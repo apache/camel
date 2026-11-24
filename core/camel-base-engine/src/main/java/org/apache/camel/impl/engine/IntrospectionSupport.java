@@ -450,100 +450,7 @@ final class IntrospectionSupport {
 
         // does the property name include a lookup key, then we need to set the property as a map or list
         if (name.contains("[") && name.endsWith("]")) {
-            int pos = name.indexOf('[');
-            String lookupKey = name.substring(pos + 1, name.length() - 1);
-            String key = name.substring(0, pos);
-
-            Object obj = IntrospectionSupport.getOrElseProperty(target, key, null, ignoreCase);
-            if (obj == null) {
-                // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
-                Method getter = IntrospectionSupport.getPropertyGetter(target.getClass(), key, ignoreCase);
-                if (getter != null) {
-                    // what type does it have
-                    Class<?> returnType = getter.getReturnType();
-                    if (Map.class.isAssignableFrom(returnType)) {
-                        obj = new LinkedHashMap<>();
-                    } else if (Collection.class.isAssignableFrom(returnType)) {
-                        obj = new ArrayList<>();
-                    } else if (returnType.isArray()) {
-                        obj = Array.newInstance(returnType.getComponentType(), 0);
-                    }
-                } else {
-                    // fallback as map type
-                    obj = new LinkedHashMap<>();
-                }
-                boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
-                if (!hit) {
-                    throw new IllegalArgumentException(
-                            "Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
-                }
-            }
-            if (obj instanceof Map map) {
-                if (context != null && refName != null && value == null) {
-                    String s = refName.replace("#", "");
-                    value = CamelContextHelper.lookup(context, s);
-                }
-                map.put(lookupKey, value);
-                return true;
-            } else if (obj instanceof List list) {
-                if (context != null && refName != null && value == null) {
-                    String s = refName.replace("#", "");
-                    value = CamelContextHelper.lookup(context, s);
-                }
-                if (isNotEmpty(lookupKey)) {
-                    int idx = Integer.parseInt(lookupKey);
-                    if (idx < list.size()) {
-                        list.set(idx, value);
-                    } else if (idx == list.size()) {
-                        list.add(value);
-                    } else {
-                        // If the list implementation is based on an array, we
-                        // can increase tha capacity to the required value to
-                        // avoid potential re-allocation weh invoking List::add.
-                        //
-                        // Note that ArrayList is the default List impl that
-                        // is automatically created if the property is null.
-                        if (list instanceof ArrayList<?> al) {
-                            al.ensureCapacity(idx + 1);
-                        }
-                        while (list.size() < idx) {
-                            list.add(null);
-                        }
-                        list.add(idx, value);
-                    }
-                } else {
-                    list.add(value);
-                }
-                return true;
-            } else if (obj != null && obj.getClass().isArray()) {
-                if (context != null && refName != null && value == null) {
-                    String s = refName.replace("#", "");
-                    value = CamelContextHelper.lookup(context, s);
-                }
-                int idx = Integer.parseInt(lookupKey);
-                int size = Array.getLength(obj);
-                if (idx >= size) {
-                    obj = Arrays.copyOf((Object[]) obj, idx + 1);
-
-                    // replace array
-                    boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
-                    if (!hit) {
-                        throw new IllegalArgumentException(
-                                "Cannot set property: " + name
-                                                           + " as an array because target bean has no setter method for the array");
-                    }
-                }
-
-                Array.set(obj, idx, value);
-
-                return true;
-            } else {
-                // not a map or list
-                throw new IllegalArgumentException(
-                        "Cannot set property: " + name
-                                                   + " as either a Map/List/array because target bean is not a Map, List or array type: "
-                                                   + target);
-            }
+            return setIndexedProperty(context, target, name, value, refName, ignoreCase);
         }
 
         Class<?> clazz = target.getClass();
@@ -560,6 +467,13 @@ final class IntrospectionSupport {
             return false;
         }
 
+        return invokeMatchingSetter(context, typeConverter, target, name, value, refName, setters);
+    }
+
+    private static boolean invokeMatchingSetter(
+            CamelContext context, TypeConverter typeConverter, Object target, String name,
+            Object value, String refName, Collection<Method> setters)
+            throws Exception {
         // loop and execute the best setter method
         Exception typeConversionFailed = null;
         Method stringSetterMethod = null;
@@ -675,6 +589,99 @@ final class IntrospectionSupport {
         } else {
             return false;
         }
+    }
+
+    private static boolean setIndexedProperty(
+            CamelContext context, Object target, String name, Object value, String refName, boolean ignoreCase)
+            throws Exception {
+        int pos = name.indexOf('[');
+        String lookupKey = name.substring(pos + 1, name.length() - 1);
+        String key = name.substring(0, pos);
+
+        Object obj = IntrospectionSupport.getOrElseProperty(target, key, null, ignoreCase);
+        if (obj == null) {
+            // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
+            obj = createIndexedContainer(target, key, ignoreCase);
+            boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
+            if (!hit) {
+                throw new IllegalArgumentException(
+                        "Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
+            }
+        }
+        if (obj instanceof Map map) {
+            if (context != null && refName != null && value == null) {
+                String s = refName.replace("#", "");
+                value = CamelContextHelper.lookup(context, s);
+            }
+            map.put(lookupKey, value);
+            return true;
+        } else if (obj instanceof List list) {
+            if (context != null && refName != null && value == null) {
+                String s = refName.replace("#", "");
+                value = CamelContextHelper.lookup(context, s);
+            }
+            if (isNotEmpty(lookupKey)) {
+                int idx = Integer.parseInt(lookupKey);
+                if (idx < list.size()) {
+                    list.set(idx, value);
+                } else if (idx == list.size()) {
+                    list.add(value);
+                } else {
+                    if (list instanceof ArrayList<?> al) {
+                        al.ensureCapacity(idx + 1);
+                    }
+                    while (list.size() < idx) {
+                        list.add(null);
+                    }
+                    list.add(idx, value);
+                }
+            } else {
+                list.add(value);
+            }
+            return true;
+        } else if (obj != null && obj.getClass().isArray()) {
+            if (context != null && refName != null && value == null) {
+                String s = refName.replace("#", "");
+                value = CamelContextHelper.lookup(context, s);
+            }
+            int idx = Integer.parseInt(lookupKey);
+            int size = Array.getLength(obj);
+            if (idx >= size) {
+                obj = Arrays.copyOf((Object[]) obj, idx + 1);
+                boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
+                if (!hit) {
+                    throw new IllegalArgumentException(
+                            "Cannot set property: " + name
+                                                       + " as an array because target bean has no setter method for the array");
+                }
+            }
+            Array.set(obj, idx, value);
+            return true;
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot set property: " + name
+                                               + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                               + target);
+        }
+    }
+
+    private static Object createIndexedContainer(Object target, String key, boolean ignoreCase) {
+        try {
+            Method getter = IntrospectionSupport.getPropertyGetter(target.getClass(), key, ignoreCase);
+            if (getter != null) {
+                Class<?> returnType = getter.getReturnType();
+                if (Map.class.isAssignableFrom(returnType)) {
+                    return new LinkedHashMap<>();
+                } else if (Collection.class.isAssignableFrom(returnType)) {
+                    return new ArrayList<>();
+                } else if (returnType.isArray()) {
+                    return Array.newInstance(returnType.getComponentType(), 0);
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            // ignore — fall back to map
+        }
+        return new LinkedHashMap<>();
     }
 
     static boolean isPropertyPlaceholder(CamelContext context, Object value) {

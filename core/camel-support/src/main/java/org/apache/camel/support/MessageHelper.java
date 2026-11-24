@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
@@ -1145,6 +1146,47 @@ public final class MessageHelper {
         }
 
         return root;
+    }
+
+    /**
+     * Serializes a map of entries into a JsonArray, with optional important header marking and key skipping.
+     */
+    private static JsonArray serializeMapSection(
+            Map<String, Object> entries, Message message,
+            boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars,
+            boolean checkImportant, Set<String> skipKeys) {
+        JsonArray arr = new JsonArray();
+        for (Map.Entry<String, Object> entry : entries.entrySet()) {
+            String key = entry.getKey();
+            if (skipKeys != null && skipKeys.contains(key)) {
+                continue;
+            }
+            Object value = entry.getValue();
+            String type = ObjectHelper.classCanonicalName(value);
+            JsonObject jh = new JsonObject();
+            jh.put("key", key);
+            if (type != null) {
+                jh.put("type", type);
+            }
+            if (checkImportant && ImportantHeaderUtils.isImportantHeader(key)) {
+                jh.put("important", true);
+            }
+            if (value != null) {
+                Object s = Jsoner.trySerialize(value);
+                if (s == null) {
+                    try {
+                        s = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                } else {
+                    s = value;
+                }
+                jh.put("value", s);
+            }
+            arr.add(jh);
+        }
+        return arr;
     }
 
     /**

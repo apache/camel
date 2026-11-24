@@ -28,7 +28,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.ExchangeHelper;
@@ -189,15 +188,7 @@ public final class BeanModelHelper {
                     bindings.put("rtc", routeTemplateContext);
                     try {
                         local = slan.evaluate(script, bindings, Object.class);
-                        if (!props.isEmpty()) {
-                            PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
-                        }
-                        if (def.getInitMethod() != null) {
-                            ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
-                        }
-                        if (def.getDestroyMethod() != null) {
-                            routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
-                        }
+                        postCreateBean(camelContext, def, local, props, null, routeTemplateContext);
                     } catch (Exception e) {
                         throw new IllegalStateException(
                                 "Cannot create bean: " + def.getType(), e);
@@ -215,19 +206,7 @@ public final class BeanModelHelper {
                         if (text != null) {
                             Expression exp = lan.createExpression(text);
                             Object local = exp.evaluate(dummy, clazz);
-                            if (!props.isEmpty()) {
-                                PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
-                            }
-                            if (def.getInitMethod() != null) {
-                                try {
-                                    ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
-                                } catch (Exception e) {
-                                    throw RuntimeCamelException.wrapRuntimeException(e);
-                                }
-                            }
-                            if (def.getDestroyMethod() != null) {
-                                routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
-                            }
+                            postCreateBean(camelContext, def, local, props, null, routeTemplateContext);
                             return local;
                         } else {
                             return null;
@@ -263,15 +242,7 @@ public final class BeanModelHelper {
                             ? def.getBuilderMethod() : PropertyBindingSupport.DEFAULT_BUILDER_METHOD;
                     Object local = newInstanceViaBuilder(camelContext, builder, bm, props);
                     // set the optional properties the builder did not take on the created bean
-                    if (!props.isEmpty()) {
-                        PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
-                    }
-                    if (def.getInitMethod() != null) {
-                        ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
-                    }
-                    if (def.getDestroyMethod() != null) {
-                        routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
-                    }
+                    postCreateBean(camelContext, def, local, props, null, routeTemplateContext);
                     return local;
                 } catch (Exception e) {
                     throw new IllegalStateException(
@@ -302,23 +273,14 @@ public final class BeanModelHelper {
                                 def.getBuilderMethod());
                         local = newInstanceViaBuilder(camelContext, builder, bm, props);
                         setRemainingProperties(camelContext, local, props, builder);
+                        // properties already applied via builder, skip setPropertiesOnTarget
+                        postCreateBean(camelContext, def, local, java.util.Collections.emptyMap(), null, routeTemplateContext);
                     } else {
                         local = PropertyBindingSupport.resolveBean(camelContext, classType);
-                    }
-
-                    // do not set properties when using #type as it uses an existing shared bean
-                    boolean setProps = builder == null && !classType.startsWith("#type");
-                    if (setProps) {
-                        // set optional properties on created bean (the properties the builder took are removed)
-                        if (!props.isEmpty()) {
-                            PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
-                        }
-                    }
-                    if (def.getInitMethod() != null) {
-                        ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
-                    }
-                    if (def.getDestroyMethod() != null) {
-                        routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
+                        // do not set properties when using #type as it uses an existing shared bean
+                        boolean setProps = !classType.startsWith("#type");
+                        postCreateBean(camelContext, def, local, setProps ? props : java.util.Collections.emptyMap(),
+                                null, routeTemplateContext);
                     }
                     return local;
                 } catch (Exception e) {
@@ -455,6 +417,25 @@ public final class BeanModelHelper {
             sb.append("; the created bean accepts: ").append(String.join(", ", setters));
         }
         return sb.toString();
+    }
+
+    private static void postCreateBean(
+            CamelContext camelContext, BeanFactoryDefinition<?> def, Object bean, Map<String, Object> props,
+            Object builder, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        if (!props.isEmpty()) {
+            if (builder != null) {
+                setRemainingProperties(camelContext, bean, props, builder);
+            } else {
+                PropertyBindingSupport.setPropertiesOnTarget(camelContext, bean, props);
+            }
+        }
+        if (def.getInitMethod() != null) {
+            ObjectHelper.invokeMethodSafe(def.getInitMethod(), bean);
+        }
+        if (def.getDestroyMethod() != null && routeTemplateContext != null) {
+            routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
+        }
     }
 
     private static String resolveScript(CamelContext camelContext, BeanFactoryDefinition<?> def) {

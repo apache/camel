@@ -189,7 +189,6 @@ public final class StringQuoteHelper {
         boolean doubleQuoted = false;
         boolean separating = false;
         int depth = 0;
-        // where quoted text starts and ends in the current value, so trim does not remove spaces inside quotes
         int quoteStart = -1;
         int quoteEnd = -1;
 
@@ -200,81 +199,37 @@ public final class StringQuoteHelper {
             boolean last = i == input.length() - 1;
 
             if (!doubleQuoted && ch == '\'') {
-                if (singleQuoted && prev == ch && sb.isEmpty()) {
-                    // its an empty quote so add empty text
-                    if (keepQuotes) {
-                        answer.add("''");
-                    } else {
-                        answer.add("");
-                    }
-                }
-                // special logic needed if this quote is the end
-                if (last) {
-                    if (singleQuoted && !sb.isEmpty()) {
-                        String text = sb.toString();
-                        // do not trim a quoted string
-                        if (keepQuotes) {
-                            answer.add(text + "'"); // append ending quote
-                        } else {
-                            answer.add(text);
-                        }
-                        sb.setLength(0);
-                    }
-                    break; // break out as we are finished
+                if (handleQuoteChar(answer, sb, ch, '\'', singleQuoted, prev, last, keepQuotes)) {
+                    break;
                 }
                 singleQuoted = !singleQuoted;
                 if (keepQuotes) {
                     sb.append(ch);
                 }
-                if (singleQuoted && quoteStart == -1) {
-                    quoteStart = sb.length();
-                } else if (!singleQuoted) {
-                    quoteEnd = sb.length();
-                }
+                int[] qr = updateQuoteRange(singleQuoted, quoteStart, quoteEnd, sb.length());
+                quoteStart = qr[0];
+                quoteEnd = qr[1];
                 continue;
             } else if (!singleQuoted && ch == '"') {
-                if (doubleQuoted && prev == ch && sb.isEmpty()) {
-                    // its an empty quote so add empty text
-                    if (keepQuotes) {
-                        answer.add("\""); // append ending quote
-                    } else {
-                        answer.add("");
-                    }
-                }
-                // special logic needed if this quote is the end
-                if (last) {
-                    if (doubleQuoted && !sb.isEmpty()) {
-                        String text = sb.toString();
-                        // do not trim a quoted string
-                        if (keepQuotes) {
-                            answer.add(text + "\"");
-                        } else {
-                            answer.add(text);
-                        }
-                        sb.setLength(0);
-                    }
-                    break; // break out as we are finished
+                if (handleQuoteChar(answer, sb, ch, '"', doubleQuoted, prev, last, keepQuotes)) {
+                    break;
                 }
                 doubleQuoted = !doubleQuoted;
                 if (keepQuotes) {
                     sb.append(ch);
                 }
-                if (doubleQuoted && quoteStart == -1) {
-                    quoteStart = sb.length();
-                } else if (!doubleQuoted) {
-                    quoteEnd = sb.length();
-                }
+                int[] qr = updateQuoteRange(doubleQuoted, quoteStart, quoteEnd, sb.length());
+                quoteStart = qr[0];
+                quoteEnd = qr[1];
                 continue;
             } else if (!isQuoting && ch == separator && depth == 0) {
                 separating = true;
-                // add as answer if we are not in a quote
                 if (!sb.isEmpty()) {
                     answer.add(trim ? trimOutsideQuotes(sb, quoteStart, quoteEnd) : sb.toString());
                     sb.setLength(0);
                 }
                 quoteStart = -1;
                 quoteEnd = -1;
-                // we should avoid adding the separator
                 continue;
             }
 
@@ -323,6 +278,45 @@ public final class StringQuoteHelper {
             end--;
         }
         return sb.substring(begin, end);
+    }
+
+    /**
+     * Handles a quote character (single or double) during tokenization.
+     *
+     * @return true if parsing should break (end of input reached while inside a quote)
+     */
+    private static boolean handleQuoteChar(
+            List<String> answer, StringBuilder sb, char ch, char quoteChar,
+            boolean wasQuoted, char prev, boolean last, boolean keepQuotes) {
+        if (wasQuoted && prev == ch && sb.isEmpty()) {
+            if (keepQuotes) {
+                answer.add(String.valueOf(quoteChar) + quoteChar);
+            } else {
+                answer.add("");
+            }
+        }
+        if (last) {
+            if (wasQuoted && !sb.isEmpty()) {
+                String text = sb.toString();
+                if (keepQuotes) {
+                    answer.add(text + quoteChar);
+                } else {
+                    answer.add(text);
+                }
+                sb.setLength(0);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static int[] updateQuoteRange(boolean nowQuoted, int quoteStart, int quoteEnd, int sbLength) {
+        if (nowQuoted && quoteStart == -1) {
+            return new int[] { sbLength, quoteEnd };
+        } else if (!nowQuoted) {
+            return new int[] { quoteStart, sbLength };
+        }
+        return new int[] { quoteStart, quoteEnd };
     }
 
 }

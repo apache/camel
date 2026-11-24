@@ -1134,76 +1134,24 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             binding.setOutType(parseText(camelContext, verb.getOutType()));
             binding.setOutTypeClass(verb.getOutTypeClass());
             // verb takes precedence over configuration on rest
-            if (verb.getBindingMode() != null) {
-                binding.setBindingMode(parseText(camelContext, verb.getBindingMode()));
-            } else {
-                binding.setBindingMode(getBindingMode());
-            }
-            if (verb.getConsumes() != null) {
-                binding.setConsumes(parseText(camelContext, verb.getConsumes()));
-            } else {
-                binding.setConsumes(getConsumes());
-            }
-            if (verb.getProduces() != null) {
-                binding.setProduces(parseText(camelContext, verb.getProduces()));
-            } else {
-                binding.setProduces(getProduces());
-            }
+            binding.setBindingMode(resolveWithFallback(camelContext, verb.getBindingMode(), getBindingMode()));
+            binding.setConsumes(resolveWithFallback(camelContext, verb.getConsumes(), getConsumes()));
+            binding.setProduces(resolveWithFallback(camelContext, verb.getProduces(), getProduces()));
             // the binding mode from the verb or rest, or else from the rest configuration
             String mode = parseText(camelContext, binding.getBindingMode());
             if (mode == null && camelContext.getRestConfiguration().getBindingMode() != null) {
                 mode = camelContext.getRestConfiguration().getBindingMode().name();
             }
-            if (mode != null && (binding.getType() != null || binding.getOutType() != null)) {
-                // okay we have binding mode and in/out type defined - then we can infer consume/produces
-                if ("json".equals(mode)) {
-                    if (binding.getConsumes() == null && binding.getType() != null) {
-                        binding.setConsumes("application/json");
-                    }
-                    if (binding.getProduces() == null && binding.getOutType() != null) {
-                        binding.setProduces("application/json");
-                    }
-                } else if ("xml".equals(mode)) {
-                    if (binding.getConsumes() == null && binding.getType() != null) {
-                        binding.setConsumes("application/xml");
-                    }
-                    if (binding.getProduces() == null && binding.getOutType() != null) {
-                        binding.setProduces("application/xml");
-                    }
-                } else if ("json_xml".equals(mode)) {
-                    if (binding.getConsumes() == null && binding.getType() != null) {
-                        binding.setConsumes("application/json;application/xml");
-                    }
-                    if (binding.getProduces() == null && binding.getOutType() != null) {
-                        binding.setProduces("application/json;application/xml");
-                    }
-                }
-            }
-            if (verb.getSkipBindingOnErrorCode() != null) {
-                binding.setSkipBindingOnErrorCode(parseText(camelContext, verb.getSkipBindingOnErrorCode()));
-            } else {
-                binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
-            }
-            if (verb.getClientRequestValidation() != null) {
-                binding.setClientRequestValidation(parseText(camelContext, verb.getClientRequestValidation()));
-            } else {
-                binding.setClientRequestValidation(getClientRequestValidation());
-            }
-            if (verb.getClientResponseValidation() != null) {
-                binding.setClientResponseValidation(parseText(camelContext, verb.getClientResponseValidation()));
-            } else {
-                binding.setClientResponseValidation(getClientResponseValidation());
-            }
-            if (verb.getEnableCORS() != null) {
-                binding.setEnableCORS(parseText(camelContext, verb.getEnableCORS()));
-            } else {
-                binding.setEnableCORS(getEnableCORS());
-            }
-            if (verb.getEnableNoContentResponse() != null) {
-                binding.setEnableNoContentResponse(parseText(camelContext, verb.getEnableNoContentResponse()));
-            } else {
-                binding.setEnableNoContentResponse(getEnableNoContentResponse());
-            }
+            inferConsumesProduces(binding, mode);
+            binding.setSkipBindingOnErrorCode(
+                    resolveWithFallback(camelContext, verb.getSkipBindingOnErrorCode(), getSkipBindingOnErrorCode()));
+            binding.setClientRequestValidation(
+                    resolveWithFallback(camelContext, verb.getClientRequestValidation(), getClientRequestValidation()));
+            binding.setClientResponseValidation(
+                    resolveWithFallback(camelContext, verb.getClientResponseValidation(), getClientResponseValidation()));
+            binding.setEnableCORS(resolveWithFallback(camelContext, verb.getEnableCORS(), getEnableCORS()));
+            binding.setEnableNoContentResponse(
+                    resolveWithFallback(camelContext, verb.getEnableNoContentResponse(), getEnableNoContentResponse()));
             // the body parameter from the type must be added before the parameters are registered on the binding,
             // so a required body is enforced
             if (verb.getType() != null) {
@@ -1361,6 +1309,33 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             description = getDescriptionText();
         }
         return description;
+    }
+
+    private static String resolveWithFallback(CamelContext camelContext, String verbValue, String restValue) {
+        if (verbValue != null) {
+            return parseText(camelContext, verbValue);
+        }
+        return restValue;
+    }
+
+    private static void inferConsumesProduces(RestBindingDefinition binding, String mode) {
+        if (mode == null || (binding.getType() == null && binding.getOutType() == null)) {
+            return;
+        }
+        String contentType = switch (mode) {
+            case "json" -> "application/json";
+            case "xml" -> "application/xml";
+            case "json_xml" -> "application/json;application/xml";
+            default -> null;
+        };
+        if (contentType != null) {
+            if (binding.getConsumes() == null && binding.getType() != null) {
+                binding.setConsumes(contentType);
+            }
+            if (binding.getProduces() == null && binding.getOutType() != null) {
+                binding.setProduces(contentType);
+            }
+        }
     }
 
     private Set<String> uriTemplating(
