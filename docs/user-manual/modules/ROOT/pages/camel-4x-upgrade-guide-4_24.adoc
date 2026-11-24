@@ -10966,6 +10966,17 @@ not pass a language on; a language header alone turns OCR on, unless the endpoin
 The language itself is passed to docling untouched, in both forms: it is docling's own identifier (language codes such
 as `en,de`, BCP-47 tags such as `iso:zh-Hant`, or `script/Latin`), and docling validates it.
 
+=== camel-docling - the ocrLanguage option is sent to docling-serve
+
+With docling-serve (`useDoclingServe=true`), the `ocrLanguage` option was only sent when `doOcr=true` was also set;
+otherwise it was dropped and the server used its own default languages. The option now works like the
+`CamelDoclingOCRLanguage` header: when it is set, the request has `do_ocr=true` and the language, unless `enableOCR` or
+`doOcr` is `false`. Remove `ocrLanguage` from the endpoint if OCR should stay at the server defaults.
+
+The option no longer has a default value (it was `en`). The docling CLI path still uses `en` when no language is set.
+On the docling-serve path, `doOcr=true` or a `CamelDoclingEnableOCR=true` header without a language no longer sends
+`en`: the server uses its own default languages. Set `ocrLanguage=en` to keep English.
+
 === camel-spiffe - SpiffeSecurityPolicy reads the TLS peer from servlet, Undertow and Vert.x consumers
 
 `SpiffeSecurityPolicy` now recognizes authenticated TLS peer certificates supplied by servlet/Jetty, Undertow,
