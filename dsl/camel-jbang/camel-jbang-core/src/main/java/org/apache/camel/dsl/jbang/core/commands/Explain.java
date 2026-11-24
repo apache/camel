@@ -218,9 +218,9 @@ public class Explain extends CamelCommand {
 
         printer().printDiagnostic("Analyzing route with " + client.model + " (" + client.apiType + ")...");
 
-        String explanation = client.generate(sysPrompt, userPrompt);
+        LlmClient.GenerateResponse response = client.generate(sysPrompt, userPrompt);
 
-        return handleExplanationResult(explanation);
+        return handleExplanationResult(response);
     }
 
     private void printFileHeader(String file) {
@@ -242,13 +242,13 @@ public class Explain extends CamelCommand {
         printer().printDiagnostic("");
     }
 
-    private int handleExplanationResult(String explanation) {
-        if (explanation == null) {
+    private int handleExplanationResult(LlmClient.GenerateResponse response) {
+        if (response == null || response.text() == null) {
             printer().printErr("Failed to get explanation from LLM");
             return 1;
         }
-        if (!stream) {
-            printer().println(explanation);
+        if (!response.streamed()) {
+            printer().println(response.text());
         }
         printer().println();
         return 0;
