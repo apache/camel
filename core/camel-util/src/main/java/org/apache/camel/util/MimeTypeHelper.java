@@ -16,12 +16,19 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringJoiner;
 
 public class MimeTypeHelper {
 
     /**
-     * Sanitizes the mime types after URL encoding to convert space into plus sign.
+     * Sanitizes the mime types after URL decoding.
+     * <p>
+     * URL decoding turns a plus sign into a space, so a space inside the <tt>type/subtype</tt> token (such as
+     * <tt>application/xslt xml</tt>) is turned back into a plus sign. The parameters of a media type (such as
+     * <tt>application/json; q=0.5</tt>) keep their meaning: the spaces around <tt>;</tt> and <tt>=</tt> are removed,
+     * and a quoted parameter value is kept as is.
      *
      * @param  types mime types such as from HTTP Accept header
      * @return       the sanitized mime types
@@ -29,12 +36,71 @@ public class MimeTypeHelper {
     public static String sanitizeMimeType(String types) {
         if (types != null) {
             StringJoiner sj = new StringJoiner(",");
-            for (String part : types.split(",")) {
-                sj.add(part.trim().replace(' ', '+'));
+            for (String part : splitOutsideQuotes(types, ',')) {
+                String type = sanitizeSingleMimeType(part);
+                if (!type.isEmpty()) {
+                    sj.add(type);
+                }
             }
             types = sj.toString();
         }
         return types;
+    }
+
+    private static String sanitizeSingleMimeType(String type) {
+        List<String> parts = splitOutsideQuotes(type, ';');
+        // a space is not valid in the type/subtype token, so it is a plus sign that URL decoding turned into a space
+        StringBuilder sb = new StringBuilder(parts.get(0).trim().replace(' ', '+'));
+        for (int i = 1; i < parts.size(); i++) {
+            String param = parts.get(i).trim();
+            if (param.isEmpty()) {
+                continue;
+            }
+            sb.append(';');
+            int pos = param.indexOf('=');
+            if (pos == -1) {
+                sb.append(param.replace(' ', '+'));
+            } else {
+                String name = param.substring(0, pos).trim();
+                String value = param.substring(pos + 1).trim();
+                sb.append(name).append('=');
+                if (value.startsWith("\"")) {
+                    // a quoted value may contain spaces
+                    sb.append(value);
+                } else {
+                    // a space is not valid in a token value either
+                    sb.append(value.replace(' ', '+'));
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Splits the text by the separator, ignoring separators inside a quoted string (with backslash escapes).
+     */
+    private static List<String> splitOutsideQuotes(String text, char separator) {
+        List<String> answer = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean quoted = false;
+        boolean escaped = false;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (escaped) {
+                escaped = false;
+            } else if (quoted && ch == '\\') {
+                escaped = true;
+            } else if (ch == '"') {
+                quoted = !quoted;
+            } else if (ch == separator && !quoted) {
+                answer.add(sb.toString());
+                sb.setLength(0);
+                continue;
+            }
+            sb.append(ch);
+        }
+        answer.add(sb.toString());
+        return answer;
     }
 
     /**

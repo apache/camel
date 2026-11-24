@@ -33,6 +33,38 @@ class MimeTypeHelperTest {
     }
 
     @Test
+    void testSanitizeMimeTypesWithParameters() {
+        // spaces around ; and = in the parameters are removed, not turned into +
+        assertEquals("application/json;q=0.5", MimeTypeHelper.sanitizeMimeType("application/json; q=0.5"));
+        assertEquals("application/json;charset=utf-8", MimeTypeHelper.sanitizeMimeType("application/json ; charset = utf-8"));
+        assertEquals("application/json;charset=utf-8;q=0.5",
+                MimeTypeHelper.sanitizeMimeType("application/json; charset=utf-8; q=0.5"));
+        assertEquals("application/json;q=0.5", MimeTypeHelper.sanitizeMimeType("application/json;q=0.5"));
+        // the type/subtype token is still repaired
+        assertEquals("application/xslt+xml;q=0.9", MimeTypeHelper.sanitizeMimeType("application/xslt xml; q=0.9"));
+        assertEquals("application/vnd.api+json;ext=a+b", MimeTypeHelper.sanitizeMimeType("application/vnd.api json; ext=a b"));
+        // several media types
+        assertEquals("application/vnd.api+json,application/json;q=0.5",
+                MimeTypeHelper.sanitizeMimeType("application/vnd.api+json, application/json; q=0.5"));
+        assertEquals("application/xslt+xml,application/json;charset=utf-8,text/plain;q=0.1",
+                MimeTypeHelper.sanitizeMimeType("application/xslt xml, application/json; charset=utf-8 , text/plain; q=0.1"));
+        // empty parameters and media types are dropped
+        assertEquals("application/json,text/plain", MimeTypeHelper.sanitizeMimeType("application/json;, ,text/plain"));
+        assertEquals("", MimeTypeHelper.sanitizeMimeType(""));
+    }
+
+    @Test
+    void testSanitizeMimeTypesWithQuotedParameters() {
+        // a quoted value keeps its spaces, and a , or ; inside quotes does not split
+        assertEquals("text/plain;foo=\"a b\"", MimeTypeHelper.sanitizeMimeType("text/plain; foo=\"a b\""));
+        assertEquals("text/plain;foo=\"a, b; c\";q=0.5,application/json",
+                MimeTypeHelper.sanitizeMimeType("text/plain; foo=\"a, b; c\"; q=0.5, application/json"));
+        // an escaped quote inside the quoted value
+        assertEquals("text/plain;foo=\"a \\\" b, c\",application/json",
+                MimeTypeHelper.sanitizeMimeType("text/plain; foo=\"a \\\" b, c\", application/json"));
+    }
+
+    @Test
     void testMimeType() {
         assertEquals("application/xslt+xml", MimeTypeHelper.probeMimeType("xslt"));
         assertEquals("application/json", MimeTypeHelper.probeMimeType("json"));
