@@ -240,3 +240,48 @@ line in the template.
 ----
 camel validate yaml content-filter-action.kamelet.yaml
 ----
+
+== Testing a Kamelet
+
+A Kamelet is tested by running a route that uses it and checking what it does. The
+xref:manual::camel-jbang-test.adoc[Camel CLI testing plugin] runs such tests, written with
+https://citrusframework.org/[Citrus]. This test runs the route above with the three Kamelets, and checks that the
+order is logged with only the allowed fields:
+
+.test/orders.citrus.it.yaml
+[source,yaml]
+----
+name: orders-test
+actions:
+  # Run the route with the three Kamelets
+  - camel:
+      cli:
+        run:
+          resources:
+            - "order-source.kamelet.yaml"
+            - "content-filter-action.kamelet.yaml"
+            - "archive-sink.kamelet.yaml"
+          integration:
+            file: "../orders.camel.yaml"
+
+  # The order is logged with only the allowed fields
+  - camel:
+      cli:
+        verify:
+          integration: "orders.camel"
+          logMessage: '"country" : "DK"'
+----
+
+The `resources` are the files the route needs next to it, relative to the route file. The integration is named after
+the route file, without `.yaml`. Run the test from the directory of the route:
+
+[source,bash]
+----
+camel plugin add test
+camel test run test/orders.citrus.it.yaml
+----
+
+A test that only checks that something was logged also passes when a Kamelet does nothing. Check what the Kamelet
+changes, as the allowed field here, and the body and headers it gives. The tests of the Kamelet catalog show more
+ways to check a source, a sink and an action, such as with an HTTP server or a database in a container; see
+https://camel.apache.org/camel-kamelets/next/testing.html[Testing a Kamelet] in the catalog.
