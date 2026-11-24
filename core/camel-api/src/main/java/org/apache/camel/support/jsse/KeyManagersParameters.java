@@ -46,9 +46,10 @@ public class KeyManagersParameters extends JsseParameters {
      * configuration returned from {@link #getKeyStore()}. The {@code KeyManager}s are produced from a factory created
      * by using the provider and algorithm identifiers returned by {@link #getProvider()} and {@link #getAlgorithm()},
      * respectively. If either of these methods returns null, the default JSSE value is used instead.
-     * <p/>
+     * <p>
      * If an existing {@code KeyManager} is set with {@link #setKeyManager(KeyManager)}, it is returned instead, and the
-     * key store, key password, provider and algorithm are not used.
+     * key store, key password, provider and algorithm are not used. The cert alias of {@link SSLContextParameters}, if
+     * set, still applies to an {@code X509KeyManager}.
      *
      * @return                          the initialized {@code KeyManager}s
      * @throws GeneralSecurityException if there is an error creating the {@code KeyManager}s or in creating the
@@ -59,7 +60,11 @@ public class KeyManagersParameters extends JsseParameters {
      */
     public KeyManager[] createKeyManagers() throws GeneralSecurityException, IOException {
         if (keyManager != null) {
-            // use existing key manager
+            if (keyStore != null || keyPassword != null || provider != null || algorithm != null) {
+                LOG.debug("Using the existing KeyManager [{}]: the keyStore, keyPassword, provider and algorithm"
+                          + " of KeyManagersParameters [{}] are not used.",
+                        keyManager, this);
+            }
             return new KeyManager[] { keyManager };
         }
 
@@ -170,9 +175,11 @@ public class KeyManagersParameters extends JsseParameters {
 
     /**
      * To use an existing configured key manager instead of using {@link KeyManagerFactory} to get the
-     * {@link KeyManager}. When set, the key store, key password, provider and algorithm are not used.
+     * {@link KeyManager}. When set, the key store, key password, provider and algorithm are not used. The cert alias of
+     * {@link SSLContextParameters}, if set, still applies to an {@code X509KeyManager}.
      *
-     * @param keyManager the key manager to use, typically an {@code X509KeyManager}
+     * @param keyManager the key manager to use. Vert.x based components and the cert alias require an
+     *                   {@code X509KeyManager}
      * @since            4.24
      */
     public void setKeyManager(@Nullable KeyManager keyManager) {
@@ -182,13 +189,13 @@ public class KeyManagersParameters extends JsseParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
+        builder.append("KeyManagersParameters[");
         if (keyManager != null) {
-            builder.append("KeyManagersParameters[keyManager=");
+            builder.append("keyManager=");
             builder.append(keyManager);
-            builder.append("]");
-            return builder.toString();
+            builder.append(", ");
         }
-        builder.append("KeyManagersParameters[keyStore=");
+        builder.append("keyStore=");
         builder.append(keyStore);
         builder.append(", keyPassword=");
         builder.append("********");

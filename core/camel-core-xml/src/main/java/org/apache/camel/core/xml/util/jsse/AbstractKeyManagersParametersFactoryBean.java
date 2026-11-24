@@ -52,8 +52,9 @@ public abstract class AbstractKeyManagersParametersFactoryBean extends AbstractJ
 
     @XmlAttribute
     @Metadata(label = "advanced",
-              description = "To use an existing configured key manager instead of using KeyManagerFactory to get the KeyManager."
-                            + " When set, the key store, key password, provider and algorithm are not used.")
+              description = "Reference to an existing KeyManager bean in the registry, to use instead of using KeyManagerFactory"
+                            + " to get the KeyManager. When set, the key store, key password, provider and algorithm are not used."
+                            + " The certAlias of the SSL context parameters, if set, still applies to an X509KeyManager.")
     protected String keyManager;
 
     @XmlTransient

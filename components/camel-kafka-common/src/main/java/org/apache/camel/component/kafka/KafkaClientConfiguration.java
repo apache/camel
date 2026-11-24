@@ -662,6 +662,13 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
 
         KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
         if (keyManagers != null) {
+            if (keyManagers.getKeyManager() != null) {
+                // the Kafka client loads the key store itself from the ssl.keystore.* properties, so an existing
+                // key manager cannot be passed on, and ignoring it would connect without the client certificate
+                throw new IllegalArgumentException(
+                        "A KeyManager set on the key managers of sslContextParameters is not supported by the Kafka"
+                                                   + " client: configure a keyStore instead");
+            }
             addPropertyIfNotNull(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, keyManagers.getAlgorithm());
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, keyManagers.getKeyPassword());
             KeyStoreParameters keyStore = keyManagers.getKeyStore();
