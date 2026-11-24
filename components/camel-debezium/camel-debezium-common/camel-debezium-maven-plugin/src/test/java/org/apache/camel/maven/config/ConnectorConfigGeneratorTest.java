@@ -32,6 +32,8 @@ import io.debezium.storage.file.history.FileSchemaHistory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -113,16 +115,29 @@ public class ConnectorConfigGeneratorTest {
     }
 
     @Test
-    void testIfAngleBracketsOfTheDescriptionAreEscaped() {
+    void testIfAngleBracketsOfTheDescriptionAreReworded() {
         final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(
                 new MySqlConnector(), MySqlConnectorConfig.class, null, Collections.emptySet(), Collections.emptyMap());
 
         final String connectorFieldsAsString = connectorConfigGenerator.printClassAsString();
 
         // message.key.columns documents the pattern '<fully-qualified table name>:<key columns>'
-        assertTrue(connectorFieldsAsString.contains("&lt;fully-qualified"), "the placeholder should be escaped");
-        assertFalse(connectorFieldsAsString.contains("<fully-qualified"), "the placeholder should be escaped");
-        assertEquals("a &lt;b&gt; c", ConnectorConfigGenerator.escapeAngleBrackets("a <b> c"));
+        assertTrue(connectorFieldsAsString.contains("{fully-qualified"), "the placeholder should be in braces");
+        assertFalse(connectorFieldsAsString.contains("<fully-qualified"), "the placeholder should be in braces");
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', quoteCharacter = '"', value = {
+            "using '<converter.prefix>.type' and '<converter.prefix>.<option>'|using '{converter.prefix}.type' and '{converter.prefix}.{option}'",
+            "options '<post.processor.prefix.<option>'|options '{post.processor.prefix}.{option}'",
+            "a list of <dbName>.<collectionName>, for|a list of {dbName}.{collectionName}, for",
+            "the pattern '<fully-qualified table name>:<key columns>'|the pattern '{fully-qualified table name}:{key columns}'",
+            "CREATE PUBLICATION <publication_name> FOR TABLE <tbl1, tbl2, etc>|CREATE PUBLICATION {publication_name} FOR TABLE {tbl1, tbl2, etc}",
+            "must implement a.b.TableMappingStorage<io.debezium.relational.Table>.|must implement a.b.TableMappingStorage of io.debezium.relational.Table.",
+            "the Ehcache <cache/> tag, but not the <key-type/> nor the <value-type/> attributes|the Ehcache 'cache' tag, but not the 'key-type' nor the 'value-type' attributes",
+            "(-1 = no limit, 0 = disabled, > 0 = num of retries)|(-1 = no limit, 0 = disabled, > 0 = num of retries)" })
+    void testIfAngleBracketsAreReworded(String description, String expected) {
+        assertEquals(expected, ConnectorConfigGenerator.rewordAngleBrackets(description));
     }
 
     private String declarationOf(final String generatedClass, final String fieldName) {

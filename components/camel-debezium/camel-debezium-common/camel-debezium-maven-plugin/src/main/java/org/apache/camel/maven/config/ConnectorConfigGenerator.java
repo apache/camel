@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.processing.Generated;
 
@@ -40,6 +41,11 @@ import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.source.SourceConnector;
 
 public final class ConnectorConfigGenerator {
+
+    private static final Pattern XML_ELEMENT = Pattern.compile("<([\\w-]+)/>");
+    private static final Pattern GENERIC_TYPE = Pattern.compile("(\\w)<([\\w.]+)>");
+    private static final Pattern UNCLOSED_PLACEHOLDER = Pattern.compile("<([^<>]+)\\.<");
+    private static final Pattern PLACEHOLDER = Pattern.compile("<([^<>]+)>");
 
     private static final String DEFAULT_PACKAGE_NAME = "org.apache.camel.component.debezium.configuration";
     private static final String PARENT_TYPE = "EmbeddedDebeziumConfiguration";
@@ -319,7 +325,7 @@ public final class ConnectorConfigGenerator {
                             fieldName);
                 }
 
-                method.getJavaDoc().setFullText(escapeAngleBrackets(description));
+                method.getJavaDoc().setFullText(rewordAngleBrackets(description));
 
                 // getters
                 javaClass.addMethod()
@@ -332,13 +338,19 @@ public final class ConnectorConfigGenerator {
     }
 
     /**
-     * Escapes the angle brackets of the Debezium documentation, which has placeholders such as
-     * {@code <fully-qualified table name>}, generic types, XML elements and operators but no HTML. The javadoc of the
-     * setter is the description of the option, and the generated metadata removes everything between angle brackets and
-     * every angle bracket that is left, so this text would be lost (CAMEL-27452).
+     * Rewords the text between angle brackets of the Debezium documentation, which has placeholders, generic types and
+     * XML elements but no HTML. The javadoc of the setter is the description of the option, and the generated metadata
+     * removes everything between angle brackets, so this text would be lost (CAMEL-27452). An XML element
+     * ({@code <cache/>}) becomes its quoted name, a generic type ({@code TableMappingStorage<a.b.Table>}) becomes
+     * {@code TableMappingStorage of a.b.Table}, and a placeholder ({@code <converter.prefix>}) is written in braces. A
+     * lone angle bracket, such as in {@code > 0}, is kept.
      */
-    static String escapeAngleBrackets(String description) {
-        return description.replace("<", "&lt;").replace(">", "&gt;");
+    static String rewordAngleBrackets(String description) {
+        String answer = XML_ELEMENT.matcher(description).replaceAll("'$1'");
+        answer = GENERIC_TYPE.matcher(answer).replaceAll("$1 of $2");
+        // a placeholder without its closing bracket before the next one, such as <post.processor.prefix.<option>
+        answer = UNCLOSED_PLACEHOLDER.matcher(answer).replaceAll("<$1>.<");
+        return PLACEHOLDER.matcher(answer).replaceAll("{$1}");
     }
 
     private void setCreateConnectorConfigurationMethod() {

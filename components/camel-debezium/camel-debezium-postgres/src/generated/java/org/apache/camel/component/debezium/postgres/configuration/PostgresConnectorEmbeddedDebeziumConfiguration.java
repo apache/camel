@@ -303,13 +303,12 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     /**
      * A semicolon-separated list of expressions that match fully-qualified
      * tables and column(s) to be used as message key. Each expression must
-     * match the pattern '&lt;fully-qualified table name&gt;:&lt;key
-     * columns&gt;', where the table names could be defined as
-     * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-     * specific connector, and the key columns are a comma-separated list of
-     * columns representing the custom key. For any table without an explicit
-     * key configuration the table's primary key column(s) will be used as
-     * message key. Example:
+     * match the pattern '{fully-qualified table name}:{key columns}', where the
+     * table names could be defined as (DB_NAME.TABLE_NAME) or
+     * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector, and the
+     * key columns are a comma-separated list of columns representing the custom
+     * key. For any table without an explicit key configuration the table's
+     * primary key column(s) will be used as message key. Example:
      * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id
      */
     public void setMessageKeyColumns(String messageKeyColumns) {
@@ -493,9 +492,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of custom converters that would be used instead of default
-     * ones. The converters are defined using '&lt;converter.prefix&gt;.type'
-     * config option and configured using options
-     * '&lt;converter.prefix&gt;.&lt;option&gt;'
+     * ones. The converters are defined using '{converter.prefix}.type' config
+     * option and configured using options '{converter.prefix}.{option}'
      */
     public void setConverters(String converters) {
         this.converters = converters;
@@ -886,7 +884,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for table
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage&lt;io.debezium.relational.Table&gt;. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
+     * io.debezium.relational.TableMappingStorage of
+     * io.debezium.relational.Table. Defaults to
+     * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+     * storage.
      */
     public void setMemoryManagementTablesClass(
             String memoryManagementTablesClass) {
@@ -1217,7 +1218,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for schema
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage&lt;io.debezium.relational.TableSchema&gt;. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
+     * io.debezium.relational.TableMappingStorage of
+     * io.debezium.relational.TableSchema. Defaults to
+     * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+     * storage.
      */
     public void setMemoryManagementSchemasClass(
             String memoryManagementSchemasClass) {
@@ -1424,16 +1428,16 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
      * for Replica Identity at table level. This option will overwrite the
      * existing value in databaseA comma-separated list of regular expressions
      * that match fully-qualified tables and Replica Identity value to be used
-     * in the table. Each expression must match the pattern '&lt;fully-qualified
-     * table name&gt;:&lt;replica identity&gt;', where the table names could be
-     * defined as (SCHEMA_NAME.TABLE_NAME), and the replica identity values are:
-     * DEFAULT - Records the old values of the columns of the primary key, if
-     * any. This is the default for non-system tables.INDEX index_name - Records
-     * the old values of the columns covered by the named index, that must be
-     * unique, not partial, not deferrable, and include only columns marked NOT
-     * NULL. If this index is dropped, the behavior is the same as NOTHING.FULL
-     * - Records the old values of all columns in the row.NOTHING - Records no
-     * information about the old row. This is the default for system tables.
+     * in the table. Each expression must match the pattern '{fully-qualified
+     * table name}:{replica identity}', where the table names could be defined
+     * as (SCHEMA_NAME.TABLE_NAME), and the replica identity values are: DEFAULT
+     * - Records the old values of the columns of the primary key, if any. This
+     * is the default for non-system tables.INDEX index_name - Records the old
+     * values of the columns covered by the named index, that must be unique,
+     * not partial, not deferrable, and include only columns marked NOT NULL. If
+     * this index is dropped, the behavior is the same as NOTHING.FULL - Records
+     * the old values of all columns in the row.NOTHING - Records no information
+     * about the old row. This is the default for system tables.
      */
     public void setReplicaIdentityAutosetValues(
             String replicaIdentityAutosetValues) {
@@ -1618,7 +1622,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum number of retries on connection errors before failing (-1 =
-     * no limit, 0 = disabled, &gt; 0 = num of retries).
+     * no limit, 0 = disabled, > 0 = num of retries).
      */
     public void setErrorsMaxRetries(int errorsMaxRetries) {
         this.errorsMaxRetries = errorsMaxRetries;
@@ -1870,12 +1874,12 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
      * an exception and stop.ALL_TABLES - If no publication exists, the
      * connector will create a new publication for all tables. Note this
      * requires that the configured user has access. If the publication already
-     * exists, it will be used. i.e CREATE PUBLICATION &lt;publication_name&gt;
-     * FOR ALL TABLES;FILTERED - If no publication exists, the connector will
-     * create a new publication for all those tables matchingthe current filter
+     * exists, it will be used. i.e CREATE PUBLICATION {publication_name} FOR
+     * ALL TABLES;FILTERED - If no publication exists, the connector will create
+     * a new publication for all those tables matchingthe current filter
      * configuration (see table/database include/exclude list properties). If
      * the publication already exists, it will be used. i.e CREATE PUBLICATION
-     * &lt;publication_name&gt; FOR TABLE &lt;tbl1, tbl2, etc&gt;
+     * {publication_name} FOR TABLE {tbl1, tbl2, etc}
      */
     public void setPublicationAutocreateMode(String publicationAutocreateMode) {
         this.publicationAutocreateMode = publicationAutocreateMode;
@@ -1913,7 +1917,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum number of retries after encountering an error emitting a
-     * window event (-1 = no limit, 0 = disabled, &gt; 0 = num of retries).
+     * window event (-1 = no limit, 0 = disabled, > 0 = num of retries).
      * Defaults to 0.
      */
     public void setSignalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
@@ -1992,8 +1996,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of post processors. The processors are defined using
-     * '&lt;post.processor.prefix&gt;.type' config option and configured using
-     * options '&lt;post.processor.prefix.&lt;option&gt;'
+     * '{post.processor.prefix}.type' config option and configured using options
+     * '{post.processor.prefix}.{option}'
      */
     public void setPostProcessors(String postProcessors) {
         this.postProcessors = postProcessors;
