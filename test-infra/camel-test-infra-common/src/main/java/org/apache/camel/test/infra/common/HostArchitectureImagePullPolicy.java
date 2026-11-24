@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.util.Locale;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.exception.DockerClientException;
+import com.github.dockerjava.api.exception.DockerException;
 import com.github.dockerjava.api.exception.InternalServerErrorException;
 import com.github.dockerjava.api.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -84,6 +84,7 @@ public class HostArchitectureImagePullPolicy implements ImagePullPolicy {
 
     private static final Logger LOG = LoggerFactory.getLogger(HostArchitectureImagePullPolicy.class);
 
+    private static final int HTTP_TOO_MANY_REQUESTS = 429;
     private static final Duration INITIAL_RETRY_DELAY = Duration.ofSeconds(1);
     private static final Duration MAX_RETRY_DELAY = Duration.ofSeconds(15);
 
@@ -187,13 +188,13 @@ public class HostArchitectureImagePullPolicy implements ImagePullPolicy {
                 transientFailure = new ContainerFetchException("Pull of image " + name + " made no progress", e);
             } catch (InternalServerErrorException e) {
                 transientFailure = e;
-            } catch (DockerClientException e) {
+            } catch (RuntimeException e) {
+                // docker-java reports a failed pull as a DockerClientException, and maps the HTTP codes it does not know,
+                // like 429, to a plain DockerException
                 if (!isQuotaExceeded(e)) {
                     throw permanentFailure(name, platform, e);
                 }
                 transientFailure = e;
-            } catch (RuntimeException e) {
-                throw permanentFailure(name, platform, e);
             }
 
             if (Instant.now().plus(delay).isAfter(deadline)) {
@@ -236,8 +237,8 @@ public class HostArchitectureImagePullPolicy implements ImagePullPolicy {
         // Do not let Testcontainers fall back to linux/amd64, this would leave an image that cannot run on this host
         String arch = platform.substring("linux/".length());
         String skipHint = isCheckedByDefault(arch)
-                ? ", the tests needing it can be skipped with the skipITs." + arch
-                  + " Maven property"
+                ? ", the tests needing it can be skipped with the skipTests." + arch + " (unit tests) or skipITs." + arch
+                  + " (integration tests) Maven properties"
                 : "";
         return new ContainerFetchException(
                 "Failed to pull image " + name + " for platform " + platform
@@ -248,6 +249,9 @@ public class HostArchitectureImagePullPolicy implements ImagePullPolicy {
     }
 
     private static boolean isQuotaExceeded(Exception e) {
+        if (e instanceof DockerException && ((DockerException) e).getHttpStatus() == HTTP_TOO_MANY_REQUESTS) {
+            return true;
+        }
         String message = e.getMessage();
         if (message == null) {
             return false;
