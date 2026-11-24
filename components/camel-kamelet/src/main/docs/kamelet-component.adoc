@@ -89,7 +89,7 @@ should not have a parameter with one of these names.
 NOTE: An optional parameter that is not set, written `+{{?user}}+` in the template, is still looked up as a property
 placeholder, and so also in the environment under its name in capitals: an unset `user` takes the value of `USER`.
 
-For the Kamelets of the catalog, see also xref:next@camel-kamelets::using.adoc[Using Kamelets].
+For the Kamelets of the catalog, see also the page Using Kamelets in the Kamelet Catalog documentation.
 
 === Writing a custom Kamelet
 

@@ -283,5 +283,5 @@ camel test run test/orders.citrus.it.yaml
 
 A test that only checks that something was logged also passes when a Kamelet does nothing. Check what the Kamelet
 changes, as the allowed field here, and the body and headers it gives. The tests of the Kamelet catalog show more
-ways to check a source, a sink and an action, such as with an HTTP server or a database in a container; see
-xref:next@camel-kamelets::testing.adoc[Testing a Kamelet] in the catalog.
+ways to check a source, a sink and an action, such as with an HTTP server or a database in a container; see the
+page Testing a Kamelet in the Kamelet Catalog documentation.
