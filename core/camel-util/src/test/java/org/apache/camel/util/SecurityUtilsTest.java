@@ -66,6 +66,9 @@ class SecurityUtilsTest {
         // camel-kubernetes trustCerts=true disables certificate verification (CAMEL-25413)
         assertTrue(SecurityUtils.isInsecureValue("camel.component.kubernetes-pods.trustCerts", true));
         assertFalse(SecurityUtils.isInsecureValue("camel.component.kubernetes-pods.trustCerts", false));
+        // camel.vault.cyberark.verifySsl=false disables certificate verification (CAMEL-27096)
+        assertTrue(SecurityUtils.isInsecureValue("camel.vault.cyberark.verifySsl", false));
+        assertFalse(SecurityUtils.isInsecureValue("camel.vault.cyberark.verifySsl", true));
     }
 
     @Test

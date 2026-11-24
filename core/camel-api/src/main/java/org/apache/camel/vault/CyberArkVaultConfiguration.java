@@ -38,7 +38,7 @@ public class CyberArkVaultConfiguration extends VaultConfiguration {
     private @Nullable String apiKey;
     @Metadata(security = "secret")
     private @Nullable String authToken;
-    @Metadata
+    @Metadata(defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
     private boolean verifySsl = true;
     @Metadata
     private @Nullable String certificatePath;
