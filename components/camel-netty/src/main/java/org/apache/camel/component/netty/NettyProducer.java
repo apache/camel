@@ -298,10 +298,11 @@ public class NettyProducer extends DefaultAsyncProducer {
             // for use when sending subsequent messages reusing this channel
             channel.attr(CORRELATION_MANAGER_ATTR).set(correlationManager);
             exchange.setProperty(NettyConstants.NETTY_CHANNEL, channel);
-            // and defer closing the channel until we are done routing the exchange
+            // and defer closing the channel until we are done routing the exchange, also when the exchange failed,
+            // or the channel is never given back to the producer pool
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
-                public void onComplete(Exchange exchange) {
+                public void onDone(Exchange exchange) {
                     // should channel be closed after complete?
                     Boolean close
                             = exchange.getMessage().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
