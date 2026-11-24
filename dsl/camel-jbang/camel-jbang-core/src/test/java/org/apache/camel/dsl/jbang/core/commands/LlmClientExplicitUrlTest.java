@@ -16,9 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient.ApiType;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -93,6 +98,55 @@ class LlmClientExplicitUrlTest {
             assertThat(client.detectEndpoint()).isTrue();
             assertThat(client.endpointUrl()).isEqualTo(server.url());
             assertThat(client.apiType()).isEqualTo(ApiType.ollama);
+        }
+    }
+
+    /**
+     * CAMEL-27514: a URL ending with /v1 (the common OpenAI base path) must not produce a double /v1/v1/models probe.
+     * The server only knows /v1/models; /v1/v1/models returns 404 and would cause detection to fail.
+     */
+    @Test
+    void urlEndingWithV1IsDetectedAsOpenAi() throws Exception {
+        try (FakeLlmServer server = new FakeLlmServer("unused")) {
+            // The user passes the OpenAI-style base URL that includes the /v1 segment.
+            LlmClient client = LlmClient.create().withUrl(server.url() + "/v1");
+
+            assertThat(client.detectEndpoint()).isTrue();
+            assertThat(client.apiType()).isEqualTo(ApiType.openai);
+        }
+    }
+
+    /**
+     * CAMEL-27514: an OpenAI-compatible server that requires auth (returns 401 without a key) must be treated as
+     * reachable when the user has supplied an API key, because the health probe now forwards the Authorization header.
+     */
+    @Test
+    void openAiCompatibleEndpointRequiringAuthIsDetectedWhenKeyIsConfigured() throws IOException {
+        // A server that replies 401 to /v1/models without an Authorization header, 200 with one.
+        HttpServer authServer = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        authServer.createContext("/v1/models", exchange -> {
+            String auth = exchange.getRequestHeaders().getFirst("Authorization");
+            int status = (auth != null && auth.startsWith("Bearer ")) ? 200 : 401;
+            String body = status == 200 ? "{\"data\":[{\"id\":\"test\"}]}" : "";
+            byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(status, bytes.length == 0 ? -1 : bytes.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(bytes);
+            }
+        });
+        authServer.start();
+        String base = "http://127.0.0.1:" + authServer.getAddress().getPort();
+        try {
+            // Without a key the server returns 401, endpoint detection must fail.
+            LlmClient noKey = LlmClient.create().withUrl(base);
+            assertThat(noKey.detectEndpoint()).isFalse();
+
+            // With a key the Authorization header is forwarded; detection succeeds.
+            LlmClient withKey = LlmClient.create().withUrl(base).withApiKey("sk-test");
+            assertThat(withKey.detectEndpoint()).isTrue();
+            assertThat(withKey.apiType()).isEqualTo(ApiType.openai);
+        } finally {
+            authServer.stop(0);
         }
     }
 }

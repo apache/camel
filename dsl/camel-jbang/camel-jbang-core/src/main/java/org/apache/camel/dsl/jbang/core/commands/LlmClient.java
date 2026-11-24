@@ -2348,6 +2348,16 @@ public class LlmClient {
                 }
                 continue;
             }
+            // For OpenAI-compatible endpoints, normalizeOpenAiModelsUrl() strips a trailing /v1 before
+            // appending /v1/models, preventing a double-prefix when the user supplies a URL ending in /v1.
+            // It also passes the API key so that servers requiring auth don't return 401 (treated as unreachable).
+            if (check.getValue() == ApiType.openai) {
+                if (tryHealthCheck(normalizeOpenAiModelsUrl(url), buildOpenAiAuthHeaders(resolveApiKey()))) {
+                    apiType = ApiType.openai;
+                    return true;
+                }
+                continue;
+            }
             if (tryHealthCheck(url + check.getKey())) {
                 apiType = check.getValue();
                 return true;
@@ -2637,8 +2647,12 @@ public class LlmClient {
             String base = normalizeGeminiBaseUrl(endpoint);
             return tryHealthCheck(base + "/models", buildGeminiHeaders(key));
         }
-        return tryHealthCheck(endpoint + "/api/tags", Map.of(), false)
-                || tryHealthCheck(endpoint + "/v1/models", Map.of(), false)
+        // Strip a trailing /v1 before probing to avoid a double-prefix (/v1/v1/models) when the caller
+        // supplies a URL that already ends with /v1 (e.g. https://api.openai.com/v1).
+        // Pass the API key on the /v1/models probe so that servers requiring auth don't return 401.
+        String base = endpoint.endsWith("/v1") ? endpoint.substring(0, endpoint.length() - 3) : endpoint;
+        return tryHealthCheck(base + "/api/tags", Map.of(), false)
+                || tryHealthCheck(base + "/v1/models", buildOpenAiAuthHeaders(resolveApiKey()), false)
                 || tryHealthCheck(endpoint, Map.of(), false);
     }
 
