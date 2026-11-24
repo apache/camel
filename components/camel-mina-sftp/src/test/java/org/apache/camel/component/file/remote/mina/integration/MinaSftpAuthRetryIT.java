@@ -50,8 +50,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * SshException that AuthFuture.verify() throws when the server rejects the credentials. The reconnect loop then sent
  * the wrong password again on each of its maximumReconnectAttempts (default 3) iterations.
  * <p/>
- * After the fix, SshException (thrown specifically for auth failures) is caught before the generic IOException handler
- * and rethrown immediately as GenericFileOperationFailedException, stopping the reconnect loop.
+ * After the fix, SshException is caught before the generic IOException handler. Auth-rejection SshExceptions (detected
+ * via disconnect code {@code SSH2_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE} or the \"Authentication failed\" message)
+ * are rethrown immediately as GenericFileOperationFailedException, stopping the reconnect loop. Non-auth SshExceptions
+ * (e.g. connection refused) are still retried.
  */
 class MinaSftpAuthRetryIT {
 
@@ -101,7 +103,8 @@ class MinaSftpAuthRetryIT {
      * maximumReconnectAttempts.
      * <p/>
      * With the default maximumReconnectAttempts=3 and a server offering only password auth, the unfixed code sends the
-     * wrong password 3 times. With the fix it is sent exactly once.
+     * wrong password 3 times. With the fix it is sent at most twice (once per auth method offered by the server:
+     * password and keyboard-interactive), not once per reconnect attempt.
      */
     @Test
     void testRejectedLoginIsNotRetried() {
@@ -142,7 +145,7 @@ class MinaSftpAuthRetryIT {
      */
     @Test
     void testTransientFailureIsStillRetried() throws Exception {
-        // Stop the server so the client gets a connection failure (plain IOException)
+        // Stop the server so the client gets a connection failure (SshException wrapping ConnectException)
         sshd.stop(true);
 
         // maximumReconnectAttempts=2, reconnectDelay=0 → task runs atLeastOnce(2) = max 2 iterations
