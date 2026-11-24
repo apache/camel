@@ -77,6 +77,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     // package-private for tests
     XMPPTCPConnection connection;
     private volatile ScheduledExecutorService scheduledExecutor;
+    // the failed attempts of the delayed start (in the connection poller thread)
+    private int delayedStartFailures;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -100,6 +102,14 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             }
         }
 
+        subscribe();
+        super.doStart();
+    }
+
+    /**
+     * Listens on the acquired connection, enters the room when the endpoint has one, and starts the connection monitor.
+     */
+    private void subscribe() throws Exception {
         if (endpoint.getRoom() == null && endpoint.hasParticipant()) {
             // the chat manager of the account passes the chat messages of every sender to every consumer of the account
             participantJid = JidCreate.entityBareFrom(endpoint.resolveParticipant(connection));
@@ -132,23 +142,69 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
         connection.addConnectionListener(connectionListener);
         this.startRobustConnectionMonitor();
-        super.doStart();
     }
 
     protected void scheduleDelayedStart() {
-        Runnable startRunnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    doStart();
-                } catch (Exception e) {
-                    LOG.warn("Ignoring an exception caught in the startup connection poller thread.", e);
-                }
-            }
-        };
         LOG.info("Delaying XMPP consumer startup for endpoint {}. Trying again in {} seconds.",
                 URISupport.sanitizeUri(endpoint.getEndpointUri()), endpoint.getConnectionPollDelay());
-        getExecutor().schedule(startRunnable, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+        delayedStartFailures = 0;
+        getExecutor().schedule(this::delayedStart, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+    }
+
+    /**
+     * Starts the consumer in the connection poller thread when the start could not connect to the server
+     * (testConnectionOnStartup=false). Every failure is tried again after connectionPollDelay until the consumer is
+     * stopped: a server can be reachable before it accepts logins (a temporary authentication failure) or before its
+     * rooms can be entered, and nothing else starts the consumer (the connection monitor is only started at the end of
+     * a successful start). The first failure is logged at WARN and passed to the exception handler, the next ones are
+     * logged at DEBUG.
+     */
+    private void delayedStart() {
+        try {
+            connection = endpoint.acquireConnection(this);
+            subscribe();
+            super.doStart();
+            if (delayedStartFailures > 0) {
+                LOG.info("Started the XMPP consumer for endpoint {} after {} failed attempts.",
+                        URISupport.sanitizeUri(endpoint.getEndpointUri()), delayedStartFailures);
+            }
+        } catch (VirtualMachineError e) {
+            throw e;
+        } catch (Throwable e) {
+            // release what this attempt acquired: the next attempt starts again from the beginning, and a consumer
+            // that is not started must not keep the account's connection
+            releaseFailedStart();
+            if (!isRunAllowed()) {
+                LOG.debug("Not trying again to start the XMPP consumer, as it is stopping: {}", e.toString());
+                return;
+            }
+            String uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
+            if (++delayedStartFailures == 1) {
+                LOG.warn("Could not start the XMPP consumer for endpoint {}. Trying again every {} seconds.", uri,
+                        endpoint.getConnectionPollDelay(), e);
+                if (getExceptionHandler() != null) {
+                    getExceptionHandler().handleException("Could not start the XMPP consumer for endpoint " + uri, e);
+                }
+            } else {
+                LOG.debug("Could not start the XMPP consumer for endpoint {} ({} attempts). Trying again in {} seconds.",
+                        uri, delayedStartFailures, endpoint.getConnectionPollDelay(), e);
+            }
+            getExecutor().schedule(this::delayedStart, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+        }
+    }
+
+    private void releaseFailedStart() {
+        try {
+            if (connection != null) {
+                connection.removeConnectionListener(connectionListener);
+            }
+            if (muc != null) {
+                muc.removeMessageListener(this);
+                muc = null;
+            }
+        } finally {
+            releaseConnection();
+        }
     }
 
     private void startRobustConnectionMonitor() {
