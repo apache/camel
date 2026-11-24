@@ -600,7 +600,10 @@ The unauthenticated RFC 9728 document is served at
 `/.well-known/oauth-protected-resource` followed by the MCP resource path. Requests without a
 bearer token or with an invalid token receive HTTP 401 and a `WWW-Authenticate` challenge containing
 `resource_metadata`; a valid token missing a required scope receives HTTP 403 with
-`error="insufficient_scope"`, the required scopes, and the metadata URL. Identity-provider
+`error="insufficient_scope"`, the required scopes, and the metadata URL. A valid token that does not
+meet the configured step-up requirements (see `required-acr` and `max-auth-age-seconds` in the OAuth
+profile) receives HTTP 401 with `error="insufficient_user_authentication"` and `acr_values` and/or
+`max_age` hints per RFC 9470. Identity-provider
 infrastructure failures return HTTP 503. Error responses do not expose the token, client secret, or
 internal validation details.
 

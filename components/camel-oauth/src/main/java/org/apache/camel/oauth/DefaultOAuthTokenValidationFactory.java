@@ -225,7 +225,9 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
         }
 
         OAuthTokenValidationResult stepUpResult
-                = checkIntrospectionStepUpClaims(claimsJson, config.getRequiredAcr(), config.getMaxAuthAgeSeconds());
+                = checkIntrospectionStepUpClaims(
+                        claimsJson, config.getRequiredAcr(), config.getMaxAuthAgeSeconds(),
+                        config.getClockSkewSeconds());
         if (stepUpResult != null) {
             return stepUpResult;
         }
@@ -235,7 +237,7 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
     }
 
     private static OAuthTokenValidationResult checkIntrospectionStepUpClaims(
-            JsonObject claimsJson, Set<String> requiredAcr, int maxAuthAgeSeconds) {
+            JsonObject claimsJson, Set<String> requiredAcr, int maxAuthAgeSeconds, int clockSkewSeconds) {
         if (requiredAcr != null && !requiredAcr.isEmpty()) {
             String acr = readOptionalString(claimsJson, "acr");
             if (acr == null || !requiredAcr.contains(acr)) {
@@ -255,7 +257,7 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
             }
             long authTime = readOptionalNumericDate(claimsJson, "auth_time", 0);
             long now = now() / 1000L;
-            if (now - authTime > maxAuthAgeSeconds) {
+            if (now - authTime > maxAuthAgeSeconds + clockSkewSeconds) {
                 return OAuthTokenValidationResult.invalid(
                         ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
                         "Insufficient authentication context: user authentication is too old (auth_time="

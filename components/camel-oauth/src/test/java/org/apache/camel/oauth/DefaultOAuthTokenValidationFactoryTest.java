@@ -1672,6 +1672,35 @@ class DefaultOAuthTokenValidationFactoryTest {
     }
 
     @Test
+    void introspectionStepUpMaxAuthAgeAllowedWithClockSkew() throws Exception {
+        long exp = System.currentTimeMillis() / 1000L + 300;
+        long authTime = System.currentTimeMillis() / 1000L - 3610; // 10 seconds beyond max age
+        HttpServer server = startIntrospectionServer(new AtomicInteger(), new AtomicReference<>(), new AtomicReference<>(),
+                new AtomicReference<>(),
+                """
+                        {"active":true,"sub":"user","iss":"%s","aud":"%s","exp":%d,"auth_time":%d}
+                        """
+                        .formatted(ISSUER, AUDIENCE, exp, authTime));
+        try {
+            OAuthTokenValidationConfig config = new OAuthTokenValidationConfig()
+                    .setIntrospectionEndpoint("http://127.0.0.1:" + server.getAddress().getPort() + "/introspect")
+                    .setIntrospectionClientId("client")
+                    .setIntrospectionClientSecret("secret")
+                    .setAllowInsecureHttp(true)
+                    .setExpectedIssuer(ISSUER)
+                    .setExpectedAudience(AUDIENCE)
+                    .setMaxAuthAgeSeconds(3600)
+                    .setClockSkewSeconds(30); // 30-second skew covers the 10-second overage
+
+            OAuthTokenValidationResult result = factory.validateToken(config, "opaque-token-no-dots");
+
+            assertTrue(result.isValid());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
     void stepUpPropertiesResolvedFromProfile() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             PropertiesComponent pc = new PropertiesComponent();
