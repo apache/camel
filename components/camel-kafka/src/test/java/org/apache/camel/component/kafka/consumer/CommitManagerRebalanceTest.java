@@ -39,6 +39,7 @@ import org.apache.kafka.common.errors.TimeoutException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -140,6 +141,90 @@ class CommitManagerRebalanceTest {
     }
 
     @Test
+    void testRevokeWithManualCommitDoesNotCommitTheProcessedRecordsSync() {
+        setup(false, true);
+        revokeWithManualCommitDoesNotCommitTheProcessedRecords();
+    }
+
+    @Test
+    void testRevokeWithManualCommitDoesNotCommitTheProcessedRecordsAsync() {
+        setup(true, true);
+        revokeWithManualCommitDoesNotCommitTheProcessedRecords();
+    }
+
+    private void revokeWithManualCommitDoesNotCommitTheProcessedRecords() {
+        // the records up to offset 4 are processed, the route did not commit any of them (it holds them, for example
+        // in an aggregation group that is not complete)
+        commitManager.recordOffset(P0, 4);
+        rebalance(() -> listener.onPartitionsRevoked(List.of(P0)));
+        consumer.poll(Duration.ZERO);
+
+        assertEquals(0, consumer.commitRequests, "the records the route did not commit must not be committed");
+        assertNull(consumer.groupOffsets.get(P0));
+        assertEquals(List.of(), pollErrors);
+    }
+
+    @Test
+    void testRevokeWithManualCommitCommitsWhatTheRouteCommittedSync() {
+        setup(false, true);
+        // the route commits the records up to offset 2 (at once), and processes the records up to offset 4
+        commitManager.forceCommit(P0, 2);
+        commitManager.recordOffset(P0, 4);
+        rebalance(() -> listener.onPartitionsRevoked(List.of(P0)));
+
+        assertEquals(1, consumer.commitRequests, "only the commit of the route");
+        assertEquals(3L, consumer.groupOffsets.get(P0));
+    }
+
+    @Test
+    void testRevokeWithManualCommitCommitsWhatTheRouteCommittedAsync() {
+        setup(true, true);
+        // the route commits the records up to offset 2, which the consumer thread has not committed yet, and processes
+        // the records up to offset 4
+        commitManager.recordOffset(P0, 2);
+        commitManager.requestCommit(P0, 2);
+        commitManager.recordOffset(P0, 4);
+        rebalance(() -> listener.onPartitionsRevoked(List.of(P0)));
+        consumer.poll(Duration.ZERO);
+
+        assertEquals(1, consumer.commitRequests);
+        assertEquals(3L, consumer.groupOffsets.get(P0), "the revoke must commit the records the route committed");
+
+        // nothing is left to commit before the next poll
+        commitManager.commitRequestedOffsets();
+        assertEquals(1, consumer.commitRequests);
+    }
+
+    @Test
+    void testBreakOnFirstErrorWithManualCommitCommitsTheProcessedRecordsSync() {
+        setup(false, true);
+        breakOnFirstErrorWithManualCommitCommitsTheProcessedRecords();
+    }
+
+    @Test
+    void testBreakOnFirstErrorWithManualCommitCommitsTheProcessedRecordsAsync() {
+        setup(true, true);
+        breakOnFirstErrorWithManualCommitCommitsTheProcessedRecords();
+    }
+
+    private void breakOnFirstErrorWithManualCommitCommitsTheProcessedRecords() {
+        // the records up to offset 4 are processed, the route committed up to offset 2, and the record at offset 5
+        // failed: breakOnFirstError commits the records before the failed one, so the failed one is polled again
+        routeCommits(2);
+        commitManager.recordOffset(P0, 4);
+        commitManager.commitProcessedOffset(P0);
+        consumer.poll(Duration.ZERO);
+        assertEquals(5L, consumer.groupOffsets.get(P0));
+
+        // the consumer breaks out and unsubscribes: the revoke has nothing left to commit
+        int commitRequests = consumer.commitRequests;
+        rebalance(() -> listener.onPartitionsRevoked(List.of(P0)));
+        consumer.poll(Duration.ZERO);
+        assertEquals(commitRequests, consumer.commitRequests);
+        assertEquals(5L, consumer.groupOffsets.get(P0));
+    }
+
+    @Test
     void testLostPartitionIsNotSavedInTheOffsetRepository() {
         MemoryStateRepository repository = new MemoryStateRepository();
         configuration.setOffsetRepository(repository);
@@ -157,12 +242,29 @@ class CommitManagerRebalanceTest {
     }
 
     private void setup(boolean async) {
+        setup(async, false);
+    }
+
+    private void setup(boolean async, boolean manualCommit) {
         configuration.setAutoCommitEnable(false);
+        configuration.setAllowManualCommit(manualCommit);
         commitManager = async
                 ? new AsyncCommitManager(consumer, kafkaConsumer(), "t1", "orders")
                 : new SyncCommitManager(consumer, kafkaConsumer(), "t1", "orders");
         listener = new ClassicRebalanceListener("t1", configuration, commitManager, consumer);
         consumer.assign(List.of(P0));
+    }
+
+    /**
+     * The route calls KafkaManualCommit.commit() for the record at the given offset: DefaultKafkaManualSyncCommit
+     * commits at once, DefaultKafkaManualAsyncCommit leaves the commit to the consumer thread.
+     */
+    private void routeCommits(long offset) {
+        if (commitManager instanceof AsyncCommitManager) {
+            commitManager.requestCommit(P0, offset);
+        } else {
+            commitManager.forceCommit(P0, offset);
+        }
     }
 
     private KafkaConsumer kafkaConsumer() {

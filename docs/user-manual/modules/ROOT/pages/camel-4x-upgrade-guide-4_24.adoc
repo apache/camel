@@ -1144,6 +1144,21 @@ consumer thread (for example, after an aggregator).
 A commit called after the partition was revoked from the consumer is not made.
 It would move back the offset that the new owner of the partition committed.
 
+=== camel-kafka - with manual commits, a rebalance or a stop commits only what the route committed
+
+With `allowManualCommit=true` and the `DefaultKafkaManualCommitFactory` or the `DefaultKafkaManualAsyncCommitFactory`,
+a partition that is revoked from the consumer (in a rebalance, or when the consumer stops) is now committed up to the
+last record that the route committed with `KafkaManualCommit.commit()`. Before, it was committed up to the last record
+that the route processed, also when the route had not committed it, for example a record held in an aggregation group
+that is not complete. Such a record was not consumed again, and was lost when the application stopped before the group
+completed. Now the records that the route did not commit are consumed again after a rebalance or a restart, by this
+consumer or another one of the group, so they may be processed more than once. This includes the records that the
+route commits only after the partition was revoked, for example when an aggregator completes its group after the
+Kafka route was stopped: that commit is not made. The same applies when a pausable
+consumer pauses after a failed record: the failed record is no longer committed. `breakOnFirstError` is unchanged: it
+still commits the records before the failed one, whether the route committed them or not, so that the failed one is
+polled again.
+
 === camel-kafka - each consumer of consumersCount gets its own group instance id
 
 With `groupInstanceId` (or `additionalProperties.group.instance.id`) and `consumersCount` greater than 1, the consumer

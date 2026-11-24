@@ -126,10 +126,10 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
         sendTwoRecords();
         MockEndpoint.assertIsSatisfied(context);
 
-        // the partition is revoked: the last processed offset is committed (offset 2)
+        // the partition is revoked: the route committed none of the records, so none is committed (CAMEL-26993)
         mockConsumer.schedulePollTask(() -> mockConsumer.rebalance(List.of()));
         await().atMost(10, TimeUnit.SECONDS).until(() -> mockConsumer.assignment().isEmpty());
-        assertEquals(2, lastCommittedOffset());
+        assertEquals(-1, lastCommittedOffset());
         int commitsAtRevoke = mockConsumer.commits.size();
 
         // the route commits the first record after the revoke, from another thread than the consumer
@@ -142,7 +142,7 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
         // the commit is not made: it would move back the offset the new owner of the partition committed
         assertFalse(mockConsumer.commits.subList(commitsAtRevoke, mockConsumer.commits.size()).stream()
                 .anyMatch(offsets -> offsets.containsKey(PARTITION)));
-        assertEquals(2, lastCommittedOffset());
+        assertEquals(-1, lastCommittedOffset());
 
         // the partition comes back and is revoked again before any of its records is processed: the dropped request
         // left no offset behind for that revoke to commit
@@ -150,7 +150,7 @@ class DefaultKafkaManualAsyncCommitTest extends CamelTestSupport {
         await().atMost(10, TimeUnit.SECONDS).until(() -> mockConsumer.assignment().contains(PARTITION));
         mockConsumer.schedulePollTask(() -> mockConsumer.rebalance(List.of()));
         await().atMost(10, TimeUnit.SECONDS).until(() -> mockConsumer.assignment().isEmpty());
-        assertEquals(2, lastCommittedOffset());
+        assertEquals(-1, lastCommittedOffset());
     }
 
     private void sendTwoRecords() {

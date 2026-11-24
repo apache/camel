@@ -324,6 +324,12 @@ Then `commit()` records the offset, and the consumer thread commits it before it
 So the asynchronous commit can be called from a thread other than the consumer thread, for example after an aggregator.
 A commit called after the partition was revoked from the consumer, for example in a rebalance, is not made.
 
+With the synchronous or the asynchronous commit, a partition that is revoked from the consumer (in a rebalance, or when
+the consumer stops) is committed only up to the last record that the route committed with `KafkaManualCommit.commit()`,
+not up to the last record that the consumer processed. A record that the route still holds, for example in an
+aggregation group that is not complete, is not committed for it: the records that the route did not commit are consumed
+again after a rebalance or a restart, so they may be processed more than once.
+
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
 
@@ -357,6 +363,7 @@ message with an error is retried. The consumer must manage that in the route usi
 
 When the `CommitManager` is changed to either the synchronous or asynchronous manager then `breakOnFirstError` will automatically commit the offset so that the
 message with an error is retried. This message will be continually retried until it can be processed without an error.
+The break commits the records processed before the failed one, whether the route committed them or not.
 
 NOTE: A synchronous commit must be called by the consumer thread. Certain EIPs, async or concurrent operations in the DSL continue on another thread:
 for example, the Aggregate EIP completes its groups on its own `Aggregator` thread. A synchronous commit on such a thread makes the Kafka client throw

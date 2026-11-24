@@ -99,6 +99,28 @@ class KafkaRecordStreamingProcessorTest {
     }
 
     @Test
+    void breakOnFirstErrorWithManualCommitCommitsTheProcessedRecords() throws Exception {
+        // the records before the failed one are committed, whether the route committed them or not, so the failed one
+        // is polled again
+        when(configuration.isAllowManualCommit()).thenReturn(true);
+        when(configuration.isBreakOnFirstError()).thenReturn(true);
+        when(commitManager.getManualCommit(any(), any(), any())).thenReturn(mock(KafkaManualCommit.class));
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        when(kafkaConsumer.createExchange(false)).thenReturn(exchange);
+        doAnswer(invocation -> {
+            throw new IllegalStateException("Simulated failure");
+        }).when(processor).process(any(Exchange.class));
+
+        KafkaRecordStreamingProcessor proc = new KafkaRecordStreamingProcessor(configuration, processor, commitManager);
+        ProcessingResult result = proc.processExchange(kafkaConsumer, topicPartition, false, false, record);
+
+        assertTrue(result.isBreakOnErrorHit());
+        verify(commitManager).commitProcessedOffset(topicPartition);
+        verify(commitManager, never()).commit(any(TopicPartition.class));
+        verify(commitManager, never()).recordOffset(topicPartition, 42L);
+    }
+
+    @Test
     void recordSkippedAfterAHandledFailureIsNotReportedAsRolledBackWhenStillRollbackOnly() throws Exception {
         // a doCatch handled the failure of a send, the transaction synchronization aborted the output and committed the
         // source offsets alone, and the doCatch restored rollbackOnly
@@ -111,6 +133,7 @@ class KafkaRecordStreamingProcessorTest {
         assertFalse(result.isFailed());
         verify(commitManager).recordOffset(topicPartition, 42L);
         verify(commitManager, never()).commit(any(TopicPartition.class));
+        verify(commitManager, never()).commitProcessedOffset(any(TopicPartition.class));
     }
 
     @Test
