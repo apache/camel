@@ -149,6 +149,11 @@ component to load them:
 camel.component.openfeature.flags-resource = classpath:flags.json
 ----
 
+NOTE: For file-based providers (`flags` / `flagsResource`), the `deadline` option controls
+the initialization wait timeout (internally `deadline * 2` ms). The default of `500` ms is
+usually sufficient, but on heavily loaded machines or CI agents you may want to raise it
+(e.g. `deadline=5000`).
+
 === Boolean flag (toggle / detour pattern)
 
 A boolean flag enables or disables a feature. The flag definition declares

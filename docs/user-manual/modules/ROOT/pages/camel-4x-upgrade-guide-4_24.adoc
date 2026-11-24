@@ -9760,6 +9760,21 @@ Used as an expression, for example in `setBody`, `setHeader` or `setProperty`, t
 `defaultValue` of the endpoint as text (`false` unless set) and logged a `TYPE_MISMATCH` warning. String flags give
 their text as before, and number and object flags still give the `defaultValue`. Predicates are unchanged.
 
+=== camel-openfeature - deadline option now applies to file-based providers
+
+The `deadline` option (default `500` ms) is now also passed to file-based (in-process) `flagd` providers
+(`flags` and `flagsResource`), where it controls the initialization wait timeout used internally as
+`deadline * 2`. Previously it was only applied to remote gRPC connections.
+
+If you use a file-based provider and see initialization timeouts under load, raise the deadline on the
+endpoint or component (for example `deadline=5000`).
+
+If you previously relied on the `FLAGD_DEADLINE_MS` environment variable to tune the initialization wait
+for file-based providers, switch to `deadline=NNNN` on the Camel endpoint or component instead, as Camel
+now explicitly passes `deadline` to the file-based `FlagdOptions` and the environment variable no longer
+takes effect for them.
+
+
 === camel-datasonnet - a null result and a stream body
 
 An expression whose result is `null` now gives `null` instead of a `Document` without content, unless `resultType` is

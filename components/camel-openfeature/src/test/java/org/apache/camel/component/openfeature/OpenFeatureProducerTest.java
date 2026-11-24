@@ -32,6 +32,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OpenFeatureProducerTest extends CamelTestSupport {
 
     private static final String FLAGS_RESOURCE = "classpath:openfeature/flags.json";
+    // The in-process (file-based) provider waits deadline * 2 ms for initialization;
+    // raise it so loaded CI agents don't hit the 1 s timeout.
+    private static final String FILE_OPTS = "&deadline=5000";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -39,44 +42,44 @@ class OpenFeatureProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:boolean-flag")
-                        .to("openfeature:test?flagKey=enrichment-enabled&flagsResource=" + FLAGS_RESOURCE);
+                        .to("openfeature:test?flagKey=enrichment-enabled&flagsResource=" + FLAGS_RESOURCE + FILE_OPTS);
 
                 from("direct:disabled-flag")
-                        .to("openfeature:test-disabled?flagKey=disabled-flag&flagsResource=" + FLAGS_RESOURCE);
+                        .to("openfeature:test-disabled?flagKey=disabled-flag&flagsResource=" + FLAGS_RESOURCE + FILE_OPTS);
 
                 from("direct:string-flag")
                         .to("openfeature:test-string?flagKey=new-routing-algorithm&defaultValue=unknown&flagsResource="
-                            + FLAGS_RESOURCE);
+                            + FLAGS_RESOURCE + FILE_OPTS);
 
                 from("direct:result-property")
                         .to("openfeature:test-prop?flagKey=enrichment-enabled&resultProperty=flagResult&flagsResource="
-                            + FLAGS_RESOURCE);
+                            + FLAGS_RESOURCE + FILE_OPTS);
 
                 from("direct:targeted-flag")
                         .to("openfeature:test-targeted?flagKey=hazmat-compliance-v2&defaultValue=v1&flagsResource="
                             + FLAGS_RESOURCE
-                            + "&contextFromBody=true");
+                            + "&contextFromBody=true" + FILE_OPTS);
 
                 from("direct:variant-type")
                         .to("openfeature:test-variant/variant?flagKey=new-routing-algorithm&flagsResource="
-                            + FLAGS_RESOURCE);
+                            + FLAGS_RESOURCE + FILE_OPTS);
 
                 from("direct:boolean-type-explicit")
                         .to("openfeature:test-bool-type/boolean?flagKey=enrichment-enabled&flagsResource="
-                            + FLAGS_RESOURCE);
+                            + FLAGS_RESOURCE + FILE_OPTS);
 
                 from("direct:is-enabled")
                         .to("openfeature:test-is-enabled/isEnabled?flagKey=enrichment-enabled&flagsResource="
-                            + FLAGS_RESOURCE);
+                            + FLAGS_RESOURCE + FILE_OPTS);
 
                 from("direct:targeted-boolean")
                         .to("openfeature:test-targeted-bool?flagKey=targeted-boolean&flagsResource="
                             + FLAGS_RESOURCE
-                            + "&contextFromBody=true");
+                            + "&contextFromBody=true" + FILE_OPTS);
 
                 from("direct:targeted-boolean-header")
                         .to("openfeature:test-targeted-bool-hdr?flagKey=targeted-boolean&flagsResource="
-                            + FLAGS_RESOURCE);
+                            + FLAGS_RESOURCE + FILE_OPTS);
             }
         };
     }
@@ -199,7 +202,7 @@ class OpenFeatureProducerTest extends CamelTestSupport {
             public void configure() {
                 from("direct:is-enabled-disabled")
                         .to("openfeature:test-is-enabled-off/isEnabled?flagKey=disabled-flag&flagsResource="
-                            + FLAGS_RESOURCE);
+                            + FLAGS_RESOURCE + FILE_OPTS);
             }
         });
         Object result = template.requestBody("direct:is-enabled-disabled", "ignored");
@@ -225,7 +228,7 @@ class OpenFeatureProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:inline-flag")
-                        .to("openfeature:test-inline?flagKey=inline-flag&flags=" + inlineFlags);
+                        .to("openfeature:test-inline?flagKey=inline-flag&flags=" + inlineFlags + FILE_OPTS);
             }
         });
         Object result = template.requestBody("direct:inline-flag", "ignored");
@@ -287,7 +290,7 @@ class OpenFeatureProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:stale-header-test")
-                        .to("openfeature:test-stale?flagKey=enrichment-enabled&flagsResource=" + FLAGS_RESOURCE);
+                        .to("openfeature:test-stale?flagKey=enrichment-enabled&flagsResource=" + FLAGS_RESOURCE + FILE_OPTS);
             }
         });
 
@@ -347,7 +350,7 @@ class OpenFeatureProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:shared-domain")
-                        .to("openfeature:shared?flagKey=enrichment-enabled&flagsResource=" + FLAGS_RESOURCE);
+                        .to("openfeature:shared?flagKey=enrichment-enabled&flagsResource=" + FLAGS_RESOURCE + FILE_OPTS);
             }
         });
 

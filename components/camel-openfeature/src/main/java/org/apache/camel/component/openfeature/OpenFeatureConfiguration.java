@@ -58,7 +58,11 @@ public class OpenFeatureConfiguration implements Cloneable {
     private String certPath;
 
     @UriParam(label = "common", defaultValue = "500",
-              description = "Deadline in milliseconds for the remote flagd connection.")
+              description = "Deadline in milliseconds. For remote flagd connections this is the gRPC deadline."
+                            + " For file-based (in-process) providers this controls the initialization wait timeout"
+                            + " (internally used as deadline * 2). The default of 500 ms matches the flagd upstream"
+                            + " default for remote connections; for file-based providers under load consider setting a"
+                            + " higher value such as 5000.")
     private int deadline = 500;
 
     @UriParam(label = "common",
@@ -163,7 +167,7 @@ public class OpenFeatureConfiguration implements Cloneable {
         return deadline;
     }
 
-    /** Deadline in milliseconds for the remote flagd connection. */
+    /** Deadline in milliseconds for the remote or file-based flagd provider. */
     public void setDeadline(int deadline) {
         this.deadline = deadline;
     }
