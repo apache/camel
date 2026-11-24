@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 
@@ -98,9 +99,11 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         config.setClusterName(remaining);
         config.setEnableDocumentOnlyMode(this.isEnableDocumentOnlyMode());
 
-        if (config.getApiKey() != null && config.getUser() != null) {
+        // a user without a password is not used for basic authentication, so it does not clash with an apiKey
+        if (ObjectHelper.isNotEmpty(config.getApiKey()) && ObjectHelper.isNotEmpty(config.getUser())
+                && ObjectHelper.isNotEmpty(config.getPassword())) {
             throw new IllegalArgumentException(
-                    "Both apiKey and user are configured on the elasticsearch component: use either apiKey, or user and password");
+                    "Both apiKey and user and password are configured on the elasticsearch component: use either apiKey, or user and password");
         }
 
         Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
