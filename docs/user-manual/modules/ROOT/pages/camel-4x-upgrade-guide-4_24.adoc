@@ -561,7 +561,7 @@ current directory between two uploads is the directory of the last file, not the
 example the one set with the `ftpClient` option) and sends commands with relative names between two operations of Camel
 must change directory itself.
 
-=== camel-ftp, camel-sftp, camel-mina-sftp - an absolute file name is refused when the endpoint has no directory
+=== camel-ftp, camel-mina-sftp, camel-jsch - an absolute file name is refused when the endpoint has no directory
 
 With the default `jailStartingDirectory=true`, a producer whose endpoint has no directory (for example
 `+sftp://user@host+`, which uploads into the home directory of the login) now refuses an absolute file name: a name
@@ -571,7 +571,8 @@ absolute (on other servers such a name was written as a relative name). The exch
 not refused.
 
 When the endpoint has a directory, an absolute name is relative to it, as before. To write files at absolute paths
-from an endpoint without a directory, set `jailStartingDirectory=false` on the endpoint.
+from an endpoint without a directory, set `jailStartingDirectory=false` on the endpoint. This also applies to the `scp`
+producer, which wrote a name starting with `/` relative to the home directory: use a relative name instead.
 
 === camel-ftp - handleDirectoryParserAbsoluteResult: a recursive poll changes into a listed directory by its name
 
@@ -582,6 +583,36 @@ lists. The files of such a sub directory are now downloaded from that directory;
 their path was built from the absolute path of the sub directory. A listed sub directory is matched by its name, so a
 hidden directory (whose name starts with a dot) is skipped, as with other servers. Listed files are matched as listed,
 as before.
+
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-azure-files - the starting directory check resolves a name as a server does
+
+The check that a file is in the starting directory (`jailStartingDirectory=true`, the default, for a producer, and the
+same check of a consumer) now resolves the `.` and `..` segments of a name the way a server does, and refuses a name
+with a `..` segment that goes above the start of the name, also when the endpoint has no directory or its directory is
+the root (`/`). A name that starts like a scheme or a drive, such as `http:`, `file:` or `C:`, is resolved like any
+other name. The exchange fails with an `IllegalArgumentException` stating that the filename is jailed to the starting
+directory. Remove the `..` segments from such a name.
+
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-azure-files - a file name with both a backslash and a `..` segment is refused in some configurations
+
+With `jailStartingDirectory=true` (the default), a producer now refuses a file name that has both a backslash and a
+`..` segment, such as `sub\..\report.txt`, when the `separator` option is `Windows` or `Auto`, when the producer
+writes a temp file (`tempPrefix` or `tempFileName`) or a done file (`doneFileName`), or when `checksumFileAlgorithm` is
+set (with `checksumWriteFile` at its default, `true`). Where such a name goes depends on the server and on the platform
+that Camel runs on. The exchange fails with an `IllegalArgumentException` stating that the filename is jailed to the
+starting directory. With the default options, the producer replaces each backslash by `/` and writes such a name as
+before. Remove the backslashes or the `..` segments from the name.
+
+The `scp` producer (camel-jsch) sends a name as given, so it refuses such a name whatever its options.
+
+=== camel-ftp, camel-mina-sftp - a stepwise recursive poll skips a listed directory whose name is not one name
+
+A recursive consumer with `stepwise=true` (the default) changes into each sub directory by its name, and back to its
+parent afterwards. It now skips a directory from the listing of the server whose name is blank, `.` or `..`, or has a
+`/` or a `\` (other than a trailing `/`), and logs it at DEBUG level, as such a name would leave the poll in another
+directory than the one it lists. A backslash is a valid character in the name of a directory on a server on Linux: to
+poll such a directory, set `stepwise=false`. With `handleDirectoryParserAbsoluteResult=true`, a backslash always
+separates names, so such a directory cannot be polled.
 
 === camel-ai-resource - fixed resourceUri cannot contain braces
 

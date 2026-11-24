@@ -49,6 +49,7 @@ import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileListingOperations;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.FtpConstants;
+import org.apache.camel.component.file.remote.FtpUtils;
 import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
@@ -1154,7 +1155,7 @@ public class MinaSftpOperations
                 return;
             }
             String current = getCurrentDirectory();
-            if (isDirectoryOrParentOf(path, current)) {
+            if (FtpUtils.isDirectoryOrParentOf(path, current)) {
                 // extract the path segment relative to the target path and make
                 // sure it keeps the preceding '/' for the regex op
                 String p = current.substring(path.length() - (path.endsWith("/") ? 1 : 0));
@@ -1199,14 +1200,6 @@ public class MinaSftpOperations
         } finally {
             lock.unlock();
         }
-    }
-
-    /**
-     * Whether the path is the directory itself or one of its parent directories. A path that only starts with the same
-     * characters, such as /home/cam for /home/camel, is not.
-     */
-    private static boolean isDirectoryOrParentOf(String path, String directory) {
-        return directory.equals(path) || directory.startsWith(path.endsWith("/") ? path : path + "/");
     }
 
     private void doChangeDirectory(String path) {
