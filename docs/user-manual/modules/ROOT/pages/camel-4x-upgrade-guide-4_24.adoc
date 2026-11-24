@@ -3438,6 +3438,15 @@ missing, or a setting of its login is missing. Before, a missing host failed onl
 The `hashicorp-secrets` dev console now shows the login (`Token`, `AppRole`, `Kubernetes` or `JWT`) instead of
 `OAuth Token`.
 
+=== camel-hashicorp-vault, camel-aws-secrets-manager - a failed reload after a secret update is tried again
+
+When the context reload that the secret refresh task triggers fails (for example a route cannot start), the update
+is no longer marked as seen: the next check of the task reloads again, up to 10 times in a row, and logs a warning
+each time. Each such reload stops and starts the routes, as any reload does. Before, the task did not reload again
+until the next update of a secret, and the routes that did not start stayed stopped. With SQS notification
+(`camel.vault.aws.useSqsNotification=true`), the notification of the update is deleted from the queue once the
+reload succeeded, instead of when it is received, so the queue delivers it again after a failed reload.
+
 === camel-hivemq - a body that does not convert to a byte array fails the exchange
 
 The `hivemq` producer published a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a
