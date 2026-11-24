@@ -31,11 +31,27 @@ public interface CommitManager {
     void commit();
 
     /**
-     * Commits the offsets of the given partition
+     * Commits the offsets of the given partition, for example when the partition is revoked or the consumer stops.
+     * <p>
+     * With manual commits (allowManualCommit=true), only the offset that the route committed through
+     * {@link KafkaManualCommit#commit()} is committed, if it is not committed yet: the last processed record may still
+     * be held by the route (for example in an aggregation group that is not complete), and is not committed for it.
+     * Without manual commits, the offset of the last processed record is committed.
      *
      * @param partition the partition to commit the offsets
      */
     void commit(TopicPartition partition);
+
+    /**
+     * Commits the offset of the last processed record of the given partition, also with manual commits, whether the
+     * route committed it or not. Used by breakOnFirstError to commit the records before the failed one, so that the
+     * failed one is polled again.
+     *
+     * @param partition the partition to commit the offsets
+     */
+    default void commitProcessedOffset(TopicPartition partition) {
+        commit(partition);
+    }
 
     /**
      * Forcefully commits the offset of the given partition
@@ -66,16 +82,16 @@ public interface CommitManager {
     }
 
     /**
-     * Records the last processed offset and commits it, for an asynchronous manual commit. A commit manager that
-     * commits asynchronously leaves the commit to the consumer thread (see {@link #commitRequestedOffsets()}), so this
-     * can be called from any thread.
+     * Commits the given offset, for an asynchronous manual commit (the route called
+     * {@link KafkaManualCommit#commit()}). A commit manager that commits asynchronously leaves the commit to the
+     * consumer thread (see {@link #commitRequestedOffsets()}), so this can be called from any thread.
      *
      * @param partition           the partition to commit the offsets
      * @param partitionLastOffset the last offset to commit
      */
     default void requestCommit(TopicPartition partition, long partitionLastOffset) {
         recordOffset(partition, partitionLastOffset);
-        commit(partition);
+        commitProcessedOffset(partition);
     }
 
     /**
