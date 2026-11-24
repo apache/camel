@@ -150,11 +150,12 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         // trouble, but allowing the error to propagate would additionally kill sibling
                         // routes, which is strictly worse.
                         cancel();
+                        // the route id says which route to restart, as routes can share the same timer uri
                         LOG.error(
-                                "Fatal error processing exchange on timer: {}."
+                                "Fatal error processing exchange on route: {} from timer: {}."
                                   + " The timer task for this route has been cancelled."
                                   + " The route no longer fires until it is restarted.",
-                                endpoint, t);
+                                getRouteId(), endpoint, t);
                     } finally {
                         polling = false;
                     }
@@ -220,10 +221,10 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                     // An Error (such as StackOverflowError) must not be silently swallowed in the executor
                     // path. Log at ERROR so the operator sees it.
                     LOG.error(
-                            "Fatal error processing exchange on timer: {}."
+                            "Fatal error processing exchange on route: {} from timer: {}."
                               + " The timer task for this route has been terminated."
                               + " The route no longer fires until it is restarted.",
-                            endpoint, t);
+                            getRouteId(), endpoint, t);
                 } finally {
                     polling = false;
                 }
@@ -324,17 +325,16 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             AsyncCallback cb = defaultConsumerCallback(exchange, false);
             getAsyncProcessor().process(exchange, cb);
         } else {
-            // Use an outer try-finally so that releaseExchange is always called,
-            // even if an Error (e.g. StackOverflowError) escapes getProcessor().process().
-            // Without this, an Error would leave the exchange inflight and cause
-            // the context shutdown to wait for the full shutdown timeout.
+            // an Error that escapes process(...) skips the release on purpose: the route may still use the exchange
+            // (CAMEL-27515), and releasing it would not remove it from the inflight repository anyway
             try {
-                try {
-                    getProcessor().process(exchange);
-                } catch (Exception e) {
-                    exchange.setException(e);
-                }
-                // handle any thrown exception
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            // handle any thrown exception
+            try {
                 if (exchange.getException() != null) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                 }
