@@ -214,7 +214,8 @@ public class NatsProducer extends DefaultAsyncProducer {
     private JetStream getJetStream(NatsConfiguration config) throws IOException {
         JetStream js = this.jetStream;
         if (js == null) {
-            // JetStream was not available when the producer started
+            // JetStream was not available when the producer started. Two threads may both create one here, which does
+            // no harm: the JetStream context is a lightweight wrapper of the connection with nothing to close
             js = createJetStream(config);
             this.jetStream = js;
         }
