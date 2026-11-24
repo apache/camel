@@ -209,7 +209,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         InternalProcessor internal = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, target, route);
 
-        configureRoutePolicies(route, internal);
+        configureRouteAdvices(route, internal);
 
         // wrap with variable
         if (variable != null) {
@@ -337,7 +337,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
     }
 
-    private void configureRoutePolicies(Route route, InternalProcessor internal) {
+    private void configureRouteAdvices(Route route, InternalProcessor internal) {
         // configure route policy
         if (definition.getRoutePolicies() != null && !definition.getRoutePolicies().isEmpty()) {
             for (RoutePolicy policy : definition.getRoutePolicies()) {
@@ -397,7 +397,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // wrap in route lifecycle
         internal.addRouteLifecycleAdvice(camelContext, route, definition);
 
-        // add advices (REST binding, contract, variable)
+        // add advices (REST binding, contract)
         if (definition.getRestBindingDefinition() != null) {
             try {
                 // when disabling bean or processor we should also disable rest-dsl binding advice

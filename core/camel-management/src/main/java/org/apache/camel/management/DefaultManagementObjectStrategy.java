@@ -426,6 +426,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
 
     private ManagedProcessor findManagedProcessorForRoutingTypes(
             CamelContext context, Processor target, ProcessorDefinition<?> definition) {
+        // NOTE: check subclasses before their parent type (e.g. Splitter before MulticastProcessor,
+        // DynamicRouter before RoutingSlip) — a subclass would otherwise match the parent branch first.
         if (target instanceof SwitchProcessor sp) {
             return new ManagedSwitch(context, sp, definition);
         } else if (target instanceof ChoiceProcessor cp) {

@@ -173,8 +173,7 @@ public abstract class ApiMethodParser<T> {
             Map<String, String> args = signaturesArguments.get(signature);
             if (args != null) {
                 for (Map.Entry<String, String> entry : args.entrySet()) {
-                    String argName = entry.getKey();
-                    argTypes.add(parseSignatureArg(name, argName, entry.getValue(), arguments, false));
+                    argTypes.add(parseSignatureArg(name, entry.getKey(), entry.getValue(), arguments, false));
                 }
             }
             args = signaturesProperties.get(signature);
