@@ -128,64 +128,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             route.setAllowUseOriginalMessage(true);
         }
 
-        // configure tracing
-        if (definition.getTrace() != null) {
-            Boolean isTrace = parseBoolean(definition.getTrace());
-            if (isTrace != null) {
-                route.setTracing(isTrace);
-                if (isTrace) {
-                    LOG.debug("Tracing is enabled on route: {}", definition.getId());
-                    // tracing is added in the DefaultChannel so we can enable
-                    // it on the fly
-                }
-            }
-        }
-
-        // configure message history
-        if (definition.getMessageHistory() != null) {
-            Boolean isMessageHistory = parseBoolean(definition.getMessageHistory());
-            if (isMessageHistory != null) {
-                route.setMessageHistory(isMessageHistory);
-                if (isMessageHistory) {
-                    LOG.debug("Message history is enabled on route: {}", definition.getId());
-                }
-            }
-        }
-
-        // configure Log EIP mask
-        if (definition.getLogMask() != null) {
-            Boolean isLogMask = parseBoolean(definition.getLogMask());
-            if (isLogMask != null) {
-                route.setLogMask(isLogMask);
-                if (isLogMask) {
-                    LOG.debug("Security mask for Logging is enabled on route: {}", definition.getId());
-                }
-            }
-        }
-
-        // configure stream caching
-        if (definition.getStreamCache() != null) {
-            Boolean isStreamCache = parseBoolean(definition.getStreamCache());
-            if (isStreamCache != null) {
-                route.setStreamCaching(isStreamCache);
-                if (isStreamCache) {
-                    LOG.debug("StreamCaching is enabled on route: {}", definition.getId());
-                }
-            }
-        }
-
-        // configure delayer
-        if (definition.getDelayer() != null) {
-            Long delayer = parseDuration(definition.getDelayer());
-            if (delayer != null) {
-                route.setDelayer(delayer);
-                if (delayer > 0) {
-                    LOG.debug("Delayer is enabled with: {} ms. on route: {}", delayer, definition.getId());
-                } else {
-                    LOG.debug("Delayer is disabled on route: {}", definition.getId());
-                }
-            }
-        }
+        configureRouteOptions(route);
 
         // configure auto startup
         Boolean isAutoStartup = parseBoolean(definition.getAutoStartup());
@@ -266,96 +209,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         InternalProcessor internal = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, target, route);
 
-        // configure route policy
-        if (definition.getRoutePolicies() != null && !definition.getRoutePolicies().isEmpty()) {
-            for (RoutePolicy policy : definition.getRoutePolicies()) {
-                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                route.getRoutePolicyList().add(policy);
-            }
-        }
-        if (definition.getRoutePolicyRef() != null) {
-            StringTokenizer policyTokens = new StringTokenizer(definition.getRoutePolicyRef(), ",");
-            while (policyTokens.hasMoreTokens()) {
-                String ref = policyTokens.nextToken().trim();
-                RoutePolicy policy = mandatoryLookup(ref, RoutePolicy.class);
-                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                route.getRoutePolicyList().add(policy);
-            }
-        }
-        if (camelContext.getRoutePolicyFactories() != null) {
-            for (RoutePolicyFactory factory : camelContext.getRoutePolicyFactories()) {
-                RoutePolicy policy = factory.createRoutePolicy(camelContext, definition.getId(), definition);
-                if (policy != null) {
-                    LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                    route.getRoutePolicyList().add(policy);
-                }
-            }
-        }
-        // and then optionally add route policy processor if a custom policy is set
-        List<RoutePolicy> routePolicyList = route.getRoutePolicyList();
-        if (routePolicyList != null && !routePolicyList.isEmpty()) {
-            for (RoutePolicy policy : routePolicyList) {
-                // add policy as service if we have not already done that (eg possible if two routes have the same service)
-                // this ensures Camel can control the lifecycle of the policy
-                if (!camelContext.hasService(policy)) {
-                    try {
-                        // inject route
-                        if (policy instanceof RouteAware ra) {
-                            ra.setRoute(route);
-                        }
-                        camelContext.addService(policy);
-                    } catch (Exception e) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                    }
-                }
-            }
-
-            internal.addRoutePolicyAdvice(routePolicyList);
-        }
-
-        // wrap in route inflight processor to track number of inflight exchanges for the route
-        internal.addRouteInflightRepositoryAdvice(camelContext.getInflightRepository(), route.getRouteId());
-
-        // wrap in JMX instrumentation processor that is used for performance stats
-        ManagementInterceptStrategy managementInterceptStrategy = route.getManagementInterceptStrategy();
-        if (managementInterceptStrategy != null) {
-            internal.addManagementInterceptStrategy(managementInterceptStrategy.createProcessor("route"));
-        }
-
-        // wrap in route lifecycle
-        internal.addRouteLifecycleAdvice(camelContext, route, definition);
-
-        // add advices
-        if (definition.getRestBindingDefinition() != null) {
-            try {
-                // when disabling bean or processor we should also disable rest-dsl binding advice
-                boolean disabled
-                        = "true".equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
-                if (!disabled) {
-                    internal.addAdvice(
-                            new RestBindingReifier(route, definition.getRestBindingDefinition()).createRestBindingAdvice());
-                }
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        // wrap in contract
-        if (definition.getInputType() != null || definition.getOutputType() != null) {
-            Contract contract = new Contract();
-            if (definition.getInputType() != null) {
-                contract.setInputType(parseString(definition.getInputType().getUrn()));
-                contract.setValidateInput(parseBoolean(definition.getInputType().getValidate(), false));
-            }
-            if (definition.getOutputType() != null) {
-                contract.setOutputType(parseString(definition.getOutputType().getUrn()));
-                contract.setValidateOutput(parseBoolean(definition.getOutputType().getValidate(), false));
-            }
-            internal.addAdvice(new ContractAdvice(contract));
-            // make sure to enable data type as its in use when using
-            // input/output types on routes
-            camelContext.setUseDataType(true);
-        }
+        configureRoutePolicies(route, internal);
 
         // wrap with variable
         if (variable != null) {
@@ -375,6 +229,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         internal.setRouteOnAdvices(route);
 
         // invoke init on route policy
+        List<RoutePolicy> routePolicyList = route.getRoutePolicyList();
         if (routePolicyList != null && !routePolicyList.isEmpty()) {
             for (RoutePolicy policy : routePolicyList) {
                 policy.onInit(route);
@@ -418,6 +273,159 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             if (p instanceof ErrorHandlerAware errorHandlerAware) {
                 errorHandlerAware.setErrorHandler(errorHandler);
             }
+        }
+    }
+
+    private void configureRouteOptions(Route route) {
+        // configure tracing
+        if (definition.getTrace() != null) {
+            Boolean isTrace = parseBoolean(definition.getTrace());
+            if (isTrace != null) {
+                route.setTracing(isTrace);
+                if (isTrace) {
+                    LOG.debug("Tracing is enabled on route: {}", definition.getId());
+                    // tracing is added in the DefaultChannel so we can enable
+                    // it on the fly
+                }
+            }
+        }
+
+        // configure message history
+        if (definition.getMessageHistory() != null) {
+            Boolean isMessageHistory = parseBoolean(definition.getMessageHistory());
+            if (isMessageHistory != null) {
+                route.setMessageHistory(isMessageHistory);
+                if (isMessageHistory) {
+                    LOG.debug("Message history is enabled on route: {}", definition.getId());
+                }
+            }
+        }
+
+        // configure Log EIP mask
+        if (definition.getLogMask() != null) {
+            Boolean isLogMask = parseBoolean(definition.getLogMask());
+            if (isLogMask != null) {
+                route.setLogMask(isLogMask);
+                if (isLogMask) {
+                    LOG.debug("Security mask for Logging is enabled on route: {}", definition.getId());
+                }
+            }
+        }
+
+        // configure stream caching
+        if (definition.getStreamCache() != null) {
+            Boolean isStreamCache = parseBoolean(definition.getStreamCache());
+            if (isStreamCache != null) {
+                route.setStreamCaching(isStreamCache);
+                if (isStreamCache) {
+                    LOG.debug("StreamCaching is enabled on route: {}", definition.getId());
+                }
+            }
+        }
+
+        // configure delayer
+        if (definition.getDelayer() != null) {
+            Long delayer = parseDuration(definition.getDelayer());
+            if (delayer != null) {
+                route.setDelayer(delayer);
+                if (delayer > 0) {
+                    LOG.debug("Delayer is enabled with: {} ms. on route: {}", delayer, definition.getId());
+                } else {
+                    LOG.debug("Delayer is disabled on route: {}", definition.getId());
+                }
+            }
+        }
+    }
+
+    private void configureRoutePolicies(Route route, InternalProcessor internal) {
+        // configure route policy
+        if (definition.getRoutePolicies() != null && !definition.getRoutePolicies().isEmpty()) {
+            for (RoutePolicy policy : definition.getRoutePolicies()) {
+                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                route.getRoutePolicyList().add(policy);
+            }
+        }
+        if (definition.getRoutePolicyRef() != null) {
+            StringTokenizer policyTokens = new StringTokenizer(definition.getRoutePolicyRef(), ",");
+            while (policyTokens.hasMoreTokens()) {
+                String ref = policyTokens.nextToken().trim();
+                RoutePolicy policy = mandatoryLookup(ref, RoutePolicy.class);
+                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                route.getRoutePolicyList().add(policy);
+            }
+        }
+        if (camelContext.getRoutePolicyFactories() != null) {
+            for (RoutePolicyFactory factory : camelContext.getRoutePolicyFactories()) {
+                RoutePolicy policy = factory.createRoutePolicy(camelContext, definition.getId(), definition);
+                if (policy != null) {
+                    LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                    route.getRoutePolicyList().add(policy);
+                }
+            }
+        }
+
+        // and then optionally register route policies as services
+        List<RoutePolicy> routePolicyList = route.getRoutePolicyList();
+        if (routePolicyList != null && !routePolicyList.isEmpty()) {
+            for (RoutePolicy policy : routePolicyList) {
+                // add policy as service if we have not already done that (eg possible if two routes have the same service)
+                // this ensures Camel can control the lifecycle of the policy
+                if (!camelContext.hasService(policy)) {
+                    try {
+                        // inject route
+                        if (policy instanceof RouteAware ra) {
+                            ra.setRoute(route);
+                        }
+                        camelContext.addService(policy);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    }
+                }
+            }
+            internal.addRoutePolicyAdvice(routePolicyList);
+        }
+
+        // wrap in route inflight processor to track number of inflight exchanges for the route
+        internal.addRouteInflightRepositoryAdvice(camelContext.getInflightRepository(), route.getRouteId());
+
+        // wrap in JMX instrumentation processor that is used for performance stats
+        ManagementInterceptStrategy managementInterceptStrategy = route.getManagementInterceptStrategy();
+        if (managementInterceptStrategy != null) {
+            internal.addManagementInterceptStrategy(managementInterceptStrategy.createProcessor("route"));
+        }
+
+        // wrap in route lifecycle
+        internal.addRouteLifecycleAdvice(camelContext, route, definition);
+
+        // add advices (REST binding, contract, variable)
+        if (definition.getRestBindingDefinition() != null) {
+            try {
+                // when disabling bean or processor we should also disable rest-dsl binding advice
+                boolean disabled
+                        = "true".equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
+                if (!disabled) {
+                    internal.addAdvice(
+                            new RestBindingReifier(route, definition.getRestBindingDefinition()).createRestBindingAdvice());
+                }
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        if (definition.getInputType() != null || definition.getOutputType() != null) {
+            Contract contract = new Contract();
+            if (definition.getInputType() != null) {
+                contract.setInputType(parseString(definition.getInputType().getUrn()));
+                contract.setValidateInput(parseBoolean(definition.getInputType().getValidate(), false));
+            }
+            if (definition.getOutputType() != null) {
+                contract.setOutputType(parseString(definition.getOutputType().getUrn()));
+                contract.setValidateOutput(parseBoolean(definition.getOutputType().getValidate(), false));
+            }
+            internal.addAdvice(new ContractAdvice(contract));
+            // make sure to enable data type as its in use when using
+            // input/output types on routes
+            camelContext.setUseDataType(true);
         }
     }
 

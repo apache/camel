@@ -174,64 +174,13 @@ public abstract class ApiMethodParser<T> {
             if (args != null) {
                 for (Map.Entry<String, String> entry : args.entrySet()) {
                     String argName = entry.getKey();
-                    String rawTypeArg = entry.getValue();
-                    String shortTypeArgs = rawTypeArg;
-                    String typeArg = null;
-                    // handle generics
-                    pos = shortTypeArgs.indexOf('<');
-                    if (pos != -1) {
-                        typeArg = shortTypeArgs.substring(pos);
-                        // remove leading and trailing < > as that is what the old way was doing
-                        if (typeArg.startsWith("<")) {
-                            typeArg = typeArg.substring(1);
-                        }
-                        if (typeArg.endsWith(">")) {
-                            typeArg = typeArg.substring(0, typeArg.length() - 1);
-                        }
-                        shortTypeArgs = shortTypeArgs.substring(0, pos);
-                    }
-                    final Class<?> type = forName(shortTypeArgs);
-                    argTypes.add(type);
-
-                    String typeDesc = null;
-                    if (parameters != null && argName != null) {
-                        Map<String, String> params = parameters.get(name);
-                        if (params != null) {
-                            typeDesc = params.get(argName);
-                        }
-                    }
-                    arguments.add(new ApiMethodArg(argName, type, typeArg, rawTypeArg, typeDesc));
+                    argTypes.add(parseSignatureArg(name, argName, entry.getValue(), arguments, false));
                 }
             }
             args = signaturesProperties.get(signature);
             if (args != null) {
                 for (Map.Entry<String, String> entry : args.entrySet()) {
-                    String argName = entry.getKey();
-                    String rawTypeArg = entry.getValue();
-                    String shortTypeArgs = rawTypeArg;
-                    String typeArg = null;
-                    // handle generics
-                    pos = shortTypeArgs.indexOf('<');
-                    if (pos != -1) {
-                        typeArg = shortTypeArgs.substring(pos);
-                        // remove leading and trailing < > as that is what the old way was doing
-                        if (typeArg.startsWith("<")) {
-                            typeArg = typeArg.substring(1);
-                        }
-                        if (typeArg.endsWith(">")) {
-                            typeArg = typeArg.substring(0, typeArg.length() - 1);
-                        }
-                        shortTypeArgs = shortTypeArgs.substring(0, pos);
-                    }
-                    final Class<?> type = forName(shortTypeArgs);
-                    String typeDesc = null;
-                    if (parameters != null && argName != null) {
-                        Map<String, String> params = parameters.get(name);
-                        if (params != null) {
-                            typeDesc = params.get(argName);
-                        }
-                    }
-                    properties.add(new ApiMethodArg(argName, type, typeArg, rawTypeArg, typeDesc, true));
+                    parseSignatureArg(name, entry.getKey(), entry.getValue(), properties, true);
                 }
             }
 
@@ -298,6 +247,36 @@ public abstract class ApiMethodParser<T> {
             model.uniqueName = uniqueName;
         }
         return result;
+    }
+
+    private Class<?> parseSignatureArg(
+            String methodName, String argName, String rawTypeArg,
+            List<ApiMethodArg> target, boolean isProperty) {
+        String shortTypeArgs = rawTypeArg;
+        String typeArg = null;
+        // handle generics
+        int pos = shortTypeArgs.indexOf('<');
+        if (pos != -1) {
+            typeArg = shortTypeArgs.substring(pos);
+            // remove leading and trailing < > as that is what the old way was doing
+            if (typeArg.startsWith("<")) {
+                typeArg = typeArg.substring(1);
+            }
+            if (typeArg.endsWith(">")) {
+                typeArg = typeArg.substring(0, typeArg.length() - 1);
+            }
+            shortTypeArgs = shortTypeArgs.substring(0, pos);
+        }
+        final Class<?> type = forName(shortTypeArgs);
+        String typeDesc = null;
+        if (parameters != null && argName != null) {
+            Map<String, String> params = parameters.get(methodName);
+            if (params != null) {
+                typeDesc = params.get(argName);
+            }
+        }
+        target.add(new ApiMethodArg(argName, type, typeArg, rawTypeArg, typeDesc, isProperty));
+        return type;
     }
 
     private static Map<String, Class<?>> extractArguments(List<ApiMethodModel> result) {
