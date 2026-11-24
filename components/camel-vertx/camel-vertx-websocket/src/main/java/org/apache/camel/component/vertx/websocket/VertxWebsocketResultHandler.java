@@ -20,9 +20,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -31,27 +36,31 @@ import org.apache.camel.Exchange;
  * Handles the result of one or more asynchronous WebSocket write operations
  */
 class VertxWebsocketResultHandler {
+    private final Vertx vertx;
     private final Exchange exchange;
     private final AsyncCallback callback;
     private final Set<String> connectionKeys;
     private final Map<String, Throwable> errors = new HashMap<>();
     private final Lock lock = new ReentrantLock();
 
-    VertxWebsocketResultHandler(Exchange exchange, AsyncCallback callback, Set<String> connectionKeys) {
+    VertxWebsocketResultHandler(Vertx vertx, Exchange exchange, AsyncCallback callback, Set<String> connectionKeys) {
+        this.vertx = vertx;
         this.exchange = exchange;
         this.callback = callback;
         this.connectionKeys = new HashSet<>(connectionKeys);
     }
 
     void onResult(String connectionKey) {
+        boolean complete;
         lock.lock();
         try {
-            connectionKeys.remove(connectionKey);
-            if (connectionKeys.isEmpty()) {
-                onComplete();
-            }
+            // a key is removed once, so only the last result completes the exchange
+            complete = connectionKeys.remove(connectionKey) && connectionKeys.isEmpty();
         } finally {
             lock.unlock();
+        }
+        if (complete) {
+            onComplete();
         }
     }
 
@@ -81,6 +90,34 @@ class VertxWebsocketResultHandler {
                 exchange.setException(new CamelExecutionException(msg.toString(), exchange));
             }
         }
-        callback.done(false);
+        if (Context.isOnEventLoopThread()) {
+            // a write completes on the Vert.x event loop: the route must not continue there, as a blocking step
+            // stalls the I/O of that event loop, and a producer that connects to another server waits for a connect
+            // that needs this very event loop (CAMEL-27507)
+            completeOnWorkerThread();
+        } else {
+            callback.done(false);
+        }
+    }
+
+    private void completeOnWorkerThread() {
+        // the exchange is completed once: by the task, or here when the worker pool refuses the task
+        AtomicBoolean completed = new AtomicBoolean();
+        try {
+            vertx.executeBlocking((Callable<Void>) () -> {
+                complete(completed);
+                return null;
+            }, false).onFailure(e -> complete(completed));
+        } catch (RejectedExecutionException e) {
+            // the worker pool of the Vert.x is already shut down (for example while the Vert.x closes): the message
+            // was sent, so complete the exchange on this thread rather than lose it
+            complete(completed);
+        }
+    }
+
+    private void complete(AtomicBoolean completed) {
+        if (completed.compareAndSet(false, true)) {
+            callback.done(false);
+        }
     }
 }
