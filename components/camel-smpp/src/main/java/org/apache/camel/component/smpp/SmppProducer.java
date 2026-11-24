@@ -34,6 +34,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
 import org.slf4j.Logger;
@@ -56,6 +57,9 @@ public class SmppProducer extends DefaultProducer {
     private final SmppConfiguration configuration;
     private final SessionStateListener internalSessionStateListener;
     private final ReentrantLock connectLock = new ReentrantLock();
+    // the session whose connectAndBind runs on this thread: jsmpp closes a session whose bind fails on the thread that
+    // called connectAndBind, and calls the session state listeners there before connectAndBind throws
+    private final ThreadLocal<Session> bindingSession = new ThreadLocal<>();
     // created again by a start after a stop, as the stop shuts it down
     private volatile ScheduledExecutorService reconnectService;
 
@@ -75,6 +79,13 @@ public class SmppProducer extends DefaultProducer {
             }
 
             if (newState.equals(SessionState.UNBOUND) || newState.equals(SessionState.CLOSED)) {
+                if (source == bindingSession.get()) {
+                    // the bind of this session failed on this thread, and connectAndBind throws to its caller (the
+                    // start, a reconnect attempt or a lazy session creation), which handles it. Reconnecting here
+                    // would run the whole reconnect on that thread: inside start(), under the lock stop() needs too
+                    LOG.debug("The bind to {} failed", getEndpoint().getConnectionString());
+                    return;
+                }
                 LOG.warn(newState.equals(SessionState.UNBOUND)
                         ? "Session to {} was unbound - trying to reconnect" : "Lost connection to: {} - trying to reconnect...",
                         getEndpoint().getConnectionString());
@@ -119,18 +130,23 @@ public class SmppProducer extends DefaultProducer {
                     this.configuration.getMessageReceiverRouteId()));
             bindType = BindType.BIND_TRX;
         }
-        session.connectAndBind(
-                this.configuration.getHost(),
-                this.configuration.getPort(),
-                new BindParameter(
-                        bindType,
-                        this.configuration.getSystemId(),
-                        this.configuration.getPassword(),
-                        this.configuration.getSystemType(),
-                        TypeOfNumber.valueOf(configuration.getTypeOfNumber()),
-                        NumberingPlanIndicator.valueOf(configuration.getNumberingPlanIndicator()),
-                        "",
-                        configuration.getInterfaceVersionByte()));
+        bindingSession.set(session);
+        try {
+            session.connectAndBind(
+                    this.configuration.getHost(),
+                    this.configuration.getPort(),
+                    new BindParameter(
+                            bindType,
+                            this.configuration.getSystemId(),
+                            this.configuration.getPassword(),
+                            this.configuration.getSystemType(),
+                            TypeOfNumber.valueOf(configuration.getTypeOfNumber()),
+                            NumberingPlanIndicator.valueOf(configuration.getNumberingPlanIndicator()),
+                            "",
+                            configuration.getInterfaceVersionByte()));
+        } finally {
+            bindingSession.remove();
+        }
 
         LOG.info("Connected to: {}", getEndpoint().getConnectionString());
 

@@ -200,7 +200,7 @@ class SmppConsumerTest {
 
             consumer.doStart();
 
-            sessionStateListener.onStateChange(sessionState, SessionState.BOUND_RX, null);
+            sessionStateListener.onStateChange(sessionState, SessionState.BOUND_RX, session);
             verify(session).unbindAndClose();
         }
     }

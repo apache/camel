@@ -173,7 +173,7 @@ class SmppProducerTest {
 
             producer.doStart();
 
-            sessionStateListener.onStateChange(SessionState.CLOSED, SessionState.BOUND_TX, null);
+            sessionStateListener.onStateChange(SessionState.CLOSED, SessionState.BOUND_TX, session);
             verify(session).unbindAndClose();
         }
     }
