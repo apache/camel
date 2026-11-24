@@ -48,10 +48,11 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     private volatile MqttConnectionOptions connectionOptions;
     private final AtomicBoolean restarting = new AtomicBoolean(false);
     private final AtomicBoolean reconnecting = new AtomicBoolean(false);
-    // set while the consumer connects the client again after a failed exchange: Paho reports that connect to
-    // connectComplete with reconnect=true once the client lost a connection on its own (it never clears its
-    // reconnecting flag), and the consumer subscribes again there only for the automatic reconnects of Paho
-    private final AtomicBoolean ownReconnect = new AtomicBoolean(false);
+    // guards the replacement of the client by a reconnect, the client = null of a stop, and the acknowledgement of an
+    // exchange: an exchange is never acknowledged on a client that the consumer closed
+    private final Object clientLock = new Object();
+    // the client that a reconnect closes, until the reconnect replaced it: its exchanges are no longer acknowledged
+    private MqttClient replacedClient;
     // failed exchanges in a row that made the consumer reconnect, for the backoff; reset by a successful exchange
     private final AtomicInteger failedMessageReconnects = new AtomicInteger();
     private volatile ScheduledExecutorService reconnectExecutor;
@@ -60,6 +61,11 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         super(endpoint, processor);
     }
 
+    /**
+     * The client of the consumer. With manualAcksEnabled on a session that the broker keeps, a failed exchange makes
+     * the consumer replace its own client with a new one (see {@link #reconnect(MqttClient)}), so this can return
+     * another instance afterwards.
+     */
     public MqttClient getClient() {
         return client;
     }
@@ -89,10 +95,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                 if (clientId == null) {
                     clientId = PahoMqtt5Endpoint.generateClientId();
                 }
-                client = createClient();
-                if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
-                    client.setManualAcks(true);
-                }
+                client = createOwnClient();
             }
 
             // the client can be shared by the consumers of several endpoints, and it has a single callback
@@ -155,11 +158,14 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        MqttClient ownedClient = stopClient ? client : null;
+        MqttClient ownedClient;
+        synchronized (clientLock) {
+            // isRunAllowed() is false by now, so a reconnect no longer replaces the client
+            ownedClient = stopClient ? client : null;
+        }
         Exception stopException = null;
         shutdownReconnectExecutor();
         reconnecting.set(false);
-        ownReconnect.set(false);
         try {
             super.doStop();
 
@@ -192,9 +198,12 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             stopException = e;
         } finally {
             PahoMqtt5ClientCallback.unregister(this);
-            if (ownedClient != null) {
-                // an externally provided client is kept, so that the consumer uses it again when it starts again
-                client = null;
+            synchronized (clientLock) {
+                if (ownedClient != null) {
+                    // an externally provided client is kept, so that the consumer uses it again when it starts again
+                    client = null;
+                }
+                replacedClient = null;
             }
             stopClient = false;
             if (ownedClient != null) {
@@ -225,12 +234,12 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     }
 
     /**
-     * The client connected again: subscribes again after a reconnect of the client, but not after the connect of
-     * {@link #reconnect(MqttClient)}, which subscribes again itself, only when the broker did not keep the session.
+     * The client connected: subscribes again after an automatic reconnect of Paho. The first connect of a client is not
+     * a reconnect, also the connect of the new client of {@link #reconnect(MqttClient)}, which subscribes itself, only
+     * when the broker did not keep the session.
      */
     void connectComplete(boolean reconnect) {
-        boolean own = ownReconnect.compareAndSet(true, false);
-        if (reconnect && !own) {
+        if (reconnect) {
             resubscribe();
         }
     }
@@ -285,6 +294,17 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);
+    }
+
+    /**
+     * Creates the own client of the consumer, for a start and for a reconnect after a failed exchange.
+     */
+    private MqttClient createOwnClient() throws MqttException {
+        MqttClient ownClient = createClient();
+        if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
+            ownClient.setManualAcks(true);
+        }
+        return ownClient;
     }
 
     MqttClient createClient() throws MqttException {
@@ -361,28 +381,42 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
      * it is acknowledged, which frees its place in the receive window.
      */
     private void rollback(Exchange exchange, MqttMessage mqttMessage, MqttClient receivingClient) {
-        MqttClient current = client;
-        if (current == null || current != receivingClient) {
-            logNotAcknowledgedAfterStop(exchange, mqttMessage);
-            return;
-        }
-        if (mqttMessage.getQos() != 1 || !isSessionKeptAfterDisconnect()) {
-            LOG.debug("Acknowledging failed MQTT message with ID: {} (QoS {}) of Exchange ID: {} as the broker does not"
-                      + " deliver it again",
-                    mqttMessage.getId(), mqttMessage.getQos(), exchange.getExchangeId());
-            try {
-                current.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
-            } catch (MqttException e) {
-                getExceptionHandler().handleException(
-                        "Error acknowledging failed MQTT message with ID: " + mqttMessage.getId(), exchange, e);
+        MqttException ackException = null;
+        synchronized (clientLock) {
+            if (!isCurrentClient(receivingClient)) {
+                logNotAcknowledgedAfterStop(exchange, mqttMessage);
+                return;
             }
-        } else if (stopClient) {
-            reconnectAfterFailure(current, exchange, mqttMessage);
-        } else {
-            LOG.warn("Rollback due to error processing Exchange ID: {}: MQTT message with ID: {} stays unacknowledged"
-                     + " until the externally provided client connects again",
-                    exchange.getExchangeId(), mqttMessage.getId());
+            if (mqttMessage.getQos() != 1 || !isSessionKeptAfterDisconnect()) {
+                LOG.debug("Acknowledging failed MQTT message with ID: {} (QoS {}) of Exchange ID: {} as the broker does"
+                          + " not deliver it again",
+                        mqttMessage.getId(), mqttMessage.getQos(), exchange.getExchangeId());
+                try {
+                    receivingClient.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
+                } catch (MqttException e) {
+                    ackException = e;
+                }
+            } else if (stopClient) {
+                // under the lock, so that the reconnect is scheduled for the client that is still the current one
+                reconnectAfterFailure(receivingClient, exchange, mqttMessage);
+            } else {
+                LOG.warn("Rollback due to error processing Exchange ID: {}: MQTT message with ID: {} stays unacknowledged"
+                         + " until the externally provided client connects again",
+                        exchange.getExchangeId(), mqttMessage.getId());
+            }
         }
+        if (ackException != null) {
+            getExceptionHandler().handleException(
+                    "Error acknowledging failed MQTT message with ID: " + mqttMessage.getId(), exchange, ackException);
+        }
+    }
+
+    /**
+     * Whether an exchange of the given client is acknowledged: the client is the current one, and a reconnect is not
+     * closing it. Called with the clientLock held.
+     */
+    private boolean isCurrentClient(MqttClient receivingClient) {
+        return receivingClient != null && receivingClient == client && receivingClient != replacedClient;
     }
 
     private void reconnectAfterFailure(MqttClient current, Exchange exchange, MqttMessage mqttMessage) {
@@ -406,37 +440,95 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         return Math.max(min, Math.min(delay, max));
     }
 
+    /**
+     * Reconnects after a failed exchange, so that the broker sends the unacknowledged messages of the session again.
+     * <p>
+     * The consumer does not connect the same client again: it disconnects and closes it, and connects a new client with
+     * the same client id, which resumes the session that the broker kept. Paho 1.2.5 starts the threads of a new
+     * connection of a client (CommsCallback, CommsSender) only once the threads of its previous connection have ended,
+     * and otherwise waits for them forever, with no timeout. With a synchronous route the exchange runs on the callback
+     * thread of Paho, so that thread is still busy when another message is in the route, and a connect of the same
+     * client hung there (CAMEL-27043). The exchanges still in the route on the closed client are not acknowledged: the
+     * broker sends them again to the new client.
+     */
     private void reconnect(MqttClient current) {
+        if (!isRunAllowed() || current != client) {
+            // the consumer stopped, or started again with another client
+            return;
+        }
         try {
             // the message callback may still be running (disconnect is not allowed from it), so this runs here
-            if (isRunAllowed() && current == client && current.isConnected()) {
+            if (current.isConnected()) {
                 current.disconnect();
             }
         } catch (Exception e) {
             getExceptionHandler().handleException("Failed to disconnect after a failed exchange", e);
         }
-        // the disconnect covers every message that failed until now; a message the broker sends again on the new
-        // connection can fail before this method returns, and must be able to schedule the next reconnect
-        reconnecting.set(false);
+        synchronized (clientLock) {
+            // from now on its exchanges are not acknowledged: the client is closed next (an acknowledgement on a closed
+            // client fails in Paho), and the broker sends them again to the new client
+            replacedClient = current;
+        }
+        Exception closeException = closeOwnedClient(current, null);
+        if (closeException != null) {
+            getExceptionHandler().handleException("Failed to close the client after a failed exchange", closeException);
+        }
+        MqttClient next = null;
+        boolean replaced = false;
         try {
-            if (isRunAllowed() && current == client && !current.isConnected()) {
-                ownReconnect.set(true);
-                IMqttToken token = current.connectWithResult(connectionOptions);
-                // the subscription is part of the session; subscribing again would make the broker send the retained
-                // message of the topic again (Retain Handling 0)
-                if (!token.getSessionPresent()) {
-                    LOG.warn("The broker did not keep the session of client: {}: the failed MQTT message and the other"
-                             + " unacknowledged ones are not delivered again; subscribing again to topic: {}",
-                            clientId, getEndpoint().getTopic());
-                    subscribeAfterReconnect(current);
+            // after the close: with file persistence both clients use the directory of the client id, and Paho 1.2.5
+            // goes on when another client holds its lock, so the old client is done with it first
+            next = createOwnClient();
+            synchronized (clientLock) {
+                // the stop reads the client under the same lock once isRunAllowed() is false, so either it closes the
+                // new client, or the new client is not used
+                if (isRunAllowed() && current == client) {
+                    client = next;
+                    replacedClient = null;
+                    PahoMqtt5ClientCallback.unregister(this);
+                    // the callback is set before the connect: the broker sends the messages of the session right after
+                    // CONNACK
+                    PahoMqtt5ClientCallback.register(next, this, true);
+                    // a message that the broker sends again on the new connection can fail before this method returns,
+                    // and must be able to schedule the next reconnect
+                    reconnecting.set(false);
+                    replaced = true;
+                } else if (replacedClient == current) {
+                    replacedClient = null;
                 }
             }
+            if (!replaced) {
+                LOG.debug("The consumer of client: {} stopped while it reconnected: the new client is closed", clientId);
+                Exception closeFailure = closeOwnedClient(next, null);
+                if (closeFailure != null) {
+                    LOG.debug("Client: {} could not be closed: {}", clientId, closeFailure.getMessage(), closeFailure);
+                }
+                return;
+            }
+            LOG.debug("Connecting a new client: {} to broker: {} after a failed exchange", clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
+            IMqttToken token = next.connectWithResult(connectionOptions);
+            // the subscription is part of the session; subscribing again would make the broker send the retained
+            // message of the topic again (Retain Handling 0)
+            if (!token.getSessionPresent()) {
+                LOG.warn("The broker did not keep the session of client: {}: the failed MQTT message and the other"
+                         + " unacknowledged ones are not delivered again; subscribing again to topic: {}",
+                        clientId, getEndpoint().getTopic());
+                subscribeAfterReconnect(next);
+            }
         } catch (Exception e) {
-            // a failed connect does not call connectComplete
-            ownReconnect.set(false);
             getExceptionHandler().handleException("Failed to reconnect after a failed exchange", e);
             // the client does not reconnect on its own after a disconnect it was asked for, so try again later
-            scheduleReconnect(current, "Reconnect failed");
+            synchronized (clientLock) {
+                MqttClient retry = replaced ? next : current;
+                if (!replaced) {
+                    // no new client: this reconnect is still the one pending
+                    reconnecting.set(false);
+                }
+                if (retry == client) {
+                    scheduleReconnect(retry, "Reconnect failed");
+                }
+            }
         }
     }
 
@@ -499,25 +591,30 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
         exchange.setIn(paho);
         if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
-            // the message is acknowledged on the client it arrived on: once the consumer stopped, that client is closed
-            // (or replaced by the client of the next start), and its packet id means nothing to another client
+            // the message is acknowledged on the client it arrived on: once the consumer stopped or reconnected after a
+            // failed exchange, that client is closed (and replaced by a new client), and its packet id means nothing to
+            // another client
             MqttClient receivingClient = client;
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    MqttClient current = client;
-                    if (current == null || current != receivingClient) {
-                        // not a message of the current client: its backoff is left as is
-                        logNotAcknowledgedAfterStop(exchange, mqttMessage);
-                        return;
+                    MqttException ackException = null;
+                    synchronized (clientLock) {
+                        if (!isCurrentClient(receivingClient)) {
+                            // not a message of the current client: its backoff is left as is
+                            logNotAcknowledgedAfterStop(exchange, mqttMessage);
+                            return;
+                        }
+                        failedMessageReconnects.set(0);
+                        try {
+                            receivingClient.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
+                        } catch (MqttException e) {
+                            ackException = e;
+                        }
                     }
-                    failedMessageReconnects.set(0);
-                    try {
-                        current.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
-                    } catch (MqttException e) {
+                    if (ackException != null) {
                         getExceptionHandler().handleException(
-                                "Error acknowledging MQTT message with ID: " + mqttMessage.getId(),
-                                exchange, e);
+                                "Error acknowledging MQTT message with ID: " + mqttMessage.getId(), exchange, ackException);
                     }
                 }
 
@@ -531,9 +628,9 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     }
 
     private void logNotAcknowledgedAfterStop(Exchange exchange, MqttMessage mqttMessage) {
-        LOG.debug("MQTT message with ID: {} of Exchange ID: {} is not acknowledged: the consumer stopped and closed the client"
-                  + " it arrived on (on a session that the broker keeps, the broker sends it again to a client with the"
-                  + " same client id)",
+        LOG.debug("MQTT message with ID: {} of Exchange ID: {} is not acknowledged: the consumer stopped or reconnected, and"
+                  + " closed the client it arrived on (on a session that the broker keeps, the broker sends it again to a"
+                  + " client with the same client id)",
                 mqttMessage.getId(), exchange.getExchangeId());
     }
 

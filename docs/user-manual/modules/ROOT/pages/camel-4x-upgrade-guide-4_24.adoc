@@ -5812,7 +5812,9 @@ nothing more (the client completes the QoS 2 flow on its own, so QoS 2 messages 
 QoS 1 message on a session that the broker keeps after the disconnect (`cleanStart=false` and `sessionExpiryInterval`
 greater than 0), the consumer connects again after a failed exchange (after one second, doubled for each failed
 exchange in a row up to `maxReconnectDelay`, and back to one second after any exchange that succeeds; logged at WARN),
-and the broker sends the message again. In all other
+and the broker sends the message again. For that the consumer closes its client and connects a new one with the same
+client id, so `getClient()` of the consumer returns another instance afterwards, and an exchange still in the route on
+the closed client is not acknowledged (the broker sends its message again, so that message is routed twice). In all other
 cases (a clean session, which is the default, a QoS 2 message, or `cleanStart=false` without `sessionExpiryInterval`,
 where the session ends with the connection) the broker never sends the message again, so the failed message is
 acknowledged and the failure is left to the Camel error handler. A consumer that uses a client set with the `client`
