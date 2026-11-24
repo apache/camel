@@ -434,6 +434,7 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
         FlagdOptions options = FlagdOptions.builder()
                 .resolverType(Config.Resolver.FILE)
                 .offlineFlagSourcePath(path)
+                .deadline(configuration.getDeadline())
                 .build();
         return new FlagdProvider(options);
     }
@@ -447,6 +448,7 @@ public class OpenFeatureEndpoint extends DefaultEndpoint {
             FlagdOptions options = FlagdOptions.builder()
                     .resolverType(Config.Resolver.FILE)
                     .offlineFlagSourcePath(tmp.getAbsolutePath())
+                    .deadline(configuration.getDeadline())
                     .build();
             FlagdProvider provider = new FlagdProvider(options);
             OpenFeatureComponent.ProviderRegistration reg
