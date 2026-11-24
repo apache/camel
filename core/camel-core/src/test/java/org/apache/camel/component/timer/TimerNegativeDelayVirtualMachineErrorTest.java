@@ -16,34 +16,81 @@
  */
 package org.apache.camel.component.timer;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.awaitility.Awaitility.await;
 
 /**
  * Verifies that a VirtualMachineError (StackOverflowError) thrown in a timer route with a negative delay (executor
- * path) is caught and logged, and that the route's fire loop terminates rather than propagating the error.
+ * path) is caught by the executor loop's catch (Throwable) block and logged at ERROR. Without the fix the error
+ * propagates uncaught and kills the executor thread silently — the ERROR log line is never emitted.
  *
  * @see <a href="https://issues.apache.org/jira/browse/CAMEL-27470">CAMEL-27470</a>
  */
+@Isolated
 class TimerNegativeDelayVirtualMachineErrorTest extends ContextTestSupport {
 
-    /** Open once route A has thrown its Error, confirming the error was processed, not silently lost. */
-    private final CountDownLatch errorThrown = new CountDownLatch(1);
+    private final List<String> capturedErrors = new CopyOnWriteArrayList<>();
+    private AbstractAppender appender;
+
+    /**
+     * Register the log appender before the CamelContext starts. With delay=-1 the executor fires immediately on context
+     * start, so the appender must be in place before startCamelContext() runs (which happens inside setUp()). Using
+     * doPreSetup() ensures registration happens before ContextTestSupport.setUp() starts the context.
+     */
+    @Override
+    protected void doPreSetup() {
+        appender = new AbstractAppender(
+                "timer-consumer-errors-" + UUID.randomUUID(), null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                if (event.getLoggerName().contains("TimerConsumer") && event.getLevel() == Level.ERROR) {
+                    capturedErrors.add(event.getMessage().getFormattedMessage());
+                }
+            }
+        };
+        appender.start();
+        LoggerContext logging = (LoggerContext) LogManager.getContext(false);
+        logging.getConfiguration().getRootLogger().addAppender(appender, Level.ERROR, null);
+        logging.updateLoggers();
+        super.doPreSetup();
+    }
+
+    @Override
+    protected void doPostTearDown() {
+        try {
+            if (appender != null) {
+                LoggerContext logging = (LoggerContext) LogManager.getContext(false);
+                logging.getConfiguration().getRootLogger().removeAppender(appender.getName());
+                logging.updateLoggers();
+                appender.stop();
+            }
+        } finally {
+            super.doPostTearDown();
+        }
+    }
 
     @Test
-    void negativeDelayRouteLoopTerminatesOnVirtualMachineError() throws InterruptedException {
-        // The executor path catches the Throwable: the loop must terminate and the
-        // latch must open. If the error propagated uncaught and killed the thread,
-        // the latch still opens because the lambda completes — so the main assertion
-        // is that this finishes in time (not that it hangs).
-        boolean thrown = errorThrown.await(5, TimeUnit.SECONDS);
-        assertTrue(thrown, "executor path must catch the StackOverflowError and not hang");
+    void negativeDelayRouteLoopTerminatesAndLogsErrorOnVirtualMachineError() {
+        // The executor path catches Throwable: when a StackOverflowError escapes
+        // getProcessor().process(), the catch block must run and emit the ERROR log.
+        // Without the fix the error propagates uncaught and the ERROR is never logged.
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> capturedErrors.stream().anyMatch(msg -> msg.contains("has been terminated")));
     }
 
     @Override
@@ -54,7 +101,6 @@ class TimerNegativeDelayVirtualMachineErrorTest extends ContextTestSupport {
                 from("timer:negDelay?delay=-1&period=0&synchronous=true")
                         .routeId("route-neg-delay")
                         .process(exchange -> {
-                            errorThrown.countDown();
                             throw new StackOverflowError("simulated StackOverflowError in negative-delay route");
                         });
             }
