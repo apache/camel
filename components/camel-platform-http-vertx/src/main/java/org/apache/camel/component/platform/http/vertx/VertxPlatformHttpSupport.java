@@ -40,6 +40,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExceptionHelper;
@@ -139,6 +140,16 @@ public final class VertxPlatformHttpSupport {
 
             // skip headers that are path-params as we do not want to leak them back to the caller
             if (pathParams.containsKey(key)) {
+                continue;
+            }
+
+            if (!HttpHelper.isValidHeaderName(key)) {
+                // a message header can have any name, for example a form field or a query parameter mapped to a
+                // header, but it cannot be sent as an HTTP header, and the route has already run
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Skipping header {} in the response, as its name is not a valid HTTP header name",
+                            HttpHelper.sanitizeLog(key));
+                }
                 continue;
             }
 
