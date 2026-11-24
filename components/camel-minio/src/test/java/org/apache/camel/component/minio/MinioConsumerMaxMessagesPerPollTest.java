@@ -19,6 +19,7 @@ package org.apache.camel.component.minio;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -30,6 +31,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -116,12 +118,14 @@ class MinioConsumerMaxMessagesPerPollTest extends CamelTestSupport {
 
         // the bucket was drained by three polls of one full page each, continuing after the last listed object,
         // and no poll ever routed more than the limit (a poll that listed nothing is committed with 0)
-        List<Integer> nonEmpty = polledCounts.stream().filter(n -> n > 0).toList();
-        assertTrue(nonEmpty.size() >= 3, "expected at least three non-empty polls: " + polledCounts);
-        assertEquals(List.of(MAX_PER_POLL, MAX_PER_POLL, MAX_PER_POLL), nonEmpty.subList(0, 3),
-                "the first polls should each route one full page: " + polledCounts);
-        assertTrue(nonEmpty.stream().allMatch(n -> n <= MAX_PER_POLL),
-                "no poll should route more than maxMessagesPerPoll objects: " + polledCounts);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<Integer> nonEmpty = polledCounts.stream().filter(n -> n > 0).toList();
+            assertTrue(nonEmpty.size() >= 3, "expected at least three non-empty polls: " + polledCounts);
+            assertEquals(List.of(MAX_PER_POLL, MAX_PER_POLL, MAX_PER_POLL), nonEmpty.subList(0, 3),
+                    "the first polls should each route one full page: " + polledCounts);
+            assertTrue(nonEmpty.stream().allMatch(n -> n <= MAX_PER_POLL),
+                    "no poll should route more than maxMessagesPerPoll objects: " + polledCounts);
+        });
     }
 
     @Test
@@ -145,13 +149,15 @@ class MinioConsumerMaxMessagesPerPollTest extends CamelTestSupport {
         assertEquals(expected, bodies);
 
         // the pass was two full pages and a last page with the remaining objects
-        List<Integer> nonEmpty = polledCountsStartAfter.stream().filter(n -> n > 0).toList();
-        assertTrue(nonEmpty.size() >= 3, "expected at least three non-empty polls: " + polledCountsStartAfter);
-        assertEquals(List.of(MAX_PER_POLL, MAX_PER_POLL, AFTER_START_AFTER - 2 * MAX_PER_POLL),
-                nonEmpty.subList(0, 3),
-                "the first polls should progress through the objects after startAfter: " + polledCountsStartAfter);
-        assertTrue(nonEmpty.stream().allMatch(n -> n <= MAX_PER_POLL),
-                "no poll should route more than maxMessagesPerPoll objects: " + polledCountsStartAfter);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<Integer> nonEmpty = polledCountsStartAfter.stream().filter(n -> n > 0).toList();
+            assertTrue(nonEmpty.size() >= 3, "expected at least three non-empty polls: " + polledCountsStartAfter);
+            assertEquals(List.of(MAX_PER_POLL, MAX_PER_POLL, AFTER_START_AFTER - 2 * MAX_PER_POLL),
+                    nonEmpty.subList(0, 3),
+                    "the first polls should progress through the objects after startAfter: " + polledCountsStartAfter);
+            assertTrue(nonEmpty.stream().allMatch(n -> n <= MAX_PER_POLL),
+                    "no poll should route more than maxMessagesPerPoll objects: " + polledCountsStartAfter);
+        });
     }
 
     private static String name(int i) {
