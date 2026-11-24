@@ -443,6 +443,18 @@ These parameters should help to prevent bad performance when working with folder
 In previous versions, these parameters have been evaluated too late, so that big mailboxes could still cause performance problems.
 With Camel 3.1, these parameters are evaluated earlier during the poll to avoid these problems.
 
+=== Consuming one mailbox with several consumers
+
+Several consumers (in one or more applications) can consume the same mailbox when they share an
+`idempotentRepository`: a consumer routes a mail only when it could add the key of the mail to the repository. Once
+the mail is routed, it is marked as SEEN (or deleted), and by default its key is removed from the repository
+(`idempotentRepositoryRemoveOnCommit=true`). Another consumer may have found the mail in its search before that, and
+add the key after it was removed. With IMAP, the default `unseen=true` and no custom `searchTerm`, and with `peek=true`,
+that consumer asks the server whether the mail is SEEN now (one request for each mail whose key it added), and does not
+route it again. Otherwise (POP3, which has no SEEN flag, a
+custom `searchTerm`, `unseen=false` or `peek=false`), set `idempotentRepositoryRemoveOnCommit=false` so the key of a
+consumed mail stays in the repository, and use a repository that keeps the keys long enough.
+
 == Examples
 
 We start with a simple route that sends the messages received from a JMS
