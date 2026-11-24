@@ -539,10 +539,23 @@ class OpenFgaAsyncProducerTest {
         OpenFgaClient client = mock(OpenFgaClient.class);
         CountDownLatch entered = new CountDownLatch(1);
         CountDownLatch release = new CountDownLatch(1);
-        // the first call blocks inside the SDK, holding the only worker, so the second check never reaches it
+        // the first call blocks inside the SDK and holds the only worker, so the second check never reaches it. It must
+        // keep holding the worker through the interrupt the first deadline sends, as a stuck SDK call does, or the freed
+        // worker would take the queued check before that check's own deadline, a few milliseconds later
         when(client.check(any(), any())).thenAnswer(invocation -> {
             entered.countDown();
-            release.await(5, TimeUnit.SECONDS);
+            boolean interrupted = false;
+            while (true) {
+                try {
+                    release.await(5, TimeUnit.SECONDS);
+                    break;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
             return new CompletableFuture<ClientCheckResponse>();
         });
         try (Fixture fixture = new Fixture(client, configuration -> {
