@@ -391,8 +391,8 @@ default), and then failed with an `ExchangeTimedOutException`, or for ever when 
 task stops polling once the consumer was stopped and started again, so that the threads of an earlier start no longer
 poll next to the threads of the new start. The `taskCount` arithmetic that `setupTasks` used to add threads on a
 restart is gone. A class that extends `SedaConsumer` and overrides `doRun()` must override `doRun(int start)`
-instead, and should keep the loop condition of the default implementation (poll only while `start` is the current
-start and `isRunAllowed()` is true).
+instead, and should keep the loop condition `isCurrentStart(start) && isRunAllowed()` of the default implementation.
+The new protected method `isCurrentStart(int start)` returns true while no later start of the consumer has happened.
 
 === camel-ehcache - shared CacheManager and changed defaults
 

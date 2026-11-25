@@ -199,6 +199,18 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     }
 
     /**
+     * Whether the given start is the current start of this consumer. A subclass that overrides {@link #doRun(int)}
+     * polls only while this returns true (and {@link #isRunAllowed()} is true), so that its threads stop polling once
+     * the consumer was stopped and started again.
+     *
+     * @param  start the start of this consumer that submitted the polling task
+     * @return       true if no later start has happened since
+     */
+    protected boolean isCurrentStart(int start) {
+        return start == starts.get();
+    }
+
+    /**
      * Polls the queue and processes the exchanges while the given start is the current start of this consumer.
      *
      * @param start the start of this consumer that submitted the polling task
@@ -208,7 +220,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         // loop while we are allowed, or if we are stopping loop until the queue is empty. A thread of an earlier start
         // (still processing an exchange when the consumer was stopped and started again) stops polling: this start
         // has its own threads, and the earlier stop may have interrupted this thread, so its polls would only fail
-        while (queue != null && start == starts.get() && isRunAllowed()) {
+        while (queue != null && isCurrentStart(start) && isRunAllowed()) {
 
             // do not poll during CamelContext is starting, as we should only poll when CamelContext is fully started
             if (getEndpoint().getCamelContext().getStatus().isStarting()) {
