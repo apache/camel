@@ -78,6 +78,9 @@ public abstract class AbstractCamelCatalog {
     private static final Pattern ENV_OR_SYS_PATTERN = Pattern.compile("\\{\\{(env|sys):\\w+(:[^{}]*)?\\}\\}");
     private static final String ENV_OR_SYS_WORD = "CamelEnvOrSysPlaceholder";
     private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
+    // the uri prefixes of the endpoint mapping types of spring-ws (EndpointMappingType in camel-spring-ws)
+    private static final List<String> SPRING_WS_TYPES
+            = List.of("rootqname", "action", "to", "soapaction", "xpathresult", "uri", "uripath", "beanname");
 
     private SuggestionStrategy suggestionStrategy = new EditDistanceSuggestionStrategy();
     private JSonSchemaResolver jsonSchemaResolver;
@@ -786,6 +789,12 @@ public abstract class AbstractCamelCatalog {
     }
 
     private static List<String> findTokens(String syntax, String scheme, String uriPath, List<Integer> positions) {
+        // special for spring-ws where the path is either the type and the lookupKey (consumer) or the address
+        // (producer), and both the lookupKey and the address may contain colons
+        if ("spring-ws".equals(scheme)) {
+            return findSpringWsTokens(uriPath, positions);
+        }
+
         String[] tokens = SYNTAX_PATTERN.split(syntax);
 
         // find the position where each option start/end
@@ -848,6 +857,29 @@ public abstract class AbstractCamelCatalog {
             positions.clear();
         }
         return word2;
+    }
+
+    /**
+     * Splits the path of a spring-ws endpoint (syntax type:lookupKey:webServiceEndpointUri) as the component does: a
+     * path that starts with a type prefix (case-insensitive) is the type and the lookupKey (the rest of the path), and
+     * any other path is the webServiceEndpointUri of the producer.
+     */
+    private static List<String> findSpringWsTokens(String uriPath, List<Integer> positions) {
+        List<String> answer = new ArrayList<>();
+        for (String type : SPRING_WS_TYPES) {
+            if (uriPath.regionMatches(true, 0, type + ":", 0, type.length() + 1)) {
+                // type and lookupKey are the 1st and 2nd option in the syntax
+                answer.add(uriPath.substring(0, type.length()));
+                positions.add(0);
+                answer.add(uriPath.substring(type.length() + 1));
+                positions.add(1);
+                return answer;
+            }
+        }
+        // webServiceEndpointUri is the 3rd option in the syntax
+        answer.add(uriPath);
+        positions.add(2);
+        return answer;
     }
 
     private Map<String, BaseOptionModel> extractApiProperties(ComponentModel model, String key, String key2) {
