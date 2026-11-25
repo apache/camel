@@ -17,11 +17,13 @@
 package org.apache.camel.dsl.jbang.run.export;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.run.RunPipeline;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
@@ -90,7 +92,14 @@ public class ProjectExporter {
      * @return         0 when the project was exported, or the exit code of the failure
      */
     public int export(ExportRequest request) throws Exception {
-        Path baseDir = prepare(request);
+        Path baseDir;
+        try {
+            baseDir = prepare(request);
+        } catch (FileNotFoundException ex) {
+            // as in export(Path, ExportRequest): on stderr, and exit 66
+            printer().printErr(ex.getMessage());
+            return RunPipeline.FILE_NOT_FOUND;
+        }
 
         if (request.runtime == null) {
             printer().printErr("The runtime option must be specified");
@@ -129,6 +138,9 @@ public class ProjectExporter {
                 if (Files.isDirectory(first)) {
                     baseDir = first;
                     ExportHelper.dirToFiles(name, request.files);
+                    if (request.files.isEmpty()) {
+                        throw new FileNotFoundException("No files found in directory: " + name);
+                    }
                 }
             }
         }
@@ -254,7 +266,7 @@ public class ProjectExporter {
         return context.getPrinter();
     }
 
-    private static void verifyExportFiles(List<String> files) throws FileNotFoundException {
+    private static void verifyExportFiles(List<String> files) throws IOException {
         for (var fn : files) {
             if (fn.indexOf(':') < 0 || fn.startsWith("file:")) {
                 if (fn.startsWith("file:")) {
@@ -269,7 +281,17 @@ public class ProjectExporter {
                 if (!Files.exists(Paths.get(fn))) {
                     throw new FileNotFoundException("Path does not exist: " + fn);
                 }
+                Path path = Paths.get(fn);
+                if (Files.isDirectory(path) && isEmptyDirectory(path)) {
+                    throw new FileNotFoundException("No files found in directory: " + fn);
+                }
             }
+        }
+    }
+
+    private static boolean isEmptyDirectory(Path dir) throws IOException {
+        try (Stream<Path> entries = Files.list(dir)) {
+            return entries.findAny().isEmpty();
         }
     }
 
