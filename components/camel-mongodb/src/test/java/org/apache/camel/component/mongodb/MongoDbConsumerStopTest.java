@@ -49,6 +49,7 @@ import org.bson.conversions.Bson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -178,11 +179,16 @@ class MongoDbConsumerStopTest {
         result.assertIsSatisfied();
         assertTrue(reading.await(10, TimeUnit.SECONDS), "the consumer thread reads from the cursor");
 
-        stopRouteInAnotherThread(new CountDownLatch(1), new AtomicReference<>());
+        CountDownLatch stopped = new CountDownLatch(1);
+        AtomicReference<Exception> failure = new AtomicReference<>();
+        stopRouteInAnotherThread(stopped, failure);
+        assertTrue(stopped.await(10, TimeUnit.SECONDS), "the route stops while the consumer thread is blocked");
+        assertNull(failure.get());
         // the position is persisted by the stop itself: the consumer thread is blocked and never gets to its own persist
-        await().atMost(10, TimeUnit.SECONDS)
-                .until(() -> context.getRouteController().getRouteStatus("mongo") == ServiceStatus.Stopped);
-        verify(tracking).updateOne(any(Bson.class), any(Bson.class));
+        ArgumentCaptor<Bson> update = ArgumentCaptor.forClass(Bson.class);
+        verify(tracking).updateOne(any(Bson.class), update.capture());
+        assertEquals(new Document("$set", new Document(MongoDbTailTrackingConfig.DEFAULT_FIELD, 1)).toBsonDocument(),
+                update.getValue().toBsonDocument());
     }
 
     @Test

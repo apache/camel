@@ -33,7 +33,7 @@ public class MongoDbTailTrackingManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbTailTrackingManager.class);
 
-    public Object lastVal;
+    public volatile Object lastVal;
 
     private final MongoClient connection;
     private final MongoDbTailTrackingConfig config;
