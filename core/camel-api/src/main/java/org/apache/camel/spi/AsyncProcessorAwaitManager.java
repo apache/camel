@@ -181,10 +181,10 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * handler to deal with this malfunctioned exchange.
      * <p>
      * When more than one thread waits for the exchange, only the thread whose
-     * {@link #process(AsyncProcessor, Exchange)} call started last is released. This is a nested wait: a thread waits
-     * for the exchange while the exchange goes on, on another thread, through a step that waits for it too (such as
+     * {@link #process(AsyncProcessor, Exchange)} call started last is released. This happens in a nested wait. One
+     * thread waits for the exchange. On another thread, the exchange then enters a step that waits for it too (such as
      * {@code ProducerTemplate.send(uri, exchange)}). The released inner thread goes on with the failed exchange to the
-     * end of its route, and the callback then releases the outer thread, so an interrupt never releases both threads of
+     * end of its route, and the callback then releases the outer thread. So an interrupt never releases both threads of
      * a nested wait. Stopping the manager, with {@link #isInterruptThreadsWhileStopping()}, releases every blocked
      * thread.
      *
