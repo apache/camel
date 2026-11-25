@@ -335,19 +335,22 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
 
     /**
      * The stop that runs on a thread of the component. When nobody waits for it anymore, it destroys the listener
-     * container and logs the outcome by itself.
+     * container and logs the outcome by itself, also when the stop fails with an error.
      */
     private void doStopListenerContainer(
             AbstractMessageListenerContainer container, boolean destroy, AtomicBoolean waiting) {
-        RuntimeException failure = null;
+        Throwable failure = null;
         try {
             stopAndDestroy(container, destroy);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | Error e) {
             failure = e;
         }
         if (waiting.compareAndSet(true, false)) {
-            if (failure != null) {
-                throw failure;
+            // the consumer waits for the stop: it gets the failure unchanged, as from a stop on its own thread
+            if (failure instanceof RuntimeException e) {
+                throw e;
+            } else if (failure instanceof Error e) {
+                throw e;
             }
             return;
         }
@@ -361,7 +364,7 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
         if (!destroy) {
             try {
                 container.destroy();
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | Error e) {
                 LOG.warn("Error destroying the listener container of {} (queues: {}) in the background. This exception"
                          + " is ignored.",
                         getEndpoint(), queues, e);
@@ -375,11 +378,11 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
     private static void stopAndDestroy(AbstractMessageListenerContainer container, boolean destroy) {
         try {
             container.stop();
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | Error e) {
             if (destroy) {
                 try {
                     container.destroy();
-                } catch (RuntimeException destroyFailure) {
+                } catch (RuntimeException | Error destroyFailure) {
                     e.addSuppressed(destroyFailure);
                 }
             }

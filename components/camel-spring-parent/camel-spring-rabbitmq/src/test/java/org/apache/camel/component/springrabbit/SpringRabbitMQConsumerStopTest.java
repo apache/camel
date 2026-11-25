@@ -18,9 +18,9 @@ package org.apache.camel.component.springrabbit;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -64,6 +64,8 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -95,7 +97,10 @@ class SpringRabbitMQConsumerStopTest {
     private final String name = "orders-" + UUID.randomUUID();
 
     private final List<AbstractMessageListenerContainer> containers = new CopyOnWriteArrayList<>();
-    private final Set<AbstractMessageListenerContainer> destroyed = ConcurrentHashMap.newKeySet();
+    // each destroy of a listener container
+    private final List<AbstractMessageListenerContainer> destroyed = new CopyOnWriteArrayList<>();
+    // an error that the next stop of a listener container throws, once it stopped
+    private final AtomicReference<Error> stopError = new AtomicReference<>();
     // the channels on which a consumer subscribed, in that order
     private final List<FakeChannel> subscribed = new CopyOnWriteArrayList<>();
     private final List<ConnectionListener> connectionListeners = new CopyOnWriteArrayList<>();
@@ -228,6 +233,40 @@ class SpringRabbitMQConsumerStopTest {
         answer.countDown();
         await("the listener container is destroyed").atMost(10, TimeUnit.SECONDS)
                 .until(() -> destroyed.contains(containers.get(0)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "DMLC", "SMLC" })
+    void errorOfAStopInTheBackgroundIsLoggedAndTheListenerContainerDestroyed(String type) throws Exception {
+        startRoute(type);
+        subscribed(0).stopAnswering();
+        AssertionError error = new AssertionError("the stop failed");
+        stopError.set(error);
+        suspendThatDoesNotWait();
+        AbstractMessageListenerContainer container = containers.get(0);
+
+        // the broker answers: the stop, which nobody waits for anymore, fails with an error
+        answer.countDown();
+
+        await("the error is logged").atMost(10, TimeUnit.SECONDS).until(() -> events.stream()
+                .anyMatch(e -> e.getLevel() == Level.WARN && e.getThrown() == error
+                        && e.getMessage().getFormattedMessage().contains(name)));
+        await("the listener container is destroyed").atMost(10, TimeUnit.SECONDS)
+                .until(() -> destroyed.contains(container));
+        assertEquals(1, Collections.frequency(destroyed, container), "destroyed once: " + destroyed);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "DMLC", "SMLC" })
+    void errorOfAStopInTimeReachesTheConsumerUnchanged(String type) throws Exception {
+        startRoute(type);
+        subscribed(0);
+        AssertionError error = new AssertionError("the stop failed");
+        stopError.set(error);
+        SpringRabbitMQConsumer consumer = (SpringRabbitMQConsumer) context.getRoute("orders").getConsumer();
+
+        // as when the consumer stopped the listener container on its own thread
+        assertSame(error, assertThrows(AssertionError.class, consumer::suspend));
     }
 
     @ParameterizedTest
@@ -409,6 +448,12 @@ class SpringRabbitMQConsumerStopTest {
         if (SpringRabbitMQConstants.SIMPLE_MESSAGE_LISTENER_CONTAINER.equals(endpoint.getMessageListenerContainerType())) {
             CamelSimpleMessageListenerContainer simple = new CamelSimpleMessageListenerContainer(endpoint) {
                 @Override
+                public void stop() {
+                    super.stop();
+                    failStop();
+                }
+
+                @Override
                 public void destroy() {
                     destroyed.add(this);
                     super.destroy();
@@ -419,6 +464,12 @@ class SpringRabbitMQConsumerStopTest {
             container = simple;
         } else {
             container = new CamelDirectMessageListenerContainer(endpoint) {
+                @Override
+                public void stop() {
+                    super.stop();
+                    failStop();
+                }
+
                 @Override
                 public void destroy() {
                     destroyed.add(this);
@@ -434,6 +485,13 @@ class SpringRabbitMQConsumerStopTest {
         container.setShutdownTimeout(endpoint.getComponent().getShutdownTimeout());
         containers.add(container);
         return container;
+    }
+
+    private void failStop() {
+        Error error = stopError.getAndSet(null);
+        if (error != null) {
+            throw error;
+        }
     }
 
     private ConnectionFactory connectionFactory() {
