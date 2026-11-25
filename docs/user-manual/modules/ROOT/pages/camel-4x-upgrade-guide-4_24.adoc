@@ -10744,6 +10744,13 @@ Rename the alias of the key to the algorithm of the key, for example `RS256` for
 keytool -changealias -alias keycloak -destalias RS256 -keystore keycloak-realm.p12 -storetype PKCS12
 ----
 
+=== camel-alibaba-mns - MNSOperations.RECEIVE_MESSAGE and MNSEndpoint.resolveConsumerOperation() are deprecated
+
+`receiveMessage` is no longer a value of the `operation` option (CAMEL-26259): the producer does not support it, and
+the consumer receives the messages of the queue without reading the option. The `MNSOperations.RECEIVE_MESSAGE`
+constant and the `MNSEndpoint.resolveConsumerOperation()` method, which nothing calls, are deprecated and will be
+removed in a future release.
+
 === Jackson 3
 
 Camel 4.24 moves its own code to Jackson 3 (`tools.jackson`, version 3.2). The `camel-jackson`, `camel-jacksonxml`,

@@ -319,6 +319,11 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
         return MNSOperations.SEND_MESSAGE;
     }
 
+    /**
+     * @deprecated not used: the consumer receives the messages of the queue without reading the operation option. To be
+     *             removed in a future release.
+     */
+    @Deprecated(since = "4.24.0")
     public String resolveConsumerOperation() {
         if (operation != null) {
             return operation;
