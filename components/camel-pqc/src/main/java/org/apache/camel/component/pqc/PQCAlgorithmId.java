@@ -54,10 +54,7 @@ public enum PQCAlgorithmId {
     LMS(0x0203, "LMS"),
     XMSS(0x0204, "XMSS"),
     XMSSMT(0x0205, "XMSSMT"),
-    DILITHIUM(0x0206, "DILITHIUM"),
     FALCON(0x0207, "FALCON"),
-    SPHINCSPLUS(0x0208, "SPHINCSPLUS"),
-    PICNIC(0x0209, "PICNIC"),
     MAYO(0x020A, "Mayo"),
     SNOVA(0x020B, "Snova"),
 
@@ -78,11 +75,10 @@ public enum PQCAlgorithmId {
     @Deprecated(since = "4.24")
     CMCE(0x0404, "CMCE"),
     SABER(0x0405, "SABER"),
-    FRODO(0x0406, "FRODO"),
+    FRODO(0x0406, "FrodoKEM"),
     NTRU(0x0407, "NTRU"),
     NTRU_LPRIME(0x0408, "NTRULPRime"),
     SNTRU_PRIME(0x0409, "SNTRUPrime"),
-    KYBER(0x040A, "KYBER"),
 
     // Symmetric encryption algorithms (0x0500-0x05FF)
     AES(0x0501, "AES"),
@@ -103,7 +99,9 @@ public enum PQCAlgorithmId {
     static {
         for (PQCAlgorithmId alg : values()) {
             BY_ID.put(alg.id, alg);
-            BY_JCA_NAME.put(alg.jcaName.toLowerCase(), alg);
+            // Use putIfAbsent so that the first (canonical) constant for a given JCA name wins and
+            // deprecated aliases added later do not silently shadow it.
+            BY_JCA_NAME.putIfAbsent(alg.jcaName.toLowerCase(), alg);
         }
     }
 

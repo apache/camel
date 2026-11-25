@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.pqc.crypto.hybrid;
 
+import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 
+import org.apache.camel.component.pqc.PQCAlgorithmId;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -78,6 +80,58 @@ class HybridSignatureTest {
     }
 
     @Test
+    void testSignProducesV2WireFormat() throws Exception {
+        // Generate ECDSA key pair
+        KeyPairGenerator ecKpg = KeyPairGenerator.getInstance("EC", "BC");
+        ecKpg.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+        KeyPair ecKeyPair = ecKpg.generateKeyPair();
+        Signature ecSigner = Signature.getInstance("SHA256withECDSA", "BC");
+
+        // Generate ML-DSA key pair
+        KeyPairGenerator mldsaKpg = KeyPairGenerator.getInstance("ML-DSA", "BC");
+        mldsaKpg.initialize(MLDSAParameterSpec.ml_dsa_65, new SecureRandom());
+        KeyPair mldsaKeyPair = mldsaKpg.generateKeyPair();
+        Signature mldsaSigner = Signature.getInstance("ML-DSA", "BC");
+
+        byte[] data = "v2 format test".getBytes();
+        byte[] hybridSig = HybridSignature.sign(
+                data,
+                ecKeyPair.getPrivate(), ecSigner,
+                mldsaKeyPair.getPrivate(), mldsaSigner);
+
+        // Check magic bytes
+        assertEquals(HybridSignature.MAGIC_BYTE_1, hybridSig[0]);
+        assertEquals(HybridSignature.MAGIC_BYTE_2, hybridSig[1]);
+        assertEquals(HybridSignature.VERSION_V2, hybridSig[2]);
+        assertEquals(HybridSignature.FORMAT_HYBRID_SIGNATURE, hybridSig[3]);
+
+        // Parse and verify algorithm IDs are populated
+        HybridSignature.HybridSignatureComponents components = HybridSignature.parse(hybridSig);
+        assertEquals(2, components.version());
+        assertEquals(PQCAlgorithmId.SHA256_WITH_ECDSA, components.classicalAlgorithmId());
+        assertEquals(PQCAlgorithmId.ML_DSA, components.pqcAlgorithmId());
+    }
+
+    @Test
+    void testParseV1BackwardCompatibility() {
+        // Build a hand-crafted v1 payload (no magic bytes)
+        byte[] classicalSig = new byte[] { 1, 2, 3, 4, 5 };
+        byte[] pqcSig = new byte[] { 10, 20, 30, 40, 50, 60 };
+        ByteBuffer v1 = ByteBuffer.allocate(4 + classicalSig.length + pqcSig.length);
+        v1.putInt(classicalSig.length);
+        v1.put(classicalSig);
+        v1.put(pqcSig);
+
+        HybridSignature.HybridSignatureComponents components = HybridSignature.parse(v1.array());
+
+        assertEquals(1, components.version());
+        assertNull(components.classicalAlgorithmId(), "v1 payloads carry no algorithm IDs");
+        assertNull(components.pqcAlgorithmId(), "v1 payloads carry no algorithm IDs");
+        assertArrayEquals(classicalSig, components.classicalSignature());
+        assertArrayEquals(pqcSig, components.pqcSignature());
+    }
+
+    @Test
     void testVerifyFailsWithWrongData() throws Exception {
         // Generate key pairs
         KeyPairGenerator ecKpg = KeyPairGenerator.getInstance("EC", "BC");
@@ -114,16 +168,18 @@ class HybridSignatureTest {
 
     @Test
     void testParseHybridSignature() throws Exception {
-        // Create a simple hybrid signature manually
+        // Create a simple hybrid signature manually using the public API
         byte[] classicalSig = new byte[] { 1, 2, 3, 4, 5 };
         byte[] pqcSig = new byte[] { 10, 20, 30, 40, 50, 60 };
 
         byte[] combined = HybridSignature.combineSignatures(classicalSig, pqcSig);
 
+        // combineSignatures now produces v2 format
         HybridSignature.HybridSignatureComponents components = HybridSignature.parse(combined);
 
         assertArrayEquals(classicalSig, components.classicalSignature());
         assertArrayEquals(pqcSig, components.pqcSignature());
+        assertEquals(2, components.version());
     }
 
     @Test
@@ -164,7 +220,7 @@ class HybridSignatureTest {
 
     @Test
     void testInvalidSignatureFormat() {
-        byte[] invalidSig = new byte[] { 0, 0, 0, 0 }; // Length 0 for classical sig
+        byte[] invalidSig = new byte[] { 0, 0, 0, 0 }; // too short, not v2 magic
 
         assertThrows(IllegalArgumentException.class, () -> HybridSignature.parse(invalidSig));
     }

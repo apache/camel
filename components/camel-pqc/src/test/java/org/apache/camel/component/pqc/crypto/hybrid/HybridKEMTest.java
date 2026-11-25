@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pqc.crypto.hybrid;
 
+import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 
@@ -23,6 +24,7 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.apache.camel.component.pqc.PQCAlgorithmId;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -91,6 +93,63 @@ class HybridKEMTest {
     }
 
     @Test
+    void testEncapsulateProducesV2WireFormat() throws Exception {
+        // Generate X25519 key pair
+        KeyPairGenerator x25519Kpg = KeyPairGenerator.getInstance("X25519", "BC");
+        KeyPair x25519KeyPair = x25519Kpg.generateKeyPair();
+
+        // Generate ML-KEM key pair
+        KeyPairGenerator mlkemKpg = KeyPairGenerator.getInstance("ML-KEM", "BC");
+        mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+        KeyPair mlkemKeyPair = mlkemKpg.generateKeyPair();
+
+        KeyAgreement senderKA = KeyAgreement.getInstance("X25519", "BC");
+        KeyGenerator senderKg = KeyGenerator.getInstance("ML-KEM", "BC");
+
+        HybridKEM.HybridEncapsulationResult result = HybridKEM.encapsulate(
+                x25519KeyPair.getPublic(),
+                mlkemKeyPair.getPublic(),
+                senderKA,
+                senderKg,
+                "AES",
+                256,
+                "HKDF-SHA256");
+
+        byte[] encapsulation = result.encapsulation();
+
+        // Check magic bytes
+        assertEquals(HybridKEM.MAGIC_BYTE_1, encapsulation[0]);
+        assertEquals(HybridKEM.MAGIC_BYTE_2, encapsulation[1]);
+        assertEquals(HybridKEM.VERSION_V2, encapsulation[2]);
+        assertEquals(HybridKEM.FORMAT_HYBRID_KEM, encapsulation[3]);
+
+        // Parse and verify algorithm IDs are populated
+        HybridKEM.HybridEncapsulationComponents components = HybridKEM.parse(encapsulation);
+        assertEquals(2, components.version());
+        assertEquals(PQCAlgorithmId.X25519, components.classicalAlgorithmId());
+        assertEquals(PQCAlgorithmId.ML_KEM, components.pqcAlgorithmId());
+    }
+
+    @Test
+    void testParseV1BackwardCompatibility() {
+        // Build a hand-crafted v1 payload (no magic bytes)
+        byte[] classicalEncap = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+        byte[] pqcEncap = new byte[] { 10, 20, 30, 40, 50, 60, 70, 80, 90 };
+        ByteBuffer v1 = ByteBuffer.allocate(4 + classicalEncap.length + pqcEncap.length);
+        v1.putInt(classicalEncap.length);
+        v1.put(classicalEncap);
+        v1.put(pqcEncap);
+
+        HybridKEM.HybridEncapsulationComponents components = HybridKEM.parse(v1.array());
+
+        assertEquals(1, components.version());
+        assertNull(components.classicalAlgorithmId(), "v1 payloads carry no algorithm IDs");
+        assertNull(components.pqcAlgorithmId(), "v1 payloads carry no algorithm IDs");
+        assertArrayEquals(classicalEncap, components.classicalEncapsulation());
+        assertArrayEquals(pqcEncap, components.pqcEncapsulation());
+    }
+
+    @Test
     void testEncapsulateAndExtractWithECDHAndMLKEM() throws Exception {
         // Generate ECDH P-256 key pair (recipient)
         KeyPairGenerator ecKpg = KeyPairGenerator.getInstance("EC", "BC");
@@ -143,10 +202,12 @@ class HybridKEMTest {
 
         byte[] combined = HybridKEM.combineEncapsulations(classicalEncap, pqcEncap);
 
+        // combineEncapsulations now produces v2 format
         HybridKEM.HybridEncapsulationComponents components = HybridKEM.parse(combined);
 
         assertArrayEquals(classicalEncap, components.classicalEncapsulation());
         assertArrayEquals(pqcEncap, components.pqcEncapsulation());
+        assertEquals(2, components.version());
     }
 
     @Test
