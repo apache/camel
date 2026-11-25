@@ -27,7 +27,7 @@ import java.util.Map;
  * @param text              the tool output, or a safe error message when {@code isError} is true
  * @param isError           whether the invocation failed
  * @param structuredContent typed JSON output when the tool declares an output schema, otherwise {@code null}
- * @param meta              entries for the {@code _meta} field of the result, otherwise {@code null}. Since 4.24.
+ * @param meta              entries for the {@code _meta} field of the result, otherwise {@code null}
  *
  * @since                   4.22
  */
@@ -35,6 +35,8 @@ public record McpToolCallResult(String text, boolean isError, Object structuredC
 
     /**
      * Canonical constructor; defensively copies the meta entries into an unmodifiable map.
+     *
+     * @since 4.24
      */
     public McpToolCallResult {
         meta = meta == null ? null : Collections.unmodifiableMap(new LinkedHashMap<>(meta));
