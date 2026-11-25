@@ -106,13 +106,18 @@ final class MongoDbChangeStreamsMocks {
         return iterable;
     }
 
-    /** A cursor over the given events, whose {@code hasNext()} returns false after the last one. */
+    /**
+     * A cursor over the given events whose server cursor is closed after the last one: {@code tryNext()} then returns
+     * null and {@code getServerCursor()} null, as for a cursor that the server closed ({@code hasNext()} returns
+     * false).
+     */
     @SuppressWarnings("unchecked")
     static MongoChangeStreamCursor<ChangeStreamDocument<Document>> cursor(List<ChangeStreamDocument<Document>> events) {
         Iterator<ChangeStreamDocument<Document>> it = events.iterator();
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> cursor = mock(MongoChangeStreamCursor.class);
         when(cursor.hasNext()).thenAnswer(i -> it.hasNext());
         when(cursor.next()).thenAnswer(i -> it.next());
+        when(cursor.tryNext()).thenAnswer(i -> it.hasNext() ? it.next() : null);
         return cursor;
     }
 

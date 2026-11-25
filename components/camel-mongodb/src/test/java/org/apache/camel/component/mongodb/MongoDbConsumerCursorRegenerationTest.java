@@ -296,7 +296,7 @@ class MongoDbConsumerCursorRegenerationTest {
     @SuppressWarnings("unchecked")
     void changeStreamsConsumerOpensANewCursorAfterAFailedRegeneration() throws Exception {
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> broken = mock(MongoChangeStreamCursor.class);
-        when(broken.hasNext()).thenThrow(new MongoSocketReadException("Prematurely reached end of stream", SERVER));
+        when(broken.tryNext()).thenThrow(new MongoSocketReadException("Prematurely reached end of stream", SERVER));
 
         ChangeStreamDocument<Document> event = mock(ChangeStreamDocument.class);
         when(event.getFullDocument()).thenReturn(new Document("_id", 1).append("text", "after the outage"));
@@ -304,11 +304,10 @@ class MongoDbConsumerCursorRegenerationTest {
         when(event.getOperationType()).thenReturn(OperationType.INSERT);
         when(event.getResumeToken()).thenReturn(new BsonDocument("_data", new BsonInt32(1)));
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> recovered = mock(MongoChangeStreamCursor.class);
-        when(recovered.hasNext()).thenReturn(true, false);
-        when(recovered.next()).thenReturn(event);
+        // tryNext returns null once the server closed the cursor (getServerCursor() is null then too)
+        when(recovered.tryNext()).thenReturn(event, (ChangeStreamDocument<Document>) null);
 
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> idle = mock(MongoChangeStreamCursor.class);
-        when(idle.hasNext()).thenReturn(false);
 
         ChangeStreamIterable<Document> watch = mock(ChangeStreamIterable.class);
         when(collection.watch()).thenReturn(watch);
