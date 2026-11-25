@@ -149,12 +149,16 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
     }
 
     /**
-     * Persists the tail position once the thread has ended, so that a test or caller reading the tracking document
-     * right after {@code stopRoute} sees the last routed record.
+     * Persists the tail position from the thread that stops the consumer, as a thread left behind may only persist much
+     * later. A failure is logged, so that the stop completes.
      */
     @Override
     protected void afterStopped() {
-        tailTracking.persistToStore();
+        try {
+            tailTracking.persistToStore();
+        } catch (Exception e) {
+            log.warn("Failed to persist the tail position while stopping the consumer", e);
+        }
     }
 
     Exchange createMongoDbExchange(Document dbObj) {

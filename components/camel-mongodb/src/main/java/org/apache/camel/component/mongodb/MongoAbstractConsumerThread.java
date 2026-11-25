@@ -182,8 +182,9 @@ abstract class MongoAbstractConsumerThread implements Runnable {
         if (cursor != null) {
             cursor.close();
         }
-        awaitStopped();
-        afterStopped();
+        if (awaitStopped()) {
+            afterStopped();
+        }
 
         if (log.isInfoEnabled()) {
             log.info("Stopped MongoDB Tailable Cursor consumer, bound to collection: {}",
@@ -192,8 +193,9 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     }
 
     /**
-     * Called by {@link #stop()} once the thread has ended, or has been left behind by {@link #awaitStopped()}. Runs on
-     * the thread that stops the consumer, so that the work is done before {@code stop()} returns.
+     * Called by {@link #stop()} when the consumer thread was left behind by {@link #awaitStopped()}, that is, it did
+     * not end while the thread that stops the consumer waited for it. Runs on that thread, before {@code stop()}
+     * returns.
      */
     protected void afterStopped() {
     }
@@ -208,9 +210,9 @@ abstract class MongoAbstractConsumerThread implements Runnable {
      * interrupted and left behind. An exchange that the thread routes is waited for as before, as the graceful shutdown
      * bounds the wait for an exchange in flight with its own timeout.
      */
-    private void awaitStopped() throws InterruptedException {
+    private boolean awaitStopped() throws InterruptedException {
         if (stoppedLatch.getCount() == 0) {
-            return;
+            return false;
         }
         log.info("Going to wait for stopping");
         // at least a little, so that the loop does not spin while the thread routes an exchange
@@ -226,8 +228,9 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                 if (thread != null) {
                     thread.interrupt();
                 }
-                return;
+                return true;
             }
         }
+        return false;
     }
 }
