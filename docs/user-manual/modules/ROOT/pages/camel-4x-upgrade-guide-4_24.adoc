@@ -199,6 +199,20 @@ Starting in 4.24:
 * The Cache EIP stores keys directly without a namespace prefix, preserving documented cache invalidation recipes (`cache.delete(key)` and `cache.clear()`). Note that because cache keys are un-prefixed, calling `clear()` on a `KeyValueRepository` shared with the Cache EIP will clear all entries in that repository, including state-store entries. It is recommended to use a dedicated repository for the Cache EIP when co-located with state-store.
 * `KeyValueAggregationRepository` safely verifies entry types before unmarshalling, ignoring unexpected types gracefully instead of failing with a class cast exception.
 
+=== camel-api - ExchangeExtension has a new method
+
+`org.apache.camel.ExchangeExtension`, the internal extension of an `Exchange`, has a new method that an implementation
+must implement:
+
+[source,java]
+----
+long nextAwaitOrder()
+----
+
+It returns a number that grows with each call for the same exchange, which the await manager uses to tell which of
+the threads that wait for the same exchange made its `process()` call last. Camel's own implementation
+(`ExtendedExchangeExtension`) has it; only a custom implementation of `ExchangeExtension` needs a change.
+
 === camel-core - Idempotent Consumer processes an exchange that a calling route redelivers
 
 When the error handler of a calling route redelivers an exchange that failed inside an Idempotent Consumer (for
