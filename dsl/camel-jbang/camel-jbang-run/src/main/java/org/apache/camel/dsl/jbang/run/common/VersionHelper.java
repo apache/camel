@@ -80,7 +80,7 @@ public final class VersionHelper {
 
     /**
      * Whether the Camel version is 4.0 or newer, including its milestones (4.0.0-M1) and the builds of a vendor
-     * (4.10.3.redhat-00001). The Camel CLI runs Camel 4 only. A version that does not start with a number is not
+     * (4.10.3.vendor-00001). The Camel CLI runs Camel 4 only. A version that does not start with a number is not
      * rejected here.
      */
     public static boolean isCamel4OrNewer(String version) {

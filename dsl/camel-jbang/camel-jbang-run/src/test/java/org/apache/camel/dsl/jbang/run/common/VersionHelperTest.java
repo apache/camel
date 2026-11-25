@@ -59,7 +59,7 @@ class VersionHelperTest {
             "4.0.0, true",
             "4.0.0-M1, true",
             "4.24.0-SNAPSHOT, true",
-            "4.10.3.redhat-00001, true",
+            "4.10.3.vendor-00001, true",
             "10.0.0, true",
             "3.22.0, false",
             "3.18.4, false",
