@@ -16,11 +16,19 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
@@ -37,10 +45,13 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringRabbitMQConsumer.class);
 
-    private AbstractMessageListenerContainer listenerContainer;
+    private volatile AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
     private volatile DeclaringConnectionListener declaringConnectionListener;
+    // the queues of the listener container that a suspend left to stop in the background: the next listener container
+    // consumes them, as only that listener container knows the name of a queue that it generated
+    private volatile String[] detachedQueueNames;
 
     public SpringRabbitMQConsumer(Endpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
@@ -108,13 +119,7 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
         if (listenerContainer == null) {
             createMessageListenerContainer();
         }
-
-        try {
-            prepareAndStartListenerContainer();
-        } catch (Exception e) {
-            removeDeclaringConnectionListener();
-            throw e;
-        }
+        doPrepareAndStartListenerContainer();
 
         // mark as initialized for the first time
         initialized = true;
@@ -123,17 +128,20 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
     @Override
     protected void doStop() throws Exception {
         removeDeclaringConnectionListener();
-        if (listenerContainer != null) {
-            stopAndDestroyListenerContainer();
-        }
+        // also without a listener container (a suspend that did not wait for it to stop), so that a start creates
+        // everything again
+        stopAndDestroyListenerContainer();
 
         super.doStop();
     }
 
     @Override
     protected void doSuspend() throws Exception {
-        if (listenerContainer != null) {
-            listenerContainer.stop();
+        AbstractMessageListenerContainer container = listenerContainer;
+        if (container != null && !stopListenerContainer(container, false)) {
+            // the listener container stops in the background: resume creates a new one, which that stop cannot touch
+            detachedQueueNames = container.getQueueNames();
+            listenerContainer = null;
         }
     }
 
@@ -142,19 +150,43 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
         // we may not have been started before, and now the end user calls resume, so lets handle that and start it first
         if (!initialized) {
             doStart();
+        } else if (listenerContainer != null) {
+            startListenerContainer();
         } else {
-            if (listenerContainer != null) {
-                startListenerContainer();
-            } else {
-                LOG.warn(
-                        "The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
-            }
+            // the suspend did not wait for the listener container to stop, which goes on in the background
+            LOG.debug("Creating a new listener container for {}, as the previous one did not stop in time when the consumer"
+                      + " was suspended",
+                    getEndpoint());
+            // it declares with the previous listener container, also when the new one cannot be created
+            removeDeclaringConnectionListener();
+            createMessageListenerContainer();
+            doPrepareAndStartListenerContainer();
+        }
+    }
+
+    /**
+     * Prepares and starts the listener container. The connection listener that declares on new connections replaces the
+     * one of a previous preparation (a suspended consumer that is started, or resumed after its listener container did
+     * not stop in time), and is removed when the start fails.
+     */
+    private void doPrepareAndStartListenerContainer() {
+        removeDeclaringConnectionListener();
+        try {
+            prepareAndStartListenerContainer();
+        } catch (Exception e) {
+            removeDeclaringConnectionListener();
+            throw e;
         }
     }
 
     protected void createMessageListenerContainer() {
         listenerContainer = getEndpoint().createMessageListenerContainer();
         listenerContainer.setMessageListener(getEndpointMessageListener());
+        String[] queueNames = detachedQueueNames;
+        detachedQueueNames = null;
+        if (queueNames != null && listenerContainer.getQueueNames().length == 0) {
+            listenerContainer.setQueueNames(queueNames);
+        }
     }
 
     protected void prepareAndStartListenerContainer() {
@@ -223,16 +255,146 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
     }
 
     protected void stopAndDestroyListenerContainer() {
-        if (listenerContainer != null) {
-            listenerContainer.stop();
-            listenerContainer.destroy();
-        }
-
+        AbstractMessageListenerContainer container = listenerContainer;
         // null container and listener so they are fully re created if this consumer is restarted
-        // then we will use updated configuration from jms endpoint that may have been managed using JMX
+        // then we will use updated configuration from the endpoint that may have been managed using JMX
         listenerContainer = null;
         messageListener = null;
         initialized = false;
+        detachedQueueNames = null;
+
+        if (container != null) {
+            stopListenerContainer(container, true);
+        }
+    }
+
+    /**
+     * Stops the listener container (and destroys it when asked), waiting for it at most the time to wait for a thread
+     * pool to shut down ({@code ExecutorServiceManager.getShutdownAwaitTermination()}, 10 seconds by default).
+     * <p/>
+     * The stop of a listener container cancels its consumers (basic.cancel) and waits for the broker to answer, without
+     * reacting to an interrupt: on a connection that stopped answering, up to the {@code channelRpcTimeout} of the
+     * RabbitMQ client (10 minutes by default) or until the heartbeat closes the connection. So the stop runs on a
+     * thread of the component: when the bound elapses, or the waiting thread is interrupted, it goes on in the
+     * background, and destroys the listener container once it returns.
+     *
+     * @param  container the listener container, which the caller detaches from this consumer when it stops in the
+     *                   background
+     * @param  destroy   whether to destroy the listener container once it stopped
+     * @return           {@code true} if the listener container stopped in time, {@code false} if it stops in the
+     *                   background
+     */
+    private boolean stopListenerContainer(AbstractMessageListenerContainer container, boolean destroy) {
+        long timeout = getEndpoint().getCamelContext().getExecutorServiceManager().getShutdownAwaitTermination();
+        // whether this thread still waits for the stop: the first of the two that sets it to false (this thread when it
+        // stops waiting, or the stop when it ends) completes the stop
+        AtomicBoolean waiting = new AtomicBoolean(true);
+        CompletableFuture<Void> stop;
+        try {
+            stop = CompletableFuture.runAsync(() -> doStopListenerContainer(container, destroy, waiting),
+                    getEndpoint().getComponent().getStopListenerContainerExecutorService());
+        } catch (RejectedExecutionException e) {
+            // the component stopped meanwhile: as before, on this thread
+            stopAndDestroy(container, destroy);
+            return true;
+        }
+
+        try {
+            stop.get(timeout, TimeUnit.MILLISECONDS);
+            return true;
+        } catch (ExecutionException e) {
+            throw stopFailure(e.getCause());
+        } catch (TimeoutException e) {
+            if (waiting.compareAndSet(true, false)) {
+                LOG.warn("The listener container of {} (queues: {}) did not stop within {} millis (the"
+                         + " shutdownAwaitTermination of the ExecutorServiceManager): it may wait for the broker to answer"
+                         + " the cancel of its consumers, on a connection that stopped answering. It stops in the"
+                         + " background, and the consumer creates a new listener container when it is resumed or started"
+                         + " again.",
+                        getEndpoint(), Arrays.toString(container.getQueueNames()), timeout);
+                return false;
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            if (waiting.compareAndSet(true, false)) {
+                LOG.warn("Interrupted while waiting for the listener container of {} (queues: {}) to stop. It stops in"
+                         + " the background, and the consumer creates a new listener container when it is resumed or"
+                         + " started again.",
+                        getEndpoint(), Arrays.toString(container.getQueueNames()));
+                return false;
+            }
+        }
+        // the stop ended meanwhile
+        try {
+            stop.join();
+        } catch (CompletionException e) {
+            throw stopFailure(e.getCause());
+        }
+        return true;
+    }
+
+    /**
+     * The stop that runs on a thread of the component. When nobody waits for it anymore, it destroys the listener
+     * container and logs the outcome by itself.
+     */
+    private void doStopListenerContainer(
+            AbstractMessageListenerContainer container, boolean destroy, AtomicBoolean waiting) {
+        RuntimeException failure = null;
+        try {
+            stopAndDestroy(container, destroy);
+        } catch (RuntimeException e) {
+            failure = e;
+        }
+        if (waiting.compareAndSet(true, false)) {
+            if (failure != null) {
+                throw failure;
+            }
+            return;
+        }
+
+        String queues = Arrays.toString(container.getQueueNames());
+        if (failure != null) {
+            LOG.warn("Error stopping the listener container of {} (queues: {}) in the background. This exception is"
+                     + " ignored.",
+                    getEndpoint(), queues, failure);
+        }
+        if (!destroy) {
+            try {
+                container.destroy();
+            } catch (RuntimeException e) {
+                LOG.warn("Error destroying the listener container of {} (queues: {}) in the background. This exception"
+                         + " is ignored.",
+                        getEndpoint(), queues, e);
+            }
+        }
+        if (failure == null) {
+            LOG.info("The listener container of {} (queues: {}) stopped in the background", getEndpoint(), queues);
+        }
+    }
+
+    private static void stopAndDestroy(AbstractMessageListenerContainer container, boolean destroy) {
+        try {
+            container.stop();
+        } catch (RuntimeException e) {
+            if (destroy) {
+                try {
+                    container.destroy();
+                } catch (RuntimeException destroyFailure) {
+                    e.addSuppressed(destroyFailure);
+                }
+            }
+            throw e;
+        }
+        if (destroy) {
+            container.destroy();
+        }
+    }
+
+    private static RuntimeException stopFailure(Throwable cause) {
+        if (cause instanceof Error error) {
+            throw error;
+        }
+        return RuntimeCamelException.wrapRuntimeException(cause);
     }
 
     /**
