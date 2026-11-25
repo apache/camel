@@ -278,9 +278,9 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
         disconnecting.start();
         // the disconnect must wait for the listener, else it deletes the consumer that is being subscribed and the
         // reconnect reaches nobody
-        await().atMost(10, TimeUnit.SECONDS)
-                .until(() -> disconnecting.getState() == Thread.State.TIMED_WAITING);
-        assertTrue(server.isConnected(), "not disconnected while the consumer does not listen");
+        assertTrue(server.disconnectWaiting.await(10, TimeUnit.SECONDS), "the disconnect started");
+        await().during(2, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS).until(server::isConnected);
+        assertTrue(disconnecting.isAlive(), "the disconnect waits while the consumer does not listen");
 
         release.countDown();
         disconnecting.join(30_000);
@@ -583,6 +583,8 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
         int consumersCreated;
         // runs on the thread that subscribes, before the subscription is made
         volatile Runnable beforeSubscribe;
+        // counted down when a disconnect starts to wait until the consumer listens to the connection
+        final CountDownLatch disconnectWaiting = new CountDownLatch(1);
         // runs on the thread that adds a connection listener, before the listener is added
         volatile Runnable beforeAddListener;
         Connection connection;
@@ -634,6 +636,7 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
         }
 
         void disconnect() {
+            disconnectWaiting.countDown();
             // the consumer subscribes on its own executor and listens to the connection only once the subscribe
             // returned, which can be after it delivered its first message: a disconnect before that deletes the
             // consumer that is being subscribed, and the reconnect reaches no keeper, so nothing checks the consumer
