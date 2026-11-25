@@ -788,23 +788,23 @@ camel version
 
 === Running with a different version
 
-Use `--camel-version` to run with a specific Camel version:
+Use `--camel-version` to run with a specific Camel version (Camel 4.0 or newer):
 
 [source,bash]
 ----
-camel run * --camel-version=3.18.4
+camel run * --camel-version=4.18.0
 ----
 
 Or set a persistent version override:
 
 [source,bash]
 ----
-camel version set 3.18.2
+camel version set 4.18.0
 camel version set --reset
 ----
 
 `camel version set` checks in the Maven repositories that the version exists, and refuses one that does not
-(exit code 3). `--reset` removes the `camel-version`, `kamelets-version`, `repos` and `runtime` settings.
+(exit code 3), as well as a Camel 3 version (exit code 2). `--reset` removes the `camel-version`, `kamelets-version`, `repos` and `runtime` settings.
 
 IMPORTANT: You cannot combine `camel version set` with `--camel-version`.
 
@@ -812,7 +812,7 @@ For SNAPSHOT versions:
 
 [source,bash]
 ----
-jbang --fresh -Dcamel.jbang.version=3.21.0-SNAPSHOT camel@apache/camel [command]
+jbang --fresh -Dcamel.jbang.version=4.25.0-SNAPSHOT camel@apache/camel [command]
 ----
 
 === Listing available releases

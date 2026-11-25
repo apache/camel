@@ -924,6 +924,12 @@ public class Run extends CamelCommand implements CommandLifecycle {
             return CliExitCode.USAGE;
         }
 
+        if (camelVersion != null && !VersionHelper.isCamel4OrNewer(camelVersion)) {
+            printer().printErr("The --camel-version option does not support Camel " + camelVersion
+                               + ": the Camel CLI runs Camel 4.0 or newer.");
+            return CliExitCode.USAGE;
+        }
+
         // if we have a specific camel version then make sure we really need to switch
         if (camelVersion != null) {
             CamelCatalog catalog = new DefaultCamelCatalog();
@@ -1625,9 +1631,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
         sb.append(String.format("//DEPS org.apache.camel:camel-java-joor-dsl:%s%n", camelVersion));
         sb.append(String.format("//DEPS org.apache.camel:camel-kamelet:%s%n", camelVersion));
         sb.append(String.format("//DEPS org.apache.camel:camel-kamelet-main:%s%n", camelVersion));
-        if (VersionHelper.isGE(camelVersion, "3.19.0")) {
-            sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", camelVersion));
-        }
+        sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", camelVersion));
         model.put("CamelDependencies", sb.toString());
 
         // use apache distribution of camel-jbang/github-resolver
@@ -1657,13 +1661,6 @@ public class Run extends CamelCommand implements CommandLifecycle {
         if (background) {
             cmds = BackgroundWait.withoutBackgroundOptions(cmds);
         }
-        if (mavenResolver.repos() != null) {
-            if (!VersionHelper.isGE(v, "3.18.1")) {
-                // --repos is not supported in 3.18.0 or older, so remove
-                cmds.remove("--repos=" + mavenResolver.repos());
-            }
-        }
-
         cmds.remove("--camel-version=" + camelVersion);
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();

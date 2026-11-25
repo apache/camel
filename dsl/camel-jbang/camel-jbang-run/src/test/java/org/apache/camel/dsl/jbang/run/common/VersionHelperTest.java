@@ -54,6 +54,29 @@ class VersionHelperTest {
         assertThat(Integer.signum(VersionHelper.compare(source, target))).isEqualTo(expected);
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "4.0.0, true",
+            "4.0.0-M1, true",
+            "4.24.0-SNAPSHOT, true",
+            "4.10.3.redhat-00001, true",
+            "10.0.0, true",
+            "3.22.0, false",
+            "3.18.4, false",
+            "2.25.4, false",
+            "' 3.22.0', false",
+            // not a version that starts with a number: not rejected here
+            "latest, true" })
+    void camel4OrNewer(String version, boolean expected) {
+        // CAMEL-21693: the Camel CLI runs Camel 4 only
+        assertThat(VersionHelper.isCamel4OrNewer(version)).isEqualTo(expected);
+    }
+
+    @Test
+    void noVersionIsNotRejected() {
+        assertThat(VersionHelper.isCamel4OrNewer(null)).isTrue();
+    }
+
     @Test
     void missingVersionIsTheSame() {
         assertThat(VersionHelper.compare(null, "4.24.0")).isZero();

@@ -19,10 +19,15 @@ package org.apache.camel.dsl.jbang.run.common;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.cve.AdvisoryVersions;
 
 public final class VersionHelper {
+
+    // the major version a version starts with (up to 9 digits, so it always fits an int)
+    private static final Pattern LEADING_MAJOR = Pattern.compile("^\\d{1,9}");
 
     private VersionHelper() {
     }
@@ -71,6 +76,19 @@ public final class VersionHelper {
      */
     public static int compare(String source, String target) {
         return AdvisoryVersions.compare(source, target);
+    }
+
+    /**
+     * Whether the Camel version is 4.0 or newer, including its milestones (4.0.0-M1) and the builds of a vendor
+     * (4.10.3.redhat-00001). The Camel CLI runs Camel 4 only. A version that does not start with a number is not
+     * rejected here.
+     */
+    public static boolean isCamel4OrNewer(String version) {
+        if (version == null) {
+            return true;
+        }
+        Matcher m = LEADING_MAJOR.matcher(version.trim());
+        return !m.find() || Integer.parseInt(m.group()) >= 4;
     }
 
     public static String getMajorMinorVersion(String version) {
