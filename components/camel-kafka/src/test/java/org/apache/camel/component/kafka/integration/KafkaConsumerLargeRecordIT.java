@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,11 +29,13 @@ import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.config.TopicConfig;
+import org.apache.kafka.common.errors.TopicExistsException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,12 +53,22 @@ public class KafkaConsumerLargeRecordIT extends BaseKafkaTestSupport {
 
     @BeforeEach
     public void before() throws Exception {
-        // the consumer of the route may have created the topic already, so raise its limit afterwards
-        ConfigResource resource = new ConfigResource(ConfigResource.Type.TOPIC, TOPIC);
-        AlterConfigOp op = new AlterConfigOp(
-                new ConfigEntry(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, String.valueOf(10 * 1024 * 1024)),
-                AlterConfigOp.OpType.SET);
-        kafkaAdminClient.incrementalAlterConfigs(Map.of(resource, List.of(op))).all().get(30, TimeUnit.SECONDS);
+        // create the topic with a limit above the large record; the consumer of the route may have created it
+        // already (auto creation), then raise the limit of that topic instead
+        String maxMessageBytes = String.valueOf(10 * 1024 * 1024);
+        NewTopic topic = new NewTopic(TOPIC, 1, (short) 1)
+                .configs(Map.of(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, maxMessageBytes));
+        try {
+            kafkaAdminClient.createTopics(List.of(topic)).all().get(30, TimeUnit.SECONDS);
+        } catch (ExecutionException e) {
+            if (!(e.getCause() instanceof TopicExistsException)) {
+                throw e;
+            }
+            ConfigResource resource = new ConfigResource(ConfigResource.Type.TOPIC, TOPIC);
+            AlterConfigOp op = new AlterConfigOp(
+                    new ConfigEntry(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, maxMessageBytes), AlterConfigOp.OpType.SET);
+            kafkaAdminClient.incrementalAlterConfigs(Map.of(resource, List.of(op))).all().get(30, TimeUnit.SECONDS);
+        }
 
         Properties props = getDefaultProperties();
         props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 10 * 1024 * 1024);
