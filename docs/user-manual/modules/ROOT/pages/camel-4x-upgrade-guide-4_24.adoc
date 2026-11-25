@@ -1810,6 +1810,16 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-core - the in-memory saga answers a compensate or complete during a running finalization with its outcome
+
+With the in-memory saga service (`InMemorySagaService`), a `compensate()` or `complete()` that finds the saga already
+being compensated or completed (by the timeout of a step, or by another caller such as `saga:compensate`,
+`saga:complete` or the Saga EIP in `AUTO` mode) now waits for that compensation or completion, and fails when it
+fails (`Cannot compensate: status is FAILED`). Before, it reported success at once, also when the compensation then
+failed. The exchanges that compensate or complete a step carry the exchange property `CamelInMemorySagaFinalizing`
+with the id of their saga; a call for its own saga from such an exchange, or from the thread that calls the
+compensation or completion endpoint (also after `removeProperties("*")`), is answered at once, as before.
+
 === camel-core - Loop EIP breakOnShutdown
 
 The Loop EIP with `breakOnShutdown` now only breaks out when the route (or Camel) is stopped, and no longer on suspend.
