@@ -688,7 +688,7 @@ public interface FilesEndpointBuilderFactory {
         }
         /**
          * Filters the file based on Simple language. For example to filter on
-         * file size, you can use ${file:size} 5000.
+         * the file extension, you can use ${file:ext} == 'txt'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2036,7 +2036,8 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator class that compares
+         * org.apache.camel.component.file.GenericFile objects.
          * 
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;com.azure.storage.file.share.models.ShareFileItem&gt;&gt;</code> type.
@@ -2051,7 +2052,8 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator class that compares
+         * org.apache.camel.component.file.GenericFile objects.
          * 
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;com.azure.storage.file.share.models.ShareFileItem&gt;&gt;</code> type.

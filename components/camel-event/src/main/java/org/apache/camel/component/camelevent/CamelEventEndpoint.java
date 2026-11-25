@@ -110,7 +110,7 @@ public class CamelEventEndpoint extends DefaultEndpoint {
 
     @UriParam(description = "Enables event batching. When set to a value greater than 1, events are collected"
                             + " into a java.util.List and dispatched as a single exchange when the batch is full"
-                            + " or the batchTimeout expires. The exchange body will be a List<CamelEvent>.",
+                            + " or the batchTimeout expires. The exchange body will be a list of CamelEvent objects.",
               defaultValue = "0")
     private int batchSize;
 

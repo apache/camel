@@ -389,8 +389,8 @@ public interface SjmsEndpointBuilderFactory {
         }
         /**
          * Enable batch consuming. The route receives one Exchange per batch,
-         * whose body is a List of the individual JMS messages, instead of one
-         * Exchange per message.
+         * whose body is a list of Exchange objects, one for each JMS message,
+         * instead of one Exchange per message.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -406,8 +406,8 @@ public interface SjmsEndpointBuilderFactory {
         }
         /**
          * Enable batch consuming. The route receives one Exchange per batch,
-         * whose body is a List of the individual JMS messages, instead of one
-         * Exchange per message.
+         * whose body is a list of Exchange objects, one for each JMS message,
+         * instead of one Exchange per message.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

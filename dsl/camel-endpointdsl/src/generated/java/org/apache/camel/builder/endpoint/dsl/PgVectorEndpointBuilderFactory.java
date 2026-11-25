@@ -379,7 +379,7 @@ public interface PgVectorEndpointBuilderFactory {
         /**
          * Parameter values for parameterized filter queries. Use with ?
          * placeholders in the CamelPgVectorFilter header. Example: filter =
-         * 'text_content LIKE ? AND metadata::jsonb-'category' = ?' with
+         * 'text_content LIKE ? AND metadata::jsonb-&gt;&gt;'category' = ?' with
          * filterParams = List.of(%hello%, science).
          * 
          * The option is a: {@code java.util.List} type.

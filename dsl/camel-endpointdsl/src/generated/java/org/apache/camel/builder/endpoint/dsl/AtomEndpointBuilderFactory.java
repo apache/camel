@@ -1063,7 +1063,8 @@ public interface AtomEndpointBuilderFactory {
         public static final AtomHeaderNameBuilder INSTANCE = new AtomHeaderNameBuilder();
 
         /**
-         * When consuming the List object is set to this header.
+         * When consuming, the list of com.apptasticsoftware.rssreader.Item
+         * objects is set to this header.
          * 
          * The option is a: {@code java.util.List} type.
          * 

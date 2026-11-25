@@ -377,13 +377,14 @@ public interface Langchain4jAgentComponentBuilderFactory {
         }
     
         /**
-         * MCP server definitions in the form of mcpServer..=. Supported
-         * properties: transportType (stdio, http or streamableHttp, default:
-         * stdio), command (comma-separated, for stdio), url (for
-         * http/streamableHttp), environment.= (for stdio), timeout (in seconds,
-         * default: 60), logRequests, logResponses, oauthProfile (OAuth profile
-         * for HTTP auth, requires camel-oauth). This is a multi-value option
-         * with prefix: mcpServer.
+         * MCP server definitions in the form of
+         * mcpServer.myServer.myProperty=myValue, where myServer is the name of
+         * the server. Supported properties: transportType (stdio, http or
+         * streamableHttp, default: stdio), command (comma-separated, for
+         * stdio), url (for http/streamableHttp), environment.myKey=myValue (for
+         * stdio), timeout (in seconds, default: 60), logRequests, logResponses,
+         * oauthProfile (OAuth profile for HTTP auth, requires camel-oauth).
+         * This is a multi-value option with prefix: mcpServer.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.

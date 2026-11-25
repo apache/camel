@@ -470,7 +470,8 @@ public interface OpenFeatureEndpointBuilderFactory {
             return "CamelOpenFeatureTargetingKey";
         }
         /**
-         * A Map of additional evaluation context key-value pairs.
+         * A java.util.Map with String keys of additional evaluation context
+         * key-value pairs.
          * 
          * The option is a: {@code java.util.Map} type.
          * 

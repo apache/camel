@@ -1914,9 +1914,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1932,9 +1932,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -3888,12 +3888,12 @@ public interface AMQPEndpointBuilderFactory {
          * JMSCorrelationID JMS property to correlate reply message. Difference
          * between this and 'correlationProperty' is that 'correlationProperty'
          * tells which request property holds the correlation id value and it
-         * does not affect the selector for the reply
-         * (JMSCorrelationID=&amp;lt;correlation id&amp;gt;), while
+         * does not affect the selector for the reply (the selector matches the
+         * JMSCorrelationID with the correlation id), while
          * 'replyCorrelationProperty' tells which reply property will hold the
          * correlation id value and it does affect the selector for the reply
-         * (&amp;lt;replyCorrelationProperty&amp;gt;=&amp;lt;correlation
-         * id&amp;gt;).
+         * (the selector matches the replyCorrelationProperty property with the
+         * correlation id).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4567,9 +4567,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4585,9 +4585,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -6368,9 +6368,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -6386,9 +6386,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min max), then this option can be used
-         * to set a value to eg 100 to control how fast the consumers will
-         * shrink when less work is required.
+         * for concurrent consumers (eg the minimum is lower than the maximum),
+         * then this option can be used to set a value to eg 100 to control how
+         * fast the consumers will shrink when less work is required.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

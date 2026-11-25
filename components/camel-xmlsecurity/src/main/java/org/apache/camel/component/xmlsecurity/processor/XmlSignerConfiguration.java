@@ -107,8 +107,8 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     /**
      * Canonicalization method used to canonicalize the SignedInfo element before the digest is calculated. You can use
      * the helper methods XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
-     * getCanonicalizationMethod(String algorithm, List<String> inclusiveNamespacePrefixes) to create a canonicalization
-     * method.
+     * getCanonicalizationMethod(String algorithm, List inclusiveNamespacePrefixes), which takes a list of the inclusive
+     * namespace prefixes, to create a canonicalization method.
      */
     public void setCanonicalizationMethod(AlgorithmMethod canonicalizationMethod) {
         this.canonicalizationMethod = canonicalizationMethod;

@@ -191,7 +191,7 @@ public interface CamelEventEndpointBuilderFactory {
          * Enables event batching. When set to a value greater than 1, events
          * are collected into a java.util.List and dispatched as a single
          * exchange when the batch is full or the batchTimeout expires. The
-         * exchange body will be a List.
+         * exchange body will be a list of CamelEvent objects.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -209,7 +209,7 @@ public interface CamelEventEndpointBuilderFactory {
          * Enables event batching. When set to a value greater than 1, events
          * are collected into a java.util.List and dispatched as a single
          * exchange when the batch is full or the batchTimeout expires. The
-         * exchange body will be a List.
+         * exchange body will be a list of CamelEvent objects.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
