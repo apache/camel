@@ -183,11 +183,19 @@ abstract class MongoAbstractConsumerThread implements Runnable {
             cursor.close();
         }
         awaitStopped();
+        afterStopped();
 
         if (log.isInfoEnabled()) {
             log.info("Stopped MongoDB Tailable Cursor consumer, bound to collection: {}",
                     String.format("db: %s, col: %s", endpoint.getDatabase(), endpoint.getCollection()));
         }
+    }
+
+    /**
+     * Called by {@link #stop()} once the thread has ended, or has been left behind by {@link #awaitStopped()}. Runs on
+     * the thread that stops the consumer, so that the work is done before {@code stop()} returns.
+     */
+    protected void afterStopped() {
     }
 
     /**
