@@ -87,18 +87,18 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
     /**
      * Extracts list of inputs from exchange body or header.
      */
-    @SuppressWarnings("unchecked")
     protected List<String> getInputs(Exchange exchange) {
         Message in = exchange.getIn();
 
         // Try header first
-        List<String> inputs = in.getHeader(WatsonxAiConstants.INPUTS, List.class);
+        List<String> inputs = toInputs(in.getHeader(WatsonxAiConstants.INPUTS, List.class),
+                "header '" + WatsonxAiConstants.INPUTS + "'");
 
         // Fall back to body
-        if (inputs == null || inputs.isEmpty()) {
+        if (inputs.isEmpty()) {
             Object body = in.getBody();
-            if (body instanceof List) {
-                inputs = (List<String>) body;
+            if (body instanceof List<?> list) {
+                inputs = toInputs(list, "message body");
             } else if (body != null) {
                 // Single input, read as text (as textGeneration does), so a byte[] or InputStream body works too
                 String text = readAsText(in, "the input text");
@@ -113,6 +113,31 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
                     "Input texts must be provided via message body or header '" + WatsonxAiConstants.INPUTS + "'");
         }
 
+        return inputs;
+    }
+
+    /**
+     * Checks the elements of a list of input texts: a String is an input text, and so is a value whose
+     * {@code toString()} is its text, such as a UUID or a URI (as for a single body since CAMEL-26521). Any other
+     * element fails with its index and class, instead of reaching the watsonx.ai SDK as something that is not text.
+     */
+    private static List<String> toInputs(List<?> list, String source) {
+        if (list == null || list.isEmpty()) {
+            return List.of();
+        }
+        List<String> inputs = new ArrayList<>(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            Object element = list.get(i);
+            if (element instanceof String text) {
+                inputs.add(text);
+            } else if (isTextValue(element)) {
+                inputs.add(element.toString());
+            } else {
+                throw new IllegalArgumentException(
+                        "The input texts in the " + source + " must be Strings, but the element at index " + i + " is "
+                                                   + (element == null ? "null" : element.getClass().getName()));
+            }
+        }
         return inputs;
     }
 
