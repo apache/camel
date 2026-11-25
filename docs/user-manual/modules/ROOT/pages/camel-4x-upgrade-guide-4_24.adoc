@@ -1305,6 +1305,24 @@ before each had a generated group of its own: routes that consume the same topic
 on each route that must receive every record. When both `groupId` and the `group.id` property are set, `groupId` is
 still used.
 
+=== camel-kafka - partitionAssignor uses the Kafka default
+
+The `partitionAssignor` option of the Kafka consumer no longer defaults to
+`org.apache.kafka.clients.consumer.RangeAssignor`. When it is not set, Camel no longer sets
+`partition.assignment.strategy`, and the Kafka default applies: `RangeAssignor` and `CooperativeStickyAssignor`, in
+that order. The partitions are still assigned by the `RangeAssignor`, also in a consumer group where some members still
+run an older Camel version, so a rolling upgrade does not change the assignment. To move the group to cooperative
+rebalancing afterwards, do one more rolling restart with `partitionAssignor` set to
+`org.apache.kafka.clients.consumer.CooperativeStickyAssignor`. Set `partitionAssignor` to
+`org.apache.kafka.clients.consumer.RangeAssignor` to keep the old setting.
+
+With a cooperative assignor, or with `groupProtocol=consumer`, a rebalance assigns only the partitions it adds to a
+consumer, and the consumer keeps reading the other partitions from where it was. `seekTo`, `offsetRepository` and a
+resume strategy now only move the partitions that a rebalance assigned. Before, they also moved back the partitions
+that the consumer kept, which read their records again (`seekTo=BEGINNING`, `offsetRepository`) or skipped records
+(`seekTo=END`). With an eager assignor such as `RangeAssignor` every rebalance assigns all the partitions, so nothing
+changes there.
+
 === camel-kafka - Kafka 4.4 needs the Confluent serializers 8.4 or newer
 
 Camel uses the Kafka 4.4 client, which moved `org.apache.kafka.common.utils.ByteUtils` to

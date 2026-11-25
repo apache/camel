@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.consumer.support.resume;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -128,6 +129,28 @@ class KafkaResumeAdapterTest {
         // entry must remain in the cache after resume (action returned false → keep)
         assertNotNull(cache.get(tp), "Cache entry should be retained after resume");
         assertEquals(42L, cache.get(tp));
+    }
+
+    @Test
+    void testResumeOnlySeeksTheGivenPartitions() {
+        // with a cooperative assignor (or the consumer group protocol) a rebalance assigns only the added partitions:
+        // the partitions the consumer kept must not be moved back to the stored offset
+        Consumer<?, ?> consumer = mock(Consumer.class);
+        adapter.setConsumer(consumer);
+
+        TopicPartition kept = new TopicPartition("myTopic", 0);
+        TopicPartition added = new TopicPartition("myTopic", 1);
+        cache.add(kept, 10L);
+        cache.add(added, 20L);
+        when(consumer.assignment()).thenReturn(Set.of(kept, added));
+
+        adapter.resume(List.of(added));
+
+        verify(consumer).seek(added, 20L);
+        verify(consumer, never()).seek(kept, 10L);
+        // both entries stay in the cache
+        assertEquals(10L, cache.get(kept));
+        assertEquals(20L, cache.get(added));
     }
 
     @Test

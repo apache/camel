@@ -1472,13 +1472,19 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The class name of the partition assignment strategy that the client
-         * will use to distribute partition ownership amongst consumer instances
-         * when group management is used.
+         * The class names of the partition assignment strategies, ordered by
+         * preference, that the client will use to distribute partition
+         * ownership amongst consumer instances when group management is used.
+         * Multiple class names can be separated by comma. If not set, the Kafka
+         * default is used: org.apache.kafka.clients.consumer.RangeAssignor and
+         * org.apache.kafka.clients.consumer.CooperativeStickyAssignor. This
+         * uses the RangeAssignor, but allows upgrading to the
+         * CooperativeStickyAssignor with a single rolling restart that removes
+         * the RangeAssignor from the list. This option is only used when
+         * groupProtocol is set to classic.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: org.apache.kafka.clients.consumer.RangeAssignor
          * Group: consumer
          * 
          * @param partitionAssignor the value to set
