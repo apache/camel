@@ -58,9 +58,6 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     // one entry per waiting thread: two threads can wait for the same exchange (a thread that waits for an exchange while
     // the exchange goes on, on another thread, through a step that waits for it too), and each must stay listed
     private final Set<AwaitThreadEntry> inflight = ConcurrentHashMap.newKeySet();
-    // the order in which the calls started to wait: a call that waits for an exchange from within the processing of
-    // another call that waits for it (a nested wait) starts later, so interrupt(exchange) can find the innermost one
-    private final AtomicLong waitOrder = new AtomicLong();
     private final ExchangeFormatter exchangeFormatter;
     private boolean interruptThreadsWhileStopping = true;
 
@@ -87,8 +84,10 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
      */
     @Override
     public void process(final AsyncProcessor processor, final Exchange exchange) {
-        // taken before the processor runs, as a nested wait for the exchange starts from within the processing
-        long order = waitOrder.incrementAndGet();
+        // the order of the calls for this exchange, so interrupt(exchange) can find the innermost one: taken before the
+        // processor runs, as a nested call for the exchange starts from within that processing (and so sees this number).
+        // It is kept on the exchange, as only the calls for the same exchange are compared: no counter shared by all calls
+        long order = exchange.getExchangeExtension().nextAwaitOrder();
         AwaitCallback callback = new AwaitCallback(exchange);
         processor.process(exchange, callback);
         // the callback has usually fired by now, as the reactive executor runs the work in this thread
@@ -101,7 +100,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     public void await(Exchange exchange, CountDownLatch latch) {
-        await(exchange, latch, waitOrder.incrementAndGet());
+        await(exchange, latch, exchange.getExchangeExtension().nextAwaitOrder());
     }
 
     private void await(Exchange exchange, CountDownLatch latch, long order) {
@@ -216,11 +215,12 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     /**
-     * Releases the thread that started last to wait for the exchange. When a thread waits for the exchange while the
-     * exchange goes on, on another thread, through a step that waits for it too (such as
+     * Releases the thread whose {@code process()} call started last for the exchange. When a thread waits for the
+     * exchange while the exchange goes on, on another thread, through a step that waits for it too (such as
      * {@code ProducerTemplate.send(uri, exchange)}), only that inner thread is released: it goes on with the failed
-     * exchange to the end of its route, and the callback then releases the outer thread. Releasing both would route the
-     * exchange on two threads at once. The stop of the manager releases every thread.
+     * exchange to the end of its route, and the callback then releases the outer thread. So an interrupt never releases
+     * both threads of a nested wait (both would then route the exchange at once). The stop of the manager releases
+     * every thread.
      */
     @Override
     public void interrupt(Exchange exchange) {

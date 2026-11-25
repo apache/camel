@@ -164,8 +164,8 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * count-down so the blocked thread can continue. An exception is set on the exchange which allows Camel's error
      * handler to deal with this malfunctioned exchange.
      * <p>
-     * When more than one thread waits for the exchange, only the thread that started to wait last is released, see
-     * {@link #interrupt(Exchange)}.
+     * When more than one thread waits for the exchange, only the thread whose
+     * {@link #process(AsyncProcessor, Exchange)} call started last is released, see {@link #interrupt(Exchange)}.
      *
      * @param exchangeId the exchange id to interrupt.
      */
@@ -180,12 +180,13 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * count-down so the blocked thread can continue. An exception is set on the exchange which allows Camel's error
      * handler to deal with this malfunctioned exchange.
      * <p>
-     * When more than one thread waits for the exchange, only the thread that started to wait last is released. This is
-     * a nested wait: a thread waits for the exchange while the exchange goes on, on another thread, through a step that
-     * waits for it too (such as {@code ProducerTemplate.send(uri, exchange)}). The released inner thread goes on with
-     * the failed exchange to the end of its route, and the callback then releases the outer thread, so the exchange is
-     * not routed on two threads at once. Stopping the manager, with {@link #isInterruptThreadsWhileStopping()},
-     * releases every blocked thread.
+     * When more than one thread waits for the exchange, only the thread whose
+     * {@link #process(AsyncProcessor, Exchange)} call started last is released. This is a nested wait: a thread waits
+     * for the exchange while the exchange goes on, on another thread, through a step that waits for it too (such as
+     * {@code ProducerTemplate.send(uri, exchange)}). The released inner thread goes on with the failed exchange to the
+     * end of its route, and the callback then releases the outer thread, so an interrupt never releases both threads of
+     * a nested wait. Stopping the manager, with {@link #isInterruptThreadsWhileStopping()}, releases every blocked
+     * thread.
      *
      * @param exchange the exchange to interrupt.
      */

@@ -198,7 +198,7 @@ class DefaultAsyncProcessorAwaitManagerInterruptRaceTest {
         assertFalse(waiter.isAlive(), "the outer thread was released");
         assertTrue(outerReleasedByCallback.get(), "the outer thread was released by the callback of the route");
         assertInstanceOf(RejectedExecutionException.class, outerException.get());
-        assertEquals(1, routing.most.get(), "the exchange was never routed on two threads at once");
+        assertEquals(1, routing.most.get(), "the interrupt did not release both threads of the nested wait");
         assertEquals(0, manager.size());
     }
 
