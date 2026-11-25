@@ -396,7 +396,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected ExportRequest toRequest() {
         ExportRequest request = new ExportRequest();
         request.baseDir = this.exportBaseDir;
-        request.files = this.files;
+        // a copy: the preparation completes the files, and the list of the command may be of a fixed size
+        request.files = this.files != null ? new ArrayList<>(this.files) : null;
         request.dependencies = this.dependencies;
         request.runtime = this.runtime;
         request.name = this.name;

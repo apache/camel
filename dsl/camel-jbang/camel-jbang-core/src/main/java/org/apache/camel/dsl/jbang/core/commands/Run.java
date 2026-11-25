@@ -20,18 +20,17 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.CommandLifecycle;
@@ -423,43 +422,13 @@ public class Run extends CamelCommand implements CommandLifecycle {
      * with code 66.
      */
     void expandWildcards() {
-        if (files == null || files.isEmpty()) {
-            return;
+        try {
+            ExportHelper.expandWildcards(files);
+        } catch (FileNotFoundException e) {
+            throw CliException.fileNotFound(e.getMessage());
+        } catch (IOException e) {
+            throw CliException.failure(e.getMessage());
         }
-        List<String> answer = new ArrayList<>();
-        for (String file : files) {
-            // a local file, not file: (a resource pattern) nor a remote one; a single letter is a drive on Windows
-            String scheme = getScheme(file);
-            boolean local = scheme == null || scheme.length() == 1;
-            String name = FileUtil.stripPath(file);
-            String dir = FileUtil.onlyPath(file);
-            boolean wildcard = local && (name.contains("*") || name.contains("?"))
-                    && (dir == null || !dir.contains("*") && !dir.contains("?"));
-            if (!wildcard) {
-                answer.add(file);
-                continue;
-            }
-            Path folder = Paths.get(dir != null ? dir : ".");
-            List<String> matches = new ArrayList<>();
-            if (Files.isDirectory(folder)) {
-                PathMatcher matcher = folder.getFileSystem().getPathMatcher("glob:" + name);
-                try (Stream<Path> list = Files.list(folder)) {
-                    list.map(Path::getFileName)
-                            .filter(p -> matcher.matches(p) && (name.startsWith(".") || !p.toString().startsWith(".")))
-                            .map(p -> dir != null ? dir + "/" + p : p.toString())
-                            .sorted()
-                            .forEach(matches::add);
-                } catch (IOException e) {
-                    throw CliException.failure("Cannot list the files of " + folder + ": " + e.getMessage());
-                }
-            }
-            if (matches.isEmpty()) {
-                throw CliException.fileNotFound("No file matches: " + file);
-            }
-            answer.addAll(matches);
-        }
-        files.clear();
-        files.addAll(answer);
     }
 
     /**

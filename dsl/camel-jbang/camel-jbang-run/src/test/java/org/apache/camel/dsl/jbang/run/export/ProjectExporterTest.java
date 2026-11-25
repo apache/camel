@@ -746,7 +746,8 @@ class ProjectExporterTest {
     }
 
     @Test
-    void failsOnEmptyDirectory() throws Exception {
+    void failsWhenWildcardMatchesNothing() throws Exception {
+        // the shell passes the literal xyz/* when nothing matched: expandWildcards fails with "No file matches"
         Path empty = Files.createDirectories(dir.resolve("empty"));
         ExportRequest request = new ExportRequest();
         request.files.add(empty + "/*");
@@ -757,9 +758,50 @@ class ProjectExporterTest {
                 .export(request);
 
         assertThat(exit).isEqualTo(RunPipeline.FILE_NOT_FOUND);
-        assertThat(printer.getStderr()).contains("No files found in directory");
+        assertThat(printer.getStderr()).contains("No file matches");
         assertThat(printer.getStdout()).isEmpty();
         assertThat(resolved).isEmpty();
+    }
+
+    @Test
+    void failsWhenWildcardMatchesOnlyHiddenFiles() throws Exception {
+        // a directory with only hidden files (e.g. .DS_Store): the wildcard xyz/* does not match them
+        Path xyz = Files.createDirectories(dir.resolve("xyz"));
+        Files.writeString(xyz.resolve(".DS_Store"), "");
+        ExportRequest request = new ExportRequest();
+        request.files.add(xyz + "/*");
+        request.runtime = RuntimeType.main;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isEqualTo(RunPipeline.FILE_NOT_FOUND);
+        assertThat(printer.getStderr()).contains("No file matches");
+        assertThat(printer.getStdout()).isEmpty();
+        assertThat(resolved).isEmpty();
+    }
+
+    @Test
+    void expandsWildcardToMatchingFiles() throws Exception {
+        // a quoted 'routes/*.yaml' on Windows CMD, or when the shell passes the literal: the files are found and exported
+        Path routes = Files.createDirectories(dir.resolve("routes"));
+        Path route = writeRoute(routes, "hello", "hello");
+        ExportRequest request = new ExportRequest();
+        request.files.add(routes + "/*.yaml");
+        request.runtime = RuntimeType.main;
+        request.exportDir = dir.resolve("export").toString();
+        request.workDir = dir.resolve("export-work");
+        request.mavenWrapper = false;
+        request.quiet = true;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        assertThat(request.files).containsExactly(route.toString());
+        assertThat(dir.resolve("export/src/main/resources/camel/hello.camel.yaml")).hasSameTextualContentAs(route);
     }
 
     @Test

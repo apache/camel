@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.run.common;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -29,8 +31,12 @@ import java.util.Properties;
 
 import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ExportHelperTest {
 
@@ -281,5 +287,108 @@ public class ExportHelperTest {
         Assertions.assertEquals("url=jdbc:mysql://localhost:3306/db?a=b#c!",
                 ExportHelper.propertyLine("url", properties.get("url")));
         Assertions.assertEquals("euro=5 \\u20ac", ExportHelper.propertyLine("euro", "5 €"));
+    }
+
+    @Test
+    void expandWildcardsLeavesNonWildcardEntriesUntouched(@TempDir Path dir) throws Exception {
+        Path file = Files.writeString(dir.resolve("route.camel.yaml"), "");
+        List<String> files = new ArrayList<>(List.of(file.toString()));
+        ExportHelper.expandWildcards(files);
+        assertThat(files).containsExactly(file.toString());
+    }
+
+    @Test
+    void expandWildcardsExpandsStarToMatchingFiles(@TempDir Path dir) throws Exception {
+        Path a = Files.writeString(dir.resolve("a.camel.yaml"), "");
+        Path b = Files.writeString(dir.resolve("b.camel.yaml"), "");
+        List<String> files = new ArrayList<>(List.of(dir + "/*"));
+        ExportHelper.expandWildcards(files);
+        assertThat(files).containsExactly(a.toString(), b.toString());
+    }
+
+    @Test
+    void expandWildcardsExpandsGlobPatternToMatchingFiles(@TempDir Path dir) throws Exception {
+        Path yaml = Files.writeString(dir.resolve("route.camel.yaml"), "");
+        Files.writeString(dir.resolve("app.properties"), "");
+        List<String> files = new ArrayList<>(List.of(dir + "/*.yaml"));
+        ExportHelper.expandWildcards(files);
+        assertThat(files).containsExactly(yaml.toString());
+    }
+
+    @Test
+    void expandWildcardsDoesNotMatchHiddenFiles(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve(".DS_Store"), "");
+        List<String> files = new ArrayList<>(List.of(dir + "/*"));
+        assertThatThrownBy(() -> ExportHelper.expandWildcards(files))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining("No file matches");
+    }
+
+    @Test
+    void expandWildcardsFailsWhenNothingMatches(@TempDir Path dir) throws Exception {
+        List<String> files = new ArrayList<>(List.of(dir + "/*.yaml"));
+        assertThatThrownBy(() -> ExportHelper.expandWildcards(files))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining("No file matches");
+    }
+
+    @Test
+    void expandWildcardsKeepsAFixedSizeListWithoutWildcard(@TempDir Path dir) throws Exception {
+        Path file = Files.writeString(dir.resolve("route.camel.yaml"), "");
+        List<String> files = List.of(file.toString(), "classpath:route.yaml");
+        ExportHelper.expandWildcards(files);
+        assertThat(files).containsExactly(file.toString(), "classpath:route.yaml");
+    }
+
+    @Test
+    void expandWildcardsExpandsQuestionMark(@TempDir Path dir) throws Exception {
+        Path a = Files.writeString(dir.resolve("a1.yaml"), "");
+        Files.writeString(dir.resolve("a22.yaml"), "");
+        List<String> files = new ArrayList<>(List.of(dir + "/a?.yaml"));
+        ExportHelper.expandWildcards(files);
+        assertThat(files).containsExactly(dir + "/" + a.getFileName());
+    }
+
+    @Test
+    void expandWildcardsMatchesHiddenFilesWithADotPattern(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("route.yaml"), "");
+        Files.writeString(dir.resolve(".hidden.yaml"), "");
+        List<String> files = new ArrayList<>(List.of(dir + "/.*.yaml"));
+        ExportHelper.expandWildcards(files);
+        assertThat(files).containsExactly(dir + "/.hidden.yaml");
+    }
+
+    @Test
+    void expandWildcardsLeavesRemoteFileResourceAndFolderWildcardAsGiven(@TempDir Path dir) throws Exception {
+        List<String> given = List.of("github:apache:camel-kamelets-examples:jbang/*", "file:" + dir + "/*",
+                "classpath:routes/*.yaml", dir + "/*/route.yaml");
+        List<String> files = new ArrayList<>(given);
+        ExportHelper.expandWildcards(files);
+        assertThat(files).containsExactlyElementsOf(given);
+    }
+
+    @Test
+    void expandWildcardsFailsWhenTheFolderDoesNotExist(@TempDir Path dir) {
+        List<String> files = new ArrayList<>(List.of(dir + "/missing/*"));
+        assertThatThrownBy(() -> ExportHelper.expandWildcards(files))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining("No file matches");
+    }
+
+    @Test
+    void expandWildcardsReportsAnUnreadableFolder(@TempDir Path dir) throws Exception {
+        Path locked = Files.createDirectories(dir.resolve("locked"));
+        Files.writeString(locked.resolve("route.yaml"), "");
+        Assumptions.assumeTrue(locked.toFile().setReadable(false) && !Files.isReadable(locked),
+                "the permissions of the folder cannot be revoked (such as for root)");
+        try {
+            List<String> files = new ArrayList<>(List.of(locked + "/*.yaml"));
+            assertThatThrownBy(() -> ExportHelper.expandWildcards(files))
+                    .isInstanceOf(IOException.class)
+                    .isNotInstanceOf(FileNotFoundException.class)
+                    .hasMessageContaining("Cannot list the files of");
+        } finally {
+            locked.toFile().setReadable(true);
+        }
     }
 }
