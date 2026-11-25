@@ -17,6 +17,7 @@
 package org.apache.camel.component.springrabbit.integration;
 
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.RoutesBuilder;
@@ -38,6 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class RabbitMQConsumerSuspendResumeIT extends RabbitMQITSupport {
 
+    // the exchanges and queues of this test run only, so that another run on the same broker, or a message that a
+    // failed run left in a queue, does not change the counts
+    private final String run = UUID.randomUUID().toString();
     // the test checks the queue with its own connection factory
     private CachingConnectionFactory testConnectionFactory;
 
@@ -51,7 +55,7 @@ public class RabbitMQConsumerSuspendResumeIT extends RabbitMQITSupport {
     @ParameterizedTest
     @ValueSource(strings = { "DMLC", "SMLC" })
     public void testSuspendAndResume(String type) throws Exception {
-        String queue = uniqueName(type + "-queue");
+        String queue = name(type + "-queue");
         testConnectionFactory = (CachingConnectionFactory) createConnectionFactory(false);
         RabbitAdmin admin = new RabbitAdmin(testConnectionFactory);
         MockEndpoint mock = getMockEndpoint("mock:" + type);
@@ -76,6 +80,10 @@ public class RabbitMQConsumerSuspendResumeIT extends RabbitMQITSupport {
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
+    private String name(String baseName) {
+        return uniqueName(baseName) + "-" + run;
+    }
+
     private static int count(RabbitAdmin admin, String queue, Object property) {
         Properties properties = admin.getQueueProperties(queue);
         return properties == null ? -1 : ((Number) properties.get(property)).intValue();
@@ -88,9 +96,9 @@ public class RabbitMQConsumerSuspendResumeIT extends RabbitMQITSupport {
             public void configure() {
                 for (String type : new String[] { "DMLC", "SMLC" }) {
                     from("direct:" + type)
-                            .to("spring-rabbitmq:" + uniqueName(type) + "?routingKey=new");
+                            .to("spring-rabbitmq:" + name(type) + "?routingKey=new");
 
-                    from("spring-rabbitmq:" + uniqueName(type) + "?queues=" + uniqueName(type + "-queue")
+                    from("spring-rabbitmq:" + name(type) + "?queues=" + name(type + "-queue")
                          + "&routingKey=new&messageListenerContainerType=" + type)
                             .routeId(type)
                             .to("mock:" + type);
