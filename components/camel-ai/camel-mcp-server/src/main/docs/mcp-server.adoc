@@ -144,7 +144,7 @@ from("ai-resource:app_config"
 
 An MCP client then sees the resource in `resources/list` and fetches it with
 `resources/read`. A read carries no arguments: the route is invoked with an
-empty exchange and its body is the content. The `mimeType` decides the wire
+empty message body and its body is the content. The `mimeType` decides the wire
 format — textual types are sent as text, everything else as a base64 blob —
 see xref:ROOT:ai-resource-component.adoc[ai-resource] for the details.
 
@@ -618,7 +618,8 @@ subject; requests from another subject receive the same not-found response as an
 session ID. A token without a non-empty subject cannot initialize an OAuth-protected MCP
 session. This prevents a session identifier from being reused across authenticated users.
 
-For an authenticated tool call, the bridge exposes the following exchange properties:
+For an authenticated tool call, resource read or prompt get, the bridge exposes the following exchange
+properties:
 
 * `CamelMcpOAuthSubject`, `CamelMcpOAuthScopes`, and `CamelMcpOAuthClaims` contain the subject,
   scopes, and claims from the validated token.
@@ -633,6 +634,18 @@ For an authenticated tool call, the bridge exposes the following exchange proper
   server without authentication, they are not set and a tool with `allowedRoles` refuses every call.
 * `CamelOAuthTokenValidationResult` contains the full Camel OAuth validation result for route code
   that already consumes the standard HTTP OAuth exchange property.
+
+An `ai-resource` route, with a fixed `resourceUri` or a `uriTemplate`, and an `ai-prompt` route get
+the same caller properties as an `ai-tool` route, including `CamelMcpSecurityPrincipal`, the raw caller
+principal. This holds for every protocol version, with or without sessions, and for the
+`camel.server.authentication*` settings of the embedded server as well as for OAuth. A route can then
+check who is asking, for example before it returns the customer behind `crm://customers/\{id\}`.
+Unlike an `ai-tool` route, these routes have no `allowedRoles` or `authorizationPolicy` option: the
+route checks the properties itself, and to refuse it throws an exception, which the client receives
+as the generic read or prompt error. Check the properties only, never the headers: the template
+variables and the prompt arguments are headers, and they come from the client. Without an
+authenticated caller, as over stdio or on a server without authentication, none of these properties
+is set.
 
 These options configure OAuth only on the Camel Main / JBang Vert.x HTTP engine. Camel Main stdio
 mode has no HTTP authentication layer: it logs a warning and ignores these OAuth options. Native

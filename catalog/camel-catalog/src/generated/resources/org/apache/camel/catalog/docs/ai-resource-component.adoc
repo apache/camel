@@ -63,10 +63,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-A resource read carries no arguments: the route is invoked with an empty exchange and its message body is the
-content returned to the client. Retrieval therefore uses whatever Camel already offers for reading on demand: a
-producer with a read operation (`aws2-s3` with `operation=getObject`), or `pollEnrich` for the polling components
-(`file`, `ftp`, `sftp`), whose producers write rather than read.
+A resource read carries no arguments: the route is invoked with an empty message body (see <<Caller identity>> for
+the exchange properties that identify the caller) and its message body is the content returned to the client.
+Retrieval therefore uses whatever Camel already offers for reading on demand: a producer with a read operation
+(`aws2-s3` with `operation=getObject`), or `pollEnrich` for the polling components (`file`, `ftp`, `sftp`), whose
+producers write rather than read.
 
 Always give `pollEnrich` an explicit `timeout` - it is a parameter of the EIP, not an endpoint option. It
 defaults to `-1`, which waits until a message is available and
@@ -168,6 +169,18 @@ Tags group resources so that an adapter can select which ones to expose. A resou
 default pool that `camel-mcp-server` never exposes: crossing the boundary to a remote client is an explicit
 per-route opt-in. See the xref:others:mcp-server.adoc[MCP server] documentation for how the tag patterns are
 configured.
+
+== Caller identity
+
+When the xref:others:mcp-server.adoc[MCP server] of Camel Main or Camel JBang serves a resource to an authenticated
+MCP client, the route receives the caller as exchange properties, as an `ai-tool` route does:
+`CamelAiToolSecurityPrincipalName` (the caller name), `CamelAiToolSecurityPrincipalRoles` (the caller roles, when
+the token carries them), `CamelMcpSecurityPrincipal` (the raw principal) and, with OAuth, `CamelMcpOAuthSubject`,
+`CamelMcpOAuthScopes` and `CamelMcpOAuthClaims` of the validated token. A route that serves data per caller, such as
+`crm://customers/\{id\}`, checks these properties before it reads, and throws an exception to refuse; the client
+then receives a generic read error. Take the caller from these properties only, never from the URI or the template
+variables, which come from the client. Without an authenticated caller, as over stdio, the properties are not set.
+The resource has no `allowedRoles` or `authorizationPolicy` option.
 
 == Lifecycle
 

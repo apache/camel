@@ -93,7 +93,8 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
 
     /**
      * Key under which {@link VertxMcpStreamableServerTransportProvider} stashes the authenticated caller principal in
-     * the MCP transport context, so the tool-call handler reads it back via {@code exchange.transportContext()}.
+     * the MCP transport context, so the tool, resource and prompt handlers read it back via
+     * {@code exchange.transportContext()}.
      */
     static final String TRANSPORT_PRINCIPAL_KEY = "CamelMcpTransportPrincipal";
     static final String TRANSPORT_OAUTH_RESULT_KEY = "CamelMcpOAuthTokenValidationResult";
@@ -417,13 +418,14 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         if (server != null) {
             server.addResource(new McpServerFeatures.SyncResourceSpecification(
                     mcpResource,
-                    (exchange, request) -> readResult(resource.uri(), resource.mimeType(), resource.handler().read())));
+                    (exchange, request) -> readResult(resource.uri(), resource.mimeType(),
+                            resource.handler().read(toToolCallContext(exchange.transportContext())))));
         }
         if (statelessServer != null) {
             statelessServer.addResource(new McpStatelessServerFeatures.SyncResourceSpecification(
                     mcpResource,
                     (transportContext, request) -> readResult(resource.uri(), resource.mimeType(),
-                            resource.handler().read())));
+                            resource.handler().read(toToolCallContext(transportContext)))));
         }
         if (modernCatalog != null) {
             modernCatalog.addResource(resource);
@@ -485,13 +487,14 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             server.addResourceTemplate(new McpServerFeatures.SyncResourceTemplateSpecification(
                     mcpTemplate,
                     (exchange, request) -> readResult(request.uri(), resourceTemplate.mimeType(),
-                            resourceTemplate.handler().read(request.uri()))));
+                            resourceTemplate.handler().read(request.uri(),
+                                    toToolCallContext(exchange.transportContext())))));
         }
         if (statelessServer != null) {
             statelessServer.addResourceTemplate(new McpStatelessServerFeatures.SyncResourceTemplateSpecification(
                     mcpTemplate,
                     (transportContext, request) -> readResult(request.uri(), resourceTemplate.mimeType(),
-                            resourceTemplate.handler().read(request.uri()))));
+                            resourceTemplate.handler().read(request.uri(), toToolCallContext(transportContext)))));
         }
         if (modernCatalog != null) {
             modernCatalog.addResourceTemplate(resourceTemplate);
@@ -526,10 +529,12 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     public void promptAdded(McpServerPrompt prompt) {
         if (server != null) {
-            server.addPrompt(McpPromptSdkSupport.buildSpecification(prompt, jsonMapper));
+            server.addPrompt(McpPromptSdkSupport.buildSpecification(
+                    prompt, jsonMapper, VertxMcpServerEngine::toToolCallContext));
         }
         if (statelessServer != null) {
-            statelessServer.addPrompt(McpPromptSdkSupport.buildStatelessSpecification(prompt, jsonMapper));
+            statelessServer.addPrompt(McpPromptSdkSupport.buildStatelessSpecification(
+                    prompt, jsonMapper, VertxMcpServerEngine::toToolCallContext));
         }
         if (modernCatalog != null) {
             modernCatalog.addPrompt(prompt);
