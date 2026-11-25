@@ -117,6 +117,69 @@ function insertGeneratedNotice () {
   })
 }
 
+// gulp.src walks every directory below the static base of a glob, so for
+// '../components/{*,*/*}/src/...' the whole components tree, including the
+// target directories of the build, and fails on a dangling symbolic link a
+// test left there (CAMEL-26497). An ignore glob does not stop that walk. So
+// the module part of a glob (before /src/) is resolved here, without going
+// into target, node_modules or src directories, and gulp.src gets one glob
+// per module.
+const SKIPPED_DIRS = new Set(['target', 'node_modules', 'src'])
+const GLOB_CHARS = /[*?{}[\]()!]/
+
+function subdirs (dir) {
+  return fs.readdirSync(dir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory() && !dirent.name.startsWith('.') && !SKIPPED_DIRS.has(dirent.name))
+    .map((dirent) => path.join(dir, dirent.name))
+}
+
+// directories below base matching segments, where '*' matches one
+// directory and '**' any number of them
+function matchDirs (base, segments) {
+  if (segments.length === 0) return [base]
+  const [segment, ...rest] = segments
+  if (segment === '**') {
+    return [...matchDirs(base, rest), ...subdirs(base).flatMap((dir) => matchDirs(dir, segments))]
+  }
+  if (segment === '*') {
+    return subdirs(base).flatMap((dir) => matchDirs(dir, rest))
+  }
+  if (GLOB_CHARS.test(segment)) {
+    throw new Error(`Unsupported module glob segment: ${segment}`)
+  }
+  const dir = path.join(base, segment)
+  return fs.existsSync(dir) ? matchDirs(dir, rest) : []
+}
+
+function expandBraces (pattern) {
+  const braces = /\{([^{}]*)\}/.exec(pattern)
+  if (!braces) return [pattern]
+  const before = pattern.substring(0, braces.index)
+  const after = pattern.substring(braces.index + braces[0].length)
+  return braces[1].split(',').flatMap((alternative) => expandBraces(before + alternative + after))
+}
+
+function moduleGlobs (source) {
+  return [source].flat().flatMap((glob) => {
+    const index = glob.indexOf('/src/')
+    if (glob.startsWith('!') || index === -1) return [glob]
+    const segments = glob.substring(0, index).split('/')
+    const first = segments.findIndex((segment) => GLOB_CHARS.test(segment))
+    if (first === -1) return [glob]
+    const base = segments.slice(0, first).join('/')
+    const dirs = new Set(expandBraces(segments.slice(first).join('/'))
+      .flatMap((pattern) => matchDirs(base, pattern.split('/'))))
+    // gulp.src fails when the static part of a glob does not exist
+    const rest = glob.substring(index)
+    const restSegments = rest.split('/')
+    const restFirst = restSegments.findIndex((segment) => GLOB_CHARS.test(segment))
+    const staticRest = restSegments.slice(0, restFirst === -1 ? restSegments.length : restFirst).join('/')
+    return [...dirs]
+      .filter((dir) => fs.existsSync(dir + staticRest))
+      .map((dir) => dir + rest)
+  })
+}
+
 // For (some) readability the literal object is used to configure
 // the tasks in this form:
 //
@@ -217,7 +280,6 @@ const sources = {
     json: {
       source: [
         '../components/{*,*/*,*/*/*}/src/generated/resources/*.json',
-        '!../components/**/target/**',
       ],
       destination: 'components/modules/others/examples/json',
       filter: (content) => JSON.parse(content).other, // check if there is a "other" key at the root
@@ -327,7 +389,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       }
     })
 
-    return gulp.src(source)
+    return gulp.src(moduleGlobs(source))
       .pipe(filterFn)
       .pipe(
         map((file, done) => {
@@ -410,7 +472,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       return done()
     }
 
-    return gulp.src(source) // asciidoc files
+    return gulp.src(moduleGlobs(source)) // asciidoc files
       .pipe(through2.obj(extractExamples)) // extracted example files
       // symlink links from a fixed directory, i.e. we could link to
       // the example files from `destination`, that would not work for
