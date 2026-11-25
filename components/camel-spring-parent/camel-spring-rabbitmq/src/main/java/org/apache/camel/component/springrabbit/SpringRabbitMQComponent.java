@@ -18,6 +18,9 @@ package org.apache.camel.component.springrabbit;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -124,6 +127,9 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
                             + " For example to declare a queue with message ttl argument: queue.x-message-ttl=60000")
     private Map<String, Object> args;
 
+    private final Lock stopListenerContainerLock = new ReentrantLock();
+    private ExecutorService stopListenerContainerExecutorService;
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -136,6 +142,38 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         }
         if (messagePropertiesConverter == null) {
             messagePropertiesConverter = new DefaultMessagePropertiesConverter();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        stopListenerContainerLock.lock();
+        try {
+            if (stopListenerContainerExecutorService != null) {
+                // without waiting: the stop of a listener container that waits for the broker goes on in the background
+                getCamelContext().getExecutorServiceManager().shutdown(stopListenerContainerExecutorService);
+                stopListenerContainerExecutorService = null;
+            }
+        } finally {
+            stopListenerContainerLock.unlock();
+        }
+        super.doStop();
+    }
+
+    /**
+     * The thread pool that stops the listener containers of the consumers, so that they wait for a stop that waits for
+     * the broker with a bound: a cached thread pool, as such a stop can take long.
+     */
+    ExecutorService getStopListenerContainerExecutorService() {
+        stopListenerContainerLock.lock();
+        try {
+            if (stopListenerContainerExecutorService == null) {
+                stopListenerContainerExecutorService = getCamelContext().getExecutorServiceManager()
+                        .newCachedThreadPool(this, "SpringRabbitMQStopListenerContainer");
+            }
+            return stopListenerContainerExecutorService;
+        } finally {
+            stopListenerContainerLock.unlock();
         }
     }
 
