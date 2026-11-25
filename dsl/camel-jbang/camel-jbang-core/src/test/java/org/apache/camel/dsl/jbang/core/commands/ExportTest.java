@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
@@ -42,6 +43,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ExportTest extends ExportBaseTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
+
+    @Test
+    void shouldFailWithFileNotFoundWhenWildcardMatchesNothing() throws Exception {
+        Path empty = Files.createDirectories(workingDir.toPath().resolve("empty"));
+        // a fixed-size list, as the CLI never expands a wildcard that matches nothing
+        Export command = exportWithPrinter(List.of(empty + "/*"));
+
+        assertThat(command.doCall()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(printer.getStderr()).contains("No file matches: " + empty + "/*");
+        assertThat(printer.getStderr()).doesNotContain("File not found");
+    }
+
+    @Test
+    void shouldFailWithFileNotFoundOnEmptyDirectory() throws Exception {
+        Path empty = Files.createDirectories(workingDir.toPath().resolve("empty"));
+        Export command = exportWithPrinter(List.of(empty.toString()));
+
+        assertThat(command.doCall()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+        assertThat(printer.getStderr()).contains("No files found in directory: " + empty);
+        assertThat(printer.getStderr()).doesNotContain("File not found");
+    }
+
+    private Export exportWithPrinter(List<String> files) {
+        Export command = new CamelJBangMain().withPrinter(printer).command(new Export());
+        CommandLineTestHelper.parse(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--runtime=main");
+        command.files = files;
+        return command;
+    }
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
