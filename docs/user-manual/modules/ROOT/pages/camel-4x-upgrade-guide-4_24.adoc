@@ -8567,12 +8567,13 @@ header, such as one that does not come from the `aws2-sqs` consumer, gets no Clo
 also when it has a `CamelAwsSqsReceiptHandle` header. A route that relies on the old source can set the
 `CamelCloudEventSource` header itself after the transformer.
 
-=== camel-azure, camel-google, camel-aws2-kinesis - the CloudEvent source is the queue, container, file system, topic, stream, subscription or calendar
+=== camel-azure, camel-google, camel-aws2-kinesis - the CloudEvent source is the queue, container, file system, share, topic, stream, subscription or calendar
 
-Seven `application-cloudevents` data type transformers now set the `CamelCloudEventSource` header (the `ce-source`
-of the CloudEvent) to the queue, container, file system, topic, stream, subscription or calendar the message was
-consumed from, as `aws2-sqs:application-cloudevents` and `aws2-s3:application-cloudevents` do. Before, they used a
-value of each message, such as its id, so most events had a source of their own. The CloudEvent id is unchanged.
+Eight `application-cloudevents` data type transformers now set the `CamelCloudEventSource` header (the `ce-source`
+of the CloudEvent) to the queue, container, file system, share, topic, stream, subscription or calendar the message was
+consumed from, as `aws2-sqs:application-cloudevents` and `aws2-s3:application-cloudevents` do. Before, most of them
+used a value of each message, such as its id, so most events had a source of their own, and `azure-files` used the
+host of the storage account, so all the shares of an account had the same source. The CloudEvent id is unchanged.
 
 [cols="2,3,3", options="header"]
 |===
@@ -8589,6 +8590,10 @@ value of each message, such as its id, so most events had a source of their own.
 | `azure-storage-datalake:application-cloudevents`
 | `azure.storage.datalake.` and the archive status of the file
 | `azure.storage.datalake.` and the file system name
+
+| `azure-files:application-cloudevents`
+| `azure.storage.files.` and the host of the storage account, such as `myaccount.file.core.windows.net`
+| `azure.storage.files.` and the share name
 
 | `azure-servicebus:application-cloudevents`
 | `azure.servicebus.partition.` and the partition key of the message
@@ -8612,6 +8617,7 @@ The name comes from a new header that the consumer now sets on each message:
 * `azure-storage-queue`: `CamelAzureStorageQueueConsumedQueueName`
 * `azure-storage-blob`: `CamelAzureStorageBlobConsumedContainerName`
 * `azure-storage-datalake`: `CamelAzureStorageDataLakeConsumedFileSystemName`
+* `azure-files`: `CamelAzureFilesShareName`
 * `azure-servicebus`: `CamelAzureServiceBusTopicOrQueueName`
 * `aws2-kinesis`: `CamelAwsKinesisStreamName`, set by both the polling and the KCL consumer
 * `google-pubsub`: `CamelGooglePubsubSubscriptionName`, set by the synchronous and the asynchronous pull

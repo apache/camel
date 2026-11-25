@@ -4483,6 +4483,18 @@ public interface FilesEndpointBuilderFactory {
         public String fileHost() {
             return "CamelFileHost";
         }
+        /**
+         * The name of the share the file was consumed from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureFilesShareName}.
+         */
+        public String azureFilesShareName() {
+            return "CamelAzureFilesShareName";
+        }
     }
     static FilesEndpointBuilder endpointBuilder(String componentName, String path) {
         class FilesEndpointBuilderImpl extends AbstractEndpointBuilder implements FilesEndpointBuilder, AdvancedFilesEndpointBuilder {

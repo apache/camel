@@ -78,6 +78,8 @@ public final class FilesConstants {
 
     @Metadata(description = "The remote hostname.", javaType = "String")
     public static final String FILE_HOST = "CamelFileHost";
+    @Metadata(label = "consumer", description = "The name of the share the file was consumed from.", javaType = "String")
+    public static final String SHARE_NAME = "CamelAzureFilesShareName";
 
     private FilesConstants() {
     }
