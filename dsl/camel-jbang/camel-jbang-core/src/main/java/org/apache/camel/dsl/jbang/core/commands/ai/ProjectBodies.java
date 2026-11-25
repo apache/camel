@@ -29,6 +29,8 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Route;
 import org.apache.camel.dsl.yaml.validator.BodyOrigin;
 import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Where the message body of each YAML route of a project comes from, for {@code camel overview} (CAMEL-25200). It is
@@ -37,6 +39,8 @@ import org.apache.camel.dsl.yaml.validator.YamlValidator;
  * contract beside the route known to carry no body. So the {@code body-never-set} findings of the two are the same.
  */
 final class ProjectBodies {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProjectBodies.class);
 
     private ProjectBodies() {
     }
@@ -68,6 +72,7 @@ final class ProjectBodies {
                 origins = validator.bodyOrigins(e.getValue(), new ProjectFacts(bodyless, Map.of(), null));
             } catch (Exception ex) {
                 // the overview is still an overview without the bodies
+                LOG.debug("Cannot analyze the message bodies of {}: {}", file, ex.getMessage(), ex);
                 continue;
             }
             if (!origins.isEmpty()) {

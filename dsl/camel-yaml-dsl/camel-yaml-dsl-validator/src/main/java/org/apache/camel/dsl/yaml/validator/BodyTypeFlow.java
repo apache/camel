@@ -30,6 +30,7 @@ import com.networknt.schema.Error;
 import com.networknt.schema.path.NodePath;
 import tools.jackson.databind.JsonNode;
 
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.REST_VERBS;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.Route;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.from;
@@ -58,9 +59,6 @@ final class BodyTypeFlow {
 
     /** The steps that work on the body itself, and have nothing to work on when there is none. */
     private static final Set<String> STEPS_THAT_NEED_THE_BODY = Set.of("unmarshal", "marshal", "convertBodyTo");
-
-    /** The verbs of the REST DSL. */
-    private static final Set<String> REST_VERBS = Set.of("get", "post", "put", "delete", "patch", "head");
 
     /** The REST verbs that carry no body, so a route they send to starts with none. */
     private static final Set<String> VERBS_WITHOUT_BODY = Set.of("get", "delete", "head");
@@ -164,7 +162,11 @@ final class BodyTypeFlow {
             String origin;
             String via = null;
             List<String> who = List.of();
-            if (!ROUTE_CALLS.contains(scheme(r.fromUri()))) {
+            String scheme = scheme(r.fromUri());
+            if (scheme == null) {
+                // a from without an endpoint: nothing to say where the body comes from
+                origin = BodyOrigin.UNKNOWN;
+            } else if (!ROUTE_CALLS.contains(scheme)) {
                 origin = BodyOrigin.CONSUMER;
             } else if (callers.containsKey(r)) {
                 origin = BodyOrigin.CALLER;
@@ -436,6 +438,9 @@ final class BodyTypeFlow {
         }
         if (path.isEmpty()) {
             return base;
+        }
+        if (base.endsWith("/") && path.startsWith("/")) {
+            return base + path.substring(1);
         }
         return base.endsWith("/") || path.startsWith("/") ? base + path : base + "/" + path;
     }

@@ -23,8 +23,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.networknt.schema.Error;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -136,6 +138,45 @@ public class BodyOriginTest {
 
         assertThat(byRoute.get("helper").origin()).isEqualTo(BodyOrigin.UNKNOWN);
         assertThat(byRoute.get("helper").noBody()).isFalse();
+    }
+
+    @Test
+    public void testRestPathWithATrailingSlash() throws Exception {
+        String yaml = """
+                - rest:
+                    path: /stock/
+                    get:
+                      - path: /{sku}
+                        to: direct:getStock
+                - route:
+                    id: getStock
+                    from:
+                      uri: direct:getStock
+                      steps:
+                        - setBody:
+                            constant: "{}"
+                """;
+        Map<String, BodyOrigin> byRoute = byRoute(validator.bodyOrigins(yaml, ProjectFacts.NONE));
+        assertThat(byRoute.get("getStock").via()).isEqualTo("GET /stock/{sku}");
+    }
+
+    @Test
+    public void testFromWithoutAnEndpoint() {
+        // the schema rejects it, so only a caller of the analysis itself can hand one over: no NullPointerException
+        String yaml = """
+                - route:
+                    id: nowhere
+                    from:
+                      steps:
+                        - log: "${body}"
+                """;
+        JsonNode target = YamlTrees.newMapper().readTree(yaml);
+        List<BodyOrigin> origins
+                = BodyTypeFlow.analyze(target, Set.of(), new CatalogBodyTypes(new DefaultCamelCatalog(), null));
+        assertThat(origins).singleElement().satisfies(o -> {
+            assertThat(o.origin()).isEqualTo(BodyOrigin.UNKNOWN);
+            assertThat(o.noBody()).isFalse();
+        });
     }
 
     @Test

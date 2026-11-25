@@ -222,7 +222,7 @@ final class RouteGraph {
     }
 
     /** The verbs of the REST DSL, each a list of operations under rest:. */
-    private static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
+    static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
 
     /** A path parameter of a REST path: id in /orders/{id}. */
     private static final Pattern PATH_PARAMETER = Pattern.compile("\\{([A-Za-z_][\\w.-]*)}");
