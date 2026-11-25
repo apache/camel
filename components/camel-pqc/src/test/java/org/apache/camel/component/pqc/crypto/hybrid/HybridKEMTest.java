@@ -247,4 +247,173 @@ class HybridKEMTest {
             assertEquals(32, result.sharedSecret().getEncoded().length); // 256 bits = 32 bytes
         }
     }
+
+    @Test
+    void testMalformedV2Input_headerOnly() {
+        // Magic bytes present but shorter than V2_HEADER_SIZE + 2
+        byte[] malformed = new byte[] {
+                HybridKEM.MAGIC_BYTE_1, HybridKEM.MAGIC_BYTE_2, HybridKEM.VERSION_V2,
+                HybridKEM.FORMAT_HYBRID_KEM, 0x00, 0x00 };
+        assertThrows(IllegalArgumentException.class, () -> HybridKEM.parse(malformed));
+    }
+
+    @Test
+    void testMalformedV2Input_classicalLengthTooLarge() {
+        // Build a syntactically valid v2 header but set classicalLength larger than remaining bytes
+        ByteBuffer buf = ByteBuffer.allocate(HybridKEM.V2_HEADER_SIZE + 4);
+        buf.put(HybridKEM.MAGIC_BYTE_1);
+        buf.put(HybridKEM.MAGIC_BYTE_2);
+        buf.put(HybridKEM.VERSION_V2);
+        buf.put(HybridKEM.FORMAT_HYBRID_KEM);
+        buf.putShort((short) PQCAlgorithmId.X25519.getId());
+        buf.putShort((short) PQCAlgorithmId.ML_KEM.getId());
+        buf.putInt(9999); // classicalLength far larger than 4 remaining bytes
+        buf.put(new byte[] { 1, 2, 3, 4 });
+        assertThrows(IllegalArgumentException.class, () -> HybridKEM.parse(buf.array()));
+    }
+
+    @Test
+    void testMalformedV2Input_unknownVersion() {
+        ByteBuffer buf = ByteBuffer.allocate(HybridKEM.V2_HEADER_SIZE + 4);
+        buf.put(HybridKEM.MAGIC_BYTE_1);
+        buf.put(HybridKEM.MAGIC_BYTE_2);
+        buf.put((byte) 0x99); // unknown version
+        buf.put(HybridKEM.FORMAT_HYBRID_KEM);
+        buf.putShort((short) 0);
+        buf.putShort((short) 0);
+        buf.putInt(1);
+        buf.put(new byte[] { 1, 2, 3, 4 });
+        assertThrows(IllegalArgumentException.class, () -> HybridKEM.parse(buf.array()));
+    }
+
+    @Test
+    void testMalformedV2Input_wrongFormatType() {
+        ByteBuffer buf = ByteBuffer.allocate(HybridKEM.V2_HEADER_SIZE + 4);
+        buf.put(HybridKEM.MAGIC_BYTE_1);
+        buf.put(HybridKEM.MAGIC_BYTE_2);
+        buf.put(HybridKEM.VERSION_V2);
+        buf.put((byte) 0x01); // signature format type, not KEM
+        buf.putShort((short) 0);
+        buf.putShort((short) 0);
+        buf.putInt(1);
+        buf.put(new byte[] { 1, 2, 3, 4 });
+        assertThrows(IllegalArgumentException.class, () -> HybridKEM.parse(buf.array()));
+    }
+
+    @Test
+    void testMalformedV2Input_emptyPqcPart() {
+        // Build a valid v2 header where classicalLength equals all remaining bytes, leaving 0 for PQC
+        byte[] classical = new byte[] { 1, 2, 3, 4 };
+        ByteBuffer buf = ByteBuffer.allocate(HybridKEM.V2_HEADER_SIZE + classical.length);
+        buf.put(HybridKEM.MAGIC_BYTE_1);
+        buf.put(HybridKEM.MAGIC_BYTE_2);
+        buf.put(HybridKEM.VERSION_V2);
+        buf.put(HybridKEM.FORMAT_HYBRID_KEM);
+        buf.putShort((short) PQCAlgorithmId.X25519.getId());
+        buf.putShort((short) PQCAlgorithmId.ML_KEM.getId());
+        buf.putInt(classical.length); // exactly all remaining bytes
+        buf.put(classical);
+        assertThrows(IllegalArgumentException.class, () -> HybridKEM.parse(buf.array()));
+    }
+
+    @Test
+    void testV1BlobThroughExtractEndToEnd() throws Exception {
+        // Generate X25519 key pair (recipient)
+        KeyPairGenerator x25519Kpg = KeyPairGenerator.getInstance("X25519", "BC");
+        KeyPair x25519KeyPair = x25519Kpg.generateKeyPair();
+
+        // Generate ML-KEM key pair (recipient)
+        KeyPairGenerator mlkemKpg = KeyPairGenerator.getInstance("ML-KEM", "BC");
+        mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+        KeyPair mlkemKeyPair = mlkemKpg.generateKeyPair();
+
+        // Sender side: produce encapsulation in v2 format, then extract the raw components
+        KeyAgreement senderKA = KeyAgreement.getInstance("X25519", "BC");
+        KeyGenerator senderKg = KeyGenerator.getInstance("ML-KEM", "BC");
+
+        HybridKEM.HybridEncapsulationResult encapResult = HybridKEM.encapsulate(
+                x25519KeyPair.getPublic(),
+                mlkemKeyPair.getPublic(),
+                senderKA,
+                senderKg,
+                "AES",
+                256,
+                "HKDF-SHA256");
+
+        // Parse the v2 encapsulation to get the raw classical and PQC parts
+        HybridKEM.HybridEncapsulationComponents v2Components = HybridKEM.parse(encapResult.encapsulation());
+
+        // Manually re-assemble as v1 format: [4 bytes: classical len][classical][pqc]
+        byte[] classicalEncap = v2Components.classicalEncapsulation();
+        byte[] pqcEncap = v2Components.pqcEncapsulation();
+        ByteBuffer v1 = ByteBuffer.allocate(4 + classicalEncap.length + pqcEncap.length);
+        v1.putInt(classicalEncap.length);
+        v1.put(classicalEncap);
+        v1.put(pqcEncap);
+
+        // Recipient side: extract from v1 blob
+        KeyAgreement recipientKA = KeyAgreement.getInstance("X25519", "BC");
+        KeyGenerator recipientKg = KeyGenerator.getInstance("ML-KEM", "BC");
+
+        SecretKey extractedSecret = HybridKEM.extract(
+                v1.array(),
+                x25519KeyPair.getPrivate(),
+                mlkemKeyPair.getPrivate(),
+                recipientKA,
+                recipientKg,
+                "AES",
+                256,
+                "HKDF-SHA256");
+
+        assertNotNull(extractedSecret);
+        // The secret extracted from v1 must match the original v2 encapsulation secret
+        assertArrayEquals(encapResult.sharedSecret().getEncoded(), extractedSecret.getEncoded());
+    }
+
+    @Test
+    void testAlgorithmIdMismatchRejected() throws Exception {
+        // Generate X25519 key pair (recipient)
+        KeyPairGenerator x25519Kpg = KeyPairGenerator.getInstance("X25519", "BC");
+        KeyPair x25519KeyPair = x25519Kpg.generateKeyPair();
+
+        // Generate ML-KEM key pair (recipient)
+        KeyPairGenerator mlkemKpg = KeyPairGenerator.getInstance("ML-KEM", "BC");
+        mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+        KeyPair mlkemKeyPair = mlkemKpg.generateKeyPair();
+
+        // Sender side: produce encapsulation
+        KeyAgreement senderKA = KeyAgreement.getInstance("X25519", "BC");
+        KeyGenerator senderKg = KeyGenerator.getInstance("ML-KEM", "BC");
+
+        HybridKEM.HybridEncapsulationResult encapResult = HybridKEM.encapsulate(
+                x25519KeyPair.getPublic(),
+                mlkemKeyPair.getPublic(),
+                senderKA,
+                senderKg,
+                "AES",
+                256,
+                "HKDF-SHA256");
+
+        byte[] encapsulation = encapResult.encapsulation();
+
+        // Tamper the classical algorithm ID in the header (bytes 4-5) to ECDH instead of X25519
+        ByteBuffer tampered = ByteBuffer.wrap(encapsulation.clone());
+        tampered.position(4);
+        tampered.putShort((short) PQCAlgorithmId.ECDH.getId());
+
+        // Extract should throw due to algorithm ID mismatch
+        KeyAgreement recipientKA = KeyAgreement.getInstance("X25519", "BC");
+        KeyGenerator recipientKg = KeyGenerator.getInstance("ML-KEM", "BC");
+        byte[] tamperedArray = tampered.array();
+
+        assertThrows(IllegalArgumentException.class, () -> HybridKEM.extract(
+                tamperedArray,
+                x25519KeyPair.getPrivate(),
+                mlkemKeyPair.getPrivate(),
+                recipientKA,
+                recipientKg,
+                "AES",
+                256,
+                "HKDF-SHA256"));
+    }
 }

@@ -49,6 +49,10 @@ public enum PQCAlgorithmId {
     SHA512_WITH_RSA(0x0108, "SHA512withRSA"),
 
     // PQC signature algorithms (0x0200-0x02FF)
+    // Retired IDs -- must never be reused:
+    //   0x0206 was DILITHIUM (shipped in 4.19.0, algorithm renamed upstream to ML-DSA)
+    //   0x0208 was SPHINCSPLUS (shipped in 4.19.0, algorithm renamed upstream to SLH-DSA)
+    //   0x0209 was PICNIC (shipped in 4.19.0, algorithm dropped upstream)
     ML_DSA(0x0201, "ML-DSA"),
     SLH_DSA(0x0202, "SLH-DSA"),
     LMS(0x0203, "LMS"),
@@ -66,6 +70,8 @@ public enum PQCAlgorithmId {
     X448(0x0305, "X448"),
 
     // PQC KEM algorithms (0x0400-0x04FF)
+    // Retired IDs -- must never be reused:
+    //   0x040A was KYBER (shipped in 4.19.0, algorithm renamed upstream to ML-KEM)
     ML_KEM(0x0401, "ML-KEM"),
     BIKE(0x0402, "BIKE"),
     HQC(0x0403, "HQC"),

@@ -167,6 +167,26 @@ Bouncy Castle deprecated Classic McEliece, as it is now believed to be unsafe to
 release. The `CMCE` key encapsulation algorithm of the `pqc` component and the `pqc` data format is deprecated too, and
 an endpoint or a data format that uses it logs a WARN at startup. Use `MLKEM` instead.
 
+==== camel-pqc - Hybrid wire format v2 is now the default
+
+The hybrid signature and hybrid KEM utilities now produce **wire format v2** by default.
+`sign()`, `encapsulate()`, and the 2-argument `combineSignatures()` / `combineEncapsulations()` overloads all emit v2
+output. A 4.24 writer paired with a pre-4.24 reader will fail with "invalid classical length" because the reader does
+not recognize the v2 magic header. Both sides of an exchange must be upgraded together, or v2 reading support must be
+backported to LTS branches.
+
+The following `PQCAlgorithmId` constants, originally shipped in 4.19.0, have been removed because the algorithms they
+referred to were renamed or dropped upstream:
+
+* `DILITHIUM` (was `0x0206`)
+* `SPHINCSPLUS` (was `0x0208`)
+* `PICNIC` (was `0x0209`)
+* `KYBER` (was `0x040A`)
+
+The `HybridSignatureComponents` and `HybridEncapsulationComponents` record constructors changed from 2 arguments
+(`classicalBytes`, `pqcBytes`) to 5 arguments (`classicalBytes`, `pqcBytes`, `classicalAlgorithmId`, `pqcAlgorithmId`,
+`version`). Code that constructs these records directly must be updated.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.

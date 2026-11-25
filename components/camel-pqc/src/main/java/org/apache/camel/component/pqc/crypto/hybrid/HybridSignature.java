@@ -28,7 +28,7 @@ import org.apache.camel.component.pqc.PQCAlgorithmId;
  * signature (e.g., ML-DSA). Both signatures must verify for the hybrid signature to be valid, ensuring security even if
  * one algorithm is compromised.
  * <p>
- * <strong>Wire format v2</strong> (default since Camel 4.19):
+ * <strong>Wire format v2</strong> (default since Camel 4.24):
  *
  * <pre>
  * [2 bytes: magic 0x50 0x51 ("PQ")]
@@ -145,6 +145,9 @@ public final class HybridSignature {
         // Parse the hybrid signature
         HybridSignatureComponents components = parse(hybridSignature);
 
+        // Validate algorithm IDs if present (v2 format)
+        validateAlgorithmIds(components, classicalSigner, pqcSigner);
+
         // Verify classical signature
         classicalSigner.initVerify(classicalPublicKey);
         classicalSigner.update(data);
@@ -188,6 +191,9 @@ public final class HybridSignature {
 
         HybridSignatureComponents components = parse(hybridSignature);
 
+        // Validate algorithm IDs if present (v2 format)
+        validateAlgorithmIds(components, classicalSigner, pqcSigner);
+
         // Verify classical signature
         classicalSigner.initVerify(classicalPublicKey);
         classicalSigner.update(data);
@@ -199,6 +205,30 @@ public final class HybridSignature {
         boolean pqcValid = pqcSigner.verify(components.pqcSignature());
 
         return new HybridVerificationResult(classicalValid, pqcValid);
+    }
+
+    /**
+     * Validates that the algorithm IDs embedded in a v2 wire format match the algorithms configured in the Signature
+     * instances. Skips validation for v1 payloads (null IDs) and for UNKNOWN algorithm IDs (the sender may not have
+     * written a known ID).
+     */
+    private static void validateAlgorithmIds(
+            HybridSignatureComponents components, Signature classicalSigner, Signature pqcSigner) {
+        if (components.classicalAlgorithmId() != null && components.classicalAlgorithmId() != PQCAlgorithmId.UNKNOWN) {
+            PQCAlgorithmId expected = PQCAlgorithmId.fromJcaName(classicalSigner.getAlgorithm());
+            if (expected != PQCAlgorithmId.UNKNOWN && expected != components.classicalAlgorithmId()) {
+                throw new IllegalArgumentException(
+                        "Header algorithm ID mismatch: expected " + expected + " but found "
+                                                   + components.classicalAlgorithmId());
+            }
+        }
+        if (components.pqcAlgorithmId() != null && components.pqcAlgorithmId() != PQCAlgorithmId.UNKNOWN) {
+            PQCAlgorithmId expected = PQCAlgorithmId.fromJcaName(pqcSigner.getAlgorithm());
+            if (expected != PQCAlgorithmId.UNKNOWN && expected != components.pqcAlgorithmId()) {
+                throw new IllegalArgumentException(
+                        "Header algorithm ID mismatch: expected " + expected + " but found " + components.pqcAlgorithmId());
+            }
+        }
     }
 
     /**
@@ -348,6 +378,10 @@ public final class HybridSignature {
 
     /**
      * Record holding the parsed components of a hybrid signature.
+     * <p>
+     * <strong>Warning:</strong> The algorithm IDs in the header are informational metadata written by the sender and
+     * are <em>not</em> authenticated by any signature or MAC. Applications must not use these IDs to select which key
+     * or algorithm to use for cryptographic operations; always use the algorithm configured by the operator.
      *
      * @param classicalSignature   the raw classical signature bytes
      * @param pqcSignature         the raw PQC signature bytes

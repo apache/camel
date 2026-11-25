@@ -57,7 +57,7 @@ import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
  * their {@code init()} call to the call that returns the result and are not thread-safe, so each of those sequences
  * runs while holding the instance's monitor.
  * <p>
- * <strong>Wire format v2</strong> (default since Camel 4.19):
+ * <strong>Wire format v2</strong> (default since Camel 4.24):
  *
  * <pre>
  * [2 bytes: magic 0x50 0x51 ("PQ")]
@@ -209,6 +209,9 @@ public final class HybridKEM {
 
         // Parse the hybrid encapsulation
         HybridEncapsulationComponents components = parse(hybridEncapsulation);
+
+        // Validate algorithm IDs if present (v2 format)
+        validateAlgorithmIds(components, classicalKA, pqcKemGenerator);
 
         // Reconstruct the ephemeral public key from classical encapsulation
         PublicKey ephemeralPublicKey = reconstructPublicKey(
@@ -391,6 +394,30 @@ public final class HybridKEM {
     }
 
     /**
+     * Validates that the algorithm IDs embedded in a v2 wire format match the algorithms configured in the KeyAgreement
+     * and KeyGenerator instances. Skips validation for v1 payloads (null IDs) and for UNKNOWN algorithm IDs (the sender
+     * may not have written a known ID).
+     */
+    private static void validateAlgorithmIds(
+            HybridEncapsulationComponents components, KeyAgreement classicalKA, KeyGenerator pqcKemGenerator) {
+        if (components.classicalAlgorithmId() != null && components.classicalAlgorithmId() != PQCAlgorithmId.UNKNOWN) {
+            PQCAlgorithmId expected = PQCAlgorithmId.fromJcaName(classicalKA.getAlgorithm());
+            if (expected != PQCAlgorithmId.UNKNOWN && expected != components.classicalAlgorithmId()) {
+                throw new IllegalArgumentException(
+                        "Header algorithm ID mismatch: expected " + expected + " but found "
+                                                   + components.classicalAlgorithmId());
+            }
+        }
+        if (components.pqcAlgorithmId() != null && components.pqcAlgorithmId() != PQCAlgorithmId.UNKNOWN) {
+            PQCAlgorithmId expected = PQCAlgorithmId.fromJcaName(pqcKemGenerator.getAlgorithm());
+            if (expected != PQCAlgorithmId.UNKNOWN && expected != components.pqcAlgorithmId()) {
+                throw new IllegalArgumentException(
+                        "Header algorithm ID mismatch: expected " + expected + " but found " + components.pqcAlgorithmId());
+            }
+        }
+    }
+
+    /**
      * Combines two shared secrets using HKDF.
      */
     private static byte[] combineSecrets(
@@ -495,6 +522,10 @@ public final class HybridKEM {
 
     /**
      * Record holding the parsed components of a hybrid encapsulation.
+     * <p>
+     * <strong>Warning:</strong> The algorithm IDs in the header are informational metadata written by the sender and
+     * are <em>not</em> authenticated by any signature or MAC. Applications must not use these IDs to select which key
+     * or algorithm to use for cryptographic operations; always use the algorithm configured by the operator.
      *
      * @param classicalEncapsulation the raw classical encapsulation bytes
      * @param pqcEncapsulation       the raw PQC encapsulation bytes
