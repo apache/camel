@@ -745,6 +745,40 @@ class ProjectExporterTest {
         assertThat(resolved).isEmpty();
     }
 
+    @Test
+    void failsOnEmptyDirectory() throws Exception {
+        Path empty = Files.createDirectories(dir.resolve("empty"));
+        ExportRequest request = new ExportRequest();
+        request.files.add(empty + "/*");
+        request.runtime = RuntimeType.main;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isEqualTo(RunPipeline.FILE_NOT_FOUND);
+        assertThat(printer.getStderr()).contains("No files found in directory");
+        assertThat(printer.getStdout()).isEmpty();
+        assertThat(resolved).isEmpty();
+    }
+
+    @Test
+    void failsOnEmptyDirectoryWithoutWildcard() throws Exception {
+        Path empty = Files.createDirectories(dir.resolve("empty"));
+        ExportRequest request = new ExportRequest();
+        request.files.add(empty.toString());
+        request.runtime = RuntimeType.main;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isEqualTo(RunPipeline.FILE_NOT_FOUND);
+        assertThat(printer.getStderr()).contains("No files found in directory");
+        assertThat(printer.getStdout()).isEmpty();
+        assertThat(resolved).isEmpty();
+    }
+
     private ExportContext exportContext() {
         return new ExportContext().withPrinter(new StringPrinter()).withDependencyResolver(resolver);
     }
