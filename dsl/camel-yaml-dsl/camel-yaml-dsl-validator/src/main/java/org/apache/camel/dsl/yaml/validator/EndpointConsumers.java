@@ -213,7 +213,7 @@ public final class EndpointConsumers {
      * of {@code pollEnrich: {constant: seda:orders}}), as the Java and XML checks read them; an expression of another
      * language is only known at runtime, and not an endpoint here.
      */
-    private static String uriOf(String key, JsonNode value) {
+    static String uriOf(String key, JsonNode value) {
         if (("enrich".equals(key) || "pollEnrich".equals(key)) && value != null && value.isObject()
                 && !value.has("uri")) {
             JsonNode constant = value.has("expression") ? value.get("expression").get("constant") : value.get("constant");

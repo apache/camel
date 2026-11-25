@@ -36,8 +36,14 @@ import tools.jackson.databind.JsonNode;
  */
 final class RouteGraph {
 
-    /** The steps that send a message to an endpoint. */
+    /** The steps that send a message to an endpoint, or poll one. */
     static final Set<String> SENDS = Set.of("to", "toD", "enrich", "pollEnrich", "wireTap");
+
+    /**
+     * The steps that call another route with their message, the senders of {@link EndpointRules} that are steps. A
+     * pollEnrich is not one: it consumes its endpoint, as the route does.
+     */
+    static final Set<String> CALLS_A_ROUTE = Set.of("to", "toD", "enrich", "wireTap");
 
     private RouteGraph() {
     }
@@ -118,7 +124,7 @@ final class RouteGraph {
         return uri;
     }
 
-    /** The endpoints a route sends to, at any depth: to, toD and the enrich family. */
+    /** The endpoints a route sends to, at any depth: to, toD, enrich and wireTap. */
     static List<String> sendsTo(JsonNode steps) {
         List<String> answer = new ArrayList<>();
         collect(steps, answer);
@@ -141,8 +147,8 @@ final class RouteGraph {
         for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String name = it.next();
             JsonNode value = node.get(name);
-            if (SENDS.contains(name)) {
-                String uri = endpointOf(value);
+            if (CALLS_A_ROUTE.contains(name)) {
+                String uri = EndpointConsumers.uriOf(name, value);
                 if (uri != null) {
                     answer.add(uri);
                 }
@@ -227,8 +233,16 @@ final class RouteGraph {
         return answer;
     }
 
-    /** The endpoint without its options: direct:lookup?timeout=1000 is the endpoint direct:lookup. */
+    /**
+     * The endpoint without its options: direct:lookup?timeout=1000 is the endpoint direct:lookup. An endpoint that
+     * links the routes of the application is read as {@link EndpointRules#endpoint(String)} reads it, so
+     * direct://lookup is direct:lookup too, as Camel resolves both to the same endpoint.
+     */
     static String normalize(String uri) {
+        String endpoint = EndpointRules.endpoint(uri);
+        if (endpoint != null) {
+            return endpoint;
+        }
         if (uri == null) {
             return "";
         }
