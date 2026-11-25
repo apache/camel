@@ -48,6 +48,8 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  */
 public class EndpointMessageListener implements SessionAwareMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
+    // the message listener that processes a message on the current thread
+    private static final ThreadLocal<EndpointMessageListener> CURRENT = new ThreadLocal<>();
     private final Lock lock = new ReentrantLock();
     private final JmsConsumer consumer;
     private final JmsEndpoint endpoint;
@@ -68,6 +70,30 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
     @Override
     public void onMessage(Message message, Session session) throws JMSException {
+        // a suspend or stop of the consumer from this thread (such as by a route policy when the exchange is done)
+        // stops the listener container of this message listener on this thread
+        EndpointMessageListener previous = CURRENT.get();
+        CURRENT.set(this);
+        try {
+            doOnMessage(message, session);
+        } finally {
+            if (previous == null) {
+                CURRENT.remove();
+            } else {
+                CURRENT.set(previous);
+            }
+        }
+    }
+
+    /**
+     * Whether the current thread processes a message in the given message listener (the message listener of a listener
+     * container).
+     */
+    static boolean isProcessingOnCurrentThread(Object messageListener) {
+        return messageListener != null && CURRENT.get() == messageListener;
+    }
+
+    private void doOnMessage(Message message, Session session) throws JMSException {
         LOG.trace("onMessage START");
 
         LOG.debug("{} consumer received JMS message: {}", endpoint, message);

@@ -17,6 +17,9 @@
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -164,7 +167,16 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        createAndStartListenerContainer(false);
+    }
 
+    /**
+     * Creates the listener container (unless there is one), counts it as running on the endpoint, and initializes and
+     * starts it.
+     *
+     * @param start whether to start the listener container also when auto startup is disabled
+     */
+    private void createAndStartListenerContainer(boolean start) throws Exception {
         // create listener container
         if (listenerContainer == null) {
             createMessageListenerContainer();
@@ -178,16 +190,18 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         } finally {
             containerLock.unlock();
         }
-        prepareAndStartListenerContainer(container, getEndpoint().getConfiguration().isAsyncStartListener());
+        prepareAndStartListenerContainer(container, getEndpoint().getConfiguration().isAsyncStartListener(), start);
     }
 
     /**
      * Initializes and starts the listener container, in a task of the component's async start/stop thread pool when
      * async is true, otherwise on the calling thread.
+     *
+     * @param start whether to start the listener container also when auto startup is disabled
      */
-    private void prepareAndStartListenerContainer(AbstractMessageListenerContainer container, boolean async) {
+    private void prepareAndStartListenerContainer(AbstractMessageListenerContainer container, boolean async, boolean start) {
         if (!async) {
-            prepareAndStartListenerContainer(container);
+            prepareAndStartListenerContainer(container, start);
             return;
         }
         containerLock.lock();
@@ -200,7 +214,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             @Override
             public void run() {
                 try {
-                    prepareAndStartListenerContainer(container);
+                    prepareAndStartListenerContainer(container, start);
                 } catch (Exception e) {
                     LOG.warn("Error starting listener container on destination: {}. This exception will be ignored.",
                             getDestinationName(container), e);
@@ -215,7 +229,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     }
 
     protected void prepareAndStartListenerContainer() {
-        prepareAndStartListenerContainer(listenerContainer);
+        prepareAndStartListenerContainer(listenerContainer, false);
     }
 
     /**
@@ -252,7 +266,10 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                 getDestinationName(container), consumers, effect);
     }
 
-    private void prepareAndStartListenerContainer(AbstractMessageListenerContainer container) {
+    /**
+     * @param startAnyway whether to start the listener container also when auto startup is disabled
+     */
+    private void prepareAndStartListenerContainer(AbstractMessageListenerContainer container, boolean startAnyway) {
         if (listenerContainer != container) {
             // an early exit without the lock: the check that decides is the one under containerLock below.
             // The consumer was stopped (and maybe started again with a new listener container) before this
@@ -263,7 +280,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         }
 
         // only start listener if auto start is enabled or we are explicit invoking start later
-        boolean autoStart = initialized || getEndpoint().isAutoStartup();
+        boolean autoStart = startAnyway || initialized || getEndpoint().isAutoStartup();
         boolean start = false;
         try {
             // initialize only once: every initialization of a DefaultMessageListenerContainer schedules another
@@ -352,40 +369,123 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     private DetachedListenerContainer detachListenerContainer() {
         containerLock.lock();
         try {
-            AbstractMessageListenerContainer container = listenerContainer;
-            if (container == null) {
-                return null;
-            }
-            DetachedListenerContainer answer
-                    = new DetachedListenerContainer(container, executorService, shutdownExecutorService);
-            // null container and listener so they are fully re created if this consumer is restarted
-            // then we will use updated configuration from jms endpoint that may have been managed using JMX
-            listenerContainer = null;
-            messageListener = null;
+            // a later start creates the listener container, and starts it, as the first start did
             initialized = false;
-            listenerContainerCounted = false;
-            asyncStartPending = false;
-            executorService = null;
-            return answer;
+            return doDetachListenerContainer();
         } finally {
             containerLock.unlock();
         }
     }
 
+    /**
+     * Takes the given listener container away from this consumer, when its stop for a suspend did not end in time. The
+     * consumer stays initialized: a resume creates a new listener container and starts it, as it starts the one it
+     * keeps after a suspend that ended in time.
+     */
+    private DetachedListenerContainer detachSuspendedListenerContainer(AbstractMessageListenerContainer container) {
+        containerLock.lock();
+        try {
+            return listenerContainer == container ? doDetachListenerContainer() : null;
+        } finally {
+            containerLock.unlock();
+        }
+    }
+
+    private DetachedListenerContainer doDetachListenerContainer() {
+        AbstractMessageListenerContainer container = listenerContainer;
+        if (container == null) {
+            return null;
+        }
+        DetachedListenerContainer answer = new DetachedListenerContainer(container, executorService, shutdownExecutorService);
+        // null container and listener so they are fully re created if this consumer is restarted
+        // then we will use updated configuration from jms endpoint that may have been managed using JMX
+        listenerContainer = null;
+        messageListener = null;
+        // the detached listener container is no longer counted once it is destroyed, and its start task (if any) no
+        // longer starts it
+        listenerContainerCounted = false;
+        asyncStartPending = false;
+        executorService = null;
+        return answer;
+    }
+
     private void stopAndDestroyListenerContainer(DetachedListenerContainer detached) {
         try {
-            try {
-                detached.container().stop();
-            } finally {
-                // also when stop fails (a SimpleMessageListenerContainer does not swallow a failing Connection.stop())
-                detached.container().destroy();
-            }
+            detached.container().stop();
+        } finally {
+            // also when stop fails (a SimpleMessageListenerContainer does not swallow a failing Connection.stop())
+            destroyListenerContainer(detached);
+        }
+    }
+
+    private void destroyListenerContainer(DetachedListenerContainer detached) {
+        try {
+            detached.container().destroy();
         } finally {
             getEndpoint().onListenerContainerStopped();
             // shutdown thread pool if listener container was using a private thread pool
-            if (detached.shutdownExecutorService() && detached.executorService() != null) {
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(detached.executorService());
+            ExecutorService pool = detached.executorService();
+            if (detached.shutdownExecutorService() && pool != null) {
+                if (pool.isShutdown()) {
+                    // shut down (and so no longer managed) when the consumer gave up waiting for the stop
+                    pool.shutdownNow();
+                } else {
+                    getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(pool);
+                }
             }
+        }
+    }
+
+    /**
+     * Runs the stop of a listener container on the async start/stop thread pool of the component, and waits for it at
+     * most the time to wait for a thread pool to shut down
+     * ({@code ExecutorServiceManager.getShutdownAwaitTermination()}, 10 seconds by default).
+     * <p/>
+     * The stop of a listener container stops its JMS connection, and a JMS client may not return from that call before
+     * a timeout of its own elapses when the broker does not answer (the call timeout of ActiveMQ Artemis, 30 seconds by
+     * default), whether the thread is interrupted or not. When the wait ends before the stop (the time elapsed, or the
+     * waiting thread was interrupted), the listener container is no longer used by this consumer, and its stop goes on
+     * in the background: see {@link ListenerContainerStop}.
+     * <p/>
+     * A suspend or stop from a thread that processes a message of the listener container (such as a route policy that
+     * suspends the consumer when an exchange is done) stops the listener container on that thread, as before: a JMS
+     * client stops a connection at once from its own message listener, but waits for that message listener from another
+     * thread.
+     *
+     * @param operation the operation of this consumer that stops the listener container, for the log
+     */
+    private void stopWithinBound(String operation, ListenerContainerStop stop) {
+        long timeout = getEndpoint().getCamelContext().getExecutorServiceManager().getShutdownAwaitTermination();
+        if (EndpointMessageListener.isProcessingOnCurrentThread(stop.container.getMessageListener())
+                || !runInBackground(stop)) {
+            // from the message listener, or no thread pool to run the stop on: stop the listener container on this thread
+            stop.run();
+        }
+        String reason = stop.await(timeout);
+        if (reason != null) {
+            LOG.warn("The {} of the consumer on destination {} {}: the JMS client may be waiting for a broker that does"
+                     + " not answer. The listener container is stopped and destroyed in the background, and the consumer"
+                     + " creates a new one when it is resumed or started again.",
+                    operation, getDestinationName(stop.container), reason);
+            DetachedListenerContainer detached = stop.givenUpContainer();
+            if (detached != null && detached.shutdownExecutorService() && detached.executorService() != null) {
+                // the threads of its private thread pool end once the listener container is destroyed: the pool takes
+                // no new task, and the ExecutorServiceManager no longer waits for it when the CamelContext stops
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(detached.executorService());
+            }
+        }
+    }
+
+    private boolean runInBackground(Runnable task) {
+        if (getEndpoint().getComponent() == null) {
+            return false;
+        }
+        try {
+            getEndpoint().getAsyncStartStopExecutorService().execute(task);
+            return true;
+        } catch (RejectedExecutionException e) {
+            LOG.debug("Cannot run the task {} on the async start/stop thread pool: it runs on this thread", task, e);
+            return false;
         }
     }
 
@@ -411,7 +511,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
                     }
                 });
             } else {
-                stopAndDestroyListenerContainer(detached);
+                stopWithinBound("stop", new ListenerContainerStop(detached));
             }
         }
 
@@ -420,8 +520,9 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
 
     @Override
     protected void doSuspend() throws Exception {
-        if (listenerContainer != null) {
-            listenerContainer.stop();
+        AbstractMessageListenerContainer container = listenerContainer;
+        if (container != null) {
+            stopWithinBound("suspend", new ListenerContainerStop(container));
         }
     }
 
@@ -445,6 +546,11 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             // the listener container was started and counted before, but its start failed (for example
             // testConnectionOnStartup with asyncStartListener=true)
             startAgain = !wasInitialized && listenerContainerCounted;
+            if (wasInitialized && container == null) {
+                // a suspend that did not end in time took the listener container away from this consumer. The new
+                // one is initialized by its (possibly asynchronous) start, as at the first start
+                initialized = false;
+            }
         } finally {
             containerLock.unlock();
         }
@@ -453,7 +559,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             // start the same listener container again: it is already counted as running on the endpoint
             LOG.info("Starting listener container on destination {} again, as its earlier start did not complete",
                     getDestinationName(container));
-            prepareAndStartListenerContainer(container, getEndpoint().getConfiguration().isAsyncStartListener());
+            prepareAndStartListenerContainer(container, getEndpoint().getConfiguration().isAsyncStartListener(), false);
         } else if (!wasInitialized) {
             // we may not have been started before, and now the end user calls resume, so lets handle that and start it first
             doStart();
@@ -462,8 +568,9 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
             // stopped it after the task's start()
             startListenerContainer(container);
         } else {
-            LOG.warn(
-                    "The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
+            // create a new listener container, and start it as the resume starts the listener container that a suspend
+            // that ends in time keeps (also without auto startup)
+            createAndStartListenerContainer(true);
         }
     }
 
@@ -507,10 +614,159 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
     }
 
     /**
-     * A listener container detached from this consumer by a stop, with the private thread pool it uses (if any).
+     * A listener container detached from this consumer by a stop, or by a suspend that did not end in time, with the
+     * private thread pool it uses (if any).
      */
     private record DetachedListenerContainer(AbstractMessageListenerContainer container, ExecutorService executorService,
             boolean shutdownExecutorService) {
+    }
+
+    /**
+     * The stop of a listener container (for a suspend), or its stop and destroy (for a stop of this consumer, which
+     * detached it already), which this consumer waits for at most a given time.
+     * <p/>
+     * When the consumer gives up waiting, the stop goes on in the background. For a suspend, the consumer detaches the
+     * listener container: a resume (or a start) creates a new one, and the listener container is destroyed once its
+     * stop returns. Its private thread pool takes no new task from the time the consumer gives up, and is shut down
+     * once the listener container is destroyed. An exception of the stop is then logged, as nobody waits for it
+     * anymore.
+     */
+    private final class ListenerContainerStop implements Runnable {
+
+        private final AbstractMessageListenerContainer container;
+        // for a stop of the consumer: the listener container it detached, to stop and destroy (null for a suspend)
+        private final DetachedListenerContainer stopped;
+        private final Lock lock = new ReentrantLock();
+        private final Condition ended = lock.newCondition();
+        // guarded by lock
+        private boolean done;
+        private boolean givenUp;
+        // a RuntimeException or an Error
+        private Throwable failure;
+        // for a suspend: the listener container the consumer detached when it gave up waiting, to destroy once stopped
+        private DetachedListenerContainer suspended;
+
+        /**
+         * The stop of the listener container, for a suspend.
+         */
+        ListenerContainerStop(AbstractMessageListenerContainer container) {
+            this.container = container;
+            this.stopped = null;
+        }
+
+        /**
+         * The stop and destroy of the detached listener container, for a stop of the consumer.
+         */
+        ListenerContainerStop(DetachedListenerContainer detached) {
+            this.container = detached.container();
+            this.stopped = detached;
+        }
+
+        @Override
+        public void run() {
+            Throwable error = null;
+            try {
+                if (stopped != null) {
+                    stopAndDestroyListenerContainer(stopped);
+                } else {
+                    container.stop();
+                }
+            } catch (RuntimeException | Error e) {
+                // handed over to the consumer, as the stop of the listener container on its own thread would
+                error = e;
+            }
+            DetachedListenerContainer toDestroy;
+            lock.lock();
+            try {
+                done = true;
+                failure = error;
+                ended.signalAll();
+                if (!givenUp) {
+                    // the consumer gets the outcome
+                    return;
+                }
+                toDestroy = suspended;
+            } finally {
+                lock.unlock();
+            }
+            if (error != null) {
+                LOG.warn("Error stopping listener container on destination: {} in the background."
+                         + " This exception will be ignored.",
+                        getDestinationName(container), error);
+            }
+            if (toDestroy != null) {
+                try {
+                    destroyListenerContainer(toDestroy);
+                } catch (RuntimeException | Error e) {
+                    LOG.warn("Error destroying listener container on destination: {} in the background."
+                             + " This exception will be ignored.",
+                            getDestinationName(container), e);
+                }
+            }
+        }
+
+        /**
+         * Waits for the stop at most the given time. When the stop ended in time and failed, its exception is thrown.
+         *
+         * @return <tt>null</tt> when the stop ended in time, otherwise why the consumer gave up waiting
+         */
+        String await(long timeout) {
+            boolean interrupted = false;
+            lock.lock();
+            try {
+                long nanos = TimeUnit.MILLISECONDS.toNanos(timeout);
+                while (!done && nanos > 0) {
+                    try {
+                        nanos = ended.awaitNanos(nanos);
+                    } catch (InterruptedException e) {
+                        // such as the graceful shutdown when its timeout elapses: stop waiting
+                        interrupted = true;
+                        break;
+                    }
+                }
+                if (done) {
+                    if (failure instanceof Error error) {
+                        throw error;
+                    } else if (failure != null) {
+                        throw (RuntimeException) failure;
+                    }
+                    return null;
+                }
+                givenUp = true;
+                if (stopped == null) {
+                    // the suspend did not end in time: this consumer no longer uses the listener container
+                    suspended = detachSuspendedListenerContainer(container);
+                }
+                return interrupted
+                        ? "was interrupted before its listener container stopped"
+                        : "did not end within " + timeout + " millis, as its listener container did not stop";
+            } finally {
+                lock.unlock();
+                if (interrupted) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+
+        /**
+         * The listener container that this consumer gave up waiting for, which is destroyed in the background.
+         */
+        DetachedListenerContainer givenUpContainer() {
+            lock.lock();
+            try {
+                if (!givenUp) {
+                    return null;
+                }
+                return stopped != null ? stopped : suspended;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        @Override
+        public String toString() {
+            return (stopped != null ? "StopListenerTask[" : "SuspendListenerTask[") + getDestinationName(container) + "]";
+        }
     }
 
 }
