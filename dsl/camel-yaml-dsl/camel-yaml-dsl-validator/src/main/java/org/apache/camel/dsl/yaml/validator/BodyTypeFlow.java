@@ -16,10 +16,13 @@
  */
 package org.apache.camel.dsl.yaml.validator;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,106 +59,194 @@ final class BodyTypeFlow {
     /** The steps that work on the body itself, and have nothing to work on when there is none. */
     private static final Set<String> STEPS_THAT_NEED_THE_BODY = Set.of("unmarshal", "marshal", "convertBodyTo");
 
+    /** The verbs of the REST DSL. */
+    private static final Set<String> REST_VERBS = Set.of("get", "post", "put", "delete", "patch", "head");
+
     /** The REST verbs that carry no body, so a route they send to starts with none. */
     private static final Set<String> VERBS_WITHOUT_BODY = Set.of("get", "delete", "head");
 
     private BodyTypeFlow() {
     }
 
+    /** The components of the routes a route calls with its own message. */
+    private static final Set<String> ROUTE_CALLS = Set.of("direct", "seda", "direct-vm");
+
     /**
+     * Where the body of each route of the file comes from, with the message of the check for a route that reads a body
+     * it cannot have: what {@link #report} reports, and what {@code camel overview} shows (CAMEL-25200).
+     *
      * @param known     the endpoints the caller knows deliver no body, such as {@code direct:getStock} for the GET
      *                  operation of an OpenAPI specification the route binds to (CAMEL-24844 phase B)
      * @param bodyTypes the body types of the catalog, which say the consumers that give no body (timer, cron)
      */
-    static void check(JsonNode target, NodePath path, List<Error> errors, Set<String> known, CatalogBodyTypes bodyTypes) {
+    static List<BodyOrigin> analyze(JsonNode target, Set<String> known, CatalogBodyTypes bodyTypes) {
         List<Route> routes = routes(target);
+        List<BodyOrigin> answer = new ArrayList<>();
         if (routes.isEmpty()) {
-            return;
+            return answer;
         }
-        // the graph: which routes send to the endpoint a route starts from
-        Map<String, List<Route>> byFrom = new HashMap<>();
-        for (Route r : routes) {
-            if (r.fromUri() != null) {
-                byFrom.computeIfAbsent(normalize(r.fromUri()), k -> new ArrayList<>()).add(r);
-            }
+        Graph graph = new Graph(target, routes, known, bodyTypes);
+        for (int i = 0; i < routes.size(); i++) {
+            answer.add(graph.origin(i, routes.get(i)));
         }
-        Map<Route, List<Route>> callers = new HashMap<>();
-        for (Route caller : routes) {
-            for (String uri : sendsTo(caller.steps())) {
-                for (Route target2 : byFrom.getOrDefault(normalize(uri), List.of())) {
-                    callers.computeIfAbsent(target2, k -> new ArrayList<>()).add(caller);
-                }
+        return answer;
+    }
+
+    /** Adds the message of each route that reads a body it cannot have, as {@link #analyze} found them. */
+    static void report(List<BodyOrigin> origins, NodePath path, List<Error> errors) {
+        for (BodyOrigin origin : origins) {
+            if (origin.problem() != null) {
+                errors.add(Error.builder()
+                        .keyword("type")
+                        .instanceLocation(path)
+                        .messageKey("type")
+                        .format(new MessageFormat("{0}"))
+                        .arguments(origin.problem())
+                        .build());
             }
-        }
-        Set<String> restless = new HashSet<>(restEndpointsWithoutABody(target));
-        for (String uri : known) {
-            restless.add(normalize(uri));
-        }
-        for (Route r : routes) {
-            String reader = firstBodyReaderBeforeAnyProducer(r.steps(), bodyTypes);
-            if (reader == null) {
-                continue;
-            }
-            if (!certainlyWithoutABody(r, callers, restless, new HashSet<>(), bodyTypes)) {
-                continue;
-            }
-            errors.add(Error.builder()
-                    .keyword("type")
-                    .instanceLocation(path)
-                    .messageKey("type")
-                    .format(new java.text.MessageFormat("{0}"))
-                    .arguments((r.id() != null ? "route " + r.id() + ": " : "") + reader
-                               + (READS_THE_BODY.contains(reader) ? " reads the message body" : " works on the message body")
-                               + ", and the message reaching this route has none"
-                               + (callers.containsKey(r) ? " - the routes that call it do not set one either" : "")
-                               + ": read the data first with setBody and constant: resource:file:... for a known"
-                               + " file, or poll: for one that is not")
-                    .build());
         }
     }
 
-    /**
-     * Whether it is certain that no message reaching this route can have a body: every way in starts at a consumer or a
-     * REST verb that produces none, and nothing on the way sets one. Anything unknown answers false, which keeps the
-     * check quiet.
-     */
-    private static boolean certainlyWithoutABody(
-            Route route, Map<Route, List<Route>> callers, Set<String> restless,
-            Set<Route> seen, CatalogBodyTypes bodyTypes) {
-        if (!seen.add(route)) {
-            return false; // a cycle: say nothing
-        }
-        String scheme = scheme(route.fromUri());
-        if (scheme == null) {
-            return false;
-        }
-        // with variableReceive the message goes into the variable, and the route starts with no body
-        if (bodyTypes.startsWithNoBody(from(route.node()))) {
-            return true;
-        }
-        // a consumer that produces no body of its own, as the catalog says: timer, cron, scheduler, quartz
-        CatalogBodyTypes.Answer out = bodyTypes.consumerOut(route.fromUri(), from(route.node()));
-        if (out != null && out.none()) {
-            return true;
-        }
-        if (!"direct".equals(scheme) && !"seda".equals(scheme) && !"direct-vm".equals(scheme)) {
-            return false; // a consumer of its own: it brings whatever it brings
-        }
-        boolean fromRestWithoutBody = restless.contains(normalize(route.fromUri()));
-        List<Route> from = callers.get(route);
-        if (from == null || from.isEmpty()) {
-            // nothing in the file calls it: only a REST verb that carries no body makes this certain
-            return fromRestWithoutBody;
-        }
-        for (Route caller : from) {
-            if (setsTheBodyBeforeSendingTo(caller, route, bodyTypes)) {
-                return false;
+    /** The routes of a file and the ways a message reaches each of them. */
+    private static final class Graph {
+
+        private final Map<Route, List<Route>> callers = new HashMap<>();
+        private final Map<String, String> rest;
+        private final Set<String> restless;
+        private final Set<String> known;
+        private final Map<String, List<RouteGraph.ErrorPath>> errorPaths = new HashMap<>();
+        private final CatalogBodyTypes bodyTypes;
+
+        Graph(JsonNode target, List<Route> routes, Set<String> known, CatalogBodyTypes bodyTypes) {
+            this.bodyTypes = bodyTypes;
+            // the graph: which routes send to the endpoint a route starts from
+            Map<String, List<Route>> byFrom = new HashMap<>();
+            for (Route r : routes) {
+                if (r.fromUri() != null) {
+                    byFrom.computeIfAbsent(normalize(r.fromUri()), k -> new ArrayList<>()).add(r);
+                }
             }
-            if (!certainlyWithoutABody(caller, callers, restless, seen, bodyTypes)) {
-                return false;
+            for (Route caller : routes) {
+                for (String uri : sendsTo(caller.steps())) {
+                    for (Route target2 : byFrom.getOrDefault(normalize(uri), List.of())) {
+                        callers.computeIfAbsent(target2, k -> new ArrayList<>()).add(caller);
+                    }
+                }
+            }
+            this.rest = restOperations(target);
+            this.restless = new HashSet<>(restEndpointsWithoutABody(target));
+            this.known = new HashSet<>();
+            for (String uri : known) {
+                this.restless.add(normalize(uri));
+                this.known.add(normalize(uri));
+            }
+            for (RouteGraph.ErrorPath p : RouteGraph.errorPaths(target)) {
+                errorPaths.computeIfAbsent(p.endpoint(), k -> new ArrayList<>()).add(p);
             }
         }
-        return true;
+
+        BodyOrigin origin(int index, Route r) {
+            boolean noBody = certainlyWithoutABody(r, new HashSet<>());
+            String reader = firstBodyReaderBeforeAnyProducer(r.steps(), bodyTypes);
+            String problem = reader != null && noBody ? problem(r, reader) : null;
+            String setBy = null;
+            int setAt = 0;
+            if (noBody && r.steps() != null && r.steps().isArray()) {
+                for (int i = 0; i < r.steps().size(); i++) {
+                    if (producesTheBody(r.steps().get(i), bodyTypes)) {
+                        setBy = firstName(r.steps().get(i));
+                        setAt = i + 1;
+                        break;
+                    }
+                }
+            }
+            String key = normalize(r.fromUri());
+            String origin;
+            String via = null;
+            List<String> who = List.of();
+            if (!ROUTE_CALLS.contains(scheme(r.fromUri()))) {
+                origin = BodyOrigin.CONSUMER;
+            } else if (callers.containsKey(r)) {
+                origin = BodyOrigin.CALLER;
+                via = key;
+                // a caller without an id by its endpoint, without the options, which may carry credentials
+                who = callers.get(r).stream().map(c -> c.id() != null ? c.id() : normalize(c.fromUri())).distinct()
+                        .toList();
+            } else if (rest.containsKey(key) || known.contains(key)) {
+                origin = BodyOrigin.REST;
+                via = rest.get(key);
+            } else if (errorPaths.containsKey(key)) {
+                List<RouteGraph.ErrorPath> paths = errorPaths.get(key);
+                via = paths.get(0).kind();
+                origin = switch (via) {
+                    case "onCompletion" -> BodyOrigin.ON_COMPLETION;
+                    case "compensation", "completion" -> BodyOrigin.SAGA;
+                    default -> BodyOrigin.ERROR_HANDLER;
+                };
+                String kind = via;
+                who = paths.stream().filter(p -> kind.equals(p.kind()) && p.route() != null)
+                        .map(RouteGraph.ErrorPath::route).distinct().toList();
+            } else {
+                origin = BodyOrigin.UNKNOWN;
+            }
+            return new BodyOrigin(index, r.id(), r.fromUri(), origin, via, who, noBody, setBy, setAt, problem);
+        }
+
+        private String problem(Route r, String reader) {
+            return (r.id() != null ? "route " + r.id() + ": " : "") + reader
+                   + (READS_THE_BODY.contains(reader) ? " reads the message body" : " works on the message body")
+                   + ", and the message reaching this route has none"
+                   + (callers.containsKey(r) ? " - the routes that call it do not set one either" : "")
+                   + ": read the data first with setBody and constant: resource:file:... for a known"
+                   + " file, or poll: for one that is not";
+        }
+
+        /**
+         * Whether it is certain that no message reaching this route can have a body: every way in starts at a consumer
+         * or a REST verb that produces none, and nothing on the way sets one. Anything unknown answers false, which
+         * keeps the check quiet.
+         */
+        private boolean certainlyWithoutABody(Route route, Set<Route> seen) {
+            if (!seen.add(route)) {
+                return false; // a cycle: say nothing
+            }
+            String scheme = scheme(route.fromUri());
+            if (scheme == null) {
+                return false;
+            }
+            // with variableReceive the message goes into the variable, and the route starts with no body
+            if (bodyTypes.startsWithNoBody(from(route.node()))) {
+                return true;
+            }
+            // a consumer that produces no body of its own, as the catalog says: timer, cron, scheduler, quartz
+            CatalogBodyTypes.Answer out = bodyTypes.consumerOut(route.fromUri(), from(route.node()));
+            if (out != null && out.none()) {
+                return true;
+            }
+            if (!ROUTE_CALLS.contains(scheme)) {
+                return false; // a consumer of its own: it brings whatever it brings
+            }
+            String key = normalize(route.fromUri());
+            if (errorPaths.containsKey(key)) {
+                // the failed or completed message, which has the body of wherever the route was: not known here
+                return false;
+            }
+            boolean fromRestWithoutBody = restless.contains(key);
+            List<Route> from = callers.get(route);
+            if (from == null || from.isEmpty()) {
+                // nothing in the file calls it: only a REST verb that carries no body makes this certain
+                return fromRestWithoutBody;
+            }
+            for (Route caller : from) {
+                if (setsTheBodyBeforeSendingTo(caller, route, bodyTypes)) {
+                    return false;
+                }
+                if (!certainlyWithoutABody(caller, seen)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     /**
@@ -307,6 +398,46 @@ final class BodyTypeFlow {
             }
         }
         return null;
+    }
+
+    /** The REST operations of the file by the endpoint they send to: GET /stock/{id} for direct:getStock. */
+    private static Map<String, String> restOperations(JsonNode target) {
+        Map<String, String> answer = new LinkedHashMap<>();
+        if (target == null || !target.isArray()) {
+            return answer;
+        }
+        for (JsonNode entry : target) {
+            JsonNode rest = entry.isObject() ? entry.get("rest") : null;
+            if (rest == null || !rest.isObject()) {
+                continue;
+            }
+            String base = rest.has("path") ? rest.get("path").asString("") : "";
+            for (var it = rest.propertyNames().iterator(); it.hasNext();) {
+                String verb = it.next();
+                if (!REST_VERBS.contains(verb)) {
+                    continue;
+                }
+                JsonNode value = rest.get(verb);
+                for (JsonNode operation : value.isArray() ? value : List.of(value)) {
+                    String uri = operation.isObject() ? endpointOf(operation.get("to")) : null;
+                    if (uri != null) {
+                        String path = operation.has("path") ? operation.get("path").asString("") : "";
+                        answer.putIfAbsent(normalize(uri), verb.toUpperCase(Locale.ROOT) + " " + joinPath(base, path));
+                    }
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static String joinPath(String base, String path) {
+        if (base.isEmpty()) {
+            return path.isEmpty() ? "/" : path;
+        }
+        if (path.isEmpty()) {
+            return base;
+        }
+        return base.endsWith("/") || path.startsWith("/") ? base + path : base + "/" + path;
     }
 
     /** The endpoints a REST verb without a body sends to, such as a get: that routes to direct:getStock. */

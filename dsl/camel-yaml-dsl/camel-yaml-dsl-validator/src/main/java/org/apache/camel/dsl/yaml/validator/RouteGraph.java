@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -154,6 +155,69 @@ final class RouteGraph {
                 }
             }
             collect(value, answer);
+        }
+    }
+
+    /**
+     * An endpoint a message reaches by an error path or a saga, not by a step of a route: the dead letter channel of an
+     * error handler, the steps of an onException or an onCompletion, the compensation and completion of a saga.
+     *
+     * @param endpoint the endpoint, normalized
+     * @param kind     deadLetterChannel, onException, onCompletion, compensation or completion
+     * @param route    the id of the route it belongs to; null for one of the file (a top-level error handler, a route
+     *                 configuration) or of a route without an id
+     */
+    record ErrorPath(String endpoint, String kind, String route) {
+    }
+
+    /** The entries whose steps send the message of an error path, and the kind they are. */
+    private static final Set<String> ERROR_STEPS = Set.of("onException", "onCompletion");
+
+    /** The error paths of the file, wherever they are: a top-level entry, a route configuration, a route. */
+    static List<ErrorPath> errorPaths(JsonNode target) {
+        List<ErrorPath> answer = new ArrayList<>();
+        walkErrorPaths(target, null, answer);
+        // the onException entries of a route configuration are a list of onException: the same path is met twice
+        return List.copyOf(new LinkedHashSet<>(answer));
+    }
+
+    private static void walkErrorPaths(JsonNode node, String route, List<ErrorPath> answer) {
+        if (node == null) {
+            return;
+        }
+        if (node.isArray()) {
+            for (JsonNode child : node) {
+                walkErrorPaths(child, route, answer);
+            }
+            return;
+        }
+        if (!node.isObject()) {
+            return;
+        }
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
+            String name = it.next();
+            JsonNode value = node.get(name);
+            if ("route".equals(name) && value.isObject()) {
+                walkErrorPaths(value, value.has("id") ? value.get("id").asString("") : null, answer);
+            } else if ("deadLetterUri".equals(name) && value.isValueNode()) {
+                answer.add(new ErrorPath(normalize(value.asString("")), "deadLetterChannel", route));
+            } else if (ERROR_STEPS.contains(name)) {
+                for (String uri : sendsTo(value)) {
+                    answer.add(new ErrorPath(normalize(uri), name, route));
+                }
+                // an error handler inside it has a dead letter channel of its own
+                walkErrorPaths(value, route, answer);
+            } else if ("saga".equals(name) && value.isObject()) {
+                for (String kind : new String[] { "compensation", "completion" }) {
+                    String uri = endpointOf(value.get(kind));
+                    if (uri != null) {
+                        answer.add(new ErrorPath(normalize(uri), kind, route));
+                    }
+                }
+                walkErrorPaths(value, route, answer);
+            } else {
+                walkErrorPaths(value, route, answer);
+            }
         }
     }
 
