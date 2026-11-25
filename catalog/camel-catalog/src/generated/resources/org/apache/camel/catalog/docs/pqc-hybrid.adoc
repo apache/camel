@@ -286,9 +286,11 @@ Based on NIST recommendations for the transition period:
 
 5. **Algorithm agility**: Design your system to allow algorithm upgrades as standards evolve.
 
+6. **KEM combiner**: The hybrid shared secret is derived by concatenating the two component secrets and running them through HKDF. Binding the combined secret to ciphertext or public-key material (as proposed in draft-irtf-cfrg-hybrid-kem) is not yet implemented and is deferred to a future release.
+
 == Wire Format v2 and Algorithm Identification
 
-Starting with Camel 4.24, the hybrid signature, hybrid KEM, and xref:dataformats:pqc-dataformat.adoc[PQC DataFormat] wire formats include self-describing algorithm metadata. This makes the binary output portable and verifiable without out-of-band knowledge of which algorithms were used.
+Starting with Camel 4.24, the hybrid signature and hybrid KEM wire formats include self-describing algorithm metadata. This makes the binary output portable and verifiable without out-of-band knowledge of which algorithms were used.
 
 === PQCAlgorithmId
 
@@ -366,7 +368,7 @@ int version              = components.version();              // 2
 
 === Wire Format v2 Layout
 
-All three output types (hybrid signature, hybrid KEM, PQC DataFormat) share the same 8-byte header:
+Both output types (hybrid signature and hybrid KEM) share the same 8-byte header:
 
 [source,text]
 ----
@@ -396,12 +398,12 @@ All three output types (hybrid signature, hybrid KEM, PQC DataFormat) share the 
 |PQC KEM algorithm
 |===
 
-NOTE: The PQC DataFormat retains the v1 wire format for now; v2 migration for the data format is tracked separately in CAMEL-25803.
+NOTE: The PQC DataFormat retains the v1 wire format for now; v2 migration for the data format is tracked in CAMEL-27548.
 
 === Backward Compatibility
 
 Wire format v2 is fully backward-compatible with v1:
 
 * **Writing** -- `sign()`, `encapsulate()`, and the 2-argument `combineSignatures()` / `combineEncapsulations()` overloads always produce v2 output.
-* **Reading** -- `parse()`, `verify()`, `extract()`, and `unmarshal()` auto-detect the format by checking the first two bytes for the magic bytes `0x50 0x51`. If absent, they fall back to v1 parsing.
+* **Reading** -- `parse()`, `verify()`, and `extract()` auto-detect the format by checking the first two bytes for the magic bytes `0x50 0x51`. If absent, they fall back to v1 parsing.
 * **Safety** -- The magic bytes `0x50 0x51`, interpreted as the first two bytes of a big-endian 32-bit integer, produce values above 1.3 billion. No valid v1 payload has a classical signature or encapsulation of that size, so false positives are impossible in practice.

@@ -118,15 +118,17 @@ public final class HybridSignature {
     /**
      * Verifies a hybrid signature - BOTH signatures must be valid for verification to succeed.
      *
-     * @param  data                the original data that was signed
-     * @param  hybridSignature     the hybrid signature to verify
-     * @param  classicalPublicKey  the classical public key
-     * @param  classicalSigner     the classical signature instance
-     * @param  pqcPublicKey        the PQC public key
-     * @param  pqcSigner           the PQC signature instance
-     * @return                     true if both signatures are valid, false otherwise
-     * @throws InvalidKeyException if a key is invalid
-     * @throws SignatureException  if verification fails unexpectedly
+     * @param  data                     the original data that was signed
+     * @param  hybridSignature          the hybrid signature to verify
+     * @param  classicalPublicKey       the classical public key
+     * @param  classicalSigner          the classical signature instance
+     * @param  pqcPublicKey             the PQC public key
+     * @param  pqcSigner                the PQC signature instance
+     * @return                          true if both signatures are valid, false otherwise
+     * @throws InvalidKeyException      if a key is invalid
+     * @throws SignatureException       if verification fails unexpectedly
+     * @throws IllegalArgumentException if the signature format is malformed or if a v2 header algorithm ID does not
+     *                                  match the configured algorithm
      */
     public static boolean verify(
             byte[] data,
@@ -165,15 +167,17 @@ public final class HybridSignature {
     /**
      * Verifies a hybrid signature and returns detailed results for each component.
      *
-     * @param  data                the original data that was signed
-     * @param  hybridSignature     the hybrid signature to verify
-     * @param  classicalPublicKey  the classical public key
-     * @param  classicalSigner     the classical signature instance
-     * @param  pqcPublicKey        the PQC public key
-     * @param  pqcSigner           the PQC signature instance
-     * @return                     verification result with details
-     * @throws InvalidKeyException if a key is invalid
-     * @throws SignatureException  if verification fails unexpectedly
+     * @param  data                     the original data that was signed
+     * @param  hybridSignature          the hybrid signature to verify
+     * @param  classicalPublicKey       the classical public key
+     * @param  classicalSigner          the classical signature instance
+     * @param  pqcPublicKey             the PQC public key
+     * @param  pqcSigner                the PQC signature instance
+     * @return                          verification result with details
+     * @throws InvalidKeyException      if a key is invalid
+     * @throws SignatureException       if verification fails unexpectedly
+     * @throws IllegalArgumentException if the signature format is malformed or if a v2 header algorithm ID does not
+     *                                  match the configured algorithm
      */
     public static HybridVerificationResult verifyDetailed(
             byte[] data,

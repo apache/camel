@@ -419,6 +419,11 @@ public final class HybridKEM {
 
     /**
      * Combines two shared secrets using HKDF.
+     *
+     * <p>
+     * The combiner uses simple concatenation of the two secrets as the HKDF input key material. Binding the combined
+     * secret to ciphertext or public-key material (as proposed in draft-irtf-cfrg-hybrid-kem) is not yet implemented
+     * and is deferred to a future version.
      */
     private static byte[] combineSecrets(
             byte[] secret1,

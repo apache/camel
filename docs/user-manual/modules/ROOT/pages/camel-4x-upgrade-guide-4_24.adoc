@@ -172,8 +172,8 @@ an endpoint or a data format that uses it logs a WARN at startup. Use `MLKEM` in
 The hybrid signature and hybrid KEM utilities now produce **wire format v2** by default.
 `sign()`, `encapsulate()`, and the 2-argument `combineSignatures()` / `combineEncapsulations()` overloads all emit v2
 output. A 4.24 writer paired with a pre-4.24 reader will fail with "invalid classical length" because the reader does
-not recognize the v2 magic header. Both sides of an exchange must be upgraded together, or v2 reading support must be
-backported to LTS branches.
+not recognize the v2 magic header. Upgrade the readers before the writers: bring all consumers to 4.24 first, then
+upgrade the producers.
 
 The following `PQCAlgorithmId` constants, originally shipped in 4.19.0, have been removed because the algorithms they
 referred to were renamed or dropped upstream:
