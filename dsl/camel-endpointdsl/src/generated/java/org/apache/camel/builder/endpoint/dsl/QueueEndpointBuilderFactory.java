@@ -1991,6 +1991,21 @@ public interface QueueEndpointBuilderFactory {
             return "CamelAzureStorageQueueDequeueCount";
         }
         /**
+         * The name of the queue the message was received from. It is not the
+         * CamelAzureStorageQueueName header, which overrides the queue of a
+         * producer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageQueueConsumedQueueName}.
+         */
+        public String azureStorageQueueConsumedQueueName() {
+            return "CamelAzureStorageQueueConsumedQueueName";
+        }
+        /**
          * (All) Specify the producer operation to execute, please see the doc
          * on this page related to producer operation.
          * 

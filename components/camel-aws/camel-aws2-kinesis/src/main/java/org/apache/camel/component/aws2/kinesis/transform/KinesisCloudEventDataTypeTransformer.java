@@ -32,7 +32,9 @@ import org.apache.camel.spi.Transformer;
 
 /**
  * Data type transformer converts AWS Kinesis get records response to CloudEvent v1_0 data format. The data type sets
- * Camel specific CloudEvent headers with values extracted from AWS Kinesis get object response.
+ * Camel specific CloudEvent headers with values extracted from AWS Kinesis get object response. The CloudEvent source
+ * is the name of the stream, from the header the aws2-kinesis consumer sets, with the prefix
+ * {@code aws.kinesis.stream.}.
  */
 @DataTypeTransformer(name = "aws2-kinesis:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with AWS Kinesis get records response details")
@@ -50,9 +52,9 @@ public class KinesisCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.aws.kinesis.getRecords");
 
-        if (message.getHeaders().containsKey(Kinesis2Constants.PARTITION_KEY)) {
+        if (message.getHeaders().containsKey(Kinesis2Constants.STREAM_NAME)) {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "aws.kinesis.partition.key." + message.getHeader(Kinesis2Constants.PARTITION_KEY, String.class));
+                    "aws.kinesis.stream." + message.getHeader(Kinesis2Constants.STREAM_NAME, String.class));
         }
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(Kinesis2Constants.SHARD_ID, String.class));

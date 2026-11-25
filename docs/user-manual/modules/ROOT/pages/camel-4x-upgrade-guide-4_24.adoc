@@ -8567,6 +8567,66 @@ header, such as one that does not come from the `aws2-sqs` consumer, gets no Clo
 also when it has a `CamelAwsSqsReceiptHandle` header. A route that relies on the old source can set the
 `CamelCloudEventSource` header itself after the transformer.
 
+=== camel-azure, camel-google, camel-aws2-kinesis - the CloudEvent source is the queue, container, file system, topic, stream, subscription or calendar
+
+Seven `application-cloudevents` data type transformers now set the `CamelCloudEventSource` header (the `ce-source`
+of the CloudEvent) to the queue, container, file system, topic, stream, subscription or calendar the message was
+consumed from, as `aws2-sqs:application-cloudevents` and `aws2-s3:application-cloudevents` do. Before, they used a
+value of each message, such as its id, so most events had a source of their own. The CloudEvent id is unchanged.
+
+[cols="2,3,3", options="header"]
+|===
+| Data type transformer | Source before | Source now
+
+| `azure-storage-queue:application-cloudevents`
+| `azure.storage.queue.` and the message id
+| `azure.storage.queue.` and the queue name
+
+| `azure-storage-blob:application-cloudevents`
+| `azure.storage.blob.` and the ETag of the blob
+| `azure.storage.blob.` and the container name
+
+| `azure-storage-datalake:application-cloudevents`
+| `azure.storage.datalake.` and the archive status of the file
+| `azure.storage.datalake.` and the file system name
+
+| `azure-servicebus:application-cloudevents`
+| `azure.servicebus.partition.` and the partition key of the message
+| `azure.servicebus.` and the queue or topic name
+
+| `aws2-kinesis:application-cloudevents`
+| `aws.kinesis.partition.key.` and the partition key of the record
+| `aws.kinesis.stream.` and the stream name
+
+| `google-pubsub:application-cloudevents`
+| `google.pubsub.` and the ack id, which only the synchronous pull sets
+| `google.pubsub.` and the subscription name
+
+| `google-calendar-stream:application-cloudevents`
+| `google.calendar.stream.` and the event id
+| `google.calendar.stream.` and the calendar id (`primary` by default)
+|===
+
+The name comes from a new header that the consumer now sets on each message:
+
+* `azure-storage-queue`: `CamelAzureStorageQueueConsumedQueueName`
+* `azure-storage-blob`: `CamelAzureStorageBlobConsumedContainerName`
+* `azure-storage-datalake`: `CamelAzureStorageDataLakeConsumedFileSystemName`
+* `azure-servicebus`: `CamelAzureServiceBusTopicOrQueueName`
+* `aws2-kinesis`: `CamelAwsKinesisStreamName`, set by both the polling and the KCL consumer
+* `google-pubsub`: `CamelGooglePubsubSubscriptionName`, set by the synchronous and the asynchronous pull
+* `google-calendar-stream`: `CamelGoogleCalendarCalendarId`
+
+The Azure Storage consumers do not set the existing `CamelAzureStorageQueueName`,
+`CamelAzureStorageBlobBlobContainerName` and `CamelAzureStorageDataLakeFileSystemName` headers, as a producer of the
+same component takes its queue, container or file system from them, and a route that sends the message on would then
+send it back where it came from.
+
+A message without the new header, such as one that does not come from the consumer, gets no CloudEvent source from
+the transformer, also when it has the header that the source was built from before. With `google-pubsub`, the default
+asynchronous pull now gets a source; before, it got none, as only the synchronous pull sets the ack id. A route that
+relies on the old source can set the `CamelCloudEventSource` header itself after the transformer.
+
 === camel-aws2-sqs - the consumer receives up to 10 messages per poll
 
 The `maxMessagesPerPoll` option of the `aws2-sqs` consumer now defaults to 10, the most that SQS returns to one receive

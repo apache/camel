@@ -115,6 +115,7 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implemen
         Message message = exchange.getIn();
         message.setBody(event);
         message.setHeader(GoogleCalendarStreamConstants.EVENT_ID, event.getId());
+        message.setHeader(GoogleCalendarStreamConstants.CALENDAR_ID, configuration.getCalendarId());
         return exchange;
     }
 

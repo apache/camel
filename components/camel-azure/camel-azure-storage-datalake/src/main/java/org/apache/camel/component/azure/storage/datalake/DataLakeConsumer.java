@@ -178,6 +178,10 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         getEndpoint().setResponseOnExchange(response, exchange);
 
         exchange.getIn().setHeader(DataLakeConstants.FILE_NAME, fileName);
+        // the file system the file comes from, which names the CloudEvent source. It is not the FILESYSTEM_NAME header,
+        // as that header overrides the file system of a producer, which would then write to this file system
+        exchange.getIn().setHeader(DataLakeConstants.CONSUMED_FILE_SYSTEM_NAME,
+                getEndpoint().getConfiguration().getFileSystemName());
         return exchange;
     }
 

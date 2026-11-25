@@ -25,6 +25,8 @@ public final class GoogleCalendarStreamConstants {
 
     @Metadata(description = "The calendar event id", javaType = "String")
     public static final String EVENT_ID = "CamelGoogleCalendarEventId";
+    @Metadata(description = "The id of the calendar the event was read from", javaType = "String")
+    public static final String CALENDAR_ID = "CamelGoogleCalendarCalendarId";
 
     /**
      * Prevent instantiation.

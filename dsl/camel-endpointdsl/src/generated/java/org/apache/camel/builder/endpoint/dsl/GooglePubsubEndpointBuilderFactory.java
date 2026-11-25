@@ -1080,6 +1080,18 @@ public interface GooglePubsubEndpointBuilderFactory {
             return "CamelGooglePubsubMsgAckId";
         }
         /**
+         * The name of the subscription the message was received from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GooglePubsubSubscriptionName}.
+         */
+        public String googlePubsubSubscriptionName() {
+            return "CamelGooglePubsubSubscriptionName";
+        }
+        /**
          * The time at which the message was published.
          * 
          * The option is a: {@code com.google.protobuf.Timestamp} type.

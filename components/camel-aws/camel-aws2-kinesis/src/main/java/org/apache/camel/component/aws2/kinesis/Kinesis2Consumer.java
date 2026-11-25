@@ -450,6 +450,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, dataRecord.partitionKey());
         exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, dataRecord.sequenceNumber());
         exchange.getIn().setHeader(Kinesis2Constants.SHARD_ID, shard.shardId());
+        exchange.getIn().setHeader(Kinesis2Constants.STREAM_NAME, getEndpoint().getConfiguration().getStreamName());
         if (ObjectHelper.isNotEmpty(dataRecord.approximateArrivalTimestamp())) {
             long ts = dataRecord.approximateArrivalTimestamp().getEpochSecond() * 1000;
             exchange.getIn().setHeader(Kinesis2Constants.MESSAGE_TIMESTAMP, ts);

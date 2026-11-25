@@ -80,6 +80,7 @@ public class ServiceBusConsumerTest {
     private static final String MESSAGE_DEAD_LETTER_ERROR_DESCRIPTION = "deadLetterErrorDescriptionValue";
     private static final String MESSAGE_DEAD_LETTER_REASON = "deadLetterReasonValue";
     private static final String MESSAGE_DEAD_LETTER_SOURCE = "deadLetterSourceValue";
+    private static final String TOPIC_OR_QUEUE_NAME = "orders";
     private static final String PROPAGATED_HEADER_KEY = "propagatedHeaderKey";
     private static final String PROPAGATED_HEADER_VALUE = "propagatedHeaderValue";
 
@@ -123,6 +124,7 @@ public class ServiceBusConsumerTest {
                 .thenReturn(client);
         when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture())).thenReturn(true);
         when(configuration.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
+        when(configuration.getTopicOrQueueName()).thenReturn(TOPIC_OR_QUEUE_NAME);
         when(ecc.getContextPlugin(PeriodTaskScheduler.class)).thenReturn(periodTaskScheduler);
         when(context.getUuidGenerator()).thenReturn(uuidGenerator);
         when(uuidGenerator.generateExchangeUuid()).thenReturn("test-exchange-id");
@@ -1124,6 +1126,7 @@ public class ServiceBusConsumerTest {
         expectedMessageHeaders.put(ServiceBusConstants.LOCK_TOKEN, MESSAGE_LOCK_TOKEN);
         expectedMessageHeaders.put(ServiceBusConstants.LOCKED_UNTIL, MESSAGE_LOCKED_UNTIL);
         expectedMessageHeaders.put(ServiceBusConstants.PARTITION_KEY, MESSAGE_PARTITION_KEY);
+        expectedMessageHeaders.put(ServiceBusConstants.TOPIC_OR_QUEUE_NAME, TOPIC_OR_QUEUE_NAME);
         expectedMessageHeaders.put(ServiceBusConstants.RAW_AMQP_MESSAGE, rawAmqpAnnotatedMessage);
         expectedMessageHeaders.put(ServiceBusConstants.REPLY_TO, MESSAGE_REPLY_TO);
         expectedMessageHeaders.put(ServiceBusConstants.REPLY_TO_SESSION_ID, MESSAGE_REPLY_TO_SESSION_ID);

@@ -19,10 +19,13 @@ package org.apache.camel.component.azure.storage.datalake.transform;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.azure.storage.file.datalake.models.ArchiveStatus;
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
+import org.apache.camel.component.azure.storage.datalake.DataLakeConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -31,6 +34,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class DataLakeCloudEventDataTypeTransformerTest {
@@ -38,6 +42,33 @@ class DataLakeCloudEventDataTypeTransformerTest {
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
     private final DataLakeCloudEventDataTypeTransformer transformer = new DataLakeCloudEventDataTypeTransformer();
+
+    @Test
+    void theSourceIsTheFileSystem() throws Exception {
+        // CAMEL-27101: the source was built from the archive status of the file
+        for (String file : List.of("a.txt", "b.txt")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(DataLakeConstants.CONSUMED_FILE_SYSTEM_NAME, "reports");
+            exchange.getMessage().setHeader(DataLakeConstants.FILE_NAME, file);
+            exchange.getMessage().setHeader(DataLakeConstants.E_TAG, "eTag-" + file);
+            exchange.getMessage().setHeader(DataLakeConstants.ARCHIVE_STATUS, ArchiveStatus.REHYDRATE_PENDING_TO_HOT);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            assertEquals("azure.storage.datalake.reports",
+                    exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+            assertEquals("eTag-" + file, exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+        }
+    }
+
+    @Test
+    void theSourceIsNotTheArchiveStatus() throws Exception {
+        // a message without the file system name of the consumer gets no source
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(DataLakeConstants.ARCHIVE_STATUS, ArchiveStatus.REHYDRATE_PENDING_TO_HOT);
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+    }
 
     @Test
     void theBodyTypesSayTheBody() throws Exception {

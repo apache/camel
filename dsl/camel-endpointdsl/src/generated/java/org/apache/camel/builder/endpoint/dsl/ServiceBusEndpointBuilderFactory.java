@@ -1881,6 +1881,19 @@ public interface ServiceBusEndpointBuilderFactory {
             return "CamelAzureServiceBusPartitionKey";
         }
         /**
+         * The name of the queue or topic the message was received from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusTopicOrQueueName}.
+         */
+        public String azureServiceBusTopicOrQueueName() {
+            return "CamelAzureServiceBusTopicOrQueueName";
+        }
+        /**
          * The representation of message as defined by AMQP protocol.
          * 
          * The option is a: {@code
