@@ -24,7 +24,7 @@ public final class AlibabaSlsHeaders {
               description = "The operation that the producer performs. This header replaces the operation option. If"
                             + " this header is not set, an exchange property of the same name replaces the operation"
                             + " option.",
-              javaType = "String")
+              javaType = "String", enums = "putLogs,getLogs,listLogStores")
     public static final String OPERATION = AlibabaSlsProperties.OPERATION;
 
     @Metadata(label = "producer",
