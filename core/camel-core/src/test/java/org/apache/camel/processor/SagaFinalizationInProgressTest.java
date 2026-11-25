@@ -44,11 +44,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * step timeout or another caller) gets the outcome of that compensation or completion, not a success before it is
  * known.
  */
-public class SagaFinalizationInProgressTest extends ContextTestSupport {
+class SagaFinalizationInProgressTest extends ContextTestSupport {
 
     private final CountDownLatch finalizationStarted = new CountDownLatch(1);
     private final CountDownLatch releaseFinalization = new CountDownLatch(1);
     private final AtomicReference<CamelSagaCoordinator> coordinator = new AtomicReference<>();
+    private final AtomicReference<Exchange> ownCompensateAnswered = new AtomicReference<>();
     private InMemorySagaService sagaService;
 
     @Override
@@ -145,6 +146,23 @@ public class SagaFinalizationInProgressTest extends ContextTestSupport {
         assertNull(sagaService.getSaga(saga.getId()).get(), "the saga ended");
     }
 
+    @Test
+    void compensationThatRemovesThePropertiesAndCompensatesItsOwnSagaDoesNotWaitForItself() throws Exception {
+        // the compensation route removes all the exchange properties and then calls saga:compensate: the saga id is
+        // still on the exchange, and the call must be answered at once, not wait for the compensation it is part of
+        CompletableFuture<Exchange> owner = template.asyncSend("direct:compensation-removes-properties",
+                e -> e.getMessage().setBody("hello"));
+
+        Exchange result = owner.get(10, TimeUnit.SECONDS);
+        Exception ex = result.getException();
+        assertInstanceOf(IllegalArgumentException.class, ex);
+        assertEquals(0, ex.getSuppressed().length, "the compensation succeeded");
+        Exchange answered = ownCompensateAnswered.get();
+        assertNotNull(answered, "saga:compensate answered the compensation route");
+        assertNull(answered.getException());
+        assertNull(sagaService.getSaga(coordinator.get().getId()).get(), "the saga ended");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -158,7 +176,7 @@ public class SagaFinalizationInProgressTest extends ContextTestSupport {
                 from("direct:fails-after-timeout")
                         .saga().timeout(200, TimeUnit.MILLISECONDS).compensation("direct:blocks-then-fails")
                         .process(e -> {
-                            assertTrue(finalizationStarted.await(10, TimeUnit.SECONDS));
+                            waitFor(finalizationStarted, "the timeout started the compensation");
                             throw new IllegalArgumentException("business failure");
                         });
 
@@ -187,20 +205,42 @@ public class SagaFinalizationInProgressTest extends ContextTestSupport {
                 from("direct:blocks-then-fails")
                         .process(e -> {
                             finalizationStarted.countDown();
-                            assertTrue(releaseFinalization.await(10, TimeUnit.SECONDS));
+                            waitFor(releaseFinalization, "the test released the finalization");
                             throw new IllegalStateException("finalization failure");
                         });
 
                 from("direct:blocks-then-succeeds")
                         .process(e -> {
                             finalizationStarted.countDown();
-                            assertTrue(releaseFinalization.await(10, TimeUnit.SECONDS));
+                            waitFor(releaseFinalization, "the test released the finalization");
                         });
 
                 from("direct:compensates-its-saga")
                         .process(e -> coordinator.get().compensate(e).get(5, TimeUnit.SECONDS));
+
+                from("direct:compensation-removes-properties")
+                        .saga().compensation("direct:removes-properties-then-compensates")
+                        .process(e -> captureCoordinator(e))
+                        .process(e -> {
+                            throw new IllegalArgumentException("business failure");
+                        });
+
+                from("direct:removes-properties-then-compensates")
+                        .removeProperties("*")
+                        .to("saga:compensate")
+                        .process(ownCompensateAnswered::set);
             }
         };
+    }
+
+    /**
+     * Waits in a route for the test thread: if it does not come, the exchange fails with this message instead of a
+     * failed assertion that would show up later as an unrelated one.
+     */
+    private static void waitFor(CountDownLatch latch, String what) throws InterruptedException {
+        if (!latch.await(10, TimeUnit.SECONDS)) {
+            throw new IllegalStateException("Test route gave up after 10 seconds waiting until " + what);
+        }
     }
 
     private void captureCoordinator(Exchange exchange) throws Exception {
