@@ -73,9 +73,11 @@ public interface CommitManager {
      * Forgets the offset recorded for the given partition without committing it. Called when the partition is revoked
      * (after its commit, whether the commit succeeded or not) or lost: the consumer no longer owns the partition, and
      * an offset kept for it could be committed after the partition is assigned to the consumer again, which would move
-     * back the offset that another consumer committed in the meantime.
+     * back the offset that another consumer committed in the meantime. Also called when a resume seeks the partition
+     * back to its committed offset: the records after it are read and committed again, and an offset kept from before
+     * (such as one whose commit failed) could be committed in between and move the committed offset back.
      *
-     * @param partition the partition that is no longer assigned to the consumer
+     * @param partition the partition that is no longer assigned to the consumer, or that is read again
      */
     default void discardRecordedOffset(TopicPartition partition) {
         // NO-OP
