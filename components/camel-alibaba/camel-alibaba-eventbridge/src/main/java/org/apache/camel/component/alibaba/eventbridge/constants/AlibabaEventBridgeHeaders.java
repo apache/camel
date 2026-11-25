@@ -23,7 +23,7 @@ public sealed class AlibabaEventBridgeHeaders permits AlibabaEventBridgeProperti
     @Metadata(label = "producer",
               description = "The operation that the producer performs. This header replaces the operation option. If this"
                             + " header is not set, an exchange property of the same name replaces the operation option.",
-              javaType = "String")
+              javaType = "String", enums = "putEvents")
     public static final String OPERATION = "CamelAlibabaEventBridgeOperation";
 
     @Metadata(label = "producer",

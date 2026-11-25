@@ -123,7 +123,7 @@ public class KMSEndpoint extends DefaultEndpoint {
                             + " this option for a request that the producer sends. If that header is not set, an exchange"
                             + " property of the same name replaces this option. If none of the three is set, the producer adds"
                             + " no key spec to the request.",
-              displayName = "Key Spec")
+              displayName = "Key Spec", enums = "AES_256,AES_128")
     private String keySpec;
 
     @UriParam(description = "The number of bytes of the data key for generateDataKey. The value must be from 1 to 1024. The"
