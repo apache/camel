@@ -24,6 +24,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -56,6 +58,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     // one entry per waiting thread: two threads can wait for the same exchange (a thread that waits for an exchange while
     // the exchange goes on, on another thread, through a step that waits for it too), and each must stay listed
     private final Set<AwaitThreadEntry> inflight = ConcurrentHashMap.newKeySet();
+    // the order in which the calls started to wait: a call that waits for an exchange from within the processing of
+    // another call that waits for it (a nested wait) starts later, so interrupt(exchange) can find the innermost one
+    private final AtomicLong waitOrder = new AtomicLong();
     private final ExchangeFormatter exchangeFormatter;
     private boolean interruptThreadsWhileStopping = true;
 
@@ -82,18 +87,24 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
      */
     @Override
     public void process(final AsyncProcessor processor, final Exchange exchange) {
+        // taken before the processor runs, as a nested wait for the exchange starts from within the processing
+        long order = waitOrder.incrementAndGet();
         AwaitCallback callback = new AwaitCallback(exchange);
         processor.process(exchange, callback);
         // the callback has usually fired by now, as the reactive executor runs the work in this thread
         if (callback.get() == null) {
             CountDownLatch latch = new CountDownLatch(1);
             if (callback.compareAndSet(null, latch)) {
-                await(exchange, latch);
+                await(exchange, latch, order);
             }
         }
     }
 
     public void await(Exchange exchange, CountDownLatch latch) {
+        await(exchange, latch, waitOrder.incrementAndGet());
+    }
+
+    private void await(Exchange exchange, CountDownLatch latch, long order) {
         ReactiveExecutor reactiveExecutor = exchange.getContext().getCamelContextExtension().getReactiveExecutor();
         // Early exit for pending reactive queued work
         do {
@@ -106,7 +117,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
                     exchange.getExchangeId(), exchange);
         }
-        AwaitThreadEntry entry = new AwaitThreadEntry(Thread.currentThread(), exchange, latch);
+        AwaitThreadEntry entry = new AwaitThreadEntry(Thread.currentThread(), exchange, latch, order);
         try {
             if (statistics.isStatisticsEnabled()) {
                 blockedCounter.incrementAndGet();
@@ -204,16 +215,30 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         }
     }
 
+    /**
+     * Releases the thread that started last to wait for the exchange. When a thread waits for the exchange while the
+     * exchange goes on, on another thread, through a step that waits for it too (such as
+     * {@code ProducerTemplate.send(uri, exchange)}), only that inner thread is released: it goes on with the failed
+     * exchange to the end of its route, and the callback then releases the outer thread. Releasing both would route the
+     * exchange on two threads at once. The stop of the manager releases every thread.
+     */
     @Override
     public void interrupt(Exchange exchange) {
-        // every thread that waits for the exchange
+        AwaitThreadEntry innermost = null;
         for (AwaitThreadEntry entry : inflight) {
-            if (entry.getExchange() == exchange) {
-                interrupt(entry);
+            if (entry.getExchange() == exchange && (innermost == null || entry.order > innermost.order)) {
+                innermost = entry;
             }
+        }
+        if (innermost != null) {
+            interrupt(innermost);
         }
     }
 
+    /**
+     * Releases the thread of the entry, unless it already returned. The WARN line is built first, and an exception
+     * while building it is thrown only after the thread was released.
+     */
     private void interrupt(AwaitThreadEntry entry) {
         Exchange exchange = entry.getExchange();
         String dump = null;
@@ -327,14 +352,17 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         private final Thread thread;
         private final Exchange exchange;
         private final CountDownLatch latch;
+        private final long order;
         private final StopWatch watch = new StopWatch();
-        // guarded by this: the waiting thread returned (finish), or interrupt released it
+        private final Lock lock = new ReentrantLock();
+        // guarded by lock: the waiting thread returned (finish), or interrupt released it
         private boolean finished;
 
-        private AwaitThreadEntry(Thread thread, Exchange exchange, CountDownLatch latch) {
+        private AwaitThreadEntry(Thread thread, Exchange exchange, CountDownLatch latch, long order) {
             this.thread = thread;
             this.exchange = exchange;
             this.latch = latch;
+            this.order = order;
         }
 
         @Override
@@ -377,21 +405,31 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
          *
          * @return whether the exchange was failed and the thread released
          */
-        synchronized boolean interrupt() {
-            if (finished || latch.getCount() == 0) {
-                return false;
+        boolean interrupt() {
+            lock.lock();
+            try {
+                if (finished || latch.getCount() == 0) {
+                    return false;
+                }
+                finished = true;
+                exchange.setException(new RejectedExecutionException(
+                        "Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
+                exchange.getExchangeExtension().setInterrupted(true);
+                latch.countDown();
+                return true;
+            } finally {
+                lock.unlock();
             }
-            finished = true;
-            exchange.setException(new RejectedExecutionException(
-                    "Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
-            exchange.getExchangeExtension().setInterrupted(true);
-            latch.countDown();
-            return true;
         }
 
         /** Called by the waiting thread before it returns: an interrupt after this leaves the exchange alone. */
-        synchronized void finish() {
-            finished = true;
+        void finish() {
+            lock.lock();
+            try {
+                finished = true;
+            } finally {
+                lock.unlock();
+            }
         }
 
         @Override

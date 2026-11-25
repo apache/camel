@@ -19,9 +19,12 @@ package org.apache.camel.impl;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.AsyncCallback;
@@ -34,7 +37,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,10 +49,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * An interrupt of the await manager (JMX, or the stop of the CamelContext) races with the callback of the processor it
  * waits for, and with other threads that wait for the same exchange.
  */
-@Isolated
 class DefaultAsyncProcessorAwaitManagerInterruptRaceTest {
 
-    private final List<Thread> threads = new ArrayList<>();
+    // threads also start threads
+    private final List<Thread> threads = new CopyOnWriteArrayList<>();
     private final List<ControlledProcessor> processors = new ArrayList<>();
     private CamelContext context;
     private DefaultAsyncProcessorAwaitManager manager;
@@ -139,9 +141,73 @@ class DefaultAsyncProcessorAwaitManagerInterruptRaceTest {
     }
 
     @Test
+    void interruptOfNestedWaitersReleasesTheInnerOneAndTheOuterOneThroughItsCallback() throws Exception {
+        manager.getStatistics().setStatisticsEnabled(true);
+        Exchange exchange = new DefaultExchange(context);
+        Routing routing = new Routing();
+        ControlledProcessor inner = processor(null);
+        AtomicReference<Exception> innerException = new AtomicReference<>();
+        CountDownLatch innerReturned = new CountDownLatch(1);
+        CountDownLatch routeEnds = new CountDownLatch(1);
+        AtomicBoolean outerCallbackFired = new AtomicBoolean();
+        // the outer processor goes on with the exchange on another thread, which calls a step that waits for it too
+        // (such as ProducerTemplate.send(uri, exchange)); when that step returns, the route ends and fires the callback
+        // of the outer processor. The outer processor returns only once the inner thread waits, so the outer thread is
+        // listed after the inner one: what counts is which call started first, not which thread blocked first.
+        AsyncProcessorSupport outer = new AsyncProcessorSupport() {
+            @Override
+            public boolean process(Exchange ex, AsyncCallback callback) {
+                thread("route-worker", () -> {
+                    manager.process(inner, ex);
+                    routing.enter();
+                    innerException.set(ex.getException());
+                    innerReturned.countDown();
+                    awaitLatch(routeEnds);
+                    routing.leave();
+                    outerCallbackFired.set(true);
+                    callback.done(false);
+                });
+                await().atMost(10, TimeUnit.SECONDS).until(() -> manager.size() == 1);
+                return false;
+            }
+        };
+        AtomicBoolean outerReleasedByCallback = new AtomicBoolean();
+        AtomicReference<Exception> outerException = new AtomicReference<>();
+        Thread waiter = thread("waiter", () -> {
+            manager.process(outer, exchange);
+            routing.enter();
+            outerReleasedByCallback.set(outerCallbackFired.get());
+            outerException.set(exchange.getException());
+            routing.leave();
+        });
+        try {
+            await().atMost(10, TimeUnit.SECONDS).until(() -> manager.size() == 2);
+
+            manager.interrupt(exchange);
+            // releasing every waiting thread fails here, and releasing the thread that blocked last (the outer one)
+            // fails next
+            assertEquals(1, manager.getStatistics().getThreadsInterrupted(), "only the inner thread is released");
+            assertTrue(innerReturned.await(10, TimeUnit.SECONDS), "the inner thread was released");
+            assertInstanceOf(RejectedExecutionException.class, innerException.get());
+            assertEquals(1, manager.size(), "the outer thread still waits");
+            assertEquals(waiter, manager.browse().iterator().next().getBlockedThread());
+        } finally {
+            routeEnds.countDown();
+        }
+        waiter.join(TimeUnit.SECONDS.toMillis(10));
+        assertFalse(waiter.isAlive(), "the outer thread was released");
+        assertTrue(outerReleasedByCallback.get(), "the outer thread was released by the callback of the route");
+        assertInstanceOf(RejectedExecutionException.class, outerException.get());
+        assertEquals(1, routing.most.get(), "the exchange was never routed on two threads at once");
+        assertEquals(0, manager.size());
+    }
+
+    @Test
     void threadThatWaitsWhileTheManagerStopsIsReleasedOrStaysListed() throws Exception {
         // the first exchange is in a bin of the map of main after the one of the second, so the iteration of the stop
-        // that is at the first has passed the bin of the second (DefaultExchange does not override hashCode)
+        // that is at the first has passed the bin of the second (DefaultExchange does not override hashCode). The bins
+        // only matter for the implementation of main, which kept the entries in a map keyed by the exchange: with an
+        // entry per thread the test passes for any two exchanges.
         Gate gate = new Gate();
         Exchange first = new DefaultExchange(context);
         while (bin(first) == 0) {
@@ -192,6 +258,28 @@ class DefaultAsyncProcessorAwaitManagerInterruptRaceTest {
         threads.add(thread);
         thread.start();
         return thread;
+    }
+
+    private static void awaitLatch(CountDownLatch latch) {
+        try {
+            latch.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    /** How many threads route the exchange at once, and the most seen. */
+    private static final class Routing {
+        final AtomicInteger now = new AtomicInteger();
+        final AtomicInteger most = new AtomicInteger();
+
+        void enter() {
+            most.accumulateAndGet(now.incrementAndGet(), Math::max);
+        }
+
+        void leave() {
+            now.decrementAndGet();
+        }
     }
 
     /** The bin of a key in a ConcurrentHashMap of 16 bins (the spread and mask of ConcurrentHashMap). */
