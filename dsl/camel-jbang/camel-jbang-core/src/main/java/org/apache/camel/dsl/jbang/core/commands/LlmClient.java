@@ -2647,12 +2647,18 @@ public class LlmClient {
             String base = normalizeGeminiBaseUrl(endpoint);
             return tryHealthCheck(base + "/models", buildGeminiHeaders(key));
         }
-        // Strip a trailing /v1 before probing to avoid a double-prefix (/v1/v1/models) when the caller
-        // supplies a URL that already ends with /v1 (e.g. https://api.openai.com/v1).
-        // Pass the API key on the /v1/models probe so that servers requiring auth don't return 401.
-        String base = endpoint.endsWith("/v1") ? endpoint.substring(0, endpoint.length() - 3) : endpoint;
+        // normalizeOpenAiModelsUrl strips any trailing /v1, /v1/, or /v1/chat/completions suffix before
+        // appending /v1/models, preventing a double-prefix (/v1/v1/models) when the caller supplies a URL
+        // that already ends with /v1 or /v1/.
+        // The API key is forwarded only on the /v1/models probe (OpenAI-compatible) to avoid leaking credentials
+        // onto the Ollama /api/tags or root probes.
+        String openAiModelsUrl = normalizeOpenAiModelsUrl(endpoint);
+        // Derive the base URL for Ollama and root probes (strip /v1/models suffix added above).
+        String base = openAiModelsUrl.endsWith("/v1/models")
+                ? openAiModelsUrl.substring(0, openAiModelsUrl.length() - "/v1/models".length())
+                : endpoint;
         return tryHealthCheck(base + "/api/tags", Map.of(), false)
-                || tryHealthCheck(base + "/v1/models", buildOpenAiAuthHeaders(resolveApiKey()), false)
+                || tryHealthCheck(openAiModelsUrl, buildOpenAiAuthHeaders(resolveApiKey()), false)
                 || tryHealthCheck(endpoint, Map.of(), false);
     }
 

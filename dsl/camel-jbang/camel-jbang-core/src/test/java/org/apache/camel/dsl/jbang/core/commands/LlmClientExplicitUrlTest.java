@@ -29,6 +29,8 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariables;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,8 +121,16 @@ class LlmClientExplicitUrlTest {
     /**
      * CAMEL-27514: an OpenAI-compatible server that requires auth (returns 401 without a key) must be treated as
      * reachable when the user has supplied an API key, because the health probe now forwards the Authorization header.
+     * <p>
+     * The negative assertion (no-key → detection fails) is skipped when {@code OPENAI_API_KEY} or {@code LLM_API_KEY}
+     * is set in the environment: {@code resolveApiKey()} falls back to those variables, so a developer machine with
+     * either variable set would send a Bearer header and make detection succeed even without an explicit key.
      */
     @Test
+    @DisabledIfEnvironmentVariables({
+            @DisabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+"),
+            @DisabledIfEnvironmentVariable(named = "LLM_API_KEY", matches = ".+")
+    })
     void openAiCompatibleEndpointRequiringAuthIsDetectedWhenKeyIsConfigured() throws IOException {
         // A server that replies 401 to /v1/models without an Authorization header, 200 with one.
         HttpServer authServer = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
@@ -147,6 +157,28 @@ class LlmClientExplicitUrlTest {
             assertThat(withKey.apiType()).isEqualTo(ApiType.openai);
         } finally {
             authServer.stop(0);
+        }
+    }
+
+    /**
+     * CAMEL-27514: when {@code --api-type=openai} is set explicitly, detection goes through
+     * {@code isEndpointReachable()} rather than {@code tryExplicitUrl()}. The same normalisation must apply: a URL
+     * ending with {@code /v1} or {@code /v1/} must not produce a double {@code /v1/v1/models} probe.
+     */
+    @Test
+    void withApiTypeOpenAiAndV1UrlVariants() throws Exception {
+        try (FakeLlmServer server = new FakeLlmServer("unused")) {
+            // Plain base URL — sanity check that the path still works without a /v1 suffix.
+            LlmClient base = LlmClient.create().withApiType(ApiType.openai).withUrl(server.url());
+            assertThat(base.detectEndpoint()).isTrue();
+
+            // URL already ending with /v1 — must not produce /v1/v1/models.
+            LlmClient v1 = LlmClient.create().withApiType(ApiType.openai).withUrl(server.url() + "/v1");
+            assertThat(v1.detectEndpoint()).isTrue();
+
+            // URL ending with /v1/ (trailing slash) — normalisation must strip it too.
+            LlmClient v1Slash = LlmClient.create().withApiType(ApiType.openai).withUrl(server.url() + "/v1/");
+            assertThat(v1Slash.detectEndpoint()).isTrue();
         }
     }
 }
