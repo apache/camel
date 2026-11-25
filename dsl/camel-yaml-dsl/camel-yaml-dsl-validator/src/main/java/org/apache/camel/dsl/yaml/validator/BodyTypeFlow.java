@@ -185,10 +185,10 @@ final class BodyTypeFlow {
 
     /** Whether this step is the call to that route. */
     private static boolean sendsToTheRoute(String name, JsonNode value, String wanted) {
-        if (!"to".equals(name) && !"toD".equals(name) && !"enrich".equals(name) && !"wireTap".equals(name)) {
+        if (!RouteGraph.CALLS_A_ROUTE.contains(name)) {
             return false;
         }
-        String uri = endpointOf(value);
+        String uri = EndpointConsumers.uriOf(name, value);
         return uri != null && normalize(uri).equals(wanted);
     }
 
