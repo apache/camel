@@ -395,6 +395,12 @@ public class KafkaFetchRecords implements Runnable {
                 lock.lock();
                 try {
                     if (consumerListener != null) {
+                        // while the route is suspended the partitions are paused and the poll returns no records: the
+                        // listener of the pausable EIP must not run, as it would resume them. A resume of the route
+                        // that comes in the meantime is applied on the next iteration, after the listener
+                        if (state.get() == State.PAUSED) {
+                            continue;
+                        }
                         if (!consumerListener.afterConsume(consumer)) {
                             continue;
                         }
