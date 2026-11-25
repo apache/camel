@@ -75,7 +75,7 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     private Integer maxPollRecords = 500;
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long pollTimeoutMs = 5000L;
-    @UriParam(label = "consumer", javaType = "java.time.Duration")
+    @UriParam(label = "consumer", defaultValue = "300000", javaType = "java.time.Duration")
     private Integer maxPollIntervalMs;
     // auto.offset.reset1
     @UriParam(label = "consumer", defaultValue = "latest")
@@ -344,8 +344,10 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * The partitioner class for partitioning messages amongst sub-topics. The default partitioner is based on the hash
-     * of the key.
+     * The partitioner class that determines which partition to send a record to. If not set, the default partitioning
+     * logic is used: a record with a key goes to a partition chosen by a hash of the key, and a record without a key
+     * goes to a sticky partition that changes when at least producerBatchSize bytes have been produced to it. A custom
+     * partitioner implements the org.apache.kafka.clients.producer.Partitioner interface.
      */
     public void setPartitioner(String partitioner) {
         this.partitioner = partitioner;
@@ -402,8 +404,8 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * If true, periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed
-     * offset will be used when the process fails as the position from which the new consumer will begin.
+     * If true, the consumer's offset is periodically committed to Kafka in the background. This committed offset is
+     * used when the process fails as the position from which the new consumer will begin.
      */
     public void setAutoCommitEnable(boolean autoCommitEnable) {
         this.autoCommitEnable = autoCommitEnable;
@@ -440,7 +442,8 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * The frequency in ms that the consumer offsets are committed to zookeeper.
+     * The frequency in milliseconds that the consumer offsets are auto-committed to Kafka if autoCommitEnable is set to
+     * true.
      */
     public void setAutoCommitIntervalMs(Integer autoCommitIntervalMs) {
         this.autoCommitIntervalMs = autoCommitIntervalMs;
@@ -537,8 +540,10 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * The amount of time the broker will wait trying to meet the request.required.acks requirement before sending back
-     * an error to the client.
+     * The configuration controls the maximum amount of time the client will wait for the response of a request. If the
+     * response is not received before the timeout elapses, the client will resend the request if necessary or fail the
+     * request if retries are exhausted. This should be larger than replica.lag.time.max.ms (a broker configuration) to
+     * reduce the possibility of message duplication due to unnecessary producer retries.
      */
     public void setRequestTimeoutMs(Integer requestTimeoutMs) {
         this.requestTimeoutMs = requestTimeoutMs;
@@ -551,7 +556,10 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     /**
      * An upper bound on the time to report success or failure after a call to send() returns. This limits the total
      * time that a record will be delayed prior to sending, the time to await acknowledgement from the broker (if
-     * expected), and the time allowed for retriable send failures.
+     * expected), and the time allowed for retriable send failures. The producer may report failure to send a record
+     * earlier than this config if either an unrecoverable error is encountered, the retries have been exhausted, or the
+     * record is added to a batch which reached an earlier delivery expiration deadline. The value of this config should
+     * be greater than or equal to the sum of requestTimeoutMs and lingerMs.
      */
     public void setDeliveryTimeoutMs(Integer deliveryTimeoutMs) {
         this.deliveryTimeoutMs = deliveryTimeoutMs;
@@ -580,7 +588,8 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * The serializer class for messages.
+     * The serializer class for values (the message body). It must implement the
+     * org.apache.kafka.common.serialization.Serializer interface.
      */
     public void setValueSerializer(String valueSerializer) {
         this.valueSerializer = valueSerializer;
@@ -591,7 +600,7 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * The serializer class for keys (defaults to the same as for messages if nothing is given).
+     * The serializer class for keys. It must implement the org.apache.kafka.common.serialization.Serializer interface.
      */
     public void setKeySerializer(String keySerializer) {
         this.keySerializer = keySerializer;
@@ -603,11 +612,10 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
 
     /**
      * The total bytes of memory the producer can use to buffer records waiting to be sent to the server. If records are
-     * sent faster than they can be delivered to the server, the producer will either block or throw an exception based
-     * on the preference specified by block.on.buffer.full.This setting should correspond roughly to the total memory
-     * the producer will use, but is not a hard bound since not all memory the producer uses is used for buffering. Some
-     * additional memory will be used for compression (if compression is enabled) as well as for maintaining in-flight
-     * requests.
+     * sent faster than they can be delivered to the server, the producer will block for maxBlockMs after which it will
+     * fail with an exception. This setting should correspond roughly to the total memory the producer will use, but is
+     * not a hard bound since not all memory the producer uses is used for buffering. Some additional memory will be
+     * used for compression (if compression is enabled) as well as for maintaining in-flight requests.
      */
     public void setBufferMemorySize(Integer bufferMemorySize) {
         this.bufferMemorySize = bufferMemorySize;
@@ -679,18 +687,21 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * Setting a value greater than zero will cause the client to resend any record that has failed to be sent due to a
-     * potentially transient error. Note that this retry is no different from if the client re-sending the record upon
-     * receiving the error. Produce requests will be failed before the number of retries has been exhausted if the
-     * timeout configured by delivery.timeout.ms expires first before successful acknowledgement. Users should generally
-     * prefer to leave this config unset and instead use delivery.timeout.ms to control retry behavior.
+     * Number of times to retry a request that fails with a transient error. Setting a value greater than zero will
+     * cause the client to resend any record whose send fails with a potentially transient error. Requests will be
+     * retried this many times until they succeed, fail with a non-transient error, or the deliveryTimeoutMs expires.
+     * Note that this automatic retry will simply resend the same record upon receiving the error. Setting a value of
+     * zero will disable this automatic retry behaviour, so that the transient errors will be propagated to the
+     * application to be handled. Users should generally prefer to leave this config unset and instead use
+     * deliveryTimeoutMs to control retry behavior.
      *
      * Enabling idempotence requires this config value to be greater than 0. If conflicting configurations are set and
      * idempotence is not explicitly enabled, idempotence is disabled.
      *
-     * Allowing retries while setting enable.idempotence to false and max.in.flight.requests.per.connection to 1 will
-     * potentially change the ordering of records, because if two batches are sent to a single partition, and the first
-     * fails and is retried but the second succeeds; then the records in the second batch may appear first.
+     * Allowing retries while setting enable.idempotence to false and max.in.flight.requests.per.connection to greater
+     * than 1 will potentially change the ordering of records, because if two batches are sent to a single partition,
+     * and the first fails and is retried but the second succeeds; then the records in the second batch may appear
+     * first.
      */
     public void setRetries(Integer retries) {
         this.retries = retries;
@@ -738,11 +749,13 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
      * achieves this by adding a small amount of artificial delay. That is, rather than immediately sending out a
      * record, the producer will wait for up to the given delay to allow other records to be sent so that they can be
      * batched together. This can be thought of as analogous to Nagle's algorithm in TCP. This setting gives the upper
-     * bound on the delay for batching: once we get batch.size worth of records for a partition, it will be sent
+     * bound on the delay for batching: once we get producerBatchSize worth of records for a partition, it will be sent
      * immediately regardless of this setting, however, if we have fewer than this many bytes accumulated for this
      * partition, we will 'linger' for the specified time waiting for more records to show up. This setting defaults to
-     * 0 (i.e., no delay). Setting linger.ms=5, for example, would have the effect of reducing the number of requests
-     * sent but would add up to 5ms of latency to records sent in the absence of load.
+     * 5 (i.e., 5ms delay). Increasing it to 50, for example, would have the effect of reducing the number of requests
+     * sent but would add up to 50ms of latency to records sent in the absence of load. The default changed from 0 to 5
+     * in Apache Kafka 4.0 as the efficiency gains from larger batches typically result in similar or lower producer
+     * latency despite the increased linger.
      */
     public void setLingerMs(Integer lingerMs) {
         this.lingerMs = lingerMs;
@@ -769,9 +782,10 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * The maximum size of a request. This is also effectively a cap on the maximum record size. Note that the server
-     * has its own cap on record size which may be different from this. This setting will limit the number of record
-     * batches the producer will send in a single request to avoid sending huge requests.
+     * The maximum size of a request in bytes. This setting will limit the number of record batches the producer will
+     * send in a single request to avoid sending huge requests. This is also effectively a cap on the maximum
+     * uncompressed record batch size. Note that the server has its own cap on the record batch size (after compression
+     * if compression is enabled) which may be different from this.
      */
     public void setMaxRequestSize(Integer maxRequestSize) {
         this.maxRequestSize = maxRequestSize;
@@ -783,8 +797,11 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
 
     /**
      * The maximum number of unacknowledged requests the client will send on a single connection before blocking. Note
-     * that if this setting is set to be greater than 1 and there are failed sends, there is a risk of message
-     * re-ordering due to retries (i.e., if retries are enabled).
+     * that if this setting is set to be greater than 1 and enableIdempotence is set to false, there is a risk of
+     * message reordering after a failed send due to retries (i.e., if retries are enabled); if retries are disabled or
+     * if enableIdempotence is set to true, ordering will be preserved. Additionally, enabling idempotence requires the
+     * value of this setting to be less than or equal to 5, because the broker only retains at most 5 batches for each
+     * producer. If the value is more than 5, previous batches may be removed on the broker side.
      */
     public void setMaxInFlightRequest(Integer maxInFlightRequest) {
         this.maxInFlightRequest = maxInFlightRequest;
@@ -797,9 +814,11 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     /**
      * The expected time between heartbeats to the consumer coordinator when using Kafka's group management facilities.
      * Heartbeats are used to ensure that the consumer's session stays active and to facilitate rebalancing when new
-     * consumers join or leave the group. The value must be set lower than session.timeout.ms, but typically should be
-     * set no higher than 1/3 of that value. It can be adjusted even lower to control the expected time for normal
-     * rebalances.
+     * consumers join or leave the group. This option is only used when groupProtocol is set to classic. In that case,
+     * the value must be set lower than sessionTimeoutMs, but typically should be set no higher than 1/3 of that value.
+     * It can be adjusted even lower to control the expected time for normal rebalances. When groupProtocol is set to
+     * consumer, the heartbeat interval is controlled by the broker with group.consumer.heartbeat.interval.ms, and this
+     * option is left out of the consumer configuration.
      */
     public void setHeartbeatIntervalMs(Integer heartbeatIntervalMs) {
         this.heartbeatIntervalMs = heartbeatIntervalMs;
@@ -825,7 +844,13 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * The timeout used to detect failures when using Kafka's group management facilities.
+     * The timeout used to detect client failures when using Kafka's group management facility. The client sends
+     * periodic heartbeats to indicate its liveness to the broker. If no heartbeats are received by the broker before
+     * the expiration of this session timeout, then the broker will remove this client from the group and initiate a
+     * rebalance. Note that the value must be in the allowable range as configured in the broker configuration by
+     * group.min.session.timeout.ms and group.max.session.timeout.ms. This option is only used when groupProtocol is set
+     * to classic. When groupProtocol is set to consumer, the session timeout is controlled by the broker with
+     * group.consumer.session.timeout.ms, and this option is left out of the consumer configuration.
      */
     public void setSessionTimeoutMs(Integer sessionTimeoutMs) {
         this.sessionTimeoutMs = sessionTimeoutMs;

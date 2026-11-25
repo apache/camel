@@ -181,9 +181,11 @@ public interface KafkaShareComponentBuilderFactory {
     
         /**
          * A list of classes to use as metrics reporters. Implementing the
-         * MetricReporter interface allows plugging in classes that will be
-         * notified of new metric creation. The JmxReporter is always included
-         * to register JMX statistics.
+         * org.apache.kafka.common.metrics.MetricsReporter interface allows
+         * plugging in classes that will be notified of new metric creation.
+         * When custom reporters are set and
+         * org.apache.kafka.common.metrics.JmxReporter is needed, it has to be
+         * explicitly added to the list.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -234,7 +236,7 @@ public interface KafkaShareComponentBuilderFactory {
         
         /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
-         * data.
+         * data. If the value is -1, the OS default will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -272,10 +274,12 @@ public interface KafkaShareComponentBuilderFactory {
     
         
         /**
-         * The amount of time to wait before attempting to reconnect to a given
-         * host. This avoids repeatedly connecting to a host in a tight loop.
-         * This backoff applies to all requests sent by the consumer to the
-         * broker.
+         * The base amount of time to wait before attempting to reconnect to a
+         * given host. This avoids repeatedly connecting to a host in a tight
+         * loop. This backoff applies to all connection attempts by the client
+         * to a broker. This value is the initial backoff value and will
+         * increase exponentially for each consecutive connection failure, up to
+         * the reconnectBackoffMaxMs value.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -339,7 +343,8 @@ public interface KafkaShareComponentBuilderFactory {
     
         
         /**
-         * Socket write buffer size.
+         * The size of the TCP send buffer (SO_SNDBUF) to use when sending data.
+         * If the value is -1, the OS default will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -1083,10 +1088,11 @@ public interface KafkaShareComponentBuilderFactory {
          * (typically operating system usernames). The rules are evaluated in
          * order, and the first rule that matches a principal name is used to
          * map it to a short name. Any later rules in the list are ignored. By
-         * default, principal names of the form {username}/{hostname}{REALM} are
-         * mapped to {username}. For more details on the format, please see the
-         * Security Authorization and ACLs documentation (at the Apache Kafka
-         * project website). Multiple values can be separated by comma.
+         * default, principal names made of a username, a hostname and a
+         * Kerberos realm are mapped to the username. For more details on the
+         * format, please see the Security Authorization and ACLs documentation
+         * (at the Apache Kafka project website). Multiple values can be
+         * separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1462,17 +1468,18 @@ public interface KafkaShareComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * The list of protocols enabled for SSL connections. The default is
-         * TLSv1.2,TLSv1.3 when running with Java 11 or newer, TLSv1.2
-         * otherwise. With the default value for Java 11, clients and servers
-         * will prefer TLSv1.3 if both support it and fallback to TLSv1.2
-         * otherwise (assuming both support at least TLSv1.2). This default
-         * should be fine for most cases. Also see the config documentation for
-         * SslProtocol.
+         * TLSv1.2,TLSv1.3. This means that clients and servers will prefer
+         * TLSv1.3 if both support it and fallback to TLSv1.2 otherwise
+         * (assuming both support at least TLSv1.2). This default should be fine
+         * for most use cases. Also see the documentation of sslProtocol to
+         * understand how it can impact the TLS version negotiation behavior.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          * 
          * @param sslEnabledProtocols the value to set
@@ -1574,7 +1581,7 @@ public interface KafkaShareComponentBuilderFactory {
         
         /**
          * The file format of the key store file. This is optional for the
-         * client. The default value is JKS.
+         * client. The supported values are JKS, PKCS12 and PEM.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1589,20 +1596,20 @@ public interface KafkaShareComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * The SSL protocol used to generate the SSLContext. The default is
-         * TLSv1.3 when running with Java 11 or newer, TLSv1.2 otherwise. This
-         * value should be fine for most use cases. Allowed values in recent
-         * JVMs are TLSv1.2 and TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may
-         * be supported in older JVMs, but their usage is discouraged due to
-         * known security vulnerabilities. With the default value for this
-         * config and sslEnabledProtocols, clients will downgrade to TLSv1.2 if
-         * the server does not support TLSv1.3. If this config is set to
-         * TLSv1.2, clients will not use TLSv1.3 even if it is one of the values
-         * in sslEnabledProtocols and the server only supports TLSv1.3.
+         * TLSv1.3, which should be fine for most use cases. A typical
+         * alternative to the default is TLSv1.2. Allowed values for this config
+         * are dependent on the JVM. Clients using the defaults for this config
+         * and sslEnabledProtocols will downgrade to TLSv1.2 if the server does
+         * not support TLSv1.3. If this config is set to TLSv1.2, however,
+         * clients will not use TLSv1.3 even if it is one of the values in
+         * sslEnabledProtocols and the server only supports TLSv1.3.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: TLSv1.3
          * Group: security
          * 
          * @param sslProtocol the value to set
@@ -1683,7 +1690,8 @@ public interface KafkaShareComponentBuilderFactory {
     
         
         /**
-         * The file format of the trust store file. The default value is JKS.
+         * The file format of the trust store file. The supported values are
+         * JKS, PKCS12 and PEM.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
