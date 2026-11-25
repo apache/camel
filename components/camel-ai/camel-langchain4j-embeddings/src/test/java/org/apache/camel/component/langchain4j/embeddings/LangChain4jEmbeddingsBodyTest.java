@@ -17,10 +17,13 @@
 package org.apache.camel.component.langchain4j.embeddings;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -30,8 +33,10 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
@@ -56,6 +61,13 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
         LangChain4jEmbeddingsComponent component
                 = context.getComponent(LangChain4jEmbeddings.SCHEME, LangChain4jEmbeddingsComponent.class);
         component.getConfiguration().setEmbeddingModel(new AllMiniLmL6V2EmbeddingModel());
+
+        context.getTypeConverterRegistry().addTypeConverter(String.class, Headline.class, new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+                return type.cast(((Headline) value).text());
+            }
+        });
 
         return context;
     }
@@ -138,6 +150,71 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void charArrayBodyIsEmbeddedAsText() {
+        Message result = embed("hello chars".toCharArray());
+
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class).text())
+                .isEqualTo("hello chars");
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class)).isNotNull();
+    }
+
+    @Test
+    void byteBufferBodyIsEmbeddedAsText() {
+        Message result = embed(ByteBuffer.wrap("hello buffer".getBytes(StandardCharsets.UTF_8)));
+
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class).text())
+                .isEqualTo("hello buffer");
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class)).isNotNull();
+    }
+
+    @Test
+    void byteArrayOutputStreamBodyIsEmbeddedAsText() {
+        Message result = embed(outputStreamOf("parsed by tika"));
+
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class).text())
+                .isEqualTo("parsed by tika");
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class)).isNotNull();
+    }
+
+    @Test
+    void batchWithAByteArrayOutputStreamElementIsEmbeddedAsText() {
+        Message result = embed(List.of("from a string", outputStreamOf("from an output stream")));
+
+        List<TextSegment> segments = result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENTS, List.class);
+        assertThat(segments).extracting(TextSegment::text).containsExactly("from a string", "from an output stream");
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS, List.class)).hasSize(2);
+    }
+
+    @Test
+    void bodyWithItsOwnConverterToStringIsEmbeddedAsText() {
+        Message result = embed(new Headline("Camel 4.24 released"));
+
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class).text())
+                .isEqualTo("Camel 4.24 released");
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class)).isNotNull();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void batchWithACharArrayElementIsEmbeddedAsText() {
+        Message result = embed(List.of("from a string", "from chars".toCharArray()));
+
+        List<TextSegment> segments = result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENTS, List.class);
+        assertThat(segments).extracting(TextSegment::text).containsExactly("from a string", "from chars");
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS, List.class)).hasSize(2);
+    }
+
+    @Test
+    void uuidBodyIsEmbeddedAsItsText() {
+        UUID uuid = UUID.randomUUID();
+
+        Message result = embed(uuid);
+
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class).text())
+                .isEqualTo(uuid.toString());
+    }
+
+    @Test
     void noBodyFails() {
         assertThatThrownBy(() -> template.requestBody("langchain4j-embeddings:test", (Object) null))
                 .isInstanceOf(CamelExecutionException.class)
@@ -149,7 +226,9 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
         Exchange exchange = send(Map.of("text", "hello map"));
 
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("convert the body to text");
+                .hasMessageContaining("Camel reads this value only as its toString()")
+                .hasMessageContaining("marshal it first")
+                .hasMessageContaining("convertBodyTo(String.class)");
         assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING)).isNull();
         assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT)).isNull();
     }
@@ -159,7 +238,9 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
         Exchange exchange = send(new Note("hello pojo"));
 
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("convert the body to text");
+                .hasMessageContaining("Camel reads this value only as its toString()")
+                .hasMessageContaining("marshal it first")
+                .hasMessageContaining("convertBodyTo(String.class)");
         assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING)).isNull();
         assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT)).isNull();
     }
@@ -220,9 +301,19 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
     private record Note(String text) {
     }
 
+    /** A type with its own converter to String, registered on the context, whose toString() is not its text. */
+    private record Headline(String text) {
+    }
+
     private Message embed(Object body) {
         return fluentTemplate.to("langchain4j-embeddings:test")
                 .withBody(body)
                 .request(Message.class);
+    }
+
+    private static ByteArrayOutputStream outputStreamOf(String text) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.writeBytes(text.getBytes(StandardCharsets.UTF_8));
+        return out;
     }
 }

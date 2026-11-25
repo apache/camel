@@ -50,11 +50,16 @@ The component accepts two types of input:
 * **Single text**: A String containing the text to embed
 * **Batch processing**: A List<String> containing multiple texts to embed at once
 
-Bytes, a stream, a `Reader` or a file is read as text, and a Spring AI `Document` is embedded as its text, as a body
-and as an element of a List. Any other body or List element, such as a `Map`, a POJO or a number, fails the exchange
-with an `InvalidPayloadException` instead of being embedded as its `toString()`: turn it into text first, with
-`convertBodyTo(String.class)` or a marshal to JSON, say. No body, or a `null` element in a List, fails the exchange
-with an `IllegalArgumentException`.
+Bytes, a stream, a `Reader` or a file is read as text, and so is any other value Camel converts to its text, such as
+a `char[]`, a `ByteBuffer`, a Netty `ByteBuf`, a number or a type with its own type converter to `String`. A `UUID`, a
+`URI`, a `URL`, a `java.time` value or a `Date` is embedded as its `toString()`, which is its text, and a Spring AI
+`Document` as its text. This holds for the body and for each element of a List.
+
+Any other body or List element, such as a `Map` or a POJO, fails the exchange with an `InvalidPayloadException`
+instead of being embedded as its `toString()`, since that is all Camel reads of it. The rule is the text itself: a
+value fails when the text Camel gives for it is no more than its `toString()`. Marshal such a body first, to JSON, say,
+or, when its `toString()` is the text to embed, convert it with `convertBodyTo(String.class)`. No body, or a `null`
+element in a List, fails the exchange with an `IllegalArgumentException`.
 
 The embedding vectors are returned in the message body, with additional metadata available in headers.
 

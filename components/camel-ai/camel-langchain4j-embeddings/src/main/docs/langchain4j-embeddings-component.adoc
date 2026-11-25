@@ -229,11 +229,15 @@ YAML::
 
 The body is the text to embed: a `String` or a LangChain4j `TextSegment`. Bytes, a stream and a file (such as the
 body of a `file` consumer) are read as text, so a `from("file:...")` route needs no `convertBodyTo(String.class)`.
-A non-empty `List` of them is embedded in one batch.
+So is any other value Camel converts to its text, such as a `char[]`, a `ByteBuffer`, a Netty `ByteBuf`, a number or a
+type with its own type converter to `String`, and a `UUID`, a `URI`, a `URL`, a `java.time` value or a `Date` is
+embedded as its `toString()`, which is its text. A non-empty `List` of them is embedded in one batch.
 
 Any other body, or element of a `List` body, such as a `Map` or a POJO, fails the exchange with an
-`InvalidPayloadException` instead of being embedded as its `toString()`: turn it into text first, with
-`convertBodyTo(String.class)` or a marshal to JSON, say. No body fails too.
+`InvalidPayloadException` instead of being embedded as its `toString()`, since that is all Camel reads of it. The rule
+is the text itself: a value fails when the text Camel gives for it is no more than its `toString()`. Marshal such a
+body first, to JSON, say, or, when its `toString()` is the text to embed, convert it with
+`convertBodyTo(String.class)`. No body fails too.
 
 The body is kept. A single text sets the `CamelLangChain4jEmbeddingsEmbedding`, `CamelLangChain4jEmbeddingsVector`
 and `CamelLangChain4jEmbeddingsTextSegment` headers, and a `List` the `CamelLangChain4jEmbeddingsEmbeddings` and
