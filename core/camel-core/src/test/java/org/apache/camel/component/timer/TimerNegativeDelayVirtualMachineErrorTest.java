@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -37,11 +38,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A VirtualMachineError (StackOverflowError) thrown in a timer route with a negative delay (executor path) ends the
- * fire loop of the route, and the consumer logs it at ERROR with the route to restart.
+ * A VirtualMachineError (StackOverflowError) thrown in a timer route with a negative delay (executor path) fails the
+ * exchange, ends the fire loop of the route, and the consumer logs at ERROR which route to restart (CAMEL-27515).
  *
  * @see <a href="https://issues.apache.org/jira/browse/CAMEL-27470">CAMEL-27470</a>
  */
@@ -59,8 +61,8 @@ class TimerNegativeDelayVirtualMachineErrorTest extends ContextTestSupport {
             @Override
             public void append(LogEvent event) {
                 String message = event.getMessage().getFormattedMessage();
-                // other tests run in parallel: keep only the lines of this route
-                if (event.getLoggerName().equals(TimerConsumer.class.getName()) && message.contains(ROUTE_ID)) {
+                // other tests run in parallel: keep only the line of this route that says that its consumer stopped
+                if (event.getLoggerName().equals(DefaultConsumer.class.getName()) && message.contains(ROUTE_ID)) {
                     errors.add(message);
                 }
             }
@@ -84,22 +86,19 @@ class TimerNegativeDelayVirtualMachineErrorTest extends ContextTestSupport {
         // started here, once the appender is in place
         context.getRouteController().startRoute(ROUTE_ID);
 
-        // without the catch of the executor path, the Error would go to the uncaught exception handler of the thread,
-        // and the consumer would log nothing
+        // the exchange fails with the Error (CAMEL-27515), and the consumer stops: it logs which route to restart
         await().atMost(10, TimeUnit.SECONDS).until(() -> !errors.isEmpty());
         String error = errors.get(0);
-        assertTrue(error.contains("route: " + ROUTE_ID), error);
-        assertTrue(error.contains("The route no longer fires until it is restarted."), error);
+        assertTrue(error.contains("of route " + ROUTE_ID), error);
+        assertTrue(error.contains("until the route is restarted"), error);
+        TimerConsumer consumer = (TimerConsumer) context.getRoute(ROUTE_ID).getConsumer();
+        assertInstanceOf(StackOverflowError.class, consumer.getFatalError());
 
         // the loop has ended: the route does not fire again
         await().during(Duration.ofMillis(500)).atMost(2, TimeUnit.SECONDS).until(() -> fired.get() == 1);
         assertEquals(1, errors.size());
-    }
-
-    @Override
-    protected int getShutdownTimeout() {
-        // the exchange that failed with a VirtualMachineError stays inflight (CAMEL-27515)
-        return 1;
+        // the failed exchange completed: nothing stays inflight
+        assertEquals(0, context.getInflightRepository().size());
     }
 
     @Override

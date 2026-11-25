@@ -72,9 +72,6 @@ public class ContractAdvice implements CamelInternalProcessorAdvice<Object> {
                     doValidate(exchange.getIn(), to);
                 }
             }
-        } catch (VirtualMachineError e) {
-            // left as before, as in DelegateSyncProcessor
-            throw e;
         } catch (Throwable e) {
             // also an Error of a transformer or validator: thrown on, it would leave the advices of the route without
             // their after tasks (CAMEL-26741)
@@ -108,9 +105,6 @@ public class ContractAdvice implements CamelInternalProcessorAdvice<Object> {
                     doValidate(target, to);
                 }
             }
-        } catch (VirtualMachineError e) {
-            // left as before, as in DelegateSyncProcessor
-            throw e;
         } catch (Throwable e) {
             // also an Error of a transformer or validator: thrown on, it would leave the advices of the route without
             // their after tasks (CAMEL-26741)

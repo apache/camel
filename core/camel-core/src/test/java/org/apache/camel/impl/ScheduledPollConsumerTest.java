@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScheduledPollConsumerTest extends ContextTestSupport {
@@ -130,37 +129,76 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
 
     @Test
     public void testErrorOnPollStopsPollingAndHealthCheckIsDown() {
-        final LinkageError expectedError = new LinkageError("Simulated error on poll");
+        final OutOfMemoryError expectedError = new OutOfMemoryError("Simulated error on poll");
         final AtomicInteger rollbacks = new AtomicInteger();
         MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, rollbacks);
         consumer.start();
         pollUntilErrorIsNext(consumer);
 
-        // the Error ends the scheduled task, so the scheduler does not run it again
-        LinkageError thrown = assertThrows(LinkageError.class, consumer::run);
-        assertSame(expectedError, thrown);
-        // an Error is not an exception the poll strategy can retry
+        // the VirtualMachineError stops the consumer (it is not thrown on, which would end the task silently)
+        consumer.run();
+        assertSame(expectedError, consumer.getFatalError());
+        assertFalse(consumer.isRunAllowed());
+        // it is not an exception the poll strategy can retry
         assertEquals(0, rollbacks.get());
 
         HealthCheck.Result result = consumer.getHealthCheck().call();
         assertEquals(HealthCheck.State.DOWN, result.getState());
         assertSame(expectedError, result.getError().orElse(null));
 
+        // a later run does not poll, and leaves the state of the polls as it is
+        long counter = consumer.getCounter();
+        long successCounter = consumer.getSuccessCounter();
+        long errorCounter = consumer.getErrorCounter();
+        consumer.run();
+        assertEquals(counter, consumer.getCounter());
+        assertEquals(successCounter, consumer.getSuccessCounter());
+        assertEquals(errorCounter, consumer.getErrorCounter());
+
+        consumer.stop();
+    }
+
+    @Test
+    public void testOtherErrorOnPollIsFailedPoll() {
+        // such as a NoClassDefFoundError of a client library
+        final LinkageError expectedError = new LinkageError("Simulated error on poll");
+        final AtomicInteger rollbacks = new AtomicInteger();
+        MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, rollbacks);
+        consumer.start();
+        pollUntilErrorIsNext(consumer);
+
+        // a failed poll, as for an exception: rolled back, and the consumer polls again
+        consumer.run();
+        assertEquals(1, rollbacks.get());
+        assertNull(consumer.getFatalError());
+        assertTrue(consumer.isRunAllowed());
+        HealthCheck.Result result = consumer.getHealthCheck().call();
+        assertEquals(HealthCheck.State.DOWN, result.getState());
+        assertSame(expectedError, result.getError().map(Throwable::getCause).orElse(null));
+
+        // the next successful poll reports the consumer as healthy again
+        consumer.run();
+        assertEquals(HealthCheck.State.UP, consumer.getHealthCheck().call().getState());
+
         consumer.stop();
     }
 
     @Test
     public void testErrorOnPollKeepsHealthCheckDownUntilRestart() {
-        final LinkageError expectedError = new LinkageError("Simulated error on poll");
-        MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, new AtomicInteger());
+        final StackOverflowError expectedError = new StackOverflowError("Simulated error on poll");
+        final AtomicInteger rollbacks = new AtomicInteger();
+        MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, rollbacks);
         consumer.start();
         pollUntilErrorIsNext(consumer);
-        assertThrows(LinkageError.class, consumer::run);
+        consumer.run();
         assertEquals(HealthCheck.State.DOWN, consumer.getHealthCheck().call().getState());
 
-        // with concurrentConsumers > 1 the other tasks keep polling: a successful poll must not report the
-        // consumer as healthy again, as it now polls with one task less
+        // with concurrentConsumers > 1 the other tasks stop polling too: a later run does not poll (such a poll would
+        // fail and be rolled back), and does not report the consumer as healthy again
+        consumer.setExceptionToThrowOnPoll(new Exception("Simulated exception on a later poll"));
         consumer.run();
+        assertEquals(0, rollbacks.get());
+        consumer.setExceptionToThrowOnPoll(null);
         HealthCheck.Result result = consumer.getHealthCheck().call();
         assertEquals(HealthCheck.State.DOWN, result.getState());
         assertSame(expectedError, result.getError().orElse(null));
@@ -203,7 +241,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
     @Test
     public void testErrorFromRollbackStopsPollingAndHealthCheckIsDown() {
         final Exception pollException = new Exception("Simulated exception on poll");
-        final LinkageError expectedError = new LinkageError("Simulated error on rollback");
+        final InternalError expectedError = new InternalError("Simulated error on rollback");
         MockScheduledPollConsumer consumer = createConsumerWithException(pollException, expectedError);
         consumer.start();
 
@@ -214,17 +252,19 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
 
     private static void assertErrorStopsPollingAndHealthCheckIsDown(
             MockScheduledPollConsumer consumer, Error expectedError, Exception pollException) {
-        // the Error ends the scheduled task, so the scheduler does not run it again
-        Error thrown = assertThrows(Error.class, consumer::run);
-        assertSame(expectedError, thrown);
+        // the VirtualMachineError stops the consumer
+        consumer.run();
+        assertSame(expectedError, consumer.getFatalError());
+        assertFalse(consumer.isRunAllowed());
 
         HealthCheck.Result result = consumer.getHealthCheck().call();
         assertEquals(HealthCheck.State.DOWN, result.getState());
         assertSame(expectedError, result.getError().orElse(null));
         // the exception that was being handled is kept with the Error
-        assertArrayEquals(new Throwable[] { pollException }, thrown.getSuppressed());
+        assertArrayEquals(new Throwable[] { pollException }, expectedError.getSuppressed());
 
-        // a poll by another task (scheduler.concurrentConsumers > 1) does not report the consumer as healthy again
+        // a later run (such as of another task with scheduler.concurrentConsumers > 1) does not poll, and does not report
+        // the consumer as healthy again
         consumer.setExceptionToThrowOnPoll(null);
         consumer.run();
         assertEquals(HealthCheck.State.DOWN, consumer.getHealthCheck().call().getState());
@@ -254,25 +294,28 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testErrorOnPollWithOtherSchedulerIsTheLastError() {
-        // such as the Spring or Quartz scheduler, which keep running the task after an Error
-        final LinkageError expectedError = new LinkageError("Simulated error on poll");
-        MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, new AtomicInteger());
+    public void testErrorOnPollWithOtherSchedulerStopsPolling() {
+        // such as the Spring or Quartz scheduler, which keep running the task after it threw
+        final OutOfMemoryError expectedError = new OutOfMemoryError("Simulated error on poll");
+        final AtomicInteger rollbacks = new AtomicInteger();
+        MockScheduledPollConsumer consumer = createConsumerWithError(expectedError, rollbacks);
         consumer.setScheduler(new OtherScheduler());
         consumer.start();
         pollUntilErrorIsNext(consumer);
 
-        // the Error is still thrown to the scheduler
-        assertSame(expectedError, assertThrows(LinkageError.class, consumer::run));
-        // but the task keeps polling, so the consumer is not kept DOWN until restart
-        assertNull(consumer.getFatalError());
+        // the consumer stops, also with this scheduler
+        consumer.run();
+        assertSame(expectedError, consumer.getFatalError());
         HealthCheck.Result result = consumer.getHealthCheck().call();
         assertEquals(HealthCheck.State.DOWN, result.getState());
         assertSame(expectedError, result.getError().orElse(null));
 
-        // the next successful poll reports the consumer as healthy again, as for an exception
+        // the scheduler runs the task again, but it does not poll (such a poll would fail and be rolled back), and the
+        // consumer stays DOWN until restart
+        consumer.setExceptionToThrowOnPoll(new Exception("Simulated exception on a later poll"));
         consumer.run();
-        assertEquals(HealthCheck.State.UP, consumer.getHealthCheck().call().getState());
+        assertEquals(0, rollbacks.get());
+        assertEquals(HealthCheck.State.DOWN, consumer.getHealthCheck().call().getState());
 
         consumer.stop();
     }

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -122,17 +122,19 @@ class ContractAndTransactedThrowErrorTest extends ContextTestSupport {
     }
 
     @Test
-    void virtualMachineErrorOfTheProcessorOfATransactedExchangeIsLeftAsBefore() throws Exception {
-        CamelInternalProcessor internal = new CamelInternalProcessor(context, new ThrowingProcessor(new StackOverflowError()));
+    void virtualMachineErrorOfTheProcessorOfATransactedExchangeFailsTheExchange() throws Exception {
+        StackOverflowError error = new StackOverflowError();
+        CamelInternalProcessor internal = new CamelInternalProcessor(context, new ThrowingProcessor(error));
         ServiceHelper.startService(internal);
         try {
             Exchange exchange = new DefaultExchange(context);
             exchange.getExchangeExtension().setTransacted(true);
             AtomicInteger done = new AtomicInteger();
 
-            // thrown on after the callback was called, as before
-            assertThrows(StackOverflowError.class, () -> internal.process(exchange, doneSync -> done.incrementAndGet()));
+            // as any other Error (CAMEL-27515): the exchange fails with it, so the transaction rolls back
+            internal.process(exchange, doneSync -> done.incrementAndGet());
             assertEquals(1, done.get());
+            assertSame(error, assertInstanceOf(CamelExecutionException.class, exchange.getException()).getCause());
         } finally {
             ServiceHelper.stopService(internal);
         }

@@ -68,12 +68,6 @@ public class TimerVirtualMachineErrorTest extends ContextTestSupport {
     }
 
     @Override
-    protected int getShutdownTimeout() {
-        // the exchange that failed with a VirtualMachineError can stay inflight (CAMEL-27515)
-        return 1;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override

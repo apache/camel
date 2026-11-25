@@ -240,13 +240,17 @@ messages, and grew with each one. An exception from a predicate of `onException`
 Split is no longer added to it either, and is logged instead. Use `throwException(MyException.class, "...")`, or
 `exceptionType` and `message`, to get a new exception for each message, with the previous exception as suppressed.
 
-=== camel-support - a scheduled poll consumer is DOWN after an Error until the route is restarted
+=== camel-support - a scheduled poll consumer is DOWN after a VirtualMachineError until the route is restarted
 
-When a poll of a scheduled poll consumer with the default scheduler throws an `Error` (such as an `OutOfMemoryError`
-from the route), the scheduled task that ran it stops polling. Previously the health check of the consumer stayed UP in
-this case; now it flips to DOWN, with the `Error`, and stays DOWN until the route is restarted, even if other tasks
-(`scheduler.concurrentConsumers`) keep polling. The restart may wait for the shutdown timeout, as the failed exchange
-may stay inflight (see xref:error-handler.adoc#_an_error_thrown_by_a_processor[An Error thrown by a processor]).
+When a poll of a scheduled poll consumer (such as `file`, `ftp` or `scheduler`) fails with a `VirtualMachineError`
+(such as an `OutOfMemoryError` thrown by the poll, or by the route of the polled message, which does not catch it), the
+consumer stops polling until the route is restarted, with any scheduler and also with `scheduler.concurrentConsumers`
+greater than 1. Its health check flips to DOWN, with the error, and stays DOWN until the route is restarted. Previously,
+with the default scheduler, the scheduled task that ran the poll stopped polling, and the health check stayed UP; the
+Spring and Quartz schedulers kept running the task. Another `Error` of the poll (such as a `NoClassDefFoundError` of a
+client library) is now a failed poll, as an exception, and the consumer polls again; previously, with the default
+scheduler, it also ended the scheduled task. See the section "camel-core - a VirtualMachineError fails the exchange,
+and Camel does not recover from it".
 
 === camel-core - a to with an expression in its endpoint uri logs a WARN
 
@@ -2120,8 +2124,8 @@ an advice, the error handler of that route does not get it. An `Error` of a `Rou
 `onExchangeDone`) is logged at WARN and ignored, as an exception already was, so an assertion inside a `RoutePolicy`
 no longer fails the caller. Before, the `Error` was thrown on to the code that ran the route or the send (such as the
 consumer, or the caller of a `ProducerTemplate`), and the exchange could stay inflight (an asynchronous send with a
-result processor could never complete when the endpoint answered on another thread). A `VirtualMachineError` is left
-as before.
+result processor could never complete when the endpoint answered on another thread). For a `VirtualMachineError`, see
+the section "camel-core - a VirtualMachineError fails the exchange, and Camel does not recover from it".
 
 === camel-core - an AsyncProcessor that throws in a step without an error handler fails the exchange
 
@@ -2162,7 +2166,7 @@ exchange as an exception does (wrapped in a `CamelExecutionException`), also whe
 * by the watermark expression of a `split`: it fails that item, as an exception does. Before, it was thrown to the
   caller and the split exchange stayed inflight.
 
-A `VirtualMachineError` is left as before. See the next section.
+For a `VirtualMachineError`, see the section "camel-core - a VirtualMachineError fails the exchange, and Camel does not recover from it".
 
 === camel-core - an Error thrown by a Processor fails the exchange
 
@@ -2186,16 +2190,8 @@ failure: redelivery, `onException`, `doCatch` and a dead letter channel get it. 
 `onException(AssertionError.class)`
 
 |A `VirtualMachineError`, such as `OutOfMemoryError`, `StackOverflowError` or `InternalError`
-|Not changed by this entry: Camel's error handling does not get it (the JVM may no longer be in a consistent
-state, so the application should not handle it). It is not set on the exchange, but thrown on after the processor's
-callback was called. Depending on the error handler, the `Error` reaches the caller (and the exchange may stay
-inflight), or it is only logged and the route continues as if the processor had succeeded
+|The exchange fails with it too, but Camel does not recover from it on its own: see the next section
 |===
-
-An application with strict reliability needs should not rely on Camel to react to a `VirtualMachineError`. For an
-`OutOfMemoryError` that the JVM raises, it can let the JVM stop with `-XX:+ExitOnOutOfMemoryError` or
-`-XX:+CrashOnOutOfMemoryError` (these options do not cover a `StackOverflowError`, or an `OutOfMemoryError` that code
-throws itself).
 
 `template.send(...)`, `template.request(...)` and `template.asyncSend(...)` return the exchange (or its future) with the
 exception and do not throw it. `sendBody(...)` and `requestBody(...)` throw a `CamelExecutionException` that holds the
@@ -2227,6 +2223,56 @@ after it). The same applies to an `Error` that a part of a transacted `split`, `
 
 There is no option for the old behaviour. See also
 xref:error-handler.adoc#_an_error_thrown_by_a_processor[An Error thrown by a processor].
+
+=== camel-core - a VirtualMachineError fails the exchange, and Camel does not recover from it
+
+A `VirtualMachineError` (such as `OutOfMemoryError`, `StackOverflowError` or `InternalError`) thrown in a route now fails
+its exchange, as any other `Error`, but Camel does not recover from it on its own (CAMEL-27515). Before, it was thrown on
+after the callback of the step was called: the rest of the route ran later, on the next exchange of the same thread, as
+if the step had succeeded (or at once, with a dead letter channel, redelivery or an `onException`), the caller could get
+a success reply, and the exchange could stay inflight. Compared with 4.23:
+
+* The caller gets the failure: `sendBody(...)` and `requestBody(...)` throw a `CamelExecutionException` caused by the
+  `Error` (before: the raw `Error`), and `send(...)` returns the failed exchange (before: it threw the `Error`).
+* Redelivery, a dead letter channel, the fallback of a circuit breaker, the failover of a load balancer (unless its
+  `failover` names the error or a supertype) and the error thresholds of a split do not recover from it, also for a
+  bean method (before: redelivery and the dead letter channel did for a bean method). A `VirtualMachineError` thrown by
+  a dead letter route, or by an `onPrepareFailure` or `onExceptionOccurred` processor, fails the exchange, and an
+  `onExceptionOccurred` processor cannot replace it with another exception.
+* A sequential `multicast`, `split` or `recipientList` stops at the first output that fails with it, as with
+  `stopOnException`, and fails with it (before: the next outputs were called, and a later exception could replace it).
+  With `parallelProcessing`, the outputs already submitted still run, and the exchange still fails with it, also when
+  another output fails later or the aggregation strategy ignores the failures (but not when the output fails after the
+  `multicast` or `split` has completed, such as on its `timeout`).
+* An `onException` that names it handles it without the redelivery of the error handler, and without its dead letter
+  channel: it is redelivered only when that `onException` says so.
+* Only an `onException` or a `doCatch` that names it or a supertype handles it, as a Java `catch`: `Throwable`, `Error`,
+  `VirtualMachineError` or its own class. `onException(Exception.class)` and `doCatch(Exception.class)` do not.
+  To keep moving a message whose processing overflows the stack to a dead letter endpoint (as a dead letter channel did
+  for a bean method), name the error, for example
+  `onException(StackOverflowError.class).handled(true).to(ExchangePattern.InOnly, "jms:queue:dead")`.
+  Name `StackOverflowError` rather than `VirtualMachineError`: while the JVM is short of memory, many messages can fail
+  with an `OutOfMemoryError`, and each one would be moved to the dead letter endpoint.
+* `doFinally` runs, as a Java `finally`, and `onCompletion` runs as for any failed exchange (before: neither ran).
+* It is logged once at ERROR, and the `ExchangeFailedEvent` carries it.
+* A consumer that pulls work in a loop (a polling consumer, `timer`, `seda`, the hazelcast `seda` and queue consumers)
+  stops when an exchange fails with
+  it and the route does not catch it: it logs which route to restart, and its health check reports DOWN until the route
+  is restarted. Before, the error ended some loops silently (a polling task, a `seda` thread, every route on a shared
+  `timer`) and left others running. A consumer that is pushed requests (such as HTTP or `direct`) only fails that
+  request. A route that catches the `Error` explicitly keeps its consumer going. Not yet covered: a batch consumer that
+  does not check between the messages of a batch whether it may go on (such as `aws2-kinesis` or `couchdb`) routes the
+  rest of the batch it has already fetched before it stops, and a `VirtualMachineError` thrown by a `RoutePolicy`
+  fails the exchange without stopping the consumer.
+* A polling consumer whose poll throws another `Error` (such as a `NoClassDefFoundError` of a client library) treats it
+  as a failed poll and polls again, as for an exception. Before, the poll task ended (with the default scheduler).
+* `kafka` and `kafka-share` do not stop: a record whose exchange fails with a `VirtualMachineError` is handled as any
+  failed record (see `breakOnFirstError`). A `VirtualMachineError` of the Kafka client in the poll loop now terminates
+  the consumer visibly, logged and with its health check DOWN, as another `Error` already did. Before, it ended the loop
+  silently.
+
+Camel does not restart a route, a pod or the JVM after such an error: that is up to the application or the platform.
+See xref:error-handler.adoc[Error Handler] for how to log and then shut down gracefully.
 
 === camel-core - variableReceive into a route or group variable stores the header variables in that route or group
 
@@ -5544,21 +5590,15 @@ The `aws2-ddbstream` consumer now reads a closed shard to its end before it read
 shard rotation the consumer started again from `streamIteratorType`: with `FROM_START` it routed records of the stream
 again, and with `FROM_LATEST` it skipped records already written to the new shards.
 
-=== camel-bean - a VirtualMachineError thrown by a bean method is no longer given to the error handler
+=== camel-bean - a VirtualMachineError thrown by a bean method is only handled by a clause that names it
 
 A bean method that throws a `VirtualMachineError` (such as `OutOfMemoryError`, `StackOverflowError` or
-`InternalError`) is now handled as a bean that is a `Processor`: Camel's error handling does not get it (the JVM may no
-longer be in a consistent state, so the application should not handle it). It is not set on the exchange, but thrown on
-after the callback of the bean was called. Depending on the error handler, the `Error` reaches the caller (and the
-exchange may stay inflight), or it is only logged and the route continues as if the bean method had succeeded.
-
-Before, the bean component set any `Error` of a bean method on the exchange, so `onException`, `doCatch`, redelivery
-and a dead letter channel also handled an `OutOfMemoryError` or a `StackOverflowError`. Any other `Error` of a bean
-method, such as an `AssertionError`, still fails the exchange and goes to the error handler, as before.
-
-An application with strict reliability needs should not rely on Camel to react to a `VirtualMachineError`. For an
-`OutOfMemoryError` that the JVM raises, it can let the JVM stop with `-XX:+ExitOnOutOfMemoryError` or
-`-XX:+CrashOnOutOfMemoryError`.
+`InternalError`) fails the exchange, but redelivery and a dead letter channel no longer get it: only an `onException`
+or a `doCatch` that names it or a supertype (such as `Throwable`) handles it. See the section "camel-core - a
+VirtualMachineError fails the exchange, and Camel does not recover from it". Before, the bean component set any `Error`
+of a bean method on the exchange, so `onException(Exception.class)`, `doCatch(Exception.class)`, redelivery and a dead
+letter channel also handled an `OutOfMemoryError` or a `StackOverflowError`. Any other `Error` of a bean method, such as
+an `AssertionError`, still fails the exchange and goes to the error handler, as before.
 
 === camel-beanio - BeanIOSplitter decodes files and streams with the charset of the exchange or its encoding
 

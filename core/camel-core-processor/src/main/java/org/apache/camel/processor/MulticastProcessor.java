@@ -89,6 +89,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import static org.apache.camel.processor.ProcessorHelper.prepareMDCParallelTask;
+import static org.apache.camel.util.ObjectHelper.getVirtualMachineError;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -357,9 +358,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                         return doProcess(exchange, callback);
                     }
                 }, exchange);
-            } catch (VirtualMachineError e) {
-                // left as before (thrown on after the callback), as in DelegateSyncProcessor
-                throw e;
             } catch (Throwable e) {
                 // also an Error (such as one of an expression): the callback is called in finally, so an Error thrown
                 // on after it would not fail the exchange
@@ -383,9 +381,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                         .stream().filter(Objects::nonNull).toList();
                 size = ((Collection<ProcessorExchangePair>) pairs).size();
             }
-        } catch (VirtualMachineError e) {
-            // left as before (thrown on), as in DelegateSyncProcessor
-            throw e;
         } catch (Throwable e) {
             // also an Error, such as one of the split expression
             exchange.setException(e);
@@ -484,6 +479,8 @@ public class MulticastProcessor extends BaseProcessorSupport
          * can leave the index property of its own last part on the exchange).
          */
         final Map<Exchange, Integer> sentIndexes;
+        // the first failure of a sub-exchange that carries a VirtualMachineError (CAMEL-27515)
+        final AtomicReference<Exception> fatalFailure = new AtomicReference<>();
         @Deprecated(since = "4.19.0")
         final Map<String, String> mdc;
         final ScheduledFuture<?> timeoutTask;
@@ -565,6 +562,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 Exchange exchange;
                 while (!done.get() && (exchange = completion.poll()) != null) {
                     Integer index = sentIndexes != null ? sentIndexes.remove(exchange) : null;
+                    recordFatalFailure(exchange);
                     doAggregate(result, exchange, original);
                     if (handledIndexes != null && index != null) {
                         handledIndexes.set(index);
@@ -579,9 +577,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
             } catch (Exception e) {
                 doFailed(e);
-            } catch (VirtualMachineError e) {
-                // left as before, as in DelegateSyncProcessor
-                throw e;
             } catch (Throwable e) {
                 // also an Error of the aggregation strategy: thrown on, it would leave the exchange without its done
                 doFailed(e);
@@ -639,6 +634,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                         }
                     }
                     if (exchange != null) {
+                        recordFatalFailure(exchange);
                         doAggregate(result, exchange, original);
                         if (handledIndexes != null) {
                             handledIndexes.set(index);
@@ -649,8 +645,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                 doTimeoutDone(result.get(), true);
             } catch (Exception e) {
                 doTimeoutFailed(e);
-            } catch (VirtualMachineError e) {
-                throw e;
             } catch (Throwable e) {
                 // also an Error of the aggregation strategy
                 doTimeoutFailed(e);
@@ -673,6 +667,7 @@ public class MulticastProcessor extends BaseProcessorSupport
 
         protected void doTimeoutDone(Exchange exchange, boolean forceExhaust) {
             if (markDone()) {
+                keepFatalFailure(exchange);
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
         }
@@ -680,7 +675,40 @@ public class MulticastProcessor extends BaseProcessorSupport
         protected void doDone(Exchange exchange, boolean forceExhaust) {
             if (markDone()) {
                 cancelTimeoutTask();
+                keepFatalFailure(exchange);
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
+            }
+        }
+
+        /**
+         * Records the failure of a sub-exchange that carries a {@link VirtualMachineError}, before it is aggregated. In
+         * parallel the other outputs still complete, and a later failure or the aggregation strategy must not replace
+         * or drop it (CAMEL-27515).
+         */
+        private void recordFatalFailure(Exchange subExchange) {
+            Exception e = subExchange.getException();
+            if (getVirtualMachineError(e) != null) {
+                fatalFailure.compareAndSet(null, e);
+            }
+        }
+
+        /**
+         * Fails the result (or the original exchange) with the recorded failure that carries a
+         * {@link VirtualMachineError}, unless it already fails with one. Another exception of the result is added to it
+         * as suppressed.
+         */
+        private void keepFatalFailure(Exchange exchange) {
+            Exception fatal = fatalFailure.get();
+            if (fatal == null) {
+                return;
+            }
+            Exchange target = exchange != null ? exchange : original;
+            Exception other = target.getException();
+            if (getVirtualMachineError(other) == null) {
+                target.setException(fatal);
+                if (other != null && other != fatal) {
+                    ThrowExceptionProcessor.addSuppressed(target, fatal, other);
+                }
             }
         }
 
@@ -701,6 +729,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             if (markDone()) {
                 cancelTimeoutTask();
                 original.setException(e);
+                keepFatalFailure(null);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
             } else {
                 logFailedAfterDone(e);
@@ -720,6 +749,7 @@ public class MulticastProcessor extends BaseProcessorSupport
         protected void doTimeoutFailed(Throwable e) {
             if (markDone()) {
                 original.setException(e);
+                keepFatalFailure(null);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
             } else {
                 logFailedAfterDone(e);
@@ -866,8 +896,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
             } catch (Exception e) {
                 doFailed(e);
-            } catch (VirtualMachineError e) {
-                throw e;
             } catch (Throwable e) {
                 // also an Error of the iterator of a streaming split
                 doFailed(e);
@@ -905,8 +933,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                 } catch (Exception e) {
                     doFailed(e);
                     return;
-                } catch (VirtualMachineError e) {
-                    throw e;
                 } catch (Throwable e) {
                     // also an Error of the iterator
                     doFailed(e);
@@ -956,9 +982,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                 sync.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
-            } catch (VirtualMachineError e) {
-                // left as before (thrown on)
-                throw e;
             } catch (Throwable e) {
                 // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
                 exchange.setException(e);
@@ -1028,6 +1051,12 @@ public class MulticastProcessor extends BaseProcessorSupport
      * @return             {@code true} to continue processing despite the failure, {@code false} to stop
      */
     protected boolean shouldContinueOnFailure(Exchange subExchange, Exchange original, int index) {
+        if (!isParallelProcessing() && getVirtualMachineError(subExchange.getException()) != null) {
+            // a VirtualMachineError stops a sequential multicast, as stopOnException does: the next outputs are not
+            // called, as the next iterations of a Java loop (CAMEL-27515). In parallel, the other outputs are already
+            // submitted, so they complete as for any failure
+            return false;
+        }
         return !stopOnException;
     }
 
@@ -1142,7 +1171,8 @@ public class MulticastProcessor extends BaseProcessorSupport
                 && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
-            stoppedOnException = isStopOnException() || isStoppedOnFailure(original);
+            stoppedOnException = isStopOnException() || isStoppedOnFailure(original)
+                    || (subExchange != null && getVirtualMachineError(subExchange.getException()) != null);
             exception = true;
         }
 
@@ -1385,9 +1415,6 @@ public class MulticastProcessor extends BaseProcessorSupport
         if (onPrepare != null) {
             try {
                 onPrepare.process(exchange);
-            } catch (VirtualMachineError e) {
-                // left as before (thrown on)
-                throw e;
             } catch (Throwable e) {
                 // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
                 exchange.setException(e);

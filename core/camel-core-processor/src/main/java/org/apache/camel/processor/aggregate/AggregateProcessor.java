@@ -1155,12 +1155,11 @@ public class AggregateProcessor extends BaseProcessorSupport
         for (Exchange agg : aggregated) {
             try {
                 onSubmitCompletion(key, agg);
-            } catch (VirtualMachineError e) {
-                // left as before: a JVM-level failure is not handled here
-                throw e;
             } catch (RuntimeException | Error e) {
-                // also an Error of the aggregation strategy, as for an exception
-                if (failure == null) {
+                // also an Error of the aggregation strategy, as for an exception, but a VirtualMachineError is not hidden
+                // by the exception of an earlier group (CAMEL-27515)
+                if (failure == null || (ObjectHelper.getVirtualMachineError(e) != null
+                        && ObjectHelper.getVirtualMachineError(failure) == null)) {
                     failure = e;
                 }
             }

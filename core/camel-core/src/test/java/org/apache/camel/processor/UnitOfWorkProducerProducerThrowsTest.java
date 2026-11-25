@@ -212,7 +212,7 @@ class UnitOfWorkProducerProducerThrowsTest extends ContextTestSupport {
     }
 
     @Test
-    void testVirtualMachineErrorIsThrownOn() throws Exception {
+    void testVirtualMachineErrorFailsTheExchange() throws Exception {
         UnitOfWorkProducer producer = new UnitOfWorkProducer(new ThrowingEndpoint().createProducer());
         ServiceHelper.startService(producer);
         try {
@@ -220,9 +220,10 @@ class UnitOfWorkProducerProducerThrowsTest extends ContextTestSupport {
             exchange.getMessage().setHeader("mode", "vm");
             AtomicInteger done = new AtomicInteger();
 
-            // left as before (CAMEL-26741): a VirtualMachineError is not handled as a failure of the exchange
-            assertThrows(StackOverflowError.class, () -> producer.process(exchange, doneSync -> done.incrementAndGet()));
-            assertEquals(0, done.get());
+            // as any other Error (CAMEL-27515): the exchange fails with it, and the unit of work is done once
+            producer.process(exchange, doneSync -> done.incrementAndGet());
+            assertEquals(1, done.get());
+            assertInstanceOf(StackOverflowError.class, exchange.getException().getCause());
         } finally {
             ServiceHelper.stopService(producer);
         }

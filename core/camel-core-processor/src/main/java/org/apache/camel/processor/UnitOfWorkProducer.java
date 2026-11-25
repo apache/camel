@@ -129,8 +129,6 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
             SendCallback send = new SendCallback(producer, callback);
             try {
                 return processor.process(exchange, send);
-            } catch (VirtualMachineError e) {
-                throw e;
             } catch (Throwable e) {
                 // Throwable also covers a checked exception thrown sneakily
                 if (!send.compareAndSet(false, true)) {

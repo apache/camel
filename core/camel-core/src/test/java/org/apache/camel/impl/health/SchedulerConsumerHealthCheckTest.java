@@ -76,16 +76,17 @@ public class SchedulerConsumerHealthCheckTest {
     }
 
     @Test
-    public void testErrorThrownByRouteWithConcurrentConsumersShouldStayDown() throws Exception {
+    public void testErrorThrownByRouteWithConcurrentConsumersStopsAllTasksAndShouldBeDown() throws Exception {
         AtomicInteger polls = startRouteThatThrowsOnPoll(
                 "scheduler:foo?initialDelay=0&delay=10&poolSize=2&scheduler.concurrentConsumers=2");
 
         await().atMost(Duration.ofSeconds(5))
                 .untilAsserted(() -> Assertions.assertEquals(HealthCheck.State.DOWN, healthCheck().getState()));
 
-        // the other task keeps polling successfully, but the consumer now polls with one task less
+        // the other task stops polling too (at most, a poll it had already started completes)
         int pollsWhenDown = polls.get();
-        await().atMost(Duration.ofSeconds(5)).until(() -> polls.get() > pollsWhenDown + 5);
+        await().during(Duration.ofMillis(500)).atMost(Duration.ofSeconds(10))
+                .until(() -> polls.get() <= pollsWhenDown + 1);
         Assertions.assertEquals(HealthCheck.State.DOWN, healthCheck().getState());
     }
 
@@ -111,7 +112,7 @@ public class SchedulerConsumerHealthCheckTest {
     private AtomicInteger startRouteThatThrowsOnPoll(String uri) throws Exception {
         AtomicInteger polls = new AtomicInteger();
         context = new DefaultCamelContext();
-        // the exchange that failed with the Error may stay inflight, so do not wait long for it on shutdown
+        // do not wait long for inflight exchanges on shutdown
         context.getShutdownStrategy().setTimeout(1);
         context.addRoutes(new RouteBuilder() {
             @Override
