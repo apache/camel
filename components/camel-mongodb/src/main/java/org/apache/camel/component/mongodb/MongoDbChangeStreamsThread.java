@@ -68,6 +68,9 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private boolean startTimeRefused;
     private CommitManager commitManager;
     private String resumeTokenKey;
+    // the post batch resume tokens that could not be committed in a row: while the token repository cannot be reached,
+    // every getMore whose token moved fails the same way, so only the first one goes to the exception handler
+    private int postBatchTokenCommitFailures;
 
     MongoDbChangeStreamsThread(MongoDbEndpoint endpoint, MongoDbChangeStreamsConsumer consumer,
                                List<BsonDocument> bsonFilter) {
@@ -291,6 +294,7 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                         this.resumeToken = currentResumeToken;
                         commitManager.recordResumeToken(currentResumeToken);
                         commitManager.commit();
+                        tokenCommitted();
                     }
                 } catch (Exception e) {
                     getExceptionHandler().handleException("Error committing the change stream resume token", exchange, e);
@@ -299,9 +303,9 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                 }
             }
         } catch (MongoException e) {
-            // cursor.hasNext() opens socket and waiting for data
-            // it throws exception when cursor is closed in another thread
-            // there is no way to stop hasNext() before closing cursor
+            // cursor.tryNext() opens a socket and waits for data (a getMore)
+            // it throws an exception when the cursor is closed in another thread
+            // there is no way to stop tryNext() before closing the cursor
             if (keepRunning && resumeToken == null && startTime != null && isStartNotInOplog(e.getCode())) {
                 // a change stream started at the start time and failed on a getMore because the oplog no longer goes
                 // back that far (should the server not have refused it in the aggregate): the next one starts at the
@@ -313,6 +317,18 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
             } else {
                 throw e;
             }
+        }
+    }
+
+    /**
+     * A token was committed, the one of an event or a post batch resume token: the token repository can be reached
+     * again, so the next failure to commit a post batch resume token goes to the exception handler again.
+     */
+    private void tokenCommitted() {
+        if (postBatchTokenCommitFailures > 0) {
+            log.info("Committed the change stream resume token again (consecutive failures: {})",
+                    postBatchTokenCommitFailures);
+            postBatchTokenCommitFailures = 0;
         }
     }
 
@@ -336,8 +352,18 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
         try {
             commitManager.recordResumeToken(postBatchResumeToken);
             commitManager.commit();
+            tokenCommitted();
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error committing the change stream resume token", e);
+            postBatchTokenCommitFailures++;
+            if (postBatchTokenCommitFailures == 1) {
+                getExceptionHandler().handleException("Error committing the change stream resume token", e);
+            } else {
+                // this one repeats about once a second for as long as the cause persists: the first failure went to the
+                // exception handler with its stack trace
+                log.warn("Error committing the change stream resume token caused by {} ({} consecutive failures)",
+                        e.getMessage(), postBatchTokenCommitFailures);
+                log.debug("Error committing the change stream resume token", e);
+            }
         }
     }
 

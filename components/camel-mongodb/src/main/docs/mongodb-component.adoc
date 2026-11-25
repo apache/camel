@@ -1346,8 +1346,8 @@ takes the post batch resume token of the change stream: the position up to which
 token in the `changeStreamTokenRepository`, so a new change stream resumes after it.
 
 The consumer stores this token only when the exchange of the last change it read completed. A change whose exchange
-failed is therefore read again by a new change stream, unless a later change completed: as before, the token of that
-later change already passes the failed one.
+failed is therefore read again by a new change stream, unless a later change completed, as the token of that later
+change already passes the failed one.
 
 The post batch resume token is not passed to a resume strategy, which only gets the tokens of the exchanges.
 

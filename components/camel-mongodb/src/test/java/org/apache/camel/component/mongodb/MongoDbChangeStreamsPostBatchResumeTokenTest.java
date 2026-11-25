@@ -36,10 +36,12 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import com.mongodb.client.model.changestream.OperationType;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mongodb.MongoDbChangeStreamsMocks.ResumeOptions;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.processor.state.MemoryStateRepository;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -85,9 +87,19 @@ class MongoDbChangeStreamsPostBatchResumeTokenTest {
 
     private final MongoClient client = mock(MongoClient.class);
     private final MongoCollection<Document> collection = mockCollection();
+    // the next commits of a token that fail, as the token repository cannot be reached
+    private final AtomicInteger failingCommits = new AtomicInteger();
     // a durable store of the token (a database table): started here, so the consumer does not stop it, as a stopped
     // MemoryStateRepository forgets its state
-    private final MemoryStateRepository tokens = new MemoryStateRepository();
+    private final MemoryStateRepository tokens = new MemoryStateRepository() {
+        @Override
+        public void setState(String key, String value) {
+            if (failingCommits.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
+                throw new IllegalStateException("token repository cannot be reached");
+            }
+            super.setState(key, value);
+        }
+    };
 
     // the oplog of the replica set: the entries of this collection ("events") and of other collections. The entry at
     // index i has the position i + 1
@@ -301,6 +313,68 @@ class MongoDbChangeStreamsPostBatchResumeTokenTest {
         assertHistoryLostWarning();
     }
 
+    @Test
+    void repeatedPostBatchResumeTokenCommitFailuresReachTheExceptionHandlerOnce() throws Exception {
+        List<String> handled = new CopyOnWriteArrayList<>();
+        context.getRegistry().bind("handler", new ExceptionHandler() {
+            @Override
+            public void handleException(Throwable exception) {
+                handled.add(exception.getMessage());
+            }
+
+            @Override
+            public void handleException(String message, Throwable exception) {
+                handled.add(message);
+            }
+
+            @Override
+            public void handleException(String message, Exchange exchange, Throwable exception) {
+                handled.add(message);
+            }
+        });
+        MockEndpoint mock = startRoute("&exceptionHandler=#handler");
+        write("events", "a");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> token(2).toJson().equals(tokens.getState(KEY)));
+
+        // the token repository cannot be reached while the post batch resume token moves three times
+        failingCommits.set(3);
+        for (int i = 1; i <= 3; i++) {
+            write("other", "x" + i);
+            int left = 3 - i;
+            await().atMost(10, TimeUnit.SECONDS).until(() -> failingCommits.get() == left);
+        }
+        write("other", "x4");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> token(6).toJson().equals(tokens.getState(KEY)));
+
+        String failed = "Error committing the change stream resume token";
+        String cause = failed + " caused by token repository cannot be reached";
+        assertEquals(List.of(failed), handled);
+        assertEquals(List.of(cause + " (2 consecutive failures)", cause + " (3 consecutive failures)"),
+                messages(Level.WARN, failed));
+        assertEquals(List.of("Committed the change stream resume token again (consecutive failures: 3)"),
+                messages(Level.INFO, "Committed the change stream resume token"));
+
+        // a commit of the token of an event also ends a run of failures: the next failure goes to the handler again
+        failingCommits.set(1);
+        write("other", "x5");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> handled.size() == 2);
+        write("events", "b");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> token(8).toJson().equals(tokens.getState(KEY)));
+        failingCommits.set(1);
+        write("other", "x6");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> handled.size() == 3);
+        assertEquals(List.of("a", "b"), bodies(mock));
+        assertEquals(List.of(cause + " (2 consecutive failures)", cause + " (3 consecutive failures)"),
+                messages(Level.WARN, failed));
+    }
+
+    private List<String> messages(Level level, String prefix) {
+        return logged.stream().filter(e -> e.getLevel() == level)
+                .map(e -> e.getMessage().getFormattedMessage())
+                .filter(m -> m.startsWith(prefix))
+                .toList();
+    }
+
     /** Waits until the change stream read the oplog up to the position and then answered empty getMores. */
     private void awaitQuietAt(int position) {
         await().atMost(10, TimeUnit.SECONDS).until(() -> scanned == position);
@@ -346,11 +420,15 @@ class MongoDbChangeStreamsPostBatchResumeTokenTest {
     }
 
     private MockEndpoint startRoute() throws Exception {
+        return startRoute("");
+    }
+
+    private MockEndpoint startRoute(String options) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("mongodb:myDb?database=test&collection=events&consumerType=changeStreams"
-                     + "&changeStreamTokenRepository=#tokens&cursorRegenerationDelay=100")
+                     + "&changeStreamTokenRepository=#tokens&cursorRegenerationDelay=100" + options)
                         .routeId("mongo")
                         .process(exchange -> {
                             String text = exchange.getIn().getBody(Document.class).getString("text");

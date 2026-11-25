@@ -932,6 +932,10 @@ collection sees no change, at most about once a second. Before, only the token o
 completed was stored; on a collection that sees few changes, that token could fall out of the oplog, and the change
 stream could then no longer be resumed.
 
+A route with a token repository that has not consumed any change yet now also resumes after a restart: it resumes
+after the stored post batch resume token, so the changes made while the route was stopped are routed. Before, such a
+route had nothing stored and started at the current time after a restart.
+
 A resume token that the oplog no longer has (MongoDB answers ChangeStreamHistoryLost), such as a token stored before
 the route was stopped for longer than the oplog window, or a `changeStreamToken` that old, no longer fails the start of
 the route, and the consumer no longer tries it again for as long as the route runs: it logs a WARN and opens the change
