@@ -105,6 +105,52 @@ These rules apply to ALL AI agents working on this codebase.
   `await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2)`.
 - `MockEndpoint` assertions are Camel assertions, not JUnit ones — keep using them.
 
+#### Tests must survive CI load and parallelism
+
+On CI the tests run with high concurrency on busy machines: Maven modules build in parallel, several surefire forks run
+at the same time and can be reused for many test classes (`camel.surefire.forkCount`), and JUnit can run test classes
+concurrently (`camel.surefire.parallel`, see `parent/pom.xml`). A test that passes on a quiet laptop but shares
+something with another test, or relies on timing, becomes flaky. When writing a new test, assume it runs next to
+others, slowly:
+
+- **No timing assumptions**: as above, never rely on a fixed delay or on "it is done by now", and use Awaitility with
+  an explicit `atMost` (and `assertIsSatisfied` for mock endpoints) for every asynchronous condition (a file written,
+  a server started, a route started or stopped, a status changed, a thread finished). Keep the timeout generous
+  (10-30 seconds) as a loaded machine is slow: it only costs time when the test fails. Do not assert on exact
+  durations, ordering of unrelated threads or on counts taken after a sleep.
+- **No fixed ports**: prefer port 0 (the OS picks a free port) and read back the port that was bound, for example from
+  the started server or endpoint. When the port must be known before the server starts, use
+  `AvailablePortFinder.find()` from `camel-test-junit6` / `camel-test-junit5`, but know its limit: it does **not**
+  keep the port bound. It probes a free port and only records it in a registry of the current JVM, so two tests of the
+  same JVM never get the same number, while another fork or process can still take the port between the probe and the
+  bind. Bind it as soon as possible, and release it (`close()`, or register the `Port` as a JUnit extension) after the
+  test. Do not use `getNextAvailable()` (deprecated, racy) and never hardcode a port, for example `8080` or `9092`.
+  Do the same for anything else that is global to the machine:
+  JMX names, multicast groups, queue and topic names of a shared broker, database names, and so on. Make the name
+  unique per test (random suffix or `UUID`) when the resource is shared.
+- **No shared files or directories**: use a JUnit `@TempDir` or a directory below `target/` that is unique to the test,
+  never a fixed path in `target`, in the module directory, in `/tmp` or in the home directory of the user. Remember that
+  forks of the same module share the module directory as working directory.
+- **No shared JVM state**: restore every system property, environment-like setting, static field, default `Locale`,
+  `TimeZone` and similar a test changes (e.g. `@SetSystemProperty` of junit-pioneer), and stop what the test starts
+  (`CamelContext`, servers, executors, threads, containers). Do not rely on test method order, and do not rely on a
+  fresh JVM: another test class may have run in the same fork before.
+- **Tests that cannot be isolated**: when a test unavoidably needs an exclusive resource, use `@ResourceLock` (or the
+  module's own mechanism, such as `@UsesWorkingDirectory` and `@UsesFixedPort` in `camel-jbang-core`) instead of
+  hoping that nobody else uses it. Prefer removing the need to share.
+- **Camel CLI (`camel-jbang-*`) and Camel MCP**: a CamelContext that the CLI or the MCP server starts for itself
+  (a scratch context to evaluate an expression, for instance) is not an integration. Start it without the CLI
+  connector, with `ScratchContextHelper.withoutCliConnector(...)` (or bind
+  `ScratchContextHelper.disabledCliConnectorFactory()` in the registry of a Camel Main), otherwise the context writes
+  `~/.camel/{pid}-status.json` and shows up as a running integration to the other tests (and to the user) that list or
+  stop integrations, such as `camel get`. Also a test must never see or act on a process it did not start: do not
+  assume that the list of running integrations is empty, and select your integration by its own (unique) name or pid.
+  The module-specific rules (home directory, working directory, forks) are in
+  [`dsl/camel-jbang/camel-jbang-core/AGENTS.md`](dsl/camel-jbang/camel-jbang-core/AGENTS.md).
+- **Check it**: if a test fails only now and then, it almost always shares something or relies on timing. Reproduce it
+  by running the module several times with `-Dcamel.surefire.forkCount=8` (and `-Dcamel.surefire.parallel=true` for
+  modules that support concurrent test classes) and fix the cause instead of adding retries, sleeps or `@Disabled`.
+
 ### Issue Investigation (Before Implementation)
 
 Camel is a large, long-lived project — code often looks "wrong" but exists for good reasons. Before implementing a fix:
