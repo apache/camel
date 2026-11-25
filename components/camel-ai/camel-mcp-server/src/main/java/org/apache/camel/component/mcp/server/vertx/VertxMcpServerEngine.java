@@ -27,6 +27,7 @@ import java.util.Set;
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
+import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.modern.server.feature.McpChangeFeed;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
@@ -46,6 +47,7 @@ import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.McpServerIcon;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerPrompt;
+import org.apache.camel.component.mcp.server.McpServerRefusedException;
 import org.apache.camel.component.mcp.server.McpServerResource;
 import org.apache.camel.component.mcp.server.McpServerResourceTemplate;
 import org.apache.camel.component.mcp.server.McpServerTool;
@@ -270,7 +272,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     public void toolAdded(McpServerTool tool) {
-        McpSchema.Tool mcpTool = buildMcpTool(tool);
+        McpSchema.Tool mcpTool = buildValidMcpTool(tool);
         if (server != null) {
             server.addTool(McpServerFeatures.SyncToolSpecification.builder()
                     .tool(mcpTool)
@@ -570,6 +572,25 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             builder.title(resource.title());
         }
         return builder.build();
+    }
+
+    /**
+     * Builds the tool, refusing it when its input or output schema is not a valid JSON Schema document. The MCP SDK
+     * checks the schemas when a tool is added to a server of the legacy era, but not to the catalog of protocol version
+     * 2026-07-28: they are checked once here, with the same validator, before the tool is added to any server, so every
+     * era refuses the tool alike and none serves it alone.
+     */
+    private McpSchema.Tool buildValidMcpTool(McpServerTool tool) {
+        try {
+            McpSchema.Tool mcpTool = buildMcpTool(tool);
+            JsonSchemaValidator validator = McpJsonDefaults.getSchemaValidator();
+            validator.assertConforms("Tool '" + tool.name() + "' inputSchema", mcpTool.inputSchema());
+            validator.assertConforms("Tool '" + tool.name() + "' outputSchema", mcpTool.outputSchema());
+            return mcpTool;
+        } catch (IllegalArgumentException e) {
+            throw new McpServerRefusedException(
+                    "MCP tool '" + tool.name() + "' has an invalid input or output schema: " + e.getMessage(), e);
+        }
     }
 
     private McpSchema.Tool buildMcpTool(McpServerTool tool) {

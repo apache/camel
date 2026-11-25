@@ -74,6 +74,11 @@ An engine refuses a tool, resource or prompt it cannot serve, for example a name
 runtime already serves, by throwing `McpServerRefusedException` from
 `toolAdded`, `resourceAdded` or `promptAdded`. The bridge logs an ERROR, as for
 its own name clashes, and does not track the refused item as published.
+The engines of `camel-mcp-server` (HTTP and stdio) refuse that way, in every protocol
+era, a tool whose input or output schema fails the JSON Schema 2020-12 check of the MCP
+Java SDK (a schema that declares another `$schema` dialect is not checked); its route
+keeps running. Over stdio, which does not serve output schemas, only the input schema
+is checked.
 
 == Usage
 
