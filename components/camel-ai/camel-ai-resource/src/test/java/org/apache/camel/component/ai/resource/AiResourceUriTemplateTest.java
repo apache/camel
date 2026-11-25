@@ -60,6 +60,38 @@ class AiResourceUriTemplateTest {
     }
 
     @Test
+    void rejectsPercentEncodedDotSegmentsAndEncodedTraversal() {
+        AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}");
+
+        assertThat(template.match("crm://customers/%2e")).isEmpty();
+        assertThat(template.match("crm://customers/%2E")).isEmpty();
+        assertThat(template.match("crm://customers/%2e%2e")).isEmpty();
+        assertThat(template.match("crm://customers/%2E%2E")).isEmpty();
+        assertThat(template.match("crm://customers/.%2e")).isEmpty();
+        assertThat(template.match("crm://customers/%2e.")).isEmpty();
+        assertThat(template.match("crm://customers/..%2F..%2Fetc%2Fpasswd")).isEmpty();
+        assertThat(template.match("crm://customers/a%2f..%2fb")).isEmpty();
+        assertThat(template.match("crm://customers/a%2F%2e")).isEmpty();
+        assertThat(template.match("crm://customers/.%2Fa")).isEmpty();
+        assertThat(template.match("crm://customers/..%5C..%5Cwindows")).isEmpty();
+        assertThat(template.match("crm://customers/%2e%2")).isEmpty();
+    }
+
+    @Test
+    void keepsValuesWithDotsThatAreNotDotSegments() {
+        AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}");
+
+        assertThat(template.match("crm://customers/a.b")).hasValue(Map.of("id", "a.b"));
+        assertThat(template.match("crm://customers/...")).hasValue(Map.of("id", "..."));
+        assertThat(template.match("crm://customers/.hidden")).hasValue(Map.of("id", ".hidden"));
+        assertThat(template.match("crm://customers/%2E%2Ex")).hasValue(Map.of("id", "%2E%2Ex"));
+        assertThat(template.match("crm://customers/%2e%2e%2e")).hasValue(Map.of("id", "%2e%2e%2e"));
+        assertThat(template.match("crm://customers/a%2F...%2Fb.c")).hasValue(Map.of("id", "a%2F...%2Fb.c"));
+        assertThat(template.match("crm://customers/%252e%252e")).hasValue(Map.of("id", "%252e%252e"));
+        assertThat(template.match("crm://customers/%C0%AE%C0%AE")).hasValue(Map.of("id", "%C0%AE%C0%AE"));
+    }
+
+    @Test
     void detectsOverlappingTemplates() {
         AiResourceUriTemplate left = new AiResourceUriTemplate("crm://customers/{id}");
         AiResourceUriTemplate right = new AiResourceUriTemplate("crm://customers/{customerId}");
@@ -67,6 +99,19 @@ class AiResourceUriTemplateTest {
 
         assertThat(left.overlaps(right)).isTrue();
         assertThat(left.overlaps(different)).isFalse();
+    }
+
+    @Test
+    void overlapsOnADotSegmentLiteralThatAVariableDoesNotMatch() {
+        // the URI-template matcher of an MCP server matches crm://customers/%2e/profile with both templates and may
+        // pick the first one, whose variable then refuses it: such templates must not be registered together
+        AiResourceUriTemplate profile = new AiResourceUriTemplate("crm://customers/{id}/profile");
+        AiResourceUriTemplate encodedDot = new AiResourceUriTemplate("crm://customers/%2e/{name}");
+
+        assertThat(profile.match("crm://customers/%2e/profile")).isEmpty();
+        assertThat(encodedDot.match("crm://customers/%2e/profile")).hasValue(Map.of("name", "profile"));
+        assertThat(profile.overlaps(encodedDot)).isTrue();
+        assertThat(encodedDot.overlaps(profile)).isTrue();
     }
 
     @Test
