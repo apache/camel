@@ -55,7 +55,7 @@ class AzureStorageBlobCloudEventDataTypeTransformerRouteTest extends CamelTestSu
     private final BlobServiceClient serviceClient = mock(BlobServiceClient.class);
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void setupResources() throws Exception {
         BlobContainerClient containerClient = mock(BlobContainerClient.class);
         when(serviceClient.getBlobContainerClient("invoices")).thenReturn(containerClient);
         AtomicBoolean listed = new AtomicBoolean();
@@ -67,14 +67,12 @@ class AzureStorageBlobCloudEventDataTypeTransformerRouteTest extends CamelTestSu
                             : List.of(new BlobItem().setName("a.txt"), new BlobItem().setName("b.txt"));
                     return new PagedIterable<>(() -> new PagedResponseBase<Void, BlobItem>(null, 200, null, items, null, null));
                 });
-        when(containerClient.getBlobClient(anyString())).thenAnswer(i -> {
-            BlobClient blobClient = mock(BlobClient.class);
-            BlobInputStream stream = mock(BlobInputStream.class);
-            when(stream.getProperties()).thenReturn(mock(BlobProperties.class));
-            when(blobClient.openInputStream(nullable(BlobRange.class), nullable(BlobRequestConditions.class)))
-                    .thenReturn(stream);
-            return blobClient;
-        });
+        BlobClient blobClient = mock(BlobClient.class);
+        BlobInputStream stream = mock(BlobInputStream.class);
+        when(stream.getProperties()).thenReturn(mock(BlobProperties.class));
+        when(blobClient.openInputStream(nullable(BlobRange.class), nullable(BlobRequestConditions.class)))
+                .thenReturn(stream);
+        when(containerClient.getBlobClient(anyString())).thenReturn(blobClient);
     }
 
     @Test
