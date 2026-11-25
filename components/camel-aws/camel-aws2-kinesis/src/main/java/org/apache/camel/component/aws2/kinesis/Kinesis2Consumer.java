@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -77,6 +78,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     // Written concurrently from poll()'s parallelStream over the shard list, so both must be thread-safe.
     private final Map<String, String> currentShardIterators = new ConcurrentHashMap<>();
     private final Set<String> warnLogged = ConcurrentHashMap.newKeySet();
+    // The closed shards reported to the exception handler with shardClosed=fail: each one once while the consumer runs
+    // (cleared when it stops), as a closed shard stays listed for the retention period of the stream
+    private final Set<String> closedShardsReported = ConcurrentHashMap.newKeySet();
     // The sequence number of the last record routed from each shard: the position of a new shard iterator when the
     // cached one has expired. Like the cached iterators it is not cleared in doStop, and a route that is stopped and
     // started gets a new consumer.
@@ -141,9 +145,28 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
 
         } else {
+            // Each shard catches its own failure: forEach returns when the first task throws, while the tasks of the
+            // other shards still read and route, and the next poll could start before they are done. The poll fails
+            // only once all the shards of the list have been read.
+            Queue<RuntimeException> failures = new ConcurrentLinkedQueue<>();
             getCurrentShardList()
                     .parallelStream()
-                    .forEach(shard -> fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount));
+                    .forEach(shard -> {
+                        try {
+                            fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
+                        } catch (RuntimeException e) {
+                            failures.add(e);
+                        }
+                    });
+            RuntimeException failure = failures.poll();
+            if (failure != null) {
+                for (RuntimeException other : failures) {
+                    if (other != failure) {
+                        failure.addSuppressed(other);
+                    }
+                }
+                throw failure;
+            }
         }
 
         // okay we have some response from aws so lets mark the consumer as ready
@@ -358,11 +381,16 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             case silent:
                 break;
             case fail:
-                LOG.info("The shard with id={} on stream {} reached CLOSE status",
-                        shardId, getEndpoint().getConfiguration().getStreamName());
-                throw new IllegalStateException(
-                        new ReachedClosedStatusException(
-                                getEndpoint().getConfiguration().getStreamName(), shardId));
+                // reported once and then skipped, like silent: a closed shard stays in the shard list for the
+                // retention period of the stream, and the consumer goes on with the other shards (the child shards of a
+                // split or a merge)
+                if (closedShardsReported.add(shardId)) {
+                    String streamName = getEndpoint().getConfiguration().getStreamName();
+                    getExceptionHandler().handleException(
+                            "The shard with id=" + shardId + " on stream " + streamName + " reached CLOSE status",
+                            new ReachedClosedStatusException(streamName, shardId));
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported shard closed strategy");
         }
@@ -497,6 +525,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(this.shardMonitorExecutor);
             this.shardMonitorExecutor = null;
         }
+        closedShardsReported.clear();
 
         super.doStop();
     }

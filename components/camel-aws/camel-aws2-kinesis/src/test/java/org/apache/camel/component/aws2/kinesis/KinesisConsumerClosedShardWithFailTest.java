@@ -17,11 +17,15 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.ExceptionHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,12 +45,12 @@ import software.amazon.awssdk.services.kinesis.model.Shard;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -60,6 +64,8 @@ public class KinesisConsumerClosedShardWithFailTest {
 
     private final CamelContext context = new DefaultCamelContext();
     private final Kinesis2Component component = new Kinesis2Component(context);
+
+    private final List<Throwable> handled = new CopyOnWriteArrayList<>();
 
     private Kinesis2Consumer underTest;
 
@@ -100,17 +106,18 @@ public class KinesisConsumerClosedShardWithFailTest {
         endpoint.start();
         underTest = new Kinesis2Consumer(endpoint, processor);
         underTest.setConnection(component.getConnection());
+        underTest.setExceptionHandler(new RecordingExceptionHandler());
+        // the test calls poll()
+        underTest.setStartScheduler(false);
         underTest.start();
         await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> !(underTest.getCurrentShardList().isEmpty()));
     }
 
     @Test
-    public void itObtainsAShardIteratorOnFirstPoll() {
-        assertDoesNotThrow(underTest::poll);
-        assertThrows(IllegalStateException.class, () -> {
-            underTest.poll();
-        });
+    public void itObtainsAShardIteratorOnFirstPoll() throws Exception {
+        underTest.poll(); // reads the shard to its end
+        underTest.poll(); // the shard is now closed: reported to the exception handler, the poll does not fail
 
         final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
                 = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
@@ -124,5 +131,77 @@ public class KinesisConsumerClosedShardWithFailTest {
 
         verify(kinesisClient, atLeastOnce()).listShards(getListShardsCap.capture());
         assertThat(getListShardsCap.getValue().streamName(), is("streamName"));
+
+        assertReportedOnce();
+    }
+
+    @Test
+    public void closedShardIsReportedOnceAndThenSkipped() throws Exception {
+        assertThat(underTest.poll(), is(0)); // reads the shard to its end
+        assertThat(underTest.isShardClosed("shardId"), is(true));
+        assertThat(handled.isEmpty(), is(true));
+
+        // the closed shard stays in the shard list: later polls skip it, and report it only once
+        assertThat(underTest.poll(), is(0));
+        assertThat(underTest.poll(), is(0));
+        assertThat(underTest.poll(), is(0));
+
+        assertReportedOnce();
+        verify(kinesisClient, times(1)).getRecords(any(GetRecordsRequest.class));
+    }
+
+    @Test
+    public void closedShardIsReportedOnceAndThenSkippedWithShardId() throws Exception {
+        underTest.getEndpoint().getConfiguration().setShardId("shardId");
+
+        assertThat(underTest.poll(), is(0)); // reads the shard to its end
+        assertThat(handled.isEmpty(), is(true));
+
+        // with shardId the consumer has nothing more to read once the shard is closed
+        assertThat(underTest.poll(), is(0));
+        assertThat(underTest.poll(), is(0));
+        assertThat(underTest.poll(), is(0));
+
+        assertReportedOnce();
+        verify(kinesisClient, times(1)).getRecords(any(GetRecordsRequest.class));
+    }
+
+    @Test
+    public void closedShardIsReportedAgainAfterRestart() throws Exception {
+        underTest.poll();
+        underTest.poll();
+        assertReportedOnce();
+
+        underTest.stop();
+        underTest.start();
+        underTest.poll();
+        underTest.poll();
+
+        assertThat(handled.size(), is(2));
+    }
+
+    private void assertReportedOnce() {
+        assertThat(handled.size(), is(1));
+        assertThat(handled.get(0), instanceOf(ReachedClosedStatusException.class));
+        ReachedClosedStatusException e = (ReachedClosedStatusException) handled.get(0);
+        assertThat(e.getShardId(), is("shardId"));
+        assertThat(e.getStreamName(), is("streamName"));
+    }
+
+    private final class RecordingExceptionHandler implements ExceptionHandler {
+        @Override
+        public void handleException(Throwable exception) {
+            handled.add(exception);
+        }
+
+        @Override
+        public void handleException(String message, Throwable exception) {
+            handled.add(exception);
+        }
+
+        @Override
+        public void handleException(String message, Exchange exchange, Throwable exception) {
+            handled.add(exception);
+        }
     }
 }

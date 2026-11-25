@@ -6979,6 +6979,26 @@ To keep the previous behaviour, set `maxResultsPerRequest=1`. See the
 xref:components::aws2-kinesis-component.adoc[AWS Kinesis component] for how `maxResultsPerRequest`, `delay` and
 `greedy` relate to the Kinesis read quotas of a shard.
 
+=== camel-aws2-kinesis - shardClosed=fail reports a closed shard once
+
+With `shardClosed=fail`, the consumer now reports a closed shard once: it hands a `ReachedClosedStatusException` to
+the exception handler of the consumer (logged as a WARN, or routed to the error handler of the route with
+`bridgeErrorHandler=true`), and then skips the shard, as with `silent`. The poll does not fail.
+
+Before, every poll failed with an `IllegalStateException` once a closed shard had been read to its end, for as long as
+the shard was listed (a closed shard stays in the shard list for the retention period of the stream, 24 hours by
+default). Without `shardId` the consumer read the child shards of a split or a merge all the same, so it did not stop:
+it logged a WARN with a stack trace on every poll, and its health check reported the failing polls.
+
+With `shardId` set, the consumer reads only that shard, so once the shard is closed it reports it once and then has
+nothing more to read, where before every poll failed. A route that should react to the closed shard (for example by
+stopping) can set `bridgeErrorHandler=true` and handle the `ReachedClosedStatusException` in its error handler.
+
+When the consumer reads all the shards (no `shardId`) and the read of a shard fails, the poll now fails only after the
+other shards of the poll have been read and routed, with the exception of that shard (the failures of other shards
+are added as suppressed exceptions). Before, the poll failed as soon as one shard failed, with the exception wrapped
+by the parallel stream, while the other shards were still being read.
+
 === camel-graphql - the credentials are only sent to the authority of httpUri
 
 The `accessToken` (with its `jwtAuthorizationType`) is now added to a request only when the request goes to the
