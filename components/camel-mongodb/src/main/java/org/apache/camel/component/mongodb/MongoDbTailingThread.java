@@ -148,6 +148,15 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
         }
     }
 
+    /**
+     * Persists the tail position once the thread has ended, so that a test or caller reading the tracking document
+     * right after {@code stopRoute} sees the last routed record.
+     */
+    @Override
+    protected void afterStopped() {
+        tailTracking.persistToStore();
+    }
+
     Exchange createMongoDbExchange(Document dbObj) {
         // released by doRun once the outcome has been read, as an auto-released exchange may already be reset by then
         Exchange exchange = consumer.createExchange(false);
