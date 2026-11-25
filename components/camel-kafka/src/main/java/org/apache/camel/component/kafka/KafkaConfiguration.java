@@ -59,7 +59,7 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     // fetch.min.bytes
     @UriParam(label = "consumer", defaultValue = "1")
     private Integer fetchMinBytes = 1;
-    // fetch.min.bytes
+    // fetch.max.bytes
     @UriParam(label = "consumer", defaultValue = "52428800")
     private Integer fetchMaxBytes = 50 * 1024 * 1024;
     // heartbeat.interval.ms
@@ -829,10 +829,11 @@ public class KafkaConfiguration extends KafkaClientConfiguration {
     }
 
     /**
-     * The maximum amount of data per-partition the server will return. The maximum total memory used for a request will
-     * be #partitions * max.partition.fetch.bytes. This size must be at least as large as the maximum message size the
-     * server allows or else it is possible for the producer to send messages larger than the consumer can fetch. If
-     * that happens, the consumer can get stuck trying to fetch a large message on a certain partition.
+     * The maximum amount of data per-partition the server will return. This is not an absolute maximum, if the first
+     * record batch in the first non-empty partition of the fetch is larger than this value, the batch will still be
+     * returned to ensure that the consumer can make progress. The maximum record batch size accepted by the broker is
+     * defined via message.max.bytes (broker config) or max.message.bytes (topic config). See fetchMaxBytes for limiting
+     * the consumer request size.
      */
     public void setMaxPartitionFetchBytes(Integer maxPartitionFetchBytes) {
         this.maxPartitionFetchBytes = maxPartitionFetchBytes;
