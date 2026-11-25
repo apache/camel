@@ -222,6 +222,14 @@ messages, and grew with each one. An exception from a predicate of `onException`
 Split is no longer added to it either, and is logged instead. Use `throwException(MyException.class, "...")`, or
 `exceptionType` and `message`, to get a new exception for each message, with the previous exception as suppressed.
 
+=== camel-support - a scheduled poll consumer is DOWN after an Error until the route is restarted
+
+When a poll of a scheduled poll consumer with the default scheduler throws an `Error` (such as an `OutOfMemoryError`
+from the route), the scheduled task that ran it stops polling. Previously the health check of the consumer stayed UP in
+this case; now it flips to DOWN, with the `Error`, and stays DOWN until the route is restarted, even if other tasks
+(`scheduler.concurrentConsumers`) keep polling. The restart may wait for the shutdown timeout, as the failed exchange
+may stay inflight (see xref:error-handler.adoc#_an_error_thrown_by_a_processor[An Error thrown by a processor]).
+
 === camel-core - a to with an expression in its endpoint uri logs a WARN
 
 A `to` resolves its endpoint once, when the route starts, so `to("jms:queue:${header.queue}")` sends every message to
