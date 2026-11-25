@@ -248,8 +248,12 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
      * @return           Throwable that this processor catches. <code>null</code> if nothing matches.
      */
     protected Throwable catches(Exchange exchange, Throwable exception) {
+        // a VirtualMachineError is only caught by a doCatch that names it or a supertype, as a Java catch (CAMEL-27515):
+        // not by doCatch(Exception.class), which would match the CamelExecutionException it is wrapped in
+        Throwable fatal = ObjectHelper.getVirtualMachineError(exception);
+        Iterable<Throwable> candidates = fatal != null ? List.of(fatal) : ObjectHelper.createExceptionIterable(exception);
         // use the exception iterator to walk the caused by hierarchy
-        for (final Throwable e : ObjectHelper.createExceptionIterable(exception)) {
+        for (final Throwable e : candidates) {
             // see if we catch this type
             for (final Class<?> type : exceptions) {
                 if (type.isInstance(e) && matchesWhen(exchange)) {

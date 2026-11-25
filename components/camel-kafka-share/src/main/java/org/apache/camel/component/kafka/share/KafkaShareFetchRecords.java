@@ -113,9 +113,6 @@ class KafkaShareFetchRecords implements Runnable {
                 pollAndProcess();
             }
             LOG.info("Terminating Kafka share consumer thread {} receiving from {}", threadId, topics);
-        } catch (VirtualMachineError e) {
-            // an OutOfMemoryError or StackOverflowError is thrown on as is, as the JVM may not be able to log it
-            throw e;
         } catch (RuntimeException | Error e) {
             // what the poll loop does not handle, such as an Error that a deserializer throws in poll (the Kafka client
             // only wraps a RuntimeException of a deserializer in a RecordDeserializationException): this task runs in an

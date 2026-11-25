@@ -150,6 +150,10 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         // trouble, but allowing the error to propagate would additionally kill sibling
                         // routes, which is strictly worse.
                         cancel();
+                        if (t instanceof VirtualMachineError) {
+                            // the consumer keeps it as its fatal error, so its health check reports DOWN (CAMEL-27515)
+                            handleFatalError(t);
+                        }
                         // the route id says which route to restart, as routes can share the same timer uri
                         LOG.error(
                                 "Fatal error processing exchange on route: {} from timer: {}."
@@ -220,6 +224,9 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                 } catch (Throwable t) {
                     // An Error (such as StackOverflowError) must not be silently swallowed in the executor
                     // path. Log at ERROR so the operator sees it.
+                    if (t instanceof VirtualMachineError) {
+                        handleFatalError(t);
+                    }
                     LOG.error(
                             "Fatal error processing exchange on route: {} from timer: {}."
                               + " The timer task for this route has been terminated."
@@ -262,6 +269,12 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             timerTaken = true;
             configureTask(task, timer);
         }
+    }
+
+    @Override
+    protected boolean isStopOnFatalError() {
+        // a timer fires in a loop: it stops after a VirtualMachineError (CAMEL-27515)
+        return true;
     }
 
     /**

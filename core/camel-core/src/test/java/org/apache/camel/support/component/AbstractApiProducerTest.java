@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -108,15 +107,15 @@ public class AbstractApiProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testVirtualMachineErrorCompletesTheExchangeAsBefore() throws Exception {
+    public void testVirtualMachineErrorFailsTheExchange() throws Exception {
         TestApiEndpoint endpoint = (TestApiEndpoint) createEndpoint("greetMe", "name");
-        endpoint.failWith = new StackOverflowError("test");
+        StackOverflowError error = new StackOverflowError("test");
+        endpoint.failWith = error;
 
-        // left as before: the callback completes the exchange, and the error is thrown on to the executor thread. The
-        // current behaviour, not a contract
+        // as any other Error (CAMEL-27515): the exchange fails with it
         Exchange out = template.send(endpoint, e -> e.getMessage().setBody("World"));
 
-        assertNull(out.getException());
+        assertSame(error, assertInstanceOf(CamelExecutionException.class, out.getException()).getCause());
     }
 
     record TestName(String name) {

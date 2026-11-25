@@ -119,9 +119,9 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         if (!suspendOnly && getEndpoint().isPurgeWhenStopping()) {
             getEndpoint().purgeQueue();
         }
-        if (isSuspending() || isSuspended()) {
-            // a suspended consumer does not poll the queue, so do not wait for it to complete the pending exchanges
-            // (they are kept on the queue)
+        if (isSuspending() || isSuspended() || getFatalError() != null) {
+            // a suspended consumer, or one that stopped after a fatal error, does not poll the queue, so do not wait for
+            // it to complete the pending exchanges (they are kept on the queue, for when the route is started again)
             return 0;
         }
         return getEndpoint().getQueue().size();
@@ -167,8 +167,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
     @Override
     public boolean isRunAllowed() {
-        // if we force shutdown then do not allow running anymore
-        if (forceShutdown) {
+        // if we force shutdown, or the consumer stopped after a fatal error, then do not allow running anymore
+        if (forceShutdown || getFatalError() != null) {
             return false;
         }
 
@@ -178,6 +178,12 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             return true;
         }
         return super.isRunAllowed();
+    }
+
+    @Override
+    protected boolean isStopOnFatalError() {
+        // the consumer pulls work from the queue in a loop: it stops after a VirtualMachineError (CAMEL-27515)
+        return true;
     }
 
     @Override
@@ -290,7 +296,17 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             } catch (InterruptedException e) {
                 LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                 Thread.currentThread().interrupt();
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // a JVM-level failure of the consumer: it stops consuming until the route is restarted, and the loop
+                // ends, as isRunAllowed() is false (CAMEL-27515). A thread of an earlier start (CAMEL-27413) only logs it:
+                // it does not stop the consumer started again since, and its loop ends anyway
+                LOG.error("Fatal error consuming from: {}. The consumer stops consuming until the route is restarted.",
+                        getEndpoint(), e);
+                if (isCurrentStart(start)) {
+                    handleFatalError(e);
+                }
+            } catch (Throwable e) {
+                // also another Error, as an exception: the loop goes on (CAMEL-27515)
                 if (exchange != null) {
                     getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 } else {

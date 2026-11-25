@@ -17,11 +17,10 @@
 package org.apache.camel.component.timer;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.Test;
@@ -30,8 +29,9 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * With the pooled exchange factory, a timer route whose processor throws a VirtualMachineError must not give the
- * exchange back to the pool: the rest of the route may still run on it (CAMEL-27515), and releasing it would reset it.
+ * With the pooled exchange factory, a timer route whose processor throws a VirtualMachineError fails the exchange
+ * (CAMEL-27515): the exchange completes and is given back to the pool, as nothing of the route runs on it later, and
+ * the timer stops firing.
  *
  * @see <a href="https://issues.apache.org/jira/browse/CAMEL-27515">CAMEL-27515</a>
  */
@@ -39,17 +39,19 @@ class TimerPooledExchangeVirtualMachineErrorTest extends ContextTestSupport {
 
     private static final String ROUTE_ID = "route-pooled";
 
-    private final AtomicReference<Exchange> failed = new AtomicReference<>();
+    private final AtomicInteger fired = new AtomicInteger();
+    private final AtomicInteger after = new AtomicInteger();
 
     @Test
-    void exchangeIsNotReleasedAfterVirtualMachineError() {
+    void exchangeCompletesAndTheTimerStopsAfterVirtualMachineError() {
         TimerConsumer consumer = (TimerConsumer) context.getRoute(ROUTE_ID).getConsumer();
 
-        // the timer task has ended once the processor has thrown and the consumer is no longer polling
-        await().atMost(10, TimeUnit.SECONDS).until(() -> failed.get() != null && !consumer.isPolling());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getFatalError() != null && !consumer.isPolling());
 
-        // a released pooled exchange is reset, and would have lost its header
-        assertEquals("kept", failed.get().getMessage().getHeader("marker"));
+        // the failed exchange completed, and no later step of the route can use it
+        assertEquals(0, context.getInflightRepository().size());
+        assertEquals(1, fired.get());
+        assertEquals(0, after.get());
     }
 
     @Override
@@ -60,12 +62,6 @@ class TimerPooledExchangeVirtualMachineErrorTest extends ContextTestSupport {
     }
 
     @Override
-    protected int getShutdownTimeout() {
-        // the exchange that failed with a VirtualMachineError stays inflight (CAMEL-27515)
-        return 1;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
@@ -73,10 +69,10 @@ class TimerPooledExchangeVirtualMachineErrorTest extends ContextTestSupport {
                 from("timer:pooled?period=50&synchronous=true")
                         .routeId(ROUTE_ID)
                         .process(exchange -> {
-                            exchange.getMessage().setHeader("marker", "kept");
-                            failed.set(exchange);
+                            fired.incrementAndGet();
                             throw new StackOverflowError("simulated StackOverflowError in a pooled timer route");
-                        });
+                        })
+                        .process(exchange -> after.incrementAndGet());
             }
         };
     }

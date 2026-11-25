@@ -91,6 +91,12 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     }
 
     @Override
+    protected boolean isStopOnFatalError() {
+        // the consumer takes from the queue in a loop: it stops after a VirtualMachineError (CAMEL-27515)
+        return true;
+    }
+
+    @Override
     public void run() {
         BaseQueue<?> queue = endpoint.getHazelcastInstance().getQueue(endpoint.getConfiguration().getQueueName());
 
@@ -165,7 +171,20 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 }
                 Thread.currentThread().interrupt();
                 continue;
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // a JVM-level failure: the consumer stops consuming until the route is restarted, and the loop ends, as
+                // isRunAllowed() is false (CAMEL-27515)
+                if (transactionCtx != null) {
+                    try {
+                        transactionCtx.rollbackTransaction();
+                    } catch (Exception ignore) {
+                    }
+                }
+                LOG.error("Fatal error consuming from: {}. The consumer stops consuming until the route is restarted.",
+                        getEndpoint(), e);
+                handleFatalError(e);
+            } catch (Exception | Error e) {
+                // also another Error, as an exception: the loop goes on (CAMEL-27474)
                 // Rollback
                 if (transactionCtx != null) {
                     LOG.trace("Rollback transaction: {}", transactionCtx.getTxnId());

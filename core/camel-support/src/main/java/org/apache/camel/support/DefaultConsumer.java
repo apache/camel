@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
@@ -57,6 +59,7 @@ public class DefaultConsumer extends ServiceSupport
     private Route route;
     private String routeId;
     private String stepId;
+    private final AtomicReference<Throwable> fatalError = new AtomicReference<>();
 
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
@@ -238,6 +241,8 @@ public class DefaultConsumer extends ServiceSupport
     @Override
     protected void doStart() throws Exception {
         LOG.debug("Starting consumer: {}", this);
+        // a restart brings the consumer back after a fatal error
+        fatalError.set(null);
         exchangeFactory.setRouteId(routeId);
         ServiceHelper.startService(exchangeFactory, processor);
     }
@@ -245,7 +250,63 @@ public class DefaultConsumer extends ServiceSupport
     @Override
     protected void doStop() throws Exception {
         LOG.debug("Stopping consumer: {}", this);
+        fatalError.set(null);
         ServiceHelper.stopService(exchangeFactory, processor);
+    }
+
+    /**
+     * The {@link VirtualMachineError} (such as an {@link OutOfMemoryError} or a {@link StackOverflowError}) that
+     * stopped this consumer, or <tt>null</tt>. It is kept until the consumer is stopped, and the health check of the
+     * consumer reports DOWN until then.
+     *
+     * @since 4.24
+     */
+    public Throwable getFatalError() {
+        return fatalError.get();
+    }
+
+    /**
+     * Whether this consumer stops when a {@link VirtualMachineError} ends its loop, or fails one of its exchanges
+     * without the route catching it. A consumer that pulls work in a loop (polling, timer, a queue) returns
+     * <tt>true</tt>: Camel cannot know whether going on is safe. A consumer that is pushed requests (such as HTTP or
+     * direct) keeps the default <tt>false</tt>: only that request fails.
+     *
+     * @since 4.24
+     */
+    protected boolean isStopOnFatalError() {
+        return false;
+    }
+
+    /**
+     * Handles a {@link VirtualMachineError} that ended a loop or a task of this consumer, or failed one of its
+     * exchanges without the route catching it. A consumer that stops on a fatal error (see
+     * {@link #isStopOnFatalError()}) keeps it as its {@link #getFatalError() fatal error}: it no longer runs
+     * ({@link #isRunAllowed()} is <tt>false</tt>), its health check reports DOWN, and the error is logged once at
+     * ERROR, until the route is restarted. Restarting a route, a pod or the JVM is the choice of the user or of the
+     * platform.
+     *
+     * @param  error the virtual machine error
+     * @return       <tt>true</tt> if this consumer stops
+     * @since        4.24
+     */
+    public boolean handleFatalError(Throwable error) {
+        if (!isStopOnFatalError() || !super.isRunAllowed()) {
+            return false;
+        }
+        if (!fatalError.compareAndSet(null, error)) {
+            // already stopped by an earlier fatal error
+            return true;
+        }
+        // without the stack trace: whoever caught the error logged it (the error handler, or the loop of the consumer)
+        // (as text: SLF4J takes a Throwable last argument as the exception to log, and leaves its placeholder empty)
+        LOG.error("Consumer {} of route {} stopped after {}. It does not consume until the route is restarted.", this,
+                routeId, error.toString());
+        return true;
+    }
+
+    @Override
+    public boolean isRunAllowed() {
+        return fatalError.get() == null && super.isRunAllowed();
     }
 
     @Override

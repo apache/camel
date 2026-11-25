@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -59,8 +58,8 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
     }
 
     @Test
-    void evaluateExpressionProcessorThrowsAVirtualMachineErrorOnAfterTheCallback() {
-        assertVirtualMachineErrorThrownOnAfterTheCallback(new EvaluateExpressionProcessor(throwingExpression(SOE)));
+    void evaluateExpressionProcessorFailsTheExchangeWithAVirtualMachineError() {
+        assertFailsTheExchangeWithAVirtualMachineError(new EvaluateExpressionProcessor(throwingExpression(SOE)));
     }
 
     @Test
@@ -74,10 +73,10 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
     }
 
     @Test
-    void dataTypeProcessorThrowsAVirtualMachineErrorOnAfterTheCallback() throws Exception {
+    void dataTypeProcessorFailsTheExchangeWithAVirtualMachineError() throws Exception {
         DataTypeProcessor processor = dataTypeProcessor(SOE);
         try {
-            assertVirtualMachineErrorThrownOnAfterTheCallback(processor);
+            assertFailsTheExchangeWithAVirtualMachineError(processor);
         } finally {
             ServiceHelper.stopService(processor);
         }
@@ -202,16 +201,15 @@ class SiblingProcessorsThrowErrorTest extends ContextTestSupport {
         assertFailedWithTheError(exchange.getException());
     }
 
-    private void assertVirtualMachineErrorThrownOnAfterTheCallback(AsyncProcessor processor) {
+    private void assertFailsTheExchangeWithAVirtualMachineError(AsyncProcessor processor) {
         Exchange exchange = createExchangeWithBody("Hello");
         List<Boolean> calls = new ArrayList<>();
 
-        StackOverflowError thrown = assertThrows(StackOverflowError.class, () -> processor.process(exchange, calls::add));
+        assertTrue(processor.process(exchange, calls::add));
 
-        assertSame(SOE, thrown);
+        // as in ProcessorThrowsErrorTest: the exchange fails with it, and the callback is called once (CAMEL-27515)
         assertEquals(List.of(true), calls);
-        // the current behaviour of a VirtualMachineError (as in ProcessorThrowsErrorTest), not a contract
-        assertNull(exchange.getException());
+        assertSame(SOE, assertInstanceOf(CamelExecutionException.class, exchange.getException()).getCause());
     }
 
     private static void assertFailedWithTheError(Exception exception) {

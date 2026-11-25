@@ -1043,6 +1043,16 @@ public class ResilienceProcessor extends BaseProcessorSupport
             String state = circuitBreaker.getState().name();
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
 
+            if (ObjectHelper.getVirtualMachineError(throwable) != null) {
+                // a VirtualMachineError fails the exchange: Camel does not recover from it with a fallback, nor ignore
+                // it (CAMEL-27515)
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
+                exchange.setException(throwable);
+                return exchange;
+            }
+
             // check again if we should ignore or not record the throw exception as a failure
             if (ignorePredicate != null && ignorePredicate.test(throwable)) {
                 if (LOG.isTraceEnabled()) {

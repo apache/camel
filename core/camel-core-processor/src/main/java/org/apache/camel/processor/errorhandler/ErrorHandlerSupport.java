@@ -17,13 +17,16 @@
 package org.apache.camel.processor.errorhandler;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Support class for {@link ErrorHandler} implementations.
@@ -67,7 +70,24 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         if (exceptionPolicies == null) {
             return null;
         }
-        ExceptionPolicyKey key = exceptionPolicy.getExceptionPolicy(exceptionPolicies.keySet(), exchange, exception);
+        Set<ExceptionPolicyKey> keys = exceptionPolicies.keySet();
+        // a VirtualMachineError is only matched by an onException that names it or a supertype, as a Java catch
+        // (CAMEL-27515): not by onException(Exception.class), which would match the CamelExecutionException it is
+        // wrapped in, nor through the causes of the error
+        VirtualMachineError fatal = ObjectHelper.getVirtualMachineError(exception);
+        if (fatal != null) {
+            keys = new LinkedHashSet<>();
+            for (ExceptionPolicyKey candidate : exceptionPolicies.keySet()) {
+                if (candidate.getExceptionClass() != null && candidate.getExceptionClass().isInstance(fatal)) {
+                    keys.add(candidate);
+                }
+            }
+            if (keys.isEmpty()) {
+                return null;
+            }
+            exception = fatal;
+        }
+        ExceptionPolicyKey key = exceptionPolicy.getExceptionPolicy(keys, exchange, exception);
         return key != null ? exceptionPolicies.get(key) : null;
     }
 

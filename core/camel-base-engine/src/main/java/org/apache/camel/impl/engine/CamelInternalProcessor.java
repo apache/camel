@@ -65,6 +65,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggerHelper;
@@ -77,6 +78,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
@@ -424,9 +426,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (task.hasState()) {
                     states[j++] = state;
                 }
-            } catch (VirtualMachineError e) {
-                // left as before (thrown on), as in DelegateSyncProcessor
-                throw e;
             } catch (Throwable e) {
                 // also an Error (such as a NoClassDefFoundError of the data format of a rest binding): thrown on, it
                 // would skip the after of the advices whose before ran (such as the end of the unit of work), and the
@@ -558,9 +557,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
-        } catch (VirtualMachineError e) {
-            // left as before (thrown on after the callback), as in DelegateSyncProcessor
-            throw e;
         } catch (Throwable e) {
             // also an Error: the after task (the callback) is called in finally, so an Error thrown on after it would
             // not fail the exchange (CAMEL-26741)
@@ -636,12 +632,28 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (uow != null) {
                     uow.afterRoute(exchange, route);
                 }
+                stopConsumerOnFatalError(exchange);
             } finally {
                 // the caller is in its doTry again (also when this route completed asynchronously)
                 if (tryRouteBlock != null) {
                     exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, tryRouteBlock);
                 } else {
                     exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+                }
+            }
+        }
+
+        /**
+         * An exchange of the consumer of this route that failed with a {@link VirtualMachineError} that the route did
+         * not catch stops that consumer, when it pulls work in a loop (CAMEL-27515).
+         */
+        private void stopConsumerOnFatalError(Exchange exchange) {
+            Exception cause = exchange.getException();
+            if (cause != null && route != null && route.getRouteId().equals(exchange.getFromRouteId())
+                    && route.getConsumer() instanceof DefaultConsumer consumer) {
+                VirtualMachineError fatal = ObjectHelper.getVirtualMachineError(cause);
+                if (fatal != null) {
+                    consumer.handleFatalError(fatal);
                 }
             }
         }

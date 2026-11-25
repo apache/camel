@@ -57,6 +57,11 @@ public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsume
 
     @Override
     public int getPendingExchangesSize() {
+        if (getFatalError() != null) {
+            // stopped after a fatal error: the rest of the batch is not routed, so do not wait for it, only for a poll
+            // that is still running (CAMEL-27515)
+            return isPolling() ? 1 : 0;
+        }
         int answer;
         // only return the real pending size in case we are configured to complete all tasks
         if (ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask) {

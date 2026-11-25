@@ -23,7 +23,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,6 +33,7 @@ import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Suspendable;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.spi.HttpResponseAware;
@@ -84,9 +84,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private final AtomicLong successCounter = new AtomicLong();
     private volatile Throwable lastError;
     private volatile Map<String, Object> lastErrorDetails;
-    // the first Error a poll threw since the consumer was started: unlike lastError, a successful poll (such as by
-    // another task when scheduler.concurrentConsumers > 1) does not clear it, only stopping the consumer does
-    private final AtomicReference<Throwable> fatalError = new AtomicReference<>();
     private final AtomicLong counter = new AtomicLong();
     private volatile boolean firstPollDone;
     // the error counter when the last backoff finished (the error threshold of the backoff counts from this)
@@ -126,6 +123,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      */
     @Override
     public void run() {
+        // a run that started before a stop and start must not stop the restarted consumer (CAMEL-27385)
+        final long runGeneration = generation.get();
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
         try {
             // log starting
@@ -142,7 +141,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             }
 
             // execute scheduled task
-            doRun();
+            doRun(runGeneration);
 
             // log completed
             if (LoggingLevel.ERROR == runLoggingLevel) {
@@ -156,28 +155,40 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             } else {
                 LOG.trace("Scheduled task completed on: {}", this.getEndpoint());
             }
-        } catch (Error e) {
-            // need to log so there is visibility as otherwise the user may not see anything in logs
-            if (isErrorEndingTask()) {
-                LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}."
-                          + " The scheduled task has stopped polling and will not run again until the route is restarted.",
-                        this.getEndpoint(), e.getMessage(), e);
-            } else {
-                LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}.",
-                        this.getEndpoint(), e.getMessage(), e);
+        } catch (VirtualMachineError e) {
+            // a JVM-level failure of the poll (such as in a client library, or in the route of the polled message): the
+            // consumer stops polling until the route is restarted, also with concurrentConsumers > 1, and its health
+            // check is DOWN with the error (CAMEL-27515). It is not thrown on: the task would end silently, and the
+            // Spring and Quartz schedulers would keep running it. A later run returns at once, as isRunAllowed() is false
+            LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}.",
+                    this.getEndpoint(), e.getMessage(), e);
+            stateLock.lock();
+            try {
+                if (runGeneration == generation.get()) {
+                    handleFatalError(e);
+                }
+            } finally {
+                stateLock.unlock();
             }
-            throw e;
         } catch (Throwable e) {
+            // also another Error, which the poll strategy (on rollback) or the exception handler threw
             LOG.error("Error occurred during running scheduled task on: {}, due: {}."
                       + " This exception is ignored and the task will run again on next poll.",
                     this.getEndpoint(), e.getMessage(), e);
         }
     }
 
-    private void doRun() {
-        final long currentGeneration = generation.get();
+    private void doRun(long currentGeneration) {
+        // the generation that run() read: a run that started before a stop and start does not poll for the restarted
+        // consumer, which would ignore a fatal error of that poll (CAMEL-27515)
         if (isSuspended()) {
             LOG.trace("Cannot start to poll: {} as its suspended", this.getEndpoint());
+            return;
+        }
+        if (getFatalError() != null) {
+            // stopped after a VirtualMachineError: no poll, so the state of the polls (the counters and the last error)
+            // is left as it is until the route is restarted (CAMEL-27515)
+            LOG.trace("Cannot start to poll: {} as it stopped after a fatal error", this.getEndpoint());
             return;
         }
 
@@ -238,7 +249,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         while (!done) {
             // an Error is caught around the whole attempt, so also an Error that the poll strategy (such as on rollback)
             // or the exception handler (such as a bridged error handler whose route throws a StackOverflowError) throws
-            // is kept and ends this task, as one thrown by the poll itself
+            // is kept: run() stops the consumer on a VirtualMachineError, and another Error is a failed poll (CAMEL-27515)
             try {
                 try {
                     // eager assume we are done
@@ -309,7 +320,16 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                     }
 
                     LOG.trace("Finished polling: {}", this.getEndpoint());
-                } catch (Exception e) {
+                } catch (Throwable thrown) {
+                    VirtualMachineError fatal = ObjectHelper.getVirtualMachineError(thrown);
+                    if (fatal != null) {
+                        // also when wrapped by a worker of the poll (such as the parallel receives of aws2-sqs): ends
+                        // this run, and run() stops the consumer (CAMEL-27515)
+                        throw fatal;
+                    }
+                    // another Error of the poll (such as a NoClassDefFoundError of a client library) is a failed poll, as
+                    // an exception: rolled back, given to the exception handler, and polled again (CAMEL-27515)
+                    Exception e = thrown instanceof Exception ex ? ex : new RuntimeCamelException(thrown);
                     // set before the rollback, so an Error that the rollback throws keeps this exception
                     cause = e;
                     try {
@@ -339,8 +359,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                     }
                 }
             } catch (Error error) {
-                if (cause != null && cause != error) {
-                    // the Error was thrown while handling this exception, so keep it with the Error
+                if (cause != null && cause != error && error.getSuppressed().length == 0) {
+                    // the Error was thrown while handling this exception, so keep it with the Error (only once: a poll
+                    // strategy may throw the same Error instance on every failed poll, as another Error than a
+                    // VirtualMachineError does not stop the consumer)
                     error.addSuppressed(cause);
                 }
                 cause = error;
@@ -354,7 +376,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
                 LOG.trace("doRun() done after the consumer was stopped");
                 if (cause instanceof Error error) {
-                    // the task of the stopped consumer still ends, but the Error is not kept for the restarted consumer
+                    // run() logs it, but does not stop the restarted consumer for it, as this run started before
                     throw error;
                 }
                 return;
@@ -389,20 +411,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
             // now first pool is done after the poll is complete
             firstPollDone = true;
-
-            if (cause instanceof Error && isErrorEndingTask()) {
-                // keep the error until the consumer is stopped, so the health check stays DOWN even if other tasks
-                // (scheduler.concurrentConsumers > 1) keep polling successfully. Under the lock, so a stop and start
-                // after the generation check cannot leave the marker on the restarted consumer
-                fatalError.compareAndSet(null, cause);
-            }
         } finally {
             stateLock.unlock();
         }
 
         if (cause instanceof Error error) {
-            // the JVM may be in an unknown state, so run() logs and rethrows this: with the default scheduler this ends
-            // the scheduled task
+            // run() stops the consumer on a VirtualMachineError (CAMEL-27515), and logs another Error (thrown by the
+            // rollback or the exception handler), which is a failed poll as an exception
             throw error;
         }
 
@@ -410,15 +425,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 successCounter.longValue(), errorCounter.longValue());
 
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
-    }
-
-    /**
-     * Whether an {@link Error} thrown by a run ends the scheduled task: the default scheduler runs the task on a
-     * {@link java.util.concurrent.ScheduledExecutorService}, which does not run it again after it threw, while other
-     * schedulers (such as Spring or Quartz) catch it and keep running the task.
-     */
-    private boolean isErrorEndingTask() {
-        return scheduler instanceof DefaultScheduledPollConsumerScheduler;
     }
 
     /**
@@ -460,6 +466,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     protected boolean isPollAllowed() {
         return isRunAllowed() && !isSuspended();
+    }
+
+    @Override
+    protected boolean isStopOnFatalError() {
+        // a polling consumer pulls work in a loop: it stops polling after a VirtualMachineError (CAMEL-27515)
+        return true;
     }
 
     /**
@@ -704,19 +716,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     }
 
     /**
-     * The first {@link Error} (such as an {@link OutOfMemoryError}) a poll threw since the consumer was started, or
-     * null if none. With the default scheduler, the scheduled task that polled stops polling after an Error, so unlike
-     * {@link #getLastError()} this is not cleared by a later successful poll, only when the consumer is stopped (such
-     * as by restarting the route). Other schedulers (such as Spring or Quartz) keep running the task after an Error, so
-     * with them this is always null, and the Error is the {@link #getLastError()} instead.
-     *
-     * @since 4.24
-     */
-    public Throwable getFatalError() {
-        return fatalError.get();
-    }
-
-    /**
      * Whether a first pool attempt has been done (also if the consumer has been restarted).
      */
     public boolean isFirstPollDone() {
@@ -738,6 +737,25 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Stops this consumer after a fatal error, unless the error comes from a poll that started before the consumer was
+     * stopped and started again: it must not stop the restarted consumer (CAMEL-27385).
+     */
+    @Override
+    public boolean handleFatalError(Throwable error) {
+        Long pollGen = pollGeneration.get();
+        if (pollGen == null) {
+            // not called from a poll of this consumer (run() checks the generation itself)
+            return super.handleFatalError(error);
+        }
+        stateLock.lock();
+        try {
+            return pollGen == generation.get() && super.handleFatalError(error);
+        } finally {
+            stateLock.unlock();
+        }
+    }
 
     /**
      * Forces the consumer to be marked as ready. This can be used by components that need to mark this sooner than
@@ -979,7 +997,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             forceReady = false;
             lastError = null;
             lastErrorDetails = null;
-            fatalError.set(null);
         } finally {
             stateLock.unlock();
         }
