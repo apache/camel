@@ -415,6 +415,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         if (previous != null && previous.getCount() > 0) {
             earlierLatches.add(previous);
         }
+        // a latch is only dropped here, at a later start, once its count is 0: every polling task gets a worker of its
+        // own from the fixed pool, so each task runs and counts down the latch of its start
         earlierLatches.removeIf(l -> l.getCount() == 0);
         starts.incrementAndGet();
         latch = new CountDownLatch(getPollingTasks());
