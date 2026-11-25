@@ -309,8 +309,9 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
             if (row == null || row.getBoolean("[applied]")) {
                 return deserialize(previous);
             }
-            // another client changed the entry in between, try again with the value it has now
-            previous = row.getByteBuffer(VALUE_COLUMN);
+            // another client changed the entry in between, try again with the value it has now. When the row does not
+            // exist anymore the result has the [applied] column only, and the next attempt then matches the missing row
+            previous = row.getColumnDefinitions().contains(VALUE_COLUMN) ? row.getByteBuffer(VALUE_COLUMN) : null;
         }
         throw new IllegalStateException("Unable to delete the key " + key + " after " + MAX_ATTEMPTS + " attempts");
     }
