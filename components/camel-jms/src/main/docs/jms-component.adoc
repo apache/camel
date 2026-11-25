@@ -1192,7 +1192,9 @@ react to an interrupt. The consumer waits for its listener container to stop up 
 the `ExecutorServiceManager` (10 seconds by default), or until the thread that waits is interrupted (as the graceful
 shutdown does when its timeout elapses). It then logs a WARN and no longer uses that listener container:
 the listener container is stopped and destroyed in the background, once the call returns, and the consumer creates a
-new one when it is resumed or started again.
+new one when it is resumed or started again. A listener container that is destroyed ends its non-durable topic
+subscriptions: the messages published to the topic until the new listener container subscribes do not reach the
+consumer. Use a durable subscription when they must.
 
 With `asyncStopListener=true`, stopping the consumer does not wait for its listener container. Stopping a route or the
 CamelContext suspends the consumer first, though (unless the route has `shutdownRoute` set to `Defer`), and the suspend
