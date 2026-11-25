@@ -283,7 +283,10 @@ broker did not answer: for the `callTimeout` of ActiveMQ Artemis (30 seconds by 
 
 When that time elapses, the consumer logs a WARN, the listener container is stopped and destroyed in the background,
 and the consumer creates a new listener container when it is resumed or started again. A stop that returns then no
-longer means that the listener container has released its connection.
+longer means that the listener container has released its connection. With camel-jms, the destroyed listener container
+ends its non-durable topic subscriptions: the messages published until the new listener container subscribes do not
+reach the consumer. A camel-jms suspend or stop from the thread that processes a message of the consumer (such as a
+route policy when an exchange is done) still stops the listener container on that thread, without this time limit.
 
 The stop of the listener container runs on a thread pool of the component: the `AsyncStartStopListener` thread pool of
 camel-jms, and a new `SpringRabbitMQStopListenerContainer` thread pool of camel-spring-rabbitmq. camel-jms with
