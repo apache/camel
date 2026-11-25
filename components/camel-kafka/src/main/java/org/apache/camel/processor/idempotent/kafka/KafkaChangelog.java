@@ -43,6 +43,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
@@ -205,11 +206,13 @@ public final class KafkaChangelog<V> {
 
     /**
      * Writes a record to the topic, and waits until it is written.
+     *
+     * @return the partition and the offset of the record
      */
-    public void send(String key, V value) {
+    public RecordMetadata send(String key, V value) {
         try {
             ObjectHelper.notNull(producer, "producer");
-            producer.send(new ProducerRecord<>(topic, key, value)).get(); // sync send
+            return producer.send(new ProducerRecord<>(topic, key, value)).get(); // sync send
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeCamelException(e);

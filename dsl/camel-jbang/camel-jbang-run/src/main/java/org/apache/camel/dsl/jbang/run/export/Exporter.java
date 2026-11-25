@@ -94,6 +94,7 @@ abstract class Exporter {
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private Printer quietPrinter;
+    private Set<PluginExporter> pluginExporters;
     // Map to store deferred symbolic links: target path in the build dir → original source path
     private Map<Path, Path> deferredSymlinks = new HashMap<>();
 
@@ -309,8 +310,38 @@ abstract class Exporter {
      */
     protected final Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = doResolveDependencies(settings, profile);
+        removePluginDependencies(answer);
         removeDuplicateDependencies(answer);
         return answer;
+    }
+
+    /**
+     * Removes the dependencies the plugins ask to remove, after all dependencies are collected (routes, --dep, plugins
+     * and the runtime exporter). Matched by groupId:artifactId on the coordinates as collected, in any notation, see
+     * {@link PluginExporter#getDependenciesToRemove(RuntimeType)}. The camel-main runtime can still add camel:health
+     * afterwards.
+     */
+    private void removePluginDependencies(Set<String> answer) {
+        if (request.skipPlugins) {
+            return;
+        }
+        Set<String> toBeRemoved = new HashSet<>();
+        for (PluginExporter exporter : pluginExporters()) {
+            for (String d : exporter.getDependenciesToRemove(request.runtime)) {
+                MavenGav gav = MavenGav.parseGav(d);
+                toBeRemoved.add(gav.getGroupId() + ":" + gav.getArtifactId());
+            }
+        }
+        if (!toBeRemoved.isEmpty()) {
+            answer.removeIf(d -> {
+                MavenGav gav = MavenGav.parseGav(d);
+                boolean remove = toBeRemoved.contains(gav.getGroupId() + ":" + gav.getArtifactId());
+                if (remove) {
+                    printer().printf("Removing dependency %s (asked by an export plugin)%n", d);
+                }
+                return remove;
+            });
+        }
     }
 
     /**
@@ -1509,10 +1540,14 @@ abstract class Exporter {
     }
 
     /**
-     * The exporters of the active plugins.
+     * The exporters of the active plugins, looked up once per export (a plugin that cannot be linked is warned about
+     * once).
      */
     protected Set<PluginExporter> pluginExporters() {
-        return new LinkedHashSet<>(exportContext.getPlugins(request.mavenResolver.repos()).exporters());
+        if (pluginExporters == null) {
+            pluginExporters = new LinkedHashSet<>(exportContext.getPlugins(request.mavenResolver.repos()).exporters());
+        }
+        return pluginExporters;
     }
 
     protected Printer outPrinter() {
