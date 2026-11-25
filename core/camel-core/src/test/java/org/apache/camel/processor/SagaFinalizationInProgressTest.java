@@ -35,6 +35,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,6 +51,8 @@ class SagaFinalizationInProgressTest extends ContextTestSupport {
     private final CountDownLatch releaseFinalization = new CountDownLatch(1);
     private final AtomicReference<CamelSagaCoordinator> coordinator = new AtomicReference<>();
     private final AtomicReference<Exchange> ownCompensateAnswered = new AtomicReference<>();
+    private final AtomicReference<Thread> compensationThread = new AtomicReference<>();
+    private final AtomicReference<Thread> ownCompensateThread = new AtomicReference<>();
     private InMemorySagaService sagaService;
 
     @Override
@@ -163,6 +166,27 @@ class SagaFinalizationInProgressTest extends ContextTestSupport {
         assertNull(sagaService.getSaga(coordinator.get().getId()).get(), "the saga ended");
     }
 
+    @Test
+    void compensationThatCompensatesItsOwnSagaFromAnotherThreadDoesNotWaitForItself() throws Exception {
+        // the compensation route goes on in another thread and then calls saga:compensate: that thread is not the one
+        // that called the compensation endpoint, so only the exchange property tells that the call is part of the
+        // compensation of the same saga, and the call must be answered at once
+        CompletableFuture<Exchange> owner = template.asyncSend("direct:compensation-changes-thread",
+                e -> e.getMessage().setBody("hello"));
+
+        Exchange result = owner.get(10, TimeUnit.SECONDS);
+        Exception ex = result.getException();
+        assertInstanceOf(IllegalArgumentException.class, ex);
+        assertEquals(0, ex.getSuppressed().length, "the compensation succeeded");
+        Exchange answered = ownCompensateAnswered.get();
+        assertNotNull(answered, "saga:compensate answered the compensation route");
+        assertNull(answered.getException());
+        assertNotNull(compensationThread.get());
+        assertNotSame(compensationThread.get(), ownCompensateThread.get(),
+                "saga:compensate was called from another thread than the compensation endpoint");
+        assertNull(sagaService.getSaga(coordinator.get().getId()).get(), "the saga ended");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -227,6 +251,20 @@ class SagaFinalizationInProgressTest extends ContextTestSupport {
 
                 from("direct:removes-properties-then-compensates")
                         .removeProperties("*")
+                        .to("saga:compensate")
+                        .process(ownCompensateAnswered::set);
+
+                from("direct:compensation-changes-thread")
+                        .saga().compensation("direct:changes-thread-then-compensates")
+                        .process(e -> captureCoordinator(e))
+                        .process(e -> {
+                            throw new IllegalArgumentException("business failure");
+                        });
+
+                from("direct:changes-thread-then-compensates")
+                        .process(e -> compensationThread.set(Thread.currentThread()))
+                        .threads()
+                        .process(e -> ownCompensateThread.set(Thread.currentThread()))
                         .to("saga:compensate")
                         .process(ownCompensateAnswered::set);
             }
