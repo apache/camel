@@ -95,7 +95,7 @@
         <avro-ipc-jetty-version>1.12.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.2</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-glue-schema-registry-version>2.0.2</aws-glue-schema-registry-version>
+        <aws-glue-schema-registry-version>3.0.1</aws-glue-schema-registry-version>
         <aws-java-sdk2-version>2.57.11</aws-java-sdk2-version>
         <azure-iot-device-client-version>2.5.1</azure-iot-device-client-version>
         <azure-schemaregistry-kafka-avro-version>1.1.4</azure-schemaregistry-kafka-avro-version>
