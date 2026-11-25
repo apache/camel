@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -108,6 +110,18 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final DotName URI_ENDPOINT = DotName.createSimple(UriEndpoint.class.getName());
     public static final DotName COMPONENT = DotName.createSimple(Component.class.getName());
+
+    // matches a text in angle brackets, which JavadocHelper.sanitizeDescription strips from a description
+    private static final Pattern ANGLE_BRACKETS = Pattern.compile("<(.*?)>");
+    // matches the name of a tag at the start of a text in angle brackets
+    private static final Pattern TAG_NAME = Pattern.compile("^/?([a-zA-Z][a-zA-Z0-9]*)");
+    // the HTML tags that can be used in a description: they are stripped on purpose when the documentation is
+    // generated, whereas any other text in angle brackets would silently be lost
+    private static final Set<String> HTML_TAGS = Set.of(
+            "a", "abbr", "acronym", "address", "b", "big", "blockquote", "br", "caption", "center", "cite", "code",
+            "dd", "dfn", "div", "dl", "dt", "em", "font", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "i", "img",
+            "ins", "kbd", "li", "menu", "ol", "p", "pre", "q", "s", "samp", "small", "span", "strike", "strong",
+            "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "title", "tr", "tt", "u", "ul", "var");
     public static final DotName API_PARAMS = DotName.createSimple(ApiParams.class.getName());
 
     private static final String HEADER_FILTER_STRATEGY_JAVADOC
@@ -480,6 +494,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         final EndpointHeaderModel header = new EndpointHeaderModel();
         String description = metadata.description().trim();
+        checkDescription(field.getName(), description);
         if (description.isEmpty()) {
             description = getHeaderFieldJavadoc(field);
         }
@@ -709,6 +724,36 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             parentData.getEndpointHeaders().stream()
                     .filter(header -> !headerNames.contains(header.getName()))
                     .forEach(header -> componentModel.getEndpointHeaders().add(header));
+        }
+    }
+
+    /**
+     * Checks that a description read from an annotation does not contain text in angle brackets that is not an HTML
+     * tag, as {@link JavadocHelper#sanitizeDescription} strips any text in angle brackets when the documentation is
+     * generated, so that text would silently be lost.
+     *
+     * @param name        the name of the header or option the description belongs to
+     * @param description the description to check
+     */
+    static void checkDescription(String name, String description) {
+        if (Strings.isNullOrEmpty(description)) {
+            return;
+        }
+        List<String> invalid = new ArrayList<>();
+        Matcher matcher = ANGLE_BRACKETS.matcher(description);
+        while (matcher.find()) {
+            Matcher tag = TAG_NAME.matcher(matcher.group(1).trim());
+            if (!tag.find() || !HTML_TAGS.contains(tag.group(1).toLowerCase(Locale.ROOT))) {
+                invalid.add(matcher.group());
+            }
+        }
+        if (!invalid.isEmpty()) {
+            throw new IllegalStateException(
+                    "Description of " + name + " contains text in angle brackets that is not an HTML tag: "
+                                            + String.join(", ", invalid)
+                                            + ". Text in angle brackets is removed when the documentation is generated,"
+                                            + " so the description must be rewritten without angle brackets"
+                                            + " (for example, write List of String instead of List<String>).");
         }
     }
 
@@ -1101,6 +1146,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 String docComment = findJavaDoc(method, fieldName, name, classElement, false);
                 if (Strings.isNullOrEmpty(docComment)) {
                     docComment = metadata != null ? metadata.description() : null;
+                    checkDescription(name, docComment);
                 }
                 if (Strings.isNullOrEmpty(docComment)) {
                     // apt cannot grab javadoc from camel-core, only from
@@ -1438,6 +1484,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             String displayName,
             Class<?> fieldTypeElement, String fieldTypeName) {
         String docComment = param.description();
+        if (!apiOption) {
+            // the description of an api option is not sanitized, as it is overridden by the description of
+            // the api method, so only endpoint options must be checked
+            checkDescription(name, docComment);
+        }
         if (Strings.isNullOrEmpty(docComment)) {
             docComment = findJavaDoc(fieldElement, fieldName, name, classElement, false);
         }
@@ -1648,6 +1699,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             String fieldTypeName = getTypeName(GenericsUtil.resolveType(orgClassElement, fieldElement));
 
             String docComment = path.description();
+            checkDescription(name, docComment);
             if (Strings.isNullOrEmpty(docComment)) {
                 docComment = findJavaDoc(fieldElement, fieldName, name, classElement, false);
             }
@@ -1874,17 +1926,19 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private String findJavaDoc(
             AnnotatedElement member, String fieldName, String name, Class<?> classElement, boolean builderPattern) {
         if (member instanceof Method) {
+            String doc = null;
             try {
                 Field field = classElement.getDeclaredField(fieldName);
                 Metadata md = field.getAnnotation(Metadata.class);
                 if (md != null) {
-                    String doc = md.description();
-                    if (!Strings.isNullOrEmpty(doc)) {
-                        return doc;
-                    }
+                    doc = md.description();
                 }
             } catch (Exception e) {
                 // ignore
+            }
+            if (!Strings.isNullOrEmpty(doc)) {
+                checkDescription(name, doc);
+                return doc;
             }
         }
         if (member != null) {
@@ -1892,6 +1946,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             if (md != null) {
                 String doc = md.description();
                 if (!Strings.isNullOrEmpty(doc)) {
+                    checkDescription(name, doc);
                     return doc;
                 }
             }

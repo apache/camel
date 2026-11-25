@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.maven.packaging.endpoint.SomeApiWithBooleanOptions;
+import org.apache.camel.maven.packaging.endpoint.SomeComponentWithAngleBracketOption;
 import org.apache.camel.maven.packaging.endpoint.SomeComponentWithBooleanOptions;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointExtendingBodyTypes;
@@ -29,6 +30,8 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByField;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByMethod;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingInterfaceConstants;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithAngleBracketHeader;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithAngleBracketOption;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBodyTypes;
@@ -37,6 +40,8 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithEnumStyleBodyTy
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderClassHierarchy;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderInterfaceHierarchy;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHtmlHeader;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHtmlOption;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithJavadocAsDescription;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeExtendingEndpoint;
@@ -345,6 +350,56 @@ class EndpointSchemaGeneratorMojoTest {
                 .getOptions();
         assertFalse(optionJson(parameters, "wrapperParameter").containsKey("defaultValue"));
         assertEquals(Boolean.FALSE, optionJson(parameters, "primitiveParameter").get("defaultValue"));
+    }
+
+    @Test
+    void testHeaderDescriptionWithAngleBracketsIsRejected() {
+        // CAMEL-27452: text in angle brackets that is not an HTML tag is stripped when the documentation is
+        // generated, so the description must be rejected instead of silently losing that text
+        UriEndpoint endpoint = SomeEndpointWithAngleBracketHeader.class.getAnnotation(UriEndpoint.class);
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> mojo.addEndpointHeaders(model, endpoint, "some"));
+        assertTrue(e.getMessage().contains("<canonical-user-id>"), e.getMessage());
+    }
+
+    @Test
+    void testEndpointOptionDescriptionWithAngleBracketsIsRejected() {
+        // CAMEL-27452: same as above for the description of an endpoint option
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> mojo.findClassProperties(model, SomeEndpointWithAngleBracketOption.class, Set.of(), "", null,
+                        null, false));
+        assertTrue(e.getMessage().contains("<CamelEvent>"), e.getMessage());
+    }
+
+    @Test
+    void testComponentOptionDescriptionWithAngleBracketsIsRejected() {
+        // CAMEL-27452: same as above for the description of a component option, which the generator reads
+        // from the setter
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> mojo.findComponentClassProperties(model, SomeComponentWithAngleBracketOption.class, "", null,
+                        null));
+        assertTrue(e.getMessage().contains("<String>"), e.getMessage());
+    }
+
+    @Test
+    void testHeaderDescriptionWithHtmlTagsIsAccepted() {
+        // CAMEL-27452: HTML tags in a description are fine, as they are stripped on purpose when the
+        // documentation is generated
+        UriEndpoint endpoint = SomeEndpointWithHtmlHeader.class.getAnnotation(UriEndpoint.class);
+        mojo.addEndpointHeaders(model, endpoint, "some");
+        assertEquals(1, model.getEndpointHeaders().size());
+        assertEquals(
+                "Some <p>rich</p> description with <tt>code</tt> and a <a href=\"https://example.com\">link</a>.",
+                model.getEndpointHeaders().get(0).getDescription());
+    }
+
+    @Test
+    void testEndpointOptionDescriptionWithHtmlTagsIsAccepted() {
+        // CAMEL-27452: same as above for the description of an endpoint option
+        mojo.findClassProperties(model, SomeEndpointWithHtmlOption.class, Set.of(), "", null, null, false);
+        assertEquals(1, model.getEndpointOptions().size());
+        assertEquals("An option with <b>bold</b> text and a list <ul><li>one</li></ul>.",
+                model.getEndpointOptions().get(0).getDescription());
     }
 
     private static JsonObject optionJson(Collection<? extends BaseOptionModel> options, String name) {

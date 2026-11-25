@@ -697,13 +697,15 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * MCP server definitions in the form of mcpServer..=. Supported
+         * MCP server definitions in the form of
+         * mcpServer.myServer.transportType=streamableHttp. Supported
          * properties: transportType (stdio, http or streamableHttp, default:
          * stdio), command (comma-separated, for stdio), url (for
-         * http/streamableHttp), environment.= (for stdio), timeout (in seconds,
-         * default: 60), logRequests, logResponses, oauthProfile (OAuth profile
-         * for HTTP auth, requires camel-oauth). This is a multi-value option
-         * with prefix: mcpServer.
+         * http/streamableHttp), environment variables in the form of
+         * environment.MY_KEY=myValue (for stdio), timeout (in seconds, default:
+         * 60), logRequests, logResponses, oauthProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -722,13 +724,15 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
-         * MCP server definitions in the form of mcpServer..=. Supported
+         * MCP server definitions in the form of
+         * mcpServer.myServer.transportType=streamableHttp. Supported
          * properties: transportType (stdio, http or streamableHttp, default:
          * stdio), command (comma-separated, for stdio), url (for
-         * http/streamableHttp), environment.= (for stdio), timeout (in seconds,
-         * default: 60), logRequests, logResponses, oauthProfile (OAuth profile
-         * for HTTP auth, requires camel-oauth). This is a multi-value option
-         * with prefix: mcpServer.
+         * http/streamableHttp), environment variables in the form of
+         * environment.MY_KEY=myValue (for stdio), timeout (in seconds, default:
+         * 60), logRequests, logResponses, oauthProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

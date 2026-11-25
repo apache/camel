@@ -93,10 +93,10 @@ public class LangChain4jAgentConfiguration implements Cloneable {
                             + "Mutually exclusive with jsonSchema.")
     private Class<?> outputClass;
 
-    @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
+    @UriParam(description = "MCP server definitions in the form of mcpServer.myServer.transportType=streamableHttp."
                             + " Supported properties: transportType (stdio, http or streamableHttp, default: stdio),"
                             + " command (comma-separated, for stdio), url (for http/streamableHttp),"
-                            + " environment.<key>=<value> (for stdio), timeout (in seconds, default: 60),"
+                            + " environment variables in the form of environment.MY_KEY=myValue (for stdio), timeout (in seconds, default: 60),"
                             + " logRequests, logResponses,"
                             + " oauthProfile (OAuth profile for HTTP auth, requires camel-oauth).",
               prefix = "mcpServer.", multiValue = true, label = "advanced")

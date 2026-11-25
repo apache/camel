@@ -40,7 +40,7 @@ public final class GoogleFirestoreConstants {
     public static final String QUERY_FIELD = "CamelGoogleFirestoreQueryField";
 
     @Metadata(label = "producer",
-              description = "The operator for query filtering (e.g., ==, <, >, <=, >=, !=, array-contains, in, array-contains-any, not-in).",
+              description = "The operator for query filtering (e.g., ==, !=, less than, greater than, less than or equal to, greater than or equal to, array-contains, in, array-contains-any, not-in).",
               javaType = "String")
     public static final String QUERY_OPERATOR = "CamelGoogleFirestoreQueryOperator";
 

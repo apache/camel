@@ -194,7 +194,8 @@ public interface Langchain4jEmbeddingstoreComponentBuilderFactory {
     
         
         /**
-         * When true, SEARCH returns List with text content instead of List.
+         * When true, SEARCH returns a List of String with text content instead
+         * of a List of EmbeddingMatch.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

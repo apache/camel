@@ -350,9 +350,10 @@ public interface TahuEdgeEndpointBuilderFactory {
         }
         /**
          * Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files.
-         * This path will contain files named as -bdSeqNum and must be writable
-         * by the executing process' user. Applies to the edge node endpoint
-         * only.
+         * This path will contain files named with the id of the edge node
+         * followed by -bdSeqNum, such as myEdgeNode-bdSeqNum, and must be
+         * writable by the executing process' user. Applies to the edge node
+         * endpoint only.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

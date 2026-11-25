@@ -2381,7 +2381,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator of
+         * org.apache.camel.component.file.GenericFile.
          * 
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
@@ -2396,7 +2397,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator of
+         * org.apache.camel.component.file.GenericFile.
          * 
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.

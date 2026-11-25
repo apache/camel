@@ -341,7 +341,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     private boolean synchronous;
     @UriParam(label = "consumer,batch", defaultValue = "false",
               description = "Enable batch consuming. The route receives one Exchange per batch, whose body"
-                            + " is a List<Exchange> of the individual JMS messages, instead of one Exchange per message.")
+                            + " is a List of Exchange containing the individual JMS messages, instead of one Exchange per message.")
     private boolean batching;
     @UriParam(defaultValue = "100", label = "consumer,batch",
               description = "Maximum number of messages per batch.")

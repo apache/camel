@@ -91,7 +91,7 @@ public interface Ddb2Constants {
     String KEY_CONDITIONS = "CamelAwsDdbKeyConditions";
     @Metadata(label = "DeleteTable DescribeTable UpdateTable",
               description = "The KeySchema that identifies the primary key for this table.\n" +
-                            "*From Camel 2.16.0 the type of this header is List<KeySchemaElement> and not KeySchema*",
+                            "*From Camel 2.16.0 the type of this header is a List of KeySchemaElement and not KeySchema*",
               javaType = "List<software.amazon.awssdk.services.dynamodb.model.KeySchemaElement>")
     String KEY_SCHEMA = "CamelAwsDdbKeySchema";
     @Metadata(label = "Query Scan", description = "Primary key of the item where the query operation stopped, inclusive of\n" +

@@ -54,7 +54,7 @@ public interface SmppConstants {
     String DELIVERED = "CamelSmppDelivered";
     @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the\n" +
                             "destination SME address(es). For mobile terminated messages, this is the\n" +
-                            "directory number of the recipient MS. It must be a `List<String>` for\n" +
+                            "directory number of the recipient MS. It must be a List of String for\n" +
                             "SubmitMulti and a `String` otherwise.\n" +
                             "*Consumer:* *only for DeliverSm and DataSm:* Defines the destination SME address.\n" +
                             "For mobile terminated messages, this is the directory number of the\n" +
@@ -92,7 +92,7 @@ public interface SmppConstants {
               javaType = "String")
     String ENCODING = "CamelSmppEncoding";
     @Metadata(description = "*Producer:* *only for SubmitMultiSm* The errors which\n" +
-                            "occurred by sending the short message(s) the form `Map<String, List<Map<String, Object>>>` (messageID : (destAddr :\n"
+                            "occurred by sending the short message(s) the form of a Map of Lists of Maps (messageID : (destAddr :\n"
                             +
                             "address, error : errorCode)).\n" +
                             "*Consumer:* *only for smsc DeliveryReceipt* Where appropriate this may hold a\n" +
@@ -126,7 +126,7 @@ public interface SmppConstants {
     @Metadata(description = "*Producer:* The id to identify the submitted short message(s) for later use.\n" +
                             "In case of a ReplaceSm, QuerySm, CancelSm and DataSm this\n" +
                             "header value is a `String`. In case of a SubmitSm or SubmitMultiSm this\n" +
-                            "header value is a `List<String>`.\n" +
+                            "header value is a List of String.\n" +
                             "*Consumer:* *only for smsc DeliveryReceipt and DataSm* The message ID allocated to\n" +
                             "the message by the SMSC when originally submitted.",
               javaType = "String or List<String>")

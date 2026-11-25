@@ -2032,7 +2032,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator of
+         * org.apache.camel.component.file.GenericFile.
          * 
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
@@ -2047,7 +2048,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator of
+         * org.apache.camel.component.file.GenericFile.
          * 
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.

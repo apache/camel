@@ -43,7 +43,7 @@ public final class IoTHubConstants {
     public static final String DELIVERY_MODE = HEADER_PREFIX + "DeliveryMode";
 
     @Metadata(label = "producer",
-              description = "Device twin reported properties to apply, as a Map<String, Object>. Used for TWIN "
+              description = "Device twin reported properties to apply, as a Map with String keys and Object values. Used for TWIN "
                             + "delivery and, in BOTH mode, alongside the telemetry message body.",
               javaType = "java.util.Map")
     public static final String TWIN_PROPERTIES = HEADER_PREFIX + "TwinProperties";

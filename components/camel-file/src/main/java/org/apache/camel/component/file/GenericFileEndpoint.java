@@ -353,7 +353,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String antExclude;
     @UriParam(label = "consumer,sort",
               description = "Pluggable sorter as a "
-                            + "java.util.Comparator<org.apache.camel.component.file.GenericFile> class.")
+                            + "java.util.Comparator of org.apache.camel.component.file.GenericFile.")
     protected Comparator<GenericFile<T>> sorter;
     @UriParam(label = "consumer,sort", javaType = "java.lang.String", description = "Built-in sort by using the "
                                                                                     + "File Language. Supports nested sorts, so you can have a sort by file name and as a 2nd group sort "
