@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -470,6 +471,19 @@ public class MulticastProcessor extends BaseProcessorSupport
         final AtomicInteger nbAggregated = new AtomicInteger();
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
+        /**
+         * The indexes that are aggregated or reported to {@link AggregationStrategy#timeout}, in streaming mode with a
+         * timeout: the exchanges are aggregated in the order they complete, so the timeout cannot take the number of
+         * aggregated exchanges as the next index. In ordered mode they are aggregated in index order, so the number is
+         * the next index. Guarded by the lock.
+         */
+        final BitSet handledIndexes;
+        /**
+         * The index of each exchange sent and not aggregated yet, when there is a timeout. The timeout does not read
+         * the index property of the exchange, as an EIP inside the branch can change it (a nested split or multicast
+         * can leave the index property of its own last part on the exchange).
+         */
+        final Map<Exchange, Integer> sentIndexes;
         @Deprecated(since = "4.19.0")
         final Map<String, String> mdc;
         final ScheduledFuture<?> timeoutTask;
@@ -481,6 +495,8 @@ public class MulticastProcessor extends BaseProcessorSupport
             this.pairs = pairs;
             this.callback = callback;
             this.iterator = pairs.iterator();
+            this.handledIndexes = timeout > 0 && isStreaming() ? new BitSet() : null;
+            this.sentIndexes = timeout > 0 ? new ConcurrentHashMap<>() : null;
             if (timeout > 0) {
                 timeoutTask = schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
             } else {
@@ -548,8 +564,16 @@ public class MulticastProcessor extends BaseProcessorSupport
             try {
                 Exchange exchange;
                 while (!done.get() && (exchange = completion.poll()) != null) {
+                    Integer index = sentIndexes != null ? sentIndexes.remove(exchange) : null;
                     doAggregate(result, exchange, original);
-                    if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
+                    if (handledIndexes != null && index != null) {
+                        handledIndexes.set(index);
+                    }
+                    int aggregated = nbAggregated.incrementAndGet();
+                    // read allSent before nbExchangeSent: the sender sets allSent after its last increment of
+                    // nbExchangeSent, so the count read afterwards is final (read the other way round, the count can
+                    // miss the last exchange, which would then never be aggregated)
+                    if (allSent.get() && aggregated >= nbExchangeSent.get()) {
                         doDone(result.get(), true);
                     }
                 }
@@ -597,17 +621,28 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
                 while (nbAggregated.get() < nbExchangeSent.get()) {
                     Exchange exchange = completion.pollUnordered();
-                    int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
-                    while (nbAggregated.get() < index) {
-                        int idx = nbAggregated.getAndIncrement();
-                        AggregationStrategy strategy = getAggregationStrategy(null);
-                        if (strategy != null) {
-                            strategy.timeout(result.get() != null ? result.get() : original,
-                                    idx, nbExchangeSent.get(), timeout);
+                    int index = exchange != null ? indexOf(exchange) : nbExchangeSent.get();
+                    if (handledIndexes != null) {
+                        // streaming: report the indexes before it that are not aggregated (not the first nbAggregated
+                        // indexes, as the exchanges are aggregated in the order they complete)
+                        for (int idx = handledIndexes.nextClearBit(0);
+                             idx < index;
+                             idx = handledIndexes.nextClearBit(idx + 1)) {
+                            handledIndexes.set(idx);
+                            nbAggregated.incrementAndGet();
+                            reportTimeout(idx);
+                        }
+                    } else {
+                        // ordered: the first nbAggregated indexes are aggregated
+                        while (nbAggregated.get() < index) {
+                            reportTimeout(nbAggregated.getAndIncrement());
                         }
                     }
                     if (exchange != null) {
                         doAggregate(result, exchange, original);
+                        if (handledIndexes != null) {
+                            handledIndexes.set(index);
+                        }
                         nbAggregated.incrementAndGet();
                     }
                 }
@@ -621,6 +656,18 @@ public class MulticastProcessor extends BaseProcessorSupport
                 doTimeoutFailed(e);
             } finally {
                 lock.unlock();
+            }
+        }
+
+        private int indexOf(Exchange exchange) {
+            Integer index = sentIndexes != null ? sentIndexes.remove(exchange) : null;
+            return index != null ? index : getExchangeIndex(exchange);
+        }
+
+        private void reportTimeout(int index) {
+            AggregationStrategy strategy = getAggregationStrategy(null);
+            if (strategy != null) {
+                strategy.timeout(result.get() != null ? result.get() : original, index, nbExchangeSent.get(), timeout);
             }
         }
 
@@ -739,6 +786,9 @@ public class MulticastProcessor extends BaseProcessorSupport
                 Exchange exchange = pair.getExchange();
                 int index = nbExchangeSent.getAndIncrement();
                 updateNewExchange(exchange, index, pairs, hasNext);
+                if (sentIndexes != null) {
+                    sentIndexes.put(exchange, index);
+                }
                 if (!hasNext) {
                     allSent.set(true);
                 }
@@ -888,6 +938,9 @@ public class MulticastProcessor extends BaseProcessorSupport
             Exchange exchange = pair.getExchange();
             int index = nbExchangeSent.getAndIncrement();
             updateNewExchange(exchange, index, pairs, hasNext);
+            if (sentIndexes != null) {
+                sentIndexes.put(exchange, index);
+            }
             if (!hasNext) {
                 allSent.set(true);
             }
