@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
@@ -44,6 +45,7 @@ import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.Rejectable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +88,7 @@ public class WireTapProcessor extends BaseProcessorSupport
         this.dynamicUri = dynamicUri;
     }
 
-    private final class WireTapTask implements PooledExchangeTask {
+    private final class WireTapTask implements PooledExchangeTask, Rejectable {
 
         private Exchange exchange;
         private final AsyncCallback callback = new AsyncCallback() {
@@ -115,6 +117,16 @@ public class WireTapProcessor extends BaseProcessorSupport
         public void run() {
             LOG.debug(">>>> (wiretap) {} {}", uri, exchange);
             asyncProcessor.process(exchange, callback);
+        }
+
+        @Override
+        public void reject() {
+            // the thread pool rejects the task, also when it is shut down (where the CallerRuns policy does not run
+            // it): fail the submit, so process takes the task off the pending count and the error handler can react,
+            // as with the Abort policy
+            throw new RejectedExecutionException(
+                    "The thread pool of the Wire Tap " + id + (executorService.isShutdown() ? " is shut down" : " is full")
+                                                 + ": the tapped exchange is not sent to " + uri);
         }
     }
 

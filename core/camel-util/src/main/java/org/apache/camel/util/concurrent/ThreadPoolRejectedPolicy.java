@@ -54,6 +54,19 @@ public enum ThreadPoolRejectedPolicy {
         } else if (this == CallerRuns) {
             return new ThreadPoolExecutor.CallerRunsPolicy() {
                 @Override
+                public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                    if (executor.isShutdown()) {
+                        // the caller does not run the task of a shut down pool: a rejectable task is rejected, so its
+                        // exchange is completed, instead of being dropped without notice
+                        if (r instanceof Rejectable rejectable) {
+                            rejectable.reject();
+                        }
+                    } else {
+                        r.run();
+                    }
+                }
+
+                @Override
                 public String toString() {
                     return "CallerRuns";
                 }
@@ -69,7 +82,18 @@ public enum ThreadPoolRejectedPolicy {
                             Thread.currentThread().interrupt();
                             throw new RejectedExecutionException("Interrupted while waiting for queue space", e);
                         }
-                    } else if (r instanceof Rejectable rejectable) {
+                        // a shutdownNow while waiting drains the queue, which makes space for the task in a pool that
+                        // no longer runs it: take it out again, as ThreadPoolExecutor.execute does
+                        if (executor.isShutdown() && executor.remove(r)) {
+                            reject(r, executor);
+                        }
+                    } else {
+                        reject(r, executor);
+                    }
+                }
+
+                private void reject(Runnable r, ThreadPoolExecutor executor) {
+                    if (r instanceof Rejectable rejectable) {
                         // the task cannot run as the pool is shutdown
                         rejectable.reject();
                     } else {
