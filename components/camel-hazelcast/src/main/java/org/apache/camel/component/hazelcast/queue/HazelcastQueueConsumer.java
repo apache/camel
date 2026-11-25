@@ -141,6 +141,19 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                         }
                     }
                     continue;
+                } catch (Error e) {
+                    // Errors from deserialization (e.g. NoClassDefFoundError) must not kill the consumer thread;
+                    // VirtualMachineError (OutOfMemoryError, StackOverflowError, ...) are re-thrown as unrecoverable
+                    if (e instanceof VirtualMachineError) {
+                        throw e;
+                    }
+                    if (isRunAllowed()) {
+                        getExceptionHandler().handleException("Error polling from the queue " + cacheName, e);
+                        if (!waitBeforeNextPoll()) {
+                            return;
+                        }
+                    }
+                    continue;
                 }
                 // CAMEL-16035 - If the polling timeout is exceeded with nothing to poll from the queue, the queue.poll() method return NULL
                 if (body != null) {
@@ -155,6 +168,11 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                         handleFatalError(e);
                         return;
                     } catch (Exception | Error e) {
+                        getExceptionHandler().handleException("Error during processing", exchange, e);
+                    } catch (Error e) {
+                        if (e instanceof VirtualMachineError) {
+                            throw e;
+                        }
                         getExceptionHandler().handleException("Error during processing", exchange, e);
                     } finally {
                         releaseExchange(exchange, false);
