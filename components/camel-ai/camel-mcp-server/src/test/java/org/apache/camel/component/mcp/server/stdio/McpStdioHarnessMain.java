@@ -64,6 +64,11 @@ public final class McpStdioHarnessMain {
                         .to("stream:out")
                         .setBody(constant("printed"));
 
+                // over stdio no caller has roles, so this tool refuses every call
+                from("ai-tool:order_costs?tags=" + tags + "&description=Costs of a production order"
+                     + "&allowedRoles=finance")
+                        .setBody(constant("costs=42"));
+
                 // Fixed resource and URI-template routes exercise the real MCP stdio protocol.
                 from("ai-resource:stdio_config?resourceUri=camel:///stdio/config&tags=" + tags
                      + "&description=A fixed stdio resource&title=Fixed stdio resource")

@@ -101,6 +101,10 @@ class McpServerBridgeTest extends CamelTestSupport {
                             exchange.getMessage().setBody("identity-captured");
                         });
 
+                from("ai-tool:order_costs?tags=crm&description=Costs of a production order&allowedRoles=finance")
+                        .routeId("order-costs-route")
+                        .setBody(constant("costs=42"));
+
                 from("ai-tool:getWeather?tags=crm&description=Get weather"
                      + "&outputSchema={\"type\":\"object\",\"properties\":{\"temperature\":{\"type\":\"number\"},\"unit\":{\"type\":\"string\"}},\"required\":[\"temperature\",\"unit\"]}")
                         .routeId("weather-route")
@@ -202,6 +206,7 @@ class McpServerBridgeTest extends CamelTestSupport {
 
         assertThat(result.isError()).isTrue();
         assertThat(result.text()).contains("customerId");
+        assertThat(result.meta()).isNull();
     }
 
     @Test
@@ -212,6 +217,7 @@ class McpServerBridgeTest extends CamelTestSupport {
         assertThat(result.text())
                 .doesNotContain("secret internal detail")
                 .isEqualTo("Tool execution failed");
+        assertThat(result.meta()).isNull();
     }
 
     @Test
@@ -220,6 +226,29 @@ class McpServerBridgeTest extends CamelTestSupport {
 
         assertThat(result.isError()).isTrue();
         assertThat(result.text()).contains("timed out");
+    }
+
+    @Test
+    void testCallToolRefusedByTheAuthorizationCheckIsMarkedInMeta() {
+        McpToolCallContext callContext = new McpToolCallContext(null, "bob", List.of("sales"));
+
+        McpToolCallResult result = engine.tools().get("order_costs").handler().call(Map.of(), callContext);
+
+        assertThat(result.isError()).isTrue();
+        assertThat(result.text()).isEqualTo("Access denied: not authorized to call tool 'order_costs'");
+        assertThat(result.meta()).containsOnly(
+                Map.entry(McpServerConstants.META_AUTHORIZATION, McpServerConstants.META_AUTHORIZATION_DENIED));
+    }
+
+    @Test
+    void testCallToolAllowedByTheAuthorizationCheckHasNoMeta() {
+        McpToolCallContext callContext = new McpToolCallContext(null, "alice", List.of("finance"));
+
+        McpToolCallResult result = engine.tools().get("order_costs").handler().call(Map.of(), callContext);
+
+        assertThat(result.isError()).isFalse();
+        assertThat(result.text()).isEqualTo("costs=42");
+        assertThat(result.meta()).isNull();
     }
 
     @Test

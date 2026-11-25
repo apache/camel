@@ -883,6 +883,15 @@ Serving 2026-07-28 is a preview, built on an API of the MCP Java SDK that may st
 `modern` serves only 2026-07-28. The new option `camel.server.mcp-stateless = true` also serves the clients that open
 with `initialize` without a session. The MCP Java SDK is upgraded to 2.2.0.
 
+=== camel-mcp-server - a tool call refused by the authorization check is marked in _meta
+
+On Camel Main and Camel JBang, the result of a tool call that the `authorizationPolicy` or `allowedRoles` check of the
+tool refused now carries `"org.apache.camel/authorization": "denied"` in its `_meta` field. The text and `isError` are
+as before.
+
+The record `McpToolCallResult` has a new component `meta` for this, and its constructors are as before. A custom
+`McpServerEngine` passes `meta()`, when it is not null, to the `_meta` of the result.
+
 === camel-oauth - the scp claim is included in scope checks
 
 JWT validation and token introspection now read scopes from both the standard `scope` claim and the

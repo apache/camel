@@ -641,6 +641,9 @@ context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
 The event is emitted best-effort: when no `EventNotifier` is registered nothing is published, and a failure to notify
 never affects the refusal returned to the model.
 
+On Camel Main and Camel JBang, a client of the xref:others:mcp-server.adoc[MCP server] can tell a refused call from a
+tool error as well: the result of the call carries a mark in its `_meta` field, see the Security section of that page.
+
 === Tool search visibility
 
 `searchable` controls whether a route tool is sent to the model immediately or only after a producer with tool search enabled finds it. The default is `false`, so the tool stays directly visible. `searchable=true` omits the tool from the initial model request and makes it eligible for search together with remote MCP tools.

@@ -102,6 +102,9 @@ final class McpModernCatalog {
             if (result.structuredContent() != null) {
                 builder.structuredContent(result.structuredContent());
             }
+            if (result.meta() != null) {
+                builder.meta(result.meta());
+            }
             return McpSyncResponse.result(builder.build());
         }));
         changes.broadcast(new ServerChange.ToolsListChanged());
