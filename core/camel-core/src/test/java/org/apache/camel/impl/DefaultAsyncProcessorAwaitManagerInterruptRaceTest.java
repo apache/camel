@@ -108,7 +108,7 @@ class DefaultAsyncProcessorAwaitManagerInterruptRaceTest {
     }
 
     @Test
-    void twoThreadsWaitingForTheSameExchangeAreBothListedAndInterrupted() throws Exception {
+    void twoThreadsWaitingForTheSameExchangeAreBothListed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         ControlledProcessor inner = processor(null);
         AtomicReference<Thread> nested = new AtomicReference<>();
@@ -336,8 +336,11 @@ class DefaultAsyncProcessorAwaitManagerInterruptRaceTest {
         }
     }
 
-    /** An asynchronous processor whose callback the test fires, from another thread, when it chooses. */
-    private static final class ControlledProcessor extends AsyncProcessorSupport {
+    /**
+     * An asynchronous processor whose callback the test fires, from another thread, when it chooses. An inner class, so
+     * that the thread it starts in process() is tracked in threads and joined by tearDown.
+     */
+    private final class ControlledProcessor extends AsyncProcessorSupport {
         final AtomicReference<AsyncCallback> callback = new AtomicReference<>();
         final CountDownLatch called = new CountDownLatch(1);
         private final Runnable onProcess;
@@ -351,7 +354,7 @@ class DefaultAsyncProcessorAwaitManagerInterruptRaceTest {
             this.callback.set(callback);
             called.countDown();
             if (onProcess != null) {
-                new Thread(onProcess, "processor-worker").start();
+                thread("processor-worker", onProcess);
             }
             return false;
         }

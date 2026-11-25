@@ -210,8 +210,12 @@ long nextAwaitOrder()
 ----
 
 It returns a number that grows with each call for the same exchange, which the await manager uses to tell which of
-the threads that wait for the same exchange made its `process()` call last. Camel's own implementation
-(`ExtendedExchangeExtension`) has it; only a custom implementation of `ExchangeExtension` needs a change.
+the threads that wait for the same exchange made its `process()` call last. Camel's exchanges (`DefaultExchange`,
+`DefaultPooledExchange`) implement it; only a custom implementation of `ExchangeExtension` needs a change.
+
+The await manager now keeps one entry per blocked thread, not one per exchange. So `browse()` (JMX and the blocked
+console) lists one row per blocked thread, and can show two rows for one exchange when two threads wait for it (for
+example a nested `ProducerTemplate` call that sends the same exchange).
 
 === camel-core - Idempotent Consumer processes an exchange that a calling route redelivers
 
