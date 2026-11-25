@@ -63,7 +63,7 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
     @Metadata(required = true)
     private String topic;
 
-    @UriParam(label = "consumer,producer")
+    @UriParam(label = "common")
     private ClusterGroupExpression clusterGroupExpression;
 
     @UriParam(label = "producer", defaultValue = "UNORDERED")

@@ -366,4 +366,49 @@ class EndpointSchemaGeneratorMojoTest {
         option.setEnums(List.of(values));
         model.addEndpointOption(option);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "consumer,producer", "producer,consumer", "consumer,producer,advanced" })
+    void failsOnAnOptionLabelledConsumerAndProducer(String label) {
+        ComponentModel model = new ComponentModel();
+        model.setScheme("some");
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setKind("parameter");
+        option.setName("query");
+        option.setLabel(label);
+        model.addEndpointOption(option);
+
+        MojoExecutionException e
+                = assertThrows(MojoExecutionException.class, () -> EndpointSchemaGeneratorMojo.validateLabels(model));
+        assertTrue(e.getMessage().contains("parameter query"), e.getMessage());
+    }
+
+    @Test
+    void failsOnAHeaderLabelledConsumerAndProducer() {
+        ComponentModel model = new ComponentModel();
+        model.setScheme("some");
+        EndpointHeaderModel header = new EndpointHeaderModel();
+        header.setKind("header");
+        header.setName("CamelSomeProperties");
+        header.setLabel("consumer,producer");
+        model.addEndpointHeader(header);
+
+        MojoExecutionException e
+                = assertThrows(MojoExecutionException.class, () -> EndpointSchemaGeneratorMojo.validateLabels(model));
+        assertTrue(e.getMessage().contains("header CamelSomeProperties"), e.getMessage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "common", "consumer", "producer,advanced", "consumer,advanced" })
+    void acceptsAnOptionWithOneSideOrCommon(String label) throws MojoExecutionException {
+        ComponentModel model = new ComponentModel();
+        model.setScheme("some");
+        ComponentModel.ComponentOptionModel option = new ComponentModel.ComponentOptionModel();
+        option.setKind("property");
+        option.setName("query");
+        option.setLabel(label);
+        model.addComponentOption(option);
+
+        EndpointSchemaGeneratorMojo.validateLabels(model);
+    }
 }
