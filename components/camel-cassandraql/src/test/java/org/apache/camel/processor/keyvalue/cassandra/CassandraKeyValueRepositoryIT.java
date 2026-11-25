@@ -22,10 +22,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.integration.BaseCassandra;
@@ -399,6 +402,65 @@ public class CassandraKeyValueRepositoryIT extends BaseCassandra {
             assertEquals(threads * puts, all.size());
             assertEquals(threads * puts, Set.copyOf(all).size());
             assertEquals(1, previousValues.stream().filter(Objects::isNull).count());
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testConcurrentDeleteOnSameKeyRemovesTheValueOnce() throws Exception {
+        int threads = 8;
+        for (int round = 0; round < 10; round++) {
+            String key = key("deleted" + round);
+            repository.put(key, "value1", null);
+
+            // a delete that finds the row removed by another one must not fail
+            List<Object> previousValues = runConcurrently(threads, () -> repository.delete(key));
+
+            assertEquals(1, previousValues.stream().filter(Objects::nonNull).count(), key);
+            assertNull(repository.get(key), key);
+        }
+    }
+
+    @Test
+    public void testConcurrentDeleteWithExpectedValueAndDeleteOnSameKey() throws Exception {
+        for (int round = 0; round < 10; round++) {
+            String key = key("deletedboth" + round);
+            repository.put(key, "value1", null);
+
+            List<Object> results = runConcurrently(6, new Callable<Object>() {
+                private final AtomicInteger counter = new AtomicInteger();
+
+                @Override
+                public Object call() {
+                    return counter.getAndIncrement() % 2 == 0 ? repository.delete(key) : repository.delete(key, "value1");
+                }
+            });
+
+            // the value is removed by a single call, which returns it or true
+            long removed = results.stream().filter(r -> "value1".equals(r) || Boolean.TRUE.equals(r)).count();
+            assertEquals(1, removed, key);
+            assertNull(repository.get(key), key);
+        }
+    }
+
+    private static List<Object> runConcurrently(int threads, Callable<Object> task) throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        try {
+            CountDownLatch start = new CountDownLatch(1);
+            List<Future<Object>> futures = new ArrayList<>();
+            for (int t = 0; t < threads; t++) {
+                futures.add(executor.submit(() -> {
+                    start.await();
+                    return task.call();
+                }));
+            }
+            start.countDown();
+            List<Object> results = new ArrayList<>();
+            for (Future<Object> future : futures) {
+                results.add(future.get(60, TimeUnit.SECONDS));
+            }
+            return results;
         } finally {
             executor.shutdownNow();
         }
