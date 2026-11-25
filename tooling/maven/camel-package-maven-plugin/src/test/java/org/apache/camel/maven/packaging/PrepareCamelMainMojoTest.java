@@ -34,7 +34,7 @@ public class PrepareCamelMainMojoTest {
 
         List<MainModel.MainOptionModel> list = PrepareCamelMainMojo.parseConfigurationSource(fileName);
         assertNotNull(list);
-        assertEquals(39, list.size());
+        assertEquals(40, list.size());
 
         assertEquals("name", list.get(0).getName());
         assertEquals("java.lang.String", list.get(0).getJavaType());
@@ -49,5 +49,13 @@ public class PrepareCamelMainMojoTest {
         assertEquals("tracing", list.get(25).getName());
         assertEquals("boolean", list.get(25).getJavaType());
         assertTrue(list.get(25).isDeprecated());
+
+        // the default, security category and insecure value come from @Metadata
+        MainModel.MainOptionModel verifySsl = list.get(39);
+        assertEquals("verifySsl", verifySsl.getName());
+        assertEquals("boolean", verifySsl.getType());
+        assertEquals(true, verifySsl.getDefaultValue());
+        assertEquals("insecure:ssl", verifySsl.getSecurity());
+        assertEquals("false", verifySsl.getInsecureValue());
     }
 }
