@@ -18,8 +18,11 @@ package org.apache.camel.component.azure.servicebus;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import com.azure.core.util.BinaryData;
+import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -49,5 +52,16 @@ class ServiceBusTypeConverterTest extends CamelTestSupport {
         try (InputStream is = result) {
             assertThat(is.readAllBytes()).isEqualTo("Hello Camel".getBytes(StandardCharsets.UTF_8));
         }
+    }
+
+    @Test
+    void testScheduledEnqueueTimeHeaderAsString() {
+        Exchange exchange = createExchangeWithBody("Hello Camel");
+        exchange.getIn().setHeader(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, "2026-11-18T23:00:00+01:00");
+
+        OffsetDateTime result
+                = new ServiceBusConfigurationOptionsProxy(new ServiceBusConfiguration()).getScheduledEnqueueTime(exchange);
+
+        assertThat(result).isEqualTo(OffsetDateTime.of(2026, 11, 18, 23, 0, 0, 0, ZoneOffset.ofHours(1)));
     }
 }

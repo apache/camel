@@ -85,7 +85,8 @@ public final class ServiceBusConstants {
     public static final String TO = HEADER_PREFIX + "To";
 
     // headers set by consumer and evaluated by producer
-    @Metadata(description = "(producer)Overrides the OffsetDateTime at which the message should appear in the Service Bus queue or topic. "
+    @Metadata(description = "(producer) Overrides the OffsetDateTime at which the message should appear in the Service Bus queue or topic. "
+                            + "Used only by the scheduleMessages operation. "
                             +
                             "(consumer) Gets the scheduled enqueue time of this message.",
               javaType = "java.time.OffsetDateTime")

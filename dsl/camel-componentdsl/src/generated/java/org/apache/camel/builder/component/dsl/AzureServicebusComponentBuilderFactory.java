@@ -205,8 +205,12 @@ public interface AzureServicebusComponentBuilderFactory {
     
         
         /**
-         * Enable application level deadlettering to the subscription deadletter
-         * subqueue if deadletter related headers are set.
+         * Dead-letters the message of a failed exchange instead of abandoning
+         * it, with the exception as the dead-letter reason and its stack trace
+         * as the error description. The message goes to the dead-letter queue
+         * of the queue or subscription it was received from. Applies only in
+         * PEEK_LOCK receive mode, and not when reading a sub-queue (subQueue),
+         * where the message is abandoned.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -445,7 +449,10 @@ public interface AzureServicebusComponentBuilderFactory {
     
         /**
          * Sets OffsetDateTime at which the message should appear in the Service
-         * Bus queue or topic.
+         * Bus queue or topic. Used only by the scheduleMessages producer
+         * operation; sendMessages sends the message at once. In an endpoint URI
+         * or a property use an ISO-8601 date-time with an offset, such as
+         * 2026-11-18T22:00:00Z or 2026-11-18T23:00:00+01:00.
          * 
          * The option is a: &lt;code&gt;java.time.OffsetDateTime&lt;/code&gt;
          * type.
