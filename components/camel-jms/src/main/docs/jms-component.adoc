@@ -136,6 +136,34 @@ Other brokers work the same way, with the `ConnectionFactory` of their client li
 `transportType` set to `1` for a client connection). For ActiveMQ Classic, the xref:activemq-component.adoc[ActiveMQ]
 component sets up the connection factory from a `brokerURL`.
 
+=== Rotated credentials
+
+When a vault detects that a secret changed and Camel reloads the context, the JMS component uses the new value of the
+`username` and `password` options:
+
+* set in an endpoint URI, such as `jms:queue:orders?username=camel&password=RAW({{aws:jms/password}})`: the routes and
+their endpoints are created again, with the new value. Keep `RAW()` around the placeholder: Camel resolves it before it
+parses the URI, and a generated secret can contain `+`, `&` or `%`, which would change the password or break the URI
+after a rotation.
+* set with a placeholder on the component, such as `camel.component.jms.password = {{aws:jms/password}}` on Camel Main:
+the component is created again with the new value, and the endpoints of the reloaded routes use it.
+
+With a new password the component wraps its connection factory in a new `UserCredentialsConnectionFactoryAdapter`, so
+the new connections authenticate with it. A pool that keys its connections by username and password, such as
+pooled-jms, then opens new connections for the new password, and no longer hands out the ones opened with the old one.
+
+The connection factory bean is not reloaded, and the component does not create it, so it cannot authenticate it again:
+
+* A connection factory of the broker client keeps the `user` and `password` it was created with, also when they are set
+with a placeholder such as `camel.beans.artemisCF.password = {{aws:jms/password}}`: a reload does not change a bean that
+exists already.
+* A pool, or a Spring `CachingConnectionFactory`, keeps the connections it has open, authenticated with the credentials
+of the connection factory it wraps. A `CachingConnectionFactory` cannot take `username` and `password` from the
+component, as it does not support credentials per connection.
+
+So when the credentials rotate, set them on the component or the endpoints, not on the connection factory. Otherwise
+the connection factory must be created again by the application, or the application restarted.
+
 == URI format
 
 ----
