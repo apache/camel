@@ -40,6 +40,14 @@ These rules apply to ALL AI agents working on this codebase.
   CAMEL transition IDs: `4` Start Progress, `5` Resolve Issue, `2` Close Issue. Query the issue's `/transitions`
   first: availability depends on the state and the caller (`4` is only offered once the issue is assigned to you).
 - Set the `fixVersions` field before closing a ticket (it cannot be set on a closed issue).
+- Filing a ticket does not claim it. Assign a ticket to the operator only when the work on it starts, not when the
+  agent files it (for example a scan that files many bugs at once): an assigned ticket looks taken, and others do
+  not pick it up.
+- An operator MUST NOT hold more than 10 tickets "In Progress" without an open PR. Finish or unassign tickets
+  before taking more.
+- A ticket with no PR 14 days after it was assigned is unassigned so others can pick it up, by the operator or by any
+  committer. When you unassign your own ticket, stop its progress first (only the assignee is offered that
+  transition), so it goes back to "Open".
 
 ### Shared Tasks
 
