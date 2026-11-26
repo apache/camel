@@ -125,6 +125,10 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
         }
 
         try {
+            // the start task was cancelled above, but an attempt may still be running: the delegated consumer it
+            // starts may not stop on the interrupt. Wait for it (bounded by the shutdown await termination of the
+            // executor service manager) so it does not finish starting after this consumer has stopped
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(leaderPool);
             // the delegated consumer is stopped while this node still holds the leadership, and before the processor
             // of the route, so no other node starts consuming while it stops, and the messages it still routes while
             // it stops (a consumer may wait in its stop for the messages it processes) reach a started route. A
@@ -132,8 +136,6 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             Consumer delegate = delegatedConsumer;
             delegatedConsumer = null;
             ServiceHelper.stopAndShutdownServices(delegate, delegatedEndpoint);
-            // the start task was cancelled above
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(leaderPool);
         } finally {
             try {
                 super.doStop();
@@ -290,11 +292,19 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 throw new TaskRunFailureException(message, cause);
             }
 
-            if (!leadershipTaken || !isRunAllowed()) {
-                // the leadership went away while the consumer was starting, so stop what was just started
-                // instead of publishing it. No leadership event is going to do it, delegatedConsumer is unset
-                LOG.info("Leadership lost while the consumer was starting. Stopping consumer: {}", delegatedEndpoint);
-                ServiceHelper.stopAndShutdownServices(consumer, delegatedEndpoint);
+            if (task != leaderTask || delegatedConsumer != null || !leadershipTaken || !isRunAllowed()) {
+                // the leadership went away, or this consumer was stopped (and maybe started again), while the
+                // consumer was starting. This attempt is no longer the current one, so stop what it started instead
+                // of publishing it over the consumer of a newer attempt. Only the consumer: the endpoint is shared
+                // with that newer consumer, and onLeadershipLost and doStop stop it
+                LOG.info("Leadership lost or consumer stopped while the delegated consumer was starting. Stopping it: {}",
+                        delegatedEndpoint);
+                ServiceHelper.stopAndShutdownService(consumer);
+                if (delegatedConsumer != null) {
+                    // stopping a consumer also stops its processor, the processor of the route, which the
+                    // running delegated consumer uses too
+                    ServiceHelper.startService(processor);
+                }
                 attempt.set(null);
                 return true; // no more attempts
             }

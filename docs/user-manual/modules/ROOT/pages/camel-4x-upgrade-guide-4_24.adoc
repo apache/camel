@@ -320,6 +320,16 @@ camel-jms, and `SpringRabbitMQStopListenerContainer` for camel-spring-rabbitmq. 
 `camelContext.getExecutorServiceManager().setShutdownAwaitTermination(...)`; it is also the time that Camel waits for
 each thread pool to terminate when the CamelContext stops.
 
+=== camel-master - stopping a master consumer waits for the start of its delegated consumer
+
+Stopping a `master` consumer while the start of its delegated consumer is still running (for example a client connect
+that does not stop on an interrupt) now waits for that start, at most the `shutdownAwaitTermination` of the
+`ExecutorServiceManager` (10 seconds by default), and as long again after interrupting it. Previously the stop returned
+at once, and the delegated consumer could finish starting after the route had stopped. A delegated consumer that
+finishes starting after the master consumer was stopped, or lost the leadership, is now stopped, also when the master
+consumer was started again meanwhile; previously it replaced the delegated consumer of the new start, which kept
+running without being stopped again.
+
 === camel-core - a to with an expression in its endpoint uri logs a WARN
 
 A `to` resolves its endpoint once, when the route starts, so `to("jms:queue:${header.queue}")` sends every message to
