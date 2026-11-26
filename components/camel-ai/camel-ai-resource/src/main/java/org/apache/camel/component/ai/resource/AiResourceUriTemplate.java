@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
  * Each expression must occupy an entire path segment, for example {@code crm://customers/{id}}. Variables match one
  * non-empty path segment and are returned verbatim (including percent-encoding); they are never decoded, interpreted as
  * Camel expressions, or resolved as property placeholders. A value that, once percent-decoded, is a {@code .} or
- * {@code ..} dot segment or contains one between {@code /} or {@code \} separators does not match. Query and fragment
- * expressions are intentionally not supported.
+ * {@code ..} dot segment or contains one between {@code /} or {@code \} separators does not match, including one
+ * followed by path parameters such as {@code ..;x}. Query and fragment expressions are intentionally not supported.
  *
  * @since 4.24
  */
@@ -159,18 +159,26 @@ public final class AiResourceUriTemplate {
 
     /**
      * Whether the value, once percent-decoded, is a dot segment or contains one between {@code /} or {@code \}
-     * separators, for example {@code ..}, {@code %2e%2E} or {@code ..%2F..%2Fetc%2Fpasswd}.
+     * separators, for example {@code ..}, {@code %2e%2E} or {@code ..%2F..%2Fetc%2Fpasswd}. A segment counts up to its
+     * first {@code ;}, because servers such as Tomcat drop the path parameters of a segment before resolving dot
+     * segments: {@code ..;x} is a dot segment too.
      */
     private static boolean containsDotSegment(String value) {
         String decoded = percentDecode(value);
         int start = 0;
+        // where the path parameters of the current segment begin, -1 when it has none
+        int parameters = -1;
         for (int i = 0; i <= decoded.length(); i++) {
-            if (i == decoded.length() || decoded.charAt(i) == '/' || decoded.charAt(i) == '\\') {
-                int length = i - start;
+            char c = i < decoded.length() ? decoded.charAt(i) : '/';
+            if (c == ';' && parameters < 0) {
+                parameters = i;
+            } else if (c == '/' || c == '\\') {
+                int length = (parameters < 0 ? i : parameters) - start;
                 if ((length == 1 || length == 2) && decoded.startsWith(".".repeat(length), start)) {
                     return true;
                 }
                 start = i + 1;
+                parameters = -1;
             }
         }
         return false;

@@ -49,7 +49,9 @@ A `uriTemplate` follows RFC 6570 level 1: each variable must occupy an entire pa
 RFC 3986 `pchar` characters (including well-formed percent-encoded octets); raw query/fragment
 characters, controls and malformed percent escapes do not match. Nor does a value that, once
 percent-decoded, is a `.` or `..` dot segment or contains one between `/` or `+\+` separators, such as
-`..`, `%2e%2e` or `..%2F..%2Fetc%2Fpasswd`. The route still receives the value verbatim, percent-encoding included.
+`..`, `%2e%2e` or `..%2F..%2Fetc%2Fpasswd`. A segment counts up to its first `;`, because servers such as Tomcat
+drop path parameters before resolving dot segments, so `..;x` and `%2e%2e%3b` do not match either.
+The route still receives the value verbatim, percent-encoding included.
 Fixed resources take precedence over a matching template when the same concrete URI is read.
 Tagged templates in one CamelContext must not overlap, even when they belong to different tags;
 a conflicting route fails startup rather than depending on registration order. A fixed

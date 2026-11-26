@@ -78,6 +78,34 @@ class AiResourceUriTemplateTest {
     }
 
     @Test
+    void rejectsDotSegmentsFollowedByPathParameters() {
+        // Tomcat and Spring drop ";..." from a segment before resolving dot segments, so "..;x" becomes ".."
+        AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}");
+
+        assertThat(template.match("crm://customers/..;")).isEmpty();
+        assertThat(template.match("crm://customers/..;jsessionid=1")).isEmpty();
+        assertThat(template.match("crm://customers/.;x")).isEmpty();
+        assertThat(template.match("crm://customers/..;a;b")).isEmpty();
+        assertThat(template.match("crm://customers/%2e%2e%3b")).isEmpty();
+        assertThat(template.match("crm://customers/%2E%2E%3Bx")).isEmpty();
+        assertThat(template.match("crm://customers/a%2F..;x%2Fb")).isEmpty();
+        assertThat(template.match("crm://customers/b;x%2F..;y")).isEmpty();
+        assertThat(template.match("crm://customers/..;x%5Cwindows")).isEmpty();
+    }
+
+    @Test
+    void keepsValuesWithPathParametersThatAreNotDotSegments() {
+        AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}");
+
+        assertThat(template.match("crm://customers/a;b")).hasValue(Map.of("id", "a;b"));
+        assertThat(template.match("crm://customers/42;..")).hasValue(Map.of("id", "42;.."));
+        assertThat(template.match("crm://customers/...;x")).hasValue(Map.of("id", "...;x"));
+        assertThat(template.match("crm://customers/;..")).hasValue(Map.of("id", ";.."));
+        assertThat(template.match("crm://customers/.x;y")).hasValue(Map.of("id", ".x;y"));
+        assertThat(template.match("crm://customers/a;..%2Fb")).hasValue(Map.of("id", "a;..%2Fb"));
+    }
+
+    @Test
     void keepsValuesWithDotsThatAreNotDotSegments() {
         AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}");
 
