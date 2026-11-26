@@ -299,6 +299,9 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         if (result.structuredContent() != null) {
             builder.structuredContent(result.structuredContent());
         }
+        if (result.meta() != null) {
+            builder.meta(result.meta());
+        }
         return builder.build();
     }
 

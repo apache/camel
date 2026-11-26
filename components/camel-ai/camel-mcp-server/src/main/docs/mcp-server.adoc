@@ -547,6 +547,13 @@ following rules:
   message; the cause is logged server-side and never sent to the client.
   Argument validation messages (missing or invalid parameters) are returned
   as-is.
+* *Refused calls*: a tool call that the authorization check of the tool refuses (the
+  `authorizationPolicy` or `allowedRoles` option of the
+  xref:ROOT:ai-tool-component.adoc[ai-tool] route) is answered as a tool error with a
+  short generic refusal. On Camel Main and Camel JBang the result also carries
+  `"org.apache.camel/authorization": "denied"` in its `_meta` field, so that a client can
+  tell a refused call from a failed one without reading the text. The entry names
+  neither the roles, the policy nor the caller.
 * *Returned content*: the result of a tool, resource or prompt is passed to the
   client and the model as it is. Data that a route reads from a source outsiders can write may
   contain prompt injection; the route author decides what goes in.

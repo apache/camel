@@ -91,6 +91,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     private static final String GENERIC_READ_TIMEOUT_ERROR = "Resource read timed out";
     private static final String GENERIC_PROMPT_ERROR = "Prompt execution failed";
     private static final String GENERIC_PROMPT_TIMEOUT_ERROR = "Prompt execution timed out";
+    private static final Map<String, Object> AUTHORIZATION_DENIED_META
+            = Map.of(McpServerConstants.META_AUTHORIZATION, McpServerConstants.META_AUTHORIZATION_DENIED);
 
     private final McpServerConfiguration configuration;
     private final RegistryListener listener = new RegistryListener();
@@ -881,8 +883,9 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return new McpToolCallResult(error.message(), true);
             } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
                 // The denial message is already generic and caller-safe, so it is safe to return to the MCP client.
+                // The _meta entry lets the client tell the refusal from a tool error without reading the message.
                 LOG.warn("MCP tool '{}' call denied by the authorization check", spec.getName());
-                return new McpToolCallResult(denied.message(), true);
+                return new McpToolCallResult(denied.message(), true, null, AUTHORIZATION_DENIED_META);
             } else {
                 AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
                 // never leak raw route exception messages to remote MCP clients

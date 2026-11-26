@@ -489,10 +489,13 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
                 .callHandler((exchange, request) -> {
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
                     McpToolCallResult result = tool.handler().call(arguments);
-                    return McpSchema.CallToolResult.builder()
+                    McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
                             .addTextContent(result.text())
-                            .isError(result.isError())
-                            .build();
+                            .isError(result.isError());
+                    if (result.meta() != null) {
+                        builder.meta(result.meta());
+                    }
+                    return builder.build();
                 })
                 .build();
     }

@@ -71,6 +71,22 @@ public final class McpServerConstants {
      */
     public static final long DEFAULT_SESSION_IDLE_TTL = 300_000;
 
+    /**
+     * Key in the {@code _meta} field of a tool call result that the MCP server sets, with the value
+     * {@link #META_AUTHORIZATION_DENIED}, when the authorization check of the tool refused the call. An MCP client can
+     * tell a refused call from a tool error by this key, without reading the text of the result.
+     *
+     * @since 4.24
+     */
+    public static final String META_AUTHORIZATION = "org.apache.camel/authorization";
+
+    /**
+     * Value of {@link #META_AUTHORIZATION} for a call that the authorization check of the tool refused.
+     *
+     * @since 4.24
+     */
+    public static final String META_AUTHORIZATION_DENIED = "denied";
+
     private McpServerConstants() {
     }
 }

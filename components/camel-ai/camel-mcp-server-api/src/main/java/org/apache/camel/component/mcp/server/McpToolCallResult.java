@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.mcp.server;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Result of an MCP tool invocation, pre-sanitized by the bridge: the text is safe to return to a remote MCP client and
  * never contains raw route exception messages.
@@ -23,12 +27,26 @@ package org.apache.camel.component.mcp.server;
  * @param text              the tool output, or a safe error message when {@code isError} is true
  * @param isError           whether the invocation failed
  * @param structuredContent typed JSON output when the tool declares an output schema, otherwise {@code null}
+ * @param meta              entries for the {@code _meta} field of the result, otherwise {@code null}
  *
  * @since                   4.22
  */
-public record McpToolCallResult(String text, boolean isError, Object structuredContent) {
+public record McpToolCallResult(String text, boolean isError, Object structuredContent, Map<String, Object> meta) {
+
+    /**
+     * Canonical constructor; defensively copies the meta entries into an unmodifiable map.
+     *
+     * @since 4.24
+     */
+    public McpToolCallResult {
+        meta = meta == null ? null : Collections.unmodifiableMap(new LinkedHashMap<>(meta));
+    }
 
     public McpToolCallResult(String text, boolean isError) {
-        this(text, isError, null);
+        this(text, isError, null, null);
+    }
+
+    public McpToolCallResult(String text, boolean isError, Object structuredContent) {
+        this(text, isError, structuredContent, null);
     }
 }
