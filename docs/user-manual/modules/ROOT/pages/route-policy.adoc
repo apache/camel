@@ -108,6 +108,14 @@ when the handler returns `true`.
 
 The circuit closes by itself, so you do not need to resume the route.
 
+A route can have both a `ThrottlingInflightRoutePolicy` and a `ThrottlingExceptionRoutePolicy`. Then each of them
+resumes the consumer only when the other one no longer keeps it suspended: the inflight policy does not resume the
+consumer while the circuit is open, and when the circuit is half open, a consumer that the inflight policy has suspended
+stays suspended until the inflight policy resumes it. The exception policy keeps suspended only the consumer of the
+route it opened the circuit for: when it is shared by several routes, the inflight policy of another route resumes its
+consumer as before, and so it does for a consumer that is started again (such as when the CamelContext is restarted)
+while the circuit is still open.
+
 The throttling exception route policy has the following options:
 
 [width="100%",cols="10%,10%,80%",options="header",]
