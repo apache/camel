@@ -18,7 +18,6 @@ package org.apache.camel.component.file.strategy;
 
 import java.io.File;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -60,6 +59,7 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
     private int readLockIdempotentReleaseAsyncPoolSize;
     private ScheduledExecutorService readLockIdempotentReleaseExecutorService;
     private boolean shutdownExecutorService;
+    private final DelayedReadLockReleaseTasks delayedReleaseTasks = new DelayedReadLockReleaseTasks();
 
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
@@ -149,10 +149,11 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
     }
 
     private void delayOrScheduleLockRelease(Runnable r) throws InterruptedException {
-        if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
+        ScheduledExecutorService executorService = readLockIdempotentReleaseExecutorService;
+        if (readLockIdempotentReleaseDelay > 0 && executorService != null) {
             LOG.debug("Scheduling read lock release task to run asynchronous delayed after {} millis",
                     readLockIdempotentReleaseDelay);
-            readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
+            delayedReleaseTasks.schedule(executorService, r, readLockIdempotentReleaseDelay);
         } else if (readLockIdempotentReleaseDelay > 0) {
             LOG.debug("Delaying read lock release task {} millis", readLockIdempotentReleaseDelay);
             Thread.sleep(readLockIdempotentReleaseDelay);
@@ -339,10 +340,16 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
+        // run the delayed release tasks that are still waiting now, instead of waiting for their delay: shutting the
+        // thread pool down would drop them, and their keys would stay in the idempotent repository, so the files
+        // would never be picked up again
+        delayedReleaseTasks.runPending();
         if (shutdownExecutorService && readLockIdempotentReleaseExecutorService != null) {
             camelContext.getExecutorServiceManager().shutdownGraceful(readLockIdempotentReleaseExecutorService, 30000);
             readLockIdempotentReleaseExecutorService = null;
         }
+        // and the ones scheduled while the thread pool was shutting down
+        delayedReleaseTasks.runPending();
     }
 
 }

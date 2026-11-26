@@ -1562,6 +1562,17 @@ file consumer no longer adds the key to the idempotent repository eagerly, and `
 read lock adds it when it acquires the lock. Since Camel 4.7 the read lock was refused, and such a consumer never
 consumed a file.
 
+=== camel-file - a stopping idempotent read lock releases its delayed read locks at once
+
+With `readLock=idempotent` or `idempotent-changed` and `readLockIdempotentReleaseAsync=true`, the read locks whose
+release still waits for `readLockIdempotentReleaseDelay` are released when the consumer stops, at once. Before, with the pool Camel creates, the stop
+waited for them for up to 30 seconds, and a release still pending after that was dropped: its key stayed in the
+idempotent repository, so the file was never picked up again (with a persistent or clustered repository, not even
+after a restart). With `readLockRemoveOnCommit=true`, the keys of the files a stopping node committed in the last
+`readLockIdempotentReleaseDelay` millis are now removed before the delay is over.
+This also applies with a `readLockIdempotentReleaseExecutorService` of your own, which Camel does not shut down:
+there nothing was dropped before, and the pending releases now run at the stop instead of when their delay is over.
+
 === camel-spring-rabbitmq - the consumer starts while RabbitMQ is down, and declares again on a new connection
 
 With `autoDeclare=true` (the default), a consumer now starts when RabbitMQ is not available: the route shows as started,
