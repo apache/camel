@@ -40,9 +40,13 @@ import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.RunHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.PrometheusTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Prometheus;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
@@ -406,6 +410,7 @@ public class KubernetesExport extends Export {
         } else {
             setContainerHealthPaths(managementPort);
         }
+        setMetricsPort(traitsSpec, managementPort);
 
         // Run export
         int exit = super.doExport();
@@ -537,6 +542,24 @@ public class KubernetesExport extends Export {
 
     private boolean isWarPackaging() {
         return "war".equalsIgnoreCase(packaging);
+    }
+
+    /**
+     * The port the prometheus trait scrapes, when not given: the management port of camel-observability-services, or
+     * the port of the application for a WAR, which serves the management endpoints on it.
+     */
+    private void setMetricsPort(Traits traitsSpec, int managementPort) {
+        Prometheus prometheus = traitsSpec.getPrometheus();
+        if (prometheus == null || prometheus.getContainerPort() != null) {
+            return;
+        }
+        long port = managementPort > 0 ? managementPort : PrometheusTrait.DEFAULT_METRICS_PORT;
+        if (RuntimeType.springBoot == runtime && isWarPackaging()) {
+            port = Optional.ofNullable(traitsSpec.getContainer())
+                    .map(Container::getPort)
+                    .orElse((long) ContainerTrait.DEFAULT_CONTAINER_PORT);
+        }
+        prometheus.setContainerPort(port);
     }
 
     private void setContainerHealthPaths(int port) {

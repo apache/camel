@@ -16,15 +16,21 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
 
 import io.fabric8.kubernetes.api.model.Container;
+import io.fabric8.kubernetes.api.model.ContainerPort;
+import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
+import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.Volume;
@@ -967,6 +973,89 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Properties props = model.getProperties();
         Assertions.assertEquals("quay.io/camel/demo-app:1.0", props.get("jkube.image.name"));
         Assertions.assertEquals("quay.io/camel/demo-app:1.0", props.get("jkube.container-image.name"));
+    }
+
+    @ParameterizedTest
+    @SuppressWarnings("unchecked")
+    @MethodSource("runtimeProvider")
+    public void shouldAddPrometheusPodMonitor(RuntimeType rt) throws Exception {
+        // CAMEL-22104
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait", "prometheus.enabled=true",
+                "--trait", "prometheus.pod-monitor-labels=release=prometheus,team=orders",
+                "--runtime=" + rt.runtime());
+        Assertions.assertEquals(0, command.doCall());
+
+        Container container = getDeployment(rt).getSpec().getTemplate().getSpec().getContainers().get(0);
+        ContainerPort metrics = container.getPorts().stream()
+                .filter(p -> "management".equals(p.getName())).findFirst()
+                .orElseThrow(() -> new RuntimeCamelException("No management port: " + container.getPorts()));
+        Assertions.assertEquals(9876, metrics.getContainerPort());
+
+        GenericKubernetesResource podMonitor = getPodMonitor();
+        Assertions.assertEquals("monitoring.coreos.com/v1", podMonitor.getApiVersion());
+        Assertions.assertEquals("route-service", podMonitor.getMetadata().getName());
+        Assertions.assertEquals(Map.of("release", "prometheus", "team", "orders"), podMonitor.getMetadata().getLabels());
+        Map<String, Object> spec = (Map<String, Object>) podMonitor.getAdditionalProperties().get("spec");
+        Assertions.assertEquals(Map.of("matchLabels", Map.of(BaseTrait.KUBERNETES_LABEL_NAME, "route-service")),
+                spec.get("selector"));
+        Assertions.assertEquals(List.of(Map.of("port", "management", "path", "/observe/metrics")),
+                spec.get("podMetricsEndpoints"));
+    }
+
+    @Test
+    public void shouldAddPrometheusPortWithoutPodMonitor() throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait", "prometheus.enabled=true",
+                "--trait", "prometheus.pod-monitor=false",
+                "--trait", "prometheus.container-port=9100",
+                "--trait", "prometheus.container-port-name=metrics",
+                "--runtime=" + RuntimeType.main.runtime());
+        Assertions.assertEquals(0, command.doCall());
+
+        Container container = getDeployment(RuntimeType.main).getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertTrue(container.getPorts().stream()
+                .anyMatch(p -> "metrics".equals(p.getName()) && p.getContainerPort() == 9100), container.getPorts().toString());
+        Assertions.assertFalse(workingDir.toPath().resolve("src/main/jkube/podmonitor.yml").toFile().exists());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldScrapeTheHttpPortThatServesTheMetrics() throws Exception {
+        // the port of the metrics is the http port of the container: its name is kept, and no port is added
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait", "prometheus.enabled=true",
+                "--trait", "prometheus.container-port=8080",
+                "--runtime=" + RuntimeType.main.runtime());
+        Assertions.assertEquals(0, command.doCall());
+
+        Container container = getDeployment(RuntimeType.main).getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals(1, container.getPorts().stream().filter(p -> p.getContainerPort() == 8080).count(),
+                container.getPorts().toString());
+        Map<String, Object> spec = (Map<String, Object>) getPodMonitor().getAdditionalProperties().get("spec");
+        Assertions.assertEquals(List.of(Map.of("port", "http", "path", "/observe/metrics")),
+                spec.get("podMetricsEndpoints"));
+    }
+
+    @Test
+    public void shouldRejectAPodMonitorLabelWithoutValue() throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait", "prometheus.enabled=true",
+                "--trait", "prometheus.pod-monitor-labels=release",
+                "--runtime=" + RuntimeType.main.runtime());
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+        Assertions.assertEquals(CliExitCode.USAGE, e.getExitCode());
+        Assertions.assertTrue(e.getMessage().contains("pod-monitor-labels as key=value"), e.getMessage());
+    }
+
+    private GenericKubernetesResource getPodMonitor() throws IOException {
+        File file = workingDir.toPath().resolve("src/main/jkube/podmonitor.yml").toFile();
+        Assertions.assertTrue(file.isFile(), "No PodMonitor: " + file);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            HasMetadata resource = kubernetesClient.load(fis).items().get(0);
+            Assertions.assertEquals("PodMonitor", resource.getKind());
+            return (GenericKubernetesResource) resource;
+        }
     }
 
     @ParameterizedTest

@@ -2,7 +2,7 @@
 
 The xref:camel-jbang-kubernetes.adoc[Kubernetes Plugin] page covers what most applications need.
 This page lists the less common settings: the trait options the plugin inherited from Camel K,
-running as a CronJob, Knative, and the Jolokia port.
+running as a CronJob, Knative, the Jolokia port and Prometheus metrics.
 
 == Trait options
 
@@ -298,6 +298,66 @@ Example:
 [source,bash]
 ----
 camel kubernetes export Sample.java --trait jolokia.enabled=true --trait jolokia.expose=true
+----
+
+Jolokia gives full JMX access to the application, so it is not exposed outside the cluster by a Route or an Ingress.
+To reach it from your machine, forward the port of the pod (or of the Service with `jolokia.expose=true`):
+
+[source,bash]
+----
+kubectl port-forward deployment/sample 8778:8778
+----
+
+Then Jolokia answers on `http://localhost:8778/jolokia`.
+
+=== Prometheus trait
+
+Let Prometheus scrape the metrics of the application. The application includes `camel-observability-services`, which
+serves the metrics at `/observe/metrics` on the management port (`9876`). The trait names that port of the container,
+and creates a `PodMonitor` that selects the pods of the Deployment. The `PodMonitor` is a resource of the
+https://prometheus-operator.dev/[Prometheus Operator], which must be installed in the cluster.
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| prometheus.enabled
+| bool
+| Can be used to enable or disable a trait. All traits share this common property. (default `false`).
+
+| prometheus.pod-monitor
+| bool
+| Whether a `PodMonitor` is created (default `true`). Without it, only the container port is named, for a Prometheus
+that finds its targets in another way.
+
+| prometheus.pod-monitor-labels
+| []string
+| The labels of the `PodMonitor`, as `key=value`, such as `release=prometheus`, so the `podMonitorSelector` of the
+Prometheus resource selects it.
+
+| prometheus.container-port
+| int
+| The port of the container that serves the metrics (default the management port, `9876`; for a WAR, the port of the
+application, which serves the management endpoints).
+
+| prometheus.container-port-name
+| string
+| The name of the container port (default `management`). A port that the container already has for the same number,
+such as `http`, keeps its name.
+
+| prometheus.path
+| string
+| The path of the metrics (default `/observe/metrics`).
+
+|===
+
+The trait applies to a Deployment: a CronJob ends before it is scraped, and a Knative service has one port only.
+
+Example:
+
+[source,bash]
+----
+camel kubernetes run * --trait prometheus.enabled=true --trait prometheus.pod-monitor-labels=release=prometheus
 ----
 
 
