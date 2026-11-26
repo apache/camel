@@ -166,7 +166,8 @@ public class AggregateProcessor extends BaseProcessorSupport
     private final AtomicLong discarded = new AtomicLong();
     private final AtomicBoolean recoveryInProgress = new AtomicBoolean(false);
 
-    // keep booking about redelivery
+    // keep booking about redelivery (the counter is only read and written by the recover task, and the recover checks
+    // of two starts of the route do not overlap, see recoveryInProgress)
     private static class RedeliveryData {
         int redeliveryCounter;
     }
@@ -1897,6 +1898,9 @@ public class AggregateProcessor extends BaseProcessorSupport
                 // These are delivered but still in complete repository!
                 inProgressCompleteExchangesForRecoveryTask.addAll(unconfirmedCompleteExchanges);
                 final Set<String> exchangeIds = recoverable.scan(camelContext);
+                // the redelivery state is kept across a route stop and start: drop the state of the exchanges that are
+                // no longer in the repository (such as confirmed by another node), only this task adds to it
+                redeliveryState.keySet().retainAll(exchangeIds);
                 for (String exchangeId : exchangeIds) {
 
                     // we may shutdown while doing recovery
@@ -2229,7 +2233,8 @@ public class AggregateProcessor extends BaseProcessorSupport
             closedCorrelationKeys.clear();
         }
         batchConsumerCorrelationKeys.clear();
-        redeliveryState.clear();
+        // the redelivery state is kept, so the recover task of the next start goes on counting the redeliveries of
+        // the exchanges still in the repository (it is cleared in doShutdown)
     }
 
     @Override
@@ -2311,6 +2316,7 @@ public class AggregateProcessor extends BaseProcessorSupport
         // cleanup when shutting down
         inProgressCompleteExchanges.clear();
         completingExchanges.clear();
+        redeliveryState.clear();
         inProgressCount.reset();
 
         if (shutdownExecutorService) {
