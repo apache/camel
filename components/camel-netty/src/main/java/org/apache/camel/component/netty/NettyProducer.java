@@ -86,6 +86,8 @@ public class NettyProducer extends DefaultAsyncProducer {
     private EventLoopGroup workerGroup;
     private volatile ObjectPool<ChannelFuture> pool;
     private NettyCamelStateCorrelationManager correlationManager;
+    // the TimeoutCorrelationManagerSupport this producer took a reference on when it started, released when it stops
+    private TimeoutCorrelationManagerSupport retainedCorrelationManager;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
@@ -181,7 +183,15 @@ public class NettyProducer extends DefaultAsyncProducer {
         if (correlationManager instanceof CamelContextAware camelContextAware) {
             camelContextAware.setCamelContext(getContext());
         }
-        ServiceHelper.startService(correlationManager);
+        if (correlationManager instanceof TimeoutCorrelationManagerSupport timeoutCorrelationManager) {
+            // a bean that other producers can use as well (the producers of this endpoint, or of other endpoints that
+            // refer to the same bean): it is started by the first producer that starts and stopped by the last one
+            // that stops, so a producer that stops does not stop it under the others
+            timeoutCorrelationManager.retain();
+            retainedCorrelationManager = timeoutCorrelationManager;
+        } else {
+            ServiceHelper.startService(correlationManager);
+        }
 
         super.doStart();
     }
@@ -209,8 +219,16 @@ public class NettyProducer extends DefaultAsyncProducer {
             workerGroup = null;
         }
 
-        LOG.trace("Stopping correlation manager: {}", correlationManager);
-        ServiceHelper.stopService(correlationManager);
+        if (retainedCorrelationManager != null) {
+            LOG.trace("Releasing correlation manager: {}", retainedCorrelationManager);
+            retainedCorrelationManager.release();
+            retainedCorrelationManager = null;
+        } else if (!(correlationManager instanceof TimeoutCorrelationManagerSupport)) {
+            // (a TimeoutCorrelationManagerSupport that this producer did not retain, as its start failed before, is
+            // left to the producers that use it)
+            LOG.trace("Stopping correlation manager: {}", correlationManager);
+            ServiceHelper.stopService(correlationManager);
+        }
 
         LOG.debug("Stopped producer at address: {}", configuration.getAddress());
         super.doStop();
