@@ -183,6 +183,27 @@ public interface Aws2KinesisComponentBuilderFactory {
     
         
         /**
+         * Maximum number of shards that the consumer reads at the same time in
+         * a poll, each on a thread of a thread pool of the consumer, which also
+         * routes the records of the shard. With 1, or a stream of one shard,
+         * the consumer reads the shards one after the other on its own thread.
+         * Not used with shardId, or by the KCL consumer (useKclConsumers).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxConcurrentShards the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder maxConcurrentShards(int maxConcurrentShards) {
+            doSetProperty("maxConcurrentShards", maxConcurrentShards);
+            return this;
+        }
+    
+        
+        /**
          * Maximum number of records fetched from each shard in each poll: the
          * Limit of the GetRecords request, from 1 to 10000. Not used by the KCL
          * consumer (useKclConsumers).
@@ -748,6 +769,7 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "uriEndpointOverride": getOrCreateConfiguration((Kinesis2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Kinesis2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "iteratorType": getOrCreateConfiguration((Kinesis2Component) component).setIteratorType((software.amazon.awssdk.services.kinesis.model.ShardIteratorType) value); return true;
+            case "maxConcurrentShards": getOrCreateConfiguration((Kinesis2Component) component).setMaxConcurrentShards((int) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((Kinesis2Component) component).setMaxResultsPerRequest((int) value); return true;
             case "messageTimestamp": getOrCreateConfiguration((Kinesis2Component) component).setMessageTimestamp((java.lang.String) value); return true;
             case "sequenceNumber": getOrCreateConfiguration((Kinesis2Component) component).setSequenceNumber((java.lang.String) value); return true;

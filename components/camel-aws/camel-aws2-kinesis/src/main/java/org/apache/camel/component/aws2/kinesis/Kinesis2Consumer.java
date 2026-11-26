@@ -25,9 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,6 +41,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAction;
 import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.resume.ResumeActionAware;
@@ -75,7 +80,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private KinesisConnection connection;
     private ResumeStrategy resumeStrategy;
 
-    // Written concurrently from poll()'s parallelStream over the shard list, so both must be thread-safe.
+    // Written concurrently by the shards that poll() reads at the same time, so both must be thread-safe.
     private final Map<String, String> currentShardIterators = new ConcurrentHashMap<>();
     private final Set<String> warnLogged = ConcurrentHashMap.newKeySet();
     // The closed shards reported to the exception handler with shardClosed=fail: each one once while the consumer runs
@@ -105,6 +110,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
     private ScheduledExecutorService shardMonitorExecutor;
+    // Reads the shards of a poll at the same time (maxConcurrentShards), and routes their records
+    private static final String SHARD_READER_EXECUTOR_NAME = "Kinesis_shard_reader";
+    private volatile ExecutorService shardReaderExecutor;
 
     public Kinesis2Consumer(Kinesis2Endpoint endpoint,
                             Processor processor) {
@@ -166,34 +174,93 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
 
         } else {
-            // Each shard catches its own failure: forEach returns when the first task throws, while the tasks of the
-            // other shards still read and route, and the next poll could start before they are done. The poll fails
-            // only once all the shards of the list have been read.
-            Queue<RuntimeException> failures = new ConcurrentLinkedQueue<>();
-            shardList
-                    .parallelStream()
-                    .forEach(shard -> {
-                        try {
-                            fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
-                        } catch (RuntimeException e) {
-                            failures.add(e);
-                        }
-                    });
-            RuntimeException failure = failures.poll();
-            if (failure != null) {
-                for (RuntimeException other : failures) {
-                    if (other != failure) {
-                        failure.addSuppressed(other);
-                    }
-                }
-                throw failure;
-            }
+            readShards(shardList, processedExchangeCount);
         }
 
         // okay we have some response from aws so lets mark the consumer as ready
         forceConsumerAsReady();
 
         return processedExchangeCount.get();
+    }
+
+    /**
+     * Reads the shards of the list, up to maxConcurrentShards at the same time on the shard reader thread pool (with
+     * one shard, or without that pool, one after the other on the thread of the poll), and returns once all of them
+     * have been read. Each shard catches its own failure, so that the other shards are read and routed all the same,
+     * and the next poll does not start while a shard of this one is still being read: the poll then fails with the
+     * failure of the first shard that failed, and those of the other shards as suppressed exceptions.
+     */
+    private void readShards(List<Shard> shardList, AtomicInteger processedExchangeCount) throws InterruptedException {
+        Queue<RuntimeException> failures = new ConcurrentLinkedQueue<>();
+        ExecutorService executor = shardReaderExecutor;
+        if (executor == null || shardList.size() == 1) {
+            for (Shard shard : shardList) {
+                readShard(shard, processedExchangeCount, failures);
+            }
+        } else {
+            List<Future<?>> reads = new ArrayList<>(shardList.size());
+            try {
+                for (Shard shard : shardList) {
+                    reads.add(executor.submit(() -> readShard(shard, processedExchangeCount, failures)));
+                }
+            } catch (RejectedExecutionException e) {
+                // the consumer is being stopped
+                failures.add(e);
+            }
+            awaitShardReads(reads, failures);
+        }
+        RuntimeException failure = failures.poll();
+        if (failure != null) {
+            for (RuntimeException other : failures) {
+                if (other != failure) {
+                    failure.addSuppressed(other);
+                }
+            }
+            throw failure;
+        }
+    }
+
+    private void readShard(Shard shard, AtomicInteger processedExchangeCount, Queue<RuntimeException> failures) {
+        try {
+            fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
+        } catch (RuntimeException e) {
+            failures.add(e);
+        }
+    }
+
+    private static void awaitShardReads(List<Future<?>> reads, Queue<RuntimeException> failures)
+            throws InterruptedException {
+        Error error = null;
+        try {
+            for (Future<?> read : reads) {
+                try {
+                    read.get();
+                } catch (CancellationException e) {
+                    // not started before the consumer was stopped
+                } catch (ExecutionException e) {
+                    // readShard keeps the exceptions of a shard, so this is an Error
+                    if (e.getCause() instanceof Error err) {
+                        if (error == null) {
+                            error = err;
+                        } else {
+                            error.addSuppressed(err);
+                        }
+                    } else {
+                        failures.add(RuntimeCamelException.wrapRuntimeException(e.getCause()));
+                    }
+                }
+            }
+        } catch (InterruptedException e) {
+            // a forced stop interrupts the thread of the poll: interrupt the reads of the shards too, which run on
+            // threads of their own
+            for (Future<?> read : reads) {
+                read.cancel(true);
+            }
+            throw e;
+        }
+        if (error != null) {
+            throw error;
+        }
     }
 
     private void fetchAndPrepareRecordsForCamel(
@@ -588,6 +655,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         this.shardMonitorExecutor.scheduleAtFixedRate(new ShardMonitor(),
                 0, getConfiguration().getShardMonitorInterval(), TimeUnit.MILLISECONDS);
 
+        int maxConcurrentShards = getConfiguration().getMaxConcurrentShards();
+        if (getConfiguration().getShardId().isEmpty() && maxConcurrentShards > 1) {
+            // a pool managed by Camel, and not the common fork-join pool of the JVM: Camel thread names, one size per
+            // endpoint, and shut down with the consumer
+            this.shardReaderExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newFixedThreadPool(this, SHARD_READER_EXECUTOR_NAME, maxConcurrentShards);
+        }
+
         if (ObjectHelper.isNotEmpty(resumeStrategy)) {
             resumeStrategy.loadCache();
         }
@@ -598,6 +673,20 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         if (ObjectHelper.isNotEmpty(this.shardMonitorExecutor)) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(this.shardMonitorExecutor);
             this.shardMonitorExecutor = null;
+        }
+        ExecutorService executor = shardReaderExecutor;
+        if (executor != null) {
+            shardReaderExecutor = null;
+            // interrupts the shards of a poll that are still being read (a forced stop), and cancels those not started
+            // yet, so that the poll does not wait for them
+            List<Runnable> notStarted = getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            if (notStarted != null) {
+                for (Runnable read : notStarted) {
+                    if (read instanceof Future<?> future) {
+                        future.cancel(false);
+                    }
+                }
+            }
         }
         closedShardsReported.clear();
 

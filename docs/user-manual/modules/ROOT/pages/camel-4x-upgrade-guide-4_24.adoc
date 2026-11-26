@@ -7362,6 +7362,19 @@ iterator at the first record it did not route). A route that is stopped and star
 from `iteratorType`, or from its resume strategy, as before. Routes that need the previous behaviour set
 `shutdownRunningTask` to `CompleteAllTasks`.
 
+=== camel-aws2-kinesis - the consumer reads the shards on a thread pool of its own
+
+The polling consumer (without `useKclConsumers` and `shardId`) now reads the shards of a stream, and routes their
+records, on a thread pool that Camel manages (threads named `Kinesis_shard_reader`), sized by the new option
+`maxConcurrentShards` (10 by default), and shut down when the consumer stops. Before, it read them with a parallel
+stream on the common fork-join pool of the JVM (threads named `ForkJoinPool.commonPool-worker-N`, shared with the rest
+of the JVM), plus the thread of the consumer: the number of shards read at the same time was the number of CPUs (at
+least 2), and could not be set per endpoint. A stream of one shard is read on the thread of the consumer, as before.
+
+On a machine with fewer than 10 CPUs, a stream with more shards than CPUs is now read with more shards at the same
+time, so more records are routed at the same time. Set `maxConcurrentShards` to limit it; `maxConcurrentShards=1`
+reads the shards one after the other on the thread of the consumer.
+
 === camel-aws2-kinesis - shardClosed=fail reports a closed shard once
 
 With `shardClosed=fail`, the consumer now reports a closed shard once: it hands a `ReachedClosedStatusException` to
