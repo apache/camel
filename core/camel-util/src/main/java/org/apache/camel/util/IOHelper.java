@@ -40,6 +40,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
@@ -877,6 +878,16 @@ public final class IOHelper {
             this.file = file;
         }
 
+        /**
+         * @param file    the file to read
+         * @param decoder the decoder to read the file with, which decides what happens with malformed input and
+         *                unmappable characters
+         */
+        public EncodingInputStream(Path file, CharsetDecoder decoder) throws IOException {
+            super(toReader(file, decoder), defaultCharset.get());
+            this.file = file;
+        }
+
         public InputStream toOriginalInputStream() throws IOException {
             return Files.newInputStream(file);
         }
@@ -996,6 +1007,19 @@ public final class IOHelper {
         } else {
             return Files.newBufferedReader(file);
         }
+    }
+
+    /**
+     * Opens a reader for the given file, which decodes the file with the given decoder. Unlike
+     * {@link #toReader(Path, Charset)}, which reports malformed input and unmappable characters, the decoder decides
+     * what happens with them.
+     *
+     * @param  file    the file to read
+     * @param  decoder the decoder to read the file with
+     * @return         a buffered reader
+     */
+    public static BufferedReader toReader(Path file, CharsetDecoder decoder) throws IOException {
+        return new BufferedReader(new InputStreamReader(Files.newInputStream(file), decoder));
     }
 
     public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {

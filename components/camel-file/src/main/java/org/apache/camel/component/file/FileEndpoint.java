@@ -95,6 +95,16 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private boolean probeContentType;
     @UriParam(label = "consumer,advanced")
     private String extendedAttributes;
+    @UriParam(label = "advanced", defaultValue = "REPORT",
+              description = "What to do with malformed input and unmappable characters when a file is read or written with"
+                            + " a charset. REPORT fails with a MalformedInputException or an UnmappableCharacterException."
+                            + " REPLACE replaces the character with the replacement of the charset (U+FFFD when reading, '?'"
+                            + " when writing ISO-8859-1 for example). IGNORE drops the character. The consumer uses it when"
+                            + " the file content is read as text (such as a String or a Reader), and as an InputStream or"
+                            + " byte[] when the charset option is set. The producer uses it only when the charset option is"
+                            + " set. REPLACE and IGNORE change the data, so only use them when losing these characters is"
+                            + " acceptable.")
+    private CharsetErrorAction charsetErrorAction = CharsetErrorAction.REPORT;
     @Deprecated
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean forceWrites;
@@ -427,6 +437,17 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
      */
     public void setExtendedAttributes(String extendedAttributes) {
         this.extendedAttributes = extendedAttributes;
+    }
+
+    public CharsetErrorAction getCharsetErrorAction() {
+        return charsetErrorAction;
+    }
+
+    /**
+     * What to do with malformed input and unmappable characters when a file is read or written with a charset.
+     */
+    public void setCharsetErrorAction(CharsetErrorAction charsetErrorAction) {
+        this.charsetErrorAction = charsetErrorAction;
     }
 
     /**

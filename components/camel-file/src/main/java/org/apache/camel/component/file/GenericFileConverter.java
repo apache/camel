@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -123,7 +125,14 @@ public final class GenericFileConverter {
                 } else {
                     LOG.debug("Read file {} (no charset)", f);
                 }
-                InputStream inputStream = IOHelper.toInputStream(f, charset);
+                CharsetErrorAction action = file.getCharsetErrorAction();
+                InputStream inputStream;
+                if (charset != null && action != null && action != CharsetErrorAction.REPORT) {
+                    // keep the EncodingInputStream type, as converters can read the original bytes from it
+                    inputStream = new IOHelper.EncodingInputStream(f.toPath(), action.newDecoder(Charset.forName(charset)));
+                } else {
+                    inputStream = IOHelper.toInputStream(f, charset);
+                }
                 try {
                     // skipNBytes, not skip: a single skip() is allowed to advance fewer bytes than asked for, which
                     // would leave the body starting in the middle of the data the offset was meant to skip over
@@ -201,13 +210,19 @@ public final class GenericFileConverter {
             // and use the charset if the file was explicit configured with a
             // charset
             String charset = file.getCharset();
-            Reader reader;
             if (charset != null) {
                 LOG.debug("Read file {} with charset {}", f, file.getCharset());
-                reader = IOHelper.toReader(f, charset);
             } else {
                 LOG.debug("Read file {} (no charset)", f);
-                reader = IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange));
+                charset = ExchangeHelper.getCharsetName(exchange);
+            }
+            CharsetErrorAction action = file.getCharsetErrorAction();
+            Reader reader;
+            if (action != null && action != CharsetErrorAction.REPORT) {
+                Charset cs = charset != null ? Charset.forName(charset) : StandardCharsets.UTF_8;
+                reader = IOHelper.toReader(f.toPath(), action.newDecoder(cs));
+            } else {
+                reader = IOHelper.toReader(f, charset);
             }
 
             try {
