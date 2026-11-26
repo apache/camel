@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 @JsonPropertyOrder({
         "camel", "container", "cronjob", "environment", "ingress", "knative", "knative-service", "mount", "openapi", "pod",
         "route",
-        "service", "service-binding", "jolokia" })
+        "service", "service-binding", "jolokia", "prometheus" })
 public class Traits {
 
     @JsonProperty("addons")
@@ -102,6 +102,11 @@ public class Traits {
     @JsonPropertyDescription("The configuration of Jolokia trait")
     @JsonSetter(nulls = Nulls.SKIP)
     private Jolokia jolokia;
+
+    @JsonProperty("prometheus")
+    @JsonPropertyDescription("The configuration of Prometheus trait")
+    @JsonSetter(nulls = Nulls.SKIP)
+    private Prometheus prometheus;
 
     public Map<String, Addons> getAddons() {
         return this.addons;
@@ -197,6 +202,14 @@ public class Traits {
 
     public void setJolokia(Jolokia jolokia) {
         this.jolokia = jolokia;
+    }
+
+    public Prometheus getPrometheus() {
+        return prometheus;
+    }
+
+    public void setPrometheus(Prometheus prometheus) {
+        this.prometheus = prometheus;
     }
 
     public Service getService() {
