@@ -137,9 +137,12 @@ public class AggregateProcessor extends BaseProcessorSupport
     private ExceptionHandler exceptionHandler;
     private AggregationRepository aggregationRepository;
     private Map<String, String> closedCorrelationKeys;
-    // with optimistic locking: the correlation keys of the groups that a completion is removing from the repository,
-    // and that are put in closedCorrelationKeys once removed (correlation key -> number of such completions)
+    // with optimistic locking: the correlation keys that a completion is closing (it removes the group from the
+    // repository, or checks that the key has no group), until they are put in closedCorrelationKeys (correlation key ->
+    // number of such completions)
     private final Map<String, Integer> closingCorrelationKeys = new ConcurrentHashMap<>();
+    // with optimistic locking: the correlation keys that an exchange is closing on its own (its group was never stored)
+    private final Set<String> closingAloneCorrelationKeys = ConcurrentHashMap.newKeySet();
     private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<>();
     private final Set<String> inProgressCompleteExchanges = ConcurrentHashMap.newKeySet();
     private final WaitableInteger inProgressCount = new WaitableInteger();
@@ -643,9 +646,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY);
         }
 
+        boolean preCompleted = false;
         if (preCompletion && complete != null) {
             // need to pre complete the current group before we aggregate
             doAggregationComplete(complete, list, key, originalExchange, oldExchange, false);
+            preCompleted = true;
             // as we complete the current group eager, we should indicate the new group is not complete
             complete = null;
             // and clear old/original exchange as we start on a new group
@@ -721,6 +726,9 @@ public class AggregateProcessor extends BaseProcessorSupport
             }
             // only need to update aggregation repository if we are not complete
             doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
+            if (originalExchange == null && !preCompleted && optimisticLocking && closedCorrelationKeys != null) {
+                checkClosedCorrelationKeyAfterNewGroup(key, answer, newExchange);
+            }
             if (spooled != null && isKeepingReferences()) {
                 // the group keeps the references until it is completed (see doOnCompletion)
                 groupSpooledStreamCaches.computeIfAbsent(key, k -> new SpooledStreamCaches()).add(spooled.take());
@@ -761,6 +769,62 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (closedCorrelationKeys.containsKey(key)) {
             throw new ClosedCorrelationKeyException(key, exchange);
         }
+    }
+
+    /**
+     * With optimistic locking, checks the correlation key again after a new group was added to the repository.
+     * <p>
+     * The read of the repository may be older than the add: another exchange may have completed the key in between,
+     * either on its own (its group was never stored) or by removing a group that was stored after the read. The add
+     * then succeeds, as the key has no group, and would start a group for the closed key. A completion marks the key as
+     * closing before it removes the group, or before it checks that the key has no group (see
+     * {@link #onCompletion(String, Exchange, Exchange, boolean, boolean)}), so either this check sees the key as
+     * closing or closed, or that completion sees this group and does not complete on its own. If the key is closing or
+     * closed, the new group is removed again and the exchange is tried again or rejected. If the group can no longer be
+     * removed, it was changed or completed by another thread, with this exchange in it, so the add stands.
+     */
+    private void checkClosedCorrelationKeyAfterNewGroup(String key, Exchange group, Exchange exchange)
+            throws ClosedCorrelationKeyException {
+        boolean closing = closingCorrelationKeys.containsKey(key);
+        if (!closing && !closedCorrelationKeys.containsKey(key)) {
+            return;
+        }
+        // read the group again, as a repository may need what it reads to remove it (such as a version), and remove
+        // it only while it is still the group of only this exchange
+        Exchange current = aggregationRepository.get(exchange.getContext(), key);
+        if (current == null || !current.getExchangeId().equals(group.getExchangeId())
+                || current.getProperty(ExchangePropertyKey.AGGREGATED_SIZE, 0, Integer.class) != 1) {
+            return;
+        }
+        // as for a discarded group: a recoverable repository moves the exchange to its completed store when it is
+        // removed, so it is marked as being completed until it is confirmed, and the recover task does not send it
+        boolean recoverable = isRecoverableRepository();
+        String exchangeId = current.getExchangeId();
+        if (recoverable) {
+            markCompleting(exchangeId);
+        }
+        try {
+            current.setProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, key);
+            try {
+                aggregationRepository.remove(exchange.getContext(), key, current);
+            } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+                return;
+            }
+            if (recoverable) {
+                confirmDiscarded(current);
+            } else {
+                aggregationRepository.confirm(exchange.getContext(), exchangeId);
+            }
+        } finally {
+            if (recoverable) {
+                unmarkCompleting(exchangeId);
+            }
+        }
+        LOG.trace("The new group with correlation key: {} was added while the key was closed or being closed", key);
+        if (closing) {
+            throw new OptimisticLockingAggregationRepository.OptimisticLockingException();
+        }
+        throw new ClosedCorrelationKeyException(key, exchange);
     }
 
     protected void doAggregationComplete(
@@ -973,17 +1037,34 @@ public class AggregateProcessor extends BaseProcessorSupport
         // until the key is closed (or the remove failed), see checkClosedCorrelationKey. The mark is kept apart from
         // the closed keys, so a remove that fails (the group was changed or completed by another thread) never reopens
         // a key that another completion has closed, and a bounded (LRU) closed keys cache cannot evict it.
-        final boolean closing = original != null && optimisticLocking && closedCorrelationKeys != null;
+        final boolean closing = optimisticLocking && closedCorrelationKeys != null;
+        // a group that was never stored is completed by this exchange on its own, with no repository call to fail if
+        // the key changed since the read, so at most one exchange of a key at a time does this
+        final boolean alone = closing && original == null;
+        if (alone && !closingAloneCorrelationKeys.add(key)) {
+            throw new OptimisticLockingAggregationRepository.OptimisticLockingException();
+        }
         if (closing) {
             closingCorrelationKeys.merge(key, 1, Integer::sum);
         }
         Exchange answer = null;
         try {
+            if (alone && (aggregationRepository.get(aggregated.getContext(), key) != null
+                    || closingCorrelationKeys.getOrDefault(key, 0) > 1 || closedCorrelationKeys.containsKey(key))) {
+                // since this exchange read the repository, another exchange has started a group for the key (see
+                // checkClosedCorrelationKeyAfterNewGroup), or another completion is closing or has closed the key: try
+                // again, to aggregate with that group or to be rejected, instead of closing the key on its own
+                LOG.trace("The correlation key: {} has changed since it was read, will try again", key);
+                throw new OptimisticLockingAggregationRepository.OptimisticLockingException();
+            }
             answer = doOnCompletion(key, original, aggregated, fromTimeout, aggregateFailed);
             return answer;
         } finally {
             if (closing) {
                 closingCorrelationKeys.computeIfPresent(key, (k, count) -> count > 1 ? count - 1 : null);
+            }
+            if (alone) {
+                closingAloneCorrelationKeys.remove(key);
             }
             if (completing && answer == null) {
                 // not removed, or not to be sent
