@@ -48,8 +48,10 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
@@ -59,8 +61,8 @@ import static org.mockito.Mockito.when;
 /**
  * The shard monitor lists the shards at a fixed rate, and finds the shards created by a split or a merge. An
  * {@link Error} of one of its runs must not end the scheduled task (the executor would not run it again, and nothing
- * would be logged); a {@link VirtualMachineError} is thrown on and ends it, while the consumer goes on reading the
- * shards it knows.
+ * would be logged); a {@link VirtualMachineError} stops the consumer until it is restarted, and its health check is
+ * DOWN with the error (CAMEL-27515).
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -117,7 +119,7 @@ class KinesisConsumerShardMonitorErrorTest {
     }
 
     @Test
-    void aVirtualMachineErrorStopsOnlyTheMonitor() {
+    void aVirtualMachineErrorStopsTheConsumerUntilRestarted() {
         OutOfMemoryError error = new OutOfMemoryError("simulated");
         when(kinesisClient.listShards(any(ListShardsRequest.class))).thenAnswer(invocation -> {
             listShardsCalls.incrementAndGet();
@@ -128,25 +130,40 @@ class KinesisConsumerShardMonitorErrorTest {
         await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getCurrentShardList().size() == 1);
         ScheduledPollConsumerHealthCheck healthCheck = new ScheduledPollConsumerHealthCheck(consumer, "consumer:orders");
         consumer.run();
+        verify(kinesisClient, times(1)).getRecords(any(GetRecordsRequest.class));
         assertEquals(HealthCheck.State.UP, readiness(healthCheck).getState());
 
         when(kinesisClient.listShards(any(ListShardsRequest.class))).thenThrow(error);
-        // thrown on: the executor does not run the task again
+        // thrown on, which ends the scheduled task, after it stopped the consumer
         assertSame(error, assertThrows(OutOfMemoryError.class, () -> consumer.new ShardMonitor().run()));
+        assertSame(error, consumer.getFatalError());
+        HealthCheck.Result result = readiness(healthCheck);
+        assertEquals(HealthCheck.State.DOWN, result.getState());
+        assertSame(error, result.getError().orElse(null));
 
-        // the consumer goes on reading the shard it knows
+        // the next run does not poll
         consumer.run();
-        verify(kinesisClient, times(2)).getRecords(any(GetRecordsRequest.class));
-        assertEquals(0L, consumer.getErrorCounter());
-        assertEquals(HealthCheck.State.UP, readiness(healthCheck).getState());
+        verify(kinesisClient, times(1)).getRecords(any(GetRecordsRequest.class));
+        assertEquals(HealthCheck.State.DOWN, readiness(healthCheck).getState());
 
-        // a restart starts a new monitor
-        when(kinesisClient.listShards(any(ListShardsRequest.class)))
-                .thenReturn(ListShardsResponse.builder().shards(AFTER_SPLIT).build());
+        // a stop and start clears the fatal error, and the new monitor lists the shards again
+        int listedBeforeRestart = listShardsCalls.get();
+        when(kinesisClient.listShards(any(ListShardsRequest.class))).thenAnswer(invocation -> {
+            listShardsCalls.incrementAndGet();
+            return ListShardsResponse.builder().shards(AFTER_SPLIT).build();
+        });
         consumer.stop();
         consumer.start();
-        await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getCurrentShardList().size() == 3);
+        assertNull(consumer.getFatalError());
+        await().atMost(20, TimeUnit.SECONDS).until(() -> consumer.getCurrentShardList().size() == 3);
+        assertTrue(listShardsCalls.get() > listedBeforeRestart);
+
+        // and the consumer reads the three shards again (one read before the error), the children from their first
+        // record
         consumer.run();
+        verify(kinesisClient, times(4)).getRecords(any(GetRecordsRequest.class));
+        verify(kinesisClient).getShardIterator(argThat((GetShardIteratorRequest r) -> "s1".equals(r.shardId())
+                && r.shardIteratorType() == ShardIteratorType.TRIM_HORIZON));
         assertEquals(HealthCheck.State.UP, readiness(healthCheck).getState());
     }
 
