@@ -102,6 +102,52 @@ camel.management.host=127.0.0.1
 camel.management.healthCheckEnabled=true
 ----
 
+== CORS
+
+The embedded HTTP server can handle CORS (Cross-Origin Resource Sharing), so a web application served from another origin
+can call the routes from a browser. When enabled, the server answers preflight requests (`OPTIONS` with an `Origin` header)
+itself, and adds the `Access-Control-*` headers to the responses of the other requests with an `Origin` header.
+
+[source,properties]
+----
+camel.server.enabled=true
+camel.server.corsEnabled=true
+camel.server.corsOrigins=https://app.example.com,https://admin.example.com
+camel.server.corsMethods=GET,POST,PUT
+camel.server.corsHeaders=Content-Type,X-Request-Id
+camel.server.corsExposedHeaders=X-Total-Count
+camel.server.corsAccessControlMaxAge=3600
+----
+
+A request from an origin in `corsOrigins` is answered with `Access-Control-Allow-Origin` set to that origin, and
+`Access-Control-Allow-Credentials=true`. A request from another origin gets no `Access-Control-Allow-Origin` header, so
+the browser blocks the response. When `corsOrigins` is not set, the origin of every request is allowed (sent back
+as `Access-Control-Allow-Origin`), but without credentials. Set `corsOrigins` for anything other than a public API.
+
+When `corsMethods` or `corsHeaders` is not set, the methods and headers asked for in the preflight request are allowed.
+`corsAccessControlMaxAge` is in seconds; when not set, the `Access-Control-Max-Age` header is not sent.
+
+== Sessions
+
+The embedded HTTP server can keep a session for each client, identified by a session cookie (Vert.x `SessionHandler`):
+
+[source,properties]
+----
+camel.server.enabled=true
+camel.server.sessionEnabled=true
+camel.server.sessionCookieName=my-session
+camel.server.sessionCookieSecure=true
+camel.server.sessionCookieSameSite=lax
+camel.server.sessionTimeout=600000
+----
+
+The session cookie is `HttpOnly` and `SameSite=Strict` by default. Set `sessionCookieSecure=true` when the server is
+served over HTTPS (or behind a proxy that terminates TLS), so the browser only sends the cookie over HTTPS.
+The sessions are stored in the memory of the application (`sessionStoreType=local`). Use `sessionStoreType=clustered`
+to store them in the cluster of a clustered Vert.x instance, which you must then bind in the registry.
+
+All the `camel.server.*` options are listed in xref:components:others:main.adoc[Camel Main].
+
 == JWT authentication
 
 The embedded HTTP server can validate JWT bearer tokens on incoming requests.
