@@ -18,10 +18,13 @@ package org.apache.camel.component.file.cluster;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.cluster.CamelClusterEventListener;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
@@ -30,6 +33,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The only member of a cluster loses the leadership after a failed read of the cluster data. The data file still holds
@@ -104,17 +108,30 @@ class FileLockClusterViewReclaimLeadershipTest {
                 && FileLockClusterUtils.readClusterLeaderInfo(dataFile) != null);
         String id = FileLockClusterUtils.readClusterLeaderInfo(dataFile).getId();
 
+        // record the leadership changes (true: this member is leader) instead of polling for the loss: a member that
+        // takes the leadership back at once is follower for only one check, which polling can miss. The listener is
+        // told the current leader when it is added, so the first entry is true
+        List<Boolean> leadership = new CopyOnWriteArrayList<>();
+        view.addEventListener((CamelClusterEventListener.Leadership) (v, leader) -> leadership
+                .add(leader != null && leader.isLocal()));
+        assertEquals(List.of(true), leadership);
+
         // the next read of the leader fails, so it gives up the leadership. If failFirstAttempt, every attempt of the
-        // task that resolves the lock file key fails in its first try to take the leadership back
+        // task that resolves the lock file key fails in its first try to take the leadership back. The file system is
+        // healthy after that, so the member must take the leadership back
         if (failFirstAttempt) {
             keyFailures.set(service.getClusterDataTaskMaxAttempts());
         }
         readFailures.set(1);
-        await().atMost(10, TimeUnit.SECONDS).until(() -> !view.getLocalMember().isLeader());
-        await().atMost(10, TimeUnit.SECONDS).until(() -> readFailures.get() == 0 && keyFailures.get() == 0);
-
-        // the file system is healthy from now on
-        await().atMost(10, TimeUnit.SECONDS).until(() -> view.getLocalMember().isLeader());
-        assertEquals(id, FileLockClusterUtils.readClusterLeaderInfo(dataFile).getId());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> leadership.size() >= 3);
+        assertEquals(List.of(true, false, true), leadership);
+        assertEquals(0, readFailures.get());
+        assertEquals(0, keyFailures.get());
+        assertTrue(view.getLocalMember().isLeader());
+        // the member is told it is leader before it writes the cluster data, which it truncates first
+        await().atMost(10, TimeUnit.SECONDS).until(() -> {
+            FileLockClusterLeaderInfo info = FileLockClusterUtils.readClusterLeaderInfo(dataFile);
+            return info != null && id.equals(info.getId());
+        });
     }
 }
