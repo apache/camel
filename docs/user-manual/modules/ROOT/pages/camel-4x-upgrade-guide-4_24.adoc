@@ -442,6 +442,15 @@ keys. Code that walks `getOutputs()` (route dumps, tooling) now sees them, and `
 the outputs, for example with advice-with, is no longer used, and changing the list returned by `getCatchClauses()`
 no longer changes the doTry. Use `setCatchClauses` and `setFinallyClause`, or the outputs, instead.
 
+=== camel-core-model - saga and transacted keep the order of the steps
+
+A `saga` or `transacted` wraps the entire route. When it has nested steps of its own, as in the XML and YAML DSL, and
+the route has steps after it, the steps now run in the order they are written in: the steps before the `saga` or
+`transacted`, its nested steps, then the steps after it. Before, the steps after it ran before its nested steps. In the
+Java DSL the steps after `.saga()` or `.transacted()` are its nested steps, so only a route that closes it with
+`.end()` and has steps after that is affected. When a route has both a
+`saga` and a `transacted` as top-level steps, the nested steps of the `transacted` are now part of the saga too.
+
 === camel-core-model - EIP options given an expression in the Java DSL keep its language
 
 In the Java DSL, `completionSize`, `completionTimeout` and `completionPredicate` of the Aggregate EIP, and `handled`,
