@@ -5688,7 +5688,7 @@ element as before, set that element as the body.
 === camel-stax - the text mode of xtokenize gives the text as an XML parser reads it
 
 With mode `t`, `xtokenize` returned the characters between the tags of the element as they are written: entity and
-character references were not decoded (`AT&amp;T` instead of `AT&T`), and the content of a CDATA section was left
+character references were not decoded (`+AT&amp;T+` instead of `AT&T`), and the content of a CDATA section was left
 out. The text is now decoded and includes the content of CDATA sections, so a route that decoded the entities itself
 must stop doing so. With a `group` greater than 1, the texts in the `<group>` element are escaped as XML text, so the
 group is still well-formed XML.
