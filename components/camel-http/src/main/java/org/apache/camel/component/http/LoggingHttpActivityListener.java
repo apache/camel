@@ -36,6 +36,7 @@ import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
@@ -155,7 +156,8 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
         if (showHeaders) {
             Header[] headers = request != null ? request.getHeaders() : response.getHeaders();
             for (Header h : headers) {
-                lines.add(String.format("%s: %s", h.getName(), getValue(h.isSensitive(), h.getValue())));
+                lines.add(String.format("%s: %s", h.getName(),
+                        getValue(h.isSensitive() || SensitiveUtils.isSensitiveHeader(h.getName()), h.getValue())));
             }
         }
         if (showBody) {
