@@ -290,7 +290,8 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                         // Acquired the key so I'm the leader.
                         takeLeadership();
 
-                        // Get the version
+                        // Get the version, also when stopping (then takeLeadership did not take the leadership),
+                        // so that doStop releases the leader key this run acquired meanwhile
                         version = cache.getWithMetadata(leaderKey).getVersion();
 
                         LOGGER.debug("Lock acquired key={}, id={}, with version={}", leaderKey, localId, version);
@@ -299,7 +300,8 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
                         // fast) and my key was still there so yeah, I'm the leader again!
                         takeLeadership();
 
-                        // Get the version
+                        // Get the version, also when stopping (then takeLeadership did not take the leadership),
+                        // so that doStop releases the leader key this run acquired meanwhile
                         version = cache.getWithMetadata(leaderKey).getVersion();
 
                         LOGGER.debug("Lock resumed key={}, id={} with version={}", leaderKey, localId, version);

@@ -56,7 +56,9 @@ class InfinispanRemoteClusterViewStopTest {
     private static final String VIEW_NAME = "myView";
     private static final String NODE_ID = "node";
     private static final String LEADER_KEY = InfinispanClusterService.LEADER_KEY;
-    private static final long SHUTDOWN_AWAIT_TERMINATION = 1000;
+    // the stop time is compared with this, so it leaves room for a slow (loaded) machine: a stop that waits for the
+    // leadership thread once takes a bit more than this, a stop that waits twice takes more than twice this
+    private static final long SHUTDOWN_AWAIT_TERMINATION = 2000;
 
     private final FakeRemoteCache server = new FakeRemoteCache();
     private final LeadershipThreadPoolFactory pools = new LeadershipThreadPoolFactory();
