@@ -26,6 +26,7 @@ import com.ibm.watsonx.ai.chat.ChatRequest;
 import com.ibm.watsonx.ai.chat.ChatResponse;
 import com.ibm.watsonx.ai.chat.ChatService;
 import com.ibm.watsonx.ai.chat.TextChatResponse;
+import com.ibm.watsonx.ai.chat.model.AssistantMessage;
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
 import com.ibm.watsonx.ai.chat.model.PartialChatResponse;
@@ -123,6 +124,7 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
         ChatRequest request = buildChatRequest(exchange, messages);
         StringBuilder text = new StringBuilder();
         AtomicReference<Throwable> firstError = new AtomicReference<>();
+        AtomicReference<CompletableFuture<ChatResponse>> streamRef = new AtomicReference<>();
         com.ibm.watsonx.ai.chat.ChatHandler handler = new com.ibm.watsonx.ai.chat.ChatHandler() {
             @Override
             public void onPartialResponse(String partialResponse, PartialChatResponse partialChatResponse) {
@@ -139,7 +141,13 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
             public void onError(Throwable error) {
                 // an error of the stream, or of the stream consumer (which the SDK reports here, and does not stop the
                 // stream for): the exchange fails with the first one
-                firstError.compareAndSet(null, error);
+                if (firstError.compareAndSet(null, error)) {
+                    // the outcome is known: stop the stream rather than wait for its end
+                    CompletableFuture<ChatResponse> stream = streamRef.get();
+                    if (stream != null) {
+                        stream.cancel(true);
+                    }
+                }
                 LOG.debug("Error during streaming chat", error);
             }
 
@@ -151,6 +159,10 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
 
         ChatService service = endpoint.getChatService();
         CompletableFuture<ChatResponse> stream = service.chatStreaming(request, handler);
+        streamRef.set(stream);
+        if (firstError.get() != null) {
+            stream.cancel(true);
+        }
         // the complete answer, with its tool calls and reasoning, once the stream ends
         ChatResponse response;
         try {
@@ -163,10 +175,14 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
         }
 
         Map<String, Object> headers = chatResponseHeaders(response, messages);
-        // the chunks as they came: the SDK trims the content of its complete answer (but when it splits the reasoning
-        // from the answer with the thinking tags)
-        if (!text.isEmpty() && getConfiguration().getThinkingTags() == null) {
+        // the answer as its chunks came (without the reasoning that the thinking tags split off): the SDK trims the
+        // content of its complete answer
+        if (!text.isEmpty()) {
             headers.put(WatsonxAiConstants.GENERATED_TEXT, text.toString());
+            if (headers.get(WatsonxAiConstants.ASSISTANT_MESSAGE) instanceof AssistantMessage answer) {
+                headers.put(WatsonxAiConstants.ASSISTANT_MESSAGE, new AssistantMessage(
+                        text.toString(), answer.thinking(), answer.name(), answer.refusal(), answer.toolCalls()));
+            }
         }
         return WatsonxAiOperationResponse.create(headers.get(WatsonxAiConstants.GENERATED_TEXT), headers);
     }

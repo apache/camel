@@ -183,6 +183,22 @@ class WatsonxAiReviewFixesTest extends CamelTestSupport {
     }
 
     @Test
+    void deploymentForecastSendsItsBodyWhateverAFutureDataHeaderHolds() {
+        server.respond("/ml/v1/deployments/my-deployment/time_series/forecast", """
+                {"model_id":"ttm","created_at":"2026-01-01T00:00:00.000Z","results":[],"input_data_points":1,
+                 "output_data_points":0}""");
+        TimeSeriesRequest body = TimeSeriesRequest.builder()
+                .inputSchema(InputSchema.builder().timestampColumn("date").build())
+                .data(ForecastData.create().add("date", "2024-01-01T00:00:00").add("value", 1.0))
+                .build();
+        Exchange result = send("deploymentForecast", "", body,
+                Map.of(WatsonxAiConstants.FORECAST_FUTURE_DATA, "left over from an earlier step"));
+
+        assertNull(result.getException());
+        assertFalse(server.lastRequest("/ml/v1/deployments/my-deployment/time_series/forecast").json().has("future_data"));
+    }
+
+    @Test
     void forecastRefusesTheFutureDataOfARequestBody() {
         TimeSeriesRequest body = TimeSeriesRequest.builder()
                 .inputSchema(InputSchema.builder().timestampColumn("date").build())

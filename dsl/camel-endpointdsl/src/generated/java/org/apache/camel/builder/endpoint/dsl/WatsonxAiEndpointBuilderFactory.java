@@ -48,10 +48,11 @@ public interface WatsonxAiEndpointBuilderFactory {
         /**
          * The watsonx.ai base URL of the region (e.g.,
          * https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com).
+         * Required but for the utility tools (runTool, listTools), which use
+         * the wxUrl.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param baseUrl the value to set

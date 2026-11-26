@@ -19,6 +19,7 @@ package org.apache.camel.component.ibm.watsonx.ai.service;
 import java.util.concurrent.CompletableFuture;
 
 import com.ibm.watsonx.ai.core.auth.Authenticator;
+import com.ibm.watsonx.ai.core.provider.ExecutorProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.OAuthClientAuthenticationFactory;
@@ -68,12 +69,12 @@ public final class OAuthProfileAuthenticator implements Authenticator {
     }
 
     /**
-     * Obtains the token in another thread, so that a renewal does not block the caller of a streaming request, which
-     * waits for the stream within a deadline.
+     * Obtains the token in an I/O thread of the SDK, so that a renewal does not block the caller of a streaming
+     * request, which waits for the stream within a deadline.
      */
     @Override
     public CompletableFuture<String> tokenAsync() {
-        return CompletableFuture.supplyAsync(this::token);
+        return CompletableFuture.supplyAsync(this::token, ExecutorProvider.ioExecutor());
     }
 
     @Override

@@ -186,6 +186,8 @@ public class WatsonxAiChatOptionsIT extends WatsonxAiTestSupport {
                 : pii.getMessage().getHeader(WatsonxAiConstants.MODERATION_RESULTS, Map.class);
         assertNotNull(findings, "The PII guardrail should report the e-mail address");
         assertTrue(findings.containsKey("pii"), "The PII guardrail should report the e-mail address: " + findings);
+        assertFalse(((List<?>) findings.get("pii")).isEmpty(), "The PII guardrail should report the e-mail address");
+        assertTrue(findings.get("pii").toString().contains("john.smith@example.com"), findings.toString());
     }
 
     @Test

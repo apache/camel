@@ -701,11 +701,12 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         ForecastData forecastData = toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_DATA),
                 WatsonxAiConstants.FORECAST_DATA);
 
-        ForecastData futureData = toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA),
-                WatsonxAiConstants.FORECAST_FUTURE_DATA);
+        boolean futureDataHeader = in.getHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA) != null;
+        if (!futureDataAllowed && futureDataHeader) {
+            throw futureDataRefused();
+        }
         if ((inputSchema == null || forecastData == null) && in.getBody() instanceof TimeSeriesRequest request) {
-            if (!futureDataAllowed && (futureData != null
-                    || request.parameters() != null && request.parameters().futureData() != null)) {
+            if (!futureDataAllowed && request.parameters() != null && request.parameters().futureData() != null) {
                 throw futureDataRefused();
             }
             if (deploymentId == null || deploymentId.equals(request.deploymentId())) {
@@ -734,9 +735,9 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         if (predictionLength == null) {
             predictionLength = getConfiguration().getPredictionLength();
         }
-        if (futureData != null && !futureDataAllowed) {
-            throw futureDataRefused();
-        }
+        ForecastData futureData = futureDataHeader
+                ? toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA), WatsonxAiConstants.FORECAST_FUTURE_DATA)
+                : null;
 
         TimeSeriesParameters parameters = null;
         if (predictionLength != null || futureData != null) {

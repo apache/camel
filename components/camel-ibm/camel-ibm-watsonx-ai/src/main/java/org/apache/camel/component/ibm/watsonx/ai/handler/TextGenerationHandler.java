@@ -134,7 +134,10 @@ public class TextGenerationHandler extends AbstractWatsonxAiHandler {
 
                     @Override
                     public void onError(Throwable error) {
-                        errorHolder[0] = error;
+                        // the first error, not one that the cancellation of the stream causes
+                        if (errorHolder[0] == null) {
+                            errorHolder[0] = error;
+                        }
                         LOG.debug("Error during streaming text generation", error);
                     }
 
@@ -145,7 +148,14 @@ public class TextGenerationHandler extends AbstractWatsonxAiHandler {
                 };
 
         // Wait for completion, at most the time limit, and stop the stream otherwise
-        awaitStream(service.generateStreaming(input, paramsBuilder.build(), handler));
+        try {
+            awaitStream(service.generateStreaming(input, paramsBuilder.build(), handler));
+        } catch (Exception e) {
+            if (errorHolder[0] instanceof Exception error) {
+                throw error;
+            }
+            throw e;
+        }
 
         // Check for errors: the exchange fails with the error of the stream itself
         if (errorHolder[0] instanceof Exception error) {

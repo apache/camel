@@ -18,7 +18,6 @@ package org.apache.camel.component.ibm.watsonx.ai;
 
 import com.ibm.watsonx.ai.core.auth.Authenticator;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -49,8 +48,8 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     // Connection
     @UriParam(label = "common",
-              description = "The watsonx.ai base URL of the region (e.g., https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com)")
-    @Metadata(required = true)
+              description = "The watsonx.ai base URL of the region (e.g., https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com)."
+                            + " Required but for the utility tools (runTool, listTools), which use the wxUrl")
     private String baseUrl;
 
     @UriParam(label = "common",

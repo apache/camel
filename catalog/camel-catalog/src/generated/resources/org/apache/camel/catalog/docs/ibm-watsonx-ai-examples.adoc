@@ -176,7 +176,8 @@ In YAML and XML routes, where no `Consumer` header can be built, the `streamEndp
 `chatStreaming` (and `textGenerationStreaming`) as the body of a message to an endpoint. The chunks are sent from the
 threads of the watsonx.ai SDK, in order, with the id of the exchange that streams in the `CamelCorrelationId` header;
 the full answer is the body after the endpoint, as with a `Consumer`. When the stream consumer or the endpoint fails,
-the exchange fails with that error.
+the stream stops and the exchange fails with that error: with an asynchronous endpoint such as `seda`, only a failure to
+hand the chunk over counts, not a later failure of its consumer (use `direct` for that).
 
 [source,yaml]
 ----
