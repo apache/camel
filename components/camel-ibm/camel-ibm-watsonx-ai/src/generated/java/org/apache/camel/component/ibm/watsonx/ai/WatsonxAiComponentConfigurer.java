@@ -33,6 +33,7 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticator": getOrCreateConfiguration(target).setAuthenticator(property(camelContext, com.ibm.watsonx.ai.core.auth.Authenticator.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
@@ -106,6 +107,7 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "authenticator": return com.ibm.watsonx.ai.core.auth.Authenticator.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "baseurl":
@@ -180,6 +182,7 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();
+        case "authenticator": return getOrCreateConfiguration(target).getAuthenticator();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseurl":

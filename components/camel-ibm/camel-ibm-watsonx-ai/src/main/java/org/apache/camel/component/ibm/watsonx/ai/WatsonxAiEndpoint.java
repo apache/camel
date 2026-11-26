@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibm.watsonx.ai;
 
 import com.ibm.watsonx.ai.chat.ChatService;
+import com.ibm.watsonx.ai.core.auth.Authenticator;
 import com.ibm.watsonx.ai.deployment.DeploymentService;
 import com.ibm.watsonx.ai.detection.DetectionService;
 import com.ibm.watsonx.ai.embedding.EmbeddingService;
@@ -32,6 +33,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.ibm.watsonx.ai.service.OAuthProfileAuthenticator;
 import org.apache.camel.component.ibm.watsonx.ai.service.WatsonxAiServiceFactory;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -42,8 +44,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.OAuthHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
@@ -174,6 +174,9 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     @UriParam
     private WatsonxAiConfiguration configuration;
 
+    // Shared by the services of this endpoint, so that they share one access token
+    private Authenticator authenticator;
+
     // Lazy-initialized service clients
     private TextGenerationService textGenerationService;
     private ChatService chatService;
@@ -206,20 +209,18 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        resolveOAuthToken();
         validateConfiguration();
-    }
-
-    private void resolveOAuthToken() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getOauthProfile())) {
-            return;
+        authenticator = WatsonxAiServiceFactory.createAuthenticator(configuration, getCamelContext());
+        if (authenticator instanceof OAuthProfileAuthenticator) {
+            // fail at startup rather than at the first exchange when the OAuth profile cannot give a token
+            authenticator.token();
         }
-        configuration.setApiKey(OAuthHelper.resolveOAuthToken(getCamelContext(), configuration.getOauthProfile()));
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected synchronized void doStop() throws Exception {
         super.doStop();
+        authenticator = null;
         textGenerationService = null;
         chatService = null;
         embeddingService = null;
@@ -241,8 +242,10 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
             return;
         }
 
-        if (configuration.getApiKey() == null || configuration.getApiKey().isEmpty()) {
-            throw new IllegalArgumentException("API key is required");
+        if ((configuration.getApiKey() == null || configuration.getApiKey().isEmpty())
+                && (configuration.getOauthProfile() == null || configuration.getOauthProfile().isEmpty())
+                && configuration.getAuthenticator() == null) {
+            throw new IllegalArgumentException("API key is required (or set oauthProfile or authenticator)");
         }
         if (configuration.getBaseUrl() == null || configuration.getBaseUrl().isEmpty()) {
             throw new IllegalArgumentException("Base URL is required");
@@ -254,7 +257,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TextGenerationService getTextGenerationService() {
         if (textGenerationService == null) {
-            textGenerationService = WatsonxAiServiceFactory.createTextGenerationService(configuration);
+            textGenerationService = WatsonxAiServiceFactory.createTextGenerationService(configuration, authenticator);
         }
         return textGenerationService;
     }
@@ -264,7 +267,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized ChatService getChatService() {
         if (chatService == null) {
-            chatService = WatsonxAiServiceFactory.createChatService(configuration);
+            chatService = WatsonxAiServiceFactory.createChatService(configuration, authenticator);
         }
         return chatService;
     }
@@ -274,7 +277,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized EmbeddingService getEmbeddingService() {
         if (embeddingService == null) {
-            embeddingService = WatsonxAiServiceFactory.createEmbeddingService(configuration);
+            embeddingService = WatsonxAiServiceFactory.createEmbeddingService(configuration, authenticator);
         }
         return embeddingService;
     }
@@ -284,7 +287,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized RerankService getRerankService() {
         if (rerankService == null) {
-            rerankService = WatsonxAiServiceFactory.createRerankService(configuration);
+            rerankService = WatsonxAiServiceFactory.createRerankService(configuration, authenticator);
         }
         return rerankService;
     }
@@ -294,7 +297,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TokenizationService getTokenizationService() {
         if (tokenizationService == null) {
-            tokenizationService = WatsonxAiServiceFactory.createTokenizationService(configuration);
+            tokenizationService = WatsonxAiServiceFactory.createTokenizationService(configuration, authenticator);
         }
         return tokenizationService;
     }
@@ -304,7 +307,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized DetectionService getDetectionService() {
         if (detectionService == null) {
-            detectionService = WatsonxAiServiceFactory.createDetectionService(configuration);
+            detectionService = WatsonxAiServiceFactory.createDetectionService(configuration, authenticator);
         }
         return detectionService;
     }
@@ -314,7 +317,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TextExtractionService getTextExtractionService() {
         if (textExtractionService == null) {
-            textExtractionService = WatsonxAiServiceFactory.createTextExtractionService(configuration);
+            textExtractionService = WatsonxAiServiceFactory.createTextExtractionService(configuration, authenticator);
         }
         return textExtractionService;
     }
@@ -324,7 +327,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TextClassificationService getTextClassificationService() {
         if (textClassificationService == null) {
-            textClassificationService = WatsonxAiServiceFactory.createTextClassificationService(configuration);
+            textClassificationService = WatsonxAiServiceFactory.createTextClassificationService(configuration, authenticator);
         }
         return textClassificationService;
     }
@@ -334,7 +337,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TimeSeriesService getTimeSeriesService() {
         if (timeSeriesService == null) {
-            timeSeriesService = WatsonxAiServiceFactory.createTimeSeriesService(configuration);
+            timeSeriesService = WatsonxAiServiceFactory.createTimeSeriesService(configuration, authenticator);
         }
         return timeSeriesService;
     }
@@ -354,7 +357,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized DeploymentService getDeploymentService() {
         if (deploymentService == null) {
-            deploymentService = WatsonxAiServiceFactory.createDeploymentService(configuration);
+            deploymentService = WatsonxAiServiceFactory.createDeploymentService(configuration, authenticator);
         }
         return deploymentService;
     }
@@ -364,9 +367,16 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized ToolService getToolService() {
         if (toolService == null) {
-            toolService = WatsonxAiServiceFactory.createToolService(configuration);
+            toolService = WatsonxAiServiceFactory.createToolService(configuration, authenticator);
         }
         return toolService;
+    }
+
+    /**
+     * The authenticator that the services of this endpoint share, created when the endpoint starts.
+     */
+    public Authenticator getAuthenticator() {
+        return authenticator;
     }
 
     // Getters and Setters

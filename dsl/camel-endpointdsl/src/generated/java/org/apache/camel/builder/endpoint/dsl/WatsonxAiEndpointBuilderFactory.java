@@ -636,11 +636,12 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
-         * IBM Cloud API key for authentication.
+         * IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for
+         * an access token. Required unless oauthProfile or authenticator is
+         * set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param apiKey the value to set
@@ -652,9 +653,10 @@ public interface WatsonxAiEndpointBuilderFactory {
         }
         /**
          * OAuth profile name for obtaining an access token via the OAuth 2.0
-         * Client Credentials grant. When set, the token is acquired from the
-         * configured identity provider and used as apiKey. Requires camel-oauth
-         * on the classpath.
+         * Client Credentials grant. When set, the token of the configured
+         * identity provider is sent to watsonx.ai as a Bearer token instead of
+         * an IBM Cloud API key, and obtained again when it expires. Requires
+         * camel-oauth on the classpath.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -844,6 +846,42 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default AdvancedWatsonxAiEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * A custom authenticator of the watsonx.ai SDK
+         * (com.ibm.watsonx.ai.core.auth.Authenticator) that gives the token of
+         * every request, such as a CP4DAuthenticator for watsonx.ai software on
+         * Cloud Pak for Data. When set, apiKey and oauthProfile are not used.
+         * 
+         * The option is a:
+         * <code>com.ibm.watsonx.ai.core.auth.Authenticator</code> type.
+         * 
+         * Group: security (advanced)
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
+         */
+        default AdvancedWatsonxAiEndpointBuilder authenticator(com.ibm.watsonx.ai.core.auth.Authenticator authenticator) {
+            doSetProperty("authenticator", authenticator);
+            return this;
+        }
+        /**
+         * A custom authenticator of the watsonx.ai SDK
+         * (com.ibm.watsonx.ai.core.auth.Authenticator) that gives the token of
+         * every request, such as a CP4DAuthenticator for watsonx.ai software on
+         * Cloud Pak for Data. When set, apiKey and oauthProfile are not used.
+         * 
+         * The option will be converted to a
+         * <code>com.ibm.watsonx.ai.core.auth.Authenticator</code> type.
+         * 
+         * Group: security (advanced)
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
+         */
+        default AdvancedWatsonxAiEndpointBuilder authenticator(String authenticator) {
+            doSetProperty("authenticator", authenticator);
             return this;
         }
     }

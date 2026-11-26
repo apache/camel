@@ -26,6 +26,7 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticator": target.getConfiguration().setAuthenticator(property(camelContext, com.ibm.watsonx.ai.core.auth.Authenticator.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "cosurl":
@@ -96,6 +97,7 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "authenticator": return com.ibm.watsonx.ai.core.auth.Authenticator.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
         case "cosurl":
@@ -167,6 +169,7 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
+        case "authenticator": return target.getConfiguration().getAuthenticator();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "cosurl":

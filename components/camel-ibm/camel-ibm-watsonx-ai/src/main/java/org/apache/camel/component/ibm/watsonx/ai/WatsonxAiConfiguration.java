@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai;
 
+import com.ibm.watsonx.ai.core.auth.Authenticator;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -28,15 +29,23 @@ import org.apache.camel.spi.UriParams;
 public class WatsonxAiConfiguration implements Cloneable {
 
     // Authentication
-    @UriParam(label = "security", security = "secret", description = "IBM Cloud API key for authentication")
-    @Metadata(required = true)
+    @UriParam(label = "security", security = "secret",
+              description = "IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for an access token. Required"
+                            + " unless oauthProfile or authenticator is set.")
     private String apiKey;
 
     @UriParam(label = "security",
-              description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
-                            + "When set, the token is acquired from the configured identity provider and used as apiKey. "
-                            + "Requires camel-oauth on the classpath.")
+              description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant."
+                            + " When set, the token of the configured identity provider is sent to watsonx.ai as a Bearer"
+                            + " token instead of an IBM Cloud API key, and obtained again when it expires. Requires"
+                            + " camel-oauth on the classpath.")
     private String oauthProfile;
+
+    @UriParam(label = "security,advanced",
+              description = "A custom authenticator of the watsonx.ai SDK (com.ibm.watsonx.ai.core.auth.Authenticator)"
+                            + " that gives the token of every request, such as a CP4DAuthenticator for watsonx.ai software"
+                            + " on Cloud Pak for Data. When set, apiKey and oauthProfile are not used.")
+    private Authenticator authenticator;
 
     // Connection
     @UriParam(label = "common",
@@ -168,6 +177,14 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setOauthProfile(String oauthProfile) {
         this.oauthProfile = oauthProfile;
+    }
+
+    public Authenticator getAuthenticator() {
+        return authenticator;
+    }
+
+    public void setAuthenticator(Authenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     public String getBaseUrl() {

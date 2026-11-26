@@ -560,7 +560,9 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
-         * IBM Cloud API key for authentication.
+         * IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for
+         * an access token. Required unless oauthProfile or authenticator is
+         * set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -576,9 +578,10 @@ public interface IbmWatsonxAiComponentBuilderFactory {
     
         /**
          * OAuth profile name for obtaining an access token via the OAuth 2.0
-         * Client Credentials grant. When set, the token is acquired from the
-         * configured identity provider and used as apiKey. Requires camel-oauth
-         * on the classpath.
+         * Client Credentials grant. When set, the token of the configured
+         * identity provider is sent to watsonx.ai as a Bearer token instead of
+         * an IBM Cloud API key, and obtained again when it expires. Requires
+         * camel-oauth on the classpath.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -606,6 +609,26 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder verifySsl(java.lang.Boolean verifySsl) {
             doSetProperty("verifySsl", verifySsl);
+            return this;
+        }
+    
+        /**
+         * A custom authenticator of the watsonx.ai SDK
+         * (com.ibm.watsonx.ai.core.auth.Authenticator) that gives the token of
+         * every request, such as a CP4DAuthenticator for watsonx.ai software on
+         * Cloud Pak for Data. When set, apiKey and oauthProfile are not used.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.ibm.watsonx.ai.core.auth.Authenticator&lt;/code&gt;
+         * type.
+         * 
+         * Group: security (advanced)
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder authenticator(com.ibm.watsonx.ai.core.auth.Authenticator authenticator) {
+            doSetProperty("authenticator", authenticator);
             return this;
         }
     }
@@ -664,6 +687,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "apiKey": getOrCreateConfiguration((WatsonxAiComponent) component).setApiKey((java.lang.String) value); return true;
             case "oauthProfile": getOrCreateConfiguration((WatsonxAiComponent) component).setOauthProfile((java.lang.String) value); return true;
             case "verifySsl": getOrCreateConfiguration((WatsonxAiComponent) component).setVerifySsl((java.lang.Boolean) value); return true;
+            case "authenticator": getOrCreateConfiguration((WatsonxAiComponent) component).setAuthenticator((com.ibm.watsonx.ai.core.auth.Authenticator) value); return true;
             default: return false;
             }
         }
