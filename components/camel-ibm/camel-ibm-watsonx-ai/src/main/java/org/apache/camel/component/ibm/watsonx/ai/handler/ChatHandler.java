@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai.handler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,9 +97,14 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
         headers.put(WatsonxAiConstants.ASSISTANT_MESSAGE, assistantMessage);
         headers.put(WatsonxAiConstants.HAS_TOOL_CALLS, assistantMessage.hasToolCalls());
 
-        // Set tool calls if present
         if (assistantMessage.hasToolCalls()) {
             headers.put(WatsonxAiConstants.TOOL_CALLS, assistantMessage.toolCalls());
+            // the conversation goes on from these messages, which processToolCalls extends with the tool calls and
+            // their results, whether they came from the body, the system and user message headers or this header
+            headers.put(WatsonxAiConstants.MESSAGES, new ArrayList<>(messages));
+        } else {
+            // no tool calls of a previous answer must be left on the message
+            headers.put(WatsonxAiConstants.TOOL_CALLS, null);
         }
 
         if (response.usage() != null) {

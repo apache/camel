@@ -871,6 +871,19 @@ identity provider must therefore issue tokens that watsonx.ai accepts. `apiKey` 
 catalog, as `oauthProfile` or the new `authenticator` option can take its place; an endpoint without any of the three
 still fails to start.
 
+=== camel-ibm-watsonx-ai - the tool calling loop sends the whole conversation
+
+When the model answers `chat` with tool calls, `chat` now sets the `CamelIBMWatsonxAiMessages` header to the messages it
+sent, such as the system message of `CamelIBMWatsonxAiSystemMessage` and the user question of the body.
+`processToolCalls` adds the tool calls and their results to this header, as before, so the next `chat` sends the whole
+conversation. Before, a route that gave the question in the body sent only the tool calls and their results on the
+second turn, without the system message and the question. A route that sends a new question in the body after such an
+answer must remove the `CamelIBMWatsonxAiMessages` header first, as the header takes precedence over the body.
+
+`chat` also removes the `CamelIBMWatsonxAiToolCalls` header when the answer has no tool calls, instead of leaving the
+tool calls of an earlier answer, and an operation removes a header it gives no value, such as the
+`CamelIBMWatsonxAiAssistantMessage` header after `processToolCalls`, instead of setting it to `null`.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the

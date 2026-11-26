@@ -17,9 +17,16 @@
 package org.apache.camel.component.ibm.watsonx.ai.integration;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.ibm.watsonx.ai.chat.ToolRegistry;
+import com.ibm.watsonx.ai.chat.model.AssistantMessage;
+import com.ibm.watsonx.ai.chat.model.ChatMessage;
+import com.ibm.watsonx.ai.chat.model.SystemMessage;
+import com.ibm.watsonx.ai.chat.model.TextContent;
 import com.ibm.watsonx.ai.chat.model.Tool;
+import com.ibm.watsonx.ai.chat.model.ToolMessage;
+import com.ibm.watsonx.ai.chat.model.UserMessage;
 import com.ibm.watsonx.ai.tool.ToolService;
 import com.ibm.watsonx.ai.tool.builtin.WikipediaTool;
 import org.apache.camel.BindToRegistry;
@@ -71,6 +78,7 @@ public class WatsonxAiChatWithToolsIT extends WatsonxAiTestSupport {
     private static ToolService toolService;
     private static ToolRegistry toolRegistry;
     private static List<Tool> tools;
+    private static final List<String> EXECUTED_TOOLS = new CopyOnWriteArrayList<>();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -92,7 +100,10 @@ public class WatsonxAiChatWithToolsIT extends WatsonxAiTestSupport {
         toolRegistry = ToolRegistry.builder()
                 .register(new WikipediaTool(toolService))
                 .beforeExecution((name, args) -> LOG.info("Executing tool: {} with args: {}", name, args))
-                .afterExecution((name, args, result) -> LOG.info("Tool {} completed", name))
+                .afterExecution((name, args, result) -> {
+                    LOG.info("Tool {} completed", name);
+                    EXECUTED_TOOLS.add(name);
+                })
                 .build();
 
         // Get tool schemas for chat
@@ -111,6 +122,7 @@ public class WatsonxAiChatWithToolsIT extends WatsonxAiTestSupport {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testChatWithToolCalling() throws Exception {
         mockResult.expectedMinimumMessageCount(1);
 
@@ -132,6 +144,19 @@ public class WatsonxAiChatWithToolsIT extends WatsonxAiTestSupport {
 
         assertNotNull(response, "Response should not be null");
         assertFalse(response.isEmpty(), "Response should not be empty");
+
+        // the tool ran, and the last request sent the whole conversation: the system message and the question of the
+        // body, then the tool calls and their results
+        assertTrue(EXECUTED_TOOLS.contains("wikipedia"), "The wikipedia tool should have run: " + EXECUTED_TOOLS);
+        List<ChatMessage> conversation = finalExchange.getIn().getHeader(WatsonxAiConstants.MESSAGES, List.class);
+        LOG.info("Conversation sent with the tool results: {}", conversation);
+        assertTrue(conversation.size() >= 4, "The conversation should go on from the question: " + conversation);
+        assertInstanceOf(SystemMessage.class, conversation.get(0));
+        UserMessage user = assertInstanceOf(UserMessage.class, conversation.get(1));
+        assertEquals(question, ((TextContent) user.content().get(0)).text());
+        assertTrue(assertInstanceOf(AssistantMessage.class, conversation.get(2)).hasToolCalls());
+        assertInstanceOf(ToolMessage.class, conversation.get(3));
+        assertNull(finalExchange.getIn().getHeader(WatsonxAiConstants.TOOL_CALLS));
     }
 
     @Override

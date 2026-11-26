@@ -295,10 +295,10 @@ YAML::
           constant: "You are a helpful assistant. Use available tools when needed."
       - setHeader:
           name: CamelIBMWatsonxAiTools
-          constant: "{{tools}}"
+          simple: "${ref:tools}"
       - setHeader:
           name: CamelIBMWatsonxAiToolRegistry
-          constant: "{{toolRegistry}}"
+          simple: "${ref:toolRegistry}"
       - to:
           uri: ibm-watsonx-ai:chat
           parameters:
@@ -337,9 +337,13 @@ The above route:
 
 1. Sets the system message via `CamelIBMWatsonxAiSystemMessage` header
 2. The message body becomes the user question automatically
-3. Sets tools and registry via headers for function calling
-4. Uses `processToolCalls` operation to execute tools and update the conversation
-5. Loops until the LLM provides a final answer without tool calls
+3. Sets tools and registry via headers for function calling (in YAML and XML, the `tools` and `toolRegistry` beans are
+bound in the registry, for example by a Java `@BindToRegistry` method)
+4. When the model calls tools, `chat` puts the messages it sent (here the system message and the question) in the
+`CamelIBMWatsonxAiMessages` header, and `processToolCalls` adds the tool calls of the model and the results of the tools
+to them
+5. The next `chat` sends this whole conversation, and the loop goes on until the LLM provides a final answer without
+tool calls. `chat` removes the `CamelIBMWatsonxAiToolCalls` header of an answer without tool calls
 
 NOTE: The utility tools (`runTool`, `listTools` and the tools of the `ToolService`) require the `wxUrl` option, the
 watsonx platform URL of your region (`{{ibm.watsonx.wx-url}}`), which differs from the ML `baseUrl`.

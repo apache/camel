@@ -77,7 +77,11 @@ public interface WatsonxAiConstants {
     String REPETITION_PENALTY = HEADER_PREFIX + "RepetitionPenalty";
 
     // Chat
-    @Metadata(description = "The chat messages", javaType = "java.util.List")
+    @Metadata(description = "The chat messages (ChatMessage objects, or Strings as user messages) to send, in the place of"
+                            + " the body. When the model answers chat with tool calls, chat sets it to the messages it sent,"
+                            + " which processToolCalls extends with the tool calls and the tool results, so the next chat"
+                            + " sends the whole conversation",
+              javaType = "java.util.List")
     String MESSAGES = HEADER_PREFIX + "Messages";
 
     @Metadata(description = "The system message for chat (used to build messages if MESSAGES header is not set)",
@@ -236,7 +240,7 @@ public interface WatsonxAiConstants {
               javaType = "com.ibm.watsonx.ai.chat.ToolRegistry")
     String TOOL_REGISTRY = HEADER_PREFIX + "ToolRegistry";
 
-    @Metadata(description = "List of tool calls requested by the assistant",
+    @Metadata(description = "List of tool calls requested by the assistant, removed when the answer has none",
               javaType = "java.util.List<com.ibm.watsonx.ai.chat.model.ToolCall>")
     String TOOL_CALLS = HEADER_PREFIX + "ToolCalls";
 
