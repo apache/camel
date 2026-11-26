@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -37,8 +38,8 @@ import org.apache.camel.*;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.DefaultExchange;
@@ -98,7 +99,8 @@ public class ServiceBusConsumerTest {
     private final ExchangeFactory ef = mock();
     private final HeaderFilterStrategy headerFilterStrategy = mock();
     private final ExceptionHandler exceptionHandler = mock();
-    private final PeriodTaskScheduler periodTaskScheduler = mock();
+    private final ExecutorServiceManager executorServiceManager = mock();
+    private final ScheduledExecutorService lockRenewerExecutor = mock();
     private final UuidGenerator uuidGenerator = mock();
     private final ServiceBusReceiverAsyncClient renewalClient = mock();
     private final ArgumentCaptor<Consumer<ServiceBusReceivedMessageContext>> processMessageCaptor = ArgumentCaptor.captor();
@@ -125,7 +127,8 @@ public class ServiceBusConsumerTest {
         when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture())).thenReturn(true);
         when(configuration.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
         when(configuration.getTopicOrQueueName()).thenReturn(TOPIC_OR_QUEUE_NAME);
-        when(ecc.getContextPlugin(PeriodTaskScheduler.class)).thenReturn(periodTaskScheduler);
+        when(context.getExecutorServiceManager()).thenReturn(executorServiceManager);
+        when(executorServiceManager.newSingleThreadScheduledExecutor(any(), anyString())).thenReturn(lockRenewerExecutor);
         when(context.getUuidGenerator()).thenReturn(uuidGenerator);
         when(uuidGenerator.generateExchangeUuid()).thenReturn("test-exchange-id");
         when(clientFactory.createServiceBusReceiverAsyncClient(any())).thenReturn(renewalClient);
@@ -630,7 +633,7 @@ public class ServiceBusConsumerTest {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             consumer.doStart();
             verify(clientFactory).createServiceBusReceiverAsyncClient(any());
-            verify(periodTaskScheduler).schedulePeriodTask(any(), anyLong());
+            verify(lockRenewerExecutor).scheduleWithFixedDelay(any(), anyLong(), anyLong(), any());
         }
     }
 
@@ -687,9 +690,9 @@ public class ServiceBusConsumerTest {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             consumer.doStart();
 
-            // capture the lock renewer task scheduled with PeriodTaskScheduler
+            // capture the lock renewer task scheduled on its executor
             ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
-            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            verify(lockRenewerExecutor).scheduleWithFixedDelay(taskCaptor.capture(), anyLong(), anyLong(), any());
             Runnable lockRenewerTask = taskCaptor.getValue();
 
             processMessageCaptor.getValue().accept(messageContext);
@@ -718,7 +721,8 @@ public class ServiceBusConsumerTest {
 
             ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
             ArgumentCaptor<Long> periodCaptor = ArgumentCaptor.captor();
-            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), periodCaptor.capture());
+            verify(lockRenewerExecutor).scheduleWithFixedDelay(taskCaptor.capture(), anyLong(), periodCaptor.capture(),
+                    eq(TimeUnit.MILLISECONDS));
             long periodMillis = periodCaptor.getValue();
 
             // the lock expires 2 seconds after the earliest moment the scheduler runs the renewer again
@@ -727,8 +731,8 @@ public class ServiceBusConsumerTest {
 
             taskCaptor.getValue().run();
 
-            // the next run comes at least periodMillis later (the period task scheduler ticks once per second), the
-            // renewal itself is a call to Service Bus: waiting for that run leaves at most 2 seconds, or none at all
+            // the next run comes periodMillis after the end of this one, the renewal itself is a call to Service Bus:
+            // waiting for that run leaves at most 2 seconds, or none at all
             verify(renewalClient).renewMessageLock(message);
         }
     }
@@ -750,9 +754,10 @@ public class ServiceBusConsumerTest {
 
             ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
             ArgumentCaptor<Long> periodCaptor = ArgumentCaptor.captor();
-            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), periodCaptor.capture());
-            // two runs are at most the period plus a second apart (the period task scheduler ticks once per second).
-            // A lock that expires 2 seconds after two such gaps must be renewed now: left to the next run, its first
+            verify(lockRenewerExecutor).scheduleWithFixedDelay(taskCaptor.capture(), anyLong(), periodCaptor.capture(),
+                    eq(TimeUnit.MILLISECONDS));
+            // two runs are the period apart, plus the time of a run (a second here, more than a run takes). A lock
+            // that expires 2 seconds after two such gaps must be renewed now: left to the next run, its first
             // renewal could come with one gap and 2 seconds left, and a transient failure of it would be retried with
             // about 2 seconds left, too little for the call to Service Bus
             long maxGapMillis = periodCaptor.getValue() + 1000;
@@ -788,7 +793,7 @@ public class ServiceBusConsumerTest {
             consumer.doStart();
 
             ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
-            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            verify(lockRenewerExecutor).scheduleWithFixedDelay(taskCaptor.capture(), anyLong(), anyLong(), any());
             processMessageCaptor.getValue().accept(messageContext);
 
             taskCaptor.getValue().run();
@@ -809,7 +814,7 @@ public class ServiceBusConsumerTest {
             consumer.doStart();
 
             ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
-            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            verify(lockRenewerExecutor).scheduleWithFixedDelay(taskCaptor.capture(), anyLong(), anyLong(), any());
             processMessageCaptor.getValue().accept(messageContext);
 
             taskCaptor.getValue().run();
@@ -851,10 +856,14 @@ public class ServiceBusConsumerTest {
         consumer.doStart();
 
         verify(clientFactory, times(2)).createServiceBusReceiverAsyncClient(any());
-        verify(periodTaskScheduler, times(2)).schedulePeriodTask(any(), anyLong());
+        // an executor per start, the one of the first start was shut down by the stop
+        verify(executorServiceManager, times(2)).newSingleThreadScheduledExecutor(any(), anyString());
+        verify(executorServiceManager, times(1)).shutdownNow(lockRenewerExecutor);
+        verify(lockRenewerExecutor, times(2)).scheduleWithFixedDelay(any(), anyLong(), anyLong(), any());
 
         consumer.doShutdown();
         verify(renewalClient2).close();
+        verify(executorServiceManager, times(2)).shutdownNow(lockRenewerExecutor);
     }
 
     @Test

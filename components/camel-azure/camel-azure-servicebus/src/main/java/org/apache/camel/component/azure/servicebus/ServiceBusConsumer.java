@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -43,10 +45,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -56,11 +56,17 @@ import org.slf4j.LoggerFactory;
 public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
-    // the lock renewer runs every LOCK_RENEW_INTERVAL_SECONDS (or a second later) and renews a lock that expires
-    // within LOCK_RENEW_BEFORE_EXPIRY_SECONDS, so its first renewal comes with more than 14 seconds left, and a
-    // transient failure of it is retried by the next run with more than 8 seconds left (when the runs come on time)
+    // the lock renewer runs on a thread of its own, LOCK_RENEW_INTERVAL_SECONDS after the end of its previous run, and
+    // renews a lock that expires within LOCK_RENEW_BEFORE_EXPIRY_SECONDS, so its first renewal comes with about 15
+    // seconds left, and a transient failure of it is retried by the next run with about 10 seconds left
     private static final int LOCK_RENEW_INTERVAL_SECONDS = 5;
     private static final int LOCK_RENEW_BEFORE_EXPIRY_SECONDS = 20;
+    // a run does not renew a lock while a renewal of it is in flight, unless that renewal has not answered for this
+    // long (two runs): the SDK ends a request only after its tryTimeout (60 seconds by default), which can be after the
+    // lock expired, so a renewal that hangs gets one more attempt. With a lock duration of 30 seconds or more (the
+    // default is 60) it comes with about 5 to 10 seconds left; with a shorter lock it comes later in the lock (with 15
+    // seconds, 0 to 5 seconds left, 5 seconds later than without this rule)
+    private static final int LOCK_RENEW_IN_FLIGHT_SECONDS = 2 * LOCK_RENEW_INTERVAL_SECONDS;
     // Azure recommends putting the exception type in the dead-letter reason and its stack trace in the description,
     // but both are length-limited: the .NET and JavaScript SDKs cap them at 4096 (MaxDeadLetterReasonLength, applied
     // to the description as well), and Azure separately warns that a stack trace here can push a message past the
@@ -74,7 +80,8 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     private ServiceBusProcessorClient client;
     private boolean clientCloseable;
     private ServiceBusReceiverAsyncClient renewalClient;
-    private LockRenewer lockRenewer;
+    private volatile LockRenewer lockRenewer;
+    private ScheduledExecutorService lockRenewerExecutor;
     private final AtomicInteger pendingExchanges = new AtomicInteger();
     // Set by deferShutdown in peek-lock mode: a graceful stop waits for the exchanges in flight, which settle their
     // message through the processor client, so the client stays open and the messages it delivers meanwhile are held
@@ -122,11 +129,11 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             clientCloseable = false;
         }
 
-        client.start();
-
         // set up Camel-managed lock renewal for PEEK_LOCK mode
         // the Azure SDK's built-in lock renewal is tied to the processMessage callback duration,
-        // which returns immediately for async routes, making maxAutoLockRenewDuration ineffective
+        // which returns immediately for async routes, making maxAutoLockRenewDuration ineffective.
+        // Set up before the client starts, so a message it delivers right away is tracked too; if the start fails,
+        // BaseService.start calls doStop, which shuts it down
         if (getConfiguration().getProcessorClient() == null
                 && getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK
                 && getConfiguration().getMaxAutoLockRenewDuration() > 0
@@ -137,9 +144,17 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             long maxRenewMs = getConfiguration().getMaxAutoLockRenewDuration();
             lockRenewer = new LockRenewer(renewalClient, Duration.ofMillis(maxRenewMs));
 
-            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getEndpoint().getCamelContext());
-            scheduler.schedulePeriodTask(lockRenewer, LOCK_RENEW_INTERVAL_SECONDS * 1000L);
+            // a thread of its own, not the shared timer of the PeriodTaskScheduler: there the renewer waits behind every
+            // other periodic task of the context (a slow one lets the locks expire), and a task cannot be removed, so
+            // every start would leave one more renewer registered. A run only subscribes renewals, it never blocks
+            lockRenewerExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this,
+                            "ServiceBusLockRenewer[" + getConfiguration().getTopicOrQueueName() + "]");
+            lockRenewerExecutor.scheduleWithFixedDelay(lockRenewer, LOCK_RENEW_INTERVAL_SECONDS * 1000L,
+                    LOCK_RENEW_INTERVAL_SECONDS * 1000L, TimeUnit.MILLISECONDS);
         }
+
+        client.start();
     }
 
     private void processMessage(ServiceBusReceivedMessageContext messageContext) {
@@ -160,8 +175,9 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             // add exchange callback
             exchange.getExchangeExtension().addOnCompletion(onCompletion);
             // track for Camel-managed lock renewal
-            if (lockRenewer != null) {
-                lockRenewer.add(exchange, message);
+            final LockRenewer renewer = lockRenewer;
+            if (renewer != null) {
+                renewer.add(exchange, message);
             }
             // use default consumer callback
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
@@ -207,10 +223,7 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
     @Override
     protected void doStop() throws Exception {
-        if (lockRenewer != null) {
-            lockRenewer.cancel();
-            lockRenewer = null;
-        }
+        stopLockRenewer();
         if (renewalClient != null) {
             renewalClient.close();
             renewalClient = null;
@@ -237,10 +250,7 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     @Override
     protected void doShutdown() throws Exception {
         // defensive cleanup in case doStop() was not called
-        if (lockRenewer != null) {
-            lockRenewer.cancel();
-            lockRenewer = null;
-        }
+        stopLockRenewer();
         if (renewalClient != null) {
             renewalClient.close();
             renewalClient = null;
@@ -252,6 +262,36 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
         stopped.countDown();
 
         super.doShutdown();
+    }
+
+    /**
+     * Stops the lock renewer and its thread. shutdownNow: there is nothing to wait for, as a run only subscribes
+     * renewals (their callbacks run on threads of the SDK), and the renewal client is closed right after.
+     */
+    private void stopLockRenewer() {
+        if (lockRenewer != null) {
+            lockRenewer.cancel();
+            lockRenewer = null;
+        }
+        if (lockRenewerExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(lockRenewerExecutor);
+            lockRenewerExecutor = null;
+        }
+    }
+
+    /**
+     * For tests: one run of the lock renewer, as its thread runs it at the given time.
+     */
+    void runLockRenewer(Instant now) {
+        lockRenewer.renewDueLocks(now);
+    }
+
+    /**
+     * For tests: the lock expiry the lock renewer holds for the exchange, or null when it does not renew its lock.
+     */
+    OffsetDateTime lockRenewerLockedUntil(String exchangeId) {
+        LockRenewer.LockRenewerEntry entry = lockRenewer.entries.get(exchangeId);
+        return entry != null ? entry.lockedUntil : null;
     }
 
     @Override
@@ -342,6 +382,8 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
         private final ServiceBusReceiverAsyncClient client;
         private final Duration maxRenewDuration;
         private final AtomicBoolean run = new AtomicBoolean(true);
+        // changed only through the atomic operations of the map: add, the run (on the renewer thread), the renewal
+        // callbacks (on threads of the SDK) and the completion of the exchange
         private final Map<String, LockRenewerEntry> entries = new ConcurrentHashMap<>();
 
         LockRenewer(ServiceBusReceiverAsyncClient client, Duration maxRenewDuration) {
@@ -368,7 +410,7 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             });
 
             entries.put(exchange.getExchangeId(),
-                    new LockRenewerEntry(message, message.getLockedUntil(), Instant.now()));
+                    new LockRenewerEntry(message, message.getLockedUntil(), Instant.now(), null));
         }
 
         public void cancel() {
@@ -377,48 +419,89 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
         @Override
         public void run() {
+            try {
+                renewDueLocks(Instant.now());
+            } catch (VirtualMachineError e) {
+                // as the TimerListenerManager: a JVM-level failure is thrown on, and ends the task
+                throw e;
+            } catch (Exception | Error e) {
+                // keep the scheduled task alive: anything thrown would end it, and no lock would be renewed any more
+                LOG.warn("Error in the lock renewer, the next run renews the locks again: {}", e.toString());
+                LOG.debug("Error in the lock renewer", e);
+            }
+        }
+
+        void renewDueLocks(Instant now) {
             if (!run.get()) {
                 return;
             }
 
-            Instant now = Instant.now();
-            for (Map.Entry<String, LockRenewerEntry> mapEntry : entries.entrySet()) {
-                String exchangeId = mapEntry.getKey();
-                LockRenewerEntry entry = mapEntry.getValue();
-
-                // skip if max renewal duration exceeded
-                Duration elapsed = Duration.between(entry.startTime, now);
-                if (elapsed.compareTo(maxRenewDuration) >= 0) {
+            for (String exchangeId : entries.keySet()) {
+                LockRenewerEntry[] started = new LockRenewerEntry[1];
+                boolean[] exceeded = new boolean[1];
+                // decided and marked in one atomic step, so a callback or the completion of the exchange in between
+                // cannot be lost; the renewal is subscribed after it (its callback can run at once, on this thread)
+                entries.computeIfPresent(exchangeId, (k, entry) -> {
+                    // skip if max renewal duration exceeded
+                    if (Duration.between(entry.startTime, now).compareTo(maxRenewDuration) >= 0) {
+                        exceeded[0] = true;
+                        return null;
+                    }
+                    // renew if the lock expires within LOCK_RENEW_BEFORE_EXPIRY_SECONDS (several runs before it
+                    // expires), and no renewal of it is in flight
+                    if (!now.plusSeconds(LOCK_RENEW_BEFORE_EXPIRY_SECONDS).isAfter(entry.lockedUntil.toInstant())
+                            || entry.renewal != null && entry.renewal.awaited(now)) {
+                        return entry;
+                    }
+                    started[0] = new LockRenewerEntry(entry.message, entry.lockedUntil, entry.startTime, new Renewal(now));
+                    return started[0];
+                });
+                if (exceeded[0]) {
                     LOG.debug("Max lock renewal duration exceeded for exchangeId {}, stopping renewal", exchangeId);
-                    entries.remove(exchangeId);
-                    continue;
-                }
-
-                // renew if the lock expires within LOCK_RENEW_BEFORE_EXPIRY_SECONDS (several runs before it expires)
-                Instant lockExpiry = entry.lockedUntil.toInstant();
-                if (now.plusSeconds(LOCK_RENEW_BEFORE_EXPIRY_SECONDS).isAfter(lockExpiry)) {
-                    client.renewMessageLock(entry.message)
-                            .subscribe(
-                                    newLockedUntil -> {
-                                        LOG.trace("Renewed lock for exchangeId {}, new expiry: {}", exchangeId,
-                                                newLockedUntil);
-                                        entries.computeIfPresent(exchangeId,
-                                                (k, e) -> new LockRenewerEntry(e.message, newLockedUntil, e.startTime));
-                                    },
-                                    error -> {
-                                        if (isTransient(error)) {
-                                            // the SDK makes one attempt: keep the entry, so the next run renews
-                                            // the lock again while it is still held
-                                            LOG.warn("Failed to renew lock for exchangeId {}, will try again: {}",
-                                                    exchangeId, error.getMessage());
-                                        } else {
-                                            LOG.warn("Failed to renew lock for exchangeId {}: {}", exchangeId,
-                                                    error.getMessage());
-                                            entries.remove(exchangeId);
-                                        }
-                                    });
+                } else if (started[0] != null) {
+                    renew(exchangeId, started[0].message, started[0].renewal);
                 }
             }
+        }
+
+        private void renew(String exchangeId, ServiceBusReceivedMessage message, Renewal renewal) {
+            try {
+                client.renewMessageLock(message)
+                        .subscribe(
+                                newLockedUntil -> {
+                                    LOG.trace("Renewed lock for exchangeId {}, new expiry: {}", exchangeId, newLockedUntil);
+                                    // the answer of an earlier renewal can come after that of a later one: keep the
+                                    // later expiry. computeIfPresent: a late answer does not add a completed exchange
+                                    entries.computeIfPresent(exchangeId,
+                                            (k, e) -> new LockRenewerEntry(
+                                                    e.message,
+                                                    newLockedUntil.isAfter(e.lockedUntil) ? newLockedUntil : e.lockedUntil,
+                                                    e.startTime, e.renewal == renewal ? null : e.renewal));
+                                },
+                                error -> {
+                                    if (isTransient(error)) {
+                                        // the SDK makes one attempt: keep the entry, so the next run renews
+                                        // the lock again while it is still held
+                                        LOG.warn("Failed to renew lock for exchangeId {}, will try again: {}",
+                                                exchangeId, error.getMessage());
+                                        answered(exchangeId, renewal);
+                                    } else {
+                                        LOG.warn("Failed to renew lock for exchangeId {}: {}", exchangeId,
+                                                error.getMessage());
+                                        entries.remove(exchangeId);
+                                    }
+                                });
+            } catch (Exception e) {
+                // as a transient error: the next run tries again
+                LOG.warn("Failed to renew lock for exchangeId {}, will try again: {}", exchangeId, e.toString());
+                answered(exchangeId, renewal);
+            }
+        }
+
+        /** The renewal is no longer in flight: the next run may renew the lock again. */
+        private void answered(String exchangeId, Renewal renewal) {
+            entries.computeIfPresent(exchangeId,
+                    (k, e) -> e.renewal == renewal ? new LockRenewerEntry(e.message, e.lockedUntil, e.startTime, null) : e);
         }
 
         /**
@@ -429,7 +512,22 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
             return error instanceof ServiceBusException sbe && sbe.isTransient();
         }
 
-        private record LockRenewerEntry(ServiceBusReceivedMessage message, OffsetDateTime lockedUntil, Instant startTime) {
+        /** The renewal of a lock in flight, compared by identity. */
+        private static final class Renewal {
+            private final Instant sentAt;
+
+            private Renewal(Instant sentAt) {
+                this.sentAt = sentAt;
+            }
+
+            /** Whether a run at this time waits for its answer: it was sent less than two runs ago. */
+            boolean awaited(Instant now) {
+                return now.isBefore(sentAt.plusSeconds(LOCK_RENEW_IN_FLIGHT_SECONDS));
+            }
+        }
+
+        private record LockRenewerEntry(
+                ServiceBusReceivedMessage message, OffsetDateTime lockedUntil, Instant startTime, Renewal renewal) {
         }
     }
 
