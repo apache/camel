@@ -53,6 +53,8 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
 
     // total timeout of 60s
     int maxRetryAttempts = 30;
+    // the wait before a retry (shorter in tests)
+    long retryDelayMillis = 2000L;
     boolean retryForReload;
     private int retryCount;
 
@@ -191,7 +193,7 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
 
     private boolean sleepWell() {
         try {
-            Thread.sleep(2000L);
+            Thread.sleep(retryDelayMillis);
             return true;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

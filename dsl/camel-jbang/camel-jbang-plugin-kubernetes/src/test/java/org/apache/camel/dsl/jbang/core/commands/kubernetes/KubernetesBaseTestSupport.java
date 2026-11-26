@@ -19,8 +19,11 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -46,6 +49,8 @@ public class KubernetesBaseTestSupport {
     protected final String runPlatformDir = "target/tests/" + getClass().getSimpleName();
 
     private KubernetesMockServer k8sServer;
+    private Path previousHome;
+    private Path testHome;
     protected KubernetesClient kubernetesClient;
     protected StringPrinter printer;
 
@@ -54,14 +59,17 @@ public class KubernetesBaseTestSupport {
     }
 
     @BeforeAll
-    public void setupFixtures() {
+    public void setupFixtures() throws IOException {
         k8sServer = new KubernetesMockServer(
                 new Context(), new MockWebServer(),
                 new HashMap<>(), new KubernetesCrudDispatcher(), false);
 
         kubernetesClient = k8sServer.createClient();
 
-        CommandLineHelper.useHomeDir("target");
+        // a home of its own, as the test classes of a fork run one after another and forks run side by side
+        previousHome = CommandLineHelper.getHomeDir();
+        testHome = Files.createTempDirectory("camel-k8s-test-home");
+        CommandLineHelper.useHomeDir(testHome.toString());
         PluginHelper.enable(PluginType.KUBERNETES);
     }
 
@@ -75,6 +83,12 @@ public class KubernetesBaseTestSupport {
     public void cleanup() {
         k8sServer.destroy();
         FileUtil.removeDir(new File(runPlatformDir));
+        if (previousHome != null) {
+            CommandLineHelper.useHomeDir(previousHome.toString());
+        }
+        if (testHome != null) {
+            FileUtil.removeDir(testHome.toFile());
+        }
     }
 
     protected static InputStream getKubernetesManifestAsStream(String printerOutput) {

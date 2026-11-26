@@ -18,6 +18,7 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.net.HttpURLConnection;
+import java.nio.file.Path;
 import java.util.Collections;
 
 import io.fabric8.kubernetes.api.model.Node;
@@ -30,9 +31,11 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
@@ -50,11 +53,24 @@ class KubernetesRunClusterTypeTest {
 
     private StringPrinter printer;
 
+    // a home of its own, not the target directory that the other test classes use
+    @TempDir
+    Path home;
+    private Path previousHome;
+
     @BeforeEach
     void setup() {
-        CommandLineHelper.useHomeDir("target");
+        previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
         printer = new StringPrinter();
         KubernetesHelper.setKubernetesClient(client);
+    }
+
+    @AfterEach
+    void restore() {
+        CommandLineHelper.useHomeDir(previousHome.toString());
+        // the client of the mock server of this test is closed after it
+        KubernetesHelper.setKubernetesClient(null);
     }
 
     @Test
