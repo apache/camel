@@ -34,10 +34,14 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "authenticator": getOrCreateConfiguration(target).setAuthenticator(property(camelContext, com.ibm.watsonx.ai.core.auth.Authenticator.class, value)); return true;
+        case "autorotationcorrection":
+        case "autoRotationCorrection": getOrCreateConfiguration(target).setAutoRotationCorrection(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": getOrCreateConfiguration(target).setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "classificationmode":
+        case "classificationMode": getOrCreateConfiguration(target).setClassificationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration.class, value)); return true;
         case "cosurl":
         case "cosUrl": getOrCreateConfiguration(target).setCosUrl(property(camelContext, java.lang.String.class, value)); return true;
@@ -54,6 +58,14 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "documentBucket": getOrCreateConfiguration(target).setDocumentBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "documentconnectionid":
         case "documentConnectionId": getOrCreateConfiguration(target).setDocumentConnectionId(property(camelContext, java.lang.String.class, value)); return true;
+        case "documentlanguages":
+        case "documentLanguages": getOrCreateConfiguration(target).setDocumentLanguages(property(camelContext, java.lang.String.class, value)); return true;
+        case "embeddedimages":
+        case "embeddedImages": getOrCreateConfiguration(target).setEmbeddedImages(property(camelContext, java.lang.String.class, value)); return true;
+        case "extractionmode":
+        case "extractionMode": getOrCreateConfiguration(target).setExtractionMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "extractionoutputs":
+        case "extractionOutputs": getOrCreateConfiguration(target).setExtractionOutputs(property(camelContext, java.lang.String.class, value)); return true;
         case "frequencypenalty":
         case "frequencyPenalty": getOrCreateConfiguration(target).setFrequencyPenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "governanceinstanceid":
@@ -70,6 +82,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "jsonSchema": getOrCreateConfiguration(target).setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschemastrict":
         case "jsonSchemaStrict": getOrCreateConfiguration(target).setJsonSchemaStrict(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "kvpmode":
+        case "kvpMode": getOrCreateConfiguration(target).setKvpMode(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "logrequests":
@@ -94,15 +108,27 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "numberOfChoices": getOrCreateConfiguration(target).setNumberOfChoices(property(camelContext, java.lang.Integer.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": getOrCreateConfiguration(target).setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
+        case "ocrmode":
+        case "ocrMode": getOrCreateConfiguration(target).setOcrMode(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class, value)); return true;
+        case "outputdpi":
+        case "outputDpi": getOrCreateConfiguration(target).setOutputDpi(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "outputtokens":
+        case "outputTokens": getOrCreateConfiguration(target).setOutputTokens(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "predictionlength":
         case "predictionLength": getOrCreateConfiguration(target).setPredictionLength(property(camelContext, java.lang.Integer.class, value)); return true;
         case "presencepenalty":
         case "presencePenalty": getOrCreateConfiguration(target).setPresencePenalty(property(camelContext, java.lang.Double.class, value)); return true;
+        case "processingtimeout":
+        case "processingTimeout": getOrCreateConfiguration(target).setProcessingTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "projectid":
         case "projectId": getOrCreateConfiguration(target).setProjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "reasoningeffort":
         case "reasoningEffort": getOrCreateConfiguration(target).setReasoningEffort(property(camelContext, java.lang.String.class, value)); return true;
+        case "removeoutputfile":
+        case "removeOutputFile": getOrCreateConfiguration(target).setRemoveOutputFile(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "removeuploadedfile":
+        case "removeUploadedFile": getOrCreateConfiguration(target).setRemoveUploadedFile(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "repetitionpenalty":
         case "repetitionPenalty": getOrCreateConfiguration(target).setRepetitionPenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "reranktopn":
@@ -148,10 +174,14 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "authenticator": return com.ibm.watsonx.ai.core.auth.Authenticator.class;
+        case "autorotationcorrection":
+        case "autoRotationCorrection": return java.lang.Boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "classificationmode":
+        case "classificationMode": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration.class;
         case "cosurl":
         case "cosUrl": return java.lang.String.class;
@@ -168,6 +198,14 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "documentBucket": return java.lang.String.class;
         case "documentconnectionid":
         case "documentConnectionId": return java.lang.String.class;
+        case "documentlanguages":
+        case "documentLanguages": return java.lang.String.class;
+        case "embeddedimages":
+        case "embeddedImages": return java.lang.String.class;
+        case "extractionmode":
+        case "extractionMode": return java.lang.String.class;
+        case "extractionoutputs":
+        case "extractionOutputs": return java.lang.String.class;
         case "frequencypenalty":
         case "frequencyPenalty": return java.lang.Double.class;
         case "governanceinstanceid":
@@ -184,6 +222,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "jsonSchema": return java.lang.String.class;
         case "jsonschemastrict":
         case "jsonSchemaStrict": return java.lang.Boolean.class;
+        case "kvpmode":
+        case "kvpMode": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "logrequests":
@@ -208,15 +248,27 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "numberOfChoices": return java.lang.Integer.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
+        case "ocrmode":
+        case "ocrMode": return java.lang.String.class;
         case "operation": return org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class;
+        case "outputdpi":
+        case "outputDpi": return java.lang.Integer.class;
+        case "outputtokens":
+        case "outputTokens": return java.lang.Boolean.class;
         case "predictionlength":
         case "predictionLength": return java.lang.Integer.class;
         case "presencepenalty":
         case "presencePenalty": return java.lang.Double.class;
+        case "processingtimeout":
+        case "processingTimeout": return java.lang.Long.class;
         case "projectid":
         case "projectId": return java.lang.String.class;
         case "reasoningeffort":
         case "reasoningEffort": return java.lang.String.class;
+        case "removeoutputfile":
+        case "removeOutputFile": return java.lang.Boolean.class;
+        case "removeuploadedfile":
+        case "removeUploadedFile": return java.lang.Boolean.class;
         case "repetitionpenalty":
         case "repetitionPenalty": return java.lang.Double.class;
         case "reranktopn":
@@ -263,10 +315,14 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();
         case "authenticator": return getOrCreateConfiguration(target).getAuthenticator();
+        case "autorotationcorrection":
+        case "autoRotationCorrection": return getOrCreateConfiguration(target).getAutoRotationCorrection();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseurl":
         case "baseUrl": return getOrCreateConfiguration(target).getBaseUrl();
+        case "classificationmode":
+        case "classificationMode": return getOrCreateConfiguration(target).getClassificationMode();
         case "configuration": return target.getConfiguration();
         case "cosurl":
         case "cosUrl": return getOrCreateConfiguration(target).getCosUrl();
@@ -283,6 +339,14 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "documentBucket": return getOrCreateConfiguration(target).getDocumentBucket();
         case "documentconnectionid":
         case "documentConnectionId": return getOrCreateConfiguration(target).getDocumentConnectionId();
+        case "documentlanguages":
+        case "documentLanguages": return getOrCreateConfiguration(target).getDocumentLanguages();
+        case "embeddedimages":
+        case "embeddedImages": return getOrCreateConfiguration(target).getEmbeddedImages();
+        case "extractionmode":
+        case "extractionMode": return getOrCreateConfiguration(target).getExtractionMode();
+        case "extractionoutputs":
+        case "extractionOutputs": return getOrCreateConfiguration(target).getExtractionOutputs();
         case "frequencypenalty":
         case "frequencyPenalty": return getOrCreateConfiguration(target).getFrequencyPenalty();
         case "governanceinstanceid":
@@ -299,6 +363,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "jsonSchema": return getOrCreateConfiguration(target).getJsonSchema();
         case "jsonschemastrict":
         case "jsonSchemaStrict": return getOrCreateConfiguration(target).getJsonSchemaStrict();
+        case "kvpmode":
+        case "kvpMode": return getOrCreateConfiguration(target).getKvpMode();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "logrequests":
@@ -323,15 +389,27 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "numberOfChoices": return getOrCreateConfiguration(target).getNumberOfChoices();
         case "oauthprofile":
         case "oauthProfile": return getOrCreateConfiguration(target).getOauthProfile();
+        case "ocrmode":
+        case "ocrMode": return getOrCreateConfiguration(target).getOcrMode();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "outputdpi":
+        case "outputDpi": return getOrCreateConfiguration(target).getOutputDpi();
+        case "outputtokens":
+        case "outputTokens": return getOrCreateConfiguration(target).getOutputTokens();
         case "predictionlength":
         case "predictionLength": return getOrCreateConfiguration(target).getPredictionLength();
         case "presencepenalty":
         case "presencePenalty": return getOrCreateConfiguration(target).getPresencePenalty();
+        case "processingtimeout":
+        case "processingTimeout": return getOrCreateConfiguration(target).getProcessingTimeout();
         case "projectid":
         case "projectId": return getOrCreateConfiguration(target).getProjectId();
         case "reasoningeffort":
         case "reasoningEffort": return getOrCreateConfiguration(target).getReasoningEffort();
+        case "removeoutputfile":
+        case "removeOutputFile": return getOrCreateConfiguration(target).getRemoveOutputFile();
+        case "removeuploadedfile":
+        case "removeUploadedFile": return getOrCreateConfiguration(target).getRemoveUploadedFile();
         case "repetitionpenalty":
         case "repetitionPenalty": return getOrCreateConfiguration(target).getRepetitionPenalty();
         case "reranktopn":

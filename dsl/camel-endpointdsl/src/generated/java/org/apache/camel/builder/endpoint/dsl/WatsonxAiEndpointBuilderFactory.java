@@ -106,6 +106,52 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether text extraction and classification correct the rotation of
+         * the pages.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param autoRotationCorrection the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder autoRotationCorrection(Boolean autoRotationCorrection) {
+            doSetProperty("autoRotationCorrection", autoRotationCorrection);
+            return this;
+        }
+        /**
+         * Whether text extraction and classification correct the rotation of
+         * the pages.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param autoRotationCorrection the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder autoRotationCorrection(String autoRotationCorrection) {
+            doSetProperty("autoRotationCorrection", autoRotationCorrection);
+            return this;
+        }
+        /**
+         * How text classification classifies: exact (the document type) or
+         * binary (whether it is one).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param classificationMode the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder classificationMode(String classificationMode) {
+            doSetProperty("classificationMode", classificationMode);
+            return this;
+        }
+        /**
          * Cloud Object Storage URL.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -263,6 +309,65 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default WatsonxAiEndpointBuilder documentConnectionId(String documentConnectionId) {
             doSetProperty("documentConnectionId", documentConnectionId);
+            return this;
+        }
+        /**
+         * The languages of the documents of text extraction and classification,
+         * comma separated ISO 639 codes, such as en,fr.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param documentLanguages the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder documentLanguages(String documentLanguages) {
+            doSetProperty("documentLanguages", documentLanguages);
+            return this;
+        }
+        /**
+         * What text extraction does with the images of the document.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param embeddedImages the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder embeddedImages(String embeddedImages) {
+            doSetProperty("embeddedImages", embeddedImages);
+            return this;
+        }
+        /**
+         * The quality of text extraction: standard or high_quality.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param extractionMode the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder extractionMode(String extractionMode) {
+            doSetProperty("extractionMode", extractionMode);
+            return this;
+        }
+        /**
+         * The outputs of text extraction, comma separated: md (the default),
+         * json, html, plain_text, page_images. The operations that return the
+         * text (AndFetch) take one output, but page_images.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param extractionOutputs the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder extractionOutputs(String extractionOutputs) {
+            doSetProperty("extractionOutputs", extractionOutputs);
             return this;
         }
         /**
@@ -428,6 +533,20 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default WatsonxAiEndpointBuilder jsonSchemaStrict(String jsonSchemaStrict) {
             doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * The key-value pair extraction of text extraction.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param kvpMode the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder kvpMode(String kvpMode) {
+            doSetProperty("kvpMode", kvpMode);
             return this;
         }
         /**
@@ -661,6 +780,21 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * The optical character recognition of text extraction and
+         * classification: auto, disabled, enabled or forced.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param ocrMode the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder ocrMode(String ocrMode) {
+            doSetProperty("ocrMode", ocrMode);
+            return this;
+        }
+        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -688,6 +822,66 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default WatsonxAiEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The resolution of the page images of text extraction.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param outputDpi the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder outputDpi(Integer outputDpi) {
+            doSetProperty("outputDpi", outputDpi);
+            return this;
+        }
+        /**
+         * The resolution of the page images of text extraction.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param outputDpi the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder outputDpi(String outputDpi) {
+            doSetProperty("outputDpi", outputDpi);
+            return this;
+        }
+        /**
+         * Whether text extraction gives the tokens of the text, with their
+         * positions.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param outputTokens the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder outputTokens(Boolean outputTokens) {
+            doSetProperty("outputTokens", outputTokens);
+            return this;
+        }
+        /**
+         * Whether text extraction gives the tokens of the text, with their
+         * positions.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param outputTokens the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder outputTokens(String outputTokens) {
+            doSetProperty("outputTokens", outputTokens);
             return this;
         }
         /**
@@ -752,6 +946,38 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long the text extraction and classification operations that wait
+         * (AndFetch) wait for the result, in milliseconds. Defaults to the
+         * timeout of the endpoint.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param processingTimeout the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder processingTimeout(Long processingTimeout) {
+            doSetProperty("processingTimeout", processingTimeout);
+            return this;
+        }
+        /**
+         * How long the text extraction and classification operations that wait
+         * (AndFetch) wait for the result, in milliseconds. Defaults to the
+         * timeout of the endpoint.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param processingTimeout the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder processingTimeout(String processingTimeout) {
+            doSetProperty("processingTimeout", processingTimeout);
+            return this;
+        }
+        /**
          * How much the model of chat reasons: low, medium or high, for the
          * models that support it.
          * 
@@ -764,6 +990,68 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default WatsonxAiEndpointBuilder reasoningEffort(String reasoningEffort) {
             doSetProperty("reasoningEffort", reasoningEffort);
+            return this;
+        }
+        /**
+         * Whether the text extraction operations that wait (AndFetch) remove
+         * the output file from Cloud Object Storage once read.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param removeOutputFile the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder removeOutputFile(Boolean removeOutputFile) {
+            doSetProperty("removeOutputFile", removeOutputFile);
+            return this;
+        }
+        /**
+         * Whether the text extraction operations that wait (AndFetch) remove
+         * the output file from Cloud Object Storage once read.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param removeOutputFile the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder removeOutputFile(String removeOutputFile) {
+            doSetProperty("removeOutputFile", removeOutputFile);
+            return this;
+        }
+        /**
+         * Whether the operations that upload and wait (UploadAndFetch) remove
+         * the uploaded document from Cloud Object Storage at the end.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param removeUploadedFile the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder removeUploadedFile(Boolean removeUploadedFile) {
+            doSetProperty("removeUploadedFile", removeUploadedFile);
+            return this;
+        }
+        /**
+         * Whether the operations that upload and wait (UploadAndFetch) remove
+         * the uploaded document from Cloud Object Storage at the end.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param removeUploadedFile the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder removeUploadedFile(String removeUploadedFile) {
+            doSetProperty("removeUploadedFile", removeUploadedFile);
             return this;
         }
         /**
@@ -1923,7 +2211,7 @@ public interface WatsonxAiEndpointBuilderFactory {
         }
         /**
          * The file path for extraction or classification (for files already in
-         * COS).
+         * COS), such as textExtractionAndFetch.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1933,6 +2221,18 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         public String iBMWatsonxAiFilePath() {
             return "CamelIBMWatsonxAiFilePath";
+        }
+        /**
+         * The name of the output file of text extraction, in the result bucket.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiOutputFileName}.
+         */
+        public String iBMWatsonxAiOutputFileName() {
+            return "CamelIBMWatsonxAiOutputFileName";
         }
         /**
          * The extraction request ID.

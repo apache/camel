@@ -69,22 +69,6 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
-         * The component configuration.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param configuration the value to set
-         * @return the dsl builder
-         */
-        default IbmWatsonxAiComponentBuilder configuration(org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-    
-        /**
          * IBM Cloud project ID.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -128,6 +112,54 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder wxUrl(java.lang.String wxUrl) {
             doSetProperty("wxUrl", wxUrl);
+            return this;
+        }
+    
+        /**
+         * Whether text extraction and classification correct the rotation of
+         * the pages.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param autoRotationCorrection the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder autoRotationCorrection(java.lang.Boolean autoRotationCorrection) {
+            doSetProperty("autoRotationCorrection", autoRotationCorrection);
+            return this;
+        }
+    
+        /**
+         * How text classification classifies: exact (the document type) or
+         * binary (whether it is one).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param classificationMode the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder classificationMode(java.lang.String classificationMode) {
+            doSetProperty("classificationMode", classificationMode);
+            return this;
+        }
+    
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder configuration(org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     
@@ -256,6 +288,69 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * The languages of the documents of text extraction and classification,
+         * comma separated ISO 639 codes, such as en,fr.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param documentLanguages the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder documentLanguages(java.lang.String documentLanguages) {
+            doSetProperty("documentLanguages", documentLanguages);
+            return this;
+        }
+    
+        /**
+         * What text extraction does with the images of the document.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param embeddedImages the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder embeddedImages(java.lang.String embeddedImages) {
+            doSetProperty("embeddedImages", embeddedImages);
+            return this;
+        }
+    
+        /**
+         * The quality of text extraction: standard or high_quality.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param extractionMode the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder extractionMode(java.lang.String extractionMode) {
+            doSetProperty("extractionMode", extractionMode);
+            return this;
+        }
+    
+        /**
+         * The outputs of text extraction, comma separated: md (the default),
+         * json, html, plain_text, page_images. The operations that return the
+         * text (AndFetch) take one output, but page_images.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param extractionOutputs the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder extractionOutputs(java.lang.String extractionOutputs) {
+            doSetProperty("extractionOutputs", extractionOutputs);
+            return this;
+        }
+    
+        /**
          * Frequency penalty for chat.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -380,6 +475,21 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder jsonSchemaStrict(java.lang.Boolean jsonSchemaStrict) {
             doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+    
+        /**
+         * The key-value pair extraction of text extraction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param kvpMode the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder kvpMode(java.lang.String kvpMode) {
+            doSetProperty("kvpMode", kvpMode);
             return this;
         }
     
@@ -537,6 +647,22 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * The optical character recognition of text extraction and
+         * classification: auto, disabled, enabled or forced.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param ocrMode the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder ocrMode(java.lang.String ocrMode) {
+            doSetProperty("ocrMode", ocrMode);
+            return this;
+        }
+    
+        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -549,6 +675,37 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder operation(org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+    
+        /**
+         * The resolution of the page images of text extraction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param outputDpi the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder outputDpi(java.lang.Integer outputDpi) {
+            doSetProperty("outputDpi", outputDpi);
+            return this;
+        }
+    
+        /**
+         * Whether text extraction gives the tokens of the text, with their
+         * positions.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param outputTokens the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder outputTokens(java.lang.Boolean outputTokens) {
+            doSetProperty("outputTokens", outputTokens);
             return this;
         }
     
@@ -585,6 +742,23 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * How long the text extraction and classification operations that wait
+         * (AndFetch) wait for the result, in milliseconds. Defaults to the
+         * timeout of the endpoint.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param processingTimeout the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder processingTimeout(java.lang.Long processingTimeout) {
+            doSetProperty("processingTimeout", processingTimeout);
+            return this;
+        }
+    
+        /**
          * How much the model of chat reasons: low, medium or high, for the
          * models that support it.
          * 
@@ -597,6 +771,38 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder reasoningEffort(java.lang.String reasoningEffort) {
             doSetProperty("reasoningEffort", reasoningEffort);
+            return this;
+        }
+    
+        /**
+         * Whether the text extraction operations that wait (AndFetch) remove
+         * the output file from Cloud Object Storage once read.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param removeOutputFile the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder removeOutputFile(java.lang.Boolean removeOutputFile) {
+            doSetProperty("removeOutputFile", removeOutputFile);
+            return this;
+        }
+    
+        /**
+         * Whether the operations that upload and wait (UploadAndFetch) remove
+         * the uploaded document from Cloud Object Storage at the end.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param removeUploadedFile the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder removeUploadedFile(java.lang.Boolean removeUploadedFile) {
+            doSetProperty("removeUploadedFile", removeUploadedFile);
             return this;
         }
     
@@ -1017,10 +1223,12 @@ public interface IbmWatsonxAiComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "baseUrl": getOrCreateConfiguration((WatsonxAiComponent) component).setBaseUrl((java.lang.String) value); return true;
-            case "configuration": ((WatsonxAiComponent) component).setConfiguration((org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration) value); return true;
             case "projectId": getOrCreateConfiguration((WatsonxAiComponent) component).setProjectId((java.lang.String) value); return true;
             case "spaceId": getOrCreateConfiguration((WatsonxAiComponent) component).setSpaceId((java.lang.String) value); return true;
             case "wxUrl": getOrCreateConfiguration((WatsonxAiComponent) component).setWxUrl((java.lang.String) value); return true;
+            case "autoRotationCorrection": getOrCreateConfiguration((WatsonxAiComponent) component).setAutoRotationCorrection((java.lang.Boolean) value); return true;
+            case "classificationMode": getOrCreateConfiguration((WatsonxAiComponent) component).setClassificationMode((java.lang.String) value); return true;
+            case "configuration": ((WatsonxAiComponent) component).setConfiguration((org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration) value); return true;
             case "cosUrl": getOrCreateConfiguration((WatsonxAiComponent) component).setCosUrl((java.lang.String) value); return true;
             case "deploymentId": getOrCreateConfiguration((WatsonxAiComponent) component).setDeploymentId((java.lang.String) value); return true;
             case "detectHap": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectHap((java.lang.Boolean) value); return true;
@@ -1029,6 +1237,10 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "detectPii": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectPii((java.lang.Boolean) value); return true;
             case "documentBucket": getOrCreateConfiguration((WatsonxAiComponent) component).setDocumentBucket((java.lang.String) value); return true;
             case "documentConnectionId": getOrCreateConfiguration((WatsonxAiComponent) component).setDocumentConnectionId((java.lang.String) value); return true;
+            case "documentLanguages": getOrCreateConfiguration((WatsonxAiComponent) component).setDocumentLanguages((java.lang.String) value); return true;
+            case "embeddedImages": getOrCreateConfiguration((WatsonxAiComponent) component).setEmbeddedImages((java.lang.String) value); return true;
+            case "extractionMode": getOrCreateConfiguration((WatsonxAiComponent) component).setExtractionMode((java.lang.String) value); return true;
+            case "extractionOutputs": getOrCreateConfiguration((WatsonxAiComponent) component).setExtractionOutputs((java.lang.String) value); return true;
             case "frequencyPenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setFrequencyPenalty((java.lang.Double) value); return true;
             case "governanceInstanceId": getOrCreateConfiguration((WatsonxAiComponent) component).setGovernanceInstanceId((java.lang.String) value); return true;
             case "guidedChoice": getOrCreateConfiguration((WatsonxAiComponent) component).setGuidedChoice((java.lang.String) value); return true;
@@ -1037,6 +1249,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "includeReasoning": getOrCreateConfiguration((WatsonxAiComponent) component).setIncludeReasoning((java.lang.Boolean) value); return true;
             case "jsonSchema": getOrCreateConfiguration((WatsonxAiComponent) component).setJsonSchema((java.lang.String) value); return true;
             case "jsonSchemaStrict": getOrCreateConfiguration((WatsonxAiComponent) component).setJsonSchemaStrict((java.lang.Boolean) value); return true;
+            case "kvpMode": getOrCreateConfiguration((WatsonxAiComponent) component).setKvpMode((java.lang.String) value); return true;
             case "lazyStartProducer": ((WatsonxAiComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxCompletionTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setMaxCompletionTokens((java.lang.Integer) value); return true;
             case "maxNewTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setMaxNewTokens((java.lang.Integer) value); return true;
@@ -1046,10 +1259,16 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "moderationPii": getOrCreateConfiguration((WatsonxAiComponent) component).setModerationPii((java.lang.Boolean) value); return true;
             case "moderationThreshold": getOrCreateConfiguration((WatsonxAiComponent) component).setModerationThreshold((java.lang.Float) value); return true;
             case "numberOfChoices": getOrCreateConfiguration((WatsonxAiComponent) component).setNumberOfChoices((java.lang.Integer) value); return true;
+            case "ocrMode": getOrCreateConfiguration((WatsonxAiComponent) component).setOcrMode((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((WatsonxAiComponent) component).setOperation((org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations) value); return true;
+            case "outputDpi": getOrCreateConfiguration((WatsonxAiComponent) component).setOutputDpi((java.lang.Integer) value); return true;
+            case "outputTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setOutputTokens((java.lang.Boolean) value); return true;
             case "predictionLength": getOrCreateConfiguration((WatsonxAiComponent) component).setPredictionLength((java.lang.Integer) value); return true;
             case "presencePenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setPresencePenalty((java.lang.Double) value); return true;
+            case "processingTimeout": getOrCreateConfiguration((WatsonxAiComponent) component).setProcessingTimeout((java.lang.Long) value); return true;
             case "reasoningEffort": getOrCreateConfiguration((WatsonxAiComponent) component).setReasoningEffort((java.lang.String) value); return true;
+            case "removeOutputFile": getOrCreateConfiguration((WatsonxAiComponent) component).setRemoveOutputFile((java.lang.Boolean) value); return true;
+            case "removeUploadedFile": getOrCreateConfiguration((WatsonxAiComponent) component).setRemoveUploadedFile((java.lang.Boolean) value); return true;
             case "repetitionPenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setRepetitionPenalty((java.lang.Double) value); return true;
             case "rerankTopN": getOrCreateConfiguration((WatsonxAiComponent) component).setRerankTopN((java.lang.Integer) value); return true;
             case "responseFormat": getOrCreateConfiguration((WatsonxAiComponent) component).setResponseFormat((java.lang.String) value); return true;

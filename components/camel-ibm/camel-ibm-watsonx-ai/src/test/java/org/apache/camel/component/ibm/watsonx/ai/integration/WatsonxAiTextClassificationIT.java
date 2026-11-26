@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.UUID;
 
 import com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse;
 import org.apache.camel.EndpointInject;
@@ -324,6 +325,33 @@ public class WatsonxAiTextClassificationIT extends WatsonxAiTestSupport {
         // Log final result
         if ("failed".equals(status)) {
             LOG.warn("Classification ended with status 'failed'. Check error details above.");
+        }
+    }
+
+    @Test
+    public void testClassifyAndFetchFileInCosWithParameters() throws Exception {
+        String fileName = "camel-classify-" + UUID.randomUUID() + ".pdf";
+        Exchange upload = template.send(buildTextClassificationEndpointUri("textClassificationUploadFile"), exchange -> {
+            exchange.getIn().setBody(Files.readAllBytes(testFile.toPath()));
+            exchange.getIn().setHeader(WatsonxAiConstants.FILE_NAME, fileName);
+        });
+        assertNull(upload.getException());
+        try {
+            Exchange classification = template.send(buildTextClassificationEndpointUri("textClassificationAndFetch")
+                                                    + "&classificationMode=exact&ocrMode=auto&documentLanguages=en"
+                                                    + "&processingTimeout=120000",
+                    exchange -> exchange.getIn().setBody(fileName));
+            assertNull(classification.getException(), () -> "Failed: " + classification.getException());
+            LOG.info("Classification of {}: {} status={} type={}", fileName, classification.getMessage().getBody(),
+                    classification.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS),
+                    classification.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_RESULT));
+            assertEquals("completed",
+                    classification.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS, String.class));
+        } finally {
+            template.send(buildTextClassificationEndpointUri("textClassificationDeleteFile"), exchange -> {
+                exchange.getIn().setHeader(WatsonxAiConstants.BUCKET_NAME, documentBucket);
+                exchange.getIn().setBody(fileName);
+            });
         }
     }
 

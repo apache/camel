@@ -173,8 +173,13 @@ public interface WatsonxAiConstants {
     String FILE_NAME = HEADER_PREFIX + "FileName";
 
     // Text Extraction
-    @Metadata(description = "The file path for extraction or classification (for files already in COS)", javaType = "String")
+    @Metadata(description = "The file path for extraction or classification (for files already in COS), such as"
+                            + " textExtractionAndFetch",
+              javaType = "String")
     String FILE_PATH = HEADER_PREFIX + "FilePath";
+
+    @Metadata(description = "The name of the output file of text extraction, in the result bucket", javaType = "String")
+    String OUTPUT_FILE_NAME = HEADER_PREFIX + "OutputFileName";
 
     @Metadata(description = "The extraction request ID", javaType = "String")
     String EXTRACTION_ID = HEADER_PREFIX + "ExtractionId";

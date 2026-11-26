@@ -152,6 +152,9 @@ import org.apache.camel.support.DefaultEndpoint;
                                            @BodyType.When(option = "operation", value = "textClassificationUploadAndFetch",
                                                           carriers = Carrier.POJO,
                                                           javaType = "com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse$ClassificationResult"),
+                                           @BodyType.When(option = "operation", value = "textClassificationAndFetch",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse$ClassificationResult"),
                                            @BodyType.When(option = "operation", value = "textClassificationUploadFile",
                                                           carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
                                            @BodyType.When(option = "operation", value = "textClassificationDeleteFile",
@@ -166,7 +169,7 @@ import org.apache.camel.support.DefaultEndpoint;
                                    description = "The generated text for textGeneration, chat, deploymentGenerate, deploymentChat"
                                                  + " and the streaming operations, the extracted text for"
                                                  + " textExtractionUploadAndFetch and textExtractionReadFile, the tool output for"
-                                                 + " runTool, with token counts and the stop reason in headers. embedding gives a"
+                                                 + " runTool, with token counts and the stop reason in headers; textExtractionAndFetch gives the extracted text. embedding gives a"
                                                  + " List with one List of Floats per input, even for one input; rerank, detect,"
                                                  + " forecast and the list operations a List of results of the watsonx.ai SDK;"
                                                  + " tokenize the token count; the uploadFile and delete operations a Boolean."

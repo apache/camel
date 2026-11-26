@@ -27,8 +27,12 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "authenticator": target.getConfiguration().setAuthenticator(property(camelContext, com.ibm.watsonx.ai.core.auth.Authenticator.class, value)); return true;
+        case "autorotationcorrection":
+        case "autoRotationCorrection": target.getConfiguration().setAutoRotationCorrection(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "classificationmode":
+        case "classificationMode": target.getConfiguration().setClassificationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "cosurl":
         case "cosUrl": target.getConfiguration().setCosUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "deploymentid":
@@ -44,6 +48,14 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "documentBucket": target.getConfiguration().setDocumentBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "documentconnectionid":
         case "documentConnectionId": target.getConfiguration().setDocumentConnectionId(property(camelContext, java.lang.String.class, value)); return true;
+        case "documentlanguages":
+        case "documentLanguages": target.getConfiguration().setDocumentLanguages(property(camelContext, java.lang.String.class, value)); return true;
+        case "embeddedimages":
+        case "embeddedImages": target.getConfiguration().setEmbeddedImages(property(camelContext, java.lang.String.class, value)); return true;
+        case "extractionmode":
+        case "extractionMode": target.getConfiguration().setExtractionMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "extractionoutputs":
+        case "extractionOutputs": target.getConfiguration().setExtractionOutputs(property(camelContext, java.lang.String.class, value)); return true;
         case "frequencypenalty":
         case "frequencyPenalty": target.getConfiguration().setFrequencyPenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "governanceinstanceid":
@@ -60,6 +72,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschemastrict":
         case "jsonSchemaStrict": target.getConfiguration().setJsonSchemaStrict(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "kvpmode":
+        case "kvpMode": target.getConfiguration().setKvpMode(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "logrequests":
@@ -84,15 +98,27 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "numberOfChoices": target.getConfiguration().setNumberOfChoices(property(camelContext, java.lang.Integer.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
+        case "ocrmode":
+        case "ocrMode": target.getConfiguration().setOcrMode(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class, value)); return true;
+        case "outputdpi":
+        case "outputDpi": target.getConfiguration().setOutputDpi(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "outputtokens":
+        case "outputTokens": target.getConfiguration().setOutputTokens(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "predictionlength":
         case "predictionLength": target.getConfiguration().setPredictionLength(property(camelContext, java.lang.Integer.class, value)); return true;
         case "presencepenalty":
         case "presencePenalty": target.getConfiguration().setPresencePenalty(property(camelContext, java.lang.Double.class, value)); return true;
+        case "processingtimeout":
+        case "processingTimeout": target.getConfiguration().setProcessingTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "projectid":
         case "projectId": target.getConfiguration().setProjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "reasoningeffort":
         case "reasoningEffort": target.getConfiguration().setReasoningEffort(property(camelContext, java.lang.String.class, value)); return true;
+        case "removeoutputfile":
+        case "removeOutputFile": target.getConfiguration().setRemoveOutputFile(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "removeuploadedfile":
+        case "removeUploadedFile": target.getConfiguration().setRemoveUploadedFile(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "repetitionpenalty":
         case "repetitionPenalty": target.getConfiguration().setRepetitionPenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "reranktopn":
@@ -138,8 +164,12 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "authenticator": return com.ibm.watsonx.ai.core.auth.Authenticator.class;
+        case "autorotationcorrection":
+        case "autoRotationCorrection": return java.lang.Boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "classificationmode":
+        case "classificationMode": return java.lang.String.class;
         case "cosurl":
         case "cosUrl": return java.lang.String.class;
         case "deploymentid":
@@ -155,6 +185,14 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "documentBucket": return java.lang.String.class;
         case "documentconnectionid":
         case "documentConnectionId": return java.lang.String.class;
+        case "documentlanguages":
+        case "documentLanguages": return java.lang.String.class;
+        case "embeddedimages":
+        case "embeddedImages": return java.lang.String.class;
+        case "extractionmode":
+        case "extractionMode": return java.lang.String.class;
+        case "extractionoutputs":
+        case "extractionOutputs": return java.lang.String.class;
         case "frequencypenalty":
         case "frequencyPenalty": return java.lang.Double.class;
         case "governanceinstanceid":
@@ -171,6 +209,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "jsonSchema": return java.lang.String.class;
         case "jsonschemastrict":
         case "jsonSchemaStrict": return java.lang.Boolean.class;
+        case "kvpmode":
+        case "kvpMode": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "logrequests":
@@ -195,15 +235,27 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "numberOfChoices": return java.lang.Integer.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
+        case "ocrmode":
+        case "ocrMode": return java.lang.String.class;
         case "operation": return org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class;
+        case "outputdpi":
+        case "outputDpi": return java.lang.Integer.class;
+        case "outputtokens":
+        case "outputTokens": return java.lang.Boolean.class;
         case "predictionlength":
         case "predictionLength": return java.lang.Integer.class;
         case "presencepenalty":
         case "presencePenalty": return java.lang.Double.class;
+        case "processingtimeout":
+        case "processingTimeout": return java.lang.Long.class;
         case "projectid":
         case "projectId": return java.lang.String.class;
         case "reasoningeffort":
         case "reasoningEffort": return java.lang.String.class;
+        case "removeoutputfile":
+        case "removeOutputFile": return java.lang.Boolean.class;
+        case "removeuploadedfile":
+        case "removeUploadedFile": return java.lang.Boolean.class;
         case "repetitionpenalty":
         case "repetitionPenalty": return java.lang.Double.class;
         case "reranktopn":
@@ -250,8 +302,12 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
         case "authenticator": return target.getConfiguration().getAuthenticator();
+        case "autorotationcorrection":
+        case "autoRotationCorrection": return target.getConfiguration().getAutoRotationCorrection();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
+        case "classificationmode":
+        case "classificationMode": return target.getConfiguration().getClassificationMode();
         case "cosurl":
         case "cosUrl": return target.getConfiguration().getCosUrl();
         case "deploymentid":
@@ -267,6 +323,14 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "documentBucket": return target.getConfiguration().getDocumentBucket();
         case "documentconnectionid":
         case "documentConnectionId": return target.getConfiguration().getDocumentConnectionId();
+        case "documentlanguages":
+        case "documentLanguages": return target.getConfiguration().getDocumentLanguages();
+        case "embeddedimages":
+        case "embeddedImages": return target.getConfiguration().getEmbeddedImages();
+        case "extractionmode":
+        case "extractionMode": return target.getConfiguration().getExtractionMode();
+        case "extractionoutputs":
+        case "extractionOutputs": return target.getConfiguration().getExtractionOutputs();
         case "frequencypenalty":
         case "frequencyPenalty": return target.getConfiguration().getFrequencyPenalty();
         case "governanceinstanceid":
@@ -283,6 +347,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "jsonschemastrict":
         case "jsonSchemaStrict": return target.getConfiguration().getJsonSchemaStrict();
+        case "kvpmode":
+        case "kvpMode": return target.getConfiguration().getKvpMode();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "logrequests":
@@ -307,15 +373,27 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "numberOfChoices": return target.getConfiguration().getNumberOfChoices();
         case "oauthprofile":
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
+        case "ocrmode":
+        case "ocrMode": return target.getConfiguration().getOcrMode();
         case "operation": return target.getConfiguration().getOperation();
+        case "outputdpi":
+        case "outputDpi": return target.getConfiguration().getOutputDpi();
+        case "outputtokens":
+        case "outputTokens": return target.getConfiguration().getOutputTokens();
         case "predictionlength":
         case "predictionLength": return target.getConfiguration().getPredictionLength();
         case "presencepenalty":
         case "presencePenalty": return target.getConfiguration().getPresencePenalty();
+        case "processingtimeout":
+        case "processingTimeout": return target.getConfiguration().getProcessingTimeout();
         case "projectid":
         case "projectId": return target.getConfiguration().getProjectId();
         case "reasoningeffort":
         case "reasoningEffort": return target.getConfiguration().getReasoningEffort();
+        case "removeoutputfile":
+        case "removeOutputFile": return target.getConfiguration().getRemoveOutputFile();
+        case "removeuploadedfile":
+        case "removeUploadedFile": return target.getConfiguration().getRemoveUploadedFile();
         case "repetitionpenalty":
         case "repetitionPenalty": return target.getConfiguration().getRepetitionPenalty();
         case "reranktopn":

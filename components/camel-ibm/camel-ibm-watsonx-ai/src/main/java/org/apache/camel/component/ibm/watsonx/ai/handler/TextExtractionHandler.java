@@ -16,13 +16,23 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai.handler;
 
+import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import com.ibm.watsonx.ai.textprocessing.Mode;
+import com.ibm.watsonx.ai.textprocessing.OcrMode;
+import com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionParameters;
+import com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionParameters.EmbeddedImageMode;
+import com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionParameters.KvpMode;
+import com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionParameters.Type;
 import com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionResponse;
 import com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations;
@@ -48,6 +58,8 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
                 return processTextExtractionUpload(exchange);
             case textExtractionUploadAndFetch:
                 return processTextExtractionUploadAndFetch(exchange);
+            case textExtractionAndFetch:
+                return processTextExtractionAndFetch(exchange);
             case textExtractionUploadFile:
                 return processTextExtractionUploadFile(exchange);
             case textExtractionReadFile:
@@ -68,6 +80,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
                 WatsonxAiOperations.textExtractionFetch,
                 WatsonxAiOperations.textExtractionUpload,
                 WatsonxAiOperations.textExtractionUploadAndFetch,
+                WatsonxAiOperations.textExtractionAndFetch,
                 WatsonxAiOperations.textExtractionUploadFile,
                 WatsonxAiOperations.textExtractionReadFile,
                 WatsonxAiOperations.textExtractionDeleteFile,
@@ -91,7 +104,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
 
         // Call the service
         TextExtractionService service = endpoint.getTextExtractionService();
-        TextExtractionResponse response = service.startExtraction(filePath);
+        TextExtractionResponse response = service.startExtraction(filePath, parameters(exchange, false));
 
         // Build response headers
         Map<String, Object> headers = new HashMap<>();
@@ -138,9 +151,9 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
 
         TextExtractionResponse response;
         if (input.isFile()) {
-            response = service.uploadAndStartExtraction(input.file());
+            response = service.uploadAndStartExtraction(input.file(), parameters(exchange, false));
         } else {
-            response = service.uploadAndStartExtraction(input.inputStream(), input.fileName());
+            response = service.uploadAndStartExtraction(input.inputStream(), input.fileName(), parameters(exchange, false));
         }
 
         Map<String, Object> headers = new HashMap<>();
@@ -156,15 +169,105 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
 
         String extractedText;
         if (input.isFile()) {
-            extractedText = service.uploadExtractAndFetch(input.file());
+            extractedText = service.uploadExtractAndFetch(input.file(), parameters(exchange, true));
         } else {
-            extractedText = service.uploadExtractAndFetch(input.inputStream(), input.fileName());
+            extractedText = service.uploadExtractAndFetch(input.inputStream(), input.fileName(), parameters(exchange, true));
         }
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(WatsonxAiConstants.EXTRACTED_TEXT, extractedText);
 
         return WatsonxAiOperationResponse.create(extractedText, headers);
+    }
+
+    private WatsonxAiOperationResponse processTextExtractionAndFetch(Exchange exchange) throws Exception {
+        Message in = exchange.getIn();
+        String filePath = in.getHeader(WatsonxAiConstants.FILE_PATH, String.class);
+        if (filePath == null || filePath.isEmpty()) {
+            filePath = readAsText(in, "the file path");
+        }
+        if (filePath == null || filePath.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "File path must be provided via message body or header '" + WatsonxAiConstants.FILE_PATH + "'");
+        }
+
+        // extract a document already in the document bucket and wait for the text
+        String extractedText = endpoint.getTextExtractionService().extractAndFetch(filePath, parameters(exchange, true));
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(WatsonxAiConstants.EXTRACTED_TEXT, extractedText);
+        return WatsonxAiOperationResponse.create(extractedText, headers);
+    }
+
+    /**
+     * The parameters of the options, or {@code null} when none is set, so that the defaults of the SDK apply (Markdown
+     * output). The removal of the uploaded and output files applies only to the operations that wait for the result.
+     */
+    TextExtractionParameters parameters(Exchange exchange, boolean waitForResult) {
+        WatsonxAiConfiguration config = getConfiguration();
+        String outputFileName = exchange.getIn().getHeader(WatsonxAiConstants.OUTPUT_FILE_NAME, String.class);
+        boolean cleanup = waitForResult
+                && (Boolean.TRUE.equals(config.getRemoveUploadedFile()) || Boolean.TRUE.equals(config.getRemoveOutputFile()));
+        if (config.getExtractionOutputs() == null && config.getExtractionMode() == null && config.getOcrMode() == null
+                && config.getDocumentLanguages() == null && config.getAutoRotationCorrection() == null
+                && config.getEmbeddedImages() == null && config.getOutputDpi() == null && config.getOutputTokens() == null
+                && config.getKvpMode() == null && config.getProcessingTimeout() == null && outputFileName == null
+                && !cleanup) {
+            return null;
+        }
+
+        TextExtractionParameters.Builder builder = TextExtractionParameters.builder();
+        List<String> outputs = toList(null, config.getExtractionOutputs());
+        builder.requestedOutputs(outputs == null || outputs.isEmpty()
+                ? List.of(Type.MD) : outputs.stream().map(TextExtractionHandler::outputType).toList());
+        if (config.getExtractionMode() != null) {
+            builder.mode(Mode.valueOf(enumName(config.getExtractionMode())));
+        }
+        if (config.getOcrMode() != null) {
+            builder.ocrMode(OcrMode.valueOf(enumName(config.getOcrMode())));
+        }
+        List<String> languages = toList(null, config.getDocumentLanguages());
+        if (languages != null) {
+            builder.languages(languages);
+        }
+        if (config.getAutoRotationCorrection() != null) {
+            builder.autoRotationCorrection(config.getAutoRotationCorrection());
+        }
+        if (config.getEmbeddedImages() != null) {
+            builder.createEmbeddedImages(EmbeddedImageMode.valueOf(enumName(config.getEmbeddedImages())));
+        }
+        if (config.getOutputDpi() != null) {
+            builder.outputDpi(config.getOutputDpi());
+        }
+        if (config.getOutputTokens() != null) {
+            builder.outputTokens(config.getOutputTokens());
+        }
+        if (config.getKvpMode() != null) {
+            builder.kvpMode(KvpMode.valueOf(enumName(config.getKvpMode())));
+        }
+        if (outputFileName != null) {
+            builder.outputFileName(outputFileName);
+        }
+        if (waitForResult) {
+            builder.removeUploadedFile(Boolean.TRUE.equals(config.getRemoveUploadedFile()));
+            builder.removeOutputFile(Boolean.TRUE.equals(config.getRemoveOutputFile()));
+        }
+        if (config.getProcessingTimeout() != null) {
+            builder.timeout(Duration.ofMillis(config.getProcessingTimeout()));
+        }
+        return builder.build();
+    }
+
+    /**
+     * md, json (assembly), html, plain_text or page_images.
+     */
+    private static Type outputType(String output) {
+        String name = output.trim().toLowerCase(Locale.ROOT);
+        return "json".equals(name) ? Type.JSON : Type.fromValue(name);
+    }
+
+    static String enumName(String value) {
+        return value.trim().toUpperCase(Locale.ROOT);
     }
 
     private WatsonxAiOperationResponse processTextExtractionUploadFile(Exchange exchange) throws Exception {

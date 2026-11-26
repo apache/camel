@@ -219,6 +219,7 @@ Text Extraction operations:
 * `textExtractionFetch` - Fetch text extraction results by job ID
 * `textExtractionUpload` - Upload a local file and start extraction
 * `textExtractionUploadAndFetch` - Upload, extract, and return text synchronously
+* `textExtractionAndFetch` - Extract a document already in the document bucket and return its text synchronously
 * `textExtractionUploadFile` - Upload file to COS without starting extraction
 * `textExtractionReadFile` - Read file from COS result bucket
 * `textExtractionDeleteFile` - Delete file from COS
@@ -230,6 +231,14 @@ Text Classification operations:
 * `textClassificationFetch` - Fetch classification results by job ID
 * `textClassificationUpload` - Upload a local file and start classification
 * `textClassificationUploadAndFetch` - Upload, classify, and return result synchronously
+* `textClassificationAndFetch` - Classify a document already in the document bucket and return the result synchronously
+
+The options of the text extraction (`extractionOutputs`, `extractionMode`, `ocrMode`, `documentLanguages`,
+`autoRotationCorrection`, `embeddedImages`, `outputDpi`, `outputTokens`, `kvpMode`) and classification
+(`classificationMode`, `ocrMode`, `documentLanguages`, `autoRotationCorrection`) are sent with every request; the
+`CamelIBMWatsonxAiOutputFileName` header names the output file. The operations that wait for the result (`AndFetch`)
+can remove the uploaded document (`removeUploadedFile`) and the output file (`removeOutputFile`) from Cloud Object
+Storage at the end, and wait at most `processingTimeout`, which defaults to the `timeout` of the endpoint.
 * `textClassificationUploadFile` - Upload file to COS without starting classification
 * `textClassificationDeleteFile` - Delete file from COS
 * `textClassificationDeleteRequest` - Delete classification job

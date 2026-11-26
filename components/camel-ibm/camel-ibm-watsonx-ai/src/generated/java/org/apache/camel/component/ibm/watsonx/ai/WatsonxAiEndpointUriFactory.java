@@ -24,10 +24,12 @@ public class WatsonxAiEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(57);
+        Set<String> props = new HashSet<>(70);
         props.add("apiKey");
         props.add("authenticator");
+        props.add("autoRotationCorrection");
         props.add("baseUrl");
+        props.add("classificationMode");
         props.add("cosUrl");
         props.add("deploymentId");
         props.add("detectHap");
@@ -36,6 +38,10 @@ public class WatsonxAiEndpointUriFactory extends org.apache.camel.support.compon
         props.add("detectors");
         props.add("documentBucket");
         props.add("documentConnectionId");
+        props.add("documentLanguages");
+        props.add("embeddedImages");
+        props.add("extractionMode");
+        props.add("extractionOutputs");
         props.add("frequencyPenalty");
         props.add("governanceInstanceId");
         props.add("guidedChoice");
@@ -44,6 +50,7 @@ public class WatsonxAiEndpointUriFactory extends org.apache.camel.support.compon
         props.add("includeReasoning");
         props.add("jsonSchema");
         props.add("jsonSchemaStrict");
+        props.add("kvpMode");
         props.add("label");
         props.add("lazyStartProducer");
         props.add("logRequests");
@@ -57,11 +64,17 @@ public class WatsonxAiEndpointUriFactory extends org.apache.camel.support.compon
         props.add("moderationThreshold");
         props.add("numberOfChoices");
         props.add("oauthProfile");
+        props.add("ocrMode");
         props.add("operation");
+        props.add("outputDpi");
+        props.add("outputTokens");
         props.add("predictionLength");
         props.add("presencePenalty");
+        props.add("processingTimeout");
         props.add("projectId");
         props.add("reasoningEffort");
+        props.add("removeOutputFile");
+        props.add("removeUploadedFile");
         props.add("repetitionPenalty");
         props.add("rerankTopN");
         props.add("responseFormat");

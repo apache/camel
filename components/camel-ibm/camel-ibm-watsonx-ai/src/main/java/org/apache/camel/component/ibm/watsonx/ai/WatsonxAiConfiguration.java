@@ -224,6 +224,66 @@ public class WatsonxAiConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "COS bucket for result storage")
     private String resultBucket;
 
+    // Text extraction and classification parameters
+    @UriParam(label = "producer",
+              description = "The outputs of text extraction, comma separated: md (the default), json, html, plain_text,"
+                            + " page_images. The operations that return the text (AndFetch) take one output, but"
+                            + " page_images")
+    private String extractionOutputs;
+
+    @UriParam(label = "producer", enums = "standard,high_quality",
+              description = "The quality of text extraction: standard or high_quality")
+    private String extractionMode;
+
+    @UriParam(label = "producer", enums = "auto,disabled,enabled,forced",
+              description = "The optical character recognition of text extraction and classification: auto, disabled,"
+                            + " enabled or forced")
+    private String ocrMode;
+
+    @UriParam(label = "producer",
+              description = "The languages of the documents of text extraction and classification, comma separated ISO"
+                            + " 639 codes, such as en,fr")
+    private String documentLanguages;
+
+    @UriParam(label = "producer",
+              description = "Whether text extraction and classification correct the rotation of the pages")
+    private Boolean autoRotationCorrection;
+
+    @UriParam(label = "producer",
+              enums = "disabled,enabled_placeholder,enabled_text,enabled_verbalization,enabled_verbalization_all",
+              description = "What text extraction does with the images of the document")
+    private String embeddedImages;
+
+    @UriParam(label = "producer", description = "The resolution of the page images of text extraction")
+    private Integer outputDpi;
+
+    @UriParam(label = "producer",
+              description = "Whether text extraction gives the tokens of the text, with their positions")
+    private Boolean outputTokens;
+
+    @UriParam(label = "producer", enums = "disabled,invoice,ubill,generic_with_semantic",
+              description = "The key-value pair extraction of text extraction")
+    private String kvpMode;
+
+    @UriParam(label = "producer", enums = "exact,binary",
+              description = "How text classification classifies: exact (the document type) or binary (whether it is one)")
+    private String classificationMode;
+
+    @UriParam(label = "producer",
+              description = "Whether the operations that upload and wait (UploadAndFetch) remove the uploaded document"
+                            + " from Cloud Object Storage at the end")
+    private Boolean removeUploadedFile;
+
+    @UriParam(label = "producer",
+              description = "Whether the text extraction operations that wait (AndFetch) remove the output file from Cloud"
+                            + " Object Storage once read")
+    private Boolean removeOutputFile;
+
+    @UriParam(label = "producer", javaType = "java.time.Duration",
+              description = "How long the text extraction and classification operations that wait (AndFetch) wait for"
+                            + " the result, in milliseconds. Defaults to the timeout of the endpoint")
+    private Long processingTimeout;
+
     // Detection
     @UriParam(label = "producer", description = "Whether to detect PII (Personal Identifiable Information)")
     private Boolean detectPii;
@@ -636,6 +696,110 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setResultBucket(String resultBucket) {
         this.resultBucket = resultBucket;
+    }
+
+    public String getExtractionOutputs() {
+        return extractionOutputs;
+    }
+
+    public void setExtractionOutputs(String extractionOutputs) {
+        this.extractionOutputs = extractionOutputs;
+    }
+
+    public String getExtractionMode() {
+        return extractionMode;
+    }
+
+    public void setExtractionMode(String extractionMode) {
+        this.extractionMode = extractionMode;
+    }
+
+    public String getOcrMode() {
+        return ocrMode;
+    }
+
+    public void setOcrMode(String ocrMode) {
+        this.ocrMode = ocrMode;
+    }
+
+    public String getDocumentLanguages() {
+        return documentLanguages;
+    }
+
+    public void setDocumentLanguages(String documentLanguages) {
+        this.documentLanguages = documentLanguages;
+    }
+
+    public Boolean getAutoRotationCorrection() {
+        return autoRotationCorrection;
+    }
+
+    public void setAutoRotationCorrection(Boolean autoRotationCorrection) {
+        this.autoRotationCorrection = autoRotationCorrection;
+    }
+
+    public String getEmbeddedImages() {
+        return embeddedImages;
+    }
+
+    public void setEmbeddedImages(String embeddedImages) {
+        this.embeddedImages = embeddedImages;
+    }
+
+    public Integer getOutputDpi() {
+        return outputDpi;
+    }
+
+    public void setOutputDpi(Integer outputDpi) {
+        this.outputDpi = outputDpi;
+    }
+
+    public Boolean getOutputTokens() {
+        return outputTokens;
+    }
+
+    public void setOutputTokens(Boolean outputTokens) {
+        this.outputTokens = outputTokens;
+    }
+
+    public String getKvpMode() {
+        return kvpMode;
+    }
+
+    public void setKvpMode(String kvpMode) {
+        this.kvpMode = kvpMode;
+    }
+
+    public String getClassificationMode() {
+        return classificationMode;
+    }
+
+    public void setClassificationMode(String classificationMode) {
+        this.classificationMode = classificationMode;
+    }
+
+    public Boolean getRemoveUploadedFile() {
+        return removeUploadedFile;
+    }
+
+    public void setRemoveUploadedFile(Boolean removeUploadedFile) {
+        this.removeUploadedFile = removeUploadedFile;
+    }
+
+    public Boolean getRemoveOutputFile() {
+        return removeOutputFile;
+    }
+
+    public void setRemoveOutputFile(Boolean removeOutputFile) {
+        this.removeOutputFile = removeOutputFile;
+    }
+
+    public Long getProcessingTimeout() {
+        return processingTimeout;
+    }
+
+    public void setProcessingTimeout(Long processingTimeout) {
+        this.processingTimeout = processingTimeout;
     }
 
     public Boolean getDetectPii() {
