@@ -61,6 +61,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     private static final int MAX_CREDENTIALS_CONNECTION_FACTORIES = 100;
 
     private ExecutorService asyncStartStopExecutorService;
+    private ExecutorService stopListenerContainerExecutorService;
     // the connection factory of the component wrapped with the credentials of the endpoints: one per username, which
     // other credentials (such as a rotated password) replace
     private final Map<String, CredentialsConnectionFactory> credentialsConnectionFactories
@@ -1207,12 +1208,45 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     }
 
     @Override
+    protected void doStop() throws Exception {
+        lock.lock();
+        try {
+            if (stopListenerContainerExecutorService != null) {
+                // without waiting: the stop of a listener container that waits for the broker goes on in the background
+                getCamelContext().getExecutorServiceManager().shutdown(stopListenerContainerExecutorService);
+                stopListenerContainerExecutorService = null;
+            }
+        } finally {
+            lock.unlock();
+        }
+        super.doStop();
+    }
+
+    @Override
     protected void doShutdown() throws Exception {
         if (asyncStartStopExecutorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(asyncStartStopExecutorService);
             asyncStartStopExecutorService = null;
         }
         super.doShutdown();
+    }
+
+    /**
+     * The thread pool that stops the listener containers of the consumers when they are suspended or stopped, so that a
+     * consumer waits with a bound for a stop that waits for the broker: a cached thread pool, as such a stop can take
+     * long.
+     */
+    ExecutorService getStopListenerContainerExecutorService() {
+        lock.lock();
+        try {
+            if (stopListenerContainerExecutorService == null) {
+                stopListenerContainerExecutorService = getCamelContext().getExecutorServiceManager()
+                        .newCachedThreadPool(this, "JmsStopListenerContainer");
+            }
+            return stopListenerContainerExecutorService;
+        } finally {
+            lock.unlock();
+        }
     }
 
     protected ExecutorService getAsyncStartStopExecutorService() {

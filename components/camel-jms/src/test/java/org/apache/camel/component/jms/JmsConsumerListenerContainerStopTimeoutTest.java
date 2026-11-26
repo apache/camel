@@ -229,6 +229,58 @@ public class JmsConsumerListenerContainerStopTimeoutTest {
         assertConsumedOnce("Hello again");
     }
 
+    /**
+     * A listener container that the getter creates while the consumer has none, as a management tool reading it would,
+     * is initialized, counted and started by the resume, and its stop releases only what was counted.
+     */
+    @Test
+    public void testResumeAfterASuspendThatDidNotEndUsesTheListenerContainerCreatedMeanwhile() throws Exception {
+        BlockingListenerContainer first = containers.get(0);
+        JmsEndpoint endpoint = endpoint();
+        block = Block.STOP;
+        assertReturns("the suspend of the route", () -> {
+            context.getRouteController().suspendRoute("jms");
+            return null;
+        });
+        assertWarning("The suspend of the consumer on destination " + queue + " did not end within " + BOUND + " millis");
+        AbstractMessageListenerContainer created = consumer().getListenerContainer();
+        block = Block.NONE;
+
+        context.getRouteController().resumeRoute("jms");
+
+        assertSame(created, consumer().getListenerContainer(), "the resume uses the listener container created meanwhile");
+        assertTrue(created.isRunning(), "the listener container runs");
+        assertConsumedOnce("Bye World");
+        release.countDown();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> first.destroyed && endpoint.getRunningMessageListeners() == 1);
+
+        context.getRouteController().stopRoute("jms");
+
+        assertEquals(0, endpoint.getRunningMessageListeners());
+    }
+
+    @Test
+    public void testStopAfterASuspendThatDidNotEndReleasesOnlyWhatWasCounted() throws Exception {
+        BlockingListenerContainer first = containers.get(0);
+        JmsEndpoint endpoint = endpoint();
+        block = Block.STOP;
+        assertReturns("the suspend of the route", () -> {
+            context.getRouteController().suspendRoute("jms");
+            return null;
+        });
+        consumer().getListenerContainer();
+        block = Block.NONE;
+
+        context.getRouteController().stopRoute("jms");
+        release.countDown();
+
+        // the private thread pool terminates once the endpoint count is released
+        await().atMost(10, TimeUnit.SECONDS).until(() -> first.destroyed && first.taskExecutor.isTerminated());
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> containers.get(1).destroyed && containers.get(1).taskExecutor.isTerminated());
+        assertEquals(0, endpoint.getRunningMessageListeners(), "the listener container created meanwhile was not counted");
+    }
+
     @Test
     public void testStartAfterAStopThatDidNotEndCreatesANewListenerContainer() throws Exception {
         assertConsumedOnce("Hello World");
@@ -414,6 +466,64 @@ public class JmsConsumerListenerContainerStopTimeoutTest {
         List<String> warnings = events.stream().filter(e -> e.getLevel() == Level.WARN)
                 .map(e -> e.getMessage().getFormattedMessage()).filter(m -> m.contains(listenerQueue)).toList();
         assertEquals(List.of(), warnings, "no WARN");
+    }
+
+    /**
+     * A suspend from another thread while the route processes a message, with a simple listener container and a
+     * synchronous task executor: the JMS client calls the route, and stops the connection once the route returns. The
+     * suspend waits as long as the message is processed, and the bound after that.
+     */
+    @Test
+    public void testSuspendWaitsForTheMessageThatTheJmsClientProcesses() throws Exception {
+        context.getRegistry().bind("syncTaskExecutor", new SyncTaskExecutor());
+        String slowQueue = queue + ".slow";
+        CountDownLatch processing = new CountDownLatch(1);
+        CountDownLatch done = new CountDownLatch(1);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("jms:queue:" + slowQueue + "?consumerType=Simple&taskExecutor=#syncTaskExecutor").routeId("slow")
+                        .process(exchange -> {
+                            processing.countDown();
+                            done.await(20, TimeUnit.SECONDS);
+                        })
+                        .to("mock:slow");
+            }
+        });
+        JmsConsumer consumer = (JmsConsumer) context.getRoute("slow").getConsumer();
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        MockEndpoint slow = MockEndpoint.resolve(context, "mock:slow");
+        slow.expectedBodiesReceived("Hello World");
+        template.sendBody("jms:queue:" + slowQueue, "Hello World");
+        assertTrue(processing.await(10, TimeUnit.SECONDS), "the route processes the message");
+
+        Future<?> suspend = caller.submit(consumer::suspend);
+        await().atMost(10, TimeUnit.SECONDS).until(consumer::isSuspending);
+
+        // past the bound, the suspend still waits for the message
+        await().during(2 * BOUND, TimeUnit.MILLISECONDS).atMost(3 * BOUND, TimeUnit.MILLISECONDS)
+                .until(() -> !suspend.isDone());
+        done.countDown();
+        suspend.get(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context);
+        assertTrue(consumer.isSuspended(), "the consumer is suspended");
+        assertSame(container, consumer.getListenerContainer(), "the suspended consumer keeps its listener container");
+        List<String> warnings = events.stream().filter(e -> e.getLevel() == Level.WARN)
+                .map(e -> e.getMessage().getFormattedMessage()).filter(m -> m.contains(slowQueue)).toList();
+        assertEquals(List.of(), warnings, "no WARN");
+    }
+
+    @Test
+    public void testShutdownAwaitTerminationOfZeroWaitsTheLeastTime() throws Exception {
+        context.getExecutorServiceManager().setShutdownAwaitTermination(0);
+        block = Block.STOP;
+
+        assertReturns("the suspend of the route", () -> {
+            context.getRouteController().suspendRoute("jms");
+            return null;
+        });
+
+        assertWarning("The suspend of the consumer on destination " + queue + " did not end within 100 millis");
     }
 
     /**
