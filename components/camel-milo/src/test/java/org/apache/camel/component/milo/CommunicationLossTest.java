@@ -220,12 +220,19 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
             assertSame(client, connection.getOpcUaClient());
             assertEquals(sessionId, client.getSession().getSessionId());
 
-            // changes arrive as before
+            // changes arrive as before: the OPC UA subscription republish after the first connection drop may deliver
+            // stale "Foo" notifications after the reset, so we wait for a "Bar" value instead of asserting on
+            // message(0) which could race against those late republish deliveries
             item1Endpoint.reset();
-            item1Endpoint.expectedMessageCount(1);
-            testBody(item1Endpoint.message(0), assertGoodValue("Bar"));
             producer1.sendBody("Bar");
-            item1Endpoint.assertIsSatisfied();
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(
+                    item1Endpoint.getReceivedExchanges().stream()
+                            .anyMatch(e -> {
+                                DataValue v = e.getMessage().getBody(DataValue.class);
+                                return v != null && v.getStatusCode().isGood()
+                                        && "Bar".equals(v.getValue().getValue());
+                            }),
+                    "Expected a 'Bar' value notification after reset, but none arrived"));
 
             // a second loss reports the node once more
             item1Endpoint.reset();
