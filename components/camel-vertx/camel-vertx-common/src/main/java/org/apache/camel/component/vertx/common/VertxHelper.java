@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.common;
 
 import java.security.KeyStore;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -29,25 +30,36 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 
 import io.vertx.core.http.ClientAuth;
+import io.vertx.core.net.JdkSSLEngineOptions;
 import io.vertx.core.net.KeyCertOptions;
 import io.vertx.core.net.NetServerOptions;
+import io.vertx.core.net.SSLEngineOptions;
+import io.vertx.core.net.SSLOptions;
 import io.vertx.core.net.TCPSSLOptions;
 import io.vertx.core.net.TrustOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.jsse.ClientAuthentication;
+import org.apache.camel.support.jsse.JsseParametersHelper;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class VertxHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VertxHelper.class);
 
     private VertxHelper() {
         // Utility class
     }
 
     /**
-     * Configures key store and trust store options, the client authentication (of a server) and the cipher suites and
-     * protocols for the given TCPSSLOptions from the configuration specified on SSLContextParameters
+     * Configures key store and trust store options, the client authentication (of a server), the cipher suites, the
+     * protocols and the named groups (key exchange groups) for the given TCPSSLOptions from the configuration specified
+     * on SSLContextParameters. The named groups include the post-quantum preference that
+     * {@link SSLContextParameters#createSSLContext(CamelContext)} applies when none are configured. The signature
+     * schemes cannot be applied, as Vert.x has no such setting, and a WARN says so when they are configured.
      *
      * @param camelContext         the CamelContext
      * @param sslContextParameters the SSL configuration to use for the KeyManagerFactory & TrustManagerFactory
@@ -111,13 +123,19 @@ public final class VertxHelper {
             });
         }
 
-        // the cipher suites and protocols (when configured) as computed by the SSLContextParameters
+        // the cipher suites, protocols and named groups (when configured) as computed by the SSLContextParameters
         // (such as from the include and exclude filters)
         boolean cipherSuites = sslContextParameters.getCipherSuites() != null
                 || sslContextParameters.getCipherSuitesFilter() != null;
         boolean protocols = sslContextParameters.getSecureSocketProtocols() != null
                 || sslContextParameters.getSecureSocketProtocolsFilter() != null;
-        if (cipherSuites || protocols) {
+        boolean namedGroups = sslContextParameters.getNamedGroups() != null
+                || sslContextParameters.getNamedGroupsFilter() != null;
+        // the post-quantum preference that the SSLContext applies when no named groups are configured, which a Vert.x
+        // engine of the JDK can take as well
+        boolean postQuantum = !namedGroups && isJdkEngine(tcpsslOptions.getSslEngineOptions())
+                && JsseParametersHelper.postQuantumNamedGroups(sslContextParameters) != null;
+        if (cipherSuites || protocols || namedGroups || postQuantum) {
             SSLEngine engine = sslContextParameters.createSSLContext(camelContext).createSSLEngine();
             if (cipherSuites) {
                 for (String suite : engine.getEnabledCipherSuites()) {
@@ -127,7 +145,38 @@ public final class VertxHelper {
             if (protocols) {
                 tcpsslOptions.setEnabledSecureTransportProtocols(new LinkedHashSet<>(List.of(engine.getEnabledProtocols())));
             }
+            String[] groups = engine.getSSLParameters().getNamedGroups();
+            if ((namedGroups || postQuantum) && groups != null) {
+                // Vert.x applies its key exchange groups on each SSLEngine it creates, server and client side
+                sslOptions(tcpsslOptions).setKeyExchangeGroups(new ArrayList<>(List.of(groups)));
+            }
         }
+
+        // Vert.x has no setting for the signature schemes
+        if (sslContextParameters.getSignatureSchemes() != null || sslContextParameters.getSignatureSchemesFilter() != null) {
+            LOG.warn("Vert.x cannot apply the signature schemes of sslContextParameters, as its TLS options have no such"
+                     + " setting: the signature schemes of the JVM are used instead");
+        }
+    }
+
+    /**
+     * The SSL options of the given TCP SSL options, which Vert.x creates on the first SSL setting.
+     */
+    private static SSLOptions sslOptions(TCPSSLOptions tcpsslOptions) {
+        SSLOptions answer = tcpsslOptions.getSslOptions();
+        if (answer == null) {
+            // setting a value creates them, so set the one they already have
+            tcpsslOptions.setSslHandshakeTimeout(tcpsslOptions.getSslHandshakeTimeout());
+            answer = tcpsslOptions.getSslOptions();
+        }
+        return answer;
+    }
+
+    /**
+     * Whether Vert.x uses the SSLEngine of the JDK, which knows the named groups of the JVM, rather than OpenSSL.
+     */
+    private static boolean isJdkEngine(SSLEngineOptions engineOptions) {
+        return engineOptions == null || engineOptions instanceof JdkSSLEngineOptions;
     }
 
     private static KeyManagerFactory createKeyManagerFactory(

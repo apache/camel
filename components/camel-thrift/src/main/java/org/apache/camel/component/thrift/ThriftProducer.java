@@ -17,6 +17,7 @@
 package org.apache.camel.component.thrift;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.jsse.JsseParametersHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.TException;
@@ -292,6 +294,8 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             LOG.info("Creating secured transport to the remote Thrift server {}:{}", configuration.getHost(),
                     configuration.getPort());
 
+            logDroppedSslOptions(sslParameters);
+
             TSSLTransportFactory.TSSLTransportParameters sslParams;
 
             sslParams = new TSSLTransportFactory.TSSLTransportParameters(
@@ -317,6 +321,28 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
                     configuration.getClientTimeout(), sslParams);
         } else {
             throw new IllegalArgumentException("No connection properties (host, port) specified");
+        }
+    }
+
+    /**
+     * The Thrift client builds its TLS connection from TSSLTransportParameters, which cannot carry the options that
+     * only the SSLContext of {@code SSLContextParameters.createSSLContext} applies: say so instead of dropping them in
+     * silence. The post-quantum preference of the named groups, which that SSLContext applies when no named groups are
+     * configured, is not an option of the user: losing it is only logged at DEBUG.
+     */
+    private static void logDroppedSslOptions(SSLContextParameters sslParameters) {
+        List<String> dropped = JsseParametersHelper.engineOnlyParameters(sslParameters);
+        if (!dropped.isEmpty()) {
+            LOG.warn("The Thrift producer cannot apply the {} of sslParameters: it creates its TLS connection from the"
+                     + " protocol, cipher suites and trust store only, so the JVM defaults are used instead",
+                    String.join(", ", dropped));
+        } else if (LOG.isDebugEnabled()) {
+            List<String> postQuantum = JsseParametersHelper.postQuantumNamedGroups(sslParameters);
+            if (postQuantum != null) {
+                LOG.debug("The Thrift producer cannot apply the post-quantum named group order {} that sslParameters"
+                          + " prefers on this JVM: it uses the named group order of the JVM instead",
+                        postQuantum);
+            }
         }
     }
 }

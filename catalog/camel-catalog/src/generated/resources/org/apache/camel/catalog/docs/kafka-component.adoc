@@ -2176,3 +2176,10 @@ YAML::
             uri: mock:result
 ----
 ====
+
+The Kafka client creates its TLS connections from its `ssl.*` properties, which the `sslContextParameters` are mapped
+to: the protocol, the provider, the cipher suites, the enabled protocols and the key and trust stores. The Kafka client
+has no properties for the named groups and the signature schemes, so these are not applied: a `WARN` is logged when
+they are configured, and the client uses the named groups of the JVM, also for the post-quantum preference that
+`SSLContextParameters` applies elsewhere. See _Components with their own TLS stack_ in the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility] for
+setting them for the whole JVM instead.

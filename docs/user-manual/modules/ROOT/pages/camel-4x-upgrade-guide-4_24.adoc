@@ -656,6 +656,22 @@ all `https://` addresses.
 A route that called an `https://` address of a server that only speaks plain HTTP now fails; use an `http://` address
 for such a server. An `http://` address with `sslContextParameters` is not changed.
 
+=== camel-vertx, camel-platform-http-vertx, camel-kafka, camel-thrift - the named groups of sslContextParameters
+
+The Vert.x components (`camel-platform-http-vertx`, `camel-vertx-http` and `camel-vertx-websocket`) now apply the
+`namedGroups` (or `namedGroupsFilter`) of `sslContextParameters` to their TLS connections, as the key exchange groups
+of Vert.x. Before, they were ignored. When no named groups are configured, the
+post-quantum preference that `SSLContextParameters` applies on a JVM that offers a hybrid group but does not lead with
+one is applied as well. A peer that only supports named groups outside of the configured ones can no longer connect.
+Vert.x has no setting for the signature schemes: a `WARN` is logged when `signatureSchemes` are configured.
+
+The Kafka client (`camel-kafka`, `camel-kafka-share`) and the `camel-thrift` producer cannot apply the named groups
+and the signature schemes of `sslContextParameters`, as they create their TLS connections from settings of their own.
+They still ignore them, as before, but now log a `WARN` when they start with them configured. To apply them, set
+the `jdk.tls.namedGroups`, `jdk.tls.client.SignatureSchemes` and `jdk.tls.server.SignatureSchemes` system properties
+of the JDK. See _Components with their own TLS stack_ in the
+xref:camel-configuration-utilities.adoc#_components_with_their_own_tls_stack[Camel JSSE Configuration Utility].
+
 === camel-openfga - writeTuples and the read operations carry a relationship condition
 
 `writeTuples` now honours a relationship condition set on a tuple in the message body: a `ClientTupleKey` built with

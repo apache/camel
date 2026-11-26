@@ -35,6 +35,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.CipherSuitesParameters;
+import org.apache.camel.support.jsse.JsseParametersHelper;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -48,6 +49,8 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.config.internals.BrokerSecurityConfigs;
 import org.apache.kafka.common.security.auth.SecurityProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base configuration of the Camel Kafka endpoints: the brokers, the client id, the connection, metrics and backoff
@@ -62,6 +65,14 @@ import org.apache.kafka.common.security.auth.SecurityProtocol;
  */
 @UriParams
 public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaClientConfiguration.class);
+
+    /**
+     * Whether the options of sslContextParameters that the Kafka client cannot carry have been logged, so it is done
+     * once per endpoint, not each time the properties of a Kafka client are created.
+     */
+    private volatile boolean droppedSslOptionsLogged;
 
     @UriParam(label = "common",
               description = "URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a "
@@ -400,6 +411,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
         try {
             KafkaClientConfiguration copy = (KafkaClientConfiguration) clone();
             copy.additionalProperties = new HashMap<>(this.additionalProperties);
+            copy.droppedSslOptionsLogged = false;
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -547,6 +559,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
         String protocol = resolveSecurityProtocol();
         if (sslContextParameters != null) {
             applySslConfigurationFromContext(props, sslContextParameters);
+            logDroppedSslOptions(sslContextParameters);
         }
         applySslConfigurationFromOptions(props, protocol);
 
@@ -640,6 +653,33 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
             addPropertyIfNotEmpty(props, SslConfigs.SSL_PROVIDER_CONFIG, getSslProvider());
             addSslOption(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, getSslTruststoreType(),
                     SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE, true);
+        }
+    }
+
+    /**
+     * The Kafka client builds its TLS connections from the ssl.* properties, which cannot carry the options that only
+     * the SSLContext of {@code SSLContextParameters.createSSLContext} applies: say so once instead of dropping them in
+     * silence. The post-quantum preference of the named groups, which that SSLContext applies when no named groups are
+     * configured, is not an option of the user: losing it is only logged at DEBUG.
+     */
+    private void logDroppedSslOptions(SSLContextParameters sslContextParameters) {
+        if (droppedSslOptionsLogged) {
+            return;
+        }
+        droppedSslOptionsLogged = true;
+
+        List<String> dropped = JsseParametersHelper.engineOnlyParameters(sslContextParameters);
+        if (!dropped.isEmpty()) {
+            LOG.warn("The Kafka client cannot apply the {} of sslContextParameters: it creates its TLS connections from"
+                     + " the ssl.* properties, which have no such settings, so the JVM defaults are used instead",
+                    String.join(", ", dropped));
+        } else if (LOG.isDebugEnabled()) {
+            List<String> postQuantum = JsseParametersHelper.postQuantumNamedGroups(sslContextParameters);
+            if (postQuantum != null) {
+                LOG.debug("The Kafka client cannot apply the post-quantum named group order {} that sslContextParameters"
+                          + " prefers on this JVM: it uses the named group order of the JVM instead",
+                        postQuantum);
+            }
         }
     }
 
