@@ -814,6 +814,15 @@ A URL whose path is not the endpoint of the server, such as `http://host:8080/v1
 because its path was ignored, and now fails: set the URL of the endpoint, here `http://host:8080/mcp`, or remove the
 path. The URL must be absolute, with a scheme and a host.
 
+=== camel-ibm-watsonx-data - the OAuth token of oauthProfile is sent as a Bearer token
+
+With `oauthProfile`, the endpoint used to obtain an access token once at startup and use it as `apiKey`, so the token
+was posted to IBM Cloud IAM as if it were an IBM Cloud API key, which IAM rejects. The token is now sent to
+watsonx.data as a `Bearer` token, and asked from `camel-oauth` again for every request, so it is renewed when it
+expires; the endpoint fails to start when the profile gives no token. The identity provider must therefore issue tokens
+that watsonx.data accepts. `apiKey` is no longer marked as required in the catalog, as `oauthProfile` can take its
+place; an endpoint with neither still fails to start.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
@@ -6701,6 +6710,17 @@ Once a consumer that configures `handlers` is started on a path, a connection op
 first ran is no longer served: its messages no longer reach the route and it no longer receives what the producer
 sends, and the connection is closed. Clients that open a connection in this window must reconnect after the consumer
 has started.
+
+=== camel-undertow - a WebSocket message not sent within sendTimeout fails the exchange
+
+The `sendTimeout` option of a WebSocket producer (30 seconds by default) now applies to text messages, that is a
+`String` or `Reader` body, and to bodies converted to `String`. Before, it applied only to `byte[]` and `InputStream`
+bodies, so a text message to a peer that stopped reading stayed in flight, with its exchange, until the peer read it
+or the connection closed.
+
+A message that is not sent to a peer within `sendTimeout` now fails the exchange with a `CamelExchangeException`
+caused by a `TimeoutException`, and the connection to that peer is closed. Before, the timeout of a binary message
+only dropped the message, and the exchange completed as if it was sent. Set `sendTimeout` to `0` for no timeout.
 
 === camel-undertow, camel-vertx-http - CamelHttpPath with a query in the endpoint uri
 
