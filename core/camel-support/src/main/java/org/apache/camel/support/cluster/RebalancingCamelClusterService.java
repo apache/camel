@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -47,10 +48,14 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
 
     private static final Logger LOG = LoggerFactory.getLogger(RebalancingCamelClusterService.class);
 
-    protected ScheduledExecutorService serializedExecutor;
+    // set to null by doStop: a pass that runs on an executor that is no longer this one does not schedule the next pass
+    protected volatile ScheduledExecutorService serializedExecutor;
     protected CamelPreemptiveClusterService delegate;
     protected CamelContext camelContext;
     protected final long periodMillis;
+
+    // whether the previous pass failed (only used by the passes, one at a time)
+    private boolean previousPassFailed;
 
     public RebalancingCamelClusterService(CamelPreemptiveClusterService delegate, long periodMillis) {
         this.delegate = ObjectHelper.notNull(delegate, "delegate");
@@ -76,19 +81,24 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         super.doStart();
         ServiceHelper.startService(delegate);
         if (serializedExecutor == null) {
-            serializedExecutor = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "RebalancingClusterService");
-            serializedExecutor.execute(this::reconcile);
+            ScheduledExecutorService executor = getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "RebalancingClusterService");
+            previousPassFailed = false;
+            serializedExecutor = executor;
+            executor.execute(() -> reconcileAndReschedule(executor));
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (serializedExecutor != null) {
-            getCamelContext().getExecutorServiceManager().shutdown(serializedExecutor);
-        }
+        ScheduledExecutorService executor = serializedExecutor;
         serializedExecutor = null;
+        if (executor != null) {
+            // the pending pass is dropped (a scheduled executor runs its delayed tasks after a plain shutdown), so a
+            // start does not add a second chain of passes
+            getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+        }
         ServiceHelper.stopService(delegate);
     }
 
@@ -104,13 +114,40 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         this.delegate = delegate;
     }
 
+    /**
+     * Runs a rebalancing pass, and schedules the next one on the same executor while it is the executor of this
+     * service, also when the pass fails.
+     */
+    private void reconcileAndReschedule(ScheduledExecutorService executor) {
+        try {
+            reconcile();
+            previousPassFailed = false;
+        } catch (Throwable e) {
+            if (previousPassFailed) {
+                LOG.debug("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
+            } else {
+                LOG.warn("Error while rebalancing the partitions (will try again in {} ms): {}", periodMillis,
+                        e.toString());
+                LOG.debug("Exception thrown while rebalancing the partitions", e);
+            }
+            previousPassFailed = true;
+        } finally {
+            if (executor == serializedExecutor) {
+                try {
+                    executor.schedule(() -> reconcileAndReschedule(executor), periodMillis, TimeUnit.MILLISECONDS);
+                } catch (RejectedExecutionException e) {
+                    LOG.debug("Cannot schedule the next rebalancing pass as the service is stopping");
+                }
+            }
+        }
+    }
+
     protected void reconcile() {
         Integer n = members();
         List<String> partitions = partitionList();
         int k = partitions.size();
 
         if (n == null || n == 0 || k == 0) {
-            rescheduleAfterDelay();
             return;
         }
 
@@ -133,7 +170,6 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
 
         rebalanceGroup(main, quota);
         rebalanceGroup(remaining, 1);
-        rescheduleAfterDelay();
     }
 
     protected void rebalanceGroup(List<String> partitions, int quota) {
@@ -276,12 +312,6 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         } catch (Exception ex) {
             LOG.warn("Could not release view {}", view.getNamespace(), ex);
         }
-    }
-
-    private void rescheduleAfterDelay() {
-        this.serializedExecutor.schedule(this::reconcile,
-                this.periodMillis,
-                TimeUnit.MILLISECONDS);
     }
 
     @Override
