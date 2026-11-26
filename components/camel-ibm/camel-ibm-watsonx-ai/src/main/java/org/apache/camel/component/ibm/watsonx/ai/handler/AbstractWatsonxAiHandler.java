@@ -123,7 +123,7 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             Object element = list.get(i);
             if (element instanceof String text) {
                 inputs.add(text);
-            } else if (isTextValue(element)) {
+            } else if (BodyFacts.isTextValue(element)) {
                 inputs.add(element.toString());
             } else {
                 throw new IllegalArgumentException(

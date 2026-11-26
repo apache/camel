@@ -659,8 +659,14 @@ public final class BodyFacts {
         return kindOf(value) != BodyTypeRegistry.Kind.PAYLOAD && !isTextValue(value) && text.equals(value.toString());
     }
 
-    /** A value whose toString() is its text, rather than a dump of its fields: an id, an address or a point in time. */
-    private static boolean isTextValue(Object value) {
+    /**
+     * Whether the value is one whose toString() is its text, rather than a dump of its fields: an id, an address or a
+     * point in time (a UUID, URI, URL, java.time value or Date). No type converter reads these as text otherwise.
+     *
+     * @param  value the value, may be null
+     * @return       true when the toString() of the value is its text
+     */
+    public static boolean isTextValue(Object value) {
         return value instanceof UUID || value instanceof URI || value instanceof URL || value instanceof Temporal
                 || value instanceof TemporalAmount || value instanceof Date;
     }
