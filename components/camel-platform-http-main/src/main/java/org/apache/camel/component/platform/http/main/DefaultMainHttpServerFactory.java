@@ -16,11 +16,20 @@
  */
 package org.apache.camel.component.platform.http.main;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+import io.vertx.core.http.CookieSameSite;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
 import org.apache.camel.component.platform.http.main.authentication.BasicAuthenticationConfigurer;
 import org.apache.camel.component.platform.http.main.authentication.JWTAuthenticationConfigurer;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
@@ -71,15 +80,78 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             dir = TempDirHelper.resolveTempDir(camelContext, null, dir);
             server.setFileUploadDirectory(dir);
         }
+        VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler = server.getConfiguration().getBodyHandler();
+        bodyHandler.setMergeFormAttributes(configuration.isMergeFormAttributes());
+        bodyHandler.setDeleteUploadedFilesOnEnd(configuration.isDeleteUploadedFilesOnEnd());
+        bodyHandler.setPreallocateBodyBuffer(configuration.isPreallocateBodyBuffer());
         server.setStaticEnabled(configuration.isStaticEnabled());
         server.setStaticContextPath(configuration.getStaticContextPath());
         server.setStaticSourceDir(configuration.getStaticSourceDir());
 
+        if (configuration.isCorsEnabled()) {
+            configureCors(server.getConfiguration().getCors(), configuration);
+        }
+        if (configuration.isSessionEnabled()) {
+            configureSession(server.getConfiguration().getSessionConfig(), configuration);
+        }
         if (configuration.isAuthenticationEnabled()) {
             configureAuthentication(server, configuration);
         }
 
         return server;
+    }
+
+    private static void configureCors(
+            VertxPlatformHttpServerConfiguration.Cors cors, HttpServerConfigurationProperties configuration) {
+        cors.setEnabled(true);
+        cors.setOrigins(splitList(configuration.getCorsOrigins()));
+        cors.setMethods(splitList(configuration.getCorsMethods()));
+        cors.setHeaders(splitList(configuration.getCorsHeaders()));
+        cors.setExposedHeaders(splitList(configuration.getCorsExposedHeaders()));
+        if (configuration.getCorsAccessControlMaxAge() != null) {
+            cors.setAccessControlMaxAge(Duration.ofSeconds(configuration.getCorsAccessControlMaxAge()));
+        }
+    }
+
+    private static void configureSession(
+            VertxPlatformHttpServerConfiguration.SessionConfig session, HttpServerConfigurationProperties configuration) {
+        session.setEnabled(true);
+        session.setStoreType(enumValue(VertxPlatformHttpServerConfiguration.SessionStoreType.class,
+                configuration.getSessionStoreType(), "sessionStoreType"));
+        session.setSessionCookieName(configuration.getSessionCookieName());
+        session.setSessionCookiePath(configuration.getSessionCookiePath());
+        session.setSessionTimeout(configuration.getSessionTimeout());
+        session.setCookieSecure(configuration.isSessionCookieSecure());
+        session.setCookieHttpOnly(configuration.isSessionCookieHttpOnly());
+        session.setCookieSameSite(enumValue(CookieSameSite.class, configuration.getSessionCookieSameSite(),
+                "sessionCookieSameSite"));
+        session.setSessionIdMinLength(configuration.getSessionIdMinLength());
+    }
+
+    private static List<String> splitList(String value) {
+        if (ObjectHelper.isEmpty(value)) {
+            return List.of();
+        }
+        List<String> answer = new ArrayList<>();
+        for (String part : value.split(",")) {
+            String trimmed = part.trim();
+            if (!trimmed.isEmpty()) {
+                answer.add(trimmed);
+            }
+        }
+        return answer;
+    }
+
+    private static <T extends Enum<T>> T enumValue(Class<T> type, String value, String option) {
+        for (T constant : type.getEnumConstants()) {
+            if (constant.name().equalsIgnoreCase(value)) {
+                return constant;
+            }
+        }
+        throw new IllegalArgumentException(
+                "Invalid value " + value + " for camel.server." + option + ", must be one of: "
+                                           + Arrays.stream(type.getEnumConstants()).map(e -> e.name().toLowerCase(Locale.ROOT))
+                                                   .collect(Collectors.joining(",")));
     }
 
     @Override

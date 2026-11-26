@@ -27,6 +27,13 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("AuthenticationPath", java.lang.String.class);
         map.put("AuthenticationRealm", java.lang.String.class);
         map.put("BasicPropertiesFile", java.lang.String.class);
+        map.put("CorsAccessControlMaxAge", java.lang.Long.class);
+        map.put("CorsEnabled", boolean.class);
+        map.put("CorsExposedHeaders", java.lang.String.class);
+        map.put("CorsHeaders", java.lang.String.class);
+        map.put("CorsMethods", java.lang.String.class);
+        map.put("CorsOrigins", java.lang.String.class);
+        map.put("DeleteUploadedFilesOnEnd", boolean.class);
         map.put("Enabled", boolean.class);
         map.put("FileUploadDirectory", java.lang.String.class);
         map.put("FileUploadEnabled", boolean.class);
@@ -60,8 +67,19 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("McpTags", java.lang.String.class);
         map.put("McpToolTimeout", long.class);
         map.put("McpTransport", java.lang.String.class);
+        map.put("MergeFormAttributes", boolean.class);
         map.put("Path", java.lang.String.class);
         map.put("Port", int.class);
+        map.put("PreallocateBodyBuffer", boolean.class);
+        map.put("SessionCookieHttpOnly", boolean.class);
+        map.put("SessionCookieName", java.lang.String.class);
+        map.put("SessionCookiePath", java.lang.String.class);
+        map.put("SessionCookieSameSite", java.lang.String.class);
+        map.put("SessionCookieSecure", boolean.class);
+        map.put("SessionEnabled", boolean.class);
+        map.put("SessionIdMinLength", int.class);
+        map.put("SessionStoreType", java.lang.String.class);
+        map.put("SessionTimeout", long.class);
         map.put("StaticContextPath", java.lang.String.class);
         map.put("StaticEnabled", boolean.class);
         map.put("StaticSourceDir", java.lang.String.class);
@@ -81,6 +99,20 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "authenticationRealm": target.setAuthenticationRealm(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertiesfile":
         case "basicPropertiesFile": target.setBasicPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "corsaccesscontrolmaxage":
+        case "corsAccessControlMaxAge": target.setCorsAccessControlMaxAge(property(camelContext, java.lang.Long.class, value)); return true;
+        case "corsenabled":
+        case "corsEnabled": target.setCorsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "corsexposedheaders":
+        case "corsExposedHeaders": target.setCorsExposedHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "corsheaders":
+        case "corsHeaders": target.setCorsHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "corsmethods":
+        case "corsMethods": target.setCorsMethods(property(camelContext, java.lang.String.class, value)); return true;
+        case "corsorigins":
+        case "corsOrigins": target.setCorsOrigins(property(camelContext, java.lang.String.class, value)); return true;
+        case "deleteuploadedfilesonend":
+        case "deleteUploadedFilesOnEnd": target.setDeleteUploadedFilesOnEnd(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "fileuploaddirectory":
         case "fileUploadDirectory": target.setFileUploadDirectory(property(camelContext, java.lang.String.class, value)); return true;
@@ -145,8 +177,30 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpToolTimeout": target.setMcpToolTimeout(property(camelContext, long.class, value)); return true;
         case "mcptransport":
         case "mcpTransport": target.setMcpTransport(property(camelContext, java.lang.String.class, value)); return true;
+        case "mergeformattributes":
+        case "mergeFormAttributes": target.setMergeFormAttributes(property(camelContext, boolean.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "preallocatebodybuffer":
+        case "preallocateBodyBuffer": target.setPreallocateBodyBuffer(property(camelContext, boolean.class, value)); return true;
+        case "sessioncookiehttponly":
+        case "sessionCookieHttpOnly": target.setSessionCookieHttpOnly(property(camelContext, boolean.class, value)); return true;
+        case "sessioncookiename":
+        case "sessionCookieName": target.setSessionCookieName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessioncookiepath":
+        case "sessionCookiePath": target.setSessionCookiePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessioncookiesamesite":
+        case "sessionCookieSameSite": target.setSessionCookieSameSite(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessioncookiesecure":
+        case "sessionCookieSecure": target.setSessionCookieSecure(property(camelContext, boolean.class, value)); return true;
+        case "sessionenabled":
+        case "sessionEnabled": target.setSessionEnabled(property(camelContext, boolean.class, value)); return true;
+        case "sessionidminlength":
+        case "sessionIdMinLength": target.setSessionIdMinLength(property(camelContext, int.class, value)); return true;
+        case "sessionstoretype":
+        case "sessionStoreType": target.setSessionStoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontimeout":
+        case "sessionTimeout": target.setSessionTimeout(property(camelContext, long.class, value)); return true;
         case "staticcontextpath":
         case "staticContextPath": target.setStaticContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "staticenabled":
@@ -175,6 +229,20 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "authenticationRealm": return java.lang.String.class;
         case "basicpropertiesfile":
         case "basicPropertiesFile": return java.lang.String.class;
+        case "corsaccesscontrolmaxage":
+        case "corsAccessControlMaxAge": return java.lang.Long.class;
+        case "corsenabled":
+        case "corsEnabled": return boolean.class;
+        case "corsexposedheaders":
+        case "corsExposedHeaders": return java.lang.String.class;
+        case "corsheaders":
+        case "corsHeaders": return java.lang.String.class;
+        case "corsmethods":
+        case "corsMethods": return java.lang.String.class;
+        case "corsorigins":
+        case "corsOrigins": return java.lang.String.class;
+        case "deleteuploadedfilesonend":
+        case "deleteUploadedFilesOnEnd": return boolean.class;
         case "enabled": return boolean.class;
         case "fileuploaddirectory":
         case "fileUploadDirectory": return java.lang.String.class;
@@ -239,8 +307,30 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpToolTimeout": return long.class;
         case "mcptransport":
         case "mcpTransport": return java.lang.String.class;
+        case "mergeformattributes":
+        case "mergeFormAttributes": return boolean.class;
         case "path": return java.lang.String.class;
         case "port": return int.class;
+        case "preallocatebodybuffer":
+        case "preallocateBodyBuffer": return boolean.class;
+        case "sessioncookiehttponly":
+        case "sessionCookieHttpOnly": return boolean.class;
+        case "sessioncookiename":
+        case "sessionCookieName": return java.lang.String.class;
+        case "sessioncookiepath":
+        case "sessionCookiePath": return java.lang.String.class;
+        case "sessioncookiesamesite":
+        case "sessionCookieSameSite": return java.lang.String.class;
+        case "sessioncookiesecure":
+        case "sessionCookieSecure": return boolean.class;
+        case "sessionenabled":
+        case "sessionEnabled": return boolean.class;
+        case "sessionidminlength":
+        case "sessionIdMinLength": return int.class;
+        case "sessionstoretype":
+        case "sessionStoreType": return java.lang.String.class;
+        case "sessiontimeout":
+        case "sessionTimeout": return long.class;
         case "staticcontextpath":
         case "staticContextPath": return java.lang.String.class;
         case "staticenabled":
@@ -265,6 +355,20 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "authenticationRealm": return target.getAuthenticationRealm();
         case "basicpropertiesfile":
         case "basicPropertiesFile": return target.getBasicPropertiesFile();
+        case "corsaccesscontrolmaxage":
+        case "corsAccessControlMaxAge": return target.getCorsAccessControlMaxAge();
+        case "corsenabled":
+        case "corsEnabled": return target.isCorsEnabled();
+        case "corsexposedheaders":
+        case "corsExposedHeaders": return target.getCorsExposedHeaders();
+        case "corsheaders":
+        case "corsHeaders": return target.getCorsHeaders();
+        case "corsmethods":
+        case "corsMethods": return target.getCorsMethods();
+        case "corsorigins":
+        case "corsOrigins": return target.getCorsOrigins();
+        case "deleteuploadedfilesonend":
+        case "deleteUploadedFilesOnEnd": return target.isDeleteUploadedFilesOnEnd();
         case "enabled": return target.isEnabled();
         case "fileuploaddirectory":
         case "fileUploadDirectory": return target.getFileUploadDirectory();
@@ -329,8 +433,30 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpToolTimeout": return target.getMcpToolTimeout();
         case "mcptransport":
         case "mcpTransport": return target.getMcpTransport();
+        case "mergeformattributes":
+        case "mergeFormAttributes": return target.isMergeFormAttributes();
         case "path": return target.getPath();
         case "port": return target.getPort();
+        case "preallocatebodybuffer":
+        case "preallocateBodyBuffer": return target.isPreallocateBodyBuffer();
+        case "sessioncookiehttponly":
+        case "sessionCookieHttpOnly": return target.isSessionCookieHttpOnly();
+        case "sessioncookiename":
+        case "sessionCookieName": return target.getSessionCookieName();
+        case "sessioncookiepath":
+        case "sessionCookiePath": return target.getSessionCookiePath();
+        case "sessioncookiesamesite":
+        case "sessionCookieSameSite": return target.getSessionCookieSameSite();
+        case "sessioncookiesecure":
+        case "sessionCookieSecure": return target.isSessionCookieSecure();
+        case "sessionenabled":
+        case "sessionEnabled": return target.isSessionEnabled();
+        case "sessionidminlength":
+        case "sessionIdMinLength": return target.getSessionIdMinLength();
+        case "sessionstoretype":
+        case "sessionStoreType": return target.getSessionStoreType();
+        case "sessiontimeout":
+        case "sessionTimeout": return target.getSessionTimeout();
         case "staticcontextpath":
         case "staticContextPath": return target.getStaticContextPath();
         case "staticenabled":
