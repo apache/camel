@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
@@ -36,10 +37,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Windows-only behavioral test for the native camel.exe bootstrap. Requires the build-native-exe profile to have
- * produced the platform-appropriate exe (target/camel-x64.exe on x86_64, target/camel-arm64.exe on aarch64); the test
- * fails loudly if it is missing so a broken native build does not pass silently.
+ * produced the platform-appropriate exe (target/camel-x64.exe on x86_64, target/camel-arm64.exe on aarch64).
+ * <p>
+ * The test only runs with {@code -Dcamel.exe.test=true}, which the native exe workflow sets once it has put the exe in
+ * place, so a regular Windows build (that does not build the exe) skips it. With the property set, the test fails
+ * loudly if the exe is missing, so a broken native build does not pass silently.
  */
 @EnabledOnOs(OS.WINDOWS)
+@EnabledIfSystemProperty(named = "camel.exe.test", matches = "true",
+                         disabledReason = "Needs the native camel.exe, run with -Dcamel.exe.test=true once it is built")
 class CamelExeBootstrapTest {
 
     private static final String EXE_ARCH = "aarch64".equals(System.getProperty("os.arch")) ? "arm64" : "x64";
