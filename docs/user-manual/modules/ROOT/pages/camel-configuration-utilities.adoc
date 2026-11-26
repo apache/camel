@@ -524,7 +524,7 @@ instead, which applies only part of them:
 |===
 | Component | Applied | Not applied
 
-| camel-platform-http-vertx, camel-vertx-http, camel-vertx-websocket, camel-vertx-mqtt
+| camel-platform-http-vertx, camel-vertx-http, camel-vertx-websocket, camel-vertx-mqtt, camel-apicurio-registry
 | The key and trust managers, the client authentication, the cipher suites, the protocols, and the named groups,
 including the post-quantum preference, as the key exchange groups of Vert.x
 | The signature schemes: Vert.x has no such setting, and a `WARN` says so when they are configured

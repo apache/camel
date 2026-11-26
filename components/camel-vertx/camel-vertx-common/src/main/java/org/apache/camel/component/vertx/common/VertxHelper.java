@@ -165,7 +165,8 @@ public final class VertxHelper {
     private static SSLOptions sslOptions(TCPSSLOptions tcpsslOptions) {
         SSLOptions answer = tcpsslOptions.getSslOptions();
         if (answer == null) {
-            // setting a value creates them, so set the one they already have
+            // TCPSSLOptions.getOrCreateSSLOptions() is protected, but each SSL setter calls it, so set the value the
+            // options already have (VertxHelperNamedGroupsTest fails if a Vert.x upgrade changes this)
             tcpsslOptions.setSslHandshakeTimeout(tcpsslOptions.getSslHandshakeTimeout());
             answer = tcpsslOptions.getSslOptions();
         }

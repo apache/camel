@@ -658,9 +658,9 @@ for such a server. An `http://` address with `sslContextParameters` is not chang
 
 === camel-vertx, camel-platform-http-vertx, camel-kafka, camel-thrift - the named groups of sslContextParameters
 
-The Vert.x components (`camel-platform-http-vertx`, `camel-vertx-http` and `camel-vertx-websocket`) now apply the
-`namedGroups` (or `namedGroupsFilter`) of `sslContextParameters` to their TLS connections, as the key exchange groups
-of Vert.x. Before, they were ignored. When no named groups are configured, the
+The Vert.x components (`camel-platform-http-vertx`, `camel-vertx-http`, `camel-vertx-websocket` and
+`camel-vertx-mqtt`) and `camel-apicurio-registry` now apply the `namedGroups` (or `namedGroupsFilter`) of
+`sslContextParameters` to their TLS connections, as the key exchange groups of Vert.x. Before, they were ignored. When no named groups are configured, the
 post-quantum preference that `SSLContextParameters` applies on a JVM that offers a hybrid group but does not lead with
 one is applied as well. A peer that only supports named groups outside of the configured ones can no longer connect.
 Vert.x has no setting for the signature schemes: a `WARN` is logged when `signatureSchemes` are configured.
