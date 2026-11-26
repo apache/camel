@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibm.watsonx.data;
 
+import com.ibm.cloud.sdk.core.security.Authenticator;
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
 import com.ibm.cloud.watsonxdata.watsonx_data.v3.WatsonxData;
 import org.apache.camel.Category;
@@ -28,7 +29,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.OAuthHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -51,6 +51,8 @@ public class WatsonxDataEndpoint extends DefaultEndpoint implements EndpointServ
     private WatsonxDataConfiguration configuration;
 
     private WatsonxData watsonxDataService;
+    // the Bearer token authenticator of the oauthProfile, created when the endpoint starts
+    private OAuthProfileAuthenticator oauthAuthenticator;
 
     public WatsonxDataEndpoint(String uri, WatsonxDataComponent component, WatsonxDataConfiguration configuration) {
         super(uri, component);
@@ -70,26 +72,30 @@ public class WatsonxDataEndpoint extends DefaultEndpoint implements EndpointServ
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        resolveOAuthToken();
         validateConfiguration();
-    }
-
-    private void resolveOAuthToken() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getOauthProfile())) {
-            return;
+        if (ObjectHelper.isNotEmpty(configuration.getOauthProfile())) {
+            OAuthProfileAuthenticator authenticator
+                    = new OAuthProfileAuthenticator(getCamelContext(), configuration.getOauthProfile());
+            // fail at startup rather than at the first exchange when the OAuth profile cannot give a token
+            authenticator.token();
+            synchronized (this) {
+                oauthAuthenticator = authenticator;
+                // a client created before startup is created again with this authenticator
+                watsonxDataService = null;
+            }
         }
-        configuration.setApiKey(OAuthHelper.resolveOAuthToken(getCamelContext(), configuration.getOauthProfile()));
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected synchronized void doStop() throws Exception {
         super.doStop();
         watsonxDataService = null;
+        oauthAuthenticator = null;
     }
 
     private void validateConfiguration() {
-        if (configuration.getApiKey() == null || configuration.getApiKey().isEmpty()) {
-            throw new IllegalArgumentException("API key is required");
+        if (ObjectHelper.isEmpty(configuration.getApiKey()) && ObjectHelper.isEmpty(configuration.getOauthProfile())) {
+            throw new IllegalArgumentException("API key is required (or set oauthProfile)");
         }
         if (configuration.getServiceUrl() == null || configuration.getServiceUrl().isEmpty()) {
             throw new IllegalArgumentException("Service URL is required");
@@ -97,13 +103,20 @@ public class WatsonxDataEndpoint extends DefaultEndpoint implements EndpointServ
     }
 
     /**
-     * Gets or creates the WatsonxData service instance.
+     * Gets or creates the WatsonxData service instance: it authenticates with the Bearer token of the OAuth profile
+     * when {@code oauthProfile} is set, else with an IBM Cloud IAM token for the {@code apiKey}.
      */
-    public WatsonxData getWatsonxDataService() {
+    public synchronized WatsonxData getWatsonxDataService() {
         if (watsonxDataService == null) {
-            IamAuthenticator authenticator = new IamAuthenticator.Builder()
-                    .apikey(configuration.getApiKey())
-                    .build();
+            Authenticator authenticator;
+            if (ObjectHelper.isNotEmpty(configuration.getOauthProfile())) {
+                if (oauthAuthenticator == null) {
+                    oauthAuthenticator = new OAuthProfileAuthenticator(getCamelContext(), configuration.getOauthProfile());
+                }
+                authenticator = oauthAuthenticator;
+            } else {
+                authenticator = new IamAuthenticator.Builder().apikey(configuration.getApiKey()).build();
+            }
             watsonxDataService = new WatsonxData("watsonxdata", authenticator);
             watsonxDataService.setServiceUrl(configuration.getServiceUrl());
         }
