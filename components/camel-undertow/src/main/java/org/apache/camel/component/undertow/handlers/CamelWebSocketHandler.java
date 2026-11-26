@@ -143,45 +143,49 @@ public class CamelWebSocketHandler implements HttpHandler {
      * Send the given {@code message} to the given {@code channel} and report the outcome to the given {@code callback}
      * within the given {@code timeoutMillis}.
      *
-     * @param  channel       the channel to send the {@code message} to
-     * @param  message       the message to send
-     * @param  callback      where to report the outcome
-     * @param  timeoutMillis the timeout in milliseconds, none if zero or negative
-     * @throws IOException
+     * @param channel       the channel to send the {@code message} to
+     * @param message       the message to send, a {@code String} or a {@code byte[]}
+     * @param callback      where to report the outcome
+     * @param timeoutMillis the timeout in milliseconds, none if zero or negative
      */
     private static void send(
             WebSocketChannel channel, Object message, ExtendedWebSocketCallback callback,
-            long timeoutMillis)
-            throws IOException {
+            long timeoutMillis) {
         if (channel.isOpen()) {
-            String text = null;
-            ByteBuffer binary = null;
-            if (message instanceof String) {
-                text = (String) message;
-            } else if (message instanceof byte[]) {
-                binary = ByteBuffer.wrap((byte[]) message);
-            } else if (message instanceof Reader) {
-                text = IOConverter.toString((Reader) message);
-            } else if (message instanceof InputStream) {
-                binary = ByteBuffer.wrap(IOConverter.toBytes((InputStream) message));
-            } else {
-                throw new RuntimeCamelException(
-                        "Unexpected type of message " + message.getClass().getName() + "; expected String, byte[], "
-                                                + Reader.class.getName() + " or " + InputStream.class.getName());
-            }
             WebSocketCallback<Void> sendCallback = callback;
             if (timeoutMillis > 0) {
                 SendTimeoutCallback timeoutCallback = new SendTimeoutCallback(channel, callback, timeoutMillis);
                 timeoutCallback.start();
                 sendCallback = timeoutCallback;
             }
-            if (text != null) {
-                WebSockets.sendText(text, channel, sendCallback);
+            if (message instanceof String) {
+                WebSockets.sendText((String) message, channel, sendCallback);
             } else {
-                WebSockets.sendBinary(binary, channel, sendCallback);
+                // a buffer of its own per peer, as sending moves its position
+                WebSockets.sendBinary(ByteBuffer.wrap((byte[]) message), channel, sendCallback);
             }
         } else {
             callback.closedBeforeSent(channel);
+        }
+    }
+
+    /**
+     * Reads a {@code Reader} or {@code InputStream} message, so that every peer is sent the same text or bytes rather
+     * than what the previous peer left of the stream.
+     *
+     * @return the message as a {@code String} or a {@code byte[]}
+     */
+    private static Object readOnce(Object message) throws IOException {
+        if (message instanceof String || message instanceof byte[]) {
+            return message;
+        } else if (message instanceof Reader) {
+            return IOConverter.toString((Reader) message);
+        } else if (message instanceof InputStream) {
+            return IOConverter.toBytes((InputStream) message);
+        } else {
+            throw new RuntimeCamelException(
+                    "Unexpected type of message " + message.getClass().getName() + "; expected String, byte[], "
+                                            + Reader.class.getName() + " or " + InputStream.class.getName());
         }
     }
 
@@ -400,9 +404,10 @@ public class CamelWebSocketHandler implements HttpHandler {
             return true;
         } else {
             /* There are some peers to send the message to */
+            Object payload = readOnce(message);
             MultiCallback wsCallback = new MultiCallback(targetPeers, camelCallback, camelExchange);
             for (WebSocketChannel peer : targetPeers) {
-                send(peer, message, wsCallback, timeout);
+                send(peer, payload, wsCallback, timeout);
             }
             return false;
         }
