@@ -39,7 +39,7 @@ public class InfraRestartTest extends CamelCommandBaseTestSupport {
     public void restartService() throws Exception {
         // doCall() delegates to the blocking infra run, so execute it on a new thread.
         Thread thread = new Thread(() -> {
-            InfraRestart infraRestart = new InfraRestart(new CamelJBangMain().withPrinter(printer));
+            InfraRestart infraRestart = new CamelJBangMain().withPrinter(printer).command(new InfraRestart());
             infraRestart.setServiceName(List.of("ftp"));
             try {
                 infraRestart.doCall();
@@ -69,7 +69,7 @@ public class InfraRestartTest extends CamelCommandBaseTestSupport {
         Files.writeString(fakePidFile, "{}");
 
         Thread thread = new Thread(() -> {
-            InfraRestart infraRestart = new InfraRestart(new CamelJBangMain().withPrinter(printer));
+            InfraRestart infraRestart = new CamelJBangMain().withPrinter(printer).command(new InfraRestart());
             infraRestart.setServiceName(List.of("ftp"));
             try {
                 infraRestart.doCall();

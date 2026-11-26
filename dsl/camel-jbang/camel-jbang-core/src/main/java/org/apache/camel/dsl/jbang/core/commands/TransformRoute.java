@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
@@ -70,7 +71,7 @@ public class TransformRoute extends CamelCommand {
 
     @Option(name = "output",
             description = "File or directory to store transformed files. If none provide then output is printed to console. Use clipboard as name to copy content into clipboard.")
-    private String output;
+    String output;
 
     @Option(name = "format",
             description = "Output format (${COMPLETION-CANDIDATES}), if only yaml files are provided, the format defaults to xml and vice versa."
@@ -100,10 +101,6 @@ public class TransformRoute extends CamelCommand {
     @Mixin
     MavenResolverMixin mavenResolver;
 
-    public TransformRoute(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (format == null) {
@@ -129,59 +126,69 @@ public class TransformRoute extends CamelCommand {
             return transformToJava();
         }
 
+        Path parent = CommandLineHelper.getWorkDir();
+        Files.createDirectories(parent);
+        Path workDir = Files.createTempDirectory(parent, "transform-route-" + ProcessHandle.current().pid() + "-");
         String dump = output;
         // if no output then we want to print to console, so we need to write to a hidden file, and dump that file afterwards
         if (output == null || "clipboard".equals(output)) {
-            dump = CommandLineHelper.getWorkDir().resolve("transform-output." + format).toString();
+            dump = workDir.resolve("transform-output." + format).toString();
         }
         Files.deleteIfExists(Path.of(dump));
         final String target = dump;
 
-        if (!compile && !resolvePlaceholders && TransformJavaRoutes.applies(files)) {
-            // Java routes read without compiling them: in milliseconds, and no code of the project runs
-            TransformJavaRoutes.Result result = TransformJavaRoutes.transform(files, format, target, uriAsParameters);
-            if (result.transformed()) {
-                return printDump(target);
-            }
-            // a route the parser cannot read completely (a lambda, a value known only at runtime): compile them all
-        }
-
-        Run run = new Run(getMain()) {
-            @Override
-            protected void doAddInitialProperty(KameletMain main) {
-                main.addInitialProperty("camel.main.dumpRoutes", format);
-                main.addInitialProperty("camel.main.dumpRoutesInclude", "routes,rests,routeConfigurations,beans,dataFormats");
-                main.addInitialProperty("camel.main.dumpRoutesLog", "false");
-                main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", Boolean.toString(resolvePlaceholders));
-                main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", Boolean.toString(uriAsParameters));
-                main.addInitialProperty("camel.main.dumpRoutesOutput", target);
-                // turn debug off as this can otherwise include source location in dump
-                main.addInitialProperty("camel.debug.enabled", "false");
-                main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
-                main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
-                if (ignoreLoadingError) {
-                    // turn off bean method validator if ignore loading error
-                    main.addInitialProperty("camel.language.bean.validate", "false");
-                }
-            }
-        };
-        run.files = files;
-        run.executionLimitOptions.maxSeconds = 1;
-        run.mavenResolver = mavenResolver;
-        Integer exit;
         try {
-            exit = run.runTransform(ignoreLoadingError);
-        } catch (CliException | NoSuchFileException | FileNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            // a route that cannot be read, such as invalid YAML (the message says where): not a bug of the CLI
-            throw new CliException(CliExitCode.FAILURE, "Cannot transform the routes: " + e.getMessage(), e);
-        }
-        if (exit != null && exit != 0) {
-            return exit;
-        }
+            if (!compile && !resolvePlaceholders && TransformJavaRoutes.applies(files)) {
+                // Java routes read without compiling them: in milliseconds, and no code of the project runs
+                TransformJavaRoutes.Result result = TransformJavaRoutes.transform(files, format, target, uriAsParameters);
+                if (result.transformed()) {
+                    return printDump(target);
+                }
+                // a route the parser cannot read completely (a lambda, a value known only at runtime): compile them all
+            }
 
-        return printDump(target);
+            Run run = new Run() {
+                @Override
+                protected void doAddInitialProperty(KameletMain main) {
+                    main.addInitialProperty("camel.main.dumpRoutes", format);
+                    main.addInitialProperty("camel.main.dumpRoutesInclude",
+                            "routes,rests,routeConfigurations,beans,dataFormats");
+                    main.addInitialProperty("camel.main.dumpRoutesLog", "false");
+                    main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", Boolean.toString(resolvePlaceholders));
+                    main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", Boolean.toString(uriAsParameters));
+                    main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                    // turn debug off as this can otherwise include source location in dump
+                    main.addInitialProperty("camel.debug.enabled", "false");
+                    main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
+                    main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+                    if (ignoreLoadingError) {
+                        // turn off bean method validator if ignore loading error
+                        main.addInitialProperty("camel.language.bean.validate", "false");
+                    }
+                }
+            };
+            run.setCamelMain(getMain());
+            run.files = files;
+            run.setWorkDir(workDir);
+            run.executionLimitOptions.maxSeconds = 1;
+            run.mavenResolver = mavenResolver;
+            Integer exit;
+            try {
+                exit = run.runTransform(ignoreLoadingError);
+            } catch (CliException | NoSuchFileException | FileNotFoundException e) {
+                throw e;
+            } catch (Exception e) {
+                // a route that cannot be read, such as invalid YAML (the message says where): not a bug of the CLI
+                throw new CliException(CliExitCode.FAILURE, "Cannot transform the routes: " + e.getMessage(), e);
+            }
+            if (exit != null && exit != 0) {
+                return exit;
+            }
+
+            return printDump(target);
+        } finally {
+            PathUtils.deleteDirectory(workDir);
+        }
     }
 
     /**

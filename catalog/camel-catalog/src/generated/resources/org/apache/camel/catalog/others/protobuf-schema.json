@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "protobuf-schema",
+    "title": "Protobuf Schema",
+    "description": "Protobuf schemas as .proto text for the protobuf data format, without generated classes",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "dataformat,transformation",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-protobuf-schema",
+    "version": "4.24.0-SNAPSHOT"
+  }
+}

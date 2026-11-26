@@ -2,7 +2,7 @@
 :doctitle: Alibaba Object Storage Service (OSS)
 :shortname: alibaba-oss
 :artifactid: camel-alibaba-oss
-:description: Alibaba Cloud Object Storage Service (OSS) component
+:description: Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
@@ -44,30 +44,6 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-=== Message headers evaluated by the OSS producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAlibabaOssOperation` |`String` | Name of operation to invoke
-
-|`CamelAlibabaOssBucketName` |`String` | Bucket name to invoke operation on (overrides the URI path bucket name)
-
-|`CamelAlibabaOssObjectName` |`String` | Name of the object to be used in operation
-
-|`CamelAlibabaOssSourceBucketName` |`String` | Source bucket name for copy operations
-
-|`CamelAlibabaOssSourceObjectName` |`String` | Source object name for copy operations
-
-|`CamelAlibabaOssPrefix` |`String` | Prefix filter when listing objects
-
-|`CamelAlibabaOssMaxKeys` |`Integer` | Maximum number of keys returned when listing objects
-
-|=======================================================================
-
-If any of the above headers are set, they will override their corresponding query parameter or URI path value.
-
 === List of Supported OSS Operations
 
 - listBuckets
@@ -81,6 +57,8 @@ If any of the above headers are set, they will override their corresponding quer
 === Consumer
 
 The consumer polls objects from a bucket using `listObjectsV2`, downloads each object body, and optionally deletes objects after they have been processed when `deleteAfterRead` is enabled.
+The consumer deletes the object it consumed, whatever the route does with the `CamelAlibabaOssBucketName` and `CamelAlibabaOssObjectKey` headers.
+A route can set the bucket name header to write a copy of the object to another bucket.
 
 By default (`includeBody=true`) the consumer reads the content of each object into a `byte[]`, which is the body, so an object needs as much memory as its size.
 With `includeBody=false` the body is the `InputStream` of the content of the object instead, which the consumer closes when the exchange is done.

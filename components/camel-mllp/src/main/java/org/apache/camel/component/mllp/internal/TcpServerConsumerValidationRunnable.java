@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.mllp.MllpSocketException;
@@ -39,6 +40,8 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
     MllpTcpServerConsumer consumer;
+    // the consumer executor of the start that accepted the connection (null: the current one of the consumer)
+    private final ExecutorService consumerExecutor;
 
     private final String localAddress;
     private final String remoteAddress;
@@ -46,7 +49,17 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
 
     public TcpServerConsumerValidationRunnable(MllpTcpServerConsumer consumer, Socket clientSocket,
                                                MllpSocketBuffer mllpBuffer) {
+        this(consumer, clientSocket, mllpBuffer, null);
+    }
+
+    /**
+     * @param consumerExecutor the consumer executor of the start that accepted the connection, which serves it (when
+     *                         that start was stopped, it is shut down and the connection is reset)
+     */
+    public TcpServerConsumerValidationRunnable(MllpTcpServerConsumer consumer, Socket clientSocket,
+                                               MllpSocketBuffer mllpBuffer, ExecutorService consumerExecutor) {
         this.consumer = consumer;
+        this.consumerExecutor = consumerExecutor;
         // this.setName(createThreadName(clientSocket));
         this.clientSocket = clientSocket;
 
@@ -136,31 +149,39 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
             mllpBuffer.readFrom(clientSocket, Math.min(500, consumer.getConfiguration().getReceiveTimeout()),
                     consumer.getConfiguration().getReadTimeout());
             if (mllpBuffer.hasCompleteEnvelope() || mllpBuffer.hasStartOfBlock()) {
-                consumer.startConsumer(clientSocket, mllpBuffer);
+                startConsumer();
             } else if (!mllpBuffer.isEmpty()) {
                 // We have some leading out-of-band data but no START_OF_BLOCK
                 log.info("Ignoring out-of-band data on initial read [{} bytes]: {}", mllpBuffer.size(),
-                        mllpBuffer.toPrintFriendlyStringAndReset());
+                        mllpBuffer.toLoggableStringAndReset());
                 mllpBuffer.resetSocket(clientSocket);
             }
         } catch (MllpSocketException socketEx) {
             // TODO:  The socket is invalid for some reason
             if (!mllpBuffer.isEmpty()) {
                 log.warn("Exception encountered receiving complete initial message [{} bytes]: {}", mllpBuffer.size(),
-                        mllpBuffer.toPrintFriendlyStringAndReset());
+                        mllpBuffer.toLoggableStringAndReset());
             }
             mllpBuffer.resetSocket(clientSocket);
         } catch (SocketTimeoutException timeoutEx) {
             if (mllpBuffer.isEmpty()) {
                 log.debug("Initial read timed-out but no data was read - starting consumer");
-                consumer.startConsumer(clientSocket, mllpBuffer);
+                startConsumer();
             } else {
                 log.warn("Timeout receiving complete initial message on read [{} bytes]: {}", mllpBuffer.size(),
-                        mllpBuffer.toPrintFriendlyStringAndReset());
+                        mllpBuffer.toLoggableStringAndReset());
                 mllpBuffer.resetSocket(clientSocket);
             }
         } finally {
             Thread.currentThread().setName(originalThreadName);
+        }
+    }
+
+    private void startConsumer() {
+        if (consumerExecutor != null) {
+            consumer.startConsumer(clientSocket, mllpBuffer, consumerExecutor);
+        } else {
+            consumer.startConsumer(clientSocket, mllpBuffer);
         }
     }
 

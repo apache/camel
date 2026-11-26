@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -38,11 +39,14 @@ import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.plugin.PluginUpdate;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "self-update", description = "Checks for and installs updates to the Camel CLI launcher",
                    generateHelp = true,
@@ -65,8 +69,16 @@ import org.apache.camel.util.FileUtil;
                            "",
                            "--version switches the pin to another selector: SNAPSHOT, X.Y.Z-SNAPSHOT, one",
                            "nightly build (which never moves), LTS or X.Y. --version X.Y.Z installs that",
-                           "release without a pin." })
+                           "release without a pin.",
+                           "",
+                           "Once installed, the new Camel CLI (4.24 or newer) runs camel plugin update,",
+                           "which selects again the plugin releases that camel plugin add selected, for the",
+                           "new version. When --check finds a newer version, it reports what that would",
+                           "change. --skip-plugins leaves the plugins as they are." })
 public class SelfUpdateCommand extends CamelCommand {
+
+    // the first version of the Camel CLI with camel plugin update
+    private static final String PLUGIN_UPDATE_SINCE = "4.24.0";
 
     @Option(name = "version",
             description = "Install a specific version instead of the latest: X.Y.Z, the newest release of X.Y or"
@@ -74,8 +86,15 @@ public class SelfUpdateCommand extends CamelCommand {
                           + " one nightly build X.Y.Z-YYYYMMDD.HHMMSS-N (pinned)")
     String version;
 
-    @Option(name = "check", hasValue = false, description = "Only report whether a newer version is available")
+    @Option(name = "check", hasValue = false,
+            description = "Only report whether a newer version is available, and what camel plugin update would"
+                          + " change with it")
     boolean checkOnly;
+
+    @Option(name = "skip-plugins", hasValue = false,
+            description = "Do not run camel plugin update with the new version once installed (or, with --check, do not"
+                          + " report what it would change)")
+    boolean skipPlugins;
 
     private final ManifestFetcher fetcherOverride;
     private final InstallScriptFetcher scriptFetcherOverride;
@@ -83,18 +102,17 @@ public class SelfUpdateCommand extends CamelCommand {
     // Visible for testing: set to a short duration to avoid a 5-minute wait in tests
     public long processWaitTimeoutSeconds = 5 * 60;
 
-    public SelfUpdateCommand(CamelJBangMain main) {
-        this(main, null, null, null);
+    public SelfUpdateCommand() {
+        this(null, null, null);
     }
 
     // Visible for testing: SelfUpdateIntegrationTest (Task 8) points these at a local fixture instead of the real
-    // network / real install.sh|install.ps1 default base URL, and pins the delegated script's own environment
-    // (CAMEL_INSTALL_*, HOME/LOCALAPPDATA) to an isolated test HOME rather than the real machine's. Production
-    // callers (SelfUpdatePlugin) only ever use the public one-arg constructor, which passes null for all three -
-    // fromEnvironment() and the real process environment are used unmodified.
-    public SelfUpdateCommand(CamelJBangMain main, ManifestFetcher fetcherOverride, InstallScriptFetcher scriptFetcherOverride,
+    // network / real install.sh|install.ps1 default base URL, and pins the environment of the delegated script and of
+    // the installed CLI (CAMEL_INSTALL_*, HOME/LOCALAPPDATA) to an isolated test HOME rather than the real machine's.
+    // Production callers (SelfUpdatePlugin) only ever use the public one-arg constructor, which passes null for all
+    // three - fromEnvironment() and the real process environment are used unmodified.
+    public SelfUpdateCommand(ManifestFetcher fetcherOverride, InstallScriptFetcher scriptFetcherOverride,
                              Map<String, String> installerEnvironmentOverride) {
-        super(main);
         this.fetcherOverride = fetcherOverride;
         this.scriptFetcherOverride = scriptFetcherOverride;
         this.installerEnvironmentOverride = installerEnvironmentOverride;
@@ -190,6 +208,9 @@ public class SelfUpdateCommand extends CamelCommand {
             printer().println(newer
                     ? "A new version is available (" + running + " -> " + manifest.version() + ")"
                     : upToDate);
+            if (newer) {
+                checkPlugins(manifest.version(), manifest.version());
+            }
             return 0;
         }
 
@@ -204,13 +225,16 @@ public class SelfUpdateCommand extends CamelCommand {
         // actually decided on. For an X.Y or LTS pin this is the version the alias resolved to; the delegated run
         // (CAMEL_INSTALL_SELF_UPDATE=true) leaves the selector in the pin file untouched.
         int exit = runInstaller(manifest.version());
-        if (exit == 0 && selector != null) {
-            return writePin(selector.value());
+        if (exit != 0) {
+            return exit;
         }
-        if (exit == 0 && replacesPin) {
+        if (selector != null) {
+            exit = writePin(selector.value());
+        } else if (replacesPin) {
             // --version X.Y.Z, which leaves the nightly builds: back to following the releases
-            return writePin(null);
+            exit = writePin(null);
         }
+        updatePlugins(manifest.version(), manifest.version());
         return exit;
     }
 
@@ -267,6 +291,10 @@ public class SelfUpdateCommand extends CamelCommand {
                     ? "Camel CLI is already on the newest nightly build for " + Nightly.describe(selector) + " (" + current
                       + ")"
                     : "A new nightly build is available (" + current + " -> " + build + ")");
+            if (!same && newer) {
+                String snapshotVersion = Nightly.snapshotVersionOf(build);
+                checkPlugins(snapshotVersion, Nightly.releaseOf(snapshotVersion));
+            }
             printNote(releasedNote);
             return 0;
         }
@@ -283,9 +311,11 @@ public class SelfUpdateCommand extends CamelCommand {
         if (exit != 0) {
             return exit;
         }
+        exit = explicit ? writePin(selector) : 0;
+        updatePlugins(build, Nightly.releaseOf(Nightly.snapshotVersionOf(build)));
         printNote(releasedNote);
         printNote(maintenanceNote);
-        return explicit ? writePin(selector) : 0;
+        return exit;
     }
 
     private void printNote(String note) {
@@ -368,53 +398,15 @@ public class SelfUpdateCommand extends CamelCommand {
                             "-Version", targetVersion)
                     : List.of("/bin/sh", script.toString(), "--version", targetVersion);
 
-            ProcessBuilder pb = new ProcessBuilder(command);
-            pb.redirectErrorStream(true);
-            if (installerEnvironmentOverride != null) {
-                pb.environment().clear();
-                pb.environment().put("PATH", System.getenv("PATH"));
-                pb.environment().putAll(installerEnvironmentOverride);
-            }
-            // Tells install.sh/install.ps1 that the --version/-Version below is this command's own resolved
+            // Tells install.sh/install.ps1 that the --version/-Version above is this command's own resolved
             // target (TOCTOU-safety), not a human pinning a version - the script must not write or clear its
-            // pin-state file for this run. Set last so it can never be dropped by the override block above.
-            pb.environment().put("CAMEL_INSTALL_SELF_UPDATE", "true");
-            Process process = pb.start();
-            // Drain stdout in a separate thread to prevent the subprocess from blocking on a full pipe buffer in
-            // the gap before waitFor() returns. Then wait with a timeout to prevent an indefinitely stalled
-            // installer from hanging the CLI.
-            ExecutorService drainer = Executors.newSingleThreadExecutor(r -> {
-                Thread t = new Thread(r, "camel-self-update-drainer");
-                t.setDaemon(true);
-                return t;
-            });
-            Future<String> outputFuture = drainer
-                    .submit(() -> new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
-            try {
-                boolean finished = process.waitFor(processWaitTimeoutSeconds, TimeUnit.SECONDS);
-                if (!finished) {
-                    // Kill grandchildren first (curl/wget etc.) before the shell, so they release the pipe
-                    process.descendants().forEach(ProcessHandle::destroyForcibly);
-                    process.destroyForcibly();
-                    printer().printErr("installer timed out after " + processWaitTimeoutSeconds + " seconds");
-                    return CliExitCode.TIMEOUT;
-                }
-                int exit = process.exitValue();
-                // outputFuture.get() can time out when a grandchild (curl/wget) keeps the pipe open after the
-                // shell exits, or fail with an I/O error in the drainer thread. Either case is best-effort:
-                // the install already finished (process.exitValue() was called above), so treat the drain
-                // failure as non-fatal and print what we have.
-                try {
-                    String output = outputFuture.get(10, TimeUnit.SECONDS);
-                    printer().print(output);
-                } catch (TimeoutException | ExecutionException e) {
-                    // stdout drain timed out or failed — the installer already returned exit, so continue
-                    printer().print("installer finished, but its output could not be read: " + e.getMessage());
-                }
-                return exit;
-            } finally {
-                drainer.shutdownNow();
+            // pin-state file for this run.
+            Integer exit = runProcess("installer", command, Map.of("CAMEL_INSTALL_SELF_UPDATE", "true"));
+            if (exit == null) {
+                printer().printErr("installer timed out after " + processWaitTimeoutSeconds + " seconds");
+                return CliExitCode.TIMEOUT;
             }
+            return exit;
         } catch (SelfUpdateException e) {
             printer().printErr(e.getMessage());
             return 1;
@@ -423,6 +415,141 @@ public class SelfUpdateCommand extends CamelCommand {
             return 1;
         } finally {
             deleteRecursively(stagingDir);
+        }
+    }
+
+    // Runs camel plugin update with the Camel CLI just installed (the directory of the version, and its release): it
+    // selects the plugin releases built for its own version, which this CLI does not know before it is installed. Best
+    // effort: the CLI is installed and stays so, and a failure only prints a hint.
+    private void updatePlugins(String installed, String release) {
+        if (skipPlugins || !hasPlugins(pluginConfig()) || !hasPluginUpdate(release)) {
+            return;
+        }
+        String hint = "run 'camel plugin update' to update them";
+        Path launcher = InstallDetector.webInstallerVersionsRoot().resolve(installed).resolve("bin")
+                .resolve(FileUtil.isWindows() ? "camel.bat" : "camel.sh");
+        if (!Files.isRegularFile(launcher)) {
+            printer().printWarn("The plugins were not updated (" + launcher + " not found): " + hint);
+            return;
+        }
+        List<String> command = FileUtil.isWindows()
+                ? List.of("cmd.exe", "/c", launcher.toString(), "plugin", "update")
+                : List.of(launcher.toString(), "plugin", "update");
+        try {
+            // no update notice from the new CLI, which was just installed
+            Integer exit = runProcess("camel plugin update", command, Map.of("CAMEL_SELF_UPDATE_CHECK", "false"));
+            if (exit == null) {
+                printer().printWarn("The plugins were not updated (camel plugin update timed out after "
+                                    + processWaitTimeoutSeconds + " seconds): " + hint);
+            } else if (exit != 0) {
+                printer().printWarn("The plugins were not updated (camel plugin update exited with " + exit + "): "
+                                    + hint);
+            }
+        } catch (Exception e) {
+            printer().printWarn("The plugins were not updated (" + e.getMessage() + "): " + hint);
+        }
+    }
+
+    // For --check: what camel plugin update would change once the version (and its release) is installed, with the
+    // releases selected by this CLI for that version, without downloading the plugins or changing anything.
+    private void checkPlugins(String cliVersion, String release) {
+        Path config = pluginConfig();
+        if (skipPlugins || !hasPlugins(config) || !hasPluginUpdate(release)) {
+            return;
+        }
+        try {
+            PluginUpdate dryRun = getMain().command(new PluginUpdate());
+            dryRun.dryRunFor(cliVersion, config);
+            dryRun.doCall();
+        } catch (Exception e) {
+            printer().printWarn("Could not check the plugins: " + e.getMessage());
+        }
+    }
+
+    // Whether the Camel CLI of this release has camel plugin update; when it has not, the plugins are kept as they are.
+    private boolean hasPluginUpdate(String release) {
+        if (VersionHelper.compare(release, PLUGIN_UPDATE_SINCE) >= 0) {
+            return true;
+        }
+        printer().println("Note: Camel CLI " + release + " has no camel plugin update, so the plugins are kept as they"
+                          + " are");
+        return false;
+    }
+
+    // The plugin configuration of the new CLI, which runs with the environment of runProcess, or null when it cannot be
+    // told.
+    private Path pluginConfig() {
+        String env = installerEnvironmentOverride != null
+                ? installerEnvironmentOverride.get(PluginHelper.PLUGIN_CONFIG_ENV)
+                : System.getenv(PluginHelper.PLUGIN_CONFIG_ENV);
+        try {
+            return env != null && !env.isBlank()
+                    ? Path.of(env) : CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        } catch (InvalidPathException e) {
+            return null;
+        }
+    }
+
+    // Whether there are plugins to update. A configuration that cannot be read is left to camel plugin update to report.
+    private static boolean hasPlugins(Path pluginConfig) {
+        if (pluginConfig == null) {
+            return true;
+        }
+        try {
+            JsonObject config = PluginHelper.getPluginConfig(pluginConfig);
+            JsonObject plugins = config != null ? config.getMap("plugins") : null;
+            return plugins != null && !plugins.isEmpty();
+        } catch (RuntimeException e) {
+            return true;
+        }
+    }
+
+    // Runs a process of the update, and prints its output once it ends. The environment is added to the one of this
+    // process, or to the test override. Returns the exit code, or null when the process timed out (it is killed).
+    private Integer runProcess(String what, List<String> command, Map<String, String> environment) throws Exception {
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectErrorStream(true);
+        if (installerEnvironmentOverride != null) {
+            pb.environment().clear();
+            pb.environment().put("PATH", System.getenv("PATH"));
+            pb.environment().putAll(installerEnvironmentOverride);
+        }
+        // set last so it can never be dropped by the override block above
+        pb.environment().putAll(environment);
+        Process process = pb.start();
+        // Drain stdout in a separate thread to prevent the subprocess from blocking on a full pipe buffer in the gap
+        // before waitFor() returns. Then wait with a timeout to prevent an indefinitely stalled process from hanging
+        // the CLI.
+        ExecutorService drainer = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "camel-self-update-drainer");
+            t.setDaemon(true);
+            return t;
+        });
+        Future<String> outputFuture = drainer
+                .submit(() -> new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
+        try {
+            boolean finished = process.waitFor(processWaitTimeoutSeconds, TimeUnit.SECONDS);
+            if (!finished) {
+                // Kill grandchildren first (curl/wget etc.) before the shell, so they release the pipe
+                process.descendants().forEach(ProcessHandle::destroyForcibly);
+                process.destroyForcibly();
+                return null;
+            }
+            int exit = process.exitValue();
+            // outputFuture.get() can time out when a grandchild (curl/wget) keeps the pipe open after the shell
+            // exits, or fail with an I/O error in the drainer thread. Either case is best-effort: the process already
+            // finished (process.exitValue() was called above), so treat the drain failure as non-fatal and print what
+            // we have.
+            try {
+                String output = outputFuture.get(10, TimeUnit.SECONDS);
+                printer().print(output);
+            } catch (TimeoutException | ExecutionException e) {
+                // stdout drain timed out or failed — the process already returned exit, so continue
+                printer().print(what + " finished, but its output could not be read: " + e.getMessage());
+            }
+            return exit;
+        } finally {
+            drainer.shutdownNow();
         }
     }
 

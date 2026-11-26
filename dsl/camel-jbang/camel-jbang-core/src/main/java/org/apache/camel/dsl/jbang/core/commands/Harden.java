@@ -197,10 +197,6 @@ public class Harden extends CamelCommand {
         return httpClient;
     }
 
-    public Harden(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         if (!"text".equals(format) && !"markdown".equals(format)) {

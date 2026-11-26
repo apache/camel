@@ -32,7 +32,8 @@ import org.apache.camel.spi.Transformer;
 
 /**
  * Output data type represents Azure Storage Blob get blob response as CloudEvent V1. The data type sets Camel specific
- * CloudEvent headers on the exchange.
+ * CloudEvent headers on the exchange. The CloudEvent source is the name of the container, from the header the
+ * azure-storage-blob consumer sets, with the prefix {@code azure.storage.blob.}.
  */
 @DataTypeTransformer(name = "azure-storage-blob:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Azure Store Blob get blob information")
@@ -50,9 +51,9 @@ public class AzureStorageBlobCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.storage.blob.getBlob");
 
-        if (message.getHeaders().containsKey(BlobConstants.E_TAG)) {
+        if (message.getHeaders().containsKey(BlobConstants.CONSUMED_CONTAINER_NAME)) {
             headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
-                    "azure.storage.blob." + message.getHeader(BlobConstants.E_TAG, String.class));
+                    "azure.storage.blob." + message.getHeader(BlobConstants.CONSUMED_CONTAINER_NAME, String.class));
         }
 
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(BlobConstants.BLOB_NAME, String.class));

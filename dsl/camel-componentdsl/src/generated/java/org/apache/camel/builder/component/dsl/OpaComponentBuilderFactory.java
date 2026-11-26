@@ -80,12 +80,12 @@ public interface OpaComponentBuilderFactory {
          * expects a List body, evaluates one input document per element - each
          * element as the body, sharing the exchange's headers and properties -
          * and returns the per-element verdicts in the CamelOpaBatchDecision
-         * header, a List parallel to the input. An element whose evaluation
-         * failed is denied, unless failOpen is set and its decision point was
-         * unavailable; the batch is never allowed or denied as a whole because
-         * one element failed. Only for evaluationMode=rest: it saves the
-         * per-element HTTP round-trip via OPA's batch API, which has no meaning
-         * for in-process wasm.
+         * header, a list of booleans parallel to the input. An element whose
+         * evaluation failed is denied, unless failOpen is set and its decision
+         * point was unavailable; the batch is never allowed or denied as a
+         * whole because one element failed. Only for evaluationMode=rest: it
+         * saves the per-element HTTP round-trip via OPA's batch API, which has
+         * no meaning for in-process wasm.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -415,6 +415,26 @@ public interface OpaComponentBuilderFactory {
     
         
         /**
+         * How often, in milliseconds, to check the configured WASM resource for
+         * changed policy or data. Zero disables automatic reload. Replacements
+         * are validated before publication; failed reloads retain the active
+         * revision. This option applies only to wasm mode.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param policyReloadInterval the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder policyReloadInterval(long policyReloadInterval) {
+            doSetProperty("policyReloadInterval", policyReloadInterval);
+            return this;
+        }
+    
+        
+        /**
          * How many WebAssembly policy instances to pool in wasm mode. An
          * instance carries mutable state and is not thread-safe, so each
          * exchange borrows one; this bounds how many exchanges evaluate at
@@ -606,6 +626,7 @@ public interface OpaComponentBuilderFactory {
             case "healthCheckBundles": getOrCreateConfiguration((OpaComponent) component).setHealthCheckBundles((boolean) value); return true;
             case "inputExpression": getOrCreateConfiguration((OpaComponent) component).setInputExpression((org.apache.camel.Expression) value); return true;
             case "opaClient": getOrCreateConfiguration((OpaComponent) component).setOpaClient((com.styra.opa.OPAClient) value); return true;
+            case "policyReloadInterval": getOrCreateConfiguration((OpaComponent) component).setPolicyReloadInterval((long) value); return true;
             case "poolSize": getOrCreateConfiguration((OpaComponent) component).setPoolSize((int) value); return true;
             case "requestTimeout": getOrCreateConfiguration((OpaComponent) component).setRequestTimeout((long) value); return true;
             case "healthCheckConsumerEnabled": ((OpaComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;

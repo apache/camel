@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
+import com.google.maps.GeocodingApiRequest;
 import com.google.maps.GeolocationApi;
 import com.google.maps.errors.InvalidRequestException;
 import com.google.maps.errors.OverDailyLimitException;
@@ -35,6 +36,7 @@ import com.google.maps.model.GeolocationResult;
 import com.google.maps.model.LatLng;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +75,7 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
                 LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
 
                 LOG.debug("Geocode for lat/lng {}", latlng);
-                GeocodingResult[] results = GeocodingApi.reverseGeocode(context, latLng).await();
+                GeocodingResult[] results = withLanguage(GeocodingApi.reverseGeocode(context, latLng)).await();
 
                 LOG.debug("Geocode response {}", Arrays.toString(results));
 
@@ -89,7 +91,7 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
                 } else {
 
                     LOG.debug("Geocode for address {}", address);
-                    GeocodingResult[] results = GeocodingApi.geocode(context, address).await();
+                    GeocodingResult[] results = withLanguage(GeocodingApi.geocode(context, address)).await();
                     LOG.debug("Geocode response {}", Arrays.toString(results));
 
                     if (results != null) {
@@ -129,13 +131,21 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
 
         // address - reverse geocode
         LOG.debug("Geocode - reverse geocode for location {}", resLatlng);
-        GeocodingResult[] results = GeocodingApi.reverseGeocode(context, result.location).await();
+        GeocodingResult[] results = withLanguage(GeocodingApi.reverseGeocode(context, result.location)).await();
 
         LOG.debug("Geocode response {}", Arrays.toString(results));
 
         if (results != null) {
             extractGeoResult(results, exchange);
         }
+    }
+
+    private GeocodingApiRequest withLanguage(GeocodingApiRequest request) {
+        String language = endpoint.getLanguage();
+        if (ObjectHelper.isNotEmpty(language)) {
+            request.language(language);
+        }
+        return request;
     }
 
     private void setLatLngToExchangeHeader(LatLng location, Exchange exchange) {

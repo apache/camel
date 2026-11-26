@@ -42,6 +42,9 @@ class DoclingOcrHeadersTest extends CamelTestSupport {
     private static final String OCR_OFF = "docling:convert?operation=CONVERT_TO_MARKDOWN&enableOCR=false&ocrLanguage=de";
     private static final String OCR_ON_IN_FRENCH
             = "docling:convert?operation=CONVERT_TO_MARKDOWN&doOcr=true&ocrLanguage=fr";
+    private static final String FRENCH = "docling:convert?operation=CONVERT_TO_MARKDOWN&ocrLanguage=fr";
+    private static final String DO_OCR_OFF_IN_FRENCH
+            = "docling:convert?operation=CONVERT_TO_MARKDOWN&doOcr=false&ocrLanguage=fr";
 
     // --- the docling CLI command
 
@@ -132,6 +135,68 @@ class DoclingOcrHeadersTest extends CamelTestSupport {
 
         assertThat(options.getDoOcr()).isFalse();
         assertThat(options.getOcrLang()).isNullOrEmpty();
+    }
+
+    // --- CAMEL-27202: the ocrLanguage option of the endpoint, without doOcr
+
+    @Test
+    void theLanguageOfTheEndpointTurnsOnOcrInTheServeRequest() throws Exception {
+        // doOcr is not set and enableOCR is at its default: a configured language is asking for OCR, as the header is
+        ConvertDocumentOptions options = serveOptions(FRENCH, null, null);
+
+        assertThat(options.getDoOcr()).isTrue();
+        assertThat(options.getOcrLang()).containsExactly("fr");
+    }
+
+    @Test
+    void theLanguageHeaderWinsOverTheLanguageOfTheEndpointInTheServeRequest() throws Exception {
+        ConvertDocumentOptions options = serveOptions(FRENCH, null, "es");
+
+        assertThat(options.getDoOcr()).isTrue();
+        assertThat(options.getOcrLang()).containsExactly("es");
+    }
+
+    @Test
+    void theLanguageOfTheEndpointDoesNotTurnOnOcrThatEnableOcrDisabled() throws Exception {
+        ConvertDocumentOptions options = serveOptions(OCR_OFF, null, null);
+
+        assertThat(options.getDoOcr()).isFalse();
+        assertThat(options.getOcrLang()).isNullOrEmpty();
+    }
+
+    @Test
+    void theLanguageOfTheEndpointDoesNotTurnOnOcrThatDoOcrDisabled() throws Exception {
+        ConvertDocumentOptions options = serveOptions(DO_OCR_OFF_IN_FRENCH, null, null);
+
+        assertThat(options.getDoOcr()).isFalse();
+        assertThat(options.getOcrLang()).isNullOrEmpty();
+    }
+
+    @Test
+    void theEnableOcrHeaderTurnsOffOcrThatTheLanguageOfTheEndpointTurnedOn() throws Exception {
+        ConvertDocumentOptions options = serveOptions(FRENCH, false, null);
+
+        assertThat(options.getDoOcr()).isFalse();
+        assertThat(options.getOcrLang()).isNullOrEmpty();
+    }
+
+    @Test
+    void theEnableOcrHeaderAloneLeavesTheLanguageToTheServer() throws Exception {
+        // ocrLanguage has no default, so en is no longer sent in place of the server's own default languages
+        ConvertDocumentOptions options = serveOptions(DEFAULT, true, null);
+
+        assertThat(options.getDoOcr()).isTrue();
+        assertThat(options.getOcrLang()).isNullOrEmpty();
+    }
+
+    @Test
+    void theLanguageOfTheEndpointReachesTheCli() throws Exception {
+        assertThat(commandFor(FRENCH, null, null)).contains("--ocr-lang", "fr").doesNotContain("--no-ocr");
+    }
+
+    @Test
+    void theCliKeepsEnglishWhenNoLanguageIsConfigured() throws Exception {
+        assertThat(commandFor(DEFAULT, true, null)).contains("--ocr-lang", DoclingProducer.DEFAULT_CLI_OCR_LANGUAGE);
     }
 
     // --- the language is docling's own identifier, so it is passed on as it is

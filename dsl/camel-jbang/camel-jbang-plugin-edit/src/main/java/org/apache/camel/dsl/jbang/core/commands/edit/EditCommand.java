@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.jline.builtins.ClasspathResourceUtil;
 import org.jline.builtins.ConfigurationPath;
 import org.jline.builtins.Nano;
@@ -38,10 +37,6 @@ public class EditCommand extends CamelCommand {
     private Path filePath; // Defined only for file path completion; the field never used
     @Argument(required = true, description = "Name of file", paramLabel = "file")
     private String file;
-
-    public EditCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

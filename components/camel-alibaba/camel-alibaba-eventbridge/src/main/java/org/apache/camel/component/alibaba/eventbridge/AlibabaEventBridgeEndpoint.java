@@ -65,13 +65,13 @@ public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
                             + " x-eventbridge-regionId of each request. Not used when the eventBridgeClient option is set or"
                             + " autowired.",
               displayName = "Region")
-    @Metadata(required = true)
     private String region;
 
     @UriParam(description = "The endpoint of EventBridge, which is a host name without http:// or https://. The region option"
                             + " does not determine the endpoint, so this option is required. Not used when the"
                             + " eventBridgeClient option is set or autowired.",
               displayName = "Endpoint")
+    @Metadata(required = true)
     private String endpoint;
 
     @UriParam(description = "The AccessKey ID of the AccessKey pair for the requests that the producer sends to EventBridge. If"
@@ -175,7 +175,7 @@ public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
                             + " these options. It creates this client when the producer processes its first message.",
               displayName = "EventBridge Client", label = "advanced")
     @Metadata(autowired = true)
-    private EventBridgeClient eventBridgeClient;
+    private volatile EventBridgeClient eventBridgeClient;
 
     private boolean autowiredEventBridgeClient;
     private EventSourceCache eventSourceCache;
@@ -199,11 +199,24 @@ public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
     }
 
     public EventBridgeClient initClient() {
-        if (eventBridgeClient != null) {
-            return eventBridgeClient;
+        EventBridgeClient answer = eventBridgeClient;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = eventBridgeClient;
+                if (answer == null) {
+                    answer = createClient();
+                    eventBridgeClient = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        eventBridgeClient = AlibabaEventBridgeUtils.createClient(this);
-        return eventBridgeClient;
+        return answer;
+    }
+
+    EventBridgeClient createClient() {
+        return AlibabaEventBridgeUtils.createClient(this);
     }
 
     @Override
@@ -216,8 +229,13 @@ public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        if (eventBridgeClient != null && !autowiredEventBridgeClient) {
-            eventBridgeClient = null;
+        lock.lock();
+        try {
+            if (eventBridgeClient != null && !autowiredEventBridgeClient) {
+                eventBridgeClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         if (eventSourceCache != null) {
             eventSourceCache.clear();
@@ -359,7 +377,12 @@ public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
     }
 
     public void setEventBridgeClient(EventBridgeClient eventBridgeClient) {
-        this.eventBridgeClient = eventBridgeClient;
-        this.autowiredEventBridgeClient = eventBridgeClient != null;
+        lock.lock();
+        try {
+            this.eventBridgeClient = eventBridgeClient;
+            this.autowiredEventBridgeClient = eventBridgeClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 }

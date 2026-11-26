@@ -153,12 +153,13 @@ class ListTimelineTest extends ProcessCommandTestSupport {
     }
 
     private ListTimeline command(JsonObject answer) {
-        ListTimeline cmd = new ListTimeline(new CamelJBangMain().withPrinter(printer)) {
+        ListTimeline cmd = new ListTimeline() {
             @Override
             JsonObject loadTimeline(long pid, String routeId) {
                 return answer;
             }
         };
+        cmd.setCamelMain(new CamelJBangMain().withPrinter(printer));
         cmd.sort = "since";
         return cmd;
     }

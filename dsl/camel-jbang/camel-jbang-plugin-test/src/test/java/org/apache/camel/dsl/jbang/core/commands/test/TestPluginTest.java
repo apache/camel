@@ -18,6 +18,8 @@
 package org.apache.camel.dsl.jbang.core.commands.test;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
@@ -29,6 +31,7 @@ import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
+import org.citrusframework.jbang.cli.CitrusJBangMain;
 import org.citrusframework.spi.Resources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -225,6 +228,38 @@ class TestPluginTest {
     }
 
     @Test
+    public void shouldDetectDependenciesWhenTheContextClassLoaderCannotSeeCitrus() throws IOException {
+        // camel export and camel dependency list run with the class loader of the CLI as the context class loader,
+        // which cannot see the citrus-jbang JAR of the plugin, where the code analyzer has its catalog (CAMEL-27341)
+        Path testDir = Path.of(".").resolve("test");
+        Files.createDirectories(testDir);
+        Path yamlFile = testDir.resolve("cli-loader.citrus.it.yaml");
+        Thread thread = Thread.currentThread();
+        ClassLoader tccl = thread.getContextClassLoader();
+        try (URLClassLoader cli = new URLClassLoader(new URL[0], null)) {
+            Files.writeString(yamlFile, """
+                    name: cli-loader
+                    actions:
+                      - send:
+                          endpoint: "kafka:myTopic"
+                    """);
+            Assertions.assertNull(cli.getResource("citrus-catalog/citrus/citrus-catalog-aggregate-endpoints.json"),
+                    "The class loader of the test must not see the catalog of the code analyzer");
+
+            thread.setContextClassLoader(cli);
+            Set<String> deps = new TestPluginExporter().getDependencies(RuntimeType.quarkus);
+
+            Assertions.assertTrue(deps.contains("mvn@test:org.citrusframework:citrus-kafka:${citrus.version}"),
+                    "Should auto-detect citrus-kafka from kafka endpoint");
+            Assertions.assertSame(cli, thread.getContextClassLoader(), "Should restore the context class loader");
+        } finally {
+            thread.setContextClassLoader(tccl);
+            Files.deleteIfExists(yamlFile);
+            Files.deleteIfExists(testDir);
+        }
+    }
+
+    @Test
     public void shouldNotAddExtraDepsWithoutMatchingActions() throws IOException {
         Path testDir = Path.of(".").resolve("test");
         Files.createDirectories(testDir);
@@ -376,6 +411,46 @@ class TestPluginTest {
             Files.deleteIfExists(yamlFile);
             Files.deleteIfExists(testDir);
         }
+    }
+
+    @Test
+    public void shouldUseTestAgentInCommandTree() {
+        CamelJBangMain main = createCamelJBangMain();
+        CommandTree root = new CommandTree(main);
+        TestPlugin plugin = new TestPlugin();
+        plugin.customize(root, main);
+
+        CommandTree agentTree = root.getSubcommands().get("test")
+                .getSubcommands().get("agent");
+        Assertions.assertNotNull(agentTree, "test agent command should be registered");
+        Assertions.assertInstanceOf(TestAgent.class, agentTree.getCommand(),
+                "agent command should be TestAgent, not the plain Citrus Agent");
+    }
+
+    @Test
+    public void shouldUseTestAgentStartInCommandTree() {
+        CamelJBangMain main = createCamelJBangMain();
+        CommandTree root = new CommandTree(main);
+        TestPlugin plugin = new TestPlugin();
+        plugin.customize(root, main);
+
+        CommandTree startTree = root.getSubcommands().get("test")
+                .getSubcommands().get("agent")
+                .getSubcommands().get("start");
+        Assertions.assertNotNull(startTree, "test agent start command should be registered");
+        Assertions.assertInstanceOf(TestAgentStart.class, startTree.getCommand(),
+                "agent start command should be TestAgentStart, not the plain Citrus AgentStart");
+    }
+
+    @Test
+    public void testAgentGetCommandsShouldReturnTestAgentStart() {
+        CitrusJBangMain citrus = new CitrusJBangMain();
+        TestAgent agent = new TestAgent(citrus);
+
+        boolean hasTestAgentStart = agent.getCommands().stream()
+                .anyMatch(cmd -> cmd instanceof TestAgentStart);
+        Assertions.assertTrue(hasTestAgentStart,
+                "TestAgent.getCommands() must return TestAgentStart so aesh dispatches to it");
     }
 
     /**

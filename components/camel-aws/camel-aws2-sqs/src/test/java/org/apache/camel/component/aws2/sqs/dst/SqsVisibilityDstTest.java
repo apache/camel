@@ -25,7 +25,7 @@ import org.apache.camel.test.dst.DstTest;
  * short polling and faults of the SQS calls: a message the consumer holds must not be delivered again. Regression test
  * for CAMEL-25700 (apache/camel#27985): before that fix 1397 of 5000 seeds fail. The world was written by Claus Ibsen
  * for CAMEL-25738. A failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds;
- * {@code -Ddst.sqs.visibilityTimeouts=1} shows CAMEL-25737.
+ * {@code -Ddst.sqs.visibilityTimeouts=2,3} runs only the short visibility timeouts.
  */
 @DstInstrument("org.apache.camel.component.aws2.sqs")
 class SqsVisibilityDstTest {

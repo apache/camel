@@ -159,10 +159,6 @@ public class Debug extends Run {
     private final AtomicBoolean waitForUser = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong();
 
-    public Debug(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         // the debugger reads its commands from the terminal; skip the check in background mode

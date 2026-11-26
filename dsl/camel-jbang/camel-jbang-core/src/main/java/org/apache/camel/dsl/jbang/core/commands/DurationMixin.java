@@ -28,7 +28,7 @@ public class DurationMixin {
     @Option(name = "duration", description = "How long to keep watching or following, in millis or as a duration such as 30s"
                                              + " (default: until Enter is pressed)",
             converter = TimeoutConverter.class)
-    long duration;
+    public long duration;
 
     /**
      * How long to keep going, in millis, or 0 to keep going until Enter is pressed.

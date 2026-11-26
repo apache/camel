@@ -84,7 +84,7 @@ class TransformTest extends CamelCommandBaseTestSupport {
     }
 
     private TransformRoute createCommand(String[] files, String... args) {
-        TransformRoute command = new TransformRoute(new CamelJBangMain());
+        TransformRoute command = new CamelJBangMain().command(new TransformRoute());
 
         CommandLineTestHelper.parse(command, "--format=yaml");
         if (args != null) {

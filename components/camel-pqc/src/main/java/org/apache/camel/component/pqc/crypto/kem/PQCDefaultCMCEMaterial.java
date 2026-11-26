@@ -26,6 +26,13 @@ import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
+/**
+ * Default key material for Classic McEliece.
+ *
+ * @deprecated Classic McEliece is believed to be unsafe to use, and Bouncy Castle deprecated it in 1.87 and will remove
+ *             it in a future release. Use ML-KEM instead.
+ */
+@Deprecated(since = "4.24")
 public class PQCDefaultCMCEMaterial {
 
     public static final KeyPair keyPair;

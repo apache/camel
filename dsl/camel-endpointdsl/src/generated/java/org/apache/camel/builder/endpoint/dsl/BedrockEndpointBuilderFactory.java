@@ -841,7 +841,8 @@ public interface BedrockEndpointBuilderFactory {
             return "CamelAwsBedrockChunkCount";
         }
         /**
-         * The conversation messages for Converse API.
+         * The conversation messages for Converse API. When not set, the body as
+         * text is sent as one user message.
          * 
          * The option is a: {@code
          * List<software.amazon.awssdk.services.bedrockruntime.model.Message>}
@@ -975,7 +976,8 @@ public interface BedrockEndpointBuilderFactory {
             return "CamelAwsBedrockGuardrailIdentifier";
         }
         /**
-         * The content blocks for ApplyGuardrail operation.
+         * The content blocks for ApplyGuardrail operation. When not set, the
+         * body as text is checked.
          * 
          * The option is a: {@code
          * List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock>} type.

@@ -19,14 +19,16 @@
         "file",
         "pojo"
       ],
-      "description": "Needs the Protobuf schema in the X-Content-Schema exchange property: a Json object or array as text, Protobuf binary, a JsonNode or a POJO; a Map or a null body fail"
+      "description": "Needs the Protobuf schema in the X-Content-Schema exchange property: a Json object or array as text, Protobuf binary, a JsonNode or a POJO; a Map or a null body fail. Bytes or a stream with the Content-Type application\/protobuf or protobuf\/binary are Protobuf binary already, and are kept as they are, without the schema"
     },
     "transformerOut": {
       "carriers": [
-        "bytes"
+        "bytes",
+        "stream"
       ],
       "javaType": "byte[]",
-      "format": "binary"
+      "format": "binary",
+      "description": "Protobuf binary as bytes; a body that is Protobuf binary already is kept, also a stream, with its Content-Type"
     }
   }
 }

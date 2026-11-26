@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 class RunDirectoryTest {
 
     private static Run run(String... args) {
-        Run command = new Run(new CamelJBangMain());
+        Run command = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

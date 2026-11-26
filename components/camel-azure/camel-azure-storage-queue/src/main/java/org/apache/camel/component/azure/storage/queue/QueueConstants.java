@@ -45,6 +45,11 @@ public final class QueueConstants {
     public static final String TIME_NEXT_VISIBLE = HEADER_PREFIX + "TimeNextVisible";
     @Metadata(description = "The number of times the message has been dequeued.", javaType = "long")
     public static final String DEQUEUE_COUNT = HEADER_PREFIX + "DequeueCount";
+    @Metadata(label = "consumer",
+              description = "The name of the queue the message was received from. It is not the CamelAzureStorageQueueName"
+                            + " header, which overrides the queue of a producer.",
+              javaType = "String")
+    public static final String CONSUMED_QUEUE_NAME = HEADER_PREFIX + "ConsumedQueueName";
     // headers to be retrieved
     @Metadata(label = "producer",
               description = "(All) Specify the producer operation to execute, please see the doc on this page related to producer operation.",

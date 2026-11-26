@@ -49,15 +49,16 @@ public enum PQCAlgorithmId {
     SHA512_WITH_RSA(0x0108, "SHA512withRSA"),
 
     // PQC signature algorithms (0x0200-0x02FF)
+    // Retired IDs -- must never be reused:
+    //   0x0206 was DILITHIUM (shipped in 4.19.0, algorithm renamed upstream to ML-DSA)
+    //   0x0208 was SPHINCSPLUS (shipped in 4.19.0, algorithm renamed upstream to SLH-DSA)
+    //   0x0209 was PICNIC (shipped in 4.19.0, algorithm dropped upstream)
     ML_DSA(0x0201, "ML-DSA"),
     SLH_DSA(0x0202, "SLH-DSA"),
     LMS(0x0203, "LMS"),
     XMSS(0x0204, "XMSS"),
     XMSSMT(0x0205, "XMSSMT"),
-    DILITHIUM(0x0206, "DILITHIUM"),
     FALCON(0x0207, "FALCON"),
-    SPHINCSPLUS(0x0208, "SPHINCSPLUS"),
-    PICNIC(0x0209, "PICNIC"),
     MAYO(0x020A, "Mayo"),
     SNOVA(0x020B, "Snova"),
 
@@ -69,16 +70,21 @@ public enum PQCAlgorithmId {
     X448(0x0305, "X448"),
 
     // PQC KEM algorithms (0x0400-0x04FF)
+    // Retired IDs -- must never be reused:
+    //   0x040A was KYBER (shipped in 4.19.0, algorithm renamed upstream to ML-KEM)
     ML_KEM(0x0401, "ML-KEM"),
     BIKE(0x0402, "BIKE"),
     HQC(0x0403, "HQC"),
+    /**
+     * @deprecated Classic McEliece is believed to be unsafe to use, see {@link PQCKeyEncapsulationAlgorithms#CMCE}.
+     */
+    @Deprecated(since = "4.24")
     CMCE(0x0404, "CMCE"),
     SABER(0x0405, "SABER"),
-    FRODO(0x0406, "FRODO"),
+    FRODO(0x0406, "FrodoKEM"),
     NTRU(0x0407, "NTRU"),
     NTRU_LPRIME(0x0408, "NTRULPRime"),
     SNTRU_PRIME(0x0409, "SNTRUPrime"),
-    KYBER(0x040A, "KYBER"),
 
     // Symmetric encryption algorithms (0x0500-0x05FF)
     AES(0x0501, "AES"),
@@ -99,7 +105,9 @@ public enum PQCAlgorithmId {
     static {
         for (PQCAlgorithmId alg : values()) {
             BY_ID.put(alg.id, alg);
-            BY_JCA_NAME.put(alg.jcaName.toLowerCase(), alg);
+            // Use putIfAbsent so that the first (canonical) constant for a given JCA name wins and
+            // deprecated aliases added later do not silently shadow it.
+            BY_JCA_NAME.putIfAbsent(alg.jcaName.toLowerCase(), alg);
         }
     }
 

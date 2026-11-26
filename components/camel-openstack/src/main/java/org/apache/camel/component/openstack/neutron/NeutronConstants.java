@@ -19,6 +19,7 @@ package org.apache.camel.component.openstack.neutron;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.24")
 public final class NeutronConstants extends OpenstackConstants {
 
     public static final String NEUTRON_NETWORK_SUBSYSTEM = "networks";

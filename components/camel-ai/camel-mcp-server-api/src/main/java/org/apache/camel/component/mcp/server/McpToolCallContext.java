@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.component.ai.tool.AiToolConstants;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 
 /**
@@ -75,23 +76,23 @@ public record McpToolCallContext(
     /**
      * Exchange property under which the bridge stamps {@link #principalName()} on the tool exchange: the
      * runtime-neutral caller name, so a tool route (or its {@link org.apache.camel.spi.AuthorizationPolicy}) can
-     * authorize on a stable identity via {@code exchangeProperty.CamelMcpSecurityPrincipalName}, regardless of the MCP
-     * server runtime. Not set when there is no principal or no name could be determined.
+     * authorize on a stable identity via {@code exchangeProperty.CamelAiToolSecurityPrincipalName}, regardless of the
+     * MCP server runtime. Not set when there is no principal or no name could be determined.
      *
      * @since 4.24
      */
-    public static final String SECURITY_PRINCIPAL_NAME_PROPERTY = "CamelMcpSecurityPrincipalName";
+    public static final String SECURITY_PRINCIPAL_NAME_PROPERTY = AiToolConstants.SECURITY_PRINCIPAL_NAME_PROPERTY;
 
     /**
      * Exchange property under which the bridge stamps {@link #principalRoles()} on the tool exchange: the
      * runtime-neutral caller role names (a {@code Collection<String>}), so a tool route (or its
      * {@link org.apache.camel.spi.AuthorizationPolicy}) can authorize on stable roles via
-     * {@code exchangeProperty.CamelMcpSecurityPrincipalRoles}, regardless of the MCP server runtime. Not set when there
-     * is no principal or no roles could be determined.
+     * {@code exchangeProperty.CamelAiToolSecurityPrincipalRoles}, regardless of the MCP server runtime. Not set when
+     * there is no principal or no roles could be determined.
      *
      * @since 4.24
      */
-    public static final String SECURITY_PRINCIPAL_ROLES_PROPERTY = "CamelMcpSecurityPrincipalRoles";
+    public static final String SECURITY_PRINCIPAL_ROLES_PROPERTY = AiToolConstants.SECURITY_PRINCIPAL_ROLES_PROPERTY;
 
     /** Exchange property containing the validated OAuth subject. */
     public static final String OAUTH_SUBJECT_PROPERTY = "CamelMcpOAuthSubject";

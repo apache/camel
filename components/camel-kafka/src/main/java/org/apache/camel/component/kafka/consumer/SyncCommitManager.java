@@ -32,9 +32,11 @@ import org.slf4j.LoggerFactory;
 public class SyncCommitManager extends AbstractCommitManager {
     private static final Logger LOG = LoggerFactory.getLogger(SyncCommitManager.class);
 
+    // the offsets of the last processed records
     private final OffsetCache offsetCache = new OffsetCache();
     private final Consumer<?, ?> consumer;
     private final StateRepository<String, String> offsetRepository;
+    private final boolean manualCommit;
 
     public SyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         super(consumer, kafkaConsumer, threadId, printableTopic);
@@ -42,6 +44,7 @@ public class SyncCommitManager extends AbstractCommitManager {
         this.consumer = consumer;
 
         offsetRepository = configuration.getOffsetRepository();
+        manualCommit = configuration.isAllowManualCommit();
     }
 
     @Override
@@ -54,6 +57,20 @@ public class SyncCommitManager extends AbstractCommitManager {
 
     @Override
     public void commit(TopicPartition partition) {
+        if (manualCommit) {
+            // a manual commit of the route (KafkaManualCommit.commit()) is committed at once (forceCommit), so nothing
+            // is left to commit. The last processed record is not committed: the route may still hold it, for example
+            // in an aggregation group that is not complete
+            LOG.debug("Not committing the last processed offset of {} from thread {}: the route commits manually",
+                    partition, threadId);
+            return;
+        }
+
+        commitProcessedOffset(partition);
+    }
+
+    @Override
+    public void commitProcessedOffset(TopicPartition partition) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Auto commitSync from thread {} from topic {}", threadId, partition.topic());
         }
@@ -84,5 +101,10 @@ public class SyncCommitManager extends AbstractCommitManager {
     @Override
     public void recordOffset(TopicPartition partition, long partitionLastOffset) {
         offsetCache.recordOffset(partition, partitionLastOffset);
+    }
+
+    @Override
+    public void discardRecordedOffset(TopicPartition partition) {
+        offsetCache.remove(partition);
     }
 }

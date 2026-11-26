@@ -52,7 +52,7 @@ class CatalogDevConsoleTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogDevConsole createCommand() {
-        CatalogDevConsole command = new CatalogDevConsole(new CamelJBangMain().withPrinter(printer));
+        CatalogDevConsole command = new CamelJBangMain().withPrinter(printer).command(new CatalogDevConsole());
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
         command.mavenResolver = new MavenResolverMixin();

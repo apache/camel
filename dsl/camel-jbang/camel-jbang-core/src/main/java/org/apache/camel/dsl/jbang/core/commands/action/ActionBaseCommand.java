@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
@@ -50,10 +49,6 @@ abstract class ActionBaseCommand extends CamelCommand {
 
     /** The parts of Java sources the parser could not read, when the routes were read from Java sources. */
     private List<String> unreadSourceParts;
-
-    protected ActionBaseCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     protected static JsonObject getJsonObject(Path outputFile) {
         return getJsonObject(outputFile, 10000);
@@ -291,7 +286,7 @@ abstract class ActionBaseCommand extends CamelCommand {
             return dumpJavaRoutes(sourceFiles, target) ? new SourceDump(workDir, bootStart) : null;
         }
 
-        Run run = new Run(getMain()) {
+        Run run = new Run() {
             @Override
             protected void doAddInitialProperty(KameletMain main) {
                 main.addInitialProperty("camel.main.dumpRoutes", "json");
@@ -307,7 +302,9 @@ abstract class ActionBaseCommand extends CamelCommand {
                 }
             }
         };
+        run.setCamelMain(getMain());
         run.files = sourceFiles;
+        run.setWorkDir(workDir);
         // the routes are dumped while Camel starts, and a transform run stops once Camel has started
         // (camel.main.durationMaxSeconds=-1): a run of a fixed second only made each diagram a second slower
         int exit = run.runTransform(ignoreLoadingError);

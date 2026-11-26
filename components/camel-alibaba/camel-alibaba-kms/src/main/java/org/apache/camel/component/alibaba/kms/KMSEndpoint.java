@@ -66,9 +66,9 @@ public class KMSEndpoint extends DefaultEndpoint {
     private String operation;
 
     @UriParam(description = "The region ID of KMS, for example cn-hangzhou. Only used when the endpoint option is not set, to"
-                            + " build the endpoint of KMS. Not used when the kmsClient option is set or autowired.",
+                            + " build the endpoint of KMS. One of the two is required, unless the kmsClient option is set or"
+                            + " autowired, which uses neither.",
               displayName = "Region")
-    @Metadata(required = true)
     private String region;
 
     @UriParam(description = "The endpoint of KMS, which is a host name without http:// or https://. The producer sends requests"
@@ -123,7 +123,7 @@ public class KMSEndpoint extends DefaultEndpoint {
                             + " this option for a request that the producer sends. If that header is not set, an exchange"
                             + " property of the same name replaces this option. If none of the three is set, the producer adds"
                             + " no key spec to the request.",
-              displayName = "Key Spec")
+              displayName = "Key Spec", enums = "AES_256,AES_128")
     private String keySpec;
 
     @UriParam(description = "The number of bytes of the data key for generateDataKey. The value must be from 1 to 1024. The"
@@ -139,7 +139,7 @@ public class KMSEndpoint extends DefaultEndpoint {
                             + " this client when the producer processes its first message.",
               displayName = "KMS Client", label = "advanced")
     @Metadata(autowired = true)
-    private Client kmsClient;
+    private volatile Client kmsClient;
 
     private boolean autowiredKmsClient;
 
@@ -162,17 +162,35 @@ public class KMSEndpoint extends DefaultEndpoint {
     }
 
     public Client initClient() throws Exception {
-        if (kmsClient != null) {
-            return kmsClient;
+        Client answer = kmsClient;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = kmsClient;
+                if (answer == null) {
+                    answer = createClient();
+                    kmsClient = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        kmsClient = KMSUtils.createClient(this);
-        return kmsClient;
+        return answer;
+    }
+
+    Client createClient() throws Exception {
+        return KMSUtils.createClient(this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (kmsClient != null && !autowiredKmsClient) {
-            kmsClient = null;
+        lock.lock();
+        try {
+            if (kmsClient != null && !autowiredKmsClient) {
+                kmsClient = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -270,7 +288,12 @@ public class KMSEndpoint extends DefaultEndpoint {
     }
 
     public void setKmsClient(Client kmsClient) {
-        this.kmsClient = kmsClient;
-        this.autowiredKmsClient = kmsClient != null;
+        lock.lock();
+        try {
+            this.kmsClient = kmsClient;
+            this.autowiredKmsClient = kmsClient != null;
+        } finally {
+            lock.unlock();
+        }
     }
 }

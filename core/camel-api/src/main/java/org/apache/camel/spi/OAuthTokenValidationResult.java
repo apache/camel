@@ -80,7 +80,14 @@ public final class OAuthTokenValidationResult {
         /**
          * The token audience does not match the expected audience.
          */
-        INVALID_AUDIENCE
+        INVALID_AUDIENCE,
+        /**
+         * The token does not meet the step-up authentication requirements (RFC 9470): the {@code acr} claim does not
+         * match a required value or the user authentication is older than allowed by {@code max-auth-age-seconds}.
+         *
+         * @since 4.24
+         */
+        INSUFFICIENT_USER_AUTHENTICATION
     }
 
     private final boolean valid;

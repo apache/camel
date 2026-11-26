@@ -121,6 +121,7 @@ public class JaxbDataFormat extends ServiceSupport
     // partial support
     private QName partNamespace;
     private Class<?> partClass;
+    private boolean allowPartClassFromHeader;
     private Map<String, String> namespacePrefix;
     private JaxbNamespacePrefixMapper namespacePrefixMapper;
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
@@ -211,8 +212,12 @@ public class JaxbDataFormat extends ServiceSupport
 
         Object element = graph;
         QName partNamespaceOnDataFormat = getPartNamespace();
-        String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
-        String partNamespaceFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_NAMESPACE, String.class);
+        String partClassFromHeader = null;
+        String partNamespaceFromHeader = null;
+        if (allowPartClassFromHeader) {
+            partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
+            partNamespaceFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_NAMESPACE, String.class);
+        }
         if ((partClass != null || partClassFromHeader != null)
                 && (partNamespaceOnDataFormat != null || partNamespaceFromHeader != null)) {
             element = toElement(graph, partClassFromHeader, partNamespaceFromHeader, partNamespaceOnDataFormat);
@@ -353,7 +358,8 @@ public class JaxbDataFormat extends ServiceSupport
                     xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, is);
                 }
             }
-            String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
+            String partClassFromHeader = allowPartClassFromHeader
+                    ? exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class) : null;
             Class<?> effectivePartClass = partClass;
             if (partClassFromHeader != null) {
                 try {
@@ -515,6 +521,18 @@ public class JaxbDataFormat extends ServiceSupport
 
     public void setPartClass(Class<?> partClass) {
         this.partClass = partClass;
+    }
+
+    public boolean isAllowPartClassFromHeader() {
+        return allowPartClassFromHeader;
+    }
+
+    /**
+     * Whether the {@link JaxbConstants#JAXB_PART_CLASS} and {@link JaxbConstants#JAXB_PART_NAMESPACE} headers are used,
+     * when set, instead of the partClass and partNamespace options when marshalling and unmarshalling.
+     */
+    public void setAllowPartClassFromHeader(boolean allowPartClassFromHeader) {
+        this.allowPartClassFromHeader = allowPartClassFromHeader;
     }
 
     public Map<String, String> getNamespacePrefix() {

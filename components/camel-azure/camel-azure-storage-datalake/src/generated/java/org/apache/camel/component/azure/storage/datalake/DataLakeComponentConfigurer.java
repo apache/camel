@@ -51,6 +51,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "datacount":
         case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
+        case "deleteafterread":
+        case "deleteAfterRead": getOrCreateConfiguration(target).setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "directoryname":
         case "directoryName": getOrCreateConfiguration(target).setDirectoryName(property(camelContext, java.lang.String.class, value)); return true;
         case "downloadlinkexpiration":
@@ -128,6 +130,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
         case "directoryname":
         case "directoryName": return java.lang.String.class;
         case "downloadlinkexpiration":
@@ -201,6 +205,8 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
         case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "datacount":
         case "dataCount": return getOrCreateConfiguration(target).getDataCount();
+        case "deleteafterread":
+        case "deleteAfterRead": return getOrCreateConfiguration(target).isDeleteAfterRead();
         case "directoryname":
         case "directoryName": return getOrCreateConfiguration(target).getDirectoryName();
         case "downloadlinkexpiration":

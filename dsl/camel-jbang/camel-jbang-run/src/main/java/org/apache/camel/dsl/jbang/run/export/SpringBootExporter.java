@@ -42,6 +42,7 @@ import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.run.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.run.common.TomcatVersionHelper;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -65,6 +66,48 @@ class SpringBootExporter extends Exporter {
 
     @Override
     public Integer export() throws Exception {
+        if (request.isWarPackaging()) {
+            if (!"spring-boot-pom.ftl".equals(request.pomTemplateName)
+                    && !"spring-boot-kubernetes-pom.ftl".equals(request.pomTemplateName)) {
+                printer().printErr(
+                        "Custom POM templates are not supported with --packaging=war. "
+                                   + "WAR packaging requires the built-in Spring Boot POM template.");
+                return 1;
+            }
+
+            String bootVersion = request.springBootVersion;
+            if (!TomcatVersionHelper.supportsSpringBootVersion(bootVersion)) {
+                printer().printErr(
+                        "Tomcat export supports Spring Boot 3.x with Tomcat 10.1 "
+                                   + "and Spring Boot 4.x with Tomcat 11. Unsupported Spring Boot version: "
+                                   + bootVersion);
+                return 1;
+            }
+
+            String camelSpringBootVersion = request.camelSpringBootVersion != null
+                    ? request.camelSpringBootVersion
+                    : request.camelVersion;
+
+            // Keep the current Camel default for Spring Boot 4. For Spring Boot 3,
+            // require an explicitly selected compatible Camel Spring Boot or Camel version.
+            if (camelSpringBootVersion == null
+                    && (bootVersion == null || !bootVersion.startsWith("3."))) {
+                camelSpringBootVersion = RuntimeType.main.version();
+            }
+            String compatibilityError = TomcatVersionHelper.compatibilityError(
+                    bootVersion, camelSpringBootVersion);
+            if (compatibilityError != null) {
+                printer().printErr(compatibilityError);
+                return 1;
+            }
+
+            String tomcatVersion = TomcatVersionHelper.tomcatVersion(bootVersion);
+            printer().println(
+                    "Spring Boot WAR packaging targets Apache Tomcat " + tomcatVersion + ".");
+            printer().println(
+                    "Docker and Jib files are not generated for Spring Boot WAR exports.");
+        }
+
         try {
             MavenGav.parseStrictGav(request.gav);
         } catch (IllegalArgumentException e) {
@@ -100,7 +143,28 @@ class SpringBootExporter extends Exporter {
             printer().println("Reusing existing run data");
         }
 
-        printer().println("Exporting as Spring Boot project to: " + request.exportDir);
+        // Never place TLS private keys or certificates inside the Tomcat webapps
+        // directory. Externalize them and mount them outside webapps at runtime.
+        if (request.isWarPackaging()
+                && "spring-boot-kubernetes-pom.ftl".equals(request.pomTemplateName)) {
+            String tlsFilesProperty = CamelJBangConstants.TLS_FILES + "=";
+            boolean tlsFilesConfigured = RuntimeUtil.loadPropertiesLines(settings).stream()
+                    .filter(line -> line.startsWith(tlsFilesProperty))
+                    .map(line -> line.substring(tlsFilesProperty.length()))
+                    .anyMatch(value -> !value.isBlank());
+            if (tlsFilesConfigured) {
+                printer().printErr(
+                        "TLS files configured with " + CamelJBangConstants.TLS_FILES
+                                   + " are not supported with --packaging=war for Kubernetes export. "
+                                   + "Provision TLS material separately and mount it outside Tomcat webapps.");
+                return 1;
+            }
+        }
+
+        printer().println(
+                (request.isWarPackaging()
+                        ? "Exporting as Spring Boot WAR project to: "
+                        : "Exporting as Spring Boot project to: ") + request.exportDir);
 
         // use a temporary work dir
         Path buildDir = buildDir();
@@ -197,10 +261,12 @@ class SpringBootExporter extends Exporter {
         if (request.camelWrapper) {
             copyCamelWrapper();
         }
-        if (request.docker) {
+        // Existing Docker and Jib templates are executable-JAR based.
+        if (request.docker && !request.isWarPackaging()) {
             copyDockerFiles(buildDir.toString());
         }
-        String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
+        String appJar = "target" + File.separator + ids[1] + "-" + ids[2]
+                        + (request.isWarPackaging() ? ".war" : ".jar");
         copyReadme(buildDir.toString(), appJar);
         if (cleanExportDir() != 0) {
             return 1;
@@ -235,9 +301,11 @@ class SpringBootExporter extends Exporter {
 
         // Check if catalog provides a custom template (backward compatibility)
         // Also check old .tmpl name for catalogs that haven't been updated
-        InputStream catalogTemplate = catalog.loadResource("camel-jbang", request.pomTemplateName);
-        if (catalogTemplate == null) {
-            catalogTemplate = catalog.loadResource("camel-jbang", request.pomTemplateName.replace(".ftl", ".tmpl"));
+        InputStream catalogTemplate = request.isWarPackaging()
+                ? null : catalog.loadResource("camel-jbang", request.pomTemplateName);
+        if (!request.isWarPackaging() && catalogTemplate == null) {
+            catalogTemplate = catalog.loadResource(
+                    "camel-jbang", request.pomTemplateName.replace(".ftl", ".tmpl"));
         }
         if (catalogTemplate != null) {
             // Catalog provides a custom template - use legacy regex-based processing
@@ -255,6 +323,12 @@ class SpringBootExporter extends Exporter {
         model.put("GroupId", ids[0]);
         model.put("ArtifactId", ids[1]);
         model.put("Version", ids[2]);
+        model.put("War", request.isWarPackaging());
+        model.put("SpringBootWebStarter",
+                request.springBootVersion != null
+                        && VersionHelper.isGE(request.springBootVersion, "4.0.0")
+                                ? "spring-boot-starter-webmvc"
+                                : "spring-boot-starter-web");
         model.put("SpringBootVersion", request.springBootVersion);
         model.put("JavaVersion", request.javaVersion);
         model.put("CamelSpringBootVersion",
@@ -441,6 +515,9 @@ class SpringBootExporter extends Exporter {
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
+        // camel run serves a cxf consumer with camel-cxf-platform-http (camel-main); the runtime serves it with its
+        // CXF starter or extension
+        removeCamelArtifact(answer, "camel-cxf-platform-http");
 
         boolean http = hasCamelArtifact(answer, "camel-platform-http")
                 || hasCamelArtifact(answer, "camel-platform-http-vertx");
@@ -487,6 +564,7 @@ class SpringBootExporter extends Exporter {
         Map<String, Object> model = new HashMap<>();
         model.put("PackageName", packageName);
         model.put("MainClassname", mainClassname);
+        model.put("War", request.isWarPackaging());
 
         String content = TemplateHelper.processTemplate("spring-boot-main.ftl", model);
         IOHelper.writeText(content, Files.newOutputStream(srcJavaDir.resolve(mainClassname + ".java")));
@@ -504,6 +582,16 @@ class SpringBootExporter extends Exporter {
 
     @Override
     protected String applicationPropertyLine(String key, String value) {
+        if (key.startsWith("camel.cxf.")) {
+            // the options of camel-cxf-platform-http (camel-main) are those of the CXF servlet on Spring Boot
+            if (CXF_PATH.equals(key)) {
+                return super.applicationPropertyLine("cxf.path", value);
+            }
+            if (isCxfUseXForwardedHeaders(key)) {
+                return super.applicationPropertyLine("cxf.servlet.init.use-x-forwarded-headers", value);
+            }
+            return null;
+        }
         if (key.startsWith("camel.server.") || key.startsWith("camel.management.")) {
             // skip "camel.server." or "camel.management." as this is for camel-main only
             return null;

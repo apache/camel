@@ -37,7 +37,7 @@ class CamelBrowseActionTest extends ActionCommandTestSupport {
     void testRequestsBrowseAndRendersEndpoints() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelBrowseAction command = new CamelBrowseAction(new CamelJBangMain().withPrinter(printer));
+        CamelBrowseAction command = new CamelJBangMain().withPrinter(printer).command(new CamelBrowseAction());
         command.name = "myApp";
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "uri";
@@ -59,7 +59,7 @@ class CamelBrowseActionTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelBrowseAction command = new CamelBrowseAction(new CamelJBangMain().withPrinter(printer));
+        CamelBrowseAction command = new CamelJBangMain().withPrinter(printer).command(new CamelBrowseAction());
         command.name = "doesNotExist";
 
         CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));

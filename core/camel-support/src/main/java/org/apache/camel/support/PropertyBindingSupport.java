@@ -118,8 +118,75 @@ public final class PropertyBindingSupport {
     private PropertyBindingSupport() {
     }
 
+    // a thread-scoped signal that the endpoint currently being created has a uri computed from the current message at
+    // runtime (a dynamic endpoint such as toD/enrich/wireTap/pollEnrich/recipientList/routingSlip/dynamicRouter), so
+    // its option values are bound as literal text. The CamelContext sets it (in a try/finally) around
+    // Component#createEndpoint(String, Map) only. While it is set, the Builder binds in literal mode, and resolveBean
+    // and EndpointHelper#resolveReferenceParameter refuse the values that are kept literal, so every way a component
+    // binds its options is covered (generated configurers, setProperties overloads, resolveAndRemoveReferenceParameter
+    // and direct use of this class).
+    private static final ThreadLocal<Boolean> LITERAL_OPTION_BINDING = new ThreadLocal<>();
+
     public static Builder build() {
         return new Builder();
+    }
+
+    /**
+     * Whether the endpoint currently being created on this thread binds its option values as literal text, because its
+     * uri was computed from the current message at runtime, see {@link Builder#withLiteral(boolean)}.
+     *
+     * @return true if literal option binding is active on the current thread
+     * @since  4.24
+     */
+    public static boolean isLiteralOptionBinding() {
+        return Boolean.TRUE.equals(LITERAL_OPTION_BINDING.get());
+    }
+
+    /**
+     * Marks (or clears) the current thread as creating an endpoint whose option values are bound as literal text. The
+     * caller MUST restore the returned previous value in a {@code finally} block. The CamelContext does this around
+     * {@link org.apache.camel.Component#createEndpoint(String, Map)} when the uri was computed from the current
+     * message.
+     *
+     * @param  literalOptionBinding whether literal option binding is active
+     * @return                      the previous value, to be restored by the caller
+     * @since                       4.24
+     */
+    public static boolean setLiteralOptionBinding(boolean literalOptionBinding) {
+        boolean prev = isLiteralOptionBinding();
+        if (literalOptionBinding) {
+            LITERAL_OPTION_BINDING.set(Boolean.TRUE);
+        } else {
+            LITERAL_OPTION_BINDING.remove();
+        }
+        return prev;
+    }
+
+    /**
+     * Whether the value is kept as literal text when bound in literal mode: a value with a property placeholder
+     * ({@code {{...}}}), a {@code #class:} value or a {@code #property:} value. Plain registry references such as
+     * {@code #bean:}, {@code #type:} and {@code #name} are not.
+     */
+    static boolean isLiteralOnlyValue(String value) {
+        if (value == null) {
+            return false;
+        }
+        String s = value.trim();
+        return s.contains(PropertiesComponent.PREFIX_TOKEN) || s.startsWith("#class:") || s.startsWith("#property:");
+    }
+
+    /**
+     * Fails when literal option binding is active and the value is one that is only bound as literal text, so it is not
+     * resolved as a property placeholder, created as a class, or looked up as a property.
+     */
+    static void checkLiteralOptionReference(String value) {
+        if (isLiteralOnlyValue(value) && isLiteralOptionBinding()) {
+            throw new IllegalArgumentException(
+                    "The option value is bound as literal text because the endpoint uri is computed from the message"
+                                               + " (such as with toD, enrich, pollEnrich or recipientList): property"
+                                               + " placeholders, #class: and #property: are not resolved there."
+                                               + " Register the bean and refer to it with #bean:name instead");
+        }
     }
 
     /**
@@ -252,6 +319,11 @@ public final class PropertyBindingSupport {
      *                            value
      * @param  reference          whether reference parameter (syntax starts with #) is in use
      * @param  placeholder        whether to use Camels property placeholder to resolve placeholders on keys and values
+     * @param  literal            whether to bind in literal mode: a value with a property placeholder, a #class: value
+     *                            or a #property: value is bound as literal text, and option names are not resolved as
+     *                            property placeholders. Plain registry references (#bean:, #type:, #name) are still
+     *                            resolved. Literal mode is also on while a literal option binding scope is active, see
+     *                            {@link #isLiteralOptionBinding()}.
      * @param  reflection         whether to allow using reflection (when there is no configurer available).
      * @param  configurer         to use an optional {@link PropertyConfigurer} to configure the properties
      * @param  listener           optional listener
@@ -262,13 +334,17 @@ public final class PropertyBindingSupport {
             String optionPrefix, boolean ignoreCase, boolean removeParameter, boolean flattenProperties,
             boolean mandatory, boolean optional,
             boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
-            boolean reference, boolean placeholder,
+            boolean reference, boolean placeholder, boolean literal,
             boolean reflection, PropertyConfigurer configurer,
             PropertyBindingListener listener) {
 
         if (properties == null || properties.isEmpty()) {
             return false;
         }
+
+        // an endpoint whose uri is computed from the current message binds its options in literal mode, however the
+        // component binds them
+        literal = literal || isLiteralOptionBinding();
 
         if (flattenProperties) {
             properties = new FlattenMap(properties);
@@ -309,7 +385,8 @@ public final class PropertyBindingSupport {
                 listener.bindProperty(target, key, value);
             }
             boolean hit = doBuildPropertyOgnlPath(camelContext, target, key, value, deepNesting, fluentBuilder,
-                    allowPrivateSetter, ignoreCase, reference, placeholder, mandatory, optional, reflection, configurer);
+                    allowPrivateSetter, ignoreCase, reference, placeholder, literal, mandatory, optional, reflection,
+                    configurer);
             if (hit && removeParameter) {
                 properties.remove(key);
             }
@@ -322,8 +399,8 @@ public final class PropertyBindingSupport {
     private static boolean doBuildPropertyOgnlPath(
             final CamelContext camelContext, final Object originalTarget, String name, final Object value,
             boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
-            boolean ignoreCase, boolean reference, boolean placeholder, boolean mandatory, boolean optional,
-            boolean reflection, PropertyConfigurer configurer) {
+            boolean ignoreCase, boolean reference, boolean placeholder, boolean literal, boolean mandatory,
+            boolean optional, boolean reflection, PropertyConfigurer configurer) {
 
         if (name.startsWith("?")) {
             // the name marks the option as optional
@@ -429,7 +506,7 @@ public final class PropertyBindingSupport {
         // we have walked down to the last part of the ognl path and are ready to set the last piece with the value
         // now this is actually also a bit complex so lets use another method for that
         return doSetPropertyValue(camelContext, newTarget, newName, value, ignoreCase, mandatory,
-                fluentBuilder, allowPrivateSetter, reference, placeholder, optional, reflection, configurer);
+                fluentBuilder, allowPrivateSetter, reference, placeholder, literal, optional, reflection, configurer);
     }
 
     private static Object attemptCreateNewInstanceViaReflection(
@@ -516,43 +593,60 @@ public final class PropertyBindingSupport {
             CamelContext camelContext, Object target, String name, Object value,
             boolean ignoreCase, boolean mandatory,
             boolean fluentBuilder, boolean allowPrivateSetter,
-            boolean reference, boolean placeholder, boolean optional,
+            boolean reference, boolean placeholder, boolean literal, boolean optional,
             boolean reflection, PropertyConfigurer configurer) {
 
         String key = name;
         Object text = value;
 
-        if (placeholder) {
-            // resolve property placeholders
+        // in literal mode (the endpoint uri was computed from the current message at runtime) a value with a {{...}}
+        // property placeholder, a #class: value (which creates a class and can call a factory method) or a #property:
+        // value is bound as literal text. Plain registry references (#bean:, #type:, #name) are still resolved, so a
+        // reference a route author wrote in the dynamic uri, such as dataSource=#ds, keeps working.
+        boolean literalValue = literal && text instanceof String lit && isLiteralOnlyValue(lit);
+
+        // the option names of the uri were already resolved when the route was built, so in literal mode they are not
+        // resolved again
+        if (placeholder && !literal) {
             key = camelContext.resolvePropertyPlaceholders(key);
-            if (text instanceof String s) {
-                // resolve property placeholders
-                text = camelContext.resolvePropertyPlaceholders(s);
-                if (text == null && s.startsWith(PropertiesComponent.PREFIX_TOKEN + "?")) {
-                    // it was an optional value, so we should not try to set the property but regard it as a "hit"
-                    return true;
-                }
+        }
+        if (placeholder && !literalValue && text instanceof String s) {
+            // resolve property placeholders
+            text = camelContext.resolvePropertyPlaceholders(s);
+            if (text == null && s.startsWith(PropertiesComponent.PREFIX_TOKEN + "?")) {
+                // it was an optional value, so we should not try to set the property but regard it as a "hit"
+                return true;
             }
         }
 
         // prepare the value before it is bound
-        try {
-            Object str = resolveValue(camelContext, target, key, text, ignoreCase, fluentBuilder,
-                    allowPrivateSetter, reflection, configurer);
-            // resolve property placeholders
-            if (str instanceof String strValue) {
-                // resolve property placeholders
-                str = camelContext.resolvePropertyPlaceholders(strValue);
+        if (literalValue) {
+            // keep the value as literal text: no property-placeholder, #class: or #property: resolution
+            value = text;
+        } else {
+            try {
+                Object str = resolveValue(camelContext, target, key, text, ignoreCase, fluentBuilder,
+                        allowPrivateSetter, reflection, configurer);
+                if (str instanceof String strValue && !literal) {
+                    // resolve property placeholders
+                    str = camelContext.resolvePropertyPlaceholders(strValue);
+                }
+                if (str == null && reference && mandatory && !optional) {
+                    // we could not resolve the reference and this is mandatory
+                    throw new PropertyBindingException(target, key, value);
+                }
+                value = str;
+            } catch (Exception e) {
+                // report the exception using the long key and parent target
+                throw new PropertyBindingException(target, key, text, e);
             }
-            if (str == null && reference && mandatory && !optional) {
-                // we could not resolve the reference and this is mandatory
-                throw new PropertyBindingException(target, key, value);
-            }
-            value = str;
-        } catch (Exception e) {
-            // report the exception using the long key and parent target
-            throw new PropertyBindingException(target, key, text, e);
         }
+
+        // a value kept as literal text is not resolved as a reference by reflection. A configurer resolves a
+        // reference (#...) on its own for an option that is not a String: there EndpointHelper.resolveReferenceParameter
+        // refuses a #class: or #property: value while the literal option binding scope is active, and an option of
+        // type String gets the literal text
+        boolean effReference = reference && !literalValue;
 
         // okay we are ready to set the value, but the property key
         // can still be complex such as a map/list/array so we need to handle them specially than a regular key
@@ -565,7 +659,7 @@ public final class PropertyBindingSupport {
                 }
                 if (!bound && reflection) {
                     // fallback to reflection based
-                    bound = setPropertyCollectionViaReflection(camelContext, target, key, value, ignoreCase, reference,
+                    bound = setPropertyCollectionViaReflection(camelContext, target, key, value, ignoreCase, effReference,
                             optional);
                 }
             } else {
@@ -576,7 +670,7 @@ public final class PropertyBindingSupport {
                 if (!bound && reflection) {
                     // fallback to reflection based
                     bound = setSimplePropertyViaReflection(camelContext, target, key, value, fluentBuilder, allowPrivateSetter,
-                            reflection, ignoreCase);
+                            !literalValue && reflection, ignoreCase);
                 }
                 // if the target value is a map type, then we can skip reflection
                 // and set the entry
@@ -1963,6 +2057,10 @@ public final class PropertyBindingSupport {
 
         Object answer = value;
 
+        // while an endpoint whose uri is computed from the current message is created, a placeholder, #class: or
+        // #property: value is not resolved
+        checkLiteralOptionReference(strval);
+
         // resolve placeholders
         strval = camelContext.resolvePropertyPlaceholders(strval);
 
@@ -2139,6 +2237,7 @@ public final class PropertyBindingSupport {
         private boolean deepNesting = true;
         private boolean reference = true;
         private boolean placeholder = true;
+        private boolean literal;
         private boolean fluentBuilder = true;
         private boolean allowPrivateSetter = true;
         private boolean ignoreCase;
@@ -2253,6 +2352,23 @@ public final class PropertyBindingSupport {
         }
 
         /**
+         * Whether to bind in literal mode, for values computed from message content at runtime (for example the option
+         * values of a dynamic endpoint). In literal mode a value with a property placeholder ({@code {{...}}}), a
+         * {@code #class:} value or a {@code #property:} value is bound as literal text, and option names are not
+         * resolved as property placeholders. Plain registry references ({@code #bean:}, {@code #type:}, {@code #name})
+         * are still resolved.
+         * <p>
+         * Literal mode is also on, whatever this option says, while a literal option binding scope is active on the
+         * current thread, see {@link PropertyBindingSupport#isLiteralOptionBinding()}.
+         *
+         * @since 4.24
+         */
+        public Builder withLiteral(boolean literal) {
+            this.literal = literal;
+            return this;
+        }
+
+        /**
          * Whether fluent builder is allowed as a valid getter/setter
          */
         public Builder withFluentBuilder(boolean fluentBuilder) {
@@ -2356,8 +2472,8 @@ public final class PropertyBindingSupport {
 
             return doBindProperties(camelContext, target, removeParameters ? properties : new HashMap<>(properties),
                     optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory, optional,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer,
-                    listener);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, literal, reflection,
+                    configurer, listener);
         }
 
         /**
@@ -2375,8 +2491,8 @@ public final class PropertyBindingSupport {
 
             return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
                     optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory, optional,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer,
-                    listener);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, literal, reflection,
+                    configurer, listener);
         }
 
         /**
@@ -2394,8 +2510,8 @@ public final class PropertyBindingSupport {
 
             return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, false, mandatory,
                     optional,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer,
-                    listener);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, literal, reflection,
+                    configurer, listener);
         }
 
     }

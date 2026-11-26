@@ -106,18 +106,18 @@ class CliRunnerTest {
         Files.writeString(CommandLineHelper.getCamelDir().resolve(PID + "-status.json"),
                 "{\"context\":{\"name\":\"test\",\"version\":\"4.24.0\",\"phase\":5}}");
 
-        CliRunner.CliResult result = CliRunner.run(List.of("cmd", "gc", Long.toString(PID), "--timeout=2000"), 300);
+        CliRunner.CliResult result = CliRunner.run(List.of("cmd", "gc", Long.toString(PID), "--timeout=2000"), 100);
 
         assertThat(result.timedOut()).isTrue();
         assertThat(result.exitCode()).isEqualTo(CliExitCode.TIMEOUT);
         // after what the interrupted command printed
         assertThat(result.stderr())
-                .endsWith("ERROR: camel cmd gc " + PID + " --timeout=2000 did not finish within 300 millis");
+                .endsWith("ERROR: camel cmd gc " + PID + " --timeout=2000 did not finish within 100 millis");
     }
 
     @Test
     void commandThatIgnoresTheInterruptIsReported() {
-        CliRunner.CliResult result = CliRunner.run(List.of("busy"), 300);
+        CliRunner.CliResult result = CliRunner.run(List.of("busy"), 100);
 
         assertThat(result.exitCode()).isEqualTo(CliExitCode.TIMEOUT);
         assertThat(result.stderr()).endsWith("it has not stopped yet, and the next command waits until it has");
@@ -129,7 +129,7 @@ class CliRunnerTest {
         CliRunner.CliResult result;
         // another command runs meanwhile
         synchronized (CliRunner.LOCK) {
-            result = CliRunner.run(List.of("config", "set", "foo=bar"), 300);
+            result = CliRunner.run(List.of("config", "set", "foo=bar"), 100);
         }
 
         assertThat(result.exitCode()).isEqualTo(CliExitCode.TIMEOUT);
@@ -162,8 +162,8 @@ class CliRunnerTest {
         @Override
         public void postAddCommands(CommandTree commandLine, String[] args) {
             // the commands of the CLI, one that ignores the interrupt, and one that counts its runs
-            commandLine.addSubcommand("busy", new CommandTree(new BusyCommand(this)));
-            commandLine.addSubcommand("count", new CommandTree(new CountCommand(this)));
+            commandLine.addSubcommand("busy", new CommandTree(command(new BusyCommand())));
+            commandLine.addSubcommand("count", new CommandTree(command(new CountCommand())));
         }
 
         @Override
@@ -179,10 +179,6 @@ class CliRunnerTest {
     static class CountCommand extends CamelCommand {
 
         private int runs;
-
-        CountCommand(CamelJBangMain main) {
-            super(main);
-        }
 
         @Override
         protected boolean disarrangeLogging() {
@@ -203,10 +199,6 @@ class CliRunnerTest {
     @CommandDefinition(name = "busy", description = "", generateHelp = true, sortOptions = true)
     static class BusyCommand extends CamelCommand {
 
-        BusyCommand(CamelJBangMain main) {
-            super(main);
-        }
-
         @Override
         protected boolean disarrangeLogging() {
             return false;
@@ -214,7 +206,7 @@ class CliRunnerTest {
 
         @Override
         public Integer doCall() {
-            long end = System.currentTimeMillis() + 3000;
+            long end = System.currentTimeMillis() + 2500;
             while (System.currentTimeMillis() < end) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(end - System.currentTimeMillis());

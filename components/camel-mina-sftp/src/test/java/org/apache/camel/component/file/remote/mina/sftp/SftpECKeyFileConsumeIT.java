@@ -49,7 +49,7 @@ public class SftpECKeyFileConsumeIT extends SftpServerTestSupport {
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&knownHostsFile="
                      + service.getKnownHostsFile()
-                     + "&privateKeyFile=./src/test/resources/sftp/ec.pem&delay=10000&disconnect=true").routeId("foo")
+                     + "&privateKeyFile=./src/test/resources/sftp/ec.pem&disconnect=true").routeId("foo")
                         .autoStartup(false)
                         .to("mock:result");
             }

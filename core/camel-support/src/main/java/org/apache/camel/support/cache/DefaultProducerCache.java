@@ -130,7 +130,9 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         // triggering cases of false sharing
         // copy reference to avoid need for synchronization and be thread safe
         AsyncProducer lastUsedProducerRef = lastUsedProducer;
-        if (lastUsedProducerRef != null && endpoint == lastUsedProducerRef.getEndpoint() && endpoint.isSingletonProducer()) {
+        if (lastUsedProducerRef != null && endpoint == lastUsedProducerRef.getEndpoint() && endpoint.isSingletonProducer()
+                && producers.reacquire(lastUsedProducerRef)) {
+            // the pool counts the users of a singleton producer, and an evicted producer is no longer reacquired
             return lastUsedProducerRef;
         }
 

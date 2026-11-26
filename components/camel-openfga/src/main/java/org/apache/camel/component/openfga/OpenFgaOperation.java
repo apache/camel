@@ -42,6 +42,9 @@ public enum OpenFgaOperation {
      */
     listObjects,
 
+    /** Incrementally enumerate objects through a closeable iterator. */
+    streamedListObjects,
+
     /**
      * List which of the configured relations the subject holds on the object.
      */

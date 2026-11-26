@@ -30,6 +30,11 @@ public class DependencyDownloaderClassLoader extends URLClassLoader {
 
     private static final URL[] EMPTY_URL_ARRAY = new URL[0];
 
+    /**
+     * The folder of the Kamelets in the camel-kamelets jar.
+     */
+    private static final String KAMELETS_DIR = "kamelets/";
+
     public DependencyDownloaderClassLoader(ClassLoader parent) {
         super(EMPTY_URL_ARRAY, parent);
     }
@@ -40,6 +45,22 @@ public class DependencyDownloaderClassLoader extends URLClassLoader {
         } catch (MalformedURLException e) {
             throw new DownloadException("Error adding JAR to classloader: " + file, e);
         }
+    }
+
+    /**
+     * A Kamelet is looked up in the downloaded jars first: the launcher may bundle a camel-kamelets jar of another
+     * version, and camel-kamelets is only downloaded when the version asked for (--kamelets-version) is not that one
+     * (CAMEL-27476). Any other resource is looked up in the parent first, as usual.
+     */
+    @Override
+    public URL getResource(String name) {
+        if (name != null && name.startsWith(KAMELETS_DIR)) {
+            URL url = findResource(name);
+            if (url != null) {
+                return url;
+            }
+        }
+        return super.getResource(name);
     }
 
     public List<String> getDownloaded() {

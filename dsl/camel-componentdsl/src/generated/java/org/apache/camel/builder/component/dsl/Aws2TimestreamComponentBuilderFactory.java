@@ -160,6 +160,26 @@ public interface Aws2TimestreamComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * For the query operation: read all the pages of the result, and give
+         * all the rows in one QueryResponse. Without it, the body is one page,
+         * and the CamelAwsTimestreamQueryNextToken header gives the token of
+         * the next page. Not used with pojoRequest.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param queryAllPages the value to set
+         * @return the dsl builder
+         */
+        default Aws2TimestreamComponentBuilder queryAllPages(boolean queryAllPages) {
+            doSetProperty("queryAllPages", queryAllPages);
+            return this;
+        }
+    
         /**
          * The region in which the Timestream client needs to work. When using
          * this parameter, the configuration will expect the lowercase name of
@@ -480,6 +500,7 @@ public interface Aws2TimestreamComponentBuilderFactory {
             case "overrideEndpoint": getOrCreateConfiguration((Timestream2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((Timestream2Component) component).setPojoRequest((boolean) value); return true;
             case "profileCredentialsName": getOrCreateConfiguration((Timestream2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
+            case "queryAllPages": getOrCreateConfiguration((Timestream2Component) component).setQueryAllPages((boolean) value); return true;
             case "region": getOrCreateConfiguration((Timestream2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Timestream2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Timestream2Component) component).setUriEndpointOverride((java.lang.String) value); return true;

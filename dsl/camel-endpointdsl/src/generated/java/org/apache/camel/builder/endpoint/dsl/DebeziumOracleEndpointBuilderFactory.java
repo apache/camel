@@ -480,8 +480,9 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * Optional list of custom converters that would be used instead of
-         * default ones. The converters are defined using '.type' config option
-         * and configured using options '.'.
+         * default ones. The converters are defined using
+         * '{converter.prefix}.type' config option and configured using options
+         * '{converter.prefix}.{option}'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -770,7 +771,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &gt; 0 = num of retries).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -786,7 +787,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &gt; 0 = num of retries).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1522,9 +1523,9 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the inner body the Ehcache tag for the events cache, but
-         * should not include the nor the attributes as these are managed by
-         * Debezium.
+         * Specifies the inner body the Ehcache 'cache' tag for the events
+         * cache, but should not include the 'key-type' nor the 'value-type'
+         * attributes as these are managed by Debezium.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1539,8 +1540,8 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * Specifies any Ehcache global configurations such as services or
-         * persistence. This cannot include nor tags as these are managed by
-         * Debezium.
+         * persistence. This cannot include 'cache' nor 'default-serializers'
+         * tags as these are managed by Debezium.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1554,9 +1555,9 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the inner body the Ehcache tag for the processed
-         * transaction cache, but should not include the nor the attributes as
-         * these are managed by Debezium.
+         * Specifies the inner body the Ehcache 'cache' tag for the processed
+         * transaction cache, but should not include the 'key-type' nor the
+         * 'value-type' attributes as these are managed by Debezium.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1571,9 +1572,9 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the inner body the Ehcache tag for the schema changes
-         * cache, but should not include the nor the attributes as these are
-         * managed by Debezium.
+         * Specifies the inner body the Ehcache 'cache' tag for the schema
+         * changes cache, but should not include the 'key-type' nor the
+         * 'value-type' attributes as these are managed by Debezium.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1587,9 +1588,9 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the inner body the Ehcache tag for the transaction cache,
-         * but should not include the nor the attributes as these are managed by
-         * Debezium.
+         * Specifies the inner body the Ehcache 'cache' tag for the transaction
+         * cache, but should not include the 'key-type' nor the 'value-type'
+         * attributes as these are managed by Debezium.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2493,7 +2494,8 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * schema metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.TableMappingStorage of
+         * io.debezium.relational.TableSchema. Defaults to
          * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
          * storage.
          * 
@@ -2512,7 +2514,8 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * table metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.TableMappingStorage of
+         * io.debezium.relational.Table. Defaults to
          * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
          * storage.
          * 
@@ -2531,12 +2534,13 @@ public interface DebeziumOracleEndpointBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':', where the table names could be defined as
-         * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-         * specific connector, and the key columns are a comma-separated list of
-         * columns representing the custom key. For any table without an
-         * explicit key configuration the table's primary key column(s) will be
-         * used as message key. Example:
+         * match the pattern '{fully-qualified table name}:{key columns}', where
+         * the table names could be defined as (DB_NAME.TABLE_NAME) or
+         * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector, and
+         * the key columns are a comma-separated list of columns representing
+         * the custom key. For any table without an explicit key configuration
+         * the table's primary key column(s) will be used as message key.
+         * Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2909,7 +2913,8 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * Optional list of post processors. The processors are defined using
-         * '.type' config option and configured using options ''.
+         * '{post.processor.prefix}.type' config option and configured using
+         * options '{post.processor.prefix}.{option}'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3340,7 +3345,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * window event (-1 = no limit, 0 = disabled, &gt; 0 = num of retries).
          * Defaults to 0.
          * 
          * The option is a: <code>int</code> type.
@@ -3357,7 +3362,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * window event (-1 = no limit, 0 = disabled, &gt; 0 = num of retries).
          * Defaults to 0.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -3477,38 +3482,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of attempts to retry database errors during snapshots
-         * before failing.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 0
-         * Group: oracle
-         * 
-         * @param snapshotDatabaseErrorsMaxRetries the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder snapshotDatabaseErrorsMaxRetries(int snapshotDatabaseErrorsMaxRetries) {
-            doSetProperty("snapshotDatabaseErrorsMaxRetries", snapshotDatabaseErrorsMaxRetries);
-            return this;
-        }
-        /**
-         * The number of attempts to retry database errors during snapshots
-         * before failing.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 0
-         * Group: oracle
-         * 
-         * @param snapshotDatabaseErrorsMaxRetries the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder snapshotDatabaseErrorsMaxRetries(String snapshotDatabaseErrorsMaxRetries) {
-            doSetProperty("snapshotDatabaseErrorsMaxRetries", snapshotDatabaseErrorsMaxRetries);
-            return this;
-        }
-        /**
          * A delay period before a snapshot will begin, given in milliseconds.
          * Defaults to 0 ms.
          * 
@@ -3587,15 +3560,17 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * Controls how the connector holds locks on tables while performing the
-         * schema snapshot. The default is 'shared', which means the connector
-         * will hold a table lock that prevents exclusive table access for just
-         * the initial portion of the snapshot while the database schemas and
-         * other metadata are being read. The remaining work in a snapshot
-         * involves selecting all rows from each table, and this is done using a
-         * flashback query that requires no locks. However, in some cases it may
-         * be desirable to avoid locks entirely which can be done by specifying
-         * 'none'. This mode is only safe to use if no schema changes are
-         * happening while the snapshot is taken.
+         * snapshot. The default is 'shared', which means the connector will
+         * hold a ROW SHARE table lock for the duration of the snapshot. The
+         * lock allows other sessions to read and write the table and prevents
+         * most DDL on it; however, Oracle non-blocking DDL such as ALTER TABLE
+         * ADD COLUMN is still permitted and would invalidate the flashback
+         * query used to read the table data (ORA-01466). Specifying 'extended'
+         * holds a SHARE table lock instead, which prevents all DDL but also
+         * blocks writes to the table for the duration of the snapshot. In some
+         * cases it may be desirable to avoid locks entirely which can be done
+         * by specifying 'none'. This mode is only safe to use if no schema
+         * changes are happening while the snapshot is taken.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

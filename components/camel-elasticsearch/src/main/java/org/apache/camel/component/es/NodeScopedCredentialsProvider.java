@@ -42,14 +42,25 @@ final class NodeScopedCredentialsProvider implements CredentialsProvider {
     @Override
     public Credentials getCredentials(AuthScope authScope) {
         HttpHost origin = authScope != null ? authScope.getOrigin() : null;
-        if (origin != null) {
-            for (HttpHost node : nodes.get()) {
-                if (sameAuthority(node, origin)) {
-                    return credentials;
-                }
-            }
+        if (isNode(nodes.get(), origin)) {
+            return credentials;
         }
         return null;
+    }
+
+    /**
+     * Whether the host is one of the nodes: the same scheme, host name (in any case) and port.
+     */
+    static boolean isNode(Collection<HttpHost> nodes, HttpHost host) {
+        if (host == null || nodes == null) {
+            return false;
+        }
+        for (HttpHost node : nodes) {
+            if (sameAuthority(node, host)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

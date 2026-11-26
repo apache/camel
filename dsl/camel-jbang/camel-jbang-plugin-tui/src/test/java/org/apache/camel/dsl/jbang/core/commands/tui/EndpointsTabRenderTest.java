@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -244,6 +247,33 @@ class EndpointsTabRenderTest {
         tab.selectEndpoint("http:example.com/api", "b");
         assertThat(tab.tableState.selected()).isEqualTo(2);
         assertThat(TuiTestHelper.renderToString(tab, 140, 30)).contains("http://example.com/api");
+    }
+
+    @Test
+    void theWsdlOfACxfEndpoint() {
+        // the WSDL is in the folder of the integration
+        info.directory = Paths.get("src/test/resources/wsdl").toAbsolutePath().toString();
+        addEndpoint("cxf", "cxf:///orders?dataFormat=PAYLOAD&wsdlURL=classpath:orders.wsdl", "in", "OrderService", 3);
+        addEndpoint("timer", "timer://tick", "in", "route1", 10);
+
+        EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
+        assertThat(TuiTestHelper.renderToString(tab, 160, 50)).doesNotContain("getOrderResponse");
+
+        tab.handleKeyEvent(KeyEvent.ofChar('w', KeyModifiers.NONE));
+        await().atMost(Duration.ofSeconds(10))
+                .until(() -> TuiTestHelper.renderToString(tab, 160, 50).contains("getOrderResponse"));
+        String rendered = TuiTestHelper.renderToString(tab, 160, 50);
+        assertThat(rendered).contains(" WSDL ", "OrderService · port OrderPort", "getOrder", "orderNotFound");
+    }
+
+    @Test
+    void noWsdlForAnEndpointThatIsNotCxf() {
+        addEndpoint("timer", "timer://tick?wsdlURL=classpath:orders.wsdl", "in", "route1", 10);
+
+        EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
+        tab.handleKeyEvent(KeyEvent.ofChar('w', KeyModifiers.NONE));
+
+        assertThat(TuiTestHelper.renderToString(tab, 160, 50)).doesNotContain(" WSDL ");
     }
 
     private EndpointInfo addEndpoint(String component, String uri, String direction, String routeId, long hits) {

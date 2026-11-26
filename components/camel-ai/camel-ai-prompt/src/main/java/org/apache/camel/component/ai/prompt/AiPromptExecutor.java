@@ -48,6 +48,13 @@ public final class AiPromptExecutor {
                     "No consumer available for prompt '" + promptName + "'",
                     new IllegalStateException("No consumer available"));
         }
+        // A suspended prompt (suspended route, graceful shutdown) refuses new requests, as request/reply consumers do
+        // while suspended; a caller may hold its spec from before the suspend. Requests in flight are past this point.
+        if (consumer.isSuspendingOrSuspended()) {
+            IllegalStateException cause = new IllegalStateException(
+                    String.format("Prompt '%s' is suspended", promptName));
+            return new AiPromptResult.ExecutionError(cause.getMessage(), cause);
+        }
         Processor processor = consumer.getProcessor();
         if (processor == null) {
             return new AiPromptResult.ExecutionError(

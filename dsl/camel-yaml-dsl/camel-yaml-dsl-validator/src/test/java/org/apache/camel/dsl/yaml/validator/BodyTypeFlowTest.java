@@ -249,6 +249,93 @@ public class BodyTypeFlowTest {
         assertThat(messages(yaml)).noneMatch(m -> m.contains("reads the message body"));
     }
 
+    @Test
+    public void testACallWrittenWithSlashesIsACall() {
+        // direct://lookup and direct:lookup are the same endpoint, so the timer route is the caller of lookup,
+        // whichever side has the slashes
+        String yaml = """
+                - route:
+                    id: tick
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: %s
+                - route:
+                    id: lookup
+                    from:
+                      uri: %s
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml.formatted("direct://lookup", "direct:lookup")))
+                .anyMatch(m -> m.contains("route lookup: jsonpath reads the message body")
+                        && m.contains("the routes that call it do not set one either"));
+        assertThat(messages(yaml.formatted("direct:lookup?timeout=1000", "direct://lookup")))
+                .anyMatch(m -> m.contains("route lookup: jsonpath reads the message body"));
+    }
+
+    @Test
+    public void testAnEnrichWithAConstantEndpointIsACall() {
+        // enrich sends a copy of the message to its endpoint, written as a constant expression here
+        String yaml = """
+                - route:
+                    id: tick
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - enrich:
+                            constant: direct:lookup
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).anyMatch(m -> m.contains("route lookup: jsonpath reads the message body"));
+    }
+
+    @Test
+    public void testAPollEnrichIsNotACall() {
+        // a pollEnrich consumes from the queue, as the route does: it does not call the route with its message, so
+        // the only caller of lookup is the timer, which sets no body. Its constant endpoint is read the way the one of
+        // an enrich is, and must not make it a caller
+        String yaml = """
+                - route:
+                    id: tick
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: seda:lookup
+                - route:
+                    id: poller
+                    from:
+                      uri: platform-http:/poll
+                      steps:
+                        - pollEnrich:
+                            constant: seda:lookup
+                            timeout: 1000
+                - route:
+                    id: lookup
+                    from:
+                      uri: seda:lookup
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).anyMatch(m -> m.contains("route lookup: jsonpath reads the message body"));
+    }
+
     private List<String> messages(String yaml) {
         try {
             return validator.validate(yaml).stream().map(Error::getMessage).toList();

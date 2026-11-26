@@ -46,8 +46,8 @@ public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport 
         result.expectedBodiesReceived(expectedBody);
         result.expectedHeaderReceived("foo", "\"hello.txt\" abc");
 
-        // the consumer polls every 10 millis without a read lock: write to a hidden temp file (which the consumer
-        // skips) that is renamed when done, so the consumer never picks up hello.txt while it is still empty
+        // write via a hidden temp file (skipped by the consumer) and rename when complete, so that the consumer
+        // cannot pick up the file while it is still empty
         template.sendBodyAndHeader(fileUri(tempDir, "?tempPrefix=.inprogress-"), expectedBody, Exchange.FILE_NAME,
                 "hello.txt");
 

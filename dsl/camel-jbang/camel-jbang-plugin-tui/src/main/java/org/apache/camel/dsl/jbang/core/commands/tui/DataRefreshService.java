@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -98,6 +99,9 @@ class DataRefreshService {
     private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
     // OTel span data -- shared between CamelMonitor and SpansTab
     private final AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
+    private final AtomicReference<GenAiConsoleUsage> genAiUsage = new AtomicReference<>(GenAiConsoleUsage.NONE);
+    private static final long GENAI_REFRESH_MS = 2000;
+    private volatile long lastGenAiRefresh;
 
     private final Map<String, Integer> lastReloadCount = new ConcurrentHashMap<>();
     private volatile String reloadNotification;
@@ -150,6 +154,11 @@ class DataRefreshService {
 
     AtomicReference<List<SpanEntry>> otelSpans() {
         return otelSpans;
+    }
+
+    /** The GenAI calls of the selected integration, for the AI usage view. */
+    AtomicReference<GenAiConsoleUsage> genAiUsage() {
+        return genAiUsage;
     }
 
     MetricsCollector metrics() {
@@ -327,6 +336,8 @@ class DataRefreshService {
                     info.statusWrittenAt = writtenAt(pid);
                 }
                 if (info != null && ctx != null) {
+                    // the data type each Kamelet a step calls turns the body into (CAMEL-27475)
+                    KameletInputs.attach(info);
                     ctx.chaosMarks.record(info);
                     ctx.timeline.record(info, info.statusWrittenAt);
                     mergeTimelineFile(pid);
@@ -766,6 +777,29 @@ class DataRefreshService {
                     }
                 }
             }
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    // ---- GenAI data ----
+
+    /**
+     * The GenAI calls of the selected integration, from the genai dev console of camel-ai-observability: when asked
+     * {@code now}, else at most every {@value #GENAI_REFRESH_MS} millis.
+     */
+    void refreshGenAiData(boolean now) {
+        String pid = ctx.selectedPid;
+        long time = System.currentTimeMillis();
+        if (pid == null || !now && time - lastGenAiRefresh < GENAI_REFRESH_MS) {
+            return;
+        }
+        lastGenAiRefresh = time;
+        try {
+            JsonObject action = new JsonObject();
+            action.put("action", "genai");
+            action.put("limit", String.valueOf(GenAiConsoleUsage.LIMIT));
+            genAiUsage.set(GenAiConsoleUsage.from(ctx.executeAction(pid, action, 3000)));
         } catch (Exception e) {
             // ignore
         }

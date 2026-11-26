@@ -64,10 +64,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @OptionList(name = "dep", aliases = { "dependency" }, valueSeparator = ',', description = "Add additional dependencies")
     protected List<String> dependencies = new ArrayList<>();
 
-    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", completer = RuntimeCompletionCandidates.class,
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})",
+            completer = RuntimeCompletionCandidates.class,
             converter = RuntimeTypeConverter.class)
     protected RuntimeType runtime;
-
     @Option(name = "name", description = "The integration name. Use this when the name should not get derived otherwise.")
     protected String name;
 
@@ -247,10 +247,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @Option(name = "hawtio-version", description = "Version of the Hawtio web console",
             defaultValue = HawtioVersion.HAWTIO_VERSION)
     protected String hawtioVersion;
-
-    protected ExportBaseCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

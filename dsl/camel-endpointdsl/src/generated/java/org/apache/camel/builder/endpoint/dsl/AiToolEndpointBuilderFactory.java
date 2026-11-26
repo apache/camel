@@ -49,7 +49,10 @@ public interface AiToolEndpointBuilderFactory {
          * Raw JSON Schema for tool input parameters. Supports inline JSON and
          * resource references (classpath:, file:, resource:). Mutually
          * exclusive with the parameter multi-value options. Use for nested
-         * objects, arrays, oneOf, and other complex schemas.
+         * objects, arrays, oneOf, and other complex schemas. When the schema
+         * does not set additionalProperties, Camel adds additionalProperties:
+         * false, so a client that validates the input (such as the MCP server)
+         * refuses an undeclared argument.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -430,8 +433,10 @@ public interface AiToolEndpointBuilderFactory {
         /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
-         * LLM. When omitted, the tool goes into a default pool available to all
-         * producers.
+         * LLM. When omitted, the tool goes into a default pool that is added to
+         * the tools of every tag a producer selects with its own tags option
+         * (producers without tags receive no registry tools, and the MCP server
+         * never exposes the default pool).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -457,6 +462,59 @@ public interface AiToolEndpointBuilderFactory {
          */
         default AiToolEndpointBuilder title(String title) {
             doSetProperty("title", title);
+            return this;
+        }
+        /**
+         * Comma-separated list of the roles a caller needs to call the tool,
+         * for example finance,controlling. Any one of them is enough unless
+         * allRolesRequired is set. The roles are checked before the route runs,
+         * against the caller's roles in the exchange property
+         * CamelAiToolSecurityPrincipalRoles: a call without that property is
+         * refused. A value that is set but names no role refuses every call.
+         * Set it on the component as the default of every tool route, or per
+         * endpoint to replace it.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param allowedRoles the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder allowedRoles(String allowedRoles) {
+            doSetProperty("allowedRoles", allowedRoles);
+            return this;
+        }
+        /**
+         * Whether the caller needs all the roles in allowedRoles, rather than
+         * any one of them. Has no effect when allowedRoles is not set.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allRolesRequired the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder allRolesRequired(boolean allRolesRequired) {
+            doSetProperty("allRolesRequired", allRolesRequired);
+            return this;
+        }
+        /**
+         * Whether the caller needs all the roles in allowedRoles, rather than
+         * any one of them. Has no effect when allowedRoles is not set.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allRolesRequired the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder allRolesRequired(String allRolesRequired) {
+            doSetProperty("allRolesRequired", allRolesRequired);
             return this;
         }
         /**
@@ -712,8 +770,10 @@ public interface AiToolEndpointBuilderFactory {
         public static final AiToolHeaderNameBuilder INSTANCE = new AiToolHeaderNameBuilder();
 
         /**
-         * The tool invocation identifier supplied by the calling framework.
-         * Absent when the framework does not supply one.
+         * The tool invocation identifier supplied by the calling framework. Set
+         * when an in-process producer (such as openai or langchain4j-agent)
+         * calls the tool. Absent when the framework does not supply one, such
+         * as for a call over MCP, where the bridge has no tool call id.
          * 
          * The option is a: {@code String} type.
          * 

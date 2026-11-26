@@ -1628,6 +1628,44 @@ public final class EventHelper {
         return answer;
     }
 
+    /**
+     * Delivers an application-defined event through the standard notifier isolation and logging path. Custom events are
+     * filtered by {@link EventNotifier#isEnabled(CamelEvent)}, independently of exchange event opt-outs.
+     *
+     * @since 4.24
+     */
+    public static boolean notifyCustomEvent(CamelContext context, Supplier<CamelEvent> eventSupplier) {
+        try {
+            ManagementStrategy management = context != null ? context.getManagementStrategy() : null;
+            List<EventNotifier> notifiers = management != null ? management.getStartedEventNotifiers() : null;
+            if (notifiers == null || notifiers.isEmpty()) {
+                return false;
+            }
+            boolean answer = false;
+            CamelEvent event = null;
+            for (EventNotifier notifier : notifiers) {
+                try {
+                    if (notifier.isDisabled()) {
+                        continue;
+                    }
+                    if (event == null) {
+                        event = eventSupplier.get();
+                        if (event == null) {
+                            return answer;
+                        }
+                    }
+                    answer |= doNotifyEvent(notifier, event);
+                } catch (Throwable e) {
+                    LOG.warn("Error notifying custom event. This exception will be ignored.", e);
+                }
+            }
+            return answer;
+        } catch (Throwable e) {
+            LOG.warn("Error obtaining custom event notifiers. This exception will be ignored.", e);
+            return false;
+        }
+    }
+
     private static boolean isDisabledOrIgnored(EventNotifier notifier) {
         return notifier.isDisabled() || notifier.isIgnoreExchangeEvents();
     }

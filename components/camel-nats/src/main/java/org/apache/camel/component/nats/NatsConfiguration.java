@@ -111,6 +111,8 @@ public class NatsConfiguration implements Cloneable {
     private boolean secure;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
+    private boolean hostnameVerification = true;
     @UriParam(label = "security")
     String credentialsFilePath;
     @UriParam(label = "advanced")
@@ -237,7 +239,9 @@ public class NatsConfiguration implements Cloneable {
     }
 
     /**
-     * Request timeout in milliseconds
+     * Request timeout in milliseconds. With JetStream, the time to wait for the acknowledgement of a published message.
+     * With jetstreamAsync=true, the NATS client also gives up on the acknowledgement after requestCleanupInterval (to
+     * twice that), so a longer wait needs a longer requestCleanupInterval too.
      */
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
@@ -405,6 +409,21 @@ public class NatsConfiguration implements Cloneable {
         this.sslContextParameters = sslContextParameters;
     }
 
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * Whether to check that the certificate of the NATS server matches the host Camel connects to, when TLS is used.
+     * The client then keeps the host name of a server for TLS, and connects to the fastest of its IP addresses. A
+     * server that is given, or that the cluster announces, by its IP address needs a certificate that names that
+     * address. When disabled, any certificate trusted by the JVM, or by the sslContextParameters, is accepted, whatever
+     * host it was issued for.
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
+    }
+
     /**
      * If we use useCredentialsFile to true we'll need to set the credentialsFilePath option. It can be loaded by
      * default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different
@@ -504,15 +523,15 @@ public class NatsConfiguration implements Cloneable {
         this.jetstreamEnabled = jetstreamEnabled;
     }
 
-    /**
-     * The name of the JetStream stream to use. If not specified, a default stream will be used if JetStream is enabled.
-     */
     public String getJetstreamName() {
         return jetstreamName;
     }
 
     /**
-     * Sets the name of the JetStream stream to use.
+     * The name of the JetStream stream. The consumer reads from this stream (it is required for a JetStream consumer).
+     * When the stream does not exist, the consumer creates it with the subject of the topic. The producer creates it in
+     * the same way, unless another stream already takes in the subject. The producer publishes to the subject, and the
+     * message is stored by the stream that takes in the subject, whatever its name.
      */
     public void setJetstreamName(String jetstreamName) {
         this.jetstreamName = jetstreamName;

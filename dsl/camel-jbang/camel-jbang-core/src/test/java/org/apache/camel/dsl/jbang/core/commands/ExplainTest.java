@@ -79,6 +79,15 @@ class ExplainTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void explainsTheRouteWithOpenAiProvider() throws Exception {
+        assertThat(openAiCommand(route.toString()).doCall()).isZero();
+
+        // OpenAI does not support streaming in generate(): the full text must still be printed even with stream=true
+        assertThat(printer.getStdout()).contains(EXPLANATION);
+        assertThat(llm.lastRequest().getString("model")).isEqualTo("test");
+    }
+
+    @Test
     void explainsTheRouteWithoutStreaming() throws Exception {
         assertThat(command(route.toString(), "--stream=false").doCall()).isZero();
 
@@ -144,9 +153,17 @@ class ExplainTest extends CamelCommandBaseTestSupport {
     }
 
     private Explain command(String... args) {
-        Explain command = new Explain(new CamelJBangMain().withPrinter(printer));
+        Explain command = new CamelJBangMain().withPrinter(printer).command(new Explain());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Arrays.stream(args), Stream.of("--api-type=ollama", "--url=" + llm.url(), "--model=test"))
+                        .toArray(String[]::new));
+        return command;
+    }
+
+    private Explain openAiCommand(String... args) {
+        Explain command = new CamelJBangMain().withPrinter(printer).command(new Explain());
+        CommandLineTestHelper.parse(command,
+                Stream.concat(Arrays.stream(args), Stream.of("--api-type=openai", "--url=" + llm.url(), "--model=test"))
                         .toArray(String[]::new));
         return command;
     }

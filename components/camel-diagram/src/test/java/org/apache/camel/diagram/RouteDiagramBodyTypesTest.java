@@ -76,16 +76,36 @@ class RouteDiagramBodyTypesTest {
 
     @Test
     void labelOfTheTypes() {
-        assertThat(RouteDiagramBodyTypes.fit(List.of("java.lang.String"), List.of("payload"), FM, 1000))
+        assertThat(RouteDiagramBodyTypes.fit(List.of("java.lang.String"), List.of("payload"), List.of(), FM, 1000))
                 .isEqualTo("String");
-        assertThat(RouteDiagramBodyTypes.fit(List.of("java.lang.String", "byte[]"), List.of("payload"), FM, 1000))
+        assertThat(RouteDiagramBodyTypes.fit(List.of("java.lang.String", "byte[]"), List.of("payload"), List.of(), FM, 1000))
                 .isEqualTo("String | byte[]");
         // more than one kind: the kinds too
         assertThat(RouteDiagramBodyTypes.fit(List.of("java.util.LinkedHashMap", "java.lang.String"),
-                List.of("data", "payload"), FM, 1000)).isEqualTo("LinkedHashMap | String (data and payload)");
+                List.of("data", "payload"), List.of(), FM, 1000)).isEqualTo("LinkedHashMap | String (data and payload)");
         assertThat(RouteDiagramBodyTypes.kinds(List.of("null", "payload", "data"))).isEqualTo("null, payload and data");
         // not reached: no label
-        assertThat(RouteDiagramBodyTypes.fit(List.of(), List.of(), FM, 1000)).isEmpty();
+        assertThat(RouteDiagramBodyTypes.fit(List.of(), List.of(), List.of(), FM, 1000)).isEmpty();
+    }
+
+    @Test
+    void labelWithTheFormats() {
+        // the format of the payload, from its Content-Type (CAMEL-27468)
+        assertThat(RouteDiagramBodyTypes.fit(List.of("byte[]"), List.of("payload"), List.of("json"), FM, 1000))
+                .isEqualTo("byte[] · json");
+        assertThat(RouteDiagramBodyTypes.fit(List.of("java.lang.String", "java.util.LinkedHashMap"),
+                List.of("payload", "data"), List.of("xml"), FM, 1000))
+                .isEqualTo("String | LinkedHashMap · xml (payload and data)");
+        // more than one format is marked, as more than one kind is
+        assertThat(RouteDiagramBodyTypes.marked(List.of("payload"), List.of("json", "xml"))).isTrue();
+        assertThat(RouteDiagramBodyTypes.marked(List.of("payload"), List.of("json"))).isFalse();
+        // the formats go before the types when the room is short
+        List<String> types = List.of("java.lang.String", "byte[]");
+        String cut = "String +1 · json";
+        assertThat(RouteDiagramBodyTypes.fit(types, List.of("payload"), List.of("json"), FM, FM.stringWidth(cut)))
+                .isEqualTo(cut);
+        assertThat(RouteDiagramBodyTypes.fit(types, List.of("payload"), List.of("json"), FM, FM.stringWidth("String +1")))
+                .isEqualTo("String +1");
     }
 
     @Test
@@ -94,10 +114,10 @@ class RouteDiagramBodyTypesTest {
         List<String> kinds = List.of("data", "payload", "collection");
         // the kinds go first, then the last types, then the first type is cut
         String all = "LinkedHashMap | String | ArrayList";
-        assertThat(RouteDiagramBodyTypes.fit(types, kinds, FM, FM.stringWidth(all))).isEqualTo(all);
+        assertThat(RouteDiagramBodyTypes.fit(types, kinds, List.of(), FM, FM.stringWidth(all))).isEqualTo(all);
         String two = "LinkedHashMap | String +1";
-        assertThat(RouteDiagramBodyTypes.fit(types, kinds, FM, FM.stringWidth(two))).isEqualTo(two);
-        assertThat(RouteDiagramBodyTypes.fit(types, kinds, FM, FM.stringWidth("Linked… +2")))
+        assertThat(RouteDiagramBodyTypes.fit(types, kinds, List.of(), FM, FM.stringWidth(two))).isEqualTo(two);
+        assertThat(RouteDiagramBodyTypes.fit(types, kinds, List.of(), FM, FM.stringWidth("Linked… +2")))
                 .startsWith("Linked").endsWith("… +2");
     }
 

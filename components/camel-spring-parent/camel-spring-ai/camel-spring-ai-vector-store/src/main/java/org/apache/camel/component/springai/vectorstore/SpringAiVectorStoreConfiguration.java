@@ -43,6 +43,14 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
     @UriParam
     private String filterExpression;
 
+    @UriParam(defaultValue = "false",
+              description = "Whether SIMILARITY_SEARCH of a float[] body, such as the vector of spring-ai-embeddings,"
+                            + " searches with this vector. By default it searches for the text of the"
+                            + " CamelSpringAiEmbeddingInputText header, which the vector store embeds again. The vector"
+                            + " store must support the search with a vector, and the vector must come from the same"
+                            + " embedding model as the stored vectors.")
+    private boolean searchByVector;
+
     public VectorStore getVectorStore() {
         return vectorStore;
     }
@@ -59,7 +67,7 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
     }
 
     /**
-     * The operation to perform on the vector store (ADD, DELETE, SIMILARITY_SEARCH).
+     * The operation to perform on the vector store (ADD, DELETE, SIMILARITY_SEARCH, UPSERT).
      */
     public void setOperation(SpringAiVectorStoreOperation operation) {
         this.operation = operation;
@@ -96,6 +104,18 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
      */
     public void setFilterExpression(String filterExpression) {
         this.filterExpression = filterExpression;
+    }
+
+    public boolean isSearchByVector() {
+        return searchByVector;
+    }
+
+    /**
+     * Whether SIMILARITY_SEARCH of a float[] body searches with this vector, instead of the text of the
+     * CamelSpringAiEmbeddingInputText header.
+     */
+    public void setSearchByVector(boolean searchByVector) {
+        this.searchByVector = searchByVector;
     }
 
     public SpringAiVectorStoreConfiguration copy() {

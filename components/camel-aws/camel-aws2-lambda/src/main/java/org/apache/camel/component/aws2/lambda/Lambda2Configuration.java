@@ -48,6 +48,18 @@ public class Lambda2Configuration implements Cloneable, AwsCommonConfiguration {
     private LambdaClient awsLambdaClient;
     @UriParam
     private boolean pojoRequest;
+    @UriParam(label = "producer", enums = "RequestResponse,Event,DryRun", defaultValue = "RequestResponse",
+              description = "How invokeFunction invokes the function. RequestResponse waits until the function has"
+                            + " finished and gives its result. Event queues the event for an asynchronous invocation and"
+                            + " answers at once with status code 202 and an empty body. DryRun only checks that the"
+                            + " function can be invoked (status code 204). The CamelAwsLambdaInvocationType header"
+                            + " overrides it per message. Not used with pojoRequest.")
+    private String invocationType = "RequestResponse";
+    @UriParam(label = "producer", enums = "None,Tail", defaultValue = "None",
+              description = "Set to Tail to get the last 4 KB of the execution log of a RequestResponse invocation in the"
+                            + " CamelAwsLambdaLogResult header (base64-encoded). The CamelAwsLambdaLogType header overrides"
+                            + " it per message. Not used with pojoRequest.")
+    private String logType = "None";
     @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
@@ -172,6 +184,28 @@ public class Lambda2Configuration implements Cloneable, AwsCommonConfiguration {
      */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
+    }
+
+    public String getInvocationType() {
+        return invocationType;
+    }
+
+    /**
+     * How invokeFunction invokes the function: RequestResponse, Event or DryRun.
+     */
+    public void setInvocationType(String invocationType) {
+        this.invocationType = invocationType;
+    }
+
+    public String getLogType() {
+        return logType;
+    }
+
+    /**
+     * Set to Tail to get the last 4 KB of the execution log of a RequestResponse invocation.
+     */
+    public void setLogType(String logType) {
+        this.logType = logType;
     }
 
     public boolean isTrustAllCertificates() {

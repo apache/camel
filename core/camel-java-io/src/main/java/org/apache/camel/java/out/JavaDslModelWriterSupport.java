@@ -757,11 +757,12 @@ public abstract class JavaDslModelWriterSupport {
         String call = null;
         if (def instanceof ThrowExceptionDefinition t && t.getExceptionType() == null && t.getExceptionClass() != null) {
             call = "throwException(" + typeName(t.getExceptionClass()) + ".class, " + quote(t.getMessage()) + ")";
-        } else if (def instanceof RemoveHeadersDefinition r && r.getExcludePattern() == null
-                && r.getExcludePatterns() != null && r.getExcludePatterns().length > 0) {
+        } else if (def instanceof RemoveHeadersDefinition r && r.getExcludePatterns() != null
+                && r.getExcludePatterns().length > 0) {
+            // the patterns as given, not the excludePattern that combines them for XML and YAML
             call = "removeHeaders(" + quote(r.getPattern()) + ", " + quotedList(r.getExcludePatterns()) + ")";
-        } else if (def instanceof RemovePropertiesDefinition r && r.getExcludePattern() == null
-                && r.getExcludePatterns() != null && r.getExcludePatterns().length > 0) {
+        } else if (def instanceof RemovePropertiesDefinition r && r.getExcludePatterns() != null
+                && r.getExcludePatterns().length > 0) {
             call = "removeProperties(" + quote(r.getPattern()) + ", " + quotedList(r.getExcludePatterns()) + ")";
         }
         if (call == null || stepStart < 0 || stepStart >= sb.length()) {

@@ -88,6 +88,15 @@ final class CatalogBodyTypes {
             return !carriers.isEmpty() && carriers.stream().allMatch(c -> PAYLOAD.contains(c) || "null".equals(c));
         }
 
+        /**
+         * A payload, maybe a value or no body as well, as the text-plain data type takes: a Map or a List would be sent
+         * as its toString().
+         */
+        boolean onlyPayloadOrValue() {
+            return carriers.stream().anyMatch(PAYLOAD::contains)
+                    && carriers.stream().allMatch(c -> PAYLOAD.contains(c) || "null".equals(c) || "value".equals(c));
+        }
+
         /** A Map or a List: an iterator is not one, as it is read once and has no index. */
         boolean data() {
             return !carriers.isEmpty() && DATA.containsAll(carriers);
@@ -490,7 +499,11 @@ final class CatalogBodyTypes {
             // json is jackson, gson, fastjson or jsonb: the library option names it
             JsonNode library = options != null && options.isObject() ? options.get("library") : null;
             String wanted = library != null && library.isValueNode() ? library.asString() : defaultLibrary(key);
-            name = names.stream().filter(n -> n.equalsIgnoreCase(wanted)).findFirst().orElse(null);
+            name = names.stream()
+                    .filter(n -> n.equalsIgnoreCase(wanted) || n.equalsIgnoreCase(key + wanted))
+                    .findFirst()
+                    // ApacheAvro, GoogleProtobuf: the data format named like the model
+                    .orElse(names.contains(key) ? key : null);
         }
         if (name == null) {
             return null;

@@ -153,6 +153,12 @@ Rename the alias of the key to its algorithm, for example:
 keytool -changealias -alias keycloak -destalias RS256 -keystore keycloak-realm.p12 -storetype PKCS12
 ----
 
+== The Authorization header
+
+When the server authenticates a request (`camel.server.authenticationEnabled=true`, with basic or JWT authentication),
+the `Authorization` header of the request is not passed on to the route: it is removed from the message once the
+credential has been checked. A request to a path that is not under `authenticationPath` keeps the header as sent.
+
 == See More
 
 - xref:platform-http-vertx.adoc[Platform HTTP Vert.x]

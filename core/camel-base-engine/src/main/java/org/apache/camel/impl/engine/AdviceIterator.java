@@ -58,9 +58,6 @@ final class AdviceIterator {
     static void runAfterTask(CamelInternalProcessorAdvice task, Object state, Exchange exchange) {
         try {
             task.after(exchange, state);
-        } catch (VirtualMachineError e) {
-            // left as before (thrown on)
-            throw e;
         } catch (Throwable e) {
             // allow all advices to complete even if there was an exception (or an Error, which would otherwise skip
             // the after of the advices before it, such as the end of the unit of work),

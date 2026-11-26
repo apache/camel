@@ -42,7 +42,7 @@ class YamlNormalizeKameletTest {
 
     private static int normalize(String... args) throws Exception {
         printer = new StringPrinter();
-        YamlNormalizeCommand cmd = new YamlNormalizeCommand(new CamelJBangMain().withPrinter(printer));
+        YamlNormalizeCommand cmd = new CamelJBangMain().withPrinter(printer).command(new YamlNormalizeCommand());
         CommandLineTestHelper.parse(cmd, args);
         return cmd.doCall();
     }

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.kafka.consumer.support.classic;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -50,9 +50,14 @@ public class OffsetPartitionAssignmentAdapter implements PartitionAssignmentAdap
         consumer.seek(topicPartition, offset);
     }
 
+    @Override
     public void handlePartitionAssignment() {
-        Set<TopicPartition> assignments = consumer.assignment();
-        for (TopicPartition topicPartition : assignments) {
+        handlePartitionAssignment(consumer.assignment());
+    }
+
+    @Override
+    public void handlePartitionAssignment(Collection<TopicPartition> partitions) {
+        for (TopicPartition topicPartition : partitions) {
             String offsetState = offsetRepository.getState(serializeOffsetKey(topicPartition));
             if (offsetState != null && !offsetState.isEmpty()) {
                 resumeFromOffset(consumer, topicPartition, offsetState);

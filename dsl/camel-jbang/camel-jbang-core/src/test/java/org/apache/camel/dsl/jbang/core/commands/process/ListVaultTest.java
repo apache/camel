@@ -39,7 +39,7 @@ class ListVaultTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListVault command = new ListVault(new CamelJBangMain().withPrinter(printer));
+        ListVault command = new CamelJBangMain().withPrinter(printer).command(new ListVault());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -62,7 +62,7 @@ class ListVaultTest extends ProcessCommandTestSupport {
         root.put("vaults", vaults("aws-secrets", vault("us-east-1", "aws-secret")));
         writeStatusFile(TEST_PID, root);
 
-        ListVault command = new ListVault(new CamelJBangMain().withPrinter(printer));
+        ListVault command = new CamelJBangMain().withPrinter(printer).command(new ListVault());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -87,7 +87,7 @@ class ListVaultTest extends ProcessCommandTestSupport {
         root.put("vaults", vaults("hashicorp-secrets", hashicorpVault()));
         writeStatusFile(TEST_PID, root);
 
-        ListVault command = new ListVault(new CamelJBangMain().withPrinter(printer));
+        ListVault command = new CamelJBangMain().withPrinter(printer).command(new ListVault());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -110,7 +110,7 @@ class ListVaultTest extends ProcessCommandTestSupport {
         root.put("vaults", vaults("kubernetes-configmaps", configMapVault("app-config")));
         writeStatusFile(TEST_PID, root);
 
-        ListVault command = new ListVault(new CamelJBangMain().withPrinter(printer));
+        ListVault command = new CamelJBangMain().withPrinter(printer).command(new ListVault());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -138,7 +138,7 @@ class ListVaultTest extends ProcessCommandTestSupport {
                 "azure-secrets", vault(null, "azure-secret")));
         writeStatusFile(TEST_PID, root);
 
-        ListVault command = new ListVault(new CamelJBangMain().withPrinter(printer));
+        ListVault command = new CamelJBangMain().withPrinter(printer).command(new ListVault());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -165,7 +165,7 @@ class ListVaultTest extends ProcessCommandTestSupport {
         root.put("vaults", vaults("aws-secrets", vault("eu-west-1", "secret-a", "secret-b", "secret-c")));
         writeStatusFile(TEST_PID, root);
 
-        ListVault command = new ListVault(new CamelJBangMain().withPrinter(printer));
+        ListVault command = new CamelJBangMain().withPrinter(printer).command(new ListVault());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -194,7 +194,7 @@ class ListVaultTest extends ProcessCommandTestSupport {
         root.put("vaults", vaults("aws-secrets", vault("us-east-1", "aws-secret")));
         writeStatusFile(TEST_PID, root);
 
-        ListVault command = new ListVault(new CamelJBangMain().withPrinter(printer));
+        ListVault command = new CamelJBangMain().withPrinter(printer).command(new ListVault());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -224,7 +224,7 @@ class ListVaultTest extends ProcessCommandTestSupport {
                 "azure-secrets", vault(null, "azure-secret")));
         writeStatusFile(TEST_PID, root);
 
-        ListVault command = new ListVault(new CamelJBangMain().withPrinter(printer));
+        ListVault command = new CamelJBangMain().withPrinter(printer).command(new ListVault());
         command.sort = "pid";
         command.jsonOutput = true;
 

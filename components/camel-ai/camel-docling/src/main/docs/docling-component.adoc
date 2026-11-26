@@ -157,7 +157,7 @@ directory-or-file `String` body accepted by the batch operations.
 | `outputBaseDirectory`
 | _(none)_
 | When set, the output directory passed to the docling CLI must resolve inside this directory once normalized.
-Applies to the `CamelDoclingOutputFilePath` header.
+Applies to the `CamelDoclingOutputFilePath` header. When not set, that header must be a relative path.
 |===
 
 With both options left at their defaults, a body that is neither a URL nor a path is written to a temporary
@@ -169,9 +169,15 @@ Typed bodies - `File`, `byte[]`, `InputStream`, and the explicit path collection
 operations - are unambiguous and are likewise unaffected.
 
 The `CamelDoclingOutputFilePath` header, which selects the CLI `--output` directory, is normalized lexically
-and, when `outputBaseDirectory` is set, confined to that directory. The normalization applies unconditionally;
-with `outputBaseDirectory` unset, a header value without traversal segments is otherwise used as given. The
-containment is lexical and does not resolve symbolic links (as with `inputBaseDirectory`).
+and then checked:
+
+- With `outputBaseDirectory` set, a relative value is resolved against that directory, and the result must
+stay inside it. An absolute value is accepted when it is inside the directory.
+- With `outputBaseDirectory` unset, the value must be a relative path that does not start with `../` once
+normalized, the same rule as for the custom arguments. It resolves against the CLI working directory. To use
+absolute output directories, set `outputBaseDirectory` to a directory that contains them.
+
+The checks are lexical and do not resolve symbolic links (as with `inputBaseDirectory`).
 
 [source,java]
 ----
@@ -502,8 +508,8 @@ Only the following flags are permitted:
 |===
 
 The `--output` (`-o`) flag is **not permitted** because the output directory is managed by the producer.
-Use the `CamelDoclingOutputFilePath` header or endpoint configuration instead. That header is normalized and,
-when `outputBaseDirectory` is set, confined to that directory (see the security options above).
+Use the `CamelDoclingOutputFilePath` header or endpoint configuration instead. That header must be a relative
+path, or, when `outputBaseDirectory` is set, a path inside that directory (see the security options above).
 
 Additionally, the following are rejected:
 
@@ -1018,7 +1024,11 @@ When using docling-serve API mode (`useDoclingServe=true`), the component expose
 
 | `doOcr`
 | _not set_
-| Enable OCR processing in docling-serve API mode. When not set, the server uses its own defaults. Set `enableOCR` to `false` to explicitly disable OCR.
+| Enable OCR processing in docling-serve API mode. When not set, OCR is turned on if `ocrLanguage` is set, and otherwise the server uses its own defaults. Set `enableOCR` to `false` to explicitly disable OCR.
+
+| `ocrLanguage`
+| _not set_
+| Language for OCR. When set, it is sent as `ocr_lang` with `do_ocr=true`, unless `enableOCR` or `doOcr` is `false`. When not set, the server uses its own default languages.
 
 | `forceOcr`
 | _not set_
@@ -1030,7 +1040,7 @@ When using docling-serve API mode (`useDoclingServe=true`), the component expose
 
 |===
 
-NOTE: The `enableOCR` and `ocrLanguage` settings are primarily for CLI mode. In API mode, use `doOcr` to explicitly control OCR behavior. When `doOcr` is not set, the server uses its own defaults. Setting `enableOCR=false` will send `doOcr(false)` to the server to disable OCR.
+NOTE: In API mode, use `doOcr` to explicitly control OCR behavior. When `doOcr` is not set, a configured `ocrLanguage` turns OCR on, the same way as the `CamelDoclingOCRLanguage` header; otherwise the server uses its own defaults. Setting `enableOCR=false` will send `doOcr(false)` to the server to disable OCR. In CLI mode, `ocrLanguage` defaults to `en` when it is not set.
 
 === Table and Structure Options
 

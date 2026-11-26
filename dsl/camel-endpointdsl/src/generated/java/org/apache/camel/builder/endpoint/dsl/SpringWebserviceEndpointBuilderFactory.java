@@ -147,6 +147,52 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom
+         * org.springframework.ws.transport.WebServiceMessageSender, for example
+         * to perform authentication or to use another transport. The producer
+         * sends its requests with it, in place of the message senders of the
+         * WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS sends
+         * the response of the consumer with it when the response goes to the
+         * WS-Addressing ReplyTo or FaultTo address of the request instead of
+         * the connection of the request.
+         * 
+         * The option is a:
+         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param messageSender the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder messageSender(org.springframework.ws.transport.WebServiceMessageSender messageSender) {
+            doSetProperty("messageSender", messageSender);
+            return this;
+        }
+        /**
+         * To use a custom
+         * org.springframework.ws.transport.WebServiceMessageSender, for example
+         * to perform authentication or to use another transport. The producer
+         * sends its requests with it, in place of the message senders of the
+         * WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS sends
+         * the response of the consumer with it when the response goes to the
+         * WS-Addressing ReplyTo or FaultTo address of the request instead of
+         * the connection of the request.
+         * 
+         * The option will be converted to a
+         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param messageSender the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder messageSender(String messageSender) {
+            doSetProperty("messageSender", messageSender);
+            return this;
+        }
+        /**
          * The org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher
          * that passes requests to the consumer. An existing Spring-WS endpoint
          * mapping, such as a PayloadRootQNameEndpointMapping or a
@@ -234,49 +280,75 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom org.apache.camel.support.jsse.SSLContextParameters
-         * for the HTTPS requests that the producer sends. Only applied to a
-         * message sender of the WebServiceTemplate whose class is exactly
-         * HttpUrlConnectionMessageSender, which is the default message sender.
-         * For any other message sender, the producer logs a warning and does
-         * not apply it. If not set, the component sets it to the global SSL
-         * context parameters when it creates the endpoint and its own
-         * useGlobalSslContextParameters option is true. The consumer does not
-         * use it.
+         * The WS-Addressing Action header of a SOAP fault that the consumer
+         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
+         * If not set, the Action header of the request followed by the
+         * faultActionSuffix of the WSACamelEndpointMapping is used, and that
+         * suffix is Response by default.
          * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * The option is a: <code>java.net.URI</code> type.
          * 
-         * Group: security
+         * Group: consumer
          * 
-         * @param sslContextParameters the value to set
+         * @param faultAction the value to set
          * @return the dsl builder
          */
-        default SpringWebserviceEndpointConsumerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
+        default SpringWebserviceEndpointConsumerBuilder faultAction(java.net.URI faultAction) {
+            doSetProperty("faultAction", faultAction);
             return this;
         }
         /**
-         * To use a custom org.apache.camel.support.jsse.SSLContextParameters
-         * for the HTTPS requests that the producer sends. Only applied to a
-         * message sender of the WebServiceTemplate whose class is exactly
-         * HttpUrlConnectionMessageSender, which is the default message sender.
-         * For any other message sender, the producer logs a warning and does
-         * not apply it. If not set, the component sets it to the global SSL
-         * context parameters when it creates the endpoint and its own
-         * useGlobalSslContextParameters option is true. The consumer does not
-         * use it.
+         * The WS-Addressing Action header of a SOAP fault that the consumer
+         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
+         * If not set, the Action header of the request followed by the
+         * faultActionSuffix of the WSACamelEndpointMapping is used, and that
+         * suffix is Response by default.
          * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * The option will be converted to a <code>java.net.URI</code> type.
          * 
-         * Group: security
+         * Group: consumer
          * 
-         * @param sslContextParameters the value to set
+         * @param faultAction the value to set
          * @return the dsl builder
          */
-        default SpringWebserviceEndpointConsumerBuilder sslContextParameters(String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
+        default SpringWebserviceEndpointConsumerBuilder faultAction(String faultAction) {
+            doSetProperty("faultAction", faultAction);
+            return this;
+        }
+        /**
+         * The WS-Addressing Action header of the response that the consumer
+         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
+         * If not set, the Action header of the request followed by the
+         * outputActionSuffix of the WSACamelEndpointMapping is used, and that
+         * suffix is Response by default.
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param outputAction the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder outputAction(java.net.URI outputAction) {
+            doSetProperty("outputAction", outputAction);
+            return this;
+        }
+        /**
+         * The WS-Addressing Action header of the response that the consumer
+         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
+         * If not set, the Action header of the request followed by the
+         * outputActionSuffix of the WSACamelEndpointMapping is used, and that
+         * suffix is Response by default.
+         * 
+         * The option will be converted to a <code>java.net.URI</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param outputAction the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointConsumerBuilder outputAction(String outputAction) {
+            doSetProperty("outputAction", outputAction);
             return this;
         }
     }
@@ -522,6 +594,52 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom
+         * org.springframework.ws.transport.WebServiceMessageSender, for example
+         * to perform authentication or to use another transport. The producer
+         * sends its requests with it, in place of the message senders of the
+         * WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS sends
+         * the response of the consumer with it when the response goes to the
+         * WS-Addressing ReplyTo or FaultTo address of the request instead of
+         * the connection of the request.
+         * 
+         * The option is a:
+         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param messageSender the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointProducerBuilder messageSender(org.springframework.ws.transport.WebServiceMessageSender messageSender) {
+            doSetProperty("messageSender", messageSender);
+            return this;
+        }
+        /**
+         * To use a custom
+         * org.springframework.ws.transport.WebServiceMessageSender, for example
+         * to perform authentication or to use another transport. The producer
+         * sends its requests with it, in place of the message senders of the
+         * WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS sends
+         * the response of the consumer with it when the response goes to the
+         * WS-Addressing ReplyTo or FaultTo address of the request instead of
+         * the connection of the request.
+         * 
+         * The option will be converted to a
+         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param messageSender the value to set
+         * @return the dsl builder
+         */
+        default SpringWebserviceEndpointProducerBuilder messageSender(String messageSender) {
+            doSetProperty("messageSender", messageSender);
+            return this;
+        }
+        /**
          * Whether to copy the attachments of the response to the Camel message.
          * If true, the producer adds each attachment of the response to the
          * Camel message under its content id, where it replaces an attachment
@@ -604,42 +722,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The WS-Addressing Action header of a SOAP fault that the consumer
-         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
-         * If not set, the Action header of the request followed by the
-         * faultActionSuffix of the WSACamelEndpointMapping is used, and that
-         * suffix is Response by default. The producer does not use it.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param faultAction the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder faultAction(java.net.URI faultAction) {
-            doSetProperty("faultAction", faultAction);
-            return this;
-        }
-        /**
-         * The WS-Addressing Action header of a SOAP fault that the consumer
-         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
-         * If not set, the Action header of the request followed by the
-         * faultActionSuffix of the WSACamelEndpointMapping is used, and that
-         * suffix is Response by default. The producer does not use it.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param faultAction the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder faultAction(String faultAction) {
-            doSetProperty("faultAction", faultAction);
-            return this;
-        }
-        /**
          * The address of the WS-Addressing FaultTo header of the request that
          * the producer sends. Only used when the wsAddressingAction option or
          * the CamelSpringWebserviceAddressingAction header is set. The
@@ -703,88 +785,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageFactory(String messageFactory) {
             doSetProperty("messageFactory", messageFactory);
-            return this;
-        }
-        /**
-         * To use a custom
-         * org.springframework.ws.transport.WebServiceMessageSender, for example
-         * to perform authentication or to use another transport. The producer
-         * sends its requests with it, in place of the message senders of the
-         * WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS sends
-         * the response of the consumer with it when the response goes to the
-         * WS-Addressing ReplyTo or FaultTo address of the request instead of
-         * the connection of the request.
-         * 
-         * The option is a:
-         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param messageSender the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder messageSender(org.springframework.ws.transport.WebServiceMessageSender messageSender) {
-            doSetProperty("messageSender", messageSender);
-            return this;
-        }
-        /**
-         * To use a custom
-         * org.springframework.ws.transport.WebServiceMessageSender, for example
-         * to perform authentication or to use another transport. The producer
-         * sends its requests with it, in place of the message senders of the
-         * WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS sends
-         * the response of the consumer with it when the response goes to the
-         * WS-Addressing ReplyTo or FaultTo address of the request instead of
-         * the connection of the request.
-         * 
-         * The option will be converted to a
-         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param messageSender the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder messageSender(String messageSender) {
-            doSetProperty("messageSender", messageSender);
-            return this;
-        }
-        /**
-         * The WS-Addressing Action header of the response that the consumer
-         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
-         * If not set, the Action header of the request followed by the
-         * outputActionSuffix of the WSACamelEndpointMapping is used, and that
-         * suffix is Response by default. The producer does not use it.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param outputAction the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder outputAction(java.net.URI outputAction) {
-            doSetProperty("outputAction", outputAction);
-            return this;
-        }
-        /**
-         * The WS-Addressing Action header of the response that the consumer
-         * returns. Only used when endpointMapping is a WSACamelEndpointMapping.
-         * If not set, the Action header of the request followed by the
-         * outputActionSuffix of the WSACamelEndpointMapping is used, and that
-         * suffix is Response by default. The producer does not use it.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param outputAction the value to set
-         * @return the dsl builder
-         */
-        default SpringWebserviceEndpointProducerBuilder outputAction(String outputAction) {
-            doSetProperty("outputAction", outputAction);
             return this;
         }
         /**
@@ -1175,49 +1175,49 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom org.apache.camel.support.jsse.SSLContextParameters
-         * for the HTTPS requests that the producer sends. Only applied to a
-         * message sender of the WebServiceTemplate whose class is exactly
-         * HttpUrlConnectionMessageSender, which is the default message sender.
-         * For any other message sender, the producer logs a warning and does
-         * not apply it. If not set, the component sets it to the global SSL
-         * context parameters when it creates the endpoint and its own
-         * useGlobalSslContextParameters option is true. The consumer does not
-         * use it.
+         * To use a custom
+         * org.springframework.ws.transport.WebServiceMessageSender, for example
+         * to perform authentication or to use another transport. The producer
+         * sends its requests with it, in place of the message senders of the
+         * WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS sends
+         * the response of the consumer with it when the response goes to the
+         * WS-Addressing ReplyTo or FaultTo address of the request instead of
+         * the connection of the request.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
+         * type.
          * 
-         * Group: security
+         * Group: common
          * 
-         * @param sslContextParameters the value to set
+         * @param messageSender the value to set
          * @return the dsl builder
          */
-        default SpringWebserviceEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
+        default SpringWebserviceEndpointBuilder messageSender(org.springframework.ws.transport.WebServiceMessageSender messageSender) {
+            doSetProperty("messageSender", messageSender);
             return this;
         }
         /**
-         * To use a custom org.apache.camel.support.jsse.SSLContextParameters
-         * for the HTTPS requests that the producer sends. Only applied to a
-         * message sender of the WebServiceTemplate whose class is exactly
-         * HttpUrlConnectionMessageSender, which is the default message sender.
-         * For any other message sender, the producer logs a warning and does
-         * not apply it. If not set, the component sets it to the global SSL
-         * context parameters when it creates the endpoint and its own
-         * useGlobalSslContextParameters option is true. The consumer does not
-         * use it.
+         * To use a custom
+         * org.springframework.ws.transport.WebServiceMessageSender, for example
+         * to perform authentication or to use another transport. The producer
+         * sends its requests with it, in place of the message senders of the
+         * WebServiceTemplate. With a WSACamelEndpointMapping, Spring-WS sends
+         * the response of the consumer with it when the response goes to the
+         * WS-Addressing ReplyTo or FaultTo address of the request instead of
+         * the connection of the request.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
+         * type.
          * 
-         * Group: security
+         * Group: common
          * 
-         * @param sslContextParameters the value to set
+         * @param messageSender the value to set
          * @return the dsl builder
          */
-        default SpringWebserviceEndpointBuilder sslContextParameters(String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
+        default SpringWebserviceEndpointBuilder messageSender(String messageSender) {
+            doSetProperty("messageSender", messageSender);
             return this;
         }
     }
@@ -1271,11 +1271,10 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * the WS-Addressing Action header. to: the WS-Addressing To header.
          * beanname: no part of the request, because lookupKey names a
          * CamelEndpointDispatcher bean and an existing Spring-WS endpoint
-         * mapping maps requests to that bean. The endpoint URI takes the type
-         * as written here, without the underscore of the enum constant, and
-         * ignores its case.
-         * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION,
-         * TO, SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
+         * mapping maps requests to that bean. The endpoint URI ignores the case
+         * of the type.
+         * There are 8 enums and the value can be one of: rootqname, action, to,
+         * soapaction, xpathresult, uri, uripath, beanname
          * 
          * Path parameter: lookupKey
          * The value that is compared with the part of the request that type
@@ -1323,11 +1322,10 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * the WS-Addressing Action header. to: the WS-Addressing To header.
          * beanname: no part of the request, because lookupKey names a
          * CamelEndpointDispatcher bean and an existing Spring-WS endpoint
-         * mapping maps requests to that bean. The endpoint URI takes the type
-         * as written here, without the underscore of the enum constant, and
-         * ignores its case.
-         * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION,
-         * TO, SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
+         * mapping maps requests to that bean. The endpoint URI ignores the case
+         * of the type.
+         * There are 8 enums and the value can be one of: rootqname, action, to,
+         * soapaction, xpathresult, uri, uripath, beanname
          * 
          * Path parameter: lookupKey
          * The value that is compared with the part of the request that type
@@ -1405,7 +1403,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: {@code javax.xml.transform.Source} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code SpringWebserviceSoapHeader}.
          */

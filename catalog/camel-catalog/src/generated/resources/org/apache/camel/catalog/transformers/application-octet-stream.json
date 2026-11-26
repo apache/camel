@@ -15,15 +15,20 @@
         "text",
         "bytes",
         "stream",
-        "file"
+        "file",
+        "null"
       ],
-      "description": "A body Camel can convert to a byte array: a number or a null body fails"
+      "description": "A body Camel can convert to a byte array: a number fails, and a null body stays null"
     },
     "transformerOut": {
       "carriers": [
-        "bytes"
+        "bytes",
+        "stream",
+        "file",
+        "null"
       ],
-      "javaType": "byte[]"
+      "format": "binary",
+      "description": "A stream cache or a file body is kept as it is and a null body stays null; any other body becomes a byte array"
     }
   }
 }

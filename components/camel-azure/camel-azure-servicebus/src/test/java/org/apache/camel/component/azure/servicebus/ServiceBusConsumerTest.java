@@ -80,6 +80,7 @@ public class ServiceBusConsumerTest {
     private static final String MESSAGE_DEAD_LETTER_ERROR_DESCRIPTION = "deadLetterErrorDescriptionValue";
     private static final String MESSAGE_DEAD_LETTER_REASON = "deadLetterReasonValue";
     private static final String MESSAGE_DEAD_LETTER_SOURCE = "deadLetterSourceValue";
+    private static final String TOPIC_OR_QUEUE_NAME = "orders";
     private static final String PROPAGATED_HEADER_KEY = "propagatedHeaderKey";
     private static final String PROPAGATED_HEADER_VALUE = "propagatedHeaderValue";
 
@@ -123,6 +124,7 @@ public class ServiceBusConsumerTest {
                 .thenReturn(client);
         when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture())).thenReturn(true);
         when(configuration.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
+        when(configuration.getTopicOrQueueName()).thenReturn(TOPIC_OR_QUEUE_NAME);
         when(ecc.getContextPlugin(PeriodTaskScheduler.class)).thenReturn(periodTaskScheduler);
         when(context.getUuidGenerator()).thenReturn(uuidGenerator);
         when(uuidGenerator.generateExchangeUuid()).thenReturn("test-exchange-id");
@@ -732,12 +734,10 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
-    void lockRenewerRenewsAgainAfterATransientError() throws Exception {
+    void lockRenewerRetriesATransientErrorBeforeTheLockExpires() throws Exception {
         when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
         when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
         when(messageContext.getMessage()).thenReturn(message);
-        // the lock expires before the next runs of the renewer
-        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(15));
         // as the SDK reports a busy server: a transient error, which can be retried
         ServiceBusException busy = new ServiceBusException(
                 new AmqpException(true, AmqpErrorCondition.SERVER_BUSY_ERROR, "server busy", null),
@@ -749,7 +749,15 @@ public class ServiceBusConsumerTest {
             consumer.doStart();
 
             ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
-            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            ArgumentCaptor<Long> periodCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), periodCaptor.capture());
+            // two runs are at most the period plus a second apart (the period task scheduler ticks once per second).
+            // A lock that expires 2 seconds after two such gaps must be renewed now: left to the next run, its first
+            // renewal could come with one gap and 2 seconds left, and a transient failure of it would be retried with
+            // about 2 seconds left, too little for the call to Service Bus
+            long maxGapMillis = periodCaptor.getValue() + 1000;
+            when(message.getLockedUntil())
+                    .thenReturn(OffsetDateTime.now().plus(Duration.ofMillis(2 * maxGapMillis + 2000)));
             processMessageCaptor.getValue().accept(messageContext);
 
             taskCaptor.getValue().run();
@@ -795,7 +803,8 @@ public class ServiceBusConsumerTest {
         when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
         when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
         when(messageContext.getMessage()).thenReturn(message);
-        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusMinutes(1));
+        // the renewer renews a lock that expires within 20 seconds: this one has two seconds more
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusSeconds(22));
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             consumer.doStart();
 
@@ -1117,6 +1126,7 @@ public class ServiceBusConsumerTest {
         expectedMessageHeaders.put(ServiceBusConstants.LOCK_TOKEN, MESSAGE_LOCK_TOKEN);
         expectedMessageHeaders.put(ServiceBusConstants.LOCKED_UNTIL, MESSAGE_LOCKED_UNTIL);
         expectedMessageHeaders.put(ServiceBusConstants.PARTITION_KEY, MESSAGE_PARTITION_KEY);
+        expectedMessageHeaders.put(ServiceBusConstants.TOPIC_OR_QUEUE_NAME, TOPIC_OR_QUEUE_NAME);
         expectedMessageHeaders.put(ServiceBusConstants.RAW_AMQP_MESSAGE, rawAmqpAnnotatedMessage);
         expectedMessageHeaders.put(ServiceBusConstants.REPLY_TO, MESSAGE_REPLY_TO);
         expectedMessageHeaders.put(ServiceBusConstants.REPLY_TO_SESSION_ID, MESSAGE_REPLY_TO_SESSION_ID);

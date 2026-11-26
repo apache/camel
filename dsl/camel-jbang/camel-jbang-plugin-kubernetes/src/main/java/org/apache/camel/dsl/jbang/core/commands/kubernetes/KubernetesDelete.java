@@ -27,7 +27,6 @@ import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
 import io.fabric8.openshift.client.OpenShiftClient;
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.StringHelper;
 
@@ -37,10 +36,6 @@ import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTra
                    description = "Delete Camel application from Kubernetes. This operation will delete all resources associated to this app, such as: Deployment, Routes, Services, etc. filtering by label \"app.kubernetes.io/name=<name>\".",
                    generateHelp = true)
 public class KubernetesDelete extends KubernetesBaseCommand {
-
-    public KubernetesDelete(CamelJBangMain main) {
-        super(main);
-    }
 
     public Integer doCall() throws Exception {
         if (name == null || name.isBlank()) {

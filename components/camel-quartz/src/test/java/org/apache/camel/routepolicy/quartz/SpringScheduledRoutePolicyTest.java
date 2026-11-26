@@ -49,12 +49,12 @@ public abstract class SpringScheduledRoutePolicyTest {
     public void startTest() throws Exception {
         setUp();
 
-        CamelContext context = startRouteWithPolicy("startPolicy");
+        // the route must not auto start: the scheduled start could otherwise fire (twice) before the route is
+        // stopped by the test, when the startup is slow, and then nothing would start the route again
+        CamelContext context = startRouteWithPolicy("startPolicy", false);
 
         MockEndpoint mock = context.getEndpoint("mock:success", MockEndpoint.class);
         mock.expectedMinimumMessageCount(1);
-
-        context.getRouteController().stopRoute("testRoute", 1000, TimeUnit.MILLISECONDS);
 
         Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(
                 () -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("testRoute")));
@@ -113,8 +113,12 @@ public abstract class SpringScheduledRoutePolicyTest {
         mock.assertIsSatisfied();
     }
 
-    @SuppressWarnings("unchecked")
     private CamelContext startRouteWithPolicy(String policyBeanName) throws Exception {
+        return startRouteWithPolicy(policyBeanName, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private CamelContext startRouteWithPolicy(String policyBeanName, boolean autoStartup) throws Exception {
         CamelContext context = new DefaultCamelContext();
         List<RouteDefinition> routes = (List<RouteDefinition>) applicationContext.getBean("testRouteContext");
         RoutePolicy policy = applicationContext.getBean(policyBeanName, RoutePolicy.class);
@@ -122,6 +126,7 @@ public abstract class SpringScheduledRoutePolicyTest {
                 ? policy instanceof SimpleScheduledRoutePolicy
                 : policy instanceof CronScheduledRoutePolicy);
         routes.get(0).routePolicy(policy);
+        routes.get(0).autoStartup(autoStartup);
         ((ModelCamelContext) context).addRouteDefinitions(routes);
         context.start();
         return context;

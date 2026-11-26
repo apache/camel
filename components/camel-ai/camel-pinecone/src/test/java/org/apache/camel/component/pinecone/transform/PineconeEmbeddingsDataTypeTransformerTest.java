@@ -106,6 +106,30 @@ class PineconeEmbeddingsDataTypeTransformerTest {
     }
 
     @Test
+    void theIndexNameHeaderIsLeftUnsetWithoutTheHeader() throws Exception {
+        // CAMEL-27098: the transformer leaves CamelPineconeIndexName unset, so that the producer uses the indexName
+        // of its endpoint; before, it set the header to embeddings, which the producer takes over the endpoint
+        Message message = transform(TextSegment.from("hello"), new Embedding(new float[] { 0.1f, 0.2f, 0.3f }));
+        assertNull(message.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class));
+        // the CamelPineconeIndexId header still gets its random UUID
+        assertNotNull(message.getHeader(PineconeVectorDbHeaders.INDEX_ID, String.class));
+    }
+
+    @Test
+    void theIndexNameHeaderIsKept() throws Exception {
+        // CAMEL-27098: a CamelPineconeIndexName header the route set is kept, and the producer takes it over
+        // the indexName of its endpoint
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
+                new Embedding(new float[] { 0.1f, 0.2f, 0.3f }));
+        exchange.getMessage().setHeader(PineconeVectorDbHeaders.INDEX_NAME, "my-index");
+        exchange.getMessage().setBody(TextSegment.from("hello"));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertEquals("my-index", exchange.getMessage().getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class));
+    }
+
+    @Test
     void aMessageWithoutTheEmbeddingFailsWithAClearMessage() {
         // CAMEL-26300: an IllegalArgumentException that names the missing header, as pgvector:embeddings gives, instead of
         // a NullPointerException

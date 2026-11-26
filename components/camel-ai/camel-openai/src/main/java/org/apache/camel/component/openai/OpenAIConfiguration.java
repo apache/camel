@@ -54,15 +54,18 @@ public class OpenAIConfiguration implements Cloneable {
     private int webhookMaxPayloadSize = 1048576;
 
     @UriParam(security = "secret")
-    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", security = "secret")
+    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable. Optional for a"
+                            + " server that checks no key, such as a local Ollama, vLLM or LM Studio (with baseUrl): without"
+                            + " a key (and no oauthProfile), the requests are sent without an Authorization header.",
+              security = "secret")
     private String apiKey;
 
     @UriParam(label = "security")
     @Metadata(description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
                             + "When set, the token is acquired from the configured identity provider and used instead of apiKey. "
                             + "Requires camel-oauth on the classpath. The profile properties are resolved from "
-                            + "camel.oauth.<profileName>.client-id, camel.oauth.<profileName>.client-secret, "
-                            + "and camel.oauth.<profileName>.token-endpoint.")
+                            + "camel.oauth.myProfile.client-id, camel.oauth.myProfile.client-secret, "
+                            + "and camel.oauth.myProfile.token-endpoint, where myProfile is the profile name.")
     private String oauthProfile;
 
     @UriParam
@@ -133,6 +136,16 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "JSON schema for structured output validation", supportFileReference = true, largeInput = true,
               inputLanguage = "json")
     private String jsonSchema;
+
+    @UriParam(defaultValue = "false")
+    @Metadata(defaultValue = "false",
+              description = "Whether the model must follow jsonSchema exactly (strict structured outputs): sets strict to"
+                            + " true in the JSON schema response format of chat-completion, the Responses API and batch."
+                            + " OpenAI then only accepts a schema that meets its rules, every property of each object listed"
+                            + " in required and additionalProperties false on every object, and rejects any other with HTTP"
+                            + " 400. Without it, OpenAI takes the schema as a hint, and the answer can miss required fields"
+                            + " or have others. Other OpenAI-compatible servers may ignore it.")
+    private boolean jsonSchemaStrict;
 
     @UriParam
     @Metadata(description = "Previous response id for OpenAI server-side conversation state (Responses API only)")
@@ -217,7 +230,8 @@ public class OpenAIConfiguration implements Cloneable {
     private boolean storeFullResponse = false;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Strip <think>...</think> blocks from model responses (used by reasoning models like Qwen3, DeepSeek-R1). "
+    @Metadata(description = "Strip the think blocks (from the opening to the closing think tag) from model responses "
+                            + "(used by reasoning models like Qwen3, DeepSeek-R1). "
                             + "The thinking content is stored in the CamelOpenAIThinkingContent header.")
     private boolean stripThinking = false;
 
@@ -249,11 +263,15 @@ public class OpenAIConfiguration implements Cloneable {
 
     @UriParam(prefix = "mcpServer.", multiValue = true)
     @Metadata(description = "MCP (Model Context Protocol) server configurations. "
-                            + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, (Note that sse is deprecated) "
-                            + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
-                            + "mcpServer.<name>.url=<url> (sse/streamableHttp), "
-                            + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth), "
-                            + "mcpServer.<name>.toolNames=<comma-separated> (optional include list to restrict which tools are registered from this server)")
+                            + "Define servers using prefix notation, where myServer stands for the name of the server: "
+                            + "mcpServer.myServer.transportType=stdio|sse|streamableHttp (sse is deprecated), "
+                            + "mcpServer.myServer.command=npx (stdio), "
+                            + "mcpServer.myServer.args=arg1,arg2 (stdio, comma-separated), "
+                            + "mcpServer.myServer.url=http://localhost:8080/mcp (sse/streamableHttp, the URL of the endpoint "
+                            + "of the server, path included, such as http://localhost:8080/sse for sse), "
+                            + "mcpServer.myServer.oauthProfile=myProfile (OAuth profile for HTTP auth, requires camel-oauth), "
+                            + "mcpServer.myServer.toolNames=tool1,tool2 (optional comma-separated include list to restrict "
+                            + "which tools are registered from this server)")
     private Map<String, Object> mcpServer;
 
     @UriParam(defaultValue = "50")
@@ -261,7 +279,7 @@ public class OpenAIConfiguration implements Cloneable {
     private int maxToolIterations = 50;
 
     @UriParam(defaultValue = "0")
-    @Metadata(description = "Maximum cumulative prompt plus completion tokens allowed across the MCP agentic loop. "
+    @Metadata(description = "Maximum cumulative prompt plus completion tokens allowed across the tool loop. "
                             + "When 0 or negative, no token budget is enforced. Enforcement runs after each API call "
                             + "that requests further tool execution, so actual spend may exceed the configured budget "
                             + "by up to one call (typically the largest, as the prompt grows each iteration). "
@@ -269,13 +287,15 @@ public class OpenAIConfiguration implements Cloneable {
     private long maxAgenticTokens;
 
     @UriParam(defaultValue = "true")
-    @Metadata(description = "When true and MCP servers are configured, automatically execute tool calls "
-                            + "and loop back to the model. When false, tool calls are returned as the message body for manual handling.")
+    @Metadata(description = "When true, run the tool calls the model asks for, both MCP tools (mcpServer.*) and route "
+                            + "tools (tags), and send the results back to the model until it answers. When false, the tool "
+                            + "calls are returned as the message body for the route to handle.")
     private boolean autoToolExecution = true;
 
     @UriParam
     @Metadata(description = "Comma-separated tags for discovering route-based tools registered via the ai-tool component. "
-                            + "When set, matching tools from the shared AiToolRegistry are exposed to the model alongside MCP tools.")
+                            + "When set, matching tools from the shared AiToolRegistry are exposed to the model alongside MCP tools, "
+                            + "and run in the same tool loop (see autoToolExecution). No MCP server is needed for route tools.")
     private String tags;
 
     @UriParam
@@ -782,6 +802,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setJsonSchema(String jsonSchema) {
         this.jsonSchema = jsonSchema;
+    }
+
+    public boolean isJsonSchemaStrict() {
+        return jsonSchemaStrict;
+    }
+
+    public void setJsonSchemaStrict(boolean jsonSchemaStrict) {
+        this.jsonSchemaStrict = jsonSchemaStrict;
     }
 
     public boolean isConversationMemory() {

@@ -30,7 +30,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.process.JsonValues;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
@@ -129,10 +128,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;
-
-    public CamelBrowseAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

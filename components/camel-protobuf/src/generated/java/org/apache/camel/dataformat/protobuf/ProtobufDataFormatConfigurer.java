@@ -26,6 +26,8 @@ public class ProtobufDataFormatConfigurer extends org.apache.camel.support.compo
         map.put("ContentTypeFormat", java.lang.String.class);
         map.put("ContentTypeHeader", boolean.class);
         map.put("InstanceClass", java.lang.String.class);
+        map.put("MessageName", java.lang.String.class);
+        map.put("Schema", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -39,6 +41,9 @@ public class ProtobufDataFormatConfigurer extends org.apache.camel.support.compo
         case "contentTypeHeader": target.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "instanceclass":
         case "instanceClass": target.setInstanceClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagename":
+        case "messageName": target.setMessageName(property(camelContext, java.lang.String.class, value)); return true;
+        case "schema": target.setSchema(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -57,6 +62,9 @@ public class ProtobufDataFormatConfigurer extends org.apache.camel.support.compo
         case "contentTypeHeader": return boolean.class;
         case "instanceclass":
         case "instanceClass": return java.lang.String.class;
+        case "messagename":
+        case "messageName": return java.lang.String.class;
+        case "schema": return java.lang.String.class;
         default: return null;
         }
     }
@@ -71,6 +79,9 @@ public class ProtobufDataFormatConfigurer extends org.apache.camel.support.compo
         case "contentTypeHeader": return target.isContentTypeHeader();
         case "instanceclass":
         case "instanceClass": return target.getInstanceClass();
+        case "messagename":
+        case "messageName": return target.getMessageName();
+        case "schema": return target.getSchema();
         default: return null;
         }
     }

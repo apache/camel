@@ -96,6 +96,20 @@ For each configured option you'll see:
 
 Use `PgUp/PgDn` to scroll the documentation panel.
 
+## WSDL
+
+For a `cxf` endpoint (a SOAP service or client) with a `wsdlURL`, press
+`w` to show its WSDL in the bottom panel instead of the documentation:
+the services and ports, with the SOAP version and address of each port,
+and a table of the operations with their request, response and fault
+elements. Press `w` again to go back to the documentation.
+
+A `file:` or `classpath:` WSDL is looked up in the folder of the
+integration, and in its `src/main/resources`; an `http(s)` URL is read
+from its server, with the rules of `camel generate wsdl` (imports only
+from its host). The panel ends with the `camel generate wsdl ... --samples`
+command that writes sample messages for the operations.
+
 ## Keys
 
 - `Up/Down` — select endpoint
@@ -103,4 +117,5 @@ Use `PgUp/PgDn` to scroll the documentation panel.
 - `S` — reverse sort order
 - `f` — cycle filter mode
 - `d` — toggle endpoint documentation panel
+- `w` — show the WSDL of a cxf endpoint (and back)
 - `PgUp/PgDn` — scroll documentation (when doc panel is open)

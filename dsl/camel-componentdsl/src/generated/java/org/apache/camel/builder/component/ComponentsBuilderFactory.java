@@ -169,7 +169,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
-     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
+     * formerly MNS).
      * 
      * Category: cloud,messaging
      * Since: 4.23
@@ -182,7 +183,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
-     * Alibaba Cloud Object Storage Service (OSS) component
+     * Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
      * 
      * Category: cloud
      * Since: 4.23
@@ -208,7 +209,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log
+     * Service (SLS).
      * 
      * Category: cloud,monitoring
      * Since: 4.23

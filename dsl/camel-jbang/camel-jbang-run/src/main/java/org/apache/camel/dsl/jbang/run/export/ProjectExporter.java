@@ -171,6 +171,12 @@ public class ProjectExporter {
             return 1;
         }
 
+        String packagingError = request.packagingError();
+        if (packagingError != null) {
+            printer().printErr(packagingError);
+            return 1;
+        }
+
         try {
             verifyExportFiles(request.files);
         } catch (FileNotFoundException ex) {

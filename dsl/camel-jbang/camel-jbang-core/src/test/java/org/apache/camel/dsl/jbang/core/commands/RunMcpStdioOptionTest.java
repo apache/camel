@@ -28,7 +28,7 @@ class RunMcpStdioOptionTest {
 
     @Test
     void parseMcpStdioFlag() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "tools.yaml", "--mcp-stdio", "--mcp-tags=agent,crm");
         assertThat(run.serverOptions.mcpStdio).isTrue();
         assertThat(run.serverOptions.mcpTags).isEqualTo("agent,crm");
@@ -36,14 +36,14 @@ class RunMcpStdioOptionTest {
 
     @Test
     void mcpStdioDefaultsToFalse() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "tools.yaml");
         assertThat(run.serverOptions.mcpStdio).isFalse();
     }
 
     @Test
     void mcpOptionsArePassedToTheSettingsPipeline() {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, "--mcp-stdio", "--mcp", "--mcp-tags=agent", "tools.yaml");
 
         RunRequest request = run.toRunRequest(Path.of("."));

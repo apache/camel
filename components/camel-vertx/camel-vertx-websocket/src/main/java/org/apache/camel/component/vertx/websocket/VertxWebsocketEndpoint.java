@@ -50,7 +50,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +81,16 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
 
     @UriParam
     private VertxWebsocketConfiguration configuration;
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether the consumer routes each message synchronously. When true, the route runs on a thread of the"
+                            + " Vert.x worker pool, which waits until the route is complete, so the size of the worker pool limits"
+                            + " how many messages are routed at the same time. When false, the route starts on a worker thread"
+                            + " with the asynchronous routing engine, and the worker thread is free as soon as the route continues"
+                            + " on another thread (such as an asynchronous producer), so the worker pool no longer limits the"
+                            + " messages in flight. Keep it false for a route that calls an asynchronous producer using the same"
+                            + " Vert.x (such as vertx-http): with true, such messages can occupy every worker thread while their"
+                            + " producers need a worker thread to complete, and then no message completes.")
+    private boolean synchronous;
     @UriParam(label = "advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
@@ -169,6 +178,17 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    /**
+     * Whether the consumer routes each message synchronously.
+     */
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 
     protected Vertx getVertx() {
@@ -331,7 +351,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         URI websocketURI = configuration.getWebsocketURI();
         WebSocketConnectOptions connectOptions = new WebSocketConnectOptions();
         connectOptions.setHost(websocketURI.getHost());
-        connectOptions.setURI(URISupport.pathAndQueryOf(websocketURI));
+        connectOptions.setURI(rawPathAndQuery(websocketURI));
         connectOptions.setSsl(options.isSsl() || websocketURI.getScheme().length() == 3);
 
         if (websocketURI.getPort() > 0) {
@@ -358,6 +378,19 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         }
 
         return connectOptions;
+    }
+
+    /**
+     * The path and query of the request to the remote server, as they are encoded in the URI, so a RAW value with + or
+     * & reaches the server as written. URISupport.pathAndQueryOf uses the decoded path and query.
+     */
+    static String rawPathAndQuery(URI uri) {
+        String path = uri.getRawPath();
+        if (ObjectHelper.isEmpty(path)) {
+            path = "/";
+        }
+        String query = uri.getRawQuery();
+        return ObjectHelper.isNotEmpty(query) ? path + "?" + query : path;
     }
 
     protected Map<VertxWebsocketHostKey, VertxWebsocketHost> getVertxHostRegistry() {

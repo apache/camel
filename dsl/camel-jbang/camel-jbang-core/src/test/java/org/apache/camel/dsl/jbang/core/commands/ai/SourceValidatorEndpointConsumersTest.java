@@ -253,6 +253,20 @@ class SourceValidatorEndpointConsumersTest {
     }
 
     @Test
+    void aFolderOutsideTheSourcesOfAProjectIsChecked() throws Exception {
+        // the folder of an example in a repository with a pom.xml at its root: camel run runs the folder on its own,
+        // so a direct: that no route of the folder consumes is reported
+        Files.writeString(dir.resolve("pom.xml"), "<project/>");
+        Path example = Files.createDirectories(dir.resolve("examples/orders"));
+        assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, example))
+                .singleElement().asString().contains("sends to direct:lookup");
+        // the sources of a module under the root stay a part of that module
+        Path module = Files.createDirectories(dir.resolve("orders-module/src/main/resources/camel"));
+        Files.writeString(dir.resolve("orders-module/pom.xml"), "<project/>");
+        assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, module)).isEmpty();
+    }
+
+    @Test
     void theFileBeingValidatedIsReadFromItsContentNotFromDisk() throws Exception {
         // the editor's buffer is newer than the file on disk, which still consumes direct:lookup
         Files.writeString(dir.resolve("r.camel.yaml"), ROUTE + """

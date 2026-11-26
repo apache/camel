@@ -1029,6 +1029,9 @@ class DiagramTab extends AbstractDiagramTab {
                     // the body types the step has been reached with; more than one kind is a step that needs attention
                     node.put("bodyTypes", new JsonArray(treeNode.info.bodyTypes));
                     node.put("bodyKinds", new JsonArray(treeNode.info.bodyKinds));
+                    if (!treeNode.info.bodyFormats.isEmpty()) {
+                        node.put("bodyFormats", new JsonArray(treeNode.info.bodyFormats));
+                    }
                 }
                 result.put("selectedNode", node);
             }

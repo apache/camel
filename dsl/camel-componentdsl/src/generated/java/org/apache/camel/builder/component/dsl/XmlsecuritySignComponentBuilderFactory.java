@@ -92,7 +92,8 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * before the digest is calculated. You can use the helper methods
          * XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
          * getCanonicalizationMethod(String algorithm, List
-         * inclusiveNamespacePrefixes) to create a canonicalization method.
+         * inclusiveNamespacePrefixes), which takes a list of the inclusive
+         * namespace prefixes, to create a canonicalization method.
          * 
          * The option is a:
          * &lt;code&gt;javax.xml.crypto.AlgorithmMethod&lt;/code&gt; type.

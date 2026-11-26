@@ -52,7 +52,7 @@ class CatalogDataFormatTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogDataFormat createCommand() {
-        CatalogDataFormat command = new CatalogDataFormat(new CamelJBangMain().withPrinter(printer));
+        CatalogDataFormat command = new CamelJBangMain().withPrinter(printer).command(new CatalogDataFormat());
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
         command.mavenResolver = new MavenResolverMixin();

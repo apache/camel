@@ -703,6 +703,40 @@ public interface DataLakeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delete a file from the file system once its exchange has completed.
+         * When the exchange fails, the file is not deleted, so it is consumed
+         * again at the next poll.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder deleteAfterRead(boolean deleteAfterRead) {
+            doSetProperty("deleteAfterRead", deleteAfterRead);
+            return this;
+        }
+        /**
+         * Delete a file from the file system once its exchange has completed.
+         * When the exchange fails, the file is not deleted, so it is consumed
+         * again at the next poll.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
+         */
+        default DataLakeEndpointConsumerBuilder deleteAfterRead(String deleteAfterRead) {
+            doSetProperty("deleteAfterRead", deleteAfterRead);
+            return this;
+        }
+        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
@@ -3554,6 +3588,21 @@ public interface DataLakeEndpointBuilderFactory {
          */
         public String azureStorageDataLakeArchiveStatus() {
             return "CamelAzureStorageDataLakeArchiveStatus";
+        }
+        /**
+         * The name of the file system the file was consumed from. It is not the
+         * CamelAzureStorageDataLakeFileSystemName header, which overrides the
+         * file system of a producer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeConsumedFileSystemName}.
+         */
+        public String azureStorageDataLakeConsumedFileSystemName() {
+            return "CamelAzureStorageDataLakeConsumedFileSystemName";
         }
         /**
          * Cache control specified for the file.

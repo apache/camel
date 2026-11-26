@@ -23,7 +23,7 @@ public final class AlibabaOtsHeaders {
     @Metadata(label = "producer",
               description = "The operation that the producer performs. This header replaces the operation option. If this"
                             + " header is not set, an exchange property of the same name replaces the operation option.",
-              javaType = "String")
+              javaType = "String", enums = "putRow,getRow,updateRow,deleteRow,listTables")
     public static final String OPERATION = AlibabaOtsProperties.OPERATION;
 
     @Metadata(label = "producer",

@@ -43,7 +43,7 @@ class DirtyTest extends ProcessCommandTestSupport {
     @Test
     void testReturnsZeroWhenNoFiles() throws Exception {
         // camel dir is empty: Dirty returns before touching ProcessHandle
-        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        Dirty command = new CamelJBangMain().withPrinter(printer).command(new Dirty());
         int exit = command.doCall();
         assertEquals(0, exit);
         assertEquals("", printer.getOutput().trim());
@@ -55,7 +55,7 @@ class DirtyTest extends ProcessCommandTestSupport {
         Path orphan = CommandLineHelper.getCamelDir().resolve("77777-status.json");
         Files.writeString(orphan, "{}");
 
-        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        Dirty command = new CamelJBangMain().withPrinter(printer).command(new Dirty());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             // no process has the pid (ProcessHandle.of answers empty)
@@ -71,7 +71,7 @@ class DirtyTest extends ProcessCommandTestSupport {
         // status file for TEST_PID is owned by a running process -> not dirty
         writeStatusFile(TEST_PID, buildContextStatus("liveApp", 5));
 
-        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        Dirty command = new CamelJBangMain().withPrinter(printer).command(new Dirty());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mock(ProcessHandle.class);
@@ -91,7 +91,7 @@ class DirtyTest extends ProcessCommandTestSupport {
         Files.writeString(orphan, "{}");
         assertTrue(Files.exists(orphan), "Orphan file must exist before cleaning");
 
-        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        Dirty command = new CamelJBangMain().withPrinter(printer).command(new Dirty());
         command.clean = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -116,12 +116,12 @@ class DirtyTest extends ProcessCommandTestSupport {
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             // without --clean it says how many there are, and how to clean them
-            assertEquals(0, new Dirty(new CamelJBangMain().withPrinter(printer)).doCall());
+            assertEquals(0, new CamelJBangMain().withPrinter(printer).command(new Dirty()).doCall());
             assertEquals("There are logs of the previous runs of 3 integrations (camel dirty --clean cleans them)",
                     printer.getOutput().trim());
             assertTrue(Files.exists(dir.resolve("orders-previous.log")));
 
-            Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+            Dirty command = new CamelJBangMain().withPrinter(printer).command(new Dirty());
             command.clean = true;
             assertEquals(0, command.doCall());
             assertTrue(printer.getOutput().contains("Cleaned 5 files of the previous runs of 3 integrations"),
@@ -139,7 +139,7 @@ class DirtyTest extends ProcessCommandTestSupport {
         Path stray = CommandLineHelper.getCamelDir().resolve("${sys:pid}.log");
         Files.writeString(stray, "WARN");
 
-        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        Dirty command = new CamelJBangMain().withPrinter(printer).command(new Dirty());
         command.clean = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -162,7 +162,7 @@ class DirtyTest extends ProcessCommandTestSupport {
         Files.createDirectories(dir.resolve("quarkus-extension-registries").resolve("cache"));
         Files.createDirectories(dir.resolve("12345-dir"));
 
-        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        Dirty command = new CamelJBangMain().withPrinter(printer).command(new Dirty());
         command.clean = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -187,7 +187,7 @@ class DirtyTest extends ProcessCommandTestSupport {
         // a file in a directory that cannot be written cannot be deleted
         assertTrue(dir.toFile().setWritable(false));
 
-        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        Dirty command = new CamelJBangMain().withPrinter(printer).command(new Dirty());
         command.clean = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

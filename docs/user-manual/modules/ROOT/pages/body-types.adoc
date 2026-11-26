@@ -229,12 +229,16 @@ it the body is as it was before the split:
 === Data type transformers
 
 A data type transformer, which `transformDataType` runs for its `toType`, has body types as well. `application-json`
-writes any object as JSON bytes, and the CloudEvent transformers of the components only set headers:
+takes text, bytes, a stream, a Map, a List, a POJO or null, and writes Json bytes. Text that is not a Json object or
+array becomes a Json string, and bytes and a stream are read as text. The CloudEvent transformers of the components
+only set headers. The catalog entry of `application-json` (the descriptions shortened):
 
 [source,json]
 ----
-"transformerIn": { "carriers": [ "any" ] },
-"transformerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "format": "json" }
+"transformerIn": { "carriers": [ "text", "bytes", "stream", "map", "list", "pojo", "null" ],
+  "description": "A Json object or array as text, bytes or a stream, a Map, a List, a JsonNode or a POJO; other text ... becomes a Json string ..." },
+"transformerOut": { "carriers": [ "bytes" ], "javaType": "byte[]", "format": "json",
+  "description": "Json as bytes, with the Content-Type application/json, or the +json media type the message had ..." }
 ----
 
 `transformDataType` takes its body from them, by the name of its `toType`: `aws2-s3:application-cloudevents` is the
@@ -256,6 +260,10 @@ spec:
         binary:
           format: application-octet-stream
 ----
+
+A Kamelet that leaves the body as it is can declare the `application-x-unchanged` data type. Examples are a filter,
+or an action that only sets headers. Its transformer changes nothing and sets no `Content-Type`: it takes
+any body, and the body after the Kamelet is the body before it.
 
 The Camel CLI reads the data types of the Kamelets of the Kamelet catalog and of the project's own `.kamelet.yaml`
 files. The YAML validator walks a route that starts with `from: kamelet:aws-s3-source` with bytes. It reports a body

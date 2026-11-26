@@ -28,8 +28,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 import org.apache.camel.component.hazelcast.listener.CamelItemListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HazelcastQueueConsumer.class);
 
     // the minimum delay before polling again after a poll error, so a pollingTimeout of 0 does not spin
     private static final long MIN_POLL_ERROR_DELAY = 1000L;
@@ -93,6 +97,13 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
         super.doStop();
     }
 
+    @Override
+    protected boolean isStopOnFatalError() {
+        // in poll mode the consumer polls the queue in a loop: it stops after a VirtualMachineError (CAMEL-27515). In
+        // listen mode, Hazelcast pushes the items
+        return config.getQueueConsumerMode() == HazelcastQueueConsumerMode.POLL;
+    }
+
     class QueueConsumerTask implements Runnable {
 
         private final IQueue<Object> queue;
@@ -113,8 +124,16 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                     // only a forced shutdown interrupts this thread
                     Thread.currentThread().interrupt();
                     return;
-                } catch (Exception e) {
-                    // keep polling after an error (such as the client being disconnected from the cluster)
+                } catch (VirtualMachineError e) {
+                    // a JVM-level failure: the consumer stops polling until the route is restarted (CAMEL-27515)
+                    LOG.error("Fatal error polling from the queue {}. The consumer stops polling until the route is"
+                              + " restarted.",
+                            cacheName, e);
+                    handleFatalError(e);
+                    return;
+                } catch (Exception | Error e) {
+                    // keep polling after an error (such as the client being disconnected from the cluster), also after
+                    // another Error, as an exception (CAMEL-27474)
                     if (isRunAllowed()) {
                         getExceptionHandler().handleException("Error polling from the queue " + cacheName, e);
                         if (!waitBeforeNextPoll()) {
@@ -129,7 +148,13 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                     exchange.getIn().setBody(body);
                     try {
                         processor.process(exchange);
-                    } catch (Exception e) {
+                    } catch (VirtualMachineError e) {
+                        LOG.error("Fatal error processing an item of the queue {}. The consumer stops polling until the"
+                                  + " route is restarted.",
+                                cacheName, e);
+                        handleFatalError(e);
+                        return;
+                    } catch (Exception | Error e) {
                         getExceptionHandler().handleException("Error during processing", exchange, e);
                     } finally {
                         releaseExchange(exchange, false);

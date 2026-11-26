@@ -103,7 +103,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer", defaultValue = "ALL")
     private CachePeekMode cachePeekMode = CachePeekMode.ALL;
 
-    @UriParam(label = "producer,consumer")
+    @UriParam(label = "consumer")
     private Query<Entry<Object, Object>> query;
 
     @UriParam(label = "consumer")

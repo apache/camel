@@ -18,9 +18,12 @@ package org.apache.camel.main.download;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -106,8 +109,24 @@ public final class KnownDependenciesResolver {
         this.mappings.putAll(mappings);
     }
 
+    /**
+     * The dependency of a class, or the first one when the mapping of the class lists more (see
+     * {@link #mavenGavsForClass(String)}).
+     */
     public MavenGav mavenGavForClass(String className) {
-        return toMavenGav(findGav(mappings, className));
+        List<MavenGav> answer = mavenGavsForClass(className);
+        return answer.isEmpty() ? null : answer.get(0);
+    }
+
+    /**
+     * The dependencies of a class: one, or more when the mapping lists more, separated by commas (such as a library and
+     * a recent version of a library it needs), which are to be downloaded together with
+     * {@link #download(DependencyDownloader, List)}.
+     *
+     * @return the dependencies, or an empty list when the class is not known
+     */
+    public List<MavenGav> mavenGavsForClass(String className) {
+        return toMavenGavs(findGav(mappings, className));
     }
 
     /**
@@ -118,11 +137,53 @@ public final class KnownDependenciesResolver {
      * component.
      */
     public MavenGav mavenGavForImport(String className) {
+        List<MavenGav> answer = mavenGavsForImport(className);
+        return answer.isEmpty() ? null : answer.get(0);
+    }
+
+    /**
+     * The dependencies of a class a source imports: as {@link #mavenGavForImport(String)}, with all the dependencies of
+     * the mapping (see {@link #mavenGavsForClass(String)}).
+     */
+    public List<MavenGav> mavenGavsForImport(String className) {
         String gav = findGav(mappings, className);
         if (gav == null) {
             gav = findGav(componentPackages, className);
         }
-        return toMavenGav(gav);
+        return toMavenGavs(gav);
+    }
+
+    /**
+     * Downloads the dependencies of a mapping that are not on the classpath. Several dependencies are downloaded
+     * together, as one dependency graph, so that their versions win over the versions that the first one asks for.
+     */
+    static void download(DependencyDownloader downloader, List<MavenGav> gavs) {
+        List<MavenGav> todo = new ArrayList<>();
+        for (MavenGav gav : gavs) {
+            if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
+                todo.add(gav);
+            }
+        }
+        if (todo.size() == 1) {
+            MavenGav gav = todo.get(0);
+            downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+        } else if (!todo.isEmpty()) {
+            downloader.downloadDependencies(todo, false);
+        }
+    }
+
+    private List<MavenGav> toMavenGavs(String gavs) {
+        if (gavs == null) {
+            return Collections.emptyList();
+        }
+        List<MavenGav> answer = new ArrayList<>();
+        for (String gav : gavs.split(",")) {
+            MavenGav g = toMavenGav(gav.trim());
+            if (g != null) {
+                answer.add(g);
+            }
+        }
+        return answer;
     }
 
     private MavenGav toMavenGav(String gav) {

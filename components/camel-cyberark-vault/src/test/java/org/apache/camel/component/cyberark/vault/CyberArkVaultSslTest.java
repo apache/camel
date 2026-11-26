@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cyberark.vault;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -142,6 +143,37 @@ class CyberArkVaultSslTest extends CamelTestSupport {
 
         RuntimeCamelException e = assertThrows(RuntimeCamelException.class, endpoint::start);
         assertInstanceOf(NoSuchFileException.class, e.getCause());
+    }
+
+    @Test
+    void missingCertificateOnTheClasspathFailsAtStart() throws Exception {
+        Endpoint endpoint = context.getComponent("cyberark-vault").createEndpoint(
+                "cyberark-vault:secret?secretId=db/password&url=https://localhost:1&account=myaccount&authToken=my-token"
+                                                                                  + "&certificatePath=classpath:missing.pem");
+
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, endpoint::start);
+        assertInstanceOf(FileNotFoundException.class, e.getCause());
+    }
+
+    @Test
+    void certificatePathOnTheClasspathTrustsTheServer() {
+        assertEquals("secret-value",
+                getSecret("localhost", "&certificatePath=classpath:" + SSL_RESOURCES.substring(1) + "conjur-server.pem"));
+    }
+
+    @Test
+    void certificatePathWithTheFilePrefixTrustsTheServer() {
+        assertEquals("secret-value", getSecret("localhost", "&certificatePath=RAW(file:" + certificatePath + ")"));
+    }
+
+    @Test
+    void certificatePathWithAnotherPrefixFailsAtStart() throws Exception {
+        Endpoint endpoint = context.getComponent("cyberark-vault").createEndpoint(
+                "cyberark-vault:secret?secretId=db/password&url=https://localhost:1&account=myaccount&authToken=my-token"
+                                                                                  + "&certificatePath=RAW(http://localhost/conjur.pem)");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, endpoint::start);
+        assertTrue(e.getMessage().contains("classpath: and file:"), e.getMessage());
     }
 
     @Test

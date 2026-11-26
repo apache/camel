@@ -41,6 +41,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private final GenericFile<T> file;
     private final String absoluteFileName;
     private GenericFileKeptDoneFiles.Batch keptDoneFiles;
+    private boolean lastOfDoneFile;
 
     public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
                                    GenericFileProcessStrategy processStrategy, GenericFile<T> file,
@@ -72,6 +73,14 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      */
     void setKeptDoneFiles(GenericFileKeptDoneFiles.Batch keptDoneFiles) {
         this.keptDoneFiles = keptDoneFiles;
+    }
+
+    /**
+     * Whether the file is the last of its done file with a fixed name among the files of its poll (with
+     * {@code recursive=true} one per directory), which then deletes the done file, unless it is kept.
+     */
+    void setLastOfDoneFile(boolean lastOfDoneFile) {
+        this.lastOfDoneFile = lastOfDoneFile;
     }
 
     public ExceptionHandler getExceptionHandler() {
@@ -108,6 +117,34 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             // repository
             // as the name can be different when using preMove option
             endpoint.getInProgressRepository().remove(absoluteFileName);
+        }
+    }
+
+    /**
+     * The file was polled, but cannot be handed to anyone, so it was never started: abort it, and make it available to
+     * be polled again, as {@link GenericFileConsumer} does for a file it cannot begin to process. Unlike a rollback, a
+     * file is not moved by the moveFailed option.
+     *
+     * @param exchange the exchange of the file
+     */
+    void abort(Exchange exchange) {
+        LOG.debug("Aborting file: {} that was not started, using exchange: {}", file, exchange);
+        try {
+            processStrategy.abort(operations, endpoint, exchange, file);
+        } catch (Exception e) {
+            handleException("Error during abort", exchange, e);
+        } finally {
+            endpoint.getInProgressRepository().remove(absoluteFileName);
+            if (Boolean.TRUE.equals(endpoint.isIdempotent()) && endpoint.isIdempotentEager()
+                    && endpoint.getIdempotentRepository() != null) {
+                String key = absoluteFileName;
+                if (endpoint.getIdempotentKey() != null) {
+                    key = exchange.getProperty(Exchange.FILE_IDEMPOTENT_KEY, absoluteFileName, String.class);
+                }
+                if (key != null) {
+                    endpoint.getIdempotentRepository().remove(key);
+                }
+            }
         }
     }
 
@@ -187,9 +224,11 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     protected void handleDoneFile(Exchange exchange) {
-        // must be last in batch to delete the done file name
+        // must be last in batch to delete the done file name, or with a done file with a fixed name the last file of that
+        // done file in the batch (with recursive=true each directory has its own done file)
         // delete done file if used (and not noop=true)
-        boolean complete = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, false, Boolean.class);
+        boolean complete = keptDoneFiles != null
+                ? lastOfDoneFile : exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, false, Boolean.class);
         if (endpoint.getDoneFileName() != null && !endpoint.isNoop()) {
             // done file must be in same path as the original input file
             String doneFileName = endpoint.createDoneFileName(absoluteFileName);

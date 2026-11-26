@@ -25,7 +25,6 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.util.json.JsonObject;
 
@@ -35,10 +34,6 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel top group",
                            "  camel top group --watch" })
 public class CamelRouteGroupTop extends CamelRouteGroupStatus {
-
-    public CamelRouteGroupTop(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected void printTable(List<Row> rows) {

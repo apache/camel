@@ -149,7 +149,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
-     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
+     * formerly MNS).
      * 
      * Category: cloud,messaging
      * Since: 4.23
@@ -162,7 +163,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
-     * Alibaba Cloud Object Storage Service (OSS) component
+     * Store and retrieve objects in Alibaba Cloud Object Storage Service (OSS).
      * 
      * Category: cloud
      * Since: 4.23
@@ -188,7 +189,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
-     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * Write logs, query logs, and list Logstores on Alibaba Cloud Simple Log
+     * Service (SLS).
      * 
      * Category: cloud,monitoring
      * Since: 4.23
@@ -2053,6 +2055,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageHeaderNameBuilder ibmWatsonLanguage() {
         return WatsonLanguageEndpointBuilderFactory.WatsonLanguageHeaderNameBuilder.INSTANCE;
     }
@@ -2425,6 +2428,19 @@ public class EndpointHeaderBuilders {
      */
     public static JsltEndpointBuilderFactory.JsltHeaderNameBuilder jslt() {
         return JsltEndpointBuilderFactory.JsltHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
+     * 
+     * Category: transformation
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-jsonata
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static JsonataEndpointBuilderFactory.JsonataHeaderNameBuilder jsonata() {
+        return JsonataEndpointBuilderFactory.JsonataHeaderNameBuilder.INSTANCE;
     }
     /**
      * JT400 (camel-jt400)
@@ -3313,6 +3329,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static CinderEndpointBuilderFactory.CinderHeaderNameBuilder openstackCinder() {
         return CinderEndpointBuilderFactory.CinderHeaderNameBuilder.INSTANCE;
     }
@@ -3326,6 +3343,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static GlanceEndpointBuilderFactory.GlanceHeaderNameBuilder openstackGlance() {
         return GlanceEndpointBuilderFactory.GlanceHeaderNameBuilder.INSTANCE;
     }
@@ -3340,6 +3358,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static KeystoneEndpointBuilderFactory.KeystoneHeaderNameBuilder openstackKeystone() {
         return KeystoneEndpointBuilderFactory.KeystoneHeaderNameBuilder.INSTANCE;
     }
@@ -3353,6 +3372,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static NeutronEndpointBuilderFactory.NeutronHeaderNameBuilder openstackNeutron() {
         return NeutronEndpointBuilderFactory.NeutronHeaderNameBuilder.INSTANCE;
     }
@@ -3366,6 +3386,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static NovaEndpointBuilderFactory.NovaHeaderNameBuilder openstackNova() {
         return NovaEndpointBuilderFactory.NovaHeaderNameBuilder.INSTANCE;
     }
@@ -3379,6 +3400,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static SwiftEndpointBuilderFactory.SwiftHeaderNameBuilder openstackSwift() {
         return SwiftEndpointBuilderFactory.SwiftHeaderNameBuilder.INSTANCE;
     }

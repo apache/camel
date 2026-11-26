@@ -210,16 +210,16 @@ class ActionCommandsTest {
     @Test
     void followWithoutValueFollows() {
         // not the opposite of the default, as picocli has it for a boolean option
-        CamelLogAction log = new CamelLogAction(main);
+        CamelLogAction log = main.command(new CamelLogAction());
         CommandLineTestHelper.parse(log, "--follow", "orders");
         assertThat(log.follow).isTrue();
         assertThat(log.name).isEqualTo("orders");
 
-        CamelTraceAction trace = new CamelTraceAction(main);
+        CamelTraceAction trace = main.command(new CamelTraceAction());
         CommandLineTestHelper.parse(trace, "--follow=false");
         assertThat(trace.follow).isFalse();
 
-        CamelReceiveAction receive = new CamelReceiveAction(main);
+        CamelReceiveAction receive = main.command(new CamelReceiveAction());
         CommandLineTestHelper.parse(receive, "--follow");
         assertThat(receive.follow).isTrue();
     }

@@ -1540,7 +1540,7 @@ public class CamelCatalogTest {
         result = catalog.validateLanguageExpression(null, "jq", ". ^^+ [{\"array\": body()}]");
         assertFalse(result.isSuccess());
         assertEquals(". ^^+ [{\"array\": body()}]", result.getText());
-        assertEquals("Cannot compile query: . ^^+ [{\"array\": body()}]", result.getError());
+        assertTrue(result.getError().startsWith("Lexical error at line 1, column 3."), result.getError());
     }
 
     @Test
@@ -1602,6 +1602,54 @@ public class CamelCatalogTest {
 
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void testValidateEndpointAlibabaFc() {
+        String uri = "alibaba-fc:invokeFunction?endpoint=12345.cn-hangzhou.fc.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "alibaba-fc:invokeFunction?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals("endpoint", result.getRequired().iterator().next());
+
+        ComponentModel model = catalog.componentModel("alibaba-fc");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaFcOperation".equals(h.getName())));
+    }
+
+    @Test
+    public void testValidateEndpointAlibabaMns() {
+        // only the producer uses operation and topicName
+        String uri = "alibaba-mns:myQueue?region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com"
+                     + "&operation=sendMessage&topicName=myTopic";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("operation"));
+        assertTrue(result.getNotConsumerOnly().contains("topicName"));
+
+        // only the consumer uses waitSeconds
+        uri = "alibaba-mns:myQueue?region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com"
+              + "&waitSeconds=10";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotProducerOnly().size());
+        assertTrue(result.getNotProducerOnly().contains("waitSeconds"));
+
+        // both sides use the priority header
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("alibaba-mns").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        assertEquals("common", groups.get("CamelAlibabaMnsPriority"));
     }
 
     @Test
@@ -1677,6 +1725,21 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaEventBridge() {
+        String uri = "alibaba-eventbridge:putEvents?endpoint=12345.eventbridge.cn-hangzhou.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "alibaba-eventbridge:putEvents?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals("endpoint", result.getRequired().iterator().next());
+
+        ComponentModel model = catalog.componentModel("alibaba-eventbridge");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaEventBridgeOperation".equals(h.getName())));
+    }
+
+    @Test
     public void testValidateEndpointHttpPropertyPlaceholder() {
         String uri = "http://api.openweathermap.org/data/2.5/weather?{{property.weatherUri}}";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
@@ -1704,6 +1767,55 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateEndpointAlibabaSms() {
+        String uri = "alibaba-sms:sendSms?endpoint=dysmsapi.aliyuncs.com";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "alibaba-sms:sendSms?region=cn-hangzhou";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        ComponentModel model = catalog.componentModel("alibaba-sms");
+        assertTrue(model.getEndpointHeaders().stream().anyMatch(h -> "CamelAlibabaSmsOperation".equals(h.getName())));
+    }
+
+    @Test
+    public void testValidateEndpointAlibabaOss() {
+        // a client that is set replaces the region and the AccessKey pair
+        String uri = "alibaba-oss:myBucket?ossClient=#ossClient";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // serviceKeys replaces accessKey and secretKey
+        uri = "alibaba-oss:myBucket?region=cn-hangzhou&serviceKeys=#serviceKeys";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the producer uses prefix and maxKeys for listObjects
+        uri = "alibaba-oss:myBucket?operation=listObjects&prefix=logs/&maxKeys=100&ossClient=#ossClient";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the consumer uses prefix, but neither objectName nor maxKeys
+        uri = "alibaba-oss:myBucket?prefix=logs/&objectName=a.txt&maxKeys=100&ossClient=#ossClient";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("objectName"));
+        assertTrue(result.getNotConsumerOnly().contains("maxKeys"));
+
+        // only the producer reads these six headers, and both sides set the key of the object
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("alibaba-oss").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        for (String name : List.of("Operation", "ObjectName", "SourceBucketName", "SourceObjectName", "Prefix", "MaxKeys")) {
+            assertEquals("producer", groups.get("CamelAlibabaOss" + name), name);
+        }
+        assertEquals("common", groups.get("CamelAlibabaOssObjectKey"));
+    }
+
+    @Test
     public void testValidateEndpointConsumerOnly() {
         String uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
@@ -1727,6 +1839,204 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
 
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
+    @Test
+    public void testValidateEndpointCxfSynchronous() {
+        // the consumer and the producer of cxf use synchronous
+        String uri = "cxf:bean:orderEndpoint?synchronous=true";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // only the producer uses defaultOperationName
+        uri = "cxf:bean:orderEndpoint?synchronous=true&defaultOperationName=getOrder";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("defaultOperationName"));
+
+        // the consumer and the producer of cxfrs use synchronous too
+        uri = "cxfrs:bean:rsServer?synchronous=true";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the component options have the group advanced, with no side
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("cxf").getComponentOptions().forEach(o -> groups.put(o.getName(), o.getGroup()));
+        assertEquals("advanced", groups.get("synchronous"));
+
+        groups.clear();
+        catalog.componentModel("cxfrs").getComponentOptions().forEach(o -> groups.put(o.getName(), o.getGroup()));
+        assertEquals("advanced", groups.get("synchronous"));
+    }
+
+    @Test
+    public void testValidateEndpointSpringWsConsumerOptions() {
+        String uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+                     + "&outputAction=http://example.com/GetFooResponse&faultAction=http://example.com/GetFooFault";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        uri = "spring-ws:http://example.com/ws?outputAction=http://example.com/GetFooResponse"
+              + "&faultAction=http://example.com/GetFooFault";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertFalse(result.isSuccess());
+
+        assertEquals(2, result.getNotProducerOnly().size());
+        assertTrue(result.getNotProducerOnly().contains("outputAction"));
+        assertTrue(result.getNotProducerOnly().contains("faultAction"));
+    }
+
+    @Test
+    public void testValidateEndpointSpringWsLabelsAndType() {
+        // both sides use messageSender
+        String uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+                     + "&messageSender=#messageSender";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // only the producer uses sslContextParameters
+        uri = "spring-ws:action:http://example.com/GetFoo?endpointMapping=#wsaEndpointMapping"
+              + "&sslContextParameters=#sslContextParameters";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals(1, result.getNotConsumerOnly().size());
+        assertTrue(result.getNotConsumerOnly().contains("sslContextParameters"));
+
+        uri = "spring-ws:http://example.com/ws?messageSender=#messageSender&sslContextParameters=#sslContextParameters";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the consumer sets the SOAP header too
+        Map<String, String> groups = new HashMap<>();
+        catalog.componentModel("spring-ws").getEndpointHeaders().forEach(h -> groups.put(h.getName(), h.getGroup()));
+        assertEquals("common", groups.get("CamelSpringWebserviceSoapHeader"));
+
+        // the endpoint uri takes the type soapaction, which is not the name of the enum constant
+        uri = "spring-ws:soapaction:urn:GetFoo?endpointMapping=#endpointMapping";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+    }
+
+    @Test
+    public void testSpringWsEndpointPropertiesConsumer() throws Exception {
+        // a path that starts with a type prefix is the type and the lookupKey (the rest, which may contain colons)
+        Map<String, String> map = catalog.endpointProperties("spring-ws:soapaction:urn:GetFoo");
+        assertEquals(2, map.size());
+        assertEquals("soapaction", map.get("type"));
+        assertEquals("urn:GetFoo", map.get("lookupKey"));
+
+        map = catalog.endpointProperties("spring-ws:beanname:myDispatcher");
+        assertEquals(2, map.size());
+        assertEquals("beanname", map.get("type"));
+        assertEquals("myDispatcher", map.get("lookupKey"));
+
+        map = catalog.endpointProperties("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#m");
+        assertEquals(3, map.size());
+        assertEquals("rootqname", map.get("type"));
+        assertEquals("{http://example.com/}GetFoo", map.get("lookupKey"));
+        assertEquals("#m", map.get("endpointMapping"));
+
+        map = catalog.endpointProperties("spring-ws:action:http://example.com/GetFoo?endpointMapping=#m");
+        assertEquals("action", map.get("type"));
+        assertEquals("http://example.com/GetFoo", map.get("lookupKey"));
+        assertNull(map.get("webServiceEndpointUri"));
+
+        map = catalog.endpointProperties("spring-ws:xpathresult:abc?expression=//foo&endpointMapping=#m");
+        assertEquals("xpathresult", map.get("type"));
+        assertEquals("abc", map.get("lookupKey"));
+        assertEquals("//foo", map.get("expression"));
+
+        // the type prefix is case-insensitive, as in the component
+        map = catalog.endpointProperties("spring-ws:SoapAction:urn:GetFoo");
+        assertEquals("SoapAction", map.get("type"));
+        assertEquals("urn:GetFoo", map.get("lookupKey"));
+
+        // a placeholder in the lookupKey
+        map = catalog.endpointProperties("spring-ws:uripath:{{env:WS_PATH:/ws/foo}}");
+        assertEquals("uripath", map.get("type"));
+        assertEquals("{{env:WS_PATH:/ws/foo}}", map.get("lookupKey"));
+    }
+
+    @Test
+    public void testSpringWsEndpointPropertiesProducer() throws Exception {
+        // a path that does not start with a type prefix is the address of the producer
+        Map<String, String> map = catalog.endpointProperties("spring-ws:http://localhost/ws");
+        assertEquals(1, map.size());
+        assertEquals("http://localhost/ws", map.get("webServiceEndpointUri"));
+
+        map = catalog.endpointProperties("spring-ws:http://localhost:8080/ws");
+        assertEquals(1, map.size());
+        assertEquals("http://localhost:8080/ws", map.get("webServiceEndpointUri"));
+
+        map = catalog.endpointProperties("spring-ws:https://host:8443/a/b?soapAction=x");
+        assertEquals(2, map.size());
+        assertEquals("https://host:8443/a/b", map.get("webServiceEndpointUri"));
+        assertEquals("x", map.get("soapAction"));
+
+        map = catalog.endpointProperties("spring-ws:{{env:WS_URL:http://localhost:8080/ws}}");
+        assertEquals(1, map.size());
+        assertEquals("{{env:WS_URL:http://localhost:8080/ws}}", map.get("webServiceEndpointUri"));
+    }
+
+    @Test
+    public void testSpringWsValidateEndpointProperties() {
+        // the port of the address is not taken as the lookupKey, and the scheme of the address not as the type
+        EndpointValidationResult result = catalog.validateEndpointProperties("spring-ws:http://localhost:8080/ws");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties("spring-ws:https://host:8443/a/b?soapAction=x", false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#m",
+                false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties("spring-ws:beanname:myDispatcher", false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // a producer option on a consumer uri is still reported
+        result = catalog.validateEndpointProperties("spring-ws:soapaction:urn:GetFoo?endpointMapping=#m&soapAction=x",
+                false, true, false);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getNotConsumerOnly().contains("soapAction"));
+    }
+
+    @Test
+    public void testSpringWsAsEndpointUriRoundTrip() throws Exception {
+        String[] uris = {
+                "spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#m",
+                "spring-ws:soapaction:urn:GetFoo",
+                "spring-ws:beanname:myDispatcher",
+                "spring-ws:xpathresult:abc?expression=//foo&endpointMapping=#m",
+                "spring-ws:action:http://example.com/GetFoo?endpointMapping=#m",
+                "spring-ws:http://localhost/ws",
+                "spring-ws:http://localhost:8080/ws",
+                "spring-ws:https://host:8443/a/b?soapAction=x" };
+        for (String uri : uris) {
+            Map<String, String> map = catalog.endpointProperties(uri);
+            assertEquals(uri, catalog.asEndpointUri("spring-ws", map, false));
+        }
+
+        // build from the options
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("type", "soapaction");
+        map.put("lookupKey", "urn:GetFoo");
+        map.put("endpointMapping", "#m");
+        assertEquals("spring-ws:soapaction:urn:GetFoo?endpointMapping=#m", catalog.asEndpointUri("spring-ws", map, false));
+
+        map = new LinkedHashMap<>();
+        map.put("webServiceEndpointUri", "http://localhost:8080/ws");
+        map.put("soapAction", "x");
+        assertEquals("spring-ws:http://localhost:8080/ws?soapAction=x", catalog.asEndpointUri("spring-ws", map, false));
     }
 
     @Test

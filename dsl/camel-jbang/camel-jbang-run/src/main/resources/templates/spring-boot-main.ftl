@@ -20,12 +20,27 @@ package [=PackageName];
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+[#if War?? && War]
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+[/#if]
 
 @SpringBootApplication
+[#if War?? && War]
+public class [=MainClassname] extends SpringBootServletInitializer {
+[#else]
 public class [=MainClassname] {
+[/#if]
 
     public static void main(String[] args) {
         SpringApplication.run([=MainClassname].class, args);
     }
+
+    [#if War?? && War]
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources([=MainClassname].class);
+    }
+    [/#if]
 
 }

@@ -41,13 +41,21 @@ final class AiToolSpecToSpringAi {
     }
 
     static ToolCallback toToolCallback(AiToolSpec spec, Exchange callingExchange) {
+        return toToolCallback(spec, callingExchange, false);
+    }
+
+    /**
+     * @param tracedByFramework whether Spring AI observes the tool calls itself, so Camel records no span for them
+     */
+    static ToolCallback toToolCallback(AiToolSpec spec, Exchange callingExchange, boolean tracedByFramework) {
         Function<Map<String, Object>, String> function = args -> {
             // isolated copy of the calling exchange so the caller's context (e.g. an authenticated subject kept as an
             // exchange property) reaches the tool route; this is not a pooled consumer exchange, so it is not released
             // here (CAMEL-24832)
             Exchange toolExchange = AiToolExecutor.createToolExchange(callingExchange);
             String conversationId = callingExchange.getMessage().getHeader(SpringAiChatConstants.CONVERSATION_ID, String.class);
-            AiToolResult result = AiToolExecutor.execute(spec, args, toolExchange, null, conversationId);
+            AiToolResult result
+                    = AiToolExecutor.execute(spec, args, toolExchange, null, conversationId, tracedByFramework);
             if (result instanceof AiToolResult.Success success) {
                 return success.value();
             } else if (result instanceof AiToolResult.ArgumentError argErr) {

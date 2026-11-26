@@ -178,6 +178,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean legacySnapshotMaxThreads = false;
     @UriParam(label = LABEL_NAME)
     private String gtidSourceIncludes;
+    @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
+    private String unavailableValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
     private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
@@ -276,8 +278,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int notificationHttpRetries = 2;
     @UriParam(label = LABEL_NAME)
     private String databaseHostname;
-    @UriParam(label = LABEL_NAME, defaultValue = "10000")
-    private long databaseServerIdOffset = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
     private long connectionValidationTimeoutMs = 60000;
 
@@ -309,7 +309,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     /**
      * A semicolon-separated list of expressions that match fully-qualified
      * tables and column(s) to be used as message key. Each expression must
-     * match the pattern '<fully-qualified table name>:<key columns>', where the
+     * match the pattern '{fully-qualified table name}:{key columns}', where the
      * table names could be defined as (DB_NAME.TABLE_NAME) or
      * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector, and the
      * key columns are a comma-separated list of columns representing the custom
@@ -459,8 +459,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of custom converters that would be used instead of default
-     * ones. The converters are defined using '<converter.prefix>.type' config
-     * option and configured using options '<converter.prefix>.<option>'
+     * ones. The converters are defined using '{converter.prefix}.type' config
+     * option and configured using options '{converter.prefix}.{option}'
      */
     public void setConverters(String converters) {
         this.converters = converters;
@@ -865,9 +865,10 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for table
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage<io.debezium.relational.Table>.
-     * Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for
-     * in-memory storage.
+     * io.debezium.relational.TableMappingStorage of
+     * io.debezium.relational.Table. Defaults to
+     * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+     * storage.
      */
     public void setMemoryManagementTablesClass(
             String memoryManagementTablesClass) {
@@ -1235,7 +1236,10 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for schema
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage<io.debezium.relational.TableSchema>. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
+     * io.debezium.relational.TableMappingStorage of
+     * io.debezium.relational.TableSchema. Defaults to
+     * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+     * storage.
      */
     public void setMemoryManagementSchemasClass(
             String memoryManagementSchemasClass) {
@@ -1416,6 +1420,21 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getGtidSourceIncludes() {
         return gtidSourceIncludes;
+    }
+
+    /**
+     * Specify the constant that will be provided by Debezium to indicate that
+     * the original value is unavailable and not provided by the database. If
+     * starts with 'hex:' prefix it is expected that the rest of the string
+     * represents hexadecimal encoded octets.
+     */
+    public void setUnavailableValuePlaceholder(
+            String unavailableValuePlaceholder) {
+        this.unavailableValuePlaceholder = unavailableValuePlaceholder;
+    }
+
+    public String getUnavailableValuePlaceholder() {
+        return unavailableValuePlaceholder;
     }
 
     /**
@@ -1948,8 +1967,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of post processors. The processors are defined using
-     * '<post.processor.prefix>.type' config option and configured using options
-     * '<post.processor.prefix.<option>'
+     * '{post.processor.prefix}.type' config option and configured using options
+     * '{post.processor.prefix}.{option}'
      */
     public void setPostProcessors(String postProcessors) {
         this.postProcessors = postProcessors;
@@ -2058,20 +2077,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Only relevant if parallel snapshotting is configured. During parallel
-     * snapshotting, multiple (4) connections open to the database client, and
-     * they each need their own unique connection ID. This offset is used to
-     * generate those IDs from the base configured cluster ID.
-     */
-    public void setDatabaseServerIdOffset(long databaseServerIdOffset) {
-        this.databaseServerIdOffset = databaseServerIdOffset;
-    }
-
-    public long getDatabaseServerIdOffset() {
-        return databaseServerIdOffset;
-    }
-
-    /**
      * The maximum time in milliseconds to wait for connection validation to
      * complete. Defaults to 60 seconds.
      */
@@ -2169,6 +2174,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "ddl.parser.type", ddlParserType);
         addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "gtid.source.includes", gtidSourceIncludes);
+        addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
@@ -2217,7 +2223,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "notification.http.retries", notificationHttpRetries);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
-        addPropertyIfNotNull(configBuilder, "database.server.id.offset", databaseServerIdOffset);
         addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         
         return configBuilder.build();

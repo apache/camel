@@ -32,6 +32,8 @@ class RuntimeTypeTest {
         assertThat(RuntimeType.fromValue("camel-main")).isEqualTo(RuntimeType.main);
         assertThat(RuntimeType.fromValue("camel")).isEqualTo(RuntimeType.main);
         assertThat(RuntimeType.fromValue("spring-boot")).isEqualTo(RuntimeType.springBoot);
+        assertThatThrownBy(() -> RuntimeType.fromValue("tomcat"))
+                .isInstanceOf(IllegalArgumentException.class);
         assertThat(RuntimeType.fromValue("quarkus")).isEqualTo(RuntimeType.quarkus);
         assertThatThrownBy(() -> RuntimeType.fromValue("unknown")).isInstanceOf(IllegalArgumentException.class);
     }

@@ -52,8 +52,8 @@ import org.apache.camel.test.dst.Invariants;
  * <p>
  * The seed picks the iterator type (TRIM_HORIZON or LATEST), whether the route checkpoints with the resumable EIP and
  * KinesisResumeStrategy (the resume cache outlives the consumer, so a restarted route resumes from it), the number of
- * shards, maxResultsPerRequest, the poll delay, the shard monitor interval and shardClosed (ignore or silent; fail ends
- * the consumption of the stream by design).
+ * shards, maxResultsPerRequest, the poll delay, the shard monitor interval and shardClosed (ignore or silent; fail
+ * skips a closed shard the same way, and in addition reports it once to the exception handler of the consumer).
  * <p>
  * A route restart creates a new consumer, which this world counts as an epoch. With the one-stack model, a graceful
  * stop or suspend cannot see a poll that blocks below it finish, and the shutdown strategy waits for a poll in progress

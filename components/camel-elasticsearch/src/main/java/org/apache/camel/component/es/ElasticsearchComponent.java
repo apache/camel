@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 
@@ -53,6 +54,8 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
     private String user;
     @Metadata(label = "security", security = "secret")
     private String password;
+    @Metadata(label = "security", security = "secret")
+    private String apiKey;
     @Metadata(label = "security")
     private boolean enableSSL;
     @Metadata(label = "security")
@@ -87,6 +90,7 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         config.setUser(this.getUser());
         config.setEnableSSL(this.isEnableSSL());
         config.setPassword(this.getPassword());
+        config.setApiKey(this.getApiKey());
         config.setCertificatePath(this.getCertificatePath());
         config.setSslContextParameters(this.getSslContextParameters());
         config.setEnableSniffer(this.isEnableSniffer());
@@ -94,6 +98,13 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         config.setSniffAfterFailureDelay(this.getSniffAfterFailureDelay());
         config.setClusterName(remaining);
         config.setEnableDocumentOnlyMode(this.isEnableDocumentOnlyMode());
+
+        // a user without a password is not used for basic authentication, so it does not clash with an apiKey
+        if (ObjectHelper.isNotEmpty(config.getApiKey()) && ObjectHelper.isNotEmpty(config.getUser())
+                && ObjectHelper.isNotEmpty(config.getPassword())) {
+            throw new IllegalArgumentException(
+                    "Both apiKey and user and password are configured on the elasticsearch component: use either apiKey, or user and password");
+        }
 
         Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
         setProperties(endpoint, parameters);
@@ -191,6 +202,19 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * API key to authenticate with, sent in the Authorization header instead of a user and password. Either the encoded
+     * key as Elasticsearch shows it when the key is created, or the id and the key separated by a colon (id:key). The
+     * key is only sent to the configured hosts and the nodes found by the sniffer.
+     */
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     public boolean isEnableSSL() {

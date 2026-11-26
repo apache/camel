@@ -195,6 +195,11 @@ public final class BlobConstants {
                             + " to a blob. (consumer) The name of the blob that was consumed.",
               javaType = "String")
     public static final String BLOB_NAME = HEADER_PREFIX + "BlobName";
+    @Metadata(label = "consumer",
+              description = "The name of the container the blob was consumed from. It is not the"
+                            + " CamelAzureStorageBlobBlobContainerName header, which overrides the container of a producer.",
+              javaType = "String")
+    public static final String CONSUMED_CONTAINER_NAME = HEADER_PREFIX + "ConsumedContainerName";
     @Metadata(label = "producer",
               description = "(downloadBlobToFile) The file directory where the downloaded blobs will be saved to.",
               javaType = "String")

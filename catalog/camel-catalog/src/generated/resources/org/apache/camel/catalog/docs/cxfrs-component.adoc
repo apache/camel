@@ -444,6 +444,10 @@ inMessage.setHeader("CamelCxfRsQueryMap", queryMap);
 With the proxy-based API, you need to specify the operation name, the name of the method of the resource class, in the
 `CamelCxfOperationName` header and prepare the parameters in the message body. The camel-cxfrs producer calls that
 method on a proxy of the resource class, which generates the right REST request.
+Without this header, the producer fails with a `NoSuchMethodException` that names it.
+
+The `CamelCxfOperationName` header replaced the `operationName` header. The producer does not read the former name,
+and the default header filter strategy does not send it to the service as an HTTP header.
 
 Here is an example:
 

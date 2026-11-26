@@ -138,12 +138,22 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-google-bigquery</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-google-firestore</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-google-pubsub</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-google-secret-manager</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -521,6 +531,12 @@
                                 <fileSet>
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-google-bigquery</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-google-firestore</artifactId>
                                     </dependency>
                                 </fileSet>
@@ -528,6 +544,12 @@
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-google-pubsub</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-google-secret-manager</artifactId>
                                     </dependency>
                                 </fileSet>
                                 <fileSet>

@@ -49,7 +49,7 @@ class ValidateJsonTest {
 
     @Test
     void validYamlRoute() throws Exception {
-        assertThat(run(new YamlValidateCommand(main()), "--json", ROUTE)).isZero();
+        assertThat(run(main().command(new YamlValidateCommand()), "--json", ROUTE)).isZero();
 
         JsonArray files = stdoutArray();
         assertThat(files).hasSize(1);
@@ -69,7 +69,7 @@ class ValidateJsonTest {
                       - logg: hello
                 """);
 
-        assertThat(run(new YamlValidateCommand(main()), "--json", route.toString())).isEqualTo(1);
+        assertThat(run(main().command(new YamlValidateCommand()), "--json", route.toString())).isEqualTo(1);
 
         JsonObject file = stdoutArray().getMap(0);
         assertThat(file).containsEntry("valid", false).containsEntry("file", route.toString());
@@ -82,7 +82,7 @@ class ValidateJsonTest {
         Path properties = dir.resolve("application.properties");
         Files.writeString(properties, "camel.main.name = demo\ncamel.main.no-such-option = true\n");
 
-        assertThat(run(new PropertiesValidateCommand(main()), "--json", properties.toString())).isEqualTo(1);
+        assertThat(run(main().command(new PropertiesValidateCommand()), "--json", properties.toString())).isEqualTo(1);
 
         JsonObject file = stdoutArray().getMap(0);
         assertThat(file).containsEntry("valid", false);
@@ -92,7 +92,7 @@ class ValidateJsonTest {
 
     @Test
     void sourceFiles() throws Exception {
-        assertThat(run(new SourceValidateCommand(main()), "--json", ROUTE)).isZero();
+        assertThat(run(main().command(new SourceValidateCommand()), "--json", ROUTE)).isZero();
 
         JsonObject file = stdoutArray().getMap(0);
         assertThat(file).containsEntry("valid", true);
@@ -105,7 +105,7 @@ class ValidateJsonTest {
 
         // nothing is left to validate, so file not found (the error document is printed by the error handler)
         CliException e = assertThrows(CliException.class,
-                () -> run(new YamlValidateCommand(main()), "--json", text.toString()));
+                () -> run(main().command(new YamlValidateCommand()), "--json", text.toString()));
         assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(printer.getStderr()).startsWith("WARN: Skipping non-YAML file");
     }
@@ -114,10 +114,11 @@ class ValidateJsonTest {
     void nothingToValidateIsNotFound() throws Exception {
         Path text = Files.writeString(dir.resolve("notes.txt"), "not a route");
 
-        CliException e = assertThrows(CliException.class, () -> run(new YamlValidateCommand(main()), text.toString()));
+        CliException e
+                = assertThrows(CliException.class, () -> run(main().command(new YamlValidateCommand()), text.toString()));
         assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(e.getMessage()).isEqualTo("No YAML files to validate");
-        e = assertThrows(CliException.class, () -> run(new PropertiesValidateCommand(main()), text.toString()));
+        e = assertThrows(CliException.class, () -> run(main().command(new PropertiesValidateCommand()), text.toString()));
         assertThat(e.getMessage()).isEqualTo("No properties files to validate");
     }
 
@@ -126,16 +127,16 @@ class ValidateJsonTest {
         // validate yaml reported a validation error with exit code 1 for a missing file, validate source said
         // "Validation success (files:0)" and validate normalize exited 0 for nothing to do (CAMEL-26933)
         String missing = dir.resolve("nope.yaml").toString();
-        CliException e = assertThrows(CliException.class, () -> run(new YamlValidateCommand(main()), missing));
+        CliException e = assertThrows(CliException.class, () -> run(main().command(new YamlValidateCommand()), missing));
         assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(e.getMessage()).isEqualTo("File not found: " + missing);
 
         Path text = Files.writeString(dir.resolve("notes.txt"), "not a route");
-        e = assertThrows(CliException.class, () -> run(new SourceValidateCommand(main()), text.toString()));
+        e = assertThrows(CliException.class, () -> run(main().command(new SourceValidateCommand()), text.toString()));
         assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(e.getMessage()).startsWith("No files to validate");
 
-        e = assertThrows(CliException.class, () -> run(new YamlNormalizeCommand(main()), text.toString()));
+        e = assertThrows(CliException.class, () -> run(main().command(new YamlNormalizeCommand()), text.toString()));
         assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
         assertThat(e.getMessage()).isEqualTo("No YAML files to normalize");
     }

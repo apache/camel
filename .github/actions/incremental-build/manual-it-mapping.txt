@@ -13,3 +13,8 @@ camel-jbang-plugin-edit:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-j
 camel-jbang-plugin-kubernetes:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
 camel-jbang-plugin-test:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
 camel-launcher:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-jbang-mcp:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-jbang-plugin-validate:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-launcher-container:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-yaml-dsl-validator:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-yaml-dsl-validator-maven-plugin:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test

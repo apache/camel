@@ -239,6 +239,38 @@ public interface IgniteCacheEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Query to execute, only needed for operations that require it, and
+         * for the Continuous Query Consumer.
+         * 
+         * The option is a:
+         * <code>org.apache.ignite.cache.query.Query&lt;javax.cache.Cache.Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
+         */
+        default IgniteCacheEndpointConsumerBuilder query(org.apache.ignite.cache.query.Query<javax.cache.Cache.Entry<java.lang.Object, java.lang.Object>> query) {
+            doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * The Query to execute, only needed for operations that require it, and
+         * for the Continuous Query Consumer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.ignite.cache.query.Query&lt;javax.cache.Cache.Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
+         */
+        default IgniteCacheEndpointConsumerBuilder query(String query) {
+            doSetProperty("query", query);
+            return this;
+        }
+        /**
          * The remote filter, only used by the Continuous Query Consumer.
          * 
          * The option is a:

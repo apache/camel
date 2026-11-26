@@ -279,12 +279,8 @@ public class MethodInfo {
             }
 
             private boolean failed(Throwable e, AsyncCallback callback) {
-                if (e instanceof VirtualMachineError vme) {
-                    // as a Processor in the bean component (and DelegateSyncProcessor): a JVM-level failure such as an
-                    // OutOfMemoryError is not given to Camel's error handling, but thrown on after the callback
-                    callback.done(true);
-                    throw vme;
-                }
+                // any Throwable, a VirtualMachineError included, as in DelegateSyncProcessor: the exchange fails with it
+                // (the error handler does not recover a VirtualMachineError, CAMEL-27515)
                 exchange.setException(e);
                 callback.done(true);
                 return true;

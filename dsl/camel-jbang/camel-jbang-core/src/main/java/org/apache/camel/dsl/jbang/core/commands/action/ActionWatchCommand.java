@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -39,10 +38,6 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
 
     private Runnable waitUserTask;
     final AtomicBoolean running = new AtomicBoolean(true);
-
-    protected ActionWatchCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

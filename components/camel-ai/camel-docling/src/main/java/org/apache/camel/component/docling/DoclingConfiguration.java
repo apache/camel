@@ -47,9 +47,11 @@ public class DoclingConfiguration implements Cloneable {
     private boolean enableOCR = true;
 
     @UriParam
-    @Metadata(description = "Language code for OCR processing", defaultValue = "en",
+    @Metadata(description = "Language code for OCR processing. With the docling CLI, en is used when it is not set."
+                            + " With docling-serve, setting it turns OCR on (do_ocr=true) unless enableOCR or doOcr is false,"
+                            + " and when it is not set the server uses its own default languages.",
               enums = "en,es,fr,de,it,pt,ru,zh,ja,ko,ar,hi,th,vi,tr,pl,nl,sv,da,no,fi,cs,hu,el,he,fa,ur,bn,ta,te,ml,kn,gu,pa,or,as,ne,si,my,lo,km,ka,hy,eu,mt,is,ga,cy,gd,br,oc,ca,gl,ast,an,lad,la,eo,ia,ie,vo,jbo,tlh")
-    private String ocrLanguage = "en";
+    private String ocrLanguage;
 
     @UriParam
     @Metadata(description = "Output format of the SUBMIT_ASYNC_CONVERSION operation; the other operations always use their own format. The html_split_page value is rejected, as docling-serve does not return the split pages; use html instead",
@@ -96,8 +98,9 @@ public class DoclingConfiguration implements Cloneable {
     @Metadata(description = "When set, the output directory passed to the docling CLI must resolve inside this"
                             + " directory once normalized. Applies to the CamelDoclingOutputFilePath header. The"
                             + " check is lexical and does not resolve symbolic links, matching inputBaseDirectory."
-                            + " When empty, no directory restriction is applied and the header value is only"
-                            + " normalized.")
+                            + " When empty, the header value must be a relative path that does not leave the"
+                            + " working directory once normalized; set this option to use absolute output"
+                            + " directories.")
     private String outputBaseDirectory;
 
     @UriParam
@@ -186,7 +189,7 @@ public class DoclingConfiguration implements Cloneable {
     private boolean includeRawMetadata = false;
 
     @UriParam(label = "advanced")
-    @Metadata(description = "Enable OCR processing in docling-serve API mode. When not set, the server uses its own defaults. Set enableOCR to false to explicitly disable OCR.")
+    @Metadata(description = "Enable OCR processing in docling-serve API mode. When not set, OCR is turned on if ocrLanguage is set, and otherwise the server uses its own defaults. Set enableOCR to false to explicitly disable OCR.")
     private Boolean doOcr;
 
     @UriParam(label = "advanced")

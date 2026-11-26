@@ -152,7 +152,7 @@ class InfraStopTest extends InfraCommandTestSupport {
     }
 
     private InfraStop command(String name) {
-        InfraStop command = new InfraStop(new CamelJBangMain().withPrinter(printer));
+        InfraStop command = new CamelJBangMain().withPrinter(printer).command(new InfraStop());
         command.name = name;
         // the pid files have made-up pids
         command.aliveCheck = pid -> true;

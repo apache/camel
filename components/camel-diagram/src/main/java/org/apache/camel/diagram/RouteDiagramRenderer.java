@@ -725,8 +725,9 @@ public class RouteDiagramRenderer {
     /**
      * The body types the step has been reached with, as a label on the arrow into it, below the bend of the arrow and
      * above the counters of the metrics ({@link RouteDiagramLayoutEngine#setBodyTypes}), and inside the dashed box the
-     * step is in ({@link #bodyTypesLabelWidth(LayoutNode)}). A step reached with bodies of more than one kind has a
-     * warning label: the warning icon, the types and their kinds.
+     * step is in ({@link #bodyTypesLabelWidth(LayoutNode)}), with the formats of the payloads after them
+     * ({@code byte[] · json}). A step reached with bodies of more than one kind, or payloads of more than one format,
+     * has a warning label: the warning icon, the types and their kinds.
      */
     private void drawBodyTypes(Graphics2D g, LayoutNode node, DiagramColors colors) {
         if (node.parentNode == null || node.tableRow || node.treeNode == null
@@ -735,7 +736,8 @@ public class RouteDiagramRenderer {
         }
         List<String> types = node.treeNode.info.bodyTypes;
         List<String> kinds = node.treeNode.info.bodyKinds;
-        boolean mixed = RouteDiagramBodyTypes.mixed(kinds);
+        List<String> formats = node.treeNode.info.bodyFormats;
+        boolean mixed = RouteDiagramBodyTypes.marked(kinds, formats);
 
         Font font = RouteDiagramLayoutEngine.bodyTypesFont(fontSizeNode);
         FontMetrics fm = g.getFontMetrics(font);
@@ -743,7 +745,7 @@ public class RouteDiagramRenderer {
         int icon = mixed ? fm.getAscent() : 0;
         int iconGap = mixed ? 4 * SCALE : 0;
         int maxWidth = bodyTypesLabelWidth(node);
-        String text = RouteDiagramBodyTypes.fit(types, kinds, fm, maxWidth - 2 * padX - icon - iconGap);
+        String text = RouteDiagramBodyTypes.fit(types, kinds, formats, fm, maxWidth - 2 * padX - icon - iconGap);
         int w = 2 * padX + icon + iconGap + fm.stringWidth(text);
         int h = RouteDiagramLayoutEngine.bodyTypesLabelHeight(fm);
         int startY = node.connectFromMerge ? node.mergeY : node.parentNode.y + node.parentNode.height;

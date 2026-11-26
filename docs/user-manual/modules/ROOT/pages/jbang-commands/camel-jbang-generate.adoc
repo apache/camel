@@ -22,6 +22,7 @@ camel generate [options]
 | Subcommand | Description
 | xref:jbang-commands/camel-jbang-generate-rest.adoc[rest] | Generate REST DSL source code from OpenApi specification
 | xref:jbang-commands/camel-jbang-generate-schema.adoc[schema] | Create a JSON schema for a given Camel component and Java Object
+| xref:jbang-commands/camel-jbang-generate-wsdl.adoc[wsdl] | List the services, ports and operations of a WSDL, or scaffold a cxf route in PAYLOAD mode
 |===
 
 

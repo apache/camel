@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.vertx.core.Context;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.WebSocket;
 import org.apache.camel.Endpoint;
@@ -90,10 +92,25 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
                 getEndpoint().discardWebSocket(mine);
                 return null;
             }
+            sendConnectMessage(webSocket);
             return webSocket;
         } finally {
             connectLock.unlock();
         }
+    }
+
+    /**
+     * Sends the connectMessage, such as a subscribe request, each time the consumer connects: when it starts and after
+     * each reconnect.
+     */
+    private void sendConnectMessage(WebSocket webSocket) {
+        String connectMessage = getEndpoint().getConfiguration().getConnectMessage();
+        if (connectMessage == null || webSocket == null || webSocket.isClosed()) {
+            return;
+        }
+        webSocket.writeTextMessage(connectMessage).onFailure(cause -> LOG.warn(
+                "Failed to send the connectMessage to {} due to {}. It is sent again when the consumer reconnects.",
+                webSocket.remoteAddress(), cause.getMessage(), cause));
     }
 
     @Override
@@ -227,21 +244,50 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
 
     protected void processExchange(Exchange exchange) {
         Vertx vertx = getEndpoint().getVertx();
-        vertx.executeBlocking(() -> {
-            createUoW(exchange);
-            getProcessor().process(exchange);
-            return null;
-        }, false)
-                .onComplete(result -> {
-                    try {
-                        if (result.failed()) {
-                            Throwable cause = result.cause();
-                            getExceptionHandler().handleException(cause);
-                        }
-                    } finally {
-                        doneUoW(exchange);
-                        releaseExchange(exchange, false);
+        // ordered: Vert.x runs the blocking tasks of the WebSocket's context one after the other, so the messages reach
+        // the route in the order they are received
+        boolean ordered = !getEndpoint().getConfiguration().isParallelProcessing();
+        if (getEndpoint().isSynchronous()) {
+            // synchronous path: run on worker, block until done
+            vertx.executeBlocking(() -> {
+                createUoW(exchange);
+                getProcessor().process(exchange);
+                return null;
+            }, ordered).onComplete(result -> {
+                try {
+                    if (result.failed()) {
+                        Throwable cause = result.cause();
+                        getExceptionHandler().handleException(cause);
                     }
-                });
+                } finally {
+                    doneUoW(exchange);
+                    releaseExchange(exchange, false);
+                }
+            });
+        } else {
+            // async path: Promise + runOnContext
+            Context context = vertx.getOrCreateContext();
+            Promise<Void> done = Promise.promise();
+            try {
+                vertx.executeBlocking(() -> {
+                    createUoW(exchange);
+                    getAsyncProcessor().process(exchange, doneSync -> context.runOnContext(v -> done.tryComplete()));
+                    return null;
+                }, ordered).onFailure(done::tryFail);
+            } catch (Exception e) {
+                done.tryFail(e);
+            }
+            done.future().onComplete(result -> {
+                try {
+                    if (result.failed()) {
+                        Throwable cause = result.cause();
+                        getExceptionHandler().handleException(cause);
+                    }
+                } finally {
+                    doneUoW(exchange);
+                    releaseExchange(exchange, false);
+                }
+            });
+        }
     }
 }

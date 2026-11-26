@@ -202,11 +202,19 @@ public class TestPluginExporter implements PluginExporter {
     /**
      * Scans Citrus test files in the given directory using the Citrus code analyzer to detect required modules and
      * dependencies. Supports YAML, XML and Groovy test sources.
+     * <p/>
+     * The analyzer reads its catalog (citrus-catalog/citrus/*.json in the citrus-jbang JAR) with the thread context
+     * class loader. During camel export or camel dependency list that is the class loader of the CLI, which cannot see
+     * the JARs of this plugin, so it is set to the class loader of the analyzer while scanning. A test file that cannot
+     * be scanned is skipped, so the command goes on without its test dependencies.
      */
     private Set<String> detectDependenciesFromTestSources(Path testDir) {
         Set<String> deps = new HashSet<>();
-        DelegatingCodeAnalyzer analyzer = new DelegatingCodeAnalyzer();
+        Thread thread = Thread.currentThread();
+        ClassLoader tccl = thread.getContextClassLoader();
         try (Stream<Path> paths = Files.list(testDir)) {
+            thread.setContextClassLoader(CodeAnalyzer.class.getClassLoader());
+            DelegatingCodeAnalyzer analyzer = new DelegatingCodeAnalyzer();
             paths.filter(this::isTestSource)
                     .filter(this::isAnalyzerSupported)
                     .forEach(path -> {
@@ -220,10 +228,14 @@ public class TestPluginExporter implements PluginExporter {
                             }
                         } catch (IOException e) {
                             LOG.debug("Failed to scan {} for dependencies: {}", path, e.getMessage());
+                        } catch (RuntimeException e) {
+                            LOG.warn("Cannot detect the test dependencies of {}: {}", path, e.getMessage());
                         }
                     });
         } catch (IOException e) {
             LOG.debug("Failed to list test directory {}: {}", testDir, e.getMessage());
+        } finally {
+            thread.setContextClassLoader(tccl);
         }
 
         return deps;

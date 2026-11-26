@@ -120,7 +120,7 @@ class CamelStubActionViewsTest extends ActionCommandTestSupport {
     }
 
     private CamelStubAction command(String... args) {
-        CamelStubAction command = new CamelStubAction(new CamelJBangMain().withPrinter(printer));
+        CamelStubAction command = new CamelJBangMain().withPrinter(printer).command(new CamelStubAction());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of("myApp", "--logging-color=false"), Arrays.stream(args)).toArray(String[]::new));
         return command;

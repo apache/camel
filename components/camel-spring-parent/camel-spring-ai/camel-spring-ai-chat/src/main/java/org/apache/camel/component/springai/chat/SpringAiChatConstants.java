@@ -38,7 +38,7 @@ public final class SpringAiChatConstants {
     @Metadata(description = "The prompt template with placeholders for variable substitution", javaType = "String")
     public static final String PROMPT_TEMPLATE = "CamelSpringAiChatPromptTemplate";
 
-    @Metadata(description = "Augmented data for RAG as List<org.springframework.ai.document.Document>",
+    @Metadata(description = "Augmented data for RAG, as a List of org.springframework.ai.document.Document",
               javaType = "java.util.List<org.springframework.ai.document.Document>")
     public static final String AUGMENTED_DATA = "CamelSpringAiChatAugmentedData";
 
@@ -98,7 +98,10 @@ public final class SpringAiChatConstants {
     @Metadata(description = "Metadata to attach to system messages", javaType = "java.util.Map<String, Object>")
     public static final String SYSTEM_METADATA = "CamelSpringAiChatSystemMetadata";
 
-    @Metadata(description = "Conversation ID for managing separate conversation contexts in chat memory", javaType = "String")
+    @Metadata(description = "The conversation ID. It selects the session (sessionService) or the conversation "
+                            + "(chatMemory, chatMemoryVectorStore), and is passed to every memory advisor, also to those "
+                            + "of the advisors option or of a configured chatClient. Session advisors require it.",
+              javaType = "String")
     public static final String CONVERSATION_ID = "CamelSpringAiChatConversationId";
 
     @Metadata(description = "Maximum file size in bytes for multimodal content. Overrides endpoint configuration.",
@@ -108,6 +111,17 @@ public final class SpringAiChatConstants {
     @Metadata(description = "The reason why the chat response generation stopped (e.g., STOP, LENGTH, TOOL_CALLS)",
               javaType = "String")
     public static final String FINISH_REASON = "CamelSpringAiChatFinishReason";
+
+    @Metadata(description = "The category of the finish reason, the same for every provider: COMPLETED, TRUNCATED (a token "
+                            + "or length limit), TOOL_CALL, FILTERED (a content filter, or a refusal of the SafeGuard "
+                            + "advisor), OTHER or UNSPECIFIED",
+              javaType = "String", enums = "COMPLETED,TRUNCATED,TOOL_CALL,FILTERED,OTHER,UNSPECIFIED")
+    public static final String FINISH_REASON_CATEGORY = "CamelSpringAiChatFinishReasonCategory";
+
+    @Metadata(description = "The reasoning of the model for its reply (thinking, thoughts or reasoning content), when the "
+                            + "model returns it as text",
+              javaType = "String")
+    public static final String REASONING = "CamelSpringAiChatReasoning";
 
     @Metadata(description = "The name of the AI model used to generate the response", javaType = "String")
     public static final String MODEL_NAME = "CamelSpringAiChatModelName";

@@ -3301,7 +3301,7 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * The option is a: {@code
          * org.eclipse.paho.mqttv5.common.packet.MqttProperties} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code PahoMqtt5MsgProperties}.
          */

@@ -26,7 +26,7 @@ public class SftpSimpleConsumeRecursiveNotStepwiseIT extends SftpSimpleConsumeRe
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&recursive=true&stepwise=false&knownHostsFile="
+                     + "?username=admin&password=admin&disconnect=true&recursive=true&stepwise=false&knownHostsFile="
                      + service.getKnownHostsFile())
                         .routeId("foo")
                         .autoStartup(false).to("log:result", "mock:result");

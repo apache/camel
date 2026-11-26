@@ -1234,7 +1234,7 @@ class SemanticTabTest {
             when(registry.getActiveMoreTab()).thenReturn(tab);
             when(registry.semanticTab()).thenReturn(tab);
             when(registry.activeTab()).thenReturn(tab);
-            var monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+            var monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
             var registryField = CamelMonitor.class.getDeclaredField("tabRegistry");
             registryField.setAccessible(true);
             registryField.set(monitor, registry);
@@ -1265,7 +1265,7 @@ class SemanticTabTest {
             when(registry.selectedTabIndex()).thenReturn(TabRegistry.TAB_LOG);
             when(registry.logTab()).thenReturn(log);
             when(registry.activeTab()).thenReturn(log);
-            var monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+            var monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
             var registryField = CamelMonitor.class.getDeclaredField("tabRegistry");
             registryField.setAccessible(true);
             registryField.set(monitor, registry);

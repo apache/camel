@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.bigquery.unit;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +70,49 @@ public class GoogleBigQueryProducerTest extends BaseBigQueryTest {
         assertEquals(1, requests.size());
         assertEquals(1, requests.get(0).getRows().size());
         assertEquals("value1", requests.get(0).getRows().get(0).getId());
+    }
+
+    @Test
+    public void useAsInsertIdWithANumericField() throws Exception {
+        configuration.setUseAsInsertId("orderId");
+        Map<String, Object> object = new HashMap<>();
+        object.put("orderId", 42);
+        producer.process(createExchangeWithBody(object));
+        ArgumentCaptor<InsertAllRequest> dataCaptor = ArgumentCaptor.forClass(InsertAllRequest.class);
+        verify(bigquery).insertAll(dataCaptor.capture());
+        List<InsertAllRequest> requests = dataCaptor.getAllValues();
+        assertEquals(1, requests.size());
+        assertEquals(1, requests.get(0).getRows().size());
+        assertEquals("42", requests.get(0).getRows().get(0).getId());
+    }
+
+    @Test
+    public void useAsInsertIdWithNumericFieldsInAList() throws Exception {
+        configuration.setUseAsInsertId("orderId");
+        List<Map<String, Object>> messages = new ArrayList<>();
+        messages.add(Map.of("orderId", 1L));
+        messages.add(Map.of("orderId", 2L));
+        producer.process(createExchangeWithBody(messages));
+        ArgumentCaptor<InsertAllRequest> dataCaptor = ArgumentCaptor.forClass(InsertAllRequest.class);
+        verify(bigquery).insertAll(dataCaptor.capture());
+        List<InsertAllRequest> requests = dataCaptor.getAllValues();
+        assertEquals(1, requests.size());
+        assertEquals(2, requests.get(0).getRows().size());
+        assertEquals("1", requests.get(0).getRows().get(0).getId());
+        assertEquals("2", requests.get(0).getRows().get(1).getId());
+    }
+
+    @Test
+    public void useAsInsertIdWithABytesField() throws Exception {
+        configuration.setUseAsInsertId("orderId");
+        Map<String, Object> object = new HashMap<>();
+        object.put("orderId", "order-1".getBytes(StandardCharsets.UTF_8));
+        producer.process(createExchangeWithBody(object));
+        ArgumentCaptor<InsertAllRequest> dataCaptor = ArgumentCaptor.forClass(InsertAllRequest.class);
+        verify(bigquery).insertAll(dataCaptor.capture());
+        List<InsertAllRequest> requests = dataCaptor.getAllValues();
+        assertEquals(1, requests.size());
+        assertEquals("order-1", requests.get(0).getRows().get(0).getId());
     }
 
     @Test

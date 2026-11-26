@@ -238,7 +238,10 @@ public class RestApiEndpoint extends DefaultEndpoint {
                     throw new IllegalArgumentException(
                             "Component " + getConsumerComponentName() + " is not a RestApiConsumerFactory");
                 } else {
-                    throw new NoSuchBeanException(getConsumerComponentName(), RestApiConsumerFactory.class.getName());
+                    throw new NoSuchBeanException(
+                            getConsumerComponentName(), RestApiConsumerFactory.class.getName(),
+                            RestEndpoint.componentNameHint(getConsumerComponentName(), DEFAULT_REST_API_CONSUMER_COMPONENTS,
+                                    "component"));
                 }
             }
             cname = getConsumerComponentName();
@@ -296,7 +299,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
             return consumer;
         } else {
-            throw new IllegalStateException("Cannot find RestApiConsumerFactory in Registry or as a Component to use");
+            throw new IllegalStateException(
+                    RestEndpoint.factoryNotFound("RestApiConsumerFactory", DEFAULT_REST_API_CONSUMER_COMPONENTS, "component"));
         }
     }
 

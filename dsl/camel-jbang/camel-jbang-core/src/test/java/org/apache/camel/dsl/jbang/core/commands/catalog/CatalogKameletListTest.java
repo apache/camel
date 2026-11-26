@@ -126,12 +126,13 @@ class CatalogKameletListTest extends CamelCommandBaseTestSupport {
 
     @Test
     void aCatalogThatCannotBeDownloadedIsAFailure() throws Exception {
-        CatalogKamelet command = new CatalogKamelet(new CamelJBangMain().withPrinter(printer)) {
+        CatalogKamelet command = new CatalogKamelet() {
             @Override
             protected List<KameletModel> loadKamelets() throws Exception {
                 throw new IOException("no network");
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(command, "--kamelets-version=4.22.1");
 
         assertThat(command.doCall()).isEqualTo(CliExitCode.FAILURE);
@@ -140,7 +141,7 @@ class CatalogKameletListTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogKamelet command(String... args) {
-        CatalogKamelet command = new CatalogKamelet(new CamelJBangMain().withPrinter(printer)) {
+        CatalogKamelet command = new CatalogKamelet() {
             @Override
             protected List<KameletModel> loadKamelets() {
                 return List.of(
@@ -150,6 +151,7 @@ class CatalogKameletListTest extends CamelCommandBaseTestSupport {
                         model("log-action", "action", "Stable", null));
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         String[] withVersion = new String[args.length + 1];
         withVersion[0] = "--kamelets-version=4.22.1";
         System.arraycopy(args, 0, withVersion, 1, args.length);

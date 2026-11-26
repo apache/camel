@@ -81,6 +81,7 @@ import ai.docling.serve.api.task.request.TaskStatusPollRequest;
 import ai.docling.serve.api.task.response.TaskStatus;
 import ai.docling.serve.api.task.response.TaskStatusPollResponse;
 import ai.docling.serve.client.DoclingServeClientBuilderFactory;
+import ai.docling.serve.client.DoclingServeClientException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.StreamCache;
@@ -102,6 +103,16 @@ import tools.jackson.databind.json.JsonMapper;
 public class DoclingProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingProducer.class);
+
+    /**
+     * The OCR language of the docling CLI command when neither the endpoint nor the message names one.
+     */
+    static final String DEFAULT_CLI_OCR_LANGUAGE = "en";
+
+    /**
+     * What the sync endpoint of docling-serve answers, with a 404, when the conversion task failed on the server.
+     */
+    private static final String TASK_RESULT_NOT_FOUND = "Task result not found";
 
     /**
      * Recognized docling CLI flags. Only these flags are permitted in custom arguments (allowlist approach). Flags
@@ -674,7 +685,7 @@ public class DoclingProducer extends DefaultProducer {
         try {
             response = doclingServeApi.convertSource(request);
         } catch (Exception e) {
-            throw new IOException("Failed to convert document for metadata extraction: " + e.getMessage(), e);
+            throw syncConversionFailed("Failed to convert document for metadata extraction", e);
         }
 
         DoclingDocument doclingDocument = extractDoclingDocument(response);
@@ -1233,7 +1244,14 @@ public class DoclingProducer extends DefaultProducer {
             }
         } else {
             LOG.debug("Using sync mode for DoclingDocument conversion");
-            response = doclingServeApi.convertSource(request);
+            try {
+                response = doclingServeApi.convertSource(request);
+            } catch (DoclingServeClientException e) {
+                if (isLostSyncResult(e)) {
+                    throw syncConversionFailed("Failed to convert document", e);
+                }
+                throw e;
+            }
         }
 
         return extractDoclingDocument(response);
@@ -1468,6 +1486,31 @@ public class DoclingProducer extends DefaultProducer {
         return results;
     }
 
+    /**
+     * The exception of a failed sync conversion.
+     * <p>
+     * When the conversion fails on the server, the sync endpoint of docling-serve does not return the error: it answers
+     * with a 404 "Task result not found", which reads as if the client asked for the wrong task. That answer is turned
+     * into a message saying that the conversion failed on the server and where to find the reason.
+     */
+    private static IOException syncConversionFailed(String message, Exception e) {
+        if (isLostSyncResult(e)) {
+            return new IOException(
+                    message + ": the conversion failed on the docling-serve server, which answered \""
+                                   + TASK_RESULT_NOT_FOUND + "\" in sync mode. The cause is in the docling-serve log,"
+                                   + " or use useAsyncMode=true to get the error of the conversion",
+                    e);
+        }
+        return new IOException(message + ": " + e.getMessage(), e);
+    }
+
+    private static boolean isLostSyncResult(Exception e) {
+        return e instanceof DoclingServeClientException clientException
+                && clientException.getStatusCode() == 404
+                && clientException.getResponseBody() != null
+                && clientException.getResponseBody().contains(TASK_RESULT_NOT_FOUND);
+    }
+
     private String convertDocumentSync(String inputSource, String outputFormat, OcrSettings ocrSettings)
             throws IOException {
         LOG.debug("Converting document using docling-java (sync): {}", inputSource);
@@ -1478,7 +1521,7 @@ public class DoclingProducer extends DefaultProducer {
             ConvertDocumentResponse response = doclingServeApi.convertSource(request);
             return extractConvertedContent(response, outputFormat);
         } catch (Exception e) {
-            throw new IOException("Failed to convert document: " + e.getMessage(), e);
+            throw syncConversionFailed("Failed to convert document", e);
         }
     }
 
@@ -1489,7 +1532,7 @@ public class DoclingProducer extends DefaultProducer {
             ConvertDocumentResponse response = doclingServeApi.convertSource(request);
             return extractConvertedContent(response, "json");
         } catch (Exception e) {
-            throw new IOException("Failed to convert document: " + e.getMessage(), e);
+            throw syncConversionFailed("Failed to convert document", e);
         }
     }
 
@@ -1623,14 +1666,18 @@ public class DoclingProducer extends DefaultProducer {
      * that DoclingOcrHeadersTest can resolve them the way the producer does.
      */
     OcrSettings resolveOcrSettings(Exchange exchange) {
-        // Send doOcr only when explicitly configured via the doOcr property,
-        // or when enableOCR has been explicitly disabled. When both are at their
-        // defaults (doOcr=null, enableOCR=true), let the server use its own defaults
-        // to preserve backward compatibility.
+        // Send doOcr only when explicitly configured via the doOcr property, when enableOCR has been explicitly
+        // disabled, or when an OCR language is configured. When all are at their defaults (doOcr=null,
+        // enableOCR=true, no ocrLanguage), let the server use its own defaults to preserve backward compatibility.
         Boolean doOcr = configuration.getDoOcr();
         String ocrLanguage = configuration.getOcrLanguage();
         if (doOcr == null && !configuration.isEnableOCR()) {
             doOcr = Boolean.FALSE;
+        }
+        if (doOcr == null && ObjectHelper.isNotEmpty(ocrLanguage)) {
+            // a configured language is asking for OCR, as the language header is; ocrLanguage has no default, so a
+            // language here was set on purpose and does not override the server defaults on every request
+            doOcr = Boolean.TRUE;
         }
 
         // The per-message headers win over the endpoint configuration, as they do on the CLI path: a scanned
@@ -2369,6 +2416,10 @@ public class DoclingProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(ocrLanguage)) {
             ocrLanguage = configuration.getOcrLanguage();
         }
+        if (ObjectHelper.isEmpty(ocrLanguage)) {
+            // the docling CLI has always been given a language, so keep English when none is configured
+            ocrLanguage = DEFAULT_CLI_OCR_LANGUAGE;
+        }
 
         if (!enableOcr) {
             command.add("--no-ocr");
@@ -2398,19 +2449,29 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     /**
-     * Normalizes the given output directory and, when {@code outputBaseDirectory} is configured, verifies that it stays
-     * inside that directory. Mirrors {@link #resolveWithinInputBaseDirectory(String)} so that the output directory
-     * carried by the {@link DoclingHeaders#OUTPUT_FILE_PATH} header receives the same treatment as input paths. The
-     * containment check is lexical: symbolic links are not resolved, so - like
+     * Normalizes the given output directory and verifies where it may point. When {@code outputBaseDirectory} is
+     * configured, the directory must stay inside it, as {@link #resolveWithinInputBaseDirectory(String)} does for input
+     * paths. Without it, the directory must be a relative path that does not leave the CLI working directory, the same
+     * rule as for the custom arguments. The checks are lexical: symbolic links are not resolved, so - like
      * {@link #resolveWithinInputBaseDirectory(String)} - a symlink inside the base directory that points outside it is
      * not detected.
      */
     private Path resolveWithinOutputBaseDirectory(String outputPath) throws IOException {
         String base = configuration.getOutputBaseDirectory();
         if (base == null || base.isEmpty()) {
-            // no directory restriction: normalize lexically only, and leave relative paths relative so that they keep
-            // resolving the way they did before - against the CLI working directory, when one is set
-            return Paths.get(outputPath).normalize();
+            // no base directory: only a relative path that stays relative after normalizing, so that it keeps resolving
+            // against the CLI working directory, when one is set
+            Path path = Paths.get(outputPath).normalize();
+            if (path.isAbsolute() || path.getRoot() != null) {
+                throw new IOException(
+                        "Output path must be a relative path when outputBaseDirectory is not set: " + outputPath);
+            }
+            if (path.getNameCount() > 0 && "..".equals(path.getName(0).toString())) {
+                throw new IOException(
+                        "Output path must not leave the working directory when outputBaseDirectory is not set: "
+                                      + outputPath);
+            }
+            return path;
         }
         Path baseDir = Paths.get(base).toAbsolutePath().normalize();
         // resolve relative paths against the base directory itself, so that the path checked here is exactly the path

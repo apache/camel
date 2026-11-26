@@ -186,7 +186,7 @@ class LlmClientChatTest {
     void anExplanationWithALocalServerTurnsThinkingOff() {
         server.reply("/v1/chat/completions", 200, "{\"choices\":[{\"message\":{\"content\":\"Done\"}}]}");
 
-        String answer = client(ApiType.openai).generate("You explain", "The route");
+        String answer = client(ApiType.openai).generate("You explain", "The route").text();
 
         assertThat(answer).isEqualTo("Done");
         assertThat(server.lastRequest().getString("reasoning_effort")).isEqualTo("none");
@@ -196,7 +196,7 @@ class LlmClientChatTest {
     void anExplanationWithOllamaTurnsThinkingOff() {
         server.reply("/api/generate", 200, "{\"response\":\"Done\",\"done\":true}");
 
-        String answer = client(ApiType.ollama).generate("You explain", "The route");
+        String answer = client(ApiType.ollama).generate("You explain", "The route").text();
 
         // as the chat does: the Qwen 3.x models think by default, which makes an explanation many times slower
         assertThat(answer).isEqualTo("Done");
@@ -389,7 +389,7 @@ class LlmClientChatTest {
     void anExplanationWithAnthropicIsNotCached() {
         server.reply("/v1/messages", 200, "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"Done\"}]}");
 
-        String answer = client(ApiType.anthropic).withTemperature(0.7).generate("You explain", "The route");
+        String answer = client(ApiType.anthropic).withTemperature(0.7).generate("You explain", "The route").text();
 
         // a single question would only pay for writing the cache
         assertThat(answer).isEqualTo("Done");
@@ -526,7 +526,7 @@ class LlmClientChatTest {
             closed = "http://127.0.0.1:" + socket.getLocalPort();
         }
 
-        String answer = client(ApiType.ollama).withUrl(closed).withStream(true).generate("You help", "Hi");
+        String answer = client(ApiType.ollama).withUrl(closed).withStream(true).generate("You help", "Hi").text();
 
         assertThat(answer).isNull();
         assertThat(printer.getStdout()).isEmpty();

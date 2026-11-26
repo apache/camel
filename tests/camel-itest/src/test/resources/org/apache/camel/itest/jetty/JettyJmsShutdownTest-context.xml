@@ -39,7 +39,7 @@
         </route>
 
         <!-- also defer this as we defer the other route -->
-        <route shutdownRoute="Defer">
+        <route id="JettyJmsShutdownTest-consumer" shutdownRoute="Defer">
             <from uri="jms:queue:JettyJmsShutdownTest?concurrentConsumers=5"/>
             <delay>
                 <constant>5000</constant>

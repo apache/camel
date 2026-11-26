@@ -170,7 +170,10 @@ When `oauthProfile` is set, static profile configuration is resolved and validat
 Updates to OAuth profile properties require restarting the route or Camel context before they take effect.
 Requests without a Bearer token or with an invalid token are rejected with HTTP 401 before the
 route is processed; missing credentials receive a `WWW-Authenticate: Bearer` response header and
-invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`. Malformed
+invalid tokens receive `WWW-Authenticate: Bearer error="invalid_token"`, and tokens not meeting
+step-up requirements (see `required-acr` and `max-auth-age-seconds` in
+xref:components:others:oauth.adoc[camel-oauth]) receive `WWW-Authenticate: Bearer
+error="insufficient_user_authentication"`. Malformed
 `Authorization` headers are rejected with HTTP 400 and
 `WWW-Authenticate: Bearer error="invalid_request"`. Token validation infrastructure failures are
 rejected with HTTP 503.

@@ -36,7 +36,8 @@ public interface BedrockConstants {
     String STREAMING_TOKEN_COUNT = "CamelAwsBedrockTokenCount";
     @Metadata(description = "The number of chunks received in streaming response", javaType = "Integer")
     String STREAMING_CHUNK_COUNT = "CamelAwsBedrockChunkCount";
-    @Metadata(description = "The conversation messages for Converse API",
+    @Metadata(description = "The conversation messages for Converse API. When not set, the body as text is sent as one"
+                            + " user message.",
               javaType = "List<software.amazon.awssdk.services.bedrockruntime.model.Message>")
     String CONVERSE_MESSAGES = "CamelAwsBedrockConverseMessages";
     @Metadata(description = "The system prompts for Converse API",
@@ -64,7 +65,7 @@ public interface BedrockConstants {
     String GUARDRAIL_CONFIG = "CamelAwsBedrockGuardrailConfig";
     @Metadata(description = "The guardrail identifier to use for the ApplyGuardrail operation", javaType = "String")
     String GUARDRAIL_IDENTIFIER = "CamelAwsBedrockGuardrailIdentifier";
-    @Metadata(description = "The content blocks for ApplyGuardrail operation",
+    @Metadata(description = "The content blocks for ApplyGuardrail operation. When not set, the body as text is checked.",
               javaType = "List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock>")
     String GUARDRAIL_CONTENT = "CamelAwsBedrockGuardrailContent";
     @Metadata(description = "The source type for ApplyGuardrail operation (INPUT or OUTPUT)", javaType = "String")

@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 import dev.openfga.sdk.api.client.model.ClientBatchCheckClientResponse;
@@ -57,6 +59,7 @@ import dev.openfga.sdk.api.configuration.ClientWriteOptions;
 import dev.openfga.sdk.api.configuration.ClientWriteTuplesOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
 import dev.openfga.sdk.api.model.FgaObject;
+import dev.openfga.sdk.api.model.ListObjectsRequest;
 import dev.openfga.sdk.api.model.RelationshipCondition;
 import dev.openfga.sdk.api.model.TupleChange;
 import dev.openfga.sdk.api.model.TupleKey;
@@ -70,6 +73,11 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Failure;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Operation;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Outcome;
+import org.apache.camel.support.security.AuthorizationObservation;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +88,8 @@ public class OpenFgaProducer extends DefaultProducer {
 
     private static final String DEFAULT_USER_FILTER = "user";
 
+    private final Set<OpenFgaObjectIterator> activeStreams = ConcurrentHashMap.newKeySet();
+    private ScheduledExecutorService streamScheduler;
     private OpenFgaProducerHealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
 
@@ -97,6 +107,10 @@ public class OpenFgaProducer extends DefaultProducer {
         super.doStart();
 
         OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        if (getEndpoint().getOperation() == OpenFgaOperation.streamedListObjects) {
+            streamScheduler = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "OpenFgaStreamTimeout");
+        }
         // an injected client can point anywhere and the endpoint has no way to ask it where, so there is no server
         // this check would know the address of
         if (configuration.getOpenFgaClient() != null || ObjectHelper.isEmpty(configuration.getApiUrl())) {
@@ -120,8 +134,18 @@ public class OpenFgaProducer extends DefaultProducer {
         }
     }
 
+    /** The streamed object queries that opened a request and were not closed yet; the producer closes them on stop. */
+    int activeStreamCount() {
+        return activeStreams.size();
+    }
+
     @Override
     protected void doStop() throws Exception {
+        activeStreams.forEach(OpenFgaObjectIterator::close);
+        if (streamScheduler != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(streamScheduler);
+            streamScheduler = null;
+        }
         if (healthCheckRepository != null && producerHealthCheck != null) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck.close();
@@ -137,6 +161,7 @@ public class OpenFgaProducer extends DefaultProducer {
             case check -> authorizer.check(exchange);
             case batchCheck -> batchCheck(exchange, authorizer);
             case listObjects -> listObjects(exchange, authorizer);
+            case streamedListObjects -> streamedListObjects(exchange, authorizer);
             case listRelations -> listRelations(exchange, authorizer);
             case listUsers -> listUsers(exchange, authorizer);
             case writeTuples -> writeTuples(exchange, authorizer);
@@ -156,14 +181,36 @@ public class OpenFgaProducer extends DefaultProducer {
      * allowed - so a route can filter a collection down to what the caller may see in one step.
      */
     private void batchCheck(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        AuthorizationObservation observation = AuthorizationObservation.begin(exchange, Engine.OPENFGA, Operation.BATCH,
+                getEndpoint().getConfiguration().getAuthorizationModelId());
+        if (!observation.isEnabled()) {
+            batchCheckInternal(exchange, authorizer, observation);
+            return;
+        }
+        try {
+            batchCheckInternal(exchange, authorizer, observation);
+            observation.completeBatch();
+        } catch (Exception e) {
+            boolean unavailable = OpenFgaAuthorizer.isDecisionPointUnavailable(e);
+            observation.failure(unavailable ? Outcome.UNAVAILABLE : Outcome.ERROR,
+                    AuthorizationObservation.interrupted(e) ? Failure.INTERRUPTED
+                            : unavailable ? Failure.UNAVAILABLE : Failure.EVALUATION);
+            throw e;
+        }
+    }
+
+    private void batchCheckInternal(Exchange exchange, OpenFgaAuthorizer authorizer, AuthorizationObservation observation)
+            throws Exception {
         OpenFgaAuthorizer.clearDecisionHeaders(exchange);
         List<String> objects = bodyAsList(exchange);
+        observation.expectedItems(objects.size());
         String user = authorizer.resolveUser(exchange);
         String relation = authorizer.resolveRelation(exchange);
         if (user == null || relation == null) {
             // the subject or the permission could not be established, so none of the objects is allowed. The deny
             // reason is already on the exchange
             exchange.getMessage().setBody(List.of());
+            observation.items(Outcome.DENY, objects.size());
             return;
         }
 
@@ -172,6 +219,7 @@ public class OpenFgaProducer extends DefaultProducer {
             // a configured contextual tuple did not resolve, so no object is allowed; the reason is on the exchange
             exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, false);
             exchange.getMessage().setBody(List.of());
+            observation.items(Outcome.DENY, objects.size());
             return;
         }
 
@@ -181,6 +229,7 @@ public class OpenFgaProducer extends DefaultProducer {
                 // an entry that cannot be an object of a check is not one the caller may have; leaving it out of the
                 // batch leaves it out of the result, which is the fail-closed answer
                 LOG.debug("Skipping '{}' in a batchCheck: not usable as an object identifier", object);
+                observation.item(Outcome.DENY);
                 continue;
             }
             ClientCheckRequest item = new ClientCheckRequest().user(user).relation(relation)._object(object);
@@ -196,15 +245,16 @@ public class OpenFgaProducer extends DefaultProducer {
         }
 
         List<String> allowed = getEndpoint().getConfiguration().getBatchCheckMode() == OpenFgaBatchCheckMode.server
-                ? serverBatchCheck(exchange, authorizer, requests)
-                : clientBatchCheck(exchange, authorizer, requests, objects, user, relation);
+                ? serverBatchCheck(exchange, authorizer, requests, observation)
+                : clientBatchCheck(exchange, authorizer, requests, objects, user, relation, observation);
+        observation.remainingItems(Outcome.DENY, objects.size());
         exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, !allowed.isEmpty());
         exchange.getMessage().setBody(allowed);
     }
 
     private List<String> clientBatchCheck(
             Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests,
-            List<String> objects, String user, String relation)
+            List<String> objects, String user, String relation, AuthorizationObservation observation)
             throws Exception {
         int maxParallelRequests = getEndpoint().getConfiguration().getMaxParallelRequests();
         ClientBatchCheckClientOptions options = new ClientBatchCheckClientOptions()
@@ -235,6 +285,9 @@ public class OpenFgaProducer extends DefaultProducer {
             }
             if (Boolean.TRUE.equals(response.getAllowed())) {
                 permitted.add(response.getRequest().getObject());
+                observation.item(Outcome.ALLOW);
+            } else {
+                observation.item(Outcome.DENY);
             }
         }
         // filter the body rather than collect the answers: the SDK issues the checks in parallel and hands them back
@@ -249,7 +302,9 @@ public class OpenFgaProducer extends DefaultProducer {
         return allowed;
     }
 
-    private List<String> serverBatchCheck(Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests)
+    private List<String> serverBatchCheck(
+            Exchange exchange, OpenFgaAuthorizer authorizer, List<ClientCheckRequest> requests,
+            AuthorizationObservation observation)
             throws Exception {
         List<ClientBatchCheckItem> checks = new ArrayList<>(requests.size());
         Set<String> pending = new HashSet<>();
@@ -287,6 +342,9 @@ public class OpenFgaProducer extends DefaultProducer {
             }
             if (result.isAllowed()) {
                 permitted.add(result.getCorrelationId());
+                observation.item(Outcome.ALLOW);
+            } else {
+                observation.item(Outcome.DENY);
             }
         }
         if (!pending.isEmpty()) {
@@ -304,6 +362,31 @@ public class OpenFgaProducer extends DefaultProducer {
     /**
      * Lists the objects of the configured type the subject can reach through the relation.
      */
+    private void streamedListObjects(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
+        OpenFgaAuthorizer.clearDecisionHeaders(exchange);
+        OpenFgaConfiguration configuration = getEndpoint().getConfiguration();
+        String user = authorizer.resolveUser(exchange);
+        String relation = authorizer.resolveRelation(exchange);
+        List<ClientTupleKey> contextualTuples = authorizer.resolveContextualTuples(exchange);
+        ListObjectsRequest request = new ListObjectsRequest().user(user).relation(relation).type(configuration.getType());
+        applyModelAndConsistency(authorizer, request::authorizationModelId, request::consistency);
+        if (contextualTuples != null && !contextualTuples.isEmpty()) {
+            request.contextualTuples(ClientTupleKey.asContextualTupleKeys(contextualTuples));
+        }
+        if (authorizer.getConditionContext() != null) {
+            request.context(authorizer.getConditionContext());
+        }
+        OpenFgaObjectIterator iterator = new OpenFgaObjectIterator(
+                getEndpoint().getStreamingClient(),
+                configuration.getStoreId(), request, streamScheduler, configuration.getReadTimeout(),
+                configuration.getStreamMaxResults(), configuration.getStreamMaxLineLength(), activeStreams::add,
+                activeStreams::remove);
+        if (user == null || relation == null || contextualTuples == null) {
+            iterator.completeEmpty();
+        }
+        exchange.getMessage().setBody(iterator);
+    }
+
     private void listObjects(Exchange exchange, OpenFgaAuthorizer authorizer) throws Exception {
         OpenFgaAuthorizer.clearDecisionHeaders(exchange);
         String type = getEndpoint().getConfiguration().getType();
@@ -517,6 +600,11 @@ public class OpenFgaProducer extends DefaultProducer {
         ClientReadChangesResponse response = authorizer.await(exchange, "read the change log",
                 () -> authorizer.getClient().readChanges(request, options));
 
+        setContinuationToken(exchange, response.getContinuationToken());
+        exchange.getMessage().setBody(changePage(response));
+    }
+
+    static List<Map<String, Object>> changePage(ClientReadChangesResponse response) {
         List<Map<String, Object>> changes = new ArrayList<>();
         if (response.getChanges() != null) {
             for (TupleChange change : response.getChanges()) {
@@ -539,8 +627,7 @@ public class OpenFgaProducer extends DefaultProducer {
                 changes.add(entry);
             }
         }
-        setContinuationToken(exchange, response.getContinuationToken());
-        exchange.getMessage().setBody(changes);
+        return changes;
     }
 
     /**

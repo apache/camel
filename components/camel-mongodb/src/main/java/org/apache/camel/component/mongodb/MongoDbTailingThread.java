@@ -148,6 +148,19 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
         }
     }
 
+    /**
+     * Persists the tail position from the thread that stops the consumer, as a thread left behind may only persist much
+     * later. A failure is logged, so that the stop completes.
+     */
+    @Override
+    protected void afterStopped() {
+        try {
+            tailTracking.persistToStore();
+        } catch (Exception e) {
+            log.warn("Failed to persist the tail position while stopping the consumer", e);
+        }
+    }
+
     Exchange createMongoDbExchange(Document dbObj) {
         // released by doRun once the outcome has been read, as an auto-released exchange may already be reset by then
         Exchange exchange = consumer.createExchange(false);

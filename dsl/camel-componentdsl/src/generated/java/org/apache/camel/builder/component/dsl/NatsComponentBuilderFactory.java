@@ -135,7 +135,13 @@ public interface NatsComponentBuilderFactory {
         }
     
         /**
-         * Sets the name of the JetStream stream to use.
+         * The name of the JetStream stream. The consumer reads from this stream
+         * (it is required for a JetStream consumer). When the stream does not
+         * exist, the consumer creates it with the subject of the topic. The
+         * producer creates it in the same way, unless another stream already
+         * takes in the subject. The producer publishes to the subject, and the
+         * message is stored by the stream that takes in the subject, whatever
+         * its name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -687,7 +693,11 @@ public interface NatsComponentBuilderFactory {
     
         
         /**
-         * Request timeout in milliseconds.
+         * Request timeout in milliseconds. With JetStream, the time to wait for
+         * the acknowledgement of a published message. With jetstreamAsync=true,
+         * the NATS client also gives up on the acknowledgement after
+         * requestCleanupInterval (to twice that), so a longer wait needs a
+         * longer requestCleanupInterval too.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -812,6 +822,29 @@ public interface NatsComponentBuilderFactory {
     
         
         /**
+         * Whether to check that the certificate of the NATS server matches the
+         * host Camel connects to, when TLS is used. The client then keeps the
+         * host name of a server for TLS, and connects to the fastest of its IP
+         * addresses. A server that is given, or that the cluster announces, by
+         * its IP address needs a certificate that names that address. When
+         * disabled, any certificate trusted by the JVM, or by the
+         * sslContextParameters, is accepted, whatever host it was issued for.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+    
+        
+        /**
          * Set secure option indicating TLS is required.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -921,6 +954,7 @@ public interface NatsComponentBuilderFactory {
             case "jetstreamAsync": getOrCreateConfiguration((NatsComponent) component).setJetstreamAsync((boolean) value); return true;
             case "traceConnection": getOrCreateConfiguration((NatsComponent) component).setTraceConnection((boolean) value); return true;
             case "credentialsFilePath": getOrCreateConfiguration((NatsComponent) component).setCredentialsFilePath((java.lang.String) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((NatsComponent) component).setHostnameVerification((boolean) value); return true;
             case "secure": getOrCreateConfiguration((NatsComponent) component).setSecure((boolean) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((NatsComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((NatsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;

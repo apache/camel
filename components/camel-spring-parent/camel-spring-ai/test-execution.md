@@ -65,7 +65,8 @@ from Ollama if it has not been pulled:
 | `embeddinggemma:300m` | `SpringAiChatVectorStoreIT`, `SpringAiChatVectorMemoryIT`, `QdrantVectorStoreIT` |
 | `x/flux2-klein:4b` | `SpringAiImageOllamaIT` |
 
-`ollama.embedding.model` only drives `SpringAiEmbeddingsIT`.
+`ollama.embedding.model` only drives `SpringAiEmbeddingsIT`. With `-Dollama.instance.type=openai`, the two
+chat vector ITs use `openai.embedding.model` instead of `embeddinggemma:300m`.
 
 ### Extra requirements
 
@@ -81,6 +82,39 @@ Without it a reasoning model spends its whole token budget on the thinking chann
 with empty content, so the assertions fail or the run hangs on an unbounded generation. Ollama
 accepts `think=false` on models without a thinking mode too, so this is safe for every model —
 the granite4:3b result is identical with and without it.
+
+### Any OpenAI-compatible server
+
+`camel-spring-ai-chat` also runs on vLLM, LiteLLM, LM Studio, Ollama's `/v1` endpoint or OpenAI. With
+`-Dollama.instance.type=openai`, `OllamaTestSupport` builds Spring AI's OpenAI chat and embedding models
+instead of the Ollama ones. Pass the key in the `OPENAI_API_KEY` environment variable: an `openai.api.key`
+system property is written into the failsafe reports. The MCP filesystem server that `SpringAiChatMcpIT` starts
+with `npx` inherits that environment, so leave that IT out when the key is one you do not want to share with it.
+
+```bash
+export OPENAI_API_KEY=...     # any value for a server that checks none
+mvn verify -pl camel-spring-ai-chat -Dollama.instance.type=openai \
+    -Dopenai.endpoint=http://localhost:8000/v1 \
+    -Dopenai.model=my-model \
+    -Dopenai.embedding.model=my-embedding-model
+```
+
+- `openai.endpoint` defaults to `https://api.openai.com/v1/`, `openai.model` to `gpt-4o-mini` and
+  `openai.embedding.model` to `text-embedding-ada-002`. They can also be set with the `OPENAI_BASE_URL`,
+  `OPENAI_MODEL` and `OPENAI_EMBEDDING_MODEL` environment variables.
+- `openai.embedding.model` drives `SpringAiChatVectorStoreIT` and `SpringAiChatVectorMemoryIT`. On a server
+  without an embedding model, leave them out:
+  `-Dit.test='SpringAiChat*IT,!SpringAiChatVectorStoreIT,!SpringAiChatVectorMemoryIT'`.
+- Thinking is turned off with `reasoning_effort: none` and `chat_template_kwargs` (`enable_thinking: false`),
+  which Ollama and vLLM read, as `disableThinking()` does on Ollama. Neither is sent to the OpenAI platform.
+  `-Dopenai.disable.thinking=false` leaves both out, for servers that reject `reasoning_effort: none` (vLLM
+  before 0.18, GPT-OSS models).
+- The tool-calling ITs need a server that accepts `tool_choice: auto`: start vLLM with
+  `--enable-auto-tool-choice` and the `--tool-call-parser` of the model.
+- The tests set `temperature` and other sampling options, so use a model that accepts them. OpenAI's reasoning
+  models only accept the default temperature.
+- A slow server can take longer than the 600s `camel.failsafe.forkTimeout`: raise it, for example with
+  `-Dcamel.failsafe.forkTimeout=3600`.
 
 ### Other models tried
 

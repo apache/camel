@@ -62,7 +62,7 @@ class KubernetesDeleteTest {
 
     @Test
     public void shouldRequireName() throws Exception {
-        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        KubernetesDelete command = new CamelJBangMain().withPrinter(printer).command(new KubernetesDelete());
         command.withClient(client);
         int exit = command.doCall();
 
@@ -72,7 +72,7 @@ class KubernetesDeleteTest {
 
     @Test
     public void shouldDeleteNonExistentApp() throws Exception {
-        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        KubernetesDelete command = new CamelJBangMain().withPrinter(printer).command(new KubernetesDelete());
         command.withClient(client);
         command.name = "does-not-exist";
         int exit = command.doCall();
@@ -100,7 +100,7 @@ class KubernetesDeleteTest {
 
         serverExpect("/api/v1/nodes?labelSelector=minikube.k8s.io%2Fname", nodeList);
 
-        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        KubernetesDelete command = new CamelJBangMain().withPrinter(printer).command(new KubernetesDelete());
         command.withClient(client);
         command.name = "does-not-exist";
         int exit = command.doCall();
@@ -126,7 +126,7 @@ class KubernetesDeleteTest {
 
         serverExpect("/apis/config.openshift.io/v1/clusterversions/version", versionCR);
 
-        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        KubernetesDelete command = new CamelJBangMain().withPrinter(printer).command(new KubernetesDelete());
         command.withClient(client);
         command.name = "does-not-exist";
         int exit = command.doCall();
@@ -156,7 +156,7 @@ class KubernetesDeleteTest {
                 "/api/v1/namespaces/test/secrets?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
 
         // Execute delete command
-        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        KubernetesDelete command = new CamelJBangMain().withPrinter(printer).command(new KubernetesDelete());
         command.withClient(client);
         command.namespace = "test";
         command.name = name;
@@ -204,7 +204,7 @@ class KubernetesDeleteTest {
                 "/api/v1/namespaces/test/secrets?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
 
         // Execute delete command
-        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        KubernetesDelete command = new CamelJBangMain().withPrinter(printer).command(new KubernetesDelete());
         command.withClient(client);
         command.namespace = "test";
         command.name = name;
@@ -231,7 +231,7 @@ class KubernetesDeleteTest {
                 "/api/v1/namespaces/test/secrets")) {
             serverDeleteExpect(kind + "?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         }
-        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        KubernetesDelete command = new CamelJBangMain().withPrinter(printer).command(new KubernetesDelete());
         command.withClient(client);
         command.namespace = "test";
         command.name = "my-route";

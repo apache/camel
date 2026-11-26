@@ -62,7 +62,8 @@ public final class MojoHelper {
             case "camel-avro-rpc":
                 return Collections.singletonList(dir.resolve("camel-avro-rpc-component"));
             case "camel-cxf":
-                return Arrays.asList(dir.resolve("camel-cxf-soap"), dir.resolve("camel-cxf-rest"));
+                return Arrays.asList(dir.resolve("camel-cxf-soap"), dir.resolve("camel-cxf-rest"),
+                        dir.resolve("camel-cxf-platform-http"));
             case "camel-salesforce":
                 return Collections.singletonList(dir.resolve("camel-salesforce-component"));
             case "camel-dhis2":

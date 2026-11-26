@@ -119,7 +119,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>${protobuf-maven-plugin-version}</version>
                 <configuration>
-                    <protocVersion>${protobuf-version}</protocVersion>
+                    <protocVersion>${protoc-version}</protocVersion>
                     <sourceDirectories>
                         <sourceDirectory>${project.basedir}/src/test/proto</sourceDirectory>
                     </sourceDirectories>

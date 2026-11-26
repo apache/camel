@@ -70,12 +70,12 @@ public interface OpaEndpointBuilderFactory {
          * expects a List body, evaluates one input document per element - each
          * element as the body, sharing the exchange's headers and properties -
          * and returns the per-element verdicts in the CamelOpaBatchDecision
-         * header, a List parallel to the input. An element whose evaluation
-         * failed is denied, unless failOpen is set and its decision point was
-         * unavailable; the batch is never allowed or denied as a whole because
-         * one element failed. Only for evaluationMode=rest: it saves the
-         * per-element HTTP round-trip via OPA's batch API, which has no meaning
-         * for in-process wasm.
+         * header, a list of booleans parallel to the input. An element whose
+         * evaluation failed is denied, unless failOpen is set and its decision
+         * point was unavailable; the batch is never allowed or denied as a
+         * whole because one element failed. Only for evaluationMode=rest: it
+         * saves the per-element HTTP round-trip via OPA's batch API, which has
+         * no meaning for in-process wasm.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -94,12 +94,12 @@ public interface OpaEndpointBuilderFactory {
          * expects a List body, evaluates one input document per element - each
          * element as the body, sharing the exchange's headers and properties -
          * and returns the per-element verdicts in the CamelOpaBatchDecision
-         * header, a List parallel to the input. An element whose evaluation
-         * failed is denied, unless failOpen is set and its decision point was
-         * unavailable; the batch is never allowed or denied as a whole because
-         * one element failed. Only for evaluationMode=rest: it saves the
-         * per-element HTTP round-trip via OPA's batch API, which has no meaning
-         * for in-process wasm.
+         * header, a list of booleans parallel to the input. An element whose
+         * evaluation failed is denied, unless failOpen is set and its decision
+         * point was unavailable; the batch is never allowed or denied as a
+         * whole because one element failed. Only for evaluationMode=rest: it
+         * saves the per-element HTTP round-trip via OPA's batch API, which has
+         * no meaning for in-process wasm.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -609,6 +609,42 @@ public interface OpaEndpointBuilderFactory {
          */
         default AdvancedOpaEndpointBuilder opaClient(String opaClient) {
             doSetProperty("opaClient", opaClient);
+            return this;
+        }
+        /**
+         * How often, in milliseconds, to check the configured WASM resource for
+         * changed policy or data. Zero disables automatic reload. Replacements
+         * are validated before publication; failed reloads retain the active
+         * revision. This option applies only to wasm mode.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param policyReloadInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder policyReloadInterval(long policyReloadInterval) {
+            doSetProperty("policyReloadInterval", policyReloadInterval);
+            return this;
+        }
+        /**
+         * How often, in milliseconds, to check the configured WASM resource for
+         * changed policy or data. Zero disables automatic reload. Replacements
+         * are validated before publication; failed reloads retain the active
+         * revision. This option applies only to wasm mode.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param policyReloadInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder policyReloadInterval(String policyReloadInterval) {
+            doSetProperty("policyReloadInterval", policyReloadInterval);
             return this;
         }
         /**

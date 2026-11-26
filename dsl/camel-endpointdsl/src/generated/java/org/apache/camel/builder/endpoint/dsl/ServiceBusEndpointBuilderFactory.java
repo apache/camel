@@ -244,8 +244,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable application level deadlettering to the subscription deadletter
-         * subqueue if deadletter related headers are set.
+         * Dead-letters the message of a failed exchange instead of abandoning
+         * it, with the exception as the dead-letter reason and its stack trace
+         * as the error description. The message goes to the dead-letter queue
+         * of the queue or subscription it was received from. Applies only in
+         * PEEK_LOCK receive mode, and not when reading a sub-queue (subQueue),
+         * where the message is abandoned.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -260,8 +264,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable application level deadlettering to the subscription deadletter
-         * subqueue if deadletter related headers are set.
+         * Dead-letters the message of a failed exchange instead of abandoning
+         * it, with the exception as the dead-letter reason and its stack trace
+         * as the error description. The message goes to the dead-letter queue
+         * of the queue or subscription it was received from. Applies only in
+         * PEEK_LOCK receive mode, and not when reading a sub-queue (subQueue),
+         * where the message is abandoned.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1057,7 +1065,10 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets OffsetDateTime at which the message should appear in the Service
-         * Bus queue or topic.
+         * Bus queue or topic. Used only by the scheduleMessages producer
+         * operation; sendMessages sends the message at once. In an endpoint URI
+         * or a property use an ISO-8601 date-time with an offset, such as
+         * 2026-11-18T22:00:00Z or 2026-11-18T23:00:00+01:00.
          * 
          * The option is a: <code>java.time.OffsetDateTime</code> type.
          * 
@@ -1072,7 +1083,10 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets OffsetDateTime at which the message should appear in the Service
-         * Bus queue or topic.
+         * Bus queue or topic. Used only by the scheduleMessages producer
+         * operation; sendMessages sends the message at once. In an endpoint URI
+         * or a property use an ISO-8601 date-time with an offset, such as
+         * 2026-11-18T22:00:00Z or 2026-11-18T23:00:00+01:00.
          * 
          * The option will be converted to a
          * <code>java.time.OffsetDateTime</code> type.
@@ -1881,6 +1895,19 @@ public interface ServiceBusEndpointBuilderFactory {
             return "CamelAzureServiceBusPartitionKey";
         }
         /**
+         * The name of the queue or topic the message was received from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusTopicOrQueueName}.
+         */
+        public String azureServiceBusTopicOrQueueName() {
+            return "CamelAzureServiceBusTopicOrQueueName";
+        }
+        /**
          * The representation of message as defined by AMQP protocol.
          * 
          * The option is a: {@code
@@ -1979,9 +2006,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return "CamelAzureServiceBusTo";
         }
         /**
-         * (producer)Overrides the OffsetDateTime at which the message should
-         * appear in the Service Bus queue or topic. (consumer) Gets the
-         * scheduled enqueue time of this message.
+         * (producer) Overrides the OffsetDateTime at which the message should
+         * appear in the Service Bus queue or topic. Used only by the
+         * scheduleMessages operation. (consumer) Gets the scheduled enqueue
+         * time of this message.
          * 
          * The option is a: {@code java.time.OffsetDateTime} type.
          * 

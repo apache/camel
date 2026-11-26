@@ -81,6 +81,16 @@
             <artifactId>spring-ai-vector-store-advisor</artifactId>
         </dependency>
 
+        <!-- Spring AI session memory (sessionService), which replaces the deprecated ChatMemory -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-session</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-session-advisor</artifactId>
+        </dependency>
+
         <!-- Spring AI MCP integration for Model Context Protocol client support.
              The MCP SDK is included transitively via spring-ai-mcp. -->
         <dependency>
@@ -103,6 +113,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-telemetry</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -131,6 +146,12 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-ollama</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Spring AI OpenAI for integration tests against OpenAI-compatible servers -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-openai</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Ollama test infrastructure -->

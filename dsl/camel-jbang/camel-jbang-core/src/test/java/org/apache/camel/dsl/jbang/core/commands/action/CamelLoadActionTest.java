@@ -38,7 +38,7 @@ class CamelLoadActionTest extends ActionCommandTestSupport {
     void testRequestsLoadAndReportsSuccess() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelLoadAction command = new CamelLoadAction(new CamelJBangMain().withPrinter(printer));
+        CamelLoadAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLoadAction());
         command.name = "myApp";
         command.source = List.of("myRoute.yaml");
 
@@ -59,7 +59,7 @@ class CamelLoadActionTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNoSourceProvided() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelLoadAction command = new CamelLoadAction(new CamelJBangMain().withPrinter(printer));
+        CamelLoadAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLoadAction());
         command.name = "myApp";
 
         // the command rejects the missing --source before resolving any process, so no ProcessHandle mock is needed
@@ -74,7 +74,7 @@ class CamelLoadActionTest extends ActionCommandTestSupport {
     void testReturnsErrorWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelLoadAction command = new CamelLoadAction(new CamelJBangMain().withPrinter(printer));
+        CamelLoadAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLoadAction());
         command.name = "doesNotExist";
         command.source = List.of("myRoute.yaml");
 

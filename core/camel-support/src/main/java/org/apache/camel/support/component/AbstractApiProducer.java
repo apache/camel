@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -77,11 +80,18 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
             return true;
         }
 
+        // the call runs once: set when the task starts, or when the call is rejected after the task was submitted
+        final AtomicBoolean claimed = new AtomicBoolean();
+
         // create a runnable invocation task to be submitted on a background thread pool
         // this way we avoid blocking the current thread for long-running methods
         Runnable invocation = new Runnable() {
             @Override
             public void run() {
+                if (!claimed.compareAndSet(false, true)) {
+                    // the call was rejected because the pool was shut down while the task was submitted
+                    return;
+                }
                 try {
                     if (log.isDebugEnabled()) {
                         log.debug("Invoking operation {} with {}", method.getName(), properties.keySet());
@@ -96,13 +106,6 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
                 } catch (Exception t) {
                     exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
-                } catch (VirtualMachineError e) {
-                    // left as before (thrown on after the callback), as in DelegateSyncProcessor. On this thread of the
-                    // executor it is kept in the Future that nobody reads, so log it to make it visible at least
-                    log.error("Error invoking operation {} on exchange {}: the exchange completes as if the call succeeded,"
-                              + " and the error is thrown on to the executor thread, which drops it",
-                            method.getName(), exchange.getExchangeId(), e);
-                    throw e;
                 } catch (Throwable e) {
                     // also an Error outside the reflective call of the API method (which wraps an Error of the method),
                     // such as when the client is created: the callback is called in finally, and an Error thrown on
@@ -114,8 +117,46 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
             }
         };
 
-        endpoint.getExecutorService().submit(invocation);
+        final ExecutorService executorService;
+        try {
+            executorService = endpoint.getExecutorService();
+        } catch (RejectedExecutionException e) {
+            // the CamelContext has stopped, and has no pool for this endpoint
+            return rejected(exchange, callback, e);
+        }
+        if (executorService.isShutdown()) {
+            // the CallerRuns policy of a shut down pool would drop the task without running it, and the exchange would
+            // never complete
+            return rejected(exchange, callback, newRejectedException(method));
+        }
+        try {
+            executorService.submit(invocation);
+        } catch (RejectedExecutionException e) {
+            if (claimed.compareAndSet(false, true)) {
+                return rejected(exchange, callback, e);
+            }
+            // a custom rejection policy ran the task synchronously before it threw: the task completes the exchange
+            // (the JDK CallerRuns policy drops the task of a shut down pool, and Abort throws without running it)
+            return false;
+        }
+        if (executorService.isShutdown() && claimed.compareAndSet(false, true)) {
+            // the pool was shut down while the task was submitted, so the task may have been dropped: the call is
+            // rejected (when the task was kept after all, it does not run the call)
+            return rejected(exchange, callback, newRejectedException(method));
+        }
         return false;
+    }
+
+    private RejectedExecutionException newRejectedException(ApiMethod method) {
+        return new RejectedExecutionException(
+                "The thread pool of " + endpoint + " is shut down, the call of operation " + method.getName()
+                                              + " is rejected");
+    }
+
+    private static boolean rejected(Exchange exchange, AsyncCallback callback, RejectedExecutionException cause) {
+        exchange.setException(cause);
+        callback.done(true);
+        return true;
     }
 
     @Override

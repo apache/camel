@@ -146,7 +146,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
                 "java.lang.IllegalStateException: boom", "\tat com.acme.Orders.process(Orders.java:42)",
                 line(-1, "Stopping"));
         writeLog(otherPid + ".log", line(-200, "Billing"), line(-50, "Billed"));
-        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CamelLogAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLogAction());
         CommandLineTestHelper.parse(command, "*", "--follow=false", "--logging-color=false");
 
         assertThat(callWithResponse(command, new JsonObject(), otherPid)).isZero();
@@ -193,7 +193,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     @Test
     void nameThatMatchesNoIntegrationIsNotFound() throws Exception {
         writeStatusFile(TEST_PID, "orders");
-        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CamelLogAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLogAction());
         CommandLineTestHelper.parse(command, "payments", "--follow=false");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
@@ -206,7 +206,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     void coloredLinesAreKeptByThePrinterOfTheCommand() throws Exception {
         writeStatusFile(TEST_PID, "orders");
         writeLog(TEST_PID + ".log", line(-300, "Starting"), line(-1, "Failed"));
-        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CamelLogAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLogAction());
         CommandLineTestHelper.parse(command, "orders", "--follow=false", "--prefix=true");
 
         assertThat(callWithSingleProcess(command)).isZero();
@@ -221,12 +221,13 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         writeStatusFile(TEST_PID, "orders");
         writeLog(TEST_PID + ".log", line(-300, "\u001b[32mStarting\u001b[m"), line(-1, "Failed"));
         // the output of the console is not a terminal (a file or a pipe), which takes the colors out of each line
-        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer)) {
+        CamelLogAction command = new CamelLogAction() {
             @Override
             protected boolean colorsStripped() {
                 return true;
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(command, "orders", "--follow=false", "--prefix=true");
 
         assertThat(callWithSingleProcess(command)).isZero();
@@ -274,7 +275,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     @Test
     void previousOfANameWithoutPreviousRunIsNotFound() throws Exception {
         keepPreviousRun("orders", line(-1, "Failed"));
-        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CamelLogAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLogAction());
         CommandLineTestHelper.parse(command, "payments", "--previous");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
@@ -287,7 +288,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     void previousOfANameThatMatchesSeveralRunsAsksForOne() throws Exception {
         keepPreviousRun("orders", line(-1, "Failed"));
         keepPreviousRun("orders-eu", line(-1, "Failed"));
-        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CamelLogAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLogAction());
         CommandLineTestHelper.parse(command, "ord", "--previous");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
@@ -301,7 +302,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
     void aNameThatIsNotRunningSaysWhereTheLogOfItsPreviousRunIs() throws Exception {
         writeStatusFile(TEST_PID, "orders");
         keepPreviousRun("payments", line(-1, "Failed"));
-        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CamelLogAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLogAction());
         CommandLineTestHelper.parse(command, "payments", "--follow=false");
 
         assertThatThrownBy(() -> callWithSingleProcess(command))
@@ -314,7 +315,7 @@ class CamelLogActionTest extends ActionCommandTestSupport {
 
     private CamelLogAction command(String... args) throws Exception {
         writeStatusFile(TEST_PID, "orders");
-        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CamelLogAction command = new CamelJBangMain().withPrinter(printer).command(new CamelLogAction());
         CommandLineTestHelper.parse(command,
                 Stream.concat(Stream.of("orders", "--follow=false", "--logging-color=false"), Stream.of(args))
                         .toArray(String[]::new));

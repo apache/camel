@@ -73,6 +73,10 @@ public class DataLakeConfiguration implements Cloneable {
     private String regex;
     @UriParam(description = "directory of file to do operations in the local system")
     private String fileDir;
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Delete a file from the file system once its exchange has completed. When the exchange fails,"
+                            + " the file is not deleted, so it is consumed again at the next poll.")
+    private boolean deleteAfterRead;
     @UriParam(description = "offset position in file for different operations")
     private Long fileOffset;
     @UriParam(description = "count number of bytes to download")
@@ -238,6 +242,14 @@ public class DataLakeConfiguration implements Cloneable {
 
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
+    }
+
+    public boolean isDeleteAfterRead() {
+        return deleteAfterRead;
+    }
+
+    public void setDeleteAfterRead(boolean deleteAfterRead) {
+        this.deleteAfterRead = deleteAfterRead;
     }
 
     public Boolean getRecursive() {

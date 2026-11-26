@@ -39,7 +39,7 @@ public class ZooKeeperMessage extends DefaultMessage {
     public static final String ZOOKEEPER_NODE_VERSION = "CamelZooKeeperVersion";
 
     public static final String ZOOKEEPER_ERROR_CODE = "CamelZooKeeperErrorCode";
-    @Metadata(description = "The ACL", javaType = "List<ACL>", defaultValue = "Ids.OPEN_ACL_UNSAFE")
+    @Metadata(description = "The ACL", javaType = "List<org.apache.zookeeper.data.ACL>", defaultValue = "Ids.OPEN_ACL_UNSAFE")
     public static final String ZOOKEEPER_ACL = "CamelZookeeperAcl";
     @Metadata(description = "The create mode", javaType = "org.apache.zookeeper.CreateMode or String")
     public static final String ZOOKEEPER_CREATE_MODE = "CamelZookeeperCreateMode";

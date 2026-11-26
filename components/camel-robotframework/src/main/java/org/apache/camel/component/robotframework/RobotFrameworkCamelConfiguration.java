@@ -313,56 +313,56 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Sets free metadata for the top level tests suites. comma separated list of string resulting as List<String>
+     * Sets free metadata for the top level tests suites. Multiple values can be separated by comma.
      */
     public void setMetadata(String metadata) {
         this.metadata = metadata;
     }
 
     /**
-     * Sets the tags(s) to all executed tests cases. List<String>
+     * Sets the tags(s) to all executed tests cases. Multiple values can be separated by comma.
      */
     public void setTags(String tags) {
         this.tags = tags;
     }
 
     /**
-     * Selects the tests cases by name. List<String>
+     * Selects the tests cases by name. Multiple values can be separated by comma.
      */
     public void setTests(String tests) {
         this.tests = tests;
     }
 
     /**
-     * Selects the tests suites by name. List<String>
+     * Selects the tests suites by name. Multiple values can be separated by comma.
      */
     public void setSuites(String suites) {
         this.suites = suites;
     }
 
     /**
-     * Selects the tests cases by tags. List<String>
+     * Selects the tests cases by tags. Multiple values can be separated by comma.
      */
     public void setIncludes(String includes) {
         this.includes = includes;
     }
 
     /**
-     * Selects the tests cases by tags. List<String>
+     * Selects the tests cases by tags. Multiple values can be separated by comma.
      */
     public void setExcludes(String excludes) {
         this.excludes = excludes;
     }
 
     /**
-     * Tests that have the given tags are considered critical. List<String>
+     * Tests that have the given tags are considered critical. Multiple values can be separated by comma.
      */
     public void setCriticalTags(String criticalTags) {
         this.criticalTags = criticalTags;
     }
 
     /**
-     * Tests that have the given tags are not critical. List<String>
+     * Tests that have the given tags are not critical. Multiple values can be separated by comma.
      */
     public void setNonCriticalTags(String nonCriticalTags) {
         this.nonCriticalTags = nonCriticalTags;
@@ -406,14 +406,14 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Sets individual variables. Use the format "name:value" List<String>
+     * Sets individual variables. Use the format "name:value". Multiple values can be separated by comma.
      */
     public void setVariables(String variables) {
         this.variables = variables;
     }
 
     /**
-     * Sets variables using variables files. Use the format "path:args" List<String>
+     * Sets variables using variables files. Use the format "path:args". Multiple values can be separated by comma.
      */
     public void setVariableFiles(String variableFiles) {
         this.variableFiles = variableFiles;
@@ -520,35 +520,39 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Includes only these tags in the Statistics by Tag and Test Details by Tag tables in outputs. List<String>
+     * Includes only these tags in the Statistics by Tag and Test Details by Tag tables in outputs. Multiple values can
+     * be separated by comma.
      */
     public void setTagStatIncludes(String tagStatIncludes) {
         this.tagStatIncludes = tagStatIncludes;
     }
 
     /**
-     * Excludes these tags from the Statistics by Tag and Test Details by Tag tables in outputs. List<String>
+     * Excludes these tags from the Statistics by Tag and Test Details by Tag tables in outputs. Multiple values can be
+     * separated by comma.
      */
     public void setTagStatExcludes(String tagStatExcludes) {
         this.tagStatExcludes = tagStatExcludes;
     }
 
     /**
-     * Creates combined statistics based on tags. Use the format "tags:title" List<String>
+     * Creates combined statistics based on tags. Use the format "tags:title". Multiple values can be separated by
+     * comma.
      */
     public void setCombinedTagStats(String combinedTagStats) {
         this.combinedTagStats = combinedTagStats;
     }
 
     /**
-     * Adds documentation to the specified tags. List<String>
+     * Adds documentation to the specified tags. Multiple values can be separated by comma.
      */
     public void setTagDocs(String tagDocs) {
         this.tagDocs = tagDocs;
     }
 
     /**
-     * Adds external links to the Statistics by Tag table in outputs. Use the format "pattern:link:title" List<String>
+     * Adds external links to the Statistics by Tag table in outputs. Use the format "pattern:link:title". Multiple
+     * values can be separated by comma.
      */
     public void setTagStatLinks(String tagStatLinks) {
         this.tagStatLinks = tagStatLinks;
@@ -556,7 +560,7 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
 
     /**
      * Sets multiple listeners for monitoring tests execution. Use the format "ListenerWithArgs:arg1:arg2" or simply
-     * "ListenerWithoutArgs" List<String>
+     * "ListenerWithoutArgs". Multiple values can be separated by comma.
      */
     public void setListeners(String listeners) {
         this.listeners = listeners;

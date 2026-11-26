@@ -67,9 +67,9 @@ public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInform
             throw new IllegalArgumentException("ShareName must be configured");
         }
 
-        SmbEndpoint endpoint = new SmbEndpoint(uri, this, config);
-        setProperties(endpoint, parameters);
-        return endpoint;
+        // the options are set by GenericFileComponent.createEndpoint, after it parses sortBy (reverse:, ignoreCase:
+        // and ; groups)
+        return new SmbEndpoint(uri, this, config);
     }
 
     @Override

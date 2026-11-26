@@ -102,8 +102,7 @@ final class SqsWorld {
         this.redelivery = redelivery;
         this.ledger = new DstLedger(dst);
         this.sqs = new FakeSqs(dst, ledger, this::received, extensionFaulted::addAll);
-        // 1 s is left out by default: the extender is always late with 1 s (CAMEL-25737, open);
-        // -Ddst.sqs.visibilityTimeouts=1,2,3,5,10 puts it back
+        // 1 s is rejected when the endpoint is created: the extender would always be late (CAMEL-25737)
         this.visibilityTimeout = dst.pick(Arrays.stream(System.getProperty("dst.sqs.visibilityTimeouts", "2,3,5,10")
                 .split(",")).map(String::trim).map(Integer::valueOf).toList());
         this.maxMessagesPerPoll = dst.pick(List.of(1, 2, 5, 10));

@@ -430,6 +430,64 @@ class AuthoringToolsEditTest {
     }
 
     /**
+     * route-enrich-and-dedupe step 1 of the local-model benchmark (r30 to r35): asked to log the duplicates, the model
+     * checked CamelDuplicateMessage under an idempotentConsumer that skips them, so no duplicate was ever logged
+     * (CAMEL-27148). The write goes through, with a note that says to add skipDuplicate: false.
+     */
+    @Test
+    void aDuplicateCheckThatADuplicateNeverReachesIsANoteOfTheWrite(@TempDir Path dir) throws IOException {
+        String route = """
+                - beans:
+                    - name: orderRepo
+                      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository
+                - route:
+                    id: incoming-orders
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - idempotentConsumer:
+                            expression:
+                              simple: "${body[orderId]}"
+                            idempotentRepository: orderRepo
+                            steps:
+                              - choice:
+                                  when:
+                                    - expression:
+                                        simple: "${exchangeProperty.CamelDuplicateMessage} == true"
+                                      steps:
+                                        - log:
+                                            message: "Order ${body[orderId]} is a duplicate, skipped"
+                                  otherwise:
+                                    steps:
+                                      - log:
+                                          message: "Order ${body[orderId]} accepted"
+                """;
+
+        JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, "enrich-and-dedupe.camel.yaml", route, true);
+
+        assertThat(result.getString("status")).as(result.toJson()).isEqualTo("created");
+        assertThat(((JsonArray) result.get("notes"))).singleElement().asString()
+                .startsWith("Line 14: this idempotentConsumer skips a duplicate");
+        assertThat(result.getString("message"))
+                .endsWith("Note: an idempotentConsumer skips duplicates, so a check of CamelDuplicateMessage in its steps"
+                          + " is never true; skipDuplicate: false lets a duplicate reach them (see notes).");
+
+        // skipDuplicate: false as the note gives it: the write is valid, with no note
+        JsonObject fixed = AuthoringTools.writeFile(new ToolContext(), dir, "enrich-and-dedupe.camel.yaml",
+                route.replace("idempotentRepository: orderRepo",
+                        "idempotentRepository: orderRepo\n" + " ".repeat(12) + "skipDuplicate: false"),
+                true);
+        assertThat(fixed.getString("status")).as(fixed.toJson()).isEqualTo("overwritten");
+        assertThat(fixed.get("notes")).as(fixed.toJson()).isNull();
+        assertThat(fixed.getString("message")).doesNotContain("Note:");
+    }
+
+    /**
      * connect-file-processing step 1 of the local-model benchmark (r24, r25): asked to move the processed files to
      * done, the model added a to: done, which copies each file while the consumer still moves it to .camel. The edit
      * goes through, with a note that says how to move the file.

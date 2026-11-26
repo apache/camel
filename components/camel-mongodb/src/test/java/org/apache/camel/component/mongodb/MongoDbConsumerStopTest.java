@@ -36,6 +36,7 @@ import com.mongodb.client.model.changestream.FullDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -48,6 +49,7 @@ import org.bson.conversions.Bson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -67,6 +70,7 @@ import static org.mockito.Mockito.when;
 class MongoDbConsumerStopTest {
 
     private final MongoClient client = mock(MongoClient.class);
+    private final MongoDatabase database = mock(MongoDatabase.class);
     private final MongoCollection<Document> collection = mockCollection();
     // the consumer thread is in the read of the cursor
     private final CountDownLatch reading = new CountDownLatch(1);
@@ -83,7 +87,6 @@ class MongoDbConsumerStopTest {
     @BeforeEach
     @SuppressWarnings("unchecked")
     void setUp() {
-        MongoDatabase database = mock(MongoDatabase.class);
         ListCollectionNamesIterable names = mock(ListCollectionNamesIterable.class);
         when(names.spliterator()).thenAnswer(i -> List.of("events").spliterator());
         when(database.listCollectionNames()).thenReturn(names);
@@ -129,7 +132,10 @@ class MongoDbConsumerStopTest {
     @SuppressWarnings("unchecked")
     void changeStreamsConsumerStopsWhileItsThreadIsBlockedReadingTheCursor() throws Exception {
         MongoChangeStreamCursor<?> cursor = mock(MongoChangeStreamCursor.class);
-        when(cursor.hasNext()).thenAnswer(i -> readThatDoesNotReturn());
+        when(cursor.tryNext()).thenAnswer(i -> {
+            readThatDoesNotReturn();
+            return null;
+        });
         ChangeStreamIterable<Document> watch = mock(ChangeStreamIterable.class);
         when(collection.watch()).thenReturn(watch);
         when(watch.fullDocument(any(FullDocument.class))).thenReturn(watch);
@@ -138,6 +144,51 @@ class MongoDbConsumerStopTest {
         assertStopDoesNotWaitForTheBlockedThread(
                 "mongodb:myDb?database=test&collection=events&consumerType=changeStreams",
                 MongoDbChangeStreamsThread.class);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void stopPersistsTheTailPositionOfAConsumerThreadLeftBehind() throws Exception {
+        // the tracking collection, which holds the position of the consumer, the only record routed being increasing=1
+        MongoCollection<Document> tracking = mock(MongoCollection.class);
+        when(database.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION, Document.class)).thenReturn(tracking);
+        FindIterable<Document> trackingFind = mock(FindIterable.class);
+        when(tracking.find(any(Bson.class))).thenReturn(trackingFind);
+        when(trackingFind.first()).thenReturn(new Document("_id", "tracking").append("persistentId", "darwin"));
+
+        MongoCursor<Document> cursor = mock(MongoCursor.class);
+        // one record, then a read that does not return while the route is stopped
+        when(cursor.hasNext()).thenReturn(true).thenAnswer(i -> readThatDoesNotReturn());
+        when(cursor.next()).thenReturn(new Document("increasing", 1));
+        FindIterable<Document> find = mock(FindIterable.class);
+        when(collection.find()).thenReturn(find);
+        when(find.cursorType(CursorType.TailableAwait)).thenReturn(find);
+        when(find.iterator()).thenReturn(cursor);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("mongodb:myDb?database=test&collection=events&tailTrackIncreasingField=increasing"
+                     + "&persistentTailTracking=true&persistentId=darwin")
+                        .routeId("mongo").to("mock:result");
+            }
+        });
+        MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
+        result.expectedMessageCount(1);
+        context.start();
+        result.assertIsSatisfied();
+        assertTrue(reading.await(10, TimeUnit.SECONDS), "the consumer thread reads from the cursor");
+
+        CountDownLatch stopped = new CountDownLatch(1);
+        AtomicReference<Exception> failure = new AtomicReference<>();
+        stopRouteInAnotherThread(stopped, failure);
+        assertTrue(stopped.await(10, TimeUnit.SECONDS), "the route stops while the consumer thread is blocked");
+        assertNull(failure.get());
+        // the position is persisted by the stop itself: the consumer thread is blocked and never gets to its own persist
+        ArgumentCaptor<Bson> update = ArgumentCaptor.forClass(Bson.class);
+        verify(tracking).updateOne(any(Bson.class), update.capture());
+        assertEquals(new Document("$set", new Document(MongoDbTailTrackingConfig.DEFAULT_FIELD, 1)).toBsonDocument(),
+                update.getValue().toBsonDocument());
     }
 
     @Test
@@ -247,7 +298,9 @@ class MongoDbConsumerStopTest {
 
         assertNull(failure.get());
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("mongo"));
-        assertTrue(interruptedWhileReading.get(), "the consumer thread left behind is interrupted");
+        // the stop returns once it interrupted the thread, which sets the flag when it wakes up from the interrupt
+        await("the consumer thread left behind is interrupted").atMost(10, TimeUnit.SECONDS)
+                .until(interruptedWhileReading::get);
         List<String> warnings = events.stream().filter(e -> e.getLevel() == Level.WARN)
                 .map(e -> e.getMessage().getFormattedMessage()).toList();
         assertEquals(1, warnings.size(), "one WARN for the consumer thread left behind: " + warnings);

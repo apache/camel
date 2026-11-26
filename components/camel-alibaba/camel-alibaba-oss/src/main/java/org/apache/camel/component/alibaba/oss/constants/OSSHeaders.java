@@ -20,26 +20,61 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Constants for the exchange headers when consuming objects
+ * Constants for the message headers of the consumer and the producer
  */
 public final class OSSHeaders {
-    @Metadata(label = "consumer", description = "Name of the bucket where object is contained", javaType = "String")
+    @Metadata(label = "producer", description = "The operation that the producer performs. An exchange property of the same"
+                                                + " name replaces the operation option, and this header replaces both.",
+              javaType = "String", enums = "listBuckets,listObjects,putObject,getObject,deleteObject,copyObject,headObject")
+    public static final String OPERATION = OSSProperties.OPERATION;
+    @Metadata(label = "common", description = "The name of the bucket. The consumer sets it for a consumed object, and the"
+                                              + " producer for getObject. An exchange property of the same name replaces the"
+                                              + " bucketName option for the producer, and this header replaces both.",
+              javaType = "String")
     public static final String BUCKET_NAME = "CamelAlibabaOssBucketName";
-    @Metadata(label = "consumer", description = "The key that the object is stored under", javaType = "String")
+    @Metadata(label = "producer", description = "The name of the object, or of the destination object for copyObject. An"
+                                                + " exchange property of the same name replaces the objectName option, and this"
+                                                + " header replaces both.",
+              javaType = "String")
+    public static final String OBJECT_NAME = OSSProperties.OBJECT_NAME;
+    @Metadata(label = "producer", description = "The name of the source bucket for copyObject, which requires it. If this"
+                                                + " header is not set, the producer uses an exchange property of the same"
+                                                + " name.",
+              javaType = "String")
+    public static final String SOURCE_BUCKET_NAME = OSSProperties.SOURCE_BUCKET_NAME;
+    @Metadata(label = "producer", description = "The name of the source object for copyObject, which requires it. If this"
+                                                + " header is not set, the producer uses an exchange property of the same"
+                                                + " name.",
+              javaType = "String")
+    public static final String SOURCE_OBJECT_NAME = OSSProperties.SOURCE_OBJECT_NAME;
+    @Metadata(label = "producer", description = "The prefix of the names of the objects that listObjects returns. An exchange"
+                                                + " property of the same name replaces the prefix option for the producer, and"
+                                                + " this header replaces both.",
+              javaType = "String")
+    public static final String PREFIX = OSSProperties.PREFIX;
+    @Metadata(label = "producer", description = "The maximum number of objects that listObjects returns. An exchange property"
+                                                + " of the same name replaces the maxKeys option, and this header replaces"
+                                                + " both.",
+              javaType = "Integer")
+    public static final String MAX_KEYS = OSSProperties.MAX_KEYS;
+    @Metadata(label = "common", description = "The key that the object is stored under", javaType = "String")
     public static final String OBJECT_KEY = "CamelAlibabaOssObjectKey";
-    @Metadata(label = "consumer", description = "The date and time that the object was last modified", javaType = "String")
+    @Metadata(label = "common", description = "The date and time that the object was last modified", javaType = "String")
     public static final String LAST_MODIFIED = "CamelAlibabaOssLastModified";
-    @Metadata(label = "consumer", description = "The 128-bit MD5 digest of the object content", javaType = "String")
+    @Metadata(label = "common", description = "The entity tag (ETag) of the object, which identifies its content. It is the MD5"
+                                              + " hash of the content only for an object created by PutObject.",
+              javaType = "String")
     public static final String ETAG = "CamelAlibabaOssETag";
-    @Metadata(label = "consumer", description = "The 128-bit Base64-encoded digest of the object", javaType = "String")
+    @Metadata(label = "common", description = "The 128-bit Base64-encoded digest of the object", javaType = "String")
     public static final String CONTENT_MD5 = "CamelAlibabaOssContentMD5";
-    @Metadata(label = "consumer", description = "Shows whether the object is a `file` or a `folder`", javaType = "String")
+    @Metadata(label = "common", description = "Shows whether the object is a `file` or a `folder`", javaType = "String")
     public static final String OBJECT_TYPE = "CamelAlibabaOssObjectType";
-    @Metadata(label = "consumer", description = "The size of the object body in bytes", javaType = "Long")
+    @Metadata(label = "common", description = "The size of the object body in bytes", javaType = "Long")
     public static final String CONTENT_LENGTH = "CamelAlibabaOssContentLength";
-    @Metadata(label = "consumer", description = "The type of content stored in the object", javaType = "String")
+    @Metadata(label = "common", description = "The type of content stored in the object", javaType = "String")
     public static final String CONTENT_TYPE = "CamelAlibabaOssContentType";
-    @Metadata(label = "consumer", description = "Name of the object with which the operation is to be performed",
+    @Metadata(label = "common", description = "The name of the object. The consumer sets it for a consumed object, and the"
+                                              + " producer for getObject.",
               javaType = "String")
     public static final String FILE_NAME = Exchange.FILE_NAME;
 

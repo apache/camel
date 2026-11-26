@@ -60,7 +60,48 @@ for this component:
 ----
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 mongodb:dummy?hosts=hostnames&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
+mongodb:dummy?connectionUriString=RAW(mongodb://host:port)&database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ----
+
+The endpoint uses the first client it finds in this order:
+
+. the client set with the `mongoConnection` endpoint option
+. a client the endpoint creates from the `connectionUriString` or `hosts` option
+. the `mongoConnection` client of the component, which is autowired when the registry holds exactly one `MongoClient`
+. the `MongoClient` bean named by the endpoint path (`connectionBean`)
+
+A client the endpoint creates from `connectionUriString` or `hosts` belongs to that endpoint: each such endpoint has its
+own client and connection pool, and closes it when it stops (for example when its route is removed or reloaded, or when
+the CamelContext stops). The endpoint never closes a client it did not create. To share one client between endpoints,
+bind a `MongoClient` and have the endpoints use it instead of `connectionUriString` or `hosts`.
+
+=== Client options
+
+The client options of the endpoint (`replicaSet`, `readPreference`, `readPreferenceTags`, `maxStalenessSeconds`,
+`appName`, `compressors`, `zlibCompressionLevel`, `connectTimeoutMS`, `socketTimeoutMS`, `serverSelectionTimeoutMS`,
+`localThresholdMS`, `heartbeatFrequencyMS`, `maxIdleTimeMS`, `maxLifeTimeMS`, `minPoolSize`, `maxPoolSize`,
+`maxConnecting`, `waitQueueTimeoutMS`, `srvServiceName`, `srvMaxHosts`, `retryWrites`, `retryReads`, `directConnection`
+and `loadBalanced`) configure the client the endpoint creates from `hosts` or `connectionUriString`. For example, a
+tailable consumer that reads from the secondaries of a replica set:
+
+----
+mongodb:dummy?hosts=host1:27017,host2:27017,host3:27017&replicaSet=rs0&readPreference=SECONDARY&database=shop&collection=events&consumerType=tailable&tailTrackIncreasingField=seq
+----
+
+An option is applied only when its value differs from its default, and then it overrides the same option in
+`connectionUriString`. An option left at its default keeps the value of the connection string, so
+`connectionUriString=RAW(mongodb://host/?readPreference=nearest)` reads from the nearest member. The read preference is
+made of `readPreference`, `readPreferenceTags` and `maxStalenessSeconds` together: when any of them is set, the three
+replace the read preference of the connection string.
+
+These options cannot change a `MongoClient` the endpoint did not create (set with `mongoConnection`, on the component,
+or from the registry). Configure such a client with its own `MongoClientSettings`. In that case the endpoint logs a WARN
+that lists the options it does not use.
+
+The `org.apache.camel.component.mongodb.SslAwareMongoClient` client, which the MongoDB Kamelets create as a bean, has
+the properties `hosts`, `username`, `password` (of a user defined in the `admin` database), `ssl`,
+`sslValidationEnabled` and `readPreference` (the same values as the endpoint option). The username and password are
+given as they are: the client percent-encodes them.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -1298,6 +1339,21 @@ from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=ticket
 ----
 
 You can use only endpoint options, only route-level resumable configuration, or both depending on your deployment requirements.
+
+While no change of the collection arrives, the change stream still reads the oplog, which the other collections of the
+replica set write. After each getMore that returns no change (MongoDB waits up to one second for a change), the consumer
+takes the post batch resume token of the change stream: the position up to which it has read the oplog. It stores that
+token in the `changeStreamTokenRepository`, so a new change stream resumes after it.
+
+The consumer stores this token only when the exchange of the last change it read completed. A change whose exchange
+failed is therefore read again by a new change stream, unless a later change completed, as the token of that later
+change already passes the failed one.
+
+The post batch resume token is not passed to a resume strategy, which only gets the tokens of the exchanges.
+
+If the oplog no longer has the token to resume after (MongoDB answers ChangeStreamHistoryLost), for example because the
+route was stopped for longer than the oplog window, the consumer logs a WARN and opens the change stream at the current
+time: the changes made since that token may not have been consumed.
 
 === Type conversions
 

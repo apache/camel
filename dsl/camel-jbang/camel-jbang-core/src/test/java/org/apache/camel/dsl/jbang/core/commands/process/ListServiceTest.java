@@ -41,7 +41,7 @@ class ListServiceTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -64,7 +64,7 @@ class ListServiceTest extends ProcessCommandTestSupport {
         root.put("services", serviceContainer(service("platform-http", "in", "http", "http://0.0.0.0:8080/hello")));
         writeStatusFile(TEST_PID, root);
 
-        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -89,7 +89,7 @@ class ListServiceTest extends ProcessCommandTestSupport {
         root.put("services", serviceContainer(service("rest", "in", "http", "http://localhost:8080/orders")));
         writeStatusFile(TEST_PID, root);
 
-        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
         command.sort = "pid";
         command.metadata = true;
         command.shortUri = true;
@@ -120,7 +120,7 @@ class ListServiceTest extends ProcessCommandTestSupport {
         root.put("services", serviceContainer(entry));
         writeStatusFile(TEST_PID, root);
 
-        ListService command = new ListService(new CamelJBangMain().withPrinter(printer));
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
         command.sort = "pid";
         command.jsonOutput = true;
 
@@ -137,6 +137,34 @@ class ListServiceTest extends ProcessCommandTestSupport {
             assertTrue(output.startsWith("["), "JSON output should be array");
             assertTrue(output.contains("\"routeId\":\"\""), "Missing route id should be serialized as an empty string");
             assertTrue(output.contains("servlet"));
+        }
+    }
+
+    @Test
+    void testJsonOutputMasksSecretOptionsOfUri() throws Exception {
+        JsonObject entry = service("mongodb", "out", "mongodb", "mongodb://admin:s3cret@localhost:27017");
+        entry.put("endpointUri", "mongodb:db?database=test&password=RAW(s3cret)");
+
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("services", serviceContainer(entry));
+        writeStatusFile(TEST_PID, root);
+
+        ListService command = new CamelJBangMain().withPrinter(printer).command(new ListService());
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            String output = printer.getOutput();
+            assertTrue(output.contains("admin:xxxxxx@localhost:27017"), output);
+            assertTrue(output.contains("mongodb:db?database=test&password=xxxxxx"), output);
+            assertFalse(output.contains("s3cret"), output);
         }
     }
 

@@ -72,7 +72,7 @@ class DoctorRepositoryTest extends CamelCommandBaseTestSupport {
     @Test
     void resolvesArtifactFromConfiguredRepositoryWithEmptyCache() throws Exception {
         System.setProperty(CamelJBangConstants.REPOS, "product=" + repository.toUri());
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         assertThat(command.doCall()).isZero();
         assertThat(printer.getOutput()).contains("Artifact resolution (OK)");
@@ -84,7 +84,7 @@ class DoctorRepositoryTest extends CamelCommandBaseTestSupport {
 
     @Test
     void missingArtifactFailsWithEmptyCache() throws Exception {
-        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        Doctor command = new CamelJBangMain().withPrinter(printer).command(new Doctor());
 
         assertThat(command.doCall()).isEqualTo(1);
         assertThat(printer.getOutput()).contains("Artifact resolution failed", "Disk Space:");

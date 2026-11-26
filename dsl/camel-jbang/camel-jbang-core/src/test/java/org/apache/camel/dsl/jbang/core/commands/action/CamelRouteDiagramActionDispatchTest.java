@@ -44,7 +44,8 @@ class CamelRouteDiagramActionDispatchTest extends ActionCommandTestSupport {
     void testSingleUnmatchedNameFallsBackToSourceFile() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
 
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
         // "doesNotExist" matches no running process, so it is tried as a source file next
         command.files = List.of("doesNotExist");
 
@@ -61,7 +62,8 @@ class CamelRouteDiagramActionDispatchTest extends ActionCommandTestSupport {
         // here at all -- that absence of interaction is exactly what this test proves
         writeStatusFile(TEST_PID, "route1");
 
-        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+        CamelRouteDiagramAction command
+                = new CamelJBangMain().withPrinter(printer).command(new CamelRouteDiagramAction());
         command.files = List.of("route1", "route2");
 
         CliException e = assertThrows(CliException.class, command::doWatchCall);

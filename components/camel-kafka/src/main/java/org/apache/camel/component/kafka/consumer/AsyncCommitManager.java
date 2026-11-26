@@ -37,10 +37,12 @@ public class AsyncCommitManager extends AbstractCommitManager {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncCommitManager.class);
     private final Consumer<?, ?> consumer;
 
+    // the offsets of the last processed records
     private final OffsetCache offsetCache = new OffsetCache();
     // the offsets of the manual commits, which may come from any thread: the consumer thread commits them
     private final Map<TopicPartition, Long> requestedOffsets = new ConcurrentHashMap<>();
     private final StateRepository<String, String> offsetRepository;
+    private final boolean manualCommit;
 
     public AsyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         super(consumer, kafkaConsumer, threadId, printableTopic);
@@ -48,6 +50,7 @@ public class AsyncCommitManager extends AbstractCommitManager {
         this.consumer = consumer;
 
         offsetRepository = configuration.getOffsetRepository();
+        manualCommit = configuration.isAllowManualCommit();
     }
 
     @Override
@@ -61,6 +64,28 @@ public class AsyncCommitManager extends AbstractCommitManager {
     @Override
     public void commit(TopicPartition partition) {
         // the partition is committed now (for example, it is revoked): its requested offset is not committed later
+        Long requested = requestedOffsets.remove(partition);
+        Long offset;
+        if (manualCommit) {
+            // only what the route committed: the route may still hold the records it processed after that, for
+            // example in an aggregation group that is not complete
+            offset = requested;
+        } else {
+            offset = offsetCache.getOffset(partition);
+            if (offset == null) {
+                offset = requested;
+            }
+        }
+        if (offset == null) {
+            return;
+        }
+
+        commitAsync(consumer, partition, offset);
+    }
+
+    @Override
+    public void commitProcessedOffset(TopicPartition partition) {
+        // the partition is committed now: its requested offset is not committed later
         Long requested = requestedOffsets.remove(partition);
         Long offset = offsetCache.getOffset(partition);
         if (offset == null) {
@@ -76,7 +101,6 @@ public class AsyncCommitManager extends AbstractCommitManager {
     @Override
     public void requestCommit(TopicPartition partition, long partitionLastOffset) {
         // the Kafka consumer must only be used by its own thread, which commits before its next poll
-        offsetCache.recordOffset(partition, partitionLastOffset);
         requestedOffsets.put(partition, partitionLastOffset);
     }
 
@@ -98,8 +122,6 @@ public class AsyncCommitManager extends AbstractCommitManager {
             if (assignment.contains(partition)) {
                 offsets.put(partition, new OffsetAndMetadata(offset + 1));
             } else {
-                // requestCommit also recorded the offset in the cache: a later revoke of the partition must not commit it
-                offsetCache.remove(partition);
                 LOG.debug("Dropping the requested commit of offset {} on {} from {}: the partition is no longer assigned",
                         offset, partition, threadId);
             }
@@ -135,6 +157,12 @@ public class AsyncCommitManager extends AbstractCommitManager {
     @Override
     public void recordOffset(TopicPartition partition, long partitionLastOffset) {
         offsetCache.recordOffset(partition, partitionLastOffset);
+    }
+
+    @Override
+    public void discardRecordedOffset(TopicPartition partition) {
+        requestedOffsets.remove(partition);
+        offsetCache.remove(partition);
     }
 
     private void postCommitCallback(Map<TopicPartition, OffsetAndMetadata> committed, Exception exception) {

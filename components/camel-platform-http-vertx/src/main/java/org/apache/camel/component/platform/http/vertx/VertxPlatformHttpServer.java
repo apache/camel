@@ -56,6 +56,12 @@ import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSe
 public class VertxPlatformHttpServer extends ServiceSupport implements CamelContextAware, StaticService {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpServer.class);
 
+    /**
+     * Routing context key set when the request passed an authentication handler of the server; the consumer then
+     * removes the Authorization header from the Camel message.
+     */
+    static final String AUTHENTICATED_BY_SERVER = VertxPlatformHttpServer.class.getName() + ".authenticated";
+
     private final VertxPlatformHttpServerConfiguration configuration;
 
     private CamelContext context;
@@ -348,7 +354,15 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         authenticationConfig.getEntries()
                 .stream()
                 .sorted(this::compareUrlPathsSpecificity)
-                .forEach(entry -> subRouter.route(entry.getPath()).handler(entry.createAuthenticationHandler(vertx)));
+                .forEach(entry -> subRouter.route(entry.getPath())
+                        .handler(entry.createAuthenticationHandler(vertx))
+                        .handler(VertxPlatformHttpServer::markAuthenticated));
+    }
+
+    private static void markAuthenticated(RoutingContext ctx) {
+        // the request passed the authentication handler: the credential it carried has been checked
+        ctx.put(AUTHENTICATED_BY_SERVER, Boolean.TRUE);
+        ctx.next();
     }
 
     private int compareUrlPathsSpecificity(AuthenticationConfigEntry entry1, AuthenticationConfigEntry entry2) {

@@ -36,6 +36,7 @@ import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RunnerInfo;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ServerInfo;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.SlotState;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.Snapshot;
+import org.apache.camel.dsl.jbang.core.common.genai.SpanEntry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -144,6 +145,36 @@ class OllamaMonitorTest {
         assertEquals("m" + (OllamaMonitor.MAX_REQUESTS + 4), requests.get(0).model());
         // totals still count every request
         assertEquals(OllamaMonitor.MAX_REQUESTS + 5, monitor.snapshot().totals().requests());
+    }
+
+    @Test
+    void agentRunAndToolSpansAreNotOllamaRequests() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        SpanEntry chat = genAiSpan("s1", "ollama", "qwen3:8b", "agent-route", 300, 40, 900);
+        Map<String, Object> agentAttrs = new HashMap<>(chat.attributes());
+        agentAttrs.put(GenAiAttributes.OPERATION_NAME, "invoke_agent");
+        agentAttrs.remove(GenAiAttributes.INPUT_TOKENS);
+        agentAttrs.remove(GenAiAttributes.OUTPUT_TOKENS);
+        SpanEntry agent = new SpanEntry(
+                "trace-1", "s0", null, "invoke_agent agent-route", "INTERNAL", "OK", chat.startEpochNanos(),
+                chat.endEpochNanos(), 1500, "agent-route", null, null, agentAttrs);
+        SpanEntry tool = new SpanEntry(
+                "trace-1", "s2", "s0", "execute_tool lookup", "INTERNAL", "OK", chat.startEpochNanos(),
+                chat.endEpochNanos(), 20, "agent-route", null, null,
+                Map.of(GenAiAttributes.OPERATION_NAME, "execute_tool", GenAiAttributes.TOOL_NAME, "lookup"));
+        // at level detailed only gen_ai.provider.name may name the provider
+        Map<String, Object> providerOnly = new HashMap<>(chat.attributes());
+        providerOnly.remove(GenAiAttributes.SYSTEM);
+        providerOnly.put(GenAiAttributes.PROVIDER_NAME, "ollama");
+        SpanEntry chat2 = new SpanEntry(
+                "trace-1", "s3", "s0", chat.name(), "CLIENT", "OK", chat.startEpochNanos(), chat.endEpochNanos(), 700,
+                "agent-route", null, null, providerOnly);
+
+        monitor.ingestSpans(List.of(agent, chat, tool, chat2));
+
+        List<RequestEntry> requests = monitor.snapshot().requests();
+        assertEquals(2, requests.size());
+        assertTrue(requests.stream().allMatch(r -> "qwen3:8b".equals(r.model())));
     }
 
     @Test

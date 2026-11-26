@@ -50,9 +50,9 @@ public class AzureFilesCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.storage.files.poll");
 
-        if (message.getHeaders().containsKey(FilesConstants.FILE_HOST)) {
+        if (message.getHeaders().containsKey(FilesConstants.SHARE_NAME)) {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "azure.storage.files." + message.getHeader(FilesConstants.FILE_HOST, String.class));
+                    "azure.storage.files." + message.getHeader(FilesConstants.SHARE_NAME, String.class));
         }
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(FilesConstants.FILE_NAME, String.class));

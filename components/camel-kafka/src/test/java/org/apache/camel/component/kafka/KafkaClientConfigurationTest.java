@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import javax.net.ssl.KeyManager;
+
 import org.apache.camel.component.kafka.security.KafkaAuthType;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -128,6 +131,23 @@ class KafkaClientConfigurationTest {
         assertEquals("/keystore.jks", consumer.get(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG));
         assertEquals("/truststore.jks", consumer.get(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
         assertEquals("TLSv1.3", consumer.get(SslConfigs.SSL_PROTOCOL_CONFIG));
+    }
+
+    @Test
+    void existingKeyManagerIsRejected() {
+        KeyManagersParameters keyManagers = new KeyManagersParameters();
+        keyManagers.setKeyManager(new KeyManager() {
+        });
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setKeyManagers(keyManagers);
+
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.setSslContextParameters(sslContextParameters);
+
+        // the Kafka client cannot use a KeyManager: ignoring it would connect without the client certificate
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, config::createProducerProperties);
+        assertTrue(e.getMessage().contains("KeyManager"), e.getMessage());
+        assertThrows(IllegalArgumentException.class, config::createConsumerProperties);
     }
 
     @Test

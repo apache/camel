@@ -17,10 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -28,9 +30,11 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletInput;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
@@ -90,7 +94,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     boolean jsonOutput;
 
     @Option(name = "varied", hasValue = false,
-            description = "To show only the steps that have been reached with more than one body type, as the"
+            description = "To show only the steps that have been reached with more than one body type or format, as the"
                           + " running integration has seen them (the message history records them, such as"
                           + " with camel run --dev)")
     boolean varied;
@@ -115,10 +119,6 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
 
     private volatile long pid;
 
-    public CamelRouteStructureAction(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public Integer doCall() throws Exception {
         JsonObject jo;
@@ -139,6 +139,15 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         } else {
             // no running integration with the name, so it is a source file
             jo = doCallSource(name);
+        }
+        if (!raw && jo.toJson().contains("kamelet")) {
+            // the data type each Kamelet turns the body into (CAMEL-27475), from the Kamelets of the project, which is
+            // where the command runs, or of the catalog
+            File source = new File(name);
+            Path directory = source.isFile() ? source.getAbsoluteFile().toPath().getParent() : Path.of("");
+            // and of the Kamelets the integration runs (camel run --kamelets-version), which may not be the CLI's
+            String kameletsVersion = pid > 0 ? ActionClient.kameletsVersionOf(pid) : null;
+            KameletInput.addTo(jo, directory.toAbsolutePath(), new DefaultCamelCatalog(true), kameletsVersion);
         }
         if (varied) {
             jo = onlyVaried(jo);
@@ -211,6 +220,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                     code.description = line.getString("description");
                     code.bodyTypes = line.getCollection("bodyTypes");
                     code.bodyKinds = line.getCollection("bodyKinds");
+                    code.bodyFormats = line.getCollection("bodyFormats");
+                    code.kameletInput = line.getMap("kameletInput");
                     if (brief) {
                         // make code brief
                         code.code = StringHelper.before(code.code, "[", code.code);
@@ -239,10 +250,10 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             throw CliException.fileNotFound("File does not exist: " + name);
         }
 
-        // a file of its own, as several commands may run at the same time
-        Path output = CommandLineHelper.getWorkDir().resolve(
-                "structure-output-" + ProcessHandle.current().pid() + ".json");
-        PathUtils.deleteFile(output);
+        Path parent = CommandLineHelper.getWorkDir();
+        Files.createDirectories(parent);
+        Path workDir = Files.createTempDirectory(parent, "route-structure-source-" + ProcessHandle.current().pid() + "-");
+        Path output = workDir.resolve("structure-output.json");
         final String target = output.toString();
         try {
             if (!compile && TransformJavaRoutes.applies(List.of(name))) {
@@ -250,7 +261,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                     throw CliException.failure("Cannot read the routes of " + name);
                 }
             } else {
-                Run run = new Run(getMain()) {
+                Run run = new Run() {
                     @Override
                     protected void doAddInitialProperty(KameletMain main) {
                         main.addInitialProperty("camel.main.dumpRoutes", "json");
@@ -266,7 +277,9 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                         }
                     }
                 };
+                run.setCamelMain(getMain());
                 run.files = List.of(name);
+                run.setWorkDir(workDir);
                 run.executionLimitOptions.maxSeconds = 1;
                 int exit = run.runTransform(ignoreLoadingError);
                 if (exit != 0) {
@@ -279,7 +292,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             }
             return jo;
         } finally {
-            PathUtils.deleteFile(output);
+            PathUtils.deleteDirectory(workDir);
         }
     }
 
@@ -297,7 +310,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             // the body types each step was reached with, as the running app has seen them, line up in a column after
             // the code (the message history records them, such as with camel run --dev)
             int width = 0;
-            if (!raw && row.code.stream().anyMatch(code -> code.bodyTypes != null && !code.bodyTypes.isEmpty())) {
+            if (!raw && row.code.stream().anyMatch(code -> !bodyText(code).isEmpty())) {
                 for (Code code : row.code) {
                     width = Math.max(width, StringHelper.padString(code.level).length() + clippedCode(code).length());
                 }
@@ -310,8 +323,9 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                     printer().printf("%s%s%n", pad, c);
                 } else {
                     String text = pad + c;
-                    if (width > 0 && code.bodyTypes != null && !code.bodyTypes.isEmpty()) {
-                        text = String.format("%-" + width + "s   body: %s", text, bodyTypes(code.bodyTypes, code.bodyKinds));
+                    String body = width > 0 ? bodyText(code) : "";
+                    if (!body.isEmpty()) {
+                        text = String.format("%-" + width + "s   body: %s", text, body);
                     }
                     if (code.line != -1) {
                         printer().printf("%4d: %s%n", code.line, text);
@@ -329,16 +343,41 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     }
 
     /**
+     * The body column of a step: its body types, and the data type the Kamelet it calls turns the body into
+     * ({@code LinkedHashMap → json}, or {@code → json} before a message has reached it); empty when it has neither.
+     */
+    private static String bodyText(Code code) {
+        return bodyText(code.bodyTypes, code.bodyKinds, code.bodyFormats, code.kameletInput);
+    }
+
+    static String bodyText(
+            List<String> bodyTypes, List<String> bodyKinds, List<String> bodyFormats,
+            Map<String, Object> in) {
+        String types = bodyTypes != null && !bodyTypes.isEmpty() ? bodyTypes(bodyTypes, bodyKinds, bodyFormats) : "";
+        if (in == null || in.get("dataType") == null) {
+            return types;
+        }
+        Object takes = in.get("takesBody");
+        String arrow = KameletInput.arrowText((String) in.get("dataType"), takes instanceof Boolean b ? b : null,
+                (String) in.get("transformer"));
+        return types.isEmpty() ? arrow : types + " " + arrow;
+    }
+
+    /**
      * The body types by their simple class names, such as {@code String | LinkedHashMap} for a step reached with a text
-     * by some messages and with a Map by others, followed by the kinds when there is more than one:
+     * by some messages and with a Map by others, followed by the formats of the payloads from their Content-Type
+     * ({@code byte[] · json}), and by the kinds when there is more than one:
      * {@code String | LinkedHashMap (payload and data)}, a step that needs attention.
      */
-    static String bodyTypes(List<String> types, List<String> kinds) {
+    static String bodyTypes(List<String> types, List<String> kinds, List<String> formats) {
         StringJoiner sj = new StringJoiner(" | ");
         for (String type : types) {
             sj.add(StringHelper.afterLast(type, ".", type));
         }
         String answer = sj.toString();
+        if (formats != null && !formats.isEmpty()) {
+            answer += " · " + String.join(" | ", formats);
+        }
         if (kinds != null && kinds.size() > 1) {
             answer += " (" + String.join(", ", kinds.subList(0, kinds.size() - 1)) + " and " + kinds.get(kinds.size() - 1)
                       + ")";
@@ -347,8 +386,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     }
 
     /**
-     * Only the steps that have been reached with more than one body type, and the routes that have such steps: what is
-     * dynamic in the routes, or needs attention when the kinds differ (bodyKinds).
+     * Only the steps that have been reached with more than one body type or more than one format, and the routes that
+     * have such steps: what is dynamic in the routes, or needs attention when the kinds differ (bodyKinds).
      */
     public static JsonObject onlyVaried(JsonObject jo) {
         JsonArray routes = new JsonArray();
@@ -361,7 +400,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                 if (lines != null) {
                     for (JsonObject line : lines) {
                         List<String> types = line.getCollection("bodyTypes");
-                        if (types != null && types.size() > 1) {
+                        List<String> formats = line.getCollection("bodyFormats");
+                        if (types != null && types.size() > 1 || formats != null && formats.size() > 1) {
                             code.add(line);
                         }
                     }
@@ -428,5 +468,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         String description;
         List<String> bodyTypes;
         List<String> bodyKinds;
+        List<String> bodyFormats;
+        Map<String, Object> kameletInput;
     }
 }

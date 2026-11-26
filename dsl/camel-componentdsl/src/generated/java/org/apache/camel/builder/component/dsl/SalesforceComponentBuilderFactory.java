@@ -483,8 +483,8 @@ public interface SalesforceComponentBuilderFactory {
         }
     
         /**
-         * Notify for create operation, defaults to false (API version &amp;gt;=
-         * 29.0).
+         * Notify for create operation, defaults to false (API version 29.0 or
+         * later).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -499,8 +499,8 @@ public interface SalesforceComponentBuilderFactory {
         }
     
         /**
-         * Notify for delete operation, defaults to false (API version &amp;gt;=
-         * 29.0).
+         * Notify for delete operation, defaults to false (API version 29.0 or
+         * later).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -516,7 +516,7 @@ public interface SalesforceComponentBuilderFactory {
     
         /**
          * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
-         * version &amp;lt; 29.0).
+         * versions before 29.0).
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
@@ -532,8 +532,8 @@ public interface SalesforceComponentBuilderFactory {
         }
     
         /**
-         * Notify for un-delete operation, defaults to false (API version
-         * &amp;gt;= 29.0).
+         * Notify for un-delete operation, defaults to false (API version 29.0
+         * or later).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -548,8 +548,8 @@ public interface SalesforceComponentBuilderFactory {
         }
     
         /**
-         * Notify for update operation, defaults to false (API version &amp;gt;=
-         * 29.0).
+         * Notify for update operation, defaults to false (API version 29.0 or
+         * later).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 

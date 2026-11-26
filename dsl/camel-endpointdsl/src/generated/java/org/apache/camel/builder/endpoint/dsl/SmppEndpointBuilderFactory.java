@@ -1122,10 +1122,10 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Sessions can be lazily created to avoid exceptions, if the SMSC is
-         * not available when the Camel producer is started. Camel will check
-         * the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of
-         * the first exchange. If they are present, Camel will use these data to
-         * connect to the SMSC.
+         * not available when the Camel producer is started. The session is then
+         * created when the first exchange is sent, with the systemId and
+         * password of the endpoint. See the allowSystemIdAndPasswordFromHeaders
+         * option to take them from the message headers instead.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1141,10 +1141,10 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Sessions can be lazily created to avoid exceptions, if the SMSC is
-         * not available when the Camel producer is started. Camel will check
-         * the in message headers 'CamelSmppSystemId' and 'CamelSmppPassword' of
-         * the first exchange. If they are present, Camel will use these data to
-         * connect to the SMSC.
+         * not available when the Camel producer is started. The session is then
+         * created when the first exchange is sent, with the systemId and
+         * password of the endpoint. See the allowSystemIdAndPasswordFromHeaders
+         * option to take them from the message headers instead.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1679,6 +1679,50 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder proxyHeaders(String proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
+            return this;
+        }
+        /**
+         * Whether a producer with lazySessionCreation=true may take the system
+         * id and the password, with which it connects to the SMSC, from the
+         * 'CamelSmppSystemId' and 'CamelSmppPassword' headers of the first
+         * exchange. When both headers are present, the producer connects with
+         * them in place of the systemId and password of the endpoint, and keeps
+         * using them when it reconnects. This is disabled by default, and the
+         * headers are then ignored. Enable this only when the route sets these
+         * headers itself.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSystemIdAndPasswordFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder allowSystemIdAndPasswordFromHeaders(boolean allowSystemIdAndPasswordFromHeaders) {
+            doSetProperty("allowSystemIdAndPasswordFromHeaders", allowSystemIdAndPasswordFromHeaders);
+            return this;
+        }
+        /**
+         * Whether a producer with lazySessionCreation=true may take the system
+         * id and the password, with which it connects to the SMSC, from the
+         * 'CamelSmppSystemId' and 'CamelSmppPassword' headers of the first
+         * exchange. When both headers are present, the producer connects with
+         * them in place of the systemId and password of the endpoint, and keeps
+         * using them when it reconnects. This is disabled by default, and the
+         * headers are then ignored. Enable this only when the route sets these
+         * headers itself.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSystemIdAndPasswordFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder allowSystemIdAndPasswordFromHeaders(String allowSystemIdAndPasswordFromHeaders) {
+            doSetProperty("allowSystemIdAndPasswordFromHeaders", allowSystemIdAndPasswordFromHeaders);
             return this;
         }
         /**
@@ -2951,10 +2995,10 @@ public interface SmppEndpointBuilderFactory {
          * Producer:* *only for SubmitSm, SubmitMulti, CancelSm and DataSm*
          * Defines the destination SME address(es). For mobile terminated
          * messages, this is the directory number of the recipient MS. It must
-         * be a List for SubmitMulti and a String otherwise. Consumer:* *only
-         * for DeliverSm and DataSm:* Defines the destination SME address. For
-         * mobile terminated messages, this is the directory number of the
-         * recipient MS.
+         * be a list of strings for SubmitMulti and a String otherwise.
+         * Consumer:* *only for DeliverSm and DataSm:* Defines the destination
+         * SME address. For mobile terminated messages, this is the directory
+         * number of the recipient MS.
          * 
          * The option is a: {@code List or String} type.
          * 
@@ -3033,8 +3077,9 @@ public interface SmppEndpointBuilderFactory {
         }
         /**
          * Producer:* *only for SubmitMultiSm* The errors which occurred by
-         * sending the short message(s) the form Map (messageID : (destAddr :
-         * address, error : errorCode)). Consumer:* *only for smsc
+         * sending the short message(s), as a map from the message ID to a list
+         * of maps, each with the destination address (CamelSmppDestAddr key)
+         * and the error code (CamelSmppError key). Consumer:* *only for smsc
          * DeliveryReceipt* Where appropriate this may hold a Network specific
          * error code or an SMSC error code for the attempted delivery of the
          * message. These errors are Network or SMSC specific and are not
@@ -3132,9 +3177,9 @@ public interface SmppEndpointBuilderFactory {
          * Producer:* The id to identify the submitted short message(s) for
          * later use. In case of a ReplaceSm, QuerySm, CancelSm and DataSm this
          * header value is a String. In case of a SubmitSm or SubmitMultiSm this
-         * header value is a List. Consumer:* *only for smsc DeliveryReceipt and
-         * DataSm* The message ID allocated to the message by the SMSC when
-         * originally submitted.
+         * header value is a list of strings. Consumer:* *only for smsc
+         * DeliveryReceipt and DataSm* The message ID allocated to the message
+         * by the SMSC when originally submitted.
          * 
          * The option is a: {@code String or List<String>} type.
          * 
@@ -3395,7 +3440,10 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppSubmitDate";
         }
         /**
-         * The system id.
+         * The system id to connect to the SMSC with. Used only by the first
+         * exchange of a producer with lazySessionCreation=true and
+         * allowSystemIdAndPasswordFromHeaders=true, together with the
+         * CamelSmppPassword header; otherwise ignored.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3407,7 +3455,10 @@ public interface SmppEndpointBuilderFactory {
             return "CamelSmppSystemId";
         }
         /**
-         * The password.
+         * The password to connect to the SMSC with. Used only by the first
+         * exchange of a producer with lazySessionCreation=true and
+         * allowSystemIdAndPasswordFromHeaders=true, together with the
+         * CamelSmppSystemId header; otherwise ignored.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3457,21 +3508,21 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Producer:* *only for SubmitSm, SubmitMulti and DataSm* The optional
          * parameter which are send to the SMSC. The value is converted in the
-         * following way: String -
-         * org.jsmpp.bean.OptionalParameter.COctetString, byte[] -
-         * org.jsmpp.bean.OptionalParameter.OctetString, Byte -
-         * org.jsmpp.bean.OptionalParameter.Byte, Integer -
-         * org.jsmpp.bean.OptionalParameter.Int, Short -
-         * org.jsmpp.bean.OptionalParameter.Short, null -
+         * following way: String to
+         * org.jsmpp.bean.OptionalParameter.COctetString, byte[] to
+         * org.jsmpp.bean.OptionalParameter.OctetString, Byte to
+         * org.jsmpp.bean.OptionalParameter.Byte, Integer to
+         * org.jsmpp.bean.OptionalParameter.Int, Short to
+         * org.jsmpp.bean.OptionalParameter.Short, null to
          * org.jsmpp.bean.OptionalParameter.Null Consumer:* *only for DeliverSm*
          * The optional parameters send back by the SMSC. The key is the Short
          * code for the optional parameter. The value is converted in the
-         * following way: org.jsmpp.bean.OptionalParameter.COctetString -
-         * String, org.jsmpp.bean.OptionalParameter.OctetString - byte[],
-         * org.jsmpp.bean.OptionalParameter.Byte - Byte,
-         * org.jsmpp.bean.OptionalParameter.Int - Integer,
-         * org.jsmpp.bean.OptionalParameter.Short - Short,
-         * org.jsmpp.bean.OptionalParameter.Null - null.
+         * following way: org.jsmpp.bean.OptionalParameter.COctetString to
+         * String, org.jsmpp.bean.OptionalParameter.OctetString to byte[],
+         * org.jsmpp.bean.OptionalParameter.Byte to Byte,
+         * org.jsmpp.bean.OptionalParameter.Int to Integer,
+         * org.jsmpp.bean.OptionalParameter.Short to Short,
+         * org.jsmpp.bean.OptionalParameter.Null to null.
          * 
          * The option is a: {@code Map<Short, Object>} type.
          * 

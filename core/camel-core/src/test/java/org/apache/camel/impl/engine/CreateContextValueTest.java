@@ -24,8 +24,7 @@ import org.apache.camel.util.concurrent.ThreadType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
-import org.junit.jupiter.api.parallel.ResourceLock;
-import org.junit.jupiter.api.parallel.Resources;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * CAMEL-24320: {@link ExtendedCamelContext#getCreateRoute()} and {@link ExtendedCamelContext#getCreateProcessor()} must
  * return null outside a binding scope (used by Kamelet endpoint init).
  */
+@Isolated("Writes system properties: as a lock writer among the concurrent tests, it would hold back every test reading them until the longest one ends")
 class CreateContextValueTest {
 
     private static final String VIRTUAL_THREADS_PROPERTY = "camel.threads.virtual.enabled";
@@ -54,7 +54,6 @@ class CreateContextValueTest {
     }
 
     @EnabledForJreRange(min = JRE.JAVA_25)
-    @ResourceLock(Resources.SYSTEM_PROPERTIES)
     @Test
     void getCreateRouteDoesNotThrowWithVirtualThreadsEnabled() throws Exception {
         enableVirtualThreads();

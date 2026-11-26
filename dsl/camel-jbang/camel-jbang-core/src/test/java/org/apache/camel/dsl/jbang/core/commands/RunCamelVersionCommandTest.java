@@ -55,7 +55,7 @@ class RunCamelVersionCommandTest {
     }
 
     private static List<String> command(String... args) {
-        Run run = new Run(new CamelJBangMain());
+        Run run = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(run, args);
         return run.createCamelVersionCommand();
     }

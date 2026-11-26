@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -109,6 +110,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
     private ScheduledExecutorService scheduledExecutorService;
+    // the scheduler of the timeouts in asynchronous mode, when created by this processor
+    private ScheduledExecutorService timeoutScheduler;
+    // runs the fallback and the rest of the route after a timeout in asynchronous mode, instead of the timeout thread
+    private volatile ExecutorService timeoutContinuation;
     private ProcessorExchangeFactory processorExchangeFactory;
     private PooledExchangeTaskFactory taskFactory;
     private PooledExchangeTaskFactory fallbackTaskFactory;
@@ -187,6 +192,18 @@ public class ResilienceProcessor extends BaseProcessorSupport
         if (bulkheadConfig != null) {
             bulkhead = bulkheadRegistry.bulkhead(id, bulkheadConfig);
         }
+        if (asynchronous && timeLimiter != null && scheduledExecutorService == null && timeoutScheduler == null) {
+            // the timeouts get their own threads: when they were tasks of the pool that runs the calls, a timeout
+            // could not fire while every thread of that pool was blocked in a call, which is what the timeout is for
+            timeoutScheduler = camelContext.getExecutorServiceManager().newDefaultScheduledThreadPool(this,
+                    "CircuitBreakerTimeout");
+        }
+        if (asynchronous && timeLimiter != null && timeoutContinuation == null) {
+            // a cached thread pool, as a fallback that blocks holds its thread: with a bounded pool the next fallbacks
+            // would wait behind the blocked ones (with the timeout threads, the next timeouts would)
+            timeoutContinuation = camelContext.getExecutorServiceManager().newCachedThreadPool(this,
+                    "CircuitBreakerFallback");
+        }
         ServiceHelper.startService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
     }
 
@@ -202,10 +219,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        if (shutdownExecutorService && executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
-        }
-
+        // the thread pools are shut down when the route is removed (doShutdown), and not here: the thread pool that
+        // runs the calls is created once, with the route, and a route that is stopped is started again with it
         ServiceHelper.stopService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
 
         if (createCircuitBreaker) {
@@ -222,6 +237,17 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
     @Override
     protected void doShutdown() throws Exception {
+        if (shutdownExecutorService && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
+        if (timeoutScheduler != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(timeoutScheduler);
+            timeoutScheduler = null;
+        }
+        if (timeoutContinuation != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(timeoutContinuation);
+            timeoutContinuation = null;
+        }
         ServiceHelper.stopAndShutdownServices(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
     }
 
@@ -688,33 +714,31 @@ public class ResilienceProcessor extends BaseProcessorSupport
                 supplier = Bulkhead.decorateCompletionStage(bulkhead, supplier);
             }
             if (timeLimiter != null) {
-                supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduledExecutorService, supplier);
+                ScheduledExecutorService scheduler
+                        = scheduledExecutorService != null ? scheduledExecutorService : timeoutScheduler;
+                supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduler, supplier);
             }
             supplier = CircuitBreaker.decorateCompletionStage(circuitBreaker, supplier);
 
             // trigger the chain and handle completion
             final CircuitBreakerFallbackTask fFallbackTask = fallbackTask;
             supplier.get().whenComplete((result, throwable) -> {
-                try {
-                    if (throwable != null) {
-                        Throwable cause = throwable instanceof CompletionException ? throwable.getCause() : throwable;
-                        fFallbackTask.apply(cause);
-                    } else {
-                        successState(result);
+                Throwable cause = throwable instanceof CompletionException ? throwable.getCause() : throwable;
+                ExecutorService continuation = timeoutContinuation;
+                if (cause instanceof TimeoutException && continuation != null) {
+                    // a timeout completes the future on a thread of the timeout scheduler: hand the fallback and the
+                    // rest of the route to another thread, so a fallback that blocks does not hold the thread that the
+                    // next timeouts need
+                    try {
+                        continuation.execute(() -> completeAsync(exchange, result, cause, fFallbackTask, callback));
+                        return;
+                    } catch (RejectedExecutionException e) {
+                        // the route is being removed: continue on this thread
+                        LOG.debug("Continuing exchange: {} on the timeout thread: {}", exchange.getExchangeId(),
+                                e.getMessage());
                     }
-                } catch (Exception e) {
-                    exchange.setException(e);
-                } finally {
-                    fallbackTaskFactory.release(fFallbackTask);
                 }
-
-                if (LOG.isTraceEnabled()) {
-                    boolean failed = exchange.isFailed();
-                    LOG.trace("Processing exchange: {} using circuit breaker: {} complete (async, failed: {})",
-                            exchange.getExchangeId(), id, failed);
-                }
-
-                callback.done(false);
+                completeAsync(exchange, result, cause, fFallbackTask, callback);
             });
             return false;
         } catch (Exception e) {
@@ -726,6 +750,30 @@ public class ResilienceProcessor extends BaseProcessorSupport
             callback.done(true);
             return true;
         }
+    }
+
+    private void completeAsync(
+            Exchange exchange, Exchange result, Throwable cause, CircuitBreakerFallbackTask fallbackTask,
+            AsyncCallback callback) {
+        try {
+            if (cause != null) {
+                fallbackTask.apply(cause);
+            } else {
+                successState(result);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+        } finally {
+            fallbackTaskFactory.release(fallbackTask);
+        }
+
+        if (LOG.isTraceEnabled()) {
+            boolean failed = exchange.isFailed();
+            LOG.trace("Processing exchange: {} using circuit breaker: {} complete (async, failed: {})",
+                    exchange.getExchangeId(), id, failed);
+        }
+
+        callback.done(false);
     }
 
     private void successState(Exchange exchange) {
@@ -994,6 +1042,16 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
             String state = circuitBreaker.getState().name();
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
+
+            if (ObjectHelper.getVirtualMachineError(throwable) != null) {
+                // a VirtualMachineError fails the exchange: Camel does not recover from it with a fallback, nor ignore
+                // it (CAMEL-27515)
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
+                exchange.setException(throwable);
+                return exchange;
+            }
 
             // check again if we should ignore or not record the throw exception as a failure
             if (ignorePredicate != null && ignorePredicate.test(throwable)) {

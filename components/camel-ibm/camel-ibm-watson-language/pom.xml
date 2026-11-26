@@ -29,7 +29,7 @@
     <artifactId>camel-ibm-watson-language</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: IBM :: Watson Language</name>
+    <name>Camel :: IBM :: Watson Language (deprecated)</name>
     <description>IBM Watson Natural Language Understanding service</description>
 
     <dependencies>

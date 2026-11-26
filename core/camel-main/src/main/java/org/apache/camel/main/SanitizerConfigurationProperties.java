@@ -32,10 +32,14 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private Boolean enabled;
-    @Metadata(defaultValue = "callback")
+    @Metadata(defaultValue = "callback,threads")
     private String checks;
     @Metadata(defaultValue = "32")
     private int stackDepth = 32;
+    @Metadata(defaultValue = "0")
+    private Integer overlapSampling;
+    @Metadata(defaultValue = "1ms")
+    private String overlapWindow = "1ms";
     @Metadata(defaultValue = "60s")
     private String pendingTimeout = "60s";
     @Metadata(defaultValue = "true")
@@ -72,10 +76,11 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * The checks to run, separated by commas: callback (rule R1, the callback of each call of the processor of a step
-     * is called exactly once, and process does not throw) and commit (rule R2, each commit of a consumer runs exactly
-     * once, for the unit of work that owns it). The default is callback, as rule R2 costs more per message; for a
-     * CamelContext built on a thread the JUnit extension marked (a test with the CamelSanitizer annotation, or the CI
-     * switch) it is callback,commit.
+     * is called exactly once, and process does not throw), commit (rule R2, each commit of a consumer runs exactly
+     * once, for the unit of work that owns it) and threads (rule R3, process returns the value its callback is called
+     * with, and, at the watch windows of overlapSampling, an exchange is not used by two threads at the same time). The
+     * default is callback,threads, as rule R2 costs more per message; for a CamelContext built on a thread the JUnit
+     * extension marked (a test with the CamelSanitizer annotation, or the CI switch) it is callback,commit,threads.
      */
     public void setChecks(String checks) {
         this.checks = checks;
@@ -92,6 +97,37 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
         this.stackDepth = stackDepth;
     }
 
+    public Integer getOverlapSampling() {
+        return overlapSampling;
+    }
+
+    /**
+     * Rule R3 (in checks threads): a short watch window is opened at every Nth point where the routing engine uses an
+     * exchange (a step is called, the callback of a step continues the exchange, an on completion runs), and its thread
+     * pauses in it; another thread that uses the same exchange at such a point during the window is reported with it.
+     * The points are counted, not drawn at random: when one thread routes the exchanges, a rerun samples the same
+     * points. When several threads do, they share the counter and it falls on other points from run to run. 0 is off,
+     * the default, as a paused thread changes the timing of the application; for a CamelContext built on a thread the
+     * JUnit extension marked (a test with the CamelSanitizer annotation, or the CI switch) it is 100, and a test class
+     * turns it off for itself with CamelSanitizer(overlapSampling = 0).
+     */
+    public void setOverlapSampling(Integer overlapSampling) {
+        this.overlapSampling = overlapSampling;
+    }
+
+    public String getOverlapWindow() {
+        return overlapWindow;
+    }
+
+    /**
+     * How long a thread pauses in a watch window of rule R3 (see overlapSampling), such as 1ms or 5 (milliseconds);
+     * more than 0. The pause uses the system clock, not the TimeSource of the context, so a virtual clock does not
+     * stretch it.
+     */
+    public void setOverlapWindow(String overlapWindow) {
+        this.overlapWindow = overlapWindow;
+    }
+
     public String getPendingTimeout() {
         return pendingTimeout;
     }
@@ -102,8 +138,8 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
      * Only the innermost pending call of an exchange is reported. 0 turns the warning off, as does a value of checks
      * without callback. The parts of a split, multicast or recipient list with parallel processing share one lock of
      * the table of pending calls, which orders their threads: when hunting races between such parts, use 0, and leave
-     * commit out of checks (checks=callback), as rule R2 takes one lock of the context at each unit of work given, each
-     * on completion added, handed over or run, and each exchange done.
+     * commit out of checks (checks=callback,threads), as rule R2 takes one lock of the context at each unit of work
+     * given, each on completion added, handed over or run, and each exchange done.
      */
     public void setPendingTimeout(String pendingTimeout) {
         this.pendingTimeout = pendingTimeout;
@@ -132,10 +168,11 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * The checks to run, separated by commas: callback (rule R1, the callback of each call of the processor of a step
-     * is called exactly once, and process does not throw) and commit (rule R2, each commit of a consumer runs exactly
-     * once, for the unit of work that owns it). The default is callback, as rule R2 costs more per message; for a
-     * CamelContext built on a thread the JUnit extension marked (a test with the CamelSanitizer annotation, or the CI
-     * switch) it is callback,commit.
+     * is called exactly once, and process does not throw), commit (rule R2, each commit of a consumer runs exactly
+     * once, for the unit of work that owns it) and threads (rule R3, process returns the value its callback is called
+     * with, and, at the watch windows of overlapSampling, an exchange is not used by two threads at the same time). The
+     * default is callback,threads, as rule R2 costs more per message; for a CamelContext built on a thread the JUnit
+     * extension marked (a test with the CamelSanitizer annotation, or the CI switch) it is callback,commit,threads.
      */
     public SanitizerConfigurationProperties withChecks(String checks) {
         this.checks = checks;
@@ -151,13 +188,38 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     * Rule R3 (in checks threads): a short watch window is opened at every Nth point where the routing engine uses an
+     * exchange (a step is called, the callback of a step continues the exchange, an on completion runs), and its thread
+     * pauses in it; another thread that uses the same exchange at such a point during the window is reported with it.
+     * The points are counted, not drawn at random: when one thread routes the exchanges, a rerun samples the same
+     * points. When several threads do, they share the counter and it falls on other points from run to run. 0 is off,
+     * the default, as a paused thread changes the timing of the application; for a CamelContext built on a thread the
+     * JUnit extension marked (a test with the CamelSanitizer annotation, or the CI switch) it is 100, and a test class
+     * turns it off for itself with CamelSanitizer(overlapSampling = 0).
+     */
+    public SanitizerConfigurationProperties withOverlapSampling(Integer overlapSampling) {
+        this.overlapSampling = overlapSampling;
+        return this;
+    }
+
+    /**
+     * How long a thread pauses in a watch window of rule R3 (see overlapSampling), such as 1ms or 5 (milliseconds);
+     * more than 0. The pause uses the system clock, not the TimeSource of the context, so a virtual clock does not
+     * stretch it.
+     */
+    public SanitizerConfigurationProperties withOverlapWindow(String overlapWindow) {
+        this.overlapWindow = overlapWindow;
+        return this;
+    }
+
+    /**
      * How long an exchange waits, with nothing happening in it, before the call of a step whose callback has not come
      * is reported as still pending (a warning of rule R1, which never fails a test), such as 60s or 500 (milliseconds).
      * Only the innermost pending call of an exchange is reported. 0 turns the warning off, as does a value of checks
      * without callback. The parts of a split, multicast or recipient list with parallel processing share one lock of
      * the table of pending calls, which orders their threads: when hunting races between such parts, use 0, and leave
-     * commit out of checks (checks=callback), as rule R2 takes one lock of the context at each unit of work given, each
-     * on completion added, handed over or run, and each exchange done.
+     * commit out of checks (checks=callback,threads), as rule R2 takes one lock of the context at each unit of work
+     * given, each on completion added, handed over or run, and each exchange done.
      */
     public SanitizerConfigurationProperties withPendingTimeout(String pendingTimeout) {
         this.pendingTimeout = pendingTimeout;

@@ -79,14 +79,17 @@ class BodyTypesViewsTest {
         RouteInfo orders = route("orders", "platform-http:/orders");
         orders.variedBodyTypes = 1;
         orders.mixedBodyKinds = 1;
-        orders.processors.add(processor("unmarshal1", "unmarshal", 1,
-                List.of("org.apache.camel.converter.stream.ByteArrayInputStreamCache"), List.of("payload")));
+        ProcessorInfo unmarshal = processor("unmarshal1", "unmarshal", 1,
+                List.of("org.apache.camel.converter.stream.ByteArrayInputStreamCache"), List.of("payload"));
+        unmarshal.bodyFormats = List.of("json");
+        orders.processors.add(unmarshal);
         orders.processors.add(processor("to1", "to", 1,
                 List.of("byte[]", "java.util.LinkedHashMap"), List.of("payload", "data")));
 
         String rendered = TuiTestHelper.renderToString(new RoutesTab(ctx), 160, 40);
 
-        assertThat(rendered).contains("ByteArrayInputStreamCache");
+        // the format of the payload, from its Content-Type (CAMEL-27468)
+        assertThat(rendered).contains("ByteArrayInputStreamCache · json");
         assertThat(rendered).contains(TuiIcons.WARN + " byte[] | LinkedHashMap");
     }
 
@@ -96,7 +99,8 @@ class BodyTypesViewsTest {
                 {"routes": [{"routeId": "orders", "from": "platform-http:/orders", "state": "Started",
                   "variedBodyTypes": 1, "mixedBodyKinds": 1,
                   "processors": [{"id": "to1", "processor": "to", "level": 1,
-                    "bodyTypes": ["byte[]", "java.util.LinkedHashMap"], "bodyKinds": ["payload", "data"]}]}]}
+                    "bodyTypes": ["byte[]", "java.util.LinkedHashMap"], "bodyKinds": ["payload", "data"],
+                    "bodyFormats": ["json"]}]}]}
                 """, (JsonObject) null);
         IntegrationInfo parsed = new IntegrationInfo();
 
@@ -107,6 +111,30 @@ class BodyTypesViewsTest {
         assertThat(route.mixedBodyKinds).isEqualTo(1);
         assertThat(route.processors.get(0).bodyTypes).containsExactly("byte[]", "java.util.LinkedHashMap");
         assertThat(route.processors.get(0).bodyKinds).containsExactly("payload", "data");
+        assertThat(route.processors.get(0).bodyFormats).containsExactly("json");
+    }
+
+    @Test
+    void theWordsWithTheFormats() {
+        // the format of the payload next to its type (CAMEL-27468)
+        assertThat(BodyTypes.label(List.of("byte[]"), List.of("payload"), List.of("json"))).isEqualTo("byte[] · json");
+        assertThat(BodyTypes.label(List.of("java.util.LinkedHashMap"), List.of("data"), List.of()))
+                .isEqualTo("LinkedHashMap");
+        // more than one format is marked, as more than one kind is
+        assertThat(BodyTypes.label(List.of("java.lang.String"), List.of("payload"), List.of("xml", "csv")))
+                .isEqualTo(TuiIcons.WARN + " String · xml | csv");
+        assertThat(BodyTypes.label(List.of("java.lang.String", "java.util.LinkedHashMap"), List.of("payload", "data"),
+                List.of("json"))).isEqualTo(TuiIcons.WARN + " String | LinkedHashMap · json (payload and data)");
+        assertThat(BodyTypes.shortLabel(List.of("java.lang.String"), List.of("payload"), List.of("xml", "csv")))
+                .isEqualTo(TuiIcons.WARN + " String · xml | csv");
+        assertThat(BodyTypes.style(List.of("payload"), List.of("xml", "csv"))).isEqualTo(Theme.warning());
+        assertThat(BodyTypes.style(List.of("payload"), List.of("xml"))).isEqualTo(Theme.muted());
+        // when the room is short, the formats go before the types do
+        List<String> types = List.of("java.lang.String", "byte[]");
+        assertThat(BodyTypes.fit(types, List.of("payload"), List.of("json"), 30)).isEqualTo("String | byte[] · json");
+        assertThat(BodyTypes.fit(types, List.of("payload"), List.of("json"), 16)).isEqualTo("String +1 · json");
+        assertThat(BodyTypes.fit(types, List.of("payload"), List.of("json"), 15)).isEqualTo("String | byte[]");
+        assertThat(BodyTypes.fit(types, List.of("payload"), List.of("json"), 10)).isEqualTo("String +1");
     }
 
     @Test
@@ -167,6 +195,21 @@ class BodyTypesViewsTest {
                 " " + TuiIcons.WARN + " payload and data: the",
                 "   body here depends on the",
                 "   path a message takes");
+
+        RouteDiagramLayoutEngine.NodeInfo csv = new RouteDiagramLayoutEngine.NodeInfo();
+        csv.bodyTypes = List.of("byte[]");
+        csv.bodyKinds = List.of("payload");
+        csv.bodyFormats = List.of("csv", "json");
+        lines.clear();
+        DiagramDetailSupport.addBodyTypes(lines, csv, 27);
+        assertThat(lines).extracting(BodyTypesViewsTest::text).containsExactly(
+                "",
+                " Body types (payload):",
+                "   byte[]",
+                " Formats: csv | json",
+                " " + TuiIcons.WARN + " csv and json: the format",
+                "   here depends on the",
+                "   message");
 
         RouteDiagramLayoutEngine.NodeInfo log = new RouteDiagramLayoutEngine.NodeInfo();
         log.bodyTypes = List.of("java.lang.String", "byte[]");

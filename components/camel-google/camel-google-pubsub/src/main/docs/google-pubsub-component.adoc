@@ -90,9 +90,10 @@ The component will acknowledge the message once exchange processing has been com
 If the route throws an exception, the exchange is marked as failed, and the component will NACK the message.
 It will be redelivered immediately.
 
-To ack/nack the message the component uses Acknowledgement ID stored as header `GooglePubsubConstants.ACK_ID`.
-With the synchronous consumer (`synchronousPull=true`), if the header is changed, the ack fails; if it is removed,
-no ack is sent and a WARN is logged. In both cases the message is redelivered after the ack deadline.
+The component acks or nacks the message it received, also when the route changed or removed the
+`GooglePubsubConstants.ACK_ID` header (the Acknowledgement ID of the message), or replaced the message.
+With manual acknowledgement and the synchronous consumer, the Acknowledgement IDs are taken from the exchange given to
+`ack` or `nack` (see <<Manual Acknowledgement>>).
 
 === Delivery Attempts and Dead Letter Queues
 

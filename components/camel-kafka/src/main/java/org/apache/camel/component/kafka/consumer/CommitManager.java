@@ -31,11 +31,27 @@ public interface CommitManager {
     void commit();
 
     /**
-     * Commits the offsets of the given partition
+     * Commits the offsets of the given partition, for example when the partition is revoked or the consumer stops.
+     * <p>
+     * With manual commits (allowManualCommit=true), only the offset that the route committed through
+     * {@link KafkaManualCommit#commit()} is committed, if it is not committed yet: the last processed record may still
+     * be held by the route (for example in an aggregation group that is not complete), and is not committed for it.
+     * Without manual commits, the offset of the last processed record is committed.
      *
      * @param partition the partition to commit the offsets
      */
     void commit(TopicPartition partition);
+
+    /**
+     * Commits the offset of the last processed record of the given partition, also with manual commits, whether the
+     * route committed it or not. Used by breakOnFirstError to commit the records before the failed one, so that the
+     * failed one is polled again.
+     *
+     * @param partition the partition to commit the offsets
+     */
+    default void commitProcessedOffset(TopicPartition partition) {
+        commit(partition);
+    }
 
     /**
      * Forcefully commits the offset of the given partition
@@ -54,16 +70,30 @@ public interface CommitManager {
     void recordOffset(TopicPartition partition, long partitionLastOffset);
 
     /**
-     * Records the last processed offset and commits it, for an asynchronous manual commit. A commit manager that
-     * commits asynchronously leaves the commit to the consumer thread (see {@link #commitRequestedOffsets()}), so this
-     * can be called from any thread.
+     * Forgets the offset recorded for the given partition without committing it. Called when the partition is revoked
+     * (after its commit, whether the commit succeeded or not) or lost: the consumer no longer owns the partition, and
+     * an offset kept for it could be committed after the partition is assigned to the consumer again, which would move
+     * back the offset that another consumer committed in the meantime. Also called when a resume seeks the partition
+     * back to its committed offset: the records after it are read and committed again, and an offset kept from before
+     * (such as one whose commit failed) could be committed in between and move the committed offset back.
+     *
+     * @param partition the partition that is no longer assigned to the consumer, or that is read again
+     */
+    default void discardRecordedOffset(TopicPartition partition) {
+        // NO-OP
+    }
+
+    /**
+     * Commits the given offset, for an asynchronous manual commit (the route called
+     * {@link KafkaManualCommit#commit()}). A commit manager that commits asynchronously leaves the commit to the
+     * consumer thread (see {@link #commitRequestedOffsets()}), so this can be called from any thread.
      *
      * @param partition           the partition to commit the offsets
      * @param partitionLastOffset the last offset to commit
      */
     default void requestCommit(TopicPartition partition, long partitionLastOffset) {
         recordOffset(partition, partitionLastOffset);
-        commit(partition);
+        commitProcessedOffset(partition);
     }
 
     /**

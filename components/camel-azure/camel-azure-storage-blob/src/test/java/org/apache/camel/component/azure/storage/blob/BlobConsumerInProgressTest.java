@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.azure.core.http.HttpResponse;
 import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.http.rest.PagedResponseBase;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -36,20 +38,23 @@ import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.models.ListBlobsOptions;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doAnswer;
@@ -72,6 +77,7 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
     private final AtomicInteger failedPolls = new AtomicInteger();
     private final AtomicInteger attempts = new AtomicInteger();
     private final CountDownLatch inRoute = new CountDownLatch(1);
+    private final CountDownLatch bRead = new CountDownLatch(1);
     private final CountDownLatch twoPolls = new CountDownLatch(2);
     private final CountDownLatch release = new CountDownLatch(1);
 
@@ -130,6 +136,29 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
     }
 
     @Test
+    void inProgressBlobDoesNotConsumeMaxMessagesPerPoll() throws Exception {
+        blobs.add("a.txt");
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedHeaderValuesReceivedInAnyOrder(BlobConstants.BLOB_NAME, "a.txt", "b.txt");
+
+        // The first poll gets a.txt and hands it to a route that remains in progress.
+        // Add b.txt while a.txt is still in flight. The next poll must skip a.txt
+        // and continue until it successfully retrieves b.txt.
+        addConsumerRoute("&deleteAfterRead=true&maxMessagesPerPoll=1", "seda:hold", 250);
+
+        assertTrue(inRoute.await(20, TimeUnit.SECONDS), "a.txt did not enter the route");
+        blobs.add("b.txt");
+
+        assertTrue(bRead.await(20, TimeUnit.SECONDS), "b.txt was not retrieved while a.txt was in progress");
+        assertEquals(1, reads("a.txt"), "the in-progress a.txt must not be retrieved again");
+        assertEquals(1, reads("b.txt"), "the skipped a.txt must not consume the one-message limit");
+
+        release.countDown();
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     void blobInFlightIsNotConsumedAgain() throws Exception {
         assertNotConsumedAgain("");
     }
@@ -164,8 +193,9 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-    @Test
-    void deletedBlobIsSkipped() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "", "&maxMessagesPerPoll=2" })
+    void deletedBlobIsSkipped(String maxMessagesPerPollOption) throws Exception {
         blobs.add("a.txt");
         blobs.add("b.txt");
         blobs.add("c.txt");
@@ -173,10 +203,19 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderValuesReceivedInAnyOrder(BlobConstants.BLOB_NAME, "a.txt", "c.txt");
 
-        addConsumerRoute("&deleteAfterRead=true&pollStrategy=#countPolls", "mock:result");
+        addConsumerRoute("&deleteAfterRead=true" + maxMessagesPerPollOption
+                         + "&pollStrategy=#countPolls",
+                "mock:result");
 
         mock.assertIsSatisfied();
-        // the poll that listed b.txt is not dropped, so the blobs read before b.txt are not read again by a later poll
+        assertEquals(2, mock.getExchanges().size());
+        assertEquals(2, mock.getExchanges().get(0).getProperty(ExchangePropertyKey.BATCH_SIZE));
+        assertEquals(2, mock.getExchanges().get(1).getProperty(ExchangePropertyKey.BATCH_SIZE));
+        assertEquals(0, mock.getExchanges().get(0).getProperty(ExchangePropertyKey.BATCH_INDEX));
+        assertEquals(1, mock.getExchanges().get(1).getProperty(ExchangePropertyKey.BATCH_INDEX));
+        assertEquals(Boolean.FALSE, mock.getExchanges().get(0).getProperty(ExchangePropertyKey.BATCH_COMPLETE));
+        assertEquals(Boolean.TRUE, mock.getExchanges().get(1).getProperty(ExchangePropertyKey.BATCH_COMPLETE));
+        // The deleted b.txt does not consume the limit: a.txt and c.txt are both routed.
         assertEquals(1, reads("a.txt"), "a.txt was read again because b.txt was deleted after the listing");
         assertEquals(1, reads("c.txt"));
         assertEquals(0, failedPolls.get(), "the poll failed because b.txt was deleted after the listing");
@@ -221,10 +260,15 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
     }
 
     private void addConsumerRoute(String options, String to) throws Exception {
+        addConsumerRoute(options, to, 10);
+    }
+
+    private void addConsumerRoute(String options, String to, long delay) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("azure-storage-blob://account/container?serviceClient=#client&initialDelay=0&delay=10" + options)
+                from("azure-storage-blob://account/container?serviceClient=#client&initialDelay=0&delay="
+                     + delay + options)
                         .to(to);
             }
         });
@@ -241,14 +285,17 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
         BlobContainerClient containerClient = mock(BlobContainerClient.class);
         when(serviceClient.getBlobContainerClient(anyString())).thenReturn(containerClient);
 
-        PagedIterable<BlobItem> listing = mock(PagedIterable.class);
-        when(listing.stream()).thenAnswer(i -> {
-            List<BlobItem> items = blobs.stream().map(name -> new BlobItem().setName(name)).toList();
-            // deleted (as if by another consumer) right after the listing returned it
-            blobs.removeAll(deletedAfterListing);
-            return items.stream();
-        });
-        when(containerClient.listBlobs(any(), any())).thenReturn(listing);
+        when(containerClient.listBlobs(
+                nullable(ListBlobsOptions.class), nullable(String.class), nullable(Duration.class)))
+                .thenAnswer(i -> {
+                    List<BlobItem> items = blobs.stream()
+                            .map(name -> new BlobItem().setName(name)).toList();
+                    // Deleted (as if by another consumer) right after the listing returned it.
+                    blobs.removeAll(deletedAfterListing);
+                    return new PagedIterable<>(
+                            () -> new PagedResponseBase<Void, BlobItem>(
+                                    null, 200, null, items, null, null));
+                });
 
         when(containerClient.getBlobClient(anyString())).thenAnswer(i -> blobClient(i.getArgument(0)));
         return serviceClient;
@@ -263,6 +310,9 @@ class BlobConsumerInProgressTest extends CamelTestSupport {
                 throw new BlobStorageException("The specified blob does not exist.", response, null);
             }
             reads.computeIfAbsent(name, k -> new AtomicInteger()).incrementAndGet();
+            if ("b.txt".equals(name)) {
+                bRead.countDown();
+            }
             BlobInputStream stream = mock(BlobInputStream.class);
             when(stream.getProperties()).thenReturn(mock(BlobProperties.class));
             streams.add(stream);

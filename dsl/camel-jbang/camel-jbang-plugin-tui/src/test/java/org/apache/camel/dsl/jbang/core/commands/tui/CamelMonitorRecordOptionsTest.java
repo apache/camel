@@ -46,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ClearSystemProperty(key = "tamboui.record.fps")
 class CamelMonitorRecordOptionsTest {
 
-    private final CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+    private final CamelMonitor monitor = new CamelJBangMain().command(new CamelMonitor(getClass().getClassLoader()));
 
     @TempDir
     Path tempDir;

@@ -124,6 +124,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "imageStyle": target.getConfiguration().setImageStyle(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschema":
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": target.getConfiguration().setJsonSchemaStrict(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxagentictokens":
@@ -337,6 +339,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "imageStyle": return java.lang.String.class;
         case "jsonschema":
         case "jsonSchema": return java.lang.String.class;
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxagentictokens":
@@ -551,6 +555,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "imageStyle": return target.getConfiguration().getImageStyle();
         case "jsonschema":
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": return target.getConfiguration().isJsonSchemaStrict();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxagentictokens":

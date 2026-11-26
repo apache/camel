@@ -44,7 +44,7 @@ import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
                            "  camel sbom hello.java",
                            "  camel sbom hello.java --sbom-format=spdx",
                            "  camel sbom hello.java --sbom-output-format=xml" })
-public class SBOMGenerator extends Export {
+public class SBOMGenerator extends ExportCommandBase {
 
     protected static String tempExportDir() {
         return CommandLineHelper.getWorkDir().resolve("export").toString();
@@ -74,10 +74,6 @@ public class SBOMGenerator extends Export {
     @Option(name = "sbom-output-format", description = "The SBOM output format, possible values are json or xml",
             defaultValue = SBOM_JSON_FORMAT)
     protected String sbomOutputFormat = SBOM_JSON_FORMAT;
-
-    public SBOMGenerator(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

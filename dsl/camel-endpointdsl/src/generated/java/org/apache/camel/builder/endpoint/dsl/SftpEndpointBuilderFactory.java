@@ -159,16 +159,18 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is
@@ -665,8 +667,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Is used to exclude files, if filename matches the regex pattern
-         * (matching is case in-sensitive). Notice if you use symbols such as
-         * plus sign and others you would need to configure this using the RAW()
+         * (matching is case in-sensitive). The pattern is a regular expression,
+         * not a wildcard: use antExclude for wildcards, or excludeExt to
+         * exclude files by extension. Notice if you use symbols such as plus
+         * sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
@@ -753,7 +757,7 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Filters the file based on Simple language. For example to filter on
-         * file size, you can use ${file:size} 5000.
+         * the file extension, you can use ${file:ext} == 'txt'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -908,8 +912,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Is used to include files, if filename matches the regex pattern
-         * (matching is case in-sensitive). Notice if you use symbols such as
-         * plus sign and others you would need to configure this using the RAW()
+         * (matching is case in-sensitive). The pattern is a regular expression,
+         * not a wildcard: use antInclude for wildcards, or includeExt to
+         * include files by extension. Notice if you use symbols such as plus
+         * sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
@@ -2375,7 +2381,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator class that compares
+         * org.apache.camel.component.file.GenericFile objects.
          * 
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
@@ -2390,7 +2397,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator class that compares
+         * org.apache.camel.component.file.GenericFile objects.
          * 
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
@@ -3600,16 +3608,18 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is
@@ -5461,16 +5471,18 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
+         * For consumers, it's used as a filename filter: only a file with
+         * exactly this name is consumed, as the name is not a pattern (use
+         * antInclude or include to consume the files that match a pattern). For
+         * producers, it's used to evaluate the filename to write. If an
+         * expression is set, it take precedence over the CamelFileName header.
+         * (Note: The header itself can also be an Expression). The expression
+         * options support both String and Expression types. If the expression
+         * is a String type, it is always evaluated using the File Language. If
+         * the expression is an Expression type, the specified Expression type
+         * is used - this allows you, for instance, to use OGNL expressions. For
+         * the consumer, you can use it to filter filenames, so you can for
+         * instance consume today's file using the File Language syntax:
          * mydata-${date:now:yyyyMMdd}.txt. The producers support the
          * CamelOverruleFileName header which takes precedence over any existing
          * CamelFileName header; the CamelOverruleFileName is a header that is

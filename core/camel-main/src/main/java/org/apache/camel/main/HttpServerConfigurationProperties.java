@@ -89,6 +89,10 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private long mcpSessionKeepAliveInterval = 30000;
     @Metadata(defaultValue = "300000")
     private long mcpSessionIdleTtl = 300000;
+    @Metadata(defaultValue = "dual", enums = "dual,legacy,modern")
+    private String mcpProtocolEra = "dual";
+    @Metadata(defaultValue = "false")
+    private boolean mcpStateless;
     @Metadata
     private String mcpAllowedOrigins;
     @Metadata
@@ -545,6 +549,39 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.mcpSessionIdleTtl = mcpSessionIdleTtl;
     }
 
+    public String getMcpProtocolEra() {
+        return mcpProtocolEra;
+    }
+
+    /**
+     * The MCP protocol versions served by the Vert.x streamable transport. dual (default) serves, on the same endpoint,
+     * the protocol versions whose clients open with an initialize handshake (2025-11-25 and earlier), with a session,
+     * and protocol version 2026-07-28, without a session, choosing for each request from the protocol version it
+     * carries. legacy serves only the former, as before Camel 4.24. modern serves only protocol version 2026-07-28 and
+     * answers an initialize request with an error that lists the supported versions. Serving protocol version
+     * 2026-07-28 is a preview: it is built on an API of the MCP Java SDK that may still change.
+     */
+    public void setMcpProtocolEra(String mcpProtocolEra) {
+        this.mcpProtocolEra = mcpProtocolEra;
+    }
+
+    public boolean isMcpStateless() {
+        return mcpStateless;
+    }
+
+    /**
+     * Whether the Vert.x streamable transport serves the clients that open with an initialize handshake without a
+     * session, as the MCP streamable HTTP transport allows. When true, such a client gets no Mcp-Session-Id: each
+     * request is served on its own, so a restart of the application, or a request reaching another instance, does not
+     * end its session, and several instances need no session affinity. Such a client then receives no notifications
+     * from the server, such as a changed list of tools, and a GET or DELETE on the MCP endpoint is answered with HTTP
+     * 405. The session keep-alive and idle TTL options do not apply. Clients of protocol version 2026-07-28 never get a
+     * session.
+     */
+    public void setMcpStateless(boolean mcpStateless) {
+        this.mcpStateless = mcpStateless;
+    }
+
     public String getMcpAllowedOrigins() {
         return mcpAllowedOrigins;
     }
@@ -920,6 +957,23 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpSessionIdleTtl(long mcpSessionIdleTtl) {
         this.mcpSessionIdleTtl = mcpSessionIdleTtl;
+        return this;
+    }
+
+    /**
+     * The MCP protocol versions served by the Vert.x streamable transport: dual (default), legacy or modern.
+     */
+    public HttpServerConfigurationProperties withMcpProtocolEra(String mcpProtocolEra) {
+        this.mcpProtocolEra = mcpProtocolEra;
+        return this;
+    }
+
+    /**
+     * Whether the Vert.x streamable transport serves the clients that open with an initialize handshake without a
+     * session.
+     */
+    public HttpServerConfigurationProperties withMcpStateless(boolean mcpStateless) {
+        this.mcpStateless = mcpStateless;
         return this;
     }
 

@@ -26,7 +26,6 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -42,10 +41,6 @@ public class CamelSemantic extends SemanticActionCommand {
 
     @Option(name = "expert", description = "Show the operations and parameter contract of this expert")
     String expert;
-
-    public CamelSemantic(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected JsonObject request() {

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
@@ -32,10 +31,6 @@ import org.apache.camel.util.json.JsonObject;
                            "  camel plugin list",
                            "  camel plugin list --json" })
 public class PluginList extends PluginGet {
-
-    public PluginList(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

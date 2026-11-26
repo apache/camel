@@ -322,6 +322,33 @@ public class JmsEndpoint extends DefaultEndpoint
             listenerContainer.setSubscriptionName(configuration.getSubscriptionName());
         }
         listenerContainer.setSubscriptionShared(configuration.isSubscriptionShared());
+
+        if (getExceptionHandler() != null) {
+            forwardContainerExceptionsToExceptionHandler(listenerContainer, consumer);
+        }
+    }
+
+    /**
+     * Gives the JMS exceptions of the listener container (such as a connection that cannot be established, or a failed
+     * setup of a listener) to the exceptionHandler of the consumer as well, after the exceptionListener, if any.
+     */
+    private void forwardContainerExceptionsToExceptionHandler(
+            AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
+        final ExceptionListener exceptionListener = listenerContainer.getExceptionListener();
+        final String destination = destinationName != null ? destinationName : getEndpointUri();
+        final String message = "JMS exception in the listener container of the consumer on destination: " + destination;
+        listenerContainer.setExceptionListener(exception -> {
+            if (exceptionListener != null) {
+                exceptionListener.onException(exception);
+            }
+            try {
+                consumer.getExceptionHandler().handleException(message, exception);
+            } catch (Exception e) {
+                // the listener container calls this while it recovers, which must go on
+                LOG.warn("The exceptionHandler of the consumer on destination: {} failed. This exception is ignored.",
+                        destination, e);
+            }
+        });
     }
 
     private void setContainerTaskExecutor(AbstractMessageListenerContainer listenerContainer, Executor executor) {
@@ -361,7 +388,10 @@ public class JmsEndpoint extends DefaultEndpoint
         configureConsumer(consumer);
 
         if (isBridgeErrorHandler()) {
-            throw new IllegalArgumentException("BridgeErrorHandler is not support on JMS endpoint");
+            throw new IllegalArgumentException(
+                    "BridgeErrorHandler is not supported on JMS endpoint: a message that fails already goes to the error"
+                                               + " handler of the route. To handle the connection errors of the consumer,"
+                                               + " use the exceptionHandler or exceptionListener option");
         }
 
         String replyTo = consumer.getEndpoint().getReplyTo();

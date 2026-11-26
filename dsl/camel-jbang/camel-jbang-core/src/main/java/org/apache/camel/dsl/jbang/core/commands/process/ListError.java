@@ -40,7 +40,6 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -110,10 +109,6 @@ public class ListError extends ProcessWatchCommand {
     @Option(name = "theme", description = "Diagram color theme (ascii, unicode, dark, light, transparent, or custom)",
             defaultValue = "unicode")
     String theme = "unicode";
-
-    public ListError(CamelJBangMain main) {
-        super(main);
-    }
 
     private static final Set<String> ALL_SECTIONS
             = Set.of("body", "headers", "properties", "variables", "history", "stackTrace");

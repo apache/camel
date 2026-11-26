@@ -18,6 +18,8 @@ package org.apache.camel.component.kafka.integration;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -42,6 +44,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -50,6 +53,9 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
     public static final String TOPIC = "testManualCommitTest";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerAsyncManualCommitIT.class);
+
+    // the records the route committed: the aggregator commits them on its own thread, after the mock received them
+    private static final AtomicInteger COMMITTED = new AtomicInteger();
 
     @BindToRegistry("testFactory")
     private final KafkaManualCommitFactory manualCommitFactory = new DefaultKafkaManualAsyncCommitFactory();
@@ -99,6 +105,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
 
                             try {
                                 manual.commit();
+                                COMMITTED.incrementAndGet();
                             } catch (Exception commitException) {
                                 LOG.error("Failed to commit: {}", commitException.getMessage(), commitException);
                                 failCount++;
@@ -137,6 +144,10 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
     @Test
     void kafkaManualCommit() throws Exception {
         MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
+
+        // the route commits the records once the aggregator completed its group: a stop before that does not commit
+        // them, so they would be consumed again after the restart
+        await().atMost(10, TimeUnit.SECONDS).until(() -> COMMITTED.get() >= 5);
 
         // Second step: We shut down our route, we expect nothing will be recovered by our route
         context.getRouteController().stopRoute("foo");

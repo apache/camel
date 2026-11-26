@@ -59,7 +59,7 @@ class EvalSimpleTest extends CamelCommandBaseTestSupport {
     }
 
     private EvalExpressionCommand createCommand(String... args) {
-        EvalExpressionCommand command = new EvalExpressionCommand(new CamelJBangMain().withPrinter(printer));
+        EvalExpressionCommand command = new CamelJBangMain().withPrinter(printer).command(new EvalExpressionCommand());
         if (args != null) {
             CommandLineTestHelper.parse(command, args);
         }

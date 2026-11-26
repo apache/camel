@@ -37,7 +37,7 @@ class ListGroovyTest extends ProcessCommandTestSupport {
     void testDisplaysGroovyCompilerStats() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithGroovy(3, 1, "MyRoute", "MyBean"));
 
-        ListGroovy command = new ListGroovy(new CamelJBangMain().withPrinter(printer));
+        ListGroovy command = new CamelJBangMain().withPrinter(printer).command(new ListGroovy());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -59,7 +59,7 @@ class ListGroovyTest extends ProcessCommandTestSupport {
         JsonObject status = buildContextStatus("noGroovyApp", 5);
         writeStatusFile(TEST_PID, status);
 
-        ListGroovy command = new ListGroovy(new CamelJBangMain().withPrinter(printer));
+        ListGroovy command = new CamelJBangMain().withPrinter(printer).command(new ListGroovy());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -76,7 +76,7 @@ class ListGroovyTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        ListGroovy command = new ListGroovy(new CamelJBangMain().withPrinter(printer));
+        ListGroovy command = new CamelJBangMain().withPrinter(printer).command(new ListGroovy());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();
@@ -95,7 +95,7 @@ class ListGroovyTest extends ProcessCommandTestSupport {
     void testJsonOutput() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithGroovy(2, 0, "MyProcessor"));
 
-        ListGroovy command = new ListGroovy(new CamelJBangMain().withPrinter(printer));
+        ListGroovy command = new CamelJBangMain().withPrinter(printer).command(new ListGroovy());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

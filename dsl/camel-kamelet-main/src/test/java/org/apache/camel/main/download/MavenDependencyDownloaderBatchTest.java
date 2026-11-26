@@ -113,6 +113,22 @@ class MavenDependencyDownloaderBatchTest {
         assertEquals(List.of("org.example.batch:a:1.0"), downloaded);
     }
 
+    @Test
+    void knownDependenciesOfAMappingAreDownloadedTogether() {
+        // as the Kafka serde of Azure with a recent azure-core: the version of the mapping wins over the version that
+        // the first dependency asks for
+        MavenGav common = MavenGav.fromCoordinates("org.example.batch", "common", "2.0", null, null);
+        KnownDependenciesResolver.download(downloader, List.of(gav("a"), common));
+
+        assertEquals(List.of("org.example.batch:a:1.0", "org.example.batch:common:2.0"), downloaded);
+        assertEquals(List.of("a-1.0.jar", "common-2.0.jar"), jars());
+
+        // what is on the classpath is not downloaded again
+        downloaded.clear();
+        KnownDependenciesResolver.download(downloader, List.of(gav("a"), common));
+        assertEquals(List.of(), downloaded);
+    }
+
     private static MavenGav gav(String artifactId) {
         return MavenGav.fromCoordinates("org.example.batch", artifactId, "1.0", null, null);
     }

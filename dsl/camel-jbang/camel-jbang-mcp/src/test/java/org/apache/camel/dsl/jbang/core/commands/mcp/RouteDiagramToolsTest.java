@@ -16,17 +16,26 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import javax.management.MBeanServer;
+import javax.management.MBeanServerDelegate;
+import javax.management.MBeanServerNotification;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
+
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -138,6 +147,27 @@ class RouteDiagramToolsTest {
     }
 
     @Test
+    void renderRouteDoesNotWipeSharedWorkDir(@TempDir Path dir) throws Exception {
+        // CAMEL-27156: transient run should not wipe the shared .camel-jbang directory
+        Path workDir = CommandLineHelper.getWorkDir();
+        Files.createDirectories(workDir);
+        Path marker = workDir.resolve("marker-" + ProcessHandle.current().pid() + ".tmp");
+        Files.writeString(marker, "marker");
+        try {
+            Path source = route(dir, "marker-route");
+            RouteDiagramTools tools = new RouteDiagramTools();
+            RouteDiagramTools.RouteDiagramResult result = tools.camel_render_route_diagram(
+                    source.toString(), null, "ascii", null, null, null, null, null, null);
+
+            assertThat(result.success()).as(result.message()).isTrue();
+            assertThat(result.asciiDiagram()).contains("marker-route");
+            assertThat(Files.exists(marker)).as("Shared work directory marker must not be wiped by transient run").isTrue();
+        } finally {
+            Files.deleteIfExists(marker);
+        }
+    }
+
+    @Test
     void callsAtTheSameTime(@TempDir Path dir) throws Exception {
         // CAMEL-26932: the calls shared one work directory, which each deleted at its start, so of three calls at
         // once one failed with NoSuchFileException and one timed out
@@ -159,6 +189,35 @@ class RouteDiagramToolsTest {
         } finally {
             executor.shutdownNow();
         }
+    }
+
+    @Test
+    void aTransformRunRegistersNoMBeans(@TempDir Path dir) throws Exception {
+        // CAMEL-27326: every transform run names its context transform; with JMX on, two runs at the same time in one
+        // JVM (the MCP server) could both take that name, and the second failed with InstanceAlreadyExistsException,
+        // which made callsAtTheSameTime flaky. A transform run only dumps the routes to files, so it has no JMX.
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        List<ObjectName> registered = new CopyOnWriteArrayList<>();
+        NotificationListener listener = (notification, handback) -> {
+            if (notification instanceof MBeanServerNotification n
+                    && MBeanServerNotification.REGISTRATION_NOTIFICATION.equals(n.getType())
+                    && "org.apache.camel".equals(n.getMBeanName().getDomain())
+            // the MBeans of the transform run; other tests may start contexts of their own meanwhile
+                    && String.valueOf(n.getMBeanName().getKeyProperty("context")).startsWith("transform")) {
+                registered.add(n.getMBeanName());
+            }
+        };
+        server.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener, null, null);
+        try {
+            RouteDiagramTools.RouteDiagramResult result = new RouteDiagramTools().camel_render_route_diagram(
+                    route(dir, "lonely").toString(), null, "ascii", null, null, null, null, null, null);
+
+            assertThat(result.success()).as(result.message()).isTrue();
+            assertThat(result.asciiDiagram()).contains("lonely");
+        } finally {
+            server.removeNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener);
+        }
+        assertThat(registered).isEmpty();
     }
 
     private static Path route(Path dir, String id) throws Exception {

@@ -28,7 +28,6 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -53,10 +52,6 @@ public class ListBlocked extends ProcessWatchCommand {
     @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
             completer = PidNameAgeCompletionCandidates.class)
     String sort;
-
-    public ListBlocked(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doProcessWatchCall() throws Exception {

@@ -11,6 +11,37 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.18.6 to 4.18.7
+
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-azure-files - the starting directory check resolves a name as a server does
+
+The check that a file is in the starting directory (`jailStartingDirectory=true`, the default, for a producer, and the
+same check of a consumer) now resolves the `.` and `..` segments of a name the way a server does, and refuses a name
+with a `..` segment that goes above the start of the name, also when the endpoint has no directory or its directory is
+the root (`/`). A name that starts like a scheme or a drive, such as `http:`, `file:` or `C:`, is resolved like any
+other name. For example, a producer without a directory now refuses `/../report.txt`, which a server wrote as
+`/report.txt`. The exchange fails with an `IllegalArgumentException` stating that the filename is jailed to the starting
+directory. Remove the `..` segments from such a name.
+
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-azure-files - a file name with both a backslash and a `..` segment is refused in some configurations
+
+With `jailStartingDirectory=true` (the default), a producer now refuses a file name that has both a backslash and a
+`..` segment, such as `sub\..\report.txt`, when the `separator` option is `Windows` or `Auto`, when the producer
+writes a temp file (`tempPrefix` or `tempFileName`) or a done file (`doneFileName`), or when `checksumFileAlgorithm` is
+set (with `checksumWriteFile` at its default, `true`). Where such a name goes depends on the server and on the platform
+that Camel runs on. The exchange fails with an `IllegalArgumentException` stating that the filename is jailed to the
+starting directory. With the default options, the producer replaces each backslash by `/` and writes such a name as
+before. Remove the backslashes or the `..` segments from the name.
+
+=== camel-ftp, camel-mina-sftp - a stepwise recursive poll skips a listed directory whose name is not one name
+
+A recursive consumer with `stepwise=true` (the default) changes into each sub directory by its name, and back to its
+parent afterwards. It now skips a directory from the listing of the server whose name is blank, `.` or `..`, or has a
+`/` or a `\` (other than a trailing `/`), and logs it at DEBUG level, as such a name would leave the poll in another
+directory than the one it lists. With `handleDirectoryParserAbsoluteResult=true` (ftp and ftps), the last name of the
+path that the server lists is checked. A backslash is a valid character in the name of a directory on a server on
+Linux: to poll such a directory, set `stepwise=false`.
+
 == Upgrading from 4.18.5 to 4.18.6
 
 === camel-aws2-sns - string array message attributes
@@ -190,6 +221,25 @@ logs a warning the first time. Before, the consumer restored the headers and exc
 
 Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
 exchange properties.
+
+=== camel-jaxb - the part class and namespace headers are used only when allowed
+
+The JAXB data format has a new option `allowPartClassFromHeader` (default `false`). The `CamelJaxbPartClass` and
+`CamelJaxbPartNamespace` headers are now used only when this option is `true`; otherwise they are ignored, and the
+`partClass` and `partNamespace` options of the data format apply. Before, the headers were always used, and took
+precedence over these options.
+
+With `allowPartClassFromHeader=true`, the headers now apply to their own message only. Before, a header also changed
+the `partClass` and `partNamespace` of the data format, so later messages without the header used the class or
+namespace of an earlier message.
+
+Routes that set these headers to choose the part class or namespace per message must enable the option, for example
+`jaxb.setAllowPartClassFromHeader(true)` in Java, `allowPartClassFromHeader="true"` on `<jaxb>` in XML, or
+`allowPartClassFromHeader: true` in YAML. With REST binding, set the data format property
+`xml.out.allowPartClassFromHeader=true` on the REST configuration for a REST service (the response), or
+`xml.in.allowPartClassFromHeader=true` for the `rest` producer (the request).
+
+The SOAP data format (camel-soap) is built on the JAXB data format, and always ignores these headers.
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
@@ -984,6 +1034,229 @@ flagged secret, and are now also sensitive keys, like the other secret options. 
 The Camel Main auto-configuration summary shows the value of these options as `xxxxxx`.
 These options are matched by their whole key. Component and endpoint options with the same name, such as `tenantId` or
 `serviceAccountKey`, are not affected.
+
+=== camel-quartz - a scheduler from the registry gets the CamelContext when the component starts
+
+With a Quartz `Scheduler` set on the quartz component or autowired from the registry, such as the scheduler of
+`spring-boot-starter-quartz`, the component now stores the CamelContext in the scheduler context when it starts, before
+the routes add their jobs. Before, it did so only once the CamelContext was fully started, so a trigger that fired in
+between on a scheduler that was already running failed with `No CamelContext could be found with name`. Such a job now
+runs its route if the route has started. The component now logs a WARN when this scheduler is already running when it
+starts, as a trigger that fires before its route has started is still lost (with Spring Boot, set
+`spring.quartz.auto-startup=false` to let Camel start it), and when the options `properties`, `propertiesRef` or
+`propertiesFile` are set, as they are not used with such a scheduler.
+
+=== camel-cxf, camel-cxfrs - the former operationName and operationNamespace headers are not sent
+
+The `CamelCxfOperationName` and `CamelCxfOperationNamespace` headers replaced the `operationName` and
+`operationNamespace` headers (see the
+xref:camel-4x-upgrade-guide-4_18.adoc#_camel_cxf_potential_breaking_change[camel-cxf entry of the 4.18 upgrade guide]).
+The `cxf` producer does not read the former names. It now logs a WARN once when one of them is set without its replacement.
+The default `CxfHeaderFilterStrategy` filters `operationName` and `operationNamespace` again, as it did before the
+rename, so the service no longer receives them as HTTP headers. A route that maps a header named `operationName` to
+`CamelCxfOperationName` keeps working.
+
+The `cxf` producer also logs a WARN once when neither the `CamelCxfOperationName` header nor the `defaultOperationName`
+option selects the operation of a service with more than one operation. It then invokes the first operation that CXF
+returns, which is not the first one of the WSDL.
+
+The `cxfrs` producer does not read the former `operationName` header either. With the proxy-based client API
+(`httpClientAPI=false`) it still fails when `CamelCxfOperationName` is not set. The `NoSuchMethodException` now names
+that header, and says when `operationName` is set, in place of `Cannot find method with name: null`. The default
+`CxfRsHeaderFilterStrategy` filters a header named `operationName` again, as it did before the rename. The producer
+no longer sends it as an HTTP header, with either client API. The `SimpleConsumer` binding no longer returns it as a
+response header.
+
+=== camel-core - option values of a dynamic endpoint are bound as literal text
+
+The dynamic-endpoint EIPs -- `toD`, `enrich`, `wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and
+`dynamicRouter` -- compute their target endpoint from the current message at runtime. The option values of that
+endpoint are now bound as literal text: a `#class:` value or a `#property:` value is not resolved. This holds regardless
+of how the component binds its options, including components that bind them in their own `createEndpoint` or look up
+a reference option with `resolveAndRemoveReferenceParameter`.
+
+This applies to every option of that uri, not only to the parts that come from the message: a `#class:` or
+`#property:` value written in the text of a `toD`, or in a uri that a bean of the route builds for `recipientList`,
+`routingSlip` or `dynamicRouter`, is not resolved either. For an option of type `String` the text is bound as is. For
+an option of another type, a `#class:` value fails the creation of the endpoint with a `ResolveEndpointFailedException`.
+Register the bean instead and refer to it with `#bean:`, for example:
+
+[source,java]
+----
+// before: the class was created for every new endpoint
+toD("log:audit?exchangeFormatter=#class:com.foo.MyFormatter&marker=${header.customer}")
+
+// after: create the bean once (e.g. camel.beans.myFormatter = #class:com.foo.MyFormatter) and refer to it
+toD("log:audit?exchangeFormatter=#bean:myFormatter&marker=${header.customer}")
+----
+
+What still works as before:
+
+* Registry references (`#bean:name`, `#type:`, `#name`) are still resolved, so `+toD("sql:${header.query}?dataSource=#ds")+` keeps working.
+* Property placeholders (`+{{...}}+`) in the uri computed per message are still resolved by `recipientList`,
+  `routingSlip` and `dynamicRouter`. For `toD`, `enrich`, `wireTap` and `pollEnrich`, see the next sections.
+* An endpoint in a static `to(...)`, or configured on the component, binds `#class:`, `#property:` and placeholders as
+  before.
+
+=== camel-core - RAW() option values of a dynamic endpoint computed from the message are literal text
+
+A `RAW(...)` option value of an endpoint whose uri is computed from the current message at runtime (`toD`, `enrich`,
+`wireTap`, `pollEnrich`, `recipientList`, `routingSlip` and `dynamicRouter`) is still unwrapped, but its content is now
+taken as literal text: a `+++$simple{...}+++` in it is no longer evaluated. Endpoints written in the route, such as
+`+to("ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})")+`, are unchanged. As the whole uri of `toD`
+is computed per message, this also applies to a `+++RAW($simple{env:MY_PASSWORD})+++` written in the `toD` uri itself;
+use a property placeholder instead, such as `+toD("ftp:joe@${header.host}?password=RAW({{env:MY_PASSWORD}})")+`, which
+is resolved once when the route is created.
+
+=== camel-core - property placeholders in a toD, enrich, wireTap or pollEnrich uri computed from the message
+
+`toD`, `enrich`, `wireTap` and `pollEnrich` no longer resolve property placeholders (`+{{...}}+`) in the uri evaluated
+for each message, as in Camel 4.22 and 4.23. A placeholder written in the route is resolved once, when the route is
+created. A `+{{...}}+` that only appears in the value computed at runtime, for example from a message header or the
+body, is now taken as a literal part of the endpoint uri instead of being expanded.
+
+This only affects routes where the message carried a `+{{...}}+` and relied on it being expanded. Placeholders written
+in the route keep working, for example:
+
+[source,java]
+----
+.toD("{{myEndpoint}}/${header.id}")
+.pollEnrich("file:{{inbox}}", 5000)
+----
+
+To have a placeholder resolved, keep it in the uri written in the route rather than in the message.
+
+`recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is computed entirely at runtime and may
+carry a placeholder that comes from configuration, so they continue to resolve `+{{...}}+` in the computed recipient.
+
+=== camel-ftp - ftps checks the server certificate against the JVM trust store when no trust store is configured
+
+An `ftps` endpoint configured with neither `sslContextParameters` nor the `ftpClient.trustStore.` options now checks the
+certificate of the server against the default trust store of the JVM (the `cacerts` file of the JDK, or the trust
+store set with the `javax.net.ssl.trustStore` system property). Before, such an endpoint accepted any server
+certificate within its validity dates, without checking who signed it.
+
+A server certificate signed by a public certificate authority works as before. For an FTPS server with a self-signed
+certificate, or a certificate signed by your own certificate authority, the connection now fails in the TLS handshake:
+put that certificate (or the certificate of the authority) in a trust store, and configure it with the
+`ftpClient.trustStore.file`, `ftpClient.trustStore.password` and `ftpClient.trustStore.type` options, or with
+`sslContextParameters`. A custom `ftpClient` keeps the trust manager it was created with. See
+xref:components::ftp-component.adoc#_ftps_component_default_trust_store[FTPS component default trust store].
+
+=== camel-vertx-http - an https:// address with a port always uses TLS
+
+A `vertx-http` endpoint with an `https://` address that has an explicit port (such as `https://host:8443/path`) now
+always calls it with TLS, also when no `sslContextParameters` is configured, and also through a proxy. The server
+certificate is then checked with the default trust store of the JVM, and the host name is verified. Before, such a
+request was sent without TLS unless TLS was turned on by `sslContextParameters`, global SSL settings or custom
+`WebClientOptions`. `https://` addresses without a port already used TLS.
+
+A route that called an `https://` address of a server that only speaks plain HTTP now fails; use an `http://` address
+for such a server. An `http://` address with `sslContextParameters` is not changed.
+
+=== camel-redis - RedisAggregationRepository stores exchanges in Java serialization, read through a deserialization filter
+
+`RedisAggregationRepository` now stores the exchanges in its Redis hashes as Java serialization, with the correlation
+key (or the exchange id) as a plain string field, and reads them back through an `ObjectInputFilter`. Before, the
+fields and values were encoded with the codec of the Redisson client, by default the Redisson `Kryo5Codec`. The codec
+of a `RedissonClient` given with the `redisson` option is no longer used for these hashes.
+
+The new option `deserializationFilter` sets the filter pattern, in the syntax of the `jdk.serialFilter` system
+property. When it is not set, the JVM-wide `jdk.serialFilter` applies if it is set, otherwise the default filter
+`!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`. It allows the
+`java`, `javax` and `org.apache.camel` packages, except `java.net`, and rejects the other classes. It also limits the
+size of a stored exchange: `maxdepth=20` (the depth of the object graph), `maxrefs=10000` (the number of objects in it)
+and `maxbytes=10485760` (10 MB). Before, there was no such limit. An exchange over a limit cannot be read back, and its
+aggregation does not complete, for example a `List` body that collects more than 10000 strings, or a body of more than
+10 MB. If the bodies or headers are instances of your own classes, or are larger, set `deserializationFilter`. It
+replaces the whole default pattern, so keep its other parts, for example
+`!java.net.**;com.foo.model.**;java.**;javax.**;org.apache.camel.**;maxdepth=50;maxrefs=1000000;maxbytes=104857600;!*`,
+or leave out the `maxdepth`, `maxrefs` and `maxbytes` parts to have no limits. The objects that a body or header value
+refers to must be `java.io.Serializable`.
+
+A completed exchange that cannot be read back is skipped by the recovery, with a WARN that gives its exchange id, so
+the recovery of the other completed exchanges goes on.
+
+The exchanges stored by Camel 4.18.5 and older are not read: they stay in Redis, but these aggregations do not complete
+and these completed exchanges are not recovered. When the repository starts, it checks the first 100 entries of each
+of its hashes and logs a WARN with the number of such entries among them. Complete the aggregations in progress, and
+let the recovery of the completed exchanges finish, before upgrading. Otherwise, remove the hashes of the repository
+(`mapName` and the persistence map, by default `mapName` with the suffix `-completed`) from Redis.
+
+To upgrade without draining, set the new `codec` option to `new org.redisson.codec.Kryo5Codec()`. The repository
+then reads and writes the entries in the same format as the older versions, and the `deserializationFilter` option and
+the WARN at startup do not apply. Once the old aggregations have completed and been recovered, remove the `codec` option
+to switch to the Java serialization read through the filter.
+
+=== camel-mongodb - the tls and tlsAllowInvalidHostnames options are applied
+
+When `hosts` is set, the `tls` and `tlsAllowInvalidHostnames` options are now applied to the client that the endpoint
+creates; before, they had no effect. A route with `tls=true` now connects with TLS, so the server must accept TLS and
+its certificate must be trusted by the JVM. The TLS settings inside `connectionUriString` are kept when these options
+are not set.
+
+=== camel-snmp - the trap consumer receives only the traps of its snmpVersion
+
+The trap consumer (`type=TRAP`) now receives only the traps of the `snmpVersion` of its endpoint. With `snmpVersion=0`
+(the default) or `snmpVersion=1`, it receives SNMPv1 and SNMPv2c traps, and drops SNMPv3 traps. With `snmpVersion=3`,
+it drops SNMPv1 and SNMPv2c traps, and receives the SNMPv3 traps of the user set in `securityName`, checked with the
+`authenticationProtocol`, `authenticationPassphrase`, `privacyProtocol` and `privacyPassphrase` of the endpoint, and
+with at least its `securityLevel` (the default is 3, authentication and privacy). The user is held by the consumer
+only, and is no longer taken from another `snmp` endpoint with SNMPv3 in the JVM.
+
+Before, the consumer received the traps of every version, and received SNMPv3 traps only when another `snmp` endpoint
+with SNMPv3, such as a trap producer, had been started in the same JVM. To receive traps of several versions, use a
+consumer per version, each on its own port.
+
+=== camel-smpp - the system id and password headers need the allowSystemIdAndPasswordFromHeaders option
+
+A producer with `lazySessionCreation=true` took the system id and the password, with which it connects to the SMSC,
+from the `CamelSmppSystemId` and `CamelSmppPassword` headers of the first message when both were set, over the
+`systemId` and `password` options of the endpoint. It now connects with the `systemId` and `password` of the endpoint,
+and ignores these headers, unless the endpoint sets the new `allowSystemIdAndPasswordFromHeaders=true` option (disabled
+by default), or the component sets `camel.component.smpp.allowSystemIdAndPasswordFromHeaders=true`. A route that
+relies on these headers must set this option.
+
+=== camel-pulsar - the host name of the broker is verified with pulsar+ssl
+
+When the endpoint creates its own Pulsar client, a `pulsar+ssl://` connection now checks that the certificate of the
+broker matches the host it connects to, with the same rules as an HTTPS client. Before, the client kept the default of
+the Pulsar client, which accepts any certificate trusted by the trust store, whatever host the certificate was issued
+for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the TLS handshake; this also
+applies to the brokers that a lookup returns (their advertised listeners). Use certificates that match the hosts, or set
+the new `hostnameVerification` option to `false` to keep the previous behaviour. A `pulsarClient` that is given to the
+component or the endpoint is used as it is.
+
+The new `tlsTrustCertsFilePath` option sets a PEM file with the certificates of the certificate authorities to trust,
+for a broker whose certificate is not signed by an authority that the JVM trusts.
+
+=== camel-platform-http-main, camel-netty-http, camel-undertow - the Authorization header is removed after the login is checked
+
+When Camel checks the credential of an incoming request, the `Authorization` header of the request is now removed from
+the message before the route gets it. This applies to:
+
+* camel-platform-http-main: the requests under `camel.server.authenticationPath` when
+  `camel.server.authenticationEnabled=true`, with basic (`basicPropertiesFile`) or JWT authentication.
+* camel-netty-http: the requests that are checked with basic authentication (`securityConfiguration`).
+* camel-undertow: the requests that a security provider (`UndertowSecurityProvider`) has authenticated.
+
+Before, the header was passed on to the route, and from there to the steps that use the message headers, such as a log
+of the headers or a producer that sends them on. A request that Camel does not check, for example to a path outside
+`authenticationPath` or to a resource that the netty-http security constraint does not restrict, keeps the header as
+sent. A route that has to call a backend with credentials sets them on that producer.
+
+=== camel-google-sheets, camel-google-drive, camel-google-mail, camel-google-calendar - the OAuth access token is sent only in the Authorization header
+
+The credential options (`clientId`, `clientSecret`, `accessToken`, `refreshToken`, `serviceAccountKey`, `delegate`,
+and `p12FileName` for calendar) are no longer set on the request of the Google API, whether they are given as endpoint
+options or as `CamelGoogleSheets.*`, `CamelGoogleDrive.*`, `CamelGoogleMail.*` or `CamelGoogleCalendar.*` headers (in
+any case). Before, an `accessToken` option or header could also be added to the request URL as the `access_token`
+query parameter. The access token is now sent only in the `Authorization` header, as the client already did.
+
+A route that used a `CamelGoogleXxx.accessToken` header to change the token for one request no longer gets that;
+configure the token on the endpoint or the component instead.
 
 == Upgrading from 4.18.4 to 4.18.5
 

@@ -85,6 +85,57 @@ In Groovy, a double-quoted string with placeholders, such as `+"Hello ${body}"+`
 not a `java.lang.String`. When a script returns a GString, Camel gives it as a `String`. So the body, header or
 variable is text: it is equal to a `String`, and components such as JMS send it as text.
 
+=== Parsing JSON in a script
+
+`new groovy.json.JsonSlurper().parseText(body)` parses a JSON message body into a `Map` or a `List`. In Groovy,
+`parseText` takes only text, but many message bodies are bytes or a stream: a JMS consumer gets a `byte[]` for a
+`BytesMessage`, a Kafka record read with the `ByteArrayDeserializer` is a `byte[]`, and an HTTP request body can be a
+stream. Camel adds `parseText` for a `byte[]` and for an `InputStream`, so the same script works on all of them:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("jms:queue:orders")
+    .setHeader("orderId", groovy("new groovy.json.JsonSlurper().parseText(body).orderId"))
+    .to("jms:queue:accepted");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:orders"/>
+    <setHeader name="orderId">
+        <groovy>new groovy.json.JsonSlurper().parseText(body).orderId</groovy>
+    </setHeader>
+    <to uri="jms:queue:accepted"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:orders
+      steps:
+        - setHeader:
+            name: orderId
+            expression:
+              groovy:
+                expression: "new groovy.json.JsonSlurper().parseText(body).orderId"
+        - to:
+            uri: jms:queue:accepted
+----
+====
+
+To parse the body before the script instead, use `unmarshal` with a JSON data format.
+
 === Customizing Groovy Shell
 
 For very special use-cases you may need to use a custom `GroovyShell` instance in your

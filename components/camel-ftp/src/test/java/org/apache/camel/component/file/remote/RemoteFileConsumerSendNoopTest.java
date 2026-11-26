@@ -36,6 +36,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 /**
  * Unit tests for the connection check that {@link RemoteFileConsumer#connectIfNecessary()} does before each poll: by
@@ -58,7 +59,8 @@ class RemoteFileConsumerSendNoopTest extends CamelTestSupport {
             }, sftpOperations, mock(GenericFileProcessStrategy.class));
         }
         // the ftp consumer (also used by ftps) needs the ftp specific operations
-        FtpOperations ftpOperations = mock(FtpOperations.class);
+        // created with its constructor, so it has the lock that the consumer holds while it walks the directories
+        FtpOperations ftpOperations = mock(FtpOperations.class, withSettings().useConstructor(null, null));
         operations = ftpOperations;
         return new FtpConsumer((RemoteFileEndpoint<FTPFile>) endpoint, exchange -> {
         }, ftpOperations, mock(GenericFileProcessStrategy.class));

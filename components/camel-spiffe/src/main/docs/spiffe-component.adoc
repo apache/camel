@@ -630,3 +630,48 @@ include::spring-boot:partial$starter.adoc[]
   cannot assert an identity by setting a header - and it requires mutual TLS, failing closed when the peer presented
   no verified certificate. The verified id it publishes is the `CamelSpiffePeerId` exchange *property*, never a header,
   so it likewise cannot be injected by an inbound message.
+
+== Producer readiness and identity observations
+
+Enable producer health checks with `camel.health.producersEnabled=true` before starting the route. The component
+also supports `healthCheckProducerEnabled` to disable its checks. The producer registers a check on start and removes
+it on stop. For each enabled check, a dedicated SDK-managed Workload API client maintains one streaming observer;
+stopping the producer closes that client and cancels its observer, even when the endpoint remains cached. Health
+calls read an immutable metadata snapshot and never fetch credentials, contact the API, or start another observer.
+Producer checks remain disabled globally by default, and no observer client is opened while they are disabled.
+If producer checks are enabled dynamically after route startup, restart the route to start its observer.
+
+The observation depends on the endpoint's configured operation:
+
+* `fetchX509Svid` observes the X.509 identity the producer serves: the one named by `localSpiffeId` when that option is
+  set, otherwise the default SVID. Readiness requires an available, unexpired SVID outside
+  `healthCheckExpiryThreshold` (default 60000 milliseconds, a duration such as `5m` is accepted). Set the threshold to
+  zero to require only that it has not expired. Health details include the observed expiry, remaining validity, and whether the identity is approaching expiry.
+* `fetchJwtSvid` and `validateJwtSvid` observe JWT trust bundles. Readiness requires a non-empty bundle update. Bundles
+  have no expiry timestamp, so the check makes no expiry claim and does not mint or validate a token. In particular,
+  it does not prove that a particular audience can be issued or that an incoming token will validate.
+
+Both report the most recent update timestamp and the state of the watch (`not-started`, `starting`, `watching`, `failed`
+or `stopped`). These are SDK callback observations, not an independently measured connection heartbeat; `lastUpdate` is
+the local observation time, not the SPIRE credential's issuance time. The check measures whether the identity the
+Workload API last delivered is valid and not about to expire, not whether the agent is reachable right now. The SDK
+reconnects to an unreachable agent on its own, with unlimited retries and without telling the watch, so an agent outage
+shows up only as an SVID that is no longer refreshed and comes within `healthCheckExpiryThreshold` of its expiry.
+`watch=failed` appears only after an error the SDK does not retry; the SDK then delivers no more updates, readiness
+stays DOWN with the last observation's validity details (`materialValid` keeps saying whether that material is still
+valid), and the route has to be restarted to watch again. Producer operations still contact the Workload API; the watch
+is not a credential cache for those operations. The rotating SSL context has its own source lifecycle and is not measured
+by these producer checks.
+
+No token, private key, certificate contents or exception text is retained or published by the check. A configured
+`workloadApiClient` is not actively probed: it can address a different API from `spiffeSocketPath`, and the SDK offers
+no independent unsubscribe handle for a borrowed client. Supply your own health check for that injected client. If
+`allowOperationHeader=true` is explicitly enabled, changing an individual message's operation does not retarget the
+readiness observer, which always reflects the endpoint's configured operation.
+
+== Authorization observations
+
+See xref:manual::authorization-observability.adoc[Authorization observations]
+for optional decision events, low-cardinality metrics and verified-identity
+composition examples. Observations preserve the component's existing decision
+headers and error handling.

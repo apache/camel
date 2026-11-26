@@ -114,7 +114,9 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             }
             pipeline.addLast("encoder-" + x, encoder);
         }
-        if (configuration.isDisableStreamCache()) {
+        // a chunked request is streamed to the route only when the route runs on the executor service, as the body
+        // is received by the I/O thread, which cannot wait for the route to read it
+        if (configuration.isDisableStreamCache() && consumer.getConfiguration().isUsingExecutorService()) {
             pipeline.addLast("inbound-streamer", new HttpInboundStreamHandler());
         }
         pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));

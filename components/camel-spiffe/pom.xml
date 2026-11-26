@@ -46,6 +46,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-health</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.spiffe</groupId>
             <artifactId>java-spiffe-core</artifactId>
             <version>${java-spiffe-version}</version>
@@ -54,6 +59,12 @@
             <groupId>io.spiffe</groupId>
             <artifactId>java-spiffe-provider</artifactId>
             <version>${java-spiffe-version}</version>
+        </dependency>
+
+        <!-- The SDK exposes gRPC failures at runtime; observation classifies their status codes. -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-api</artifactId>
         </dependency>
 
         <!-- for testing -->

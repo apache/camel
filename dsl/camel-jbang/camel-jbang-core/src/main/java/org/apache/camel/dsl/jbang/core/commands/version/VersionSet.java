@@ -22,7 +22,6 @@ import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelVersionCheck;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -58,10 +57,6 @@ public class VersionSet extends CamelCommand {
 
     /** Whether a version exists, given the version and the extra repositories: true, false, or null when unknown. */
     BiFunction<String, String, Boolean> versionCheck = CamelVersionCheck::exists;
-
-    public VersionSet(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

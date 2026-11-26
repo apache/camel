@@ -43,6 +43,7 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.config.internals.BrokerSecurityConfigs;
@@ -111,10 +112,13 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private Integer connectionMaxIdleMs = 540000;
     // receive.buffer.bytes
     @UriParam(label = "common", defaultValue = "65536",
-              description = "The size of the TCP receive buffer (SO_RCVBUF) to use when reading data.")
+              description = "The size of the TCP receive buffer (SO_RCVBUF) to use when reading data. If the value is -1, "
+                            + "the OS default will be used.")
     private Integer receiveBufferBytes = 65536;
     // send.buffer.bytes
-    @UriParam(label = "common", defaultValue = "131072", description = "Socket write buffer size")
+    @UriParam(label = "common", defaultValue = "131072",
+              description = "The size of the TCP send buffer (SO_SNDBUF) to use when sending data. If the value is -1, the "
+                            + "OS default will be used.")
     private Integer sendBufferBytes = 131072;
     // metadata.max.age.ms
     @UriParam(label = "common", defaultValue = "300000",
@@ -124,9 +128,11 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private Integer metadataMaxAgeMs = 300000;
     // metric.reporters
     @UriParam(label = "common",
-              description = "A list of classes to use as metrics reporters. Implementing the MetricReporter interface allows"
-                            + " plugging in classes that will be notified of new metric creation. The JmxReporter is always "
-                            + "included to register JMX statistics.")
+              description = "A list of classes to use as metrics reporters. Implementing the "
+                            + "org.apache.kafka.common.metrics.MetricsReporter interface allows plugging in classes that will "
+                            + "be notified of new metric creation. When custom reporters are set and "
+                            + "org.apache.kafka.common.metrics.JmxReporter is needed, it has to be explicitly added to the "
+                            + "list.")
     private String metricReporters;
     // metrics.num.samples
     @UriParam(label = "common", defaultValue = "2", description = "The number of samples maintained to compute metrics.")
@@ -136,9 +142,10 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private Integer metricsSampleWindowMs = 30000;
     // reconnect.backoff.ms
     @UriParam(label = "common", defaultValue = "50",
-              description = "The amount of time to wait before attempting to reconnect to a given host. This avoids "
-                            + "repeatedly connecting to a host in a tight loop. This backoff applies to all requests sent by "
-                            + "the consumer to the broker.")
+              description = "The base amount of time to wait before attempting to reconnect to a given host. This avoids "
+                            + "repeatedly connecting to a host in a tight loop. This backoff applies to all connection "
+                            + "attempts by the client to a broker. This value is the initial backoff value and will increase "
+                            + "exponentially for each consecutive connection failure, up to the reconnectBackoffMaxMs value.")
     private Integer reconnectBackoffMs = 50;
     // reconnect.backoff.max.ms
     @UriParam(label = "common", defaultValue = "1000",
@@ -180,28 +187,26 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private String sslTruststorePassword;
     // SSL
     // ssl.enabled.protocols
-    @UriParam(label = "common,security",
-              description = "The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3 when running "
-                            + "with Java 11 or newer, TLSv1.2 otherwise. With the default value for Java 11, clients and "
-                            + "servers will prefer TLSv1.3 if both support it and fallback to TLSv1.2 otherwise (assuming both"
-                            + " support at least TLSv1.2). This default should be fine for most cases. Also see the config "
-                            + "documentation for SslProtocol.")
+    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS,
+              description = "The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3. This means "
+                            + "that clients and servers will prefer TLSv1.3 if both support it and fallback to TLSv1.2 "
+                            + "otherwise (assuming both support at least TLSv1.2). This default should be fine for most use "
+                            + "cases. Also see the documentation of sslProtocol to understand how it can impact the TLS "
+                            + "version negotiation behavior.")
     private String sslEnabledProtocols = SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS;
     // ssl.keystore.type
     @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE,
-              description = "The file format of the key store file. This is optional for the client. The default value is "
-                            + "JKS")
+              description = "The file format of the key store file. This is optional for the client. The supported values "
+                            + "are JKS, PKCS12 and PEM.")
     private String sslKeystoreType = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE;
     // ssl.protocol
-    @UriParam(label = "common,security",
-              description = "The SSL protocol used to generate the SSLContext. The default is TLSv1.3 when running with Java"
-                            + " 11 or newer, TLSv1.2 otherwise. This value should be fine for most use cases. Allowed values "
-                            + "in recent JVMs are TLSv1.2 and TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may be supported in "
-                            + "older JVMs, but their usage is discouraged due to known security vulnerabilities. With the "
-                            + "default value for this config and sslEnabledProtocols, clients will downgrade to TLSv1.2 if the"
-                            + " server does not support TLSv1.3. If this config is set to TLSv1.2, clients will not use "
-                            + "TLSv1.3 even if it is one of the values in sslEnabledProtocols and the server only supports "
-                            + "TLSv1.3.")
+    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_PROTOCOL,
+              description = "The SSL protocol used to generate the SSLContext. The default is TLSv1.3, which should be fine "
+                            + "for most use cases. A typical alternative to the default is TLSv1.2. Allowed values for this "
+                            + "config are dependent on the JVM. Clients using the defaults for this config and "
+                            + "sslEnabledProtocols will downgrade to TLSv1.2 if the server does not support TLSv1.3. If this "
+                            + "config is set to TLSv1.2, however, clients will not use TLSv1.3 even if it is one of the values "
+                            + "in sslEnabledProtocols and the server only supports TLSv1.3.")
     private String sslProtocol = SslConfigs.DEFAULT_SSL_PROTOCOL;
     // ssl.provider
     @UriParam(label = "common,security",
@@ -210,7 +215,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private String sslProvider;
     // ssl.truststore.type
     @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE,
-              description = "The file format of the trust store file. The default value is JKS.")
+              description = "The file format of the trust store file. The supported values are JKS, PKCS12 and PEM.")
     private String sslTruststoreType = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE;
     // SSL
     // ssl.cipher.suites
@@ -272,8 +277,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
               description = "A list of rules for mapping from principal names to short names (typically operating system "
                             + "usernames). The rules are evaluated in order, and the first rule that matches a principal name "
                             + "is used to map it to a short name. Any later rules in the list are ignored. By default, "
-                            + "principal names of the form {username}/{hostname}{REALM} are mapped to {username}. For more "
-                            + "details on the format, please see the Security Authorization and ACLs documentation (at the "
+                            + "principal names made of a username, a hostname and a Kerberos realm are mapped to the "
+                            + "username. For more details on the format, please see the Security Authorization and ACLs documentation (at the "
                             + "Apache Kafka project website). Multiple values can be separated by comma")
     // sasl.kerberos.principal.to.local.rules
     private String kerberosPrincipalToLocalRules;
@@ -314,13 +319,61 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     @UriParam(label = "schema",
               description = "URL of the schema registry servers to use. The format is host1:port1,host2:port2. This is known"
                             + " as schema.registry.url in multiple Schema registries documentation. This option is only "
-                            + "available externally (not standard Apache Kafka)")
+                            + "available externally (not standard Apache Kafka). When schemaRegistryVendor is set, the URL "
+                            + "is set under the property of the vendor: schema.registry.url for confluent, "
+                            + "apicurio.registry.url for apicurio (the URL of the registry API, such as "
+                            + "http://localhost:8080/apis/registry/v3), schema.registry.url for azure (the fully qualified "
+                            + "namespace, such as my-namespace.servicebus.windows.net), and endpoint for aws-glue (optional, "
+                            + "as Glue is addressed by the AWS region).")
     private String schemaRegistryURL;
     @UriParam(label = "schema,consumer",
               description = "This enables the use of a specific Avro reader for use with the in multiple Schema registries "
                             + "documentation with Avro Deserializers implementation. This option is only available externally "
-                            + "(not standard Apache Kafka)")
+                            + "(not standard Apache Kafka). When schemaRegistryVendor is set, it is set under the property "
+                            + "of the vendor (for apicurio apicurio.registry.use-specific-avro-reader, for aws-glue "
+                            + "avroRecordType=SPECIFIC_RECORD).")
     private boolean specificAvroReader;
+    @UriParam(label = "schema", enums = KafkaSchemaRegistry.VENDORS,
+              description = "The schema registry vendor, which sets up the value serializer (producer), the value "
+                            + "deserializer (consumer) and the registry properties of the vendor for the schemaFormat, "
+                            + "so that you do not need to know the class names or the property names of the vendor. The "
+                            + "schemaRegistryURL is set as the registry URL of the vendor. A valueSerializer or "
+                            + "valueDeserializer other than the default, and additionalProperties, take precedence. The "
+                            + "serde jars of the vendor must be on the classpath, as Camel does not include them. Leave it "
+                            + "unset to configure the serializer, deserializer and registry properties yourself.")
+    private String schemaRegistryVendor;
+    @UriParam(label = "schema", defaultValue = KafkaSchemaRegistry.AVRO, enums = KafkaSchemaRegistry.FORMATS,
+              description = "The format of the record values in the schema registry, which selects the serializer and "
+                            + "deserializer of the schemaRegistryVendor. Not every vendor supports every format: azure "
+                            + "supports only avro. Only used when schemaRegistryVendor is set.")
+    private String schemaFormat = KafkaSchemaRegistry.AVRO;
+    @UriParam(label = "schema,security",
+              description = "The username to log in to the schema registry with basic auth, with schemaRegistryPassword. Used "
+                            + "with schemaRegistryVendor confluent (basic.auth.user.info, which is the API key for Confluent Cloud) "
+                            + "and apicurio (apicurio.registry.auth.username). The azure and aws-glue vendors log in with the "
+                            + "credentials of the environment instead.")
+    private String schemaRegistryUsername;
+    @UriParam(label = "schema,security", security = "secret",
+              description = "The password to log in to the schema registry with basic auth, with schemaRegistryUsername. For "
+                            + "Confluent Cloud, the API secret.")
+    private String schemaRegistryPassword;
+    @UriParam(label = "schema,security",
+              description = "The token endpoint of the OAuth2 server to log in to the schema registry with client credentials, "
+                            + "with schemaRegistryOauthClientId and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor "
+                            + "confluent (bearer.auth.issuer.endpoint.url) and apicurio "
+                            + "(apicurio.registry.auth.service.token.endpoint, such as the token endpoint of a Keycloak realm).")
+    private String schemaRegistryOauthTokenEndpoint;
+    @UriParam(label = "schema,security",
+              description = "The OAuth2 client id to log in to the schema registry with client credentials. Used with "
+                            + "schemaRegistryVendor confluent and apicurio.")
+    private String schemaRegistryOauthClientId;
+    @UriParam(label = "schema,security", security = "secret",
+              description = "The OAuth2 client secret to log in to the schema registry with client credentials.")
+    private String schemaRegistryOauthClientSecret;
+    @UriParam(label = "schema,security",
+              description = "The OAuth2 scope to ask for when logging in to the schema registry with client credentials "
+                            + "(optional).")
+    private String schemaRegistryOauthScope;
     // Additional properties
     @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true,
               description = "Sets additional properties for either kafka consumer or kafka producer in case they can't be "
@@ -413,7 +466,77 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
         addPropertyIfNotEmpty(props, CommonClientConfigs.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
         addPropertyIfNotEmpty(props, CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotEmpty(props, CommonClientConfigs.RETRY_BACKOFF_MAX_MS_CONFIG, getRetryBackoffMaxMs());
-        addPropertyIfNotEmpty(props, "schema.registry.url", getSchemaRegistryURL());
+        KafkaSchemaRegistry.applyUrl(props, resolveSchemaRegistryVendor(), getSchemaRegistryURL());
+        KafkaSchemaRegistry.applyLogin(props, resolveSchemaRegistryVendor(), getSchemaRegistryUsername(),
+                getSchemaRegistryPassword(), getSchemaRegistryOauthTokenEndpoint(), getSchemaRegistryOauthClientId(),
+                getSchemaRegistryOauthClientSecret(), getSchemaRegistryOauthScope());
+    }
+
+    /**
+     * Adds the value serializer and the registry properties of the schemaRegistryVendor to the producer properties. The
+     * value serializer is only set when the configured one is the default, so that an explicit valueSerializer wins.
+     * Does nothing if no schemaRegistryVendor is set.
+     *
+     * @param  props                    the producer properties
+     * @param  valueSerializer          the configured value serializer
+     * @throws IllegalArgumentException if the vendor or format is unknown, or the vendor does not support the format
+     */
+    protected void applySchemaRegistryProducerProperties(Properties props, String valueSerializer) {
+        String vendor = resolveSchemaRegistryVendor();
+        if (vendor != null) {
+            boolean explicit = !KafkaConstants.KAFKA_DEFAULT_SERIALIZER.equals(valueSerializer);
+            KafkaSchemaRegistry.applyProducer(props, vendor, getSchemaFormat(), explicit);
+        }
+    }
+
+    /**
+     * Adds the value deserializer and the registry properties of the schemaRegistryVendor to the consumer properties,
+     * and the specificAvroReader option under the key of the vendor. The value deserializer is only set when the
+     * configured one is the default, so that an explicit valueDeserializer wins. Without a schemaRegistryVendor, the
+     * specificAvroReader option is set as specific.avro.reader.
+     *
+     * @throws IllegalArgumentException if the vendor or format is unknown, or the vendor does not support the format
+     */
+    protected void applySchemaRegistryConsumerProperties(Properties props) {
+        String vendor = resolveSchemaRegistryVendor();
+        if (vendor != null) {
+            boolean explicit = !KafkaConstants.KAFKA_DEFAULT_DESERIALIZER.equals(getValueDeserializer());
+            KafkaSchemaRegistry.applyConsumer(props, vendor, getSchemaFormat(), isSpecificAvroReader(), explicit);
+        } else {
+            addPropertyIfNotFalse(props, KafkaSchemaRegistry.CONFLUENT_SPECIFIC_AVRO_READER, isSpecificAvroReader());
+        }
+    }
+
+    /**
+     * Checks the value serializer or deserializer that the schemaRegistryVendor sets. The endpoint replaces the class
+     * names of the serializers and deserializers by the classes that the class resolver of the CamelContext loads
+     * (which downloads the jar with Camel JBang), so the class name of the vendor that is still a String is a class
+     * that none of the class loaders of Camel and Kafka has, and Kafka would fail to load it too.
+     *
+     * @param  props the properties of the client, after the endpoint replaced the class names by the classes
+     * @param  key   value.serializer or value.deserializer
+     * @return       a message that names the Maven artifact of the class to add, or null if the class was loaded, no
+     *               schemaRegistryVendor is set, or the class is not the one of the vendor (such as an explicit
+     *               valueSerializer)
+     */
+    public String missingSchemaRegistrySerde(Properties props, String key) {
+        if (ObjectHelper.isEmpty(schemaRegistryVendor) || !(props.get(key) instanceof String name)) {
+            return null;
+        }
+        String vendor = resolveSchemaRegistryVendor();
+        boolean serializer = ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG.equals(key);
+        String expected = serializer
+                ? KafkaSchemaRegistry.serializer(vendor, getSchemaFormat())
+                : KafkaSchemaRegistry.deserializer(vendor, getSchemaFormat());
+        if (!expected.equals(name.trim())) {
+            return null;
+        }
+        return KafkaSchemaRegistry.missingSerdeMessage(vendor, getSchemaFormat(),
+                serializer ? "serializer" : "deserializer", expected);
+    }
+
+    private String resolveSchemaRegistryVendor() {
+        return KafkaSchemaRegistry.vendor(getSchemaRegistryVendor(), getSchemaFormat());
     }
 
     /**
@@ -445,6 +568,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
                     props.put(property, value);
                 }
             });
+            // the Azure serde needs its flags as Boolean, also when given as a String in additionalProperties
+            KafkaSchemaRegistry.applyBooleanFlags(props, resolveSchemaRegistryVendor());
         }
     }
 
@@ -541,6 +666,13 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
 
         KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
         if (keyManagers != null) {
+            if (keyManagers.getKeyManager() != null) {
+                // the Kafka client loads the key store itself from the ssl.keystore.* properties, so an existing
+                // key manager cannot be passed on, and ignoring it would connect without the client certificate
+                throw new IllegalArgumentException(
+                        "A KeyManager set on the key managers of sslContextParameters is not supported by the Kafka"
+                                                   + " client: configure a keyStore instead");
+            }
             addPropertyIfNotNull(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, keyManagers.getAlgorithm());
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, keyManagers.getKeyPassword());
             KeyStoreParameters keyStore = keyManagers.getKeyStore();
@@ -666,7 +798,11 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     /**
      * URL of the schema registry servers to use. The format is host1:port1,host2:port2. This is known as
      * schema.registry.url in multiple Schema registries documentation. This option is only available externally (not
-     * standard Apache Kafka)
+     * standard Apache Kafka). When schemaRegistryVendor is set, the URL is set under the property of the vendor:
+     * schema.registry.url for confluent, apicurio.registry.url for apicurio (the URL of the registry API, such as
+     * http://localhost:8080/apis/registry/v3), schema.registry.url for azure (the fully qualified namespace, such as
+     * my-namespace.servicebus.windows.net), and endpoint for aws-glue (optional, as Glue is addressed by the AWS
+     * region).
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
         this.schemaRegistryURL = schemaRegistryURL;
@@ -678,10 +814,115 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
 
     /**
      * This enables the use of a specific Avro reader for use with the in multiple Schema registries documentation with
-     * Avro Deserializers implementation. This option is only available externally (not standard Apache Kafka)
+     * Avro Deserializers implementation. This option is only available externally (not standard Apache Kafka). When
+     * schemaRegistryVendor is set, it is set under the property of the vendor (for apicurio
+     * apicurio.registry.use-specific-avro-reader, for aws-glue avroRecordType=SPECIFIC_RECORD).
      */
     public void setSpecificAvroReader(boolean specificAvroReader) {
         this.specificAvroReader = specificAvroReader;
+    }
+
+    public String getSchemaRegistryVendor() {
+        return schemaRegistryVendor;
+    }
+
+    /**
+     * The schema registry vendor, which sets up the value serializer (producer), the value deserializer (consumer) and
+     * the registry properties of the vendor for the schemaFormat, so that you do not need to know the class names or
+     * the property names of the vendor. The schemaRegistryURL is set as the registry URL of the vendor. A
+     * valueSerializer or valueDeserializer other than the default, and additionalProperties, take precedence. The serde
+     * jars of the vendor must be on the classpath, as Camel does not include them. Leave it unset to configure the
+     * serializer, deserializer and registry properties yourself.
+     */
+    public void setSchemaRegistryVendor(String schemaRegistryVendor) {
+        this.schemaRegistryVendor = schemaRegistryVendor;
+    }
+
+    public String getSchemaFormat() {
+        return schemaFormat;
+    }
+
+    /**
+     * The format of the record values in the schema registry, which selects the serializer and deserializer of the
+     * schemaRegistryVendor. Not every vendor supports every format: azure supports only avro. Only used when
+     * schemaRegistryVendor is set.
+     */
+    public void setSchemaFormat(String schemaFormat) {
+        this.schemaFormat = schemaFormat;
+    }
+
+    public String getSchemaRegistryUsername() {
+        return schemaRegistryUsername;
+    }
+
+    /**
+     * The username to log in to the schema registry with basic auth, with schemaRegistryPassword. Used with
+     * schemaRegistryVendor confluent (basic.auth.user.info, which is the API key for Confluent Cloud) and apicurio
+     * (apicurio.registry.auth.username). The azure and aws-glue vendors log in with the credentials of the environment
+     * instead.
+     */
+    public void setSchemaRegistryUsername(String schemaRegistryUsername) {
+        this.schemaRegistryUsername = schemaRegistryUsername;
+    }
+
+    public String getSchemaRegistryPassword() {
+        return schemaRegistryPassword;
+    }
+
+    /**
+     * The password to log in to the schema registry with basic auth, with schemaRegistryUsername. For Confluent Cloud,
+     * the API secret.
+     */
+    public void setSchemaRegistryPassword(String schemaRegistryPassword) {
+        this.schemaRegistryPassword = schemaRegistryPassword;
+    }
+
+    public String getSchemaRegistryOauthTokenEndpoint() {
+        return schemaRegistryOauthTokenEndpoint;
+    }
+
+    /**
+     * The token endpoint of the OAuth2 server to log in to the schema registry with client credentials, with
+     * schemaRegistryOauthClientId and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor confluent
+     * (bearer.auth.issuer.endpoint.url) and apicurio (apicurio.registry.auth.service.token.endpoint, such as the token
+     * endpoint of a Keycloak realm).
+     */
+    public void setSchemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+        this.schemaRegistryOauthTokenEndpoint = schemaRegistryOauthTokenEndpoint;
+    }
+
+    public String getSchemaRegistryOauthClientId() {
+        return schemaRegistryOauthClientId;
+    }
+
+    /**
+     * The OAuth2 client id to log in to the schema registry with client credentials. Used with schemaRegistryVendor
+     * confluent and apicurio.
+     */
+    public void setSchemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+        this.schemaRegistryOauthClientId = schemaRegistryOauthClientId;
+    }
+
+    public String getSchemaRegistryOauthClientSecret() {
+        return schemaRegistryOauthClientSecret;
+    }
+
+    /**
+     * The OAuth2 client secret to log in to the schema registry with client credentials.
+     */
+    public void setSchemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+        this.schemaRegistryOauthClientSecret = schemaRegistryOauthClientSecret;
+    }
+
+    public String getSchemaRegistryOauthScope() {
+        return schemaRegistryOauthScope;
+    }
+
+    /**
+     * The OAuth2 scope to ask for when logging in to the schema registry with client credentials (optional).
+     */
+    public void setSchemaRegistryOauthScope(String schemaRegistryOauthScope) {
+        this.schemaRegistryOauthScope = schemaRegistryOauthScope;
     }
 
     public Integer getRetryBackoffMs() {
@@ -718,7 +959,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * Socket write buffer size
+     * The size of the TCP send buffer (SO_SNDBUF) to use when sending data. If the value is -1, the OS default will be
+     * used.
      */
     public void setSendBufferBytes(Integer sendBufferBytes) {
         this.sendBufferBytes = sendBufferBytes;
@@ -776,8 +1018,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     /**
      * A list of rules for mapping from principal names to short names (typically operating system usernames). The rules
      * are evaluated in order, and the first rule that matches a principal name is used to map it to a short name. Any
-     * later rules in the list are ignored. By default, principal names of the form {username}/{hostname}@{REALM} are
-     * mapped to {username}. For more details on the format, please see the Security Authorization and ACLs
+     * later rules in the list are ignored. By default, principal names made of a username, a hostname and a Kerberos
+     * realm are mapped to the username. For more details on the format, please see the Security Authorization and ACLs
      * documentation (at the Apache Kafka project website).
      *
      * Multiple values can be separated by comma
@@ -840,10 +1082,10 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3 when running with Java 11 or
-     * newer, TLSv1.2 otherwise. With the default value for Java 11, clients and servers will prefer TLSv1.3 if both
-     * support it and fallback to TLSv1.2 otherwise (assuming both support at least TLSv1.2). This default should be
-     * fine for most cases. Also see the config documentation for SslProtocol.
+     * The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3. This means that clients and
+     * servers will prefer TLSv1.3 if both support it and fallback to TLSv1.2 otherwise (assuming both support at least
+     * TLSv1.2). This default should be fine for most use cases. Also see the documentation of sslProtocol to understand
+     * how it can impact the TLS version negotiation behavior.
      */
     public void setSslEnabledProtocols(String sslEnabledProtocols) {
         this.sslEnabledProtocols = sslEnabledProtocols;
@@ -854,7 +1096,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The file format of the key store file. This is optional for the client. The default value is JKS
+     * The file format of the key store file. This is optional for the client. The supported values are JKS, PKCS12 and
+     * PEM.
      */
     public void setSslKeystoreType(String sslKeystoreType) {
         this.sslKeystoreType = sslKeystoreType;
@@ -865,12 +1108,11 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The SSL protocol used to generate the SSLContext. The default is TLSv1.3 when running with Java 11 or newer,
-     * TLSv1.2 otherwise. This value should be fine for most use cases. Allowed values in recent JVMs are TLSv1.2 and
-     * TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may be supported in older JVMs, but their usage is discouraged due to
-     * known security vulnerabilities. With the default value for this config and sslEnabledProtocols, clients will
-     * downgrade to TLSv1.2 if the server does not support TLSv1.3. If this config is set to TLSv1.2, clients will not
-     * use TLSv1.3 even if it is one of the values in sslEnabledProtocols and the server only supports TLSv1.3.
+     * The SSL protocol used to generate the SSLContext. The default is TLSv1.3, which should be fine for most use
+     * cases. A typical alternative to the default is TLSv1.2. Allowed values for this config are dependent on the JVM.
+     * Clients using the defaults for this config and sslEnabledProtocols will downgrade to TLSv1.2 if the server does
+     * not support TLSv1.3. If this config is set to TLSv1.2, however, clients will not use TLSv1.3 even if it is one of
+     * the values in sslEnabledProtocols and the server only supports TLSv1.3.
      */
     public void setSslProtocol(String sslProtocol) {
         this.sslProtocol = sslProtocol;
@@ -893,7 +1135,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The file format of the trust store file. The default value is JKS.
+     * The file format of the trust store file. The supported values are JKS, PKCS12 and PEM.
      */
     public void setSslTruststoreType(String sslTruststoreType) {
         this.sslTruststoreType = sslTruststoreType;
@@ -1136,7 +1378,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The size of the TCP receive buffer (SO_RCVBUF) to use when reading data.
+     * The size of the TCP receive buffer (SO_RCVBUF) to use when reading data. If the value is -1, the OS default will
+     * be used.
      */
     public void setReceiveBufferBytes(Integer receiveBufferBytes) {
         this.receiveBufferBytes = receiveBufferBytes;
@@ -1159,9 +1402,9 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * A list of classes to use as metrics reporters. Implementing the MetricReporter interface allows plugging in
-     * classes that will be notified of new metric creation. The JmxReporter is always included to register JMX
-     * statistics.
+     * A list of classes to use as metrics reporters. Implementing the org.apache.kafka.common.metrics.MetricsReporter
+     * interface allows plugging in classes that will be notified of new metric creation. When custom reporters are set
+     * and org.apache.kafka.common.metrics.JmxReporter is needed, it has to be explicitly added to the list.
      */
     public void setMetricReporters(String metricReporters) {
         this.metricReporters = metricReporters;
@@ -1194,8 +1437,10 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The amount of time to wait before attempting to reconnect to a given host. This avoids repeatedly connecting to a
-     * host in a tight loop. This backoff applies to all requests sent by the consumer to the broker.
+     * The base amount of time to wait before attempting to reconnect to a given host. This avoids repeatedly connecting
+     * to a host in a tight loop. This backoff applies to all connection attempts by the client to a broker. This value
+     * is the initial backoff value and will increase exponentially for each consecutive connection failure, up to the
+     * reconnectBackoffMaxMs value.
      */
     public void setReconnectBackoffMs(Integer reconnectBackoffMs) {
         this.reconnectBackoffMs = reconnectBackoffMs;

@@ -28,6 +28,7 @@ import com.styra.opa.wasm.OpaPolicy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.security.AuthorizationDecisionEvent.Engine;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -111,8 +112,24 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     }
 
     /**
-     * Builds a wasm evaluator from a bundle location, applying the validation and the entrypoint default in one place
-     * so that the producer and the {@code OpaSecurityPolicy} construct it identically.
+     * The checks every WASM evaluator makes on its options, shared with {@link OpaReloadableWasmEvaluator#create} so
+     * the producer, the policy and the reloading wrapper refuse the same configurations with the same hint.
+     */
+    static void validateWasmOptions(String policyBundle, int poolSize) {
+        if (ObjectHelper.isEmpty(policyBundle)) {
+            throw new IllegalArgumentException(
+                    "policyBundle is required when evaluationMode=wasm; build one with"
+                                               + " opa build -t wasm -e <entrypoint> <policy.rego>");
+        }
+        if (poolSize < 1) {
+            throw new IllegalArgumentException("poolSize must be at least 1 when evaluationMode=wasm, was " + poolSize);
+        }
+    }
+
+    /**
+     * Builds a non-reloading wasm evaluator from a bundle location, applying the validation and the entrypoint default
+     * in one place. The producer and the {@code OpaSecurityPolicy} build through
+     * {@link OpaReloadableWasmEvaluator#create}, which wraps evaluators built like this one.
      */
     public static OpaWasmEvaluator create(
             CamelContext camelContext, String policyBundle, String entrypoint, int poolSize, long borrowTimeout,
@@ -128,14 +145,7 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
             String policyPath, String allowKey, String includeHeaders, String includeProperties, boolean includeBody,
             boolean failOpen, Expression inputExpression)
             throws Exception {
-        if (ObjectHelper.isEmpty(policyBundle)) {
-            throw new IllegalArgumentException(
-                    "policyBundle is required when evaluationMode=wasm; build one with"
-                                               + " opa build -t wasm -e <entrypoint> <policy.rego>");
-        }
-        if (poolSize < 1) {
-            throw new IllegalArgumentException("poolSize must be at least 1 when evaluationMode=wasm, was " + poolSize);
-        }
+        validateWasmOptions(policyBundle, poolSize);
         // the entrypoint is fixed at build time and is not the same thing as a data path, but opa build names it after
         // the rule, so the policy path is the right default
         String resolvedEntrypoint = ObjectHelper.isNotEmpty(entrypoint) ? entrypoint : policyPath;
@@ -187,9 +197,27 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
 
     @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
-        // serialized before borrowing, so an input that cannot be serialized costs no pooled instance
+        return evaluateDecision(input, null);
+    }
+
+    @Override
+    protected Engine observationEngine() {
+        return Engine.OPA_WASM;
+    }
+
+    @Override
+    protected Object evaluateDecision(Map<String, Object> input, long[] poolWaitNanos) throws Exception {
+        // Serialization failures do not consume a pooled policy instance.
         String json = MAPPER.writeValueAsString(input);
-        OpaWasmPolicyPool.Lease lease = pool.borrow();
+        long started = poolWaitNanos != null ? System.nanoTime() : 0;
+        OpaWasmPolicyPool.Lease lease;
+        try {
+            lease = pool.borrow();
+        } finally {
+            if (poolWaitNanos != null) {
+                poolWaitNanos[0] = System.nanoTime() - started;
+            }
+        }
         String result;
         try {
             result = lease.policy().evaluate(json);

@@ -16,30 +16,19 @@
  */
 package org.apache.camel.component.alibaba.kms.constants;
 
-import org.apache.camel.spi.Metadata;
-
+/**
+ * The names the producer reads as an exchange property. Each one is read as a message header too, which
+ * {@link KMSHeaders} documents for the catalog.
+ */
 public final class KMSProperties {
 
-    @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
-    public static final String OPERATION = "CamelAlibabaKmsOperation";
-
-    @Metadata(label = "producer", description = "KMS key id override", javaType = "String")
-    public static final String KEY_ID = "CamelAlibabaKmsKeyId";
-
-    @Metadata(label = "producer", description = "Plaintext to encrypt", javaType = "String")
-    public static final String PLAINTEXT = "CamelAlibabaKmsPlaintext";
-
-    @Metadata(label = "producer", description = "Ciphertext blob to decrypt", javaType = "String")
-    public static final String CIPHERTEXT_BLOB = "CamelAlibabaKmsCiphertextBlob";
-
-    @Metadata(label = "producer", description = "Key spec for generateDataKey", javaType = "String")
-    public static final String KEY_SPEC = "CamelAlibabaKmsKeySpec";
-
-    @Metadata(label = "producer", description = "Number of bytes for generateDataKey", javaType = "Integer")
-    public static final String NUMBER_OF_BYTES = "CamelAlibabaKmsNumberOfBytes";
-
-    @Metadata(label = "producer", description = "Request id returned by KMS API", javaType = "String")
-    public static final String REQUEST_ID = "CamelAlibabaKmsRequestId";
+    public static final String OPERATION = KMSHeaders.OPERATION;
+    public static final String KEY_ID = KMSHeaders.KEY_ID;
+    public static final String PLAINTEXT = KMSHeaders.PLAINTEXT;
+    public static final String CIPHERTEXT_BLOB = KMSHeaders.CIPHERTEXT_BLOB;
+    public static final String KEY_SPEC = KMSHeaders.KEY_SPEC;
+    public static final String NUMBER_OF_BYTES = KMSHeaders.NUMBER_OF_BYTES;
+    public static final String REQUEST_ID = KMSHeaders.REQUEST_ID;
 
     private KMSProperties() {
     }

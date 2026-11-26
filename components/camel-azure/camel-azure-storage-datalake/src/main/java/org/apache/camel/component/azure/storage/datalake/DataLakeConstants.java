@@ -106,6 +106,11 @@ public final class DataLakeConstants {
     @Metadata(label = "consumer", description = "Archive status of file.",
               javaType = "com.azure.storage.file.datalake.models.ArchiveStatus")
     public static final String ARCHIVE_STATUS = HEADER_PREFIX + "ArchiveStatus";
+    @Metadata(label = "consumer",
+              description = "The name of the file system the file was consumed from. It is not the"
+                            + " CamelAzureStorageDataLakeFileSystemName header, which overrides the file system of a producer.",
+              javaType = "String")
+    public static final String CONSUMED_FILE_SYSTEM_NAME = HEADER_PREFIX + "ConsumedFileSystemName";
     @Metadata(label = "consumer", description = "Cache control specified for the file.", javaType = "String")
     public static final String CACHE_CONTROL = HEADER_PREFIX + "CacheControl";
     @Metadata(label = "consumer", description = "Content disposition specified for the file.", javaType = "String")

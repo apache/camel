@@ -61,12 +61,12 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
+import org.bouncycastle.jcajce.interfaces.LMSPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XMSSMTPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XMSSPrivateKey;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
-import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
-import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -841,7 +841,7 @@ public class PQCProducer extends DefaultProducer {
 
         KeyGenerator generator = keyGeneratorForExchange();
         SecretKeyWithEncapsulation secEnc1;
-        synchronized (generator) {
+        synchronized (PQCKemLocks.lockFor(generator, keyPair.getPublic())) {
             // initialise for creating an encapsulation and shared secret.
             generator.init(
                     new KEMGenerateSpec(
@@ -873,7 +873,7 @@ public class PQCProducer extends DefaultProducer {
 
         KeyGenerator generator = keyGeneratorForExchange();
         SecretKeyWithEncapsulation secEnc2;
-        synchronized (generator) {
+        synchronized (PQCKemLocks.lockFor(generator, keyPair.getPrivate())) {
             generator.init(
                     new KEMExtractSpec(
                             keyPair.getPrivate(), payload.getEncapsulation(),

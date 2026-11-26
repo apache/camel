@@ -1,0 +1,59 @@
+= Protobuf Schema Component
+:doctitle: Protobuf Schema
+:shortname: protobuf-schema
+:artifactid: camel-protobuf-schema
+:description: Protobuf schemas as .proto text for the protobuf data format, without generated classes
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The xref:dataformats:protobuf-dataformat.adoc[Protobuf] data format reads and writes the classes that `protoc` generates from a `.proto` file. With its `schema` option, it takes the `.proto` text instead, and reads and writes a `com.google.protobuf.DynamicMessage`, so no generated class and no `protoc` is needed. This suits low-code routes, such as YAML routes and Kamelets.
+
+protobuf-java cannot parse `.proto` text, so the parser is in this module, `camel-protobuf-schema`, which adds the parser of https://github.com/square/wire[Square Wire] and its dependencies (okio, Guava and the Kotlin standard library) to the classpath. Add it next to `camel-protobuf` when you use the `schema` option:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-protobuf-schema</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+In a Kamelet, declare `camel:protobuf-schema`. Without it, a protobuf data format with `schema` fails at startup with a message that says to add `camel-protobuf-schema`.
+
+== Example
+
+A YAML route that turns JSON text into a Protobuf message of the type `Order`, and writes it to Kafka through a schema registry:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:orders
+      steps:
+        - unmarshal:
+            protobuf:
+              contentTypeFormat: json
+              schema: classpath:order.proto
+              messageName: Order
+        - to:
+            uri: kafka:orders
+            parameters:
+              schemaRegistryVendor: confluent
+              schemaRegistryURL: http://localhost:8081
+              schemaFormat: protobuf
+----
+
+`schema` is the `.proto` text, or a resource such as `classpath:order.proto`, `file:order.proto` or an `http:` URL. `messageName` is the message type, such as `Order`, `shop.Order` or the nested `Order.Line`; by default the first message type of the schema.
+
+== Supported schemas
+
+`proto2` and `proto3` files with nested messages, enums, maps, `oneof` and repeated fields. A schema may import these well-known types of `google/protobuf`, which are read in their JSON form (a `Timestamp` as RFC 3339 text): `any.proto`, `descriptor.proto`, `duration.proto`, `empty.proto`, `struct.proto`, `timestamp.proto` and `wrappers.proto`. Other imports are not supported, including `api.proto`, `field_mask.proto`, `source_context.proto` and `type.proto`: the schema is one file, and a schema that imports another file (such as `import "shop/common.proto";`) fails with a message that names the import. Put the types of the imported file in the schema itself.
+
+== Your own parser
+
+The parser is found as a single bean of the type `org.apache.camel.dataformat.protobuf.ProtobufSchemaParser` in the registry, or else on the classpath through `META-INF/services/org/apache/camel/protobuf-schema-parser`. Bind your own implementation to use another parser.

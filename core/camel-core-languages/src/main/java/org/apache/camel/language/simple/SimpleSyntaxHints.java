@@ -47,10 +47,13 @@ public final class SimpleSyntaxHints {
             "substringBetween", "contains", "pad", "concat", "val", "length", "size", "empty", "newEmpty", "iif",
             "hash", "convertTo", "throwException", "assert", "load", "uuid", "env", "sys", "sysenv", "ref", "bean",
             "properties", "propertiesExist", "type", "messageAs", "messageHistory", "logExchange", "pretty",
-            "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "semantic", "function", "list", "map",
+            "compact", "stripXmlDeclaration", "stripXmlComments", "stripXmlNamespaces", "canonicalXml", "isValidXml",
+            "isValidJson", "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "semantic", "function",
+            "list", "map",
             "range", "split", "sort", "distinct", "reverse", "shuffle", "forEach", "filter", "listAdd", "listRemove",
             "mapAdd", "mapRemove", "setHeader", "setVariable", "uppercase", "lowercase", "trim", "capitalize",
-            "normalizeWhitespace", "quote", "unquote", "safeQuote", "escape", "isEmpty", "isAlpha", "isAlphaNumeric",
+            "normalizeWhitespace", "quote", "unquote", "safeQuote", "escape", "unescape", "isEmpty", "isAlpha",
+            "isAlphaNumeric",
             "isNumeric", "not", "kindOfType", "file", "null");
 
     /** Functions that are called with parentheses, so a suggestion without arguments adds them. */

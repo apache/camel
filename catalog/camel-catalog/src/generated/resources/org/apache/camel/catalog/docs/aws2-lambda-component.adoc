@@ -190,6 +190,20 @@ An error of the function does not fail the exchange: the body is the JSON of the
 `CamelAwsLambdaFunctionError` header is set (for example to `Unhandled`). Check this header, for example with a
 filter or a choice, to handle the error.
 
+By default, `invokeFunction` waits until the function has finished (invocation type `RequestResponse`). Set
+`invocationType=Event` to invoke the function asynchronously: Lambda queues the event and answers at once, with the
+`CamelAwsLambdaStatusCode` header set to `202` and an empty body; the result of the function is not returned. Set
+`invocationType=DryRun` to only check that the function can be invoked (status code `204`). With `logType=Tail`, the
+`CamelAwsLambdaLogResult` header holds the last 4 KB of the execution log of a `RequestResponse` invocation,
+base64-encoded. The `CamelAwsLambdaInvocationType` and `CamelAwsLambdaLogType` headers override the options per
+message. With `pojoRequest=true`, the `InvokeRequest` in the body is sent as it is.
+
+[source,java]
+----
+from("direct:start")
+    .to("aws2-lambda://GetHelloWithName?operation=invokeFunction&invocationType=Event");
+----
+
 === Function URL Operations
 
 Function URLs provide a dedicated HTTP(S) endpoint for your Lambda function, enabling direct invocation via HTTP without needing API Gateway.

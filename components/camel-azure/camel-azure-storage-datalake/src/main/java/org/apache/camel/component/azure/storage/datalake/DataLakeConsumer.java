@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import com.azure.core.exception.HttpResponseException;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.file.datalake.DataLakeFileSystemClient;
 import com.azure.storage.file.datalake.models.DataLakeStorageException;
 import com.azure.storage.file.datalake.models.PathItem;
@@ -70,8 +72,9 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
                 exchanges = createBatchExchangesFromPath(dataLakeFileSystemClient);
             }
             result = processBatch(CastUtils.cast(exchanges));
-        } catch (DataLakeStorageException e) {
-            if (NOT_FOUND == e.getStatusCode()) {
+        } catch (DataLakeStorageException | BlobStorageException e) {
+            if (isNotFound(e)) {
+                // the file of the fileName option does not exist (yet)
                 result = 0;
             } else {
                 throw e;
@@ -103,8 +106,8 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
                 // files are consumed, and a later poll tries it again
                 try {
                     exchanges.add(createExchangeFromFile(pathItem.getName(), dataLakeFileSystemClient));
-                } catch (DataLakeStorageException e) {
-                    if (NOT_FOUND == e.getStatusCode()) {
+                } catch (DataLakeStorageException | BlobStorageException e) {
+                    if (isNotFound(e)) {
                         // deleted (for example by another consumer) after it was listed
                         LOG.debug("Skipping file {} as it no longer exists", pathItem.getName());
                     } else {
@@ -136,6 +139,17 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         return exchanges;
     }
 
+    /**
+     * Whether the exception is the answer of the service to a file that does not exist. Reading a file goes through the
+     * blob endpoint ({@code DataLakeFileClient.openInputStream} reads with a {@code BlockBlobClient} and does not
+     * translate its exception), so a missing file is a {@link BlobStorageException}, not a
+     * {@link DataLakeStorageException}.
+     */
+    private static boolean isNotFound(final HttpResponseException e) {
+        return e instanceof DataLakeStorageException d && NOT_FOUND == d.getStatusCode()
+                || e instanceof BlobStorageException b && NOT_FOUND == b.getStatusCode();
+    }
+
     private static void rethrow(final Exception e) throws IOException {
         if (e instanceof IOException ioe) {
             throw ioe;
@@ -164,6 +178,10 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         getEndpoint().setResponseOnExchange(response, exchange);
 
         exchange.getIn().setHeader(DataLakeConstants.FILE_NAME, fileName);
+        // the file system the file comes from, which names the CloudEvent source. It is not the FILESYSTEM_NAME header,
+        // as that header overrides the file system of a producer, which would then write to this file system
+        exchange.getIn().setHeader(DataLakeConstants.CONSUMED_FILE_SYSTEM_NAME,
+                getEndpoint().getConfiguration().getFileSystemName());
         return exchange;
     }
 
@@ -185,10 +203,13 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
 
             pendingExchanges = total - i - 1;
 
+            // the file the exchange was created from, as the route may change the header
+            final String fileName = exchange.getIn().getHeader(DataLakeConstants.FILE_NAME, String.class);
+
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    LOG.trace("Processing all exchanges completed");
+                    processCommit(exchange, fileName);
                 }
 
                 @Override
@@ -202,6 +223,37 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return total;
+    }
+
+    /**
+     * Deletes the file the exchange was created from, when deleteAfterRead is enabled.
+     *
+     * @param exchange the completed exchange
+     * @param fileName the name of the file in the file system, the exchange was created from
+     */
+    protected void processCommit(Exchange exchange, String fileName) {
+        if (!getEndpoint().getConfiguration().isDeleteAfterRead() || fileName == null) {
+            return;
+        }
+        final String fileSystemName = getEndpoint().getConfiguration().getFileSystemName();
+        try {
+            LOG.trace("Deleting file {} from file system {}...", fileName, fileSystemName);
+            final DataLakeFileClientWrapper clientWrapper = new DataLakeFileClientWrapper(
+                    getEndpoint().getDataLakeServiceClient().getFileSystemClient(fileSystemName).getFileClient(fileName));
+            clientWrapper.delete(null, null);
+            LOG.trace("Deleted file {} from file system {}", fileName, fileSystemName);
+        } catch (DataLakeStorageException e) {
+            if (NOT_FOUND == e.getStatusCode()) {
+                // already deleted, for example by another consumer
+                LOG.debug("File {} to delete no longer exists in file system {}", fileName, fileSystemName);
+            } else {
+                getExceptionHandler().handleException(
+                        "Error deleting file " + fileName + " from file system " + fileSystemName, exchange, e);
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException(
+                    "Error deleting file " + fileName + " from file system " + fileSystemName, exchange, e);
+        }
     }
 
     protected void processRollback(Exchange exchange) {

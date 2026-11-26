@@ -19,5 +19,6 @@ package org.apache.camel.component.springai.vectorstore;
 public enum SpringAiVectorStoreOperation {
     ADD,
     DELETE,
-    SIMILARITY_SEARCH
+    SIMILARITY_SEARCH,
+    UPSERT
 }

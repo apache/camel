@@ -826,6 +826,139 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testAFieldReadOnTheBytesAJmsConsumerGave() {
+        // r32 to r35 (connect-service-jms-request-reply step 3): the stock service gets the order as a byte[] from JMS,
+        // and a script read body.lines: "No such property: lines for class: [B". lines is a property of text, so the
+        // walk let it through while it took bytes for text (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: stock-service
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationType: queue
+                        destinationName: stock
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "def orderLines = body.lines; orderLines ? 'reserved' : 'empty'"
+                """;
+        assertThat(lines(yaml)).isEmpty();
+
+        ProjectFacts bytes
+                = observed(ProjectFacts.consumerKey("jms:queue:stock"), List.of("byte[]"), List.of("payload"));
+        assertThat(lines(yaml, bytes)).singleElement().satisfies(m -> {
+            assertThat(m).contains("groovy reads fields of the body (body.lines), but the body here is still bytes"
+                                   + " (a byte[]), not parsed data - in the running app, from: jms:queue:stock gave a byte[]");
+            assertThat(m).contains("unmarshal it first with the data format of the payload");
+        });
+
+        // text has lines, and the length of the bytes is not a field
+        ProjectFacts text
+                = observed(ProjectFacts.consumerKey("jms:queue:stock"), List.of("java.lang.String"), List.of("payload"));
+        assertThat(lines(yaml, text)).isEmpty();
+        assertThat(lines(yaml.replace("body.lines", "body.length"), bytes)).isEmpty();
+    }
+
+    @Test
+    public void testAFieldReadAfterConvertBodyToBytes() {
+        // convertBodyTo byte[] makes bytes, not text: lines is not a property of a byte[] (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: bytes
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: hello
+                        - convertBodyTo:
+                            type: byte[]
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "body.lines.size()"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("groovy reads fields of the body (body.lines), but the body here is still bytes"
+                                   + " (a byte[]), not parsed data - convertBodyTo byte[] makes it bytes");
+        });
+
+        // text has lines, and the length of the bytes is not a field
+        assertThat(lines(yaml.replace("type: byte[]", "type: String"))).isEmpty();
+        assertThat(lines(yaml.replace("body.lines.size()", "body.length"))).isEmpty();
+    }
+
+    @Test
+    public void testAFieldReadOnTheBytesAPollEnrichGave() {
+        // the pollEnrich replaced parsed data with an event, which the azure-eventhubs consumer gives as a byte[]: the
+        // bytes stay bytes, with the data they replaced (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: restock
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: "{\\"sku\\": \\"A1\\"}"
+                        - unmarshal:
+                            json: {}
+                        - pollEnrich:
+                            expression:
+                              constant:
+                                expression: azure-eventhubs:shop/stock
+                            timeout: 5000
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "body.lines.size()"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("groovy reads fields of the body (body.lines), but the body here is still bytes"
+                                   + " (a byte[]), not parsed data - pollEnrich: azure-eventhubs:shop/stock");
+        });
+
+        // a file as it was read has lines, and the length of the bytes is not a field
+        assertThat(lines(yaml.replace("azure-eventhubs:shop/stock", "file:stock"))).isEmpty();
+        assertThat(lines(yaml.replace("body.lines.size()", "body.length"))).isEmpty();
+    }
+
+    @Test
+    public void testTheCalledRouteReturnsBytes() {
+        // a direct: route that ends with convertBodyTo byte[] returns bytes, not text (CAMEL-27154)
+        String yaml = """
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - setBody:
+                            constant: hello
+                        - convertBodyTo:
+                            type: byte[]
+                - route:
+                    id: caller
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: direct:lookup
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "body.lines.size()"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route caller: groovy reads fields of the body (body.lines), but the body here is"
+                                   + " still bytes (a byte[]), not parsed data - to: direct:lookup returns it as bytes"
+                                   + " (convertBodyTo byte[] makes it bytes)");
+        });
+
+        // text has lines
+        assertThat(lines(yaml.replace("type: byte[]", "type: String"))).isEmpty();
+    }
+
+    @Test
     public void testTheBodyAProducerReturnedInTheRunningApp() {
         // a sql call returns a List of rows, which a file write cannot write as it is
         String yaml = """
@@ -1180,8 +1313,9 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheBodyOfBinaryDataFormats() {
-        // avro with its default library, Jackson, gives a Map, which the file producer cannot write; zipFile gives the
-        // content of the entry as a stream, cbor an object of a class, and fory what the data holds, which say nothing
+        // avro with its default library, Jackson, gives a Map, which the file producer cannot write; with ApacheAvro
+        // an object of instanceClassName, zipFile the content of the entry as a stream, cbor an object of a class, and
+        // fory what the data holds, which say nothing
         String yaml = """
                 - route:
                     id: avro
@@ -1190,6 +1324,16 @@ public class TextBodyFlowTest {
                       steps:
                         - unmarshal:
                             avro: {}
+                        - to: file:out
+                - route:
+                    id: avroApache
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            avro:
+                              library: ApacheAvro
+                              instanceClassName: com.acme.Order
                         - to: file:out
                 - route:
                     id: zip
@@ -1219,6 +1363,23 @@ public class TextBodyFlowTest {
                 """;
         assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
                 .contains("route avro: to: file needs the body as text, bytes, a stream or a file"));
+    }
+
+    @Test
+    public void testTheAvroDataFormatOfTheLibraryOption() {
+        // the library option names the constant of AvroLibrary: Jackson is avroJackson, ApacheAvro the avro data format
+        CatalogBodyTypes bodyTypes = new CatalogBodyTypes(new DefaultCamelCatalog(), null);
+        ObjectNode jackson = JsonNodeFactory.instance.objectNode();
+        assertThat(bodyTypes.unmarshalOut("avro", jackson).carriers()).containsExactlyInAnyOrder("map", "list");
+        jackson.put("library", "Jackson");
+        assertThat(bodyTypes.unmarshalOut("avro", jackson).carriers()).containsExactlyInAnyOrder("map", "list");
+
+        ObjectNode apache = JsonNodeFactory.instance.objectNode();
+        apache.put("library", "ApacheAvro");
+        apache.put("instanceClassName", "com.acme.Order");
+        CatalogBodyTypes.Answer out = bodyTypes.unmarshalOut("avro", apache);
+        assertThat(out.carriers()).contains("pojo").doesNotContain("map", "list");
+        assertThat(out.javaType()).isEqualTo("com.acme.Order");
     }
 
     @Test
@@ -1954,10 +2115,11 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTheBodyOfAwsAiServices() {
-        // translate, comprehend and the speech of polly are text; the invoke operations of aws-bedrock marshal a Map to
-        // the JSON of the request, and aws-bedrock-agent-runtime sends it as the JSON text of the question; the
-        // translation is text and a cloudtrail event is JSON in bytes. converse, rekognition, textract and timestream
-        // take their input from headers, and polly without an operation is not known, as the component may set it
+        // translate, comprehend, the speech of polly and the prompt of converse in aws-bedrock are text; the invoke
+        // operations of aws-bedrock marshal a Map to the JSON of the request, and aws-bedrock-agent-runtime sends it as
+        // the JSON text of the question; the translation is text and a cloudtrail event is JSON in bytes. rekognition,
+        // textract and timestream take their input from headers, and polly without an operation is not known, as the
+        // component may set it
         String yaml = """
                 - route:
                     id: translate
@@ -2061,10 +2223,11 @@ public class TextBodyFlowTest {
                             json: {}
                         - to: aws2-polly:p?voiceId=Joanna
                 """;
-        assertThat(lines(yaml)).hasSize(5)
+        assertThat(lines(yaml)).hasSize(6)
                 .anySatisfy(m -> assertThat(m).contains("route translate: to: aws2-translate needs the body as text"))
                 .anySatisfy(m -> assertThat(m).contains("route analyze: to: aws2-comprehend needs the body as text"))
                 .anySatisfy(m -> assertThat(m).contains("route speak: to: aws2-polly needs the body as text"))
+                .anySatisfy(m -> assertThat(m).contains("route converse: to: aws-bedrock needs the body as text"))
                 .noneSatisfy(m -> assertThat(m).contains("route prompt:"))
                 .noneSatisfy(m -> assertThat(m).contains("route ask:"))
                 .anySatisfy(m -> assertThat(m).contains("route translated: simple reads a field of the body (${body[text]})"))
@@ -2837,7 +3000,7 @@ public class TextBodyFlowTest {
 
     @Test
     public void testTransformDataTypeLeavesWhatItsTransformerMakes() {
-        // text-plain makes the parsed data text again, as the body types of the transformer in the catalog say
+        // text-plain takes a payload or a value: parsed data would become its toString(), so it needs a marshal first
         String yaml = """
                 - route:
                     from:
@@ -2849,14 +3012,15 @@ public class TextBodyFlowTest {
                             toType: text/plain
                         - to: file:outbox
                 """;
-        assertThat(lines(yaml)).isEmpty();
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m).contains(
+                        "transformDataType: text/plain needs the body as text, bytes, a stream, a file or a value"));
+        // text-plain makes text, as the body types of the transformer in the catalog say
         String text = """
                 - route:
                     from:
                       uri: file:inbox
                       steps:
-                        - unmarshal:
-                            json: {}
                         - transformDataType:
                             toType: text-plain
                         - setHeader:
@@ -2918,6 +3082,8 @@ public class TextBodyFlowTest {
             Set.of(), Map.of(), null, Map.of(), Map.of(),
             Map.of("my-source", new ProjectFacts.KameletDataTypes(null, "application-octet-stream"),
                     "my-sink", new ProjectFacts.KameletDataTypes("application-octet-stream", null),
+                    "my-text-sink", new ProjectFacts.KameletDataTypes("text-plain", null),
+                    "my-filter", new ProjectFacts.KameletDataTypes("application-x-unchanged", "application-x-unchanged"),
                     "my-action", new ProjectFacts.KameletDataTypes("application-x-struct", "text-plain"),
                     "my-events", new ProjectFacts.KameletDataTypes(null, "aws2-s3:application-cloudevents")));
 
@@ -2955,6 +3121,76 @@ public class TextBodyFlowTest {
                 .satisfies(m -> assertThat(m).contains(
                         "to: the Kamelet my-sink needs the body as text, bytes, a stream or a file (its in data type"
                                                        + " application-octet-stream)"));
+    }
+
+    @Test
+    public void testAKameletThatLeavesTheBodyKeepsIt() {
+        // application-x-unchanged takes any body and leaves it: after the Kamelet the body is still parsed data
+        String fields = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - kamelet:
+                            name: my-filter
+                        - setHeader:
+                            name: status
+                            simple: "${body[status]}"
+                """;
+        assertThat(lines(fields, KAMELETS)).isEmpty();
+        String file = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - kamelet:
+                            name: my-filter
+                        - to: file:outbox
+                """;
+        assertThat(lines(file, KAMELETS)).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file needs the body as text"));
+    }
+
+    @Test
+    public void testAKameletTextSinkNeedsText() {
+        // text-plain sends a Map as its toString(): parsed data needs a marshal first
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: kamelet:my-text-sink
+                """;
+        assertThat(lines(yaml, KAMELETS)).singleElement()
+                .satisfies(m -> assertThat(m).contains(
+                        "to: the Kamelet my-text-sink needs the body as text, bytes, a stream, a file or a value (its in"
+                                                       + " data type text-plain)"));
+        // text is what it takes
+        assertThat(lines(yaml.replace("unmarshal", "marshal"), KAMELETS)).isEmpty();
+    }
+
+    @Test
+    public void testTransformDataTypeTextPlainNeedsText() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - transformDataType:
+                            toType: text-plain
+                """;
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m)
+                        .contains("transformDataType: text-plain needs the body as text, bytes, a stream, a file or a value"));
     }
 
     @Test

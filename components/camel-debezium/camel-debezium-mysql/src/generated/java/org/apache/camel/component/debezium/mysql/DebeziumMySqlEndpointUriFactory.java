@@ -53,7 +53,6 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("databaseProtocol");
         props.add("databaseQueryTimeoutMs");
         props.add("databaseServerId");
-        props.add("databaseServerIdOffset");
         props.add("databaseSslKeystore");
         props.add("databaseSslKeystorePassword");
         props.add("databaseSslMode");
@@ -170,6 +169,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("topicNamingStrategy");
         props.add("topicPrefix");
         props.add("transactionMetadataFactory");
+        props.add("unavailableValuePlaceholder");
         props.add("useNongracefulDisconnect");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);

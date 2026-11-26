@@ -4,7 +4,7 @@
     "name": "openstack-keystone",
     "title": "OpenStack Keystone",
     "description": "Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant authorization.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "container",
     "javaType": "org.apache.camel.component.openstack.keystone.KeystoneComponent",

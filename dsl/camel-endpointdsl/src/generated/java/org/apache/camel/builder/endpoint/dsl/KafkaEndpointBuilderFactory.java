@@ -271,9 +271,11 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * A list of classes to use as metrics reporters. Implementing the
-         * MetricReporter interface allows plugging in classes that will be
-         * notified of new metric creation. The JmxReporter is always included
-         * to register JMX statistics.
+         * org.apache.kafka.common.metrics.MetricsReporter interface allows
+         * plugging in classes that will be notified of new metric creation.
+         * When custom reporters are set and
+         * org.apache.kafka.common.metrics.JmxReporter is needed, it has to be
+         * explicitly added to the list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -350,7 +352,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
-         * data.
+         * data. If the value is -1, the OS default will be used.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -366,7 +368,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
-         * data.
+         * data. If the value is -1, the OS default will be used.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -421,10 +423,12 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time to wait before attempting to reconnect to a given
-         * host. This avoids repeatedly connecting to a host in a tight loop.
-         * This backoff applies to all requests sent by the consumer to the
-         * broker.
+         * The base amount of time to wait before attempting to reconnect to a
+         * given host. This avoids repeatedly connecting to a host in a tight
+         * loop. This backoff applies to all connection attempts by the client
+         * to a broker. This value is the initial backoff value and will
+         * increase exponentially for each consecutive connection failure, up to
+         * the reconnectBackoffMaxMs value.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -439,10 +443,12 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time to wait before attempting to reconnect to a given
-         * host. This avoids repeatedly connecting to a host in a tight loop.
-         * This backoff applies to all requests sent by the consumer to the
-         * broker.
+         * The base amount of time to wait before attempting to reconnect to a
+         * given host. This avoids repeatedly connecting to a host in a tight
+         * loop. This backoff applies to all connection attempts by the client
+         * to a broker. This value is the initial backoff value and will
+         * increase exponentially for each consecutive connection failure, up to
+         * the reconnectBackoffMaxMs value.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -546,7 +552,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket write buffer size.
+         * The size of the TCP send buffer (SO_SNDBUF) to use when sending data.
+         * If the value is -1, the OS default will be used.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -561,7 +568,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket write buffer size.
+         * The size of the TCP send buffer (SO_SNDBUF) to use when sending data.
+         * If the value is -1, the OS default will be used.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -645,10 +653,9 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If true, periodically commit to ZooKeeper the offset of messages
-         * already fetched by the consumer. This committed offset will be used
-         * when the process fails as the position from which the new consumer
-         * will begin.
+         * If true, the consumer's offset is periodically committed to Kafka in
+         * the background. This committed offset is used when the process fails
+         * as the position from which the new consumer will begin.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -663,10 +670,9 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If true, periodically commit to ZooKeeper the offset of messages
-         * already fetched by the consumer. This committed offset will be used
-         * when the process fails as the position from which the new consumer
-         * will begin.
+         * If true, the consumer's offset is periodically committed to Kafka in
+         * the background. This committed offset is used when the process fails
+         * as the position from which the new consumer will begin.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -681,8 +687,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The frequency in ms that the consumer offsets are committed to
-         * zookeeper.
+         * The frequency in milliseconds that the consumer offsets are
+         * auto-committed to Kafka if autoCommitEnable is set to true.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -697,8 +703,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The frequency in ms that the consumer offsets are committed to
-         * zookeeper.
+         * The frequency in milliseconds that the consumer offsets are
+         * auto-committed to Kafka if autoCommitEnable is set to true.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -738,8 +744,9 @@ public interface KafkaEndpointBuilderFactory {
          * false, which uses streaming. In streaming mode, then a single kafka
          * record is processed per Camel exchange in the message body. In
          * batching mode, then Camel groups many kafka records together as a
-         * List objects in the message body. The option maxPollRecords is used
-         * to define the number of records to group together in batching mode.
+         * list of Exchange objects in the message body. The option
+         * maxPollRecords is used to define the number of records to group
+         * together in batching mode.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -758,8 +765,9 @@ public interface KafkaEndpointBuilderFactory {
          * false, which uses streaming. In streaming mode, then a single kafka
          * record is processed per Camel exchange in the message body. In
          * batching mode, then Camel groups many kafka records together as a
-         * List objects in the message body. The option maxPollRecords is used
-         * to define the number of records to group together in batching mode.
+         * list of Exchange objects in the message body. The option
+         * maxPollRecords is used to define the number of records to group
+         * together in batching mode.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1135,7 +1143,13 @@ public interface KafkaEndpointBuilderFactory {
          * A string that uniquely identifies the group of consumer processes to
          * which this consumer belongs. By setting the same group id, multiple
          * processes can indicate that they are all part of the same consumer
-         * group. This option is required for consumers.
+         * group. It takes precedence over a group.id set in
+         * additionalProperties. If neither is set, the consumer uses a
+         * generated group id, a new one at each start, and logs a WARN: it does
+         * not resume from the offsets committed before a restart, and each
+         * instance of the application receives every record. Set it on a
+         * consumer that must resume after a restart or share the records with
+         * other instances.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1245,10 +1259,14 @@ public interface KafkaEndpointBuilderFactory {
          * The expected time between heartbeats to the consumer coordinator when
          * using Kafka's group management facilities. Heartbeats are used to
          * ensure that the consumer's session stays active and to facilitate
-         * rebalancing when new consumers join or leave the group. The value
-         * must be set lower than session.timeout.ms, but typically should be
-         * set no higher than 1/3 of that value. It can be adjusted even lower
-         * to control the expected time for normal rebalances.
+         * rebalancing when new consumers join or leave the group. This option
+         * is only used when groupProtocol is set to classic. In that case, the
+         * value must be set lower than sessionTimeoutMs, but typically should
+         * be set no higher than 1/3 of that value. It can be adjusted even
+         * lower to control the expected time for normal rebalances. When
+         * groupProtocol is set to consumer, the heartbeat interval is
+         * controlled by the broker with group.consumer.heartbeat.interval.ms,
+         * and this option is left out of the consumer configuration.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1266,10 +1284,14 @@ public interface KafkaEndpointBuilderFactory {
          * The expected time between heartbeats to the consumer coordinator when
          * using Kafka's group management facilities. Heartbeats are used to
          * ensure that the consumer's session stays active and to facilitate
-         * rebalancing when new consumers join or leave the group. The value
-         * must be set lower than session.timeout.ms, but typically should be
-         * set no higher than 1/3 of that value. It can be adjusted even lower
-         * to control the expected time for normal rebalances.
+         * rebalancing when new consumers join or leave the group. This option
+         * is only used when groupProtocol is set to classic. In that case, the
+         * value must be set lower than sessionTimeoutMs, but typically should
+         * be set no higher than 1/3 of that value. It can be adjusted even
+         * lower to control the expected time for normal rebalances. When
+         * groupProtocol is set to consumer, the heartbeat interval is
+         * controlled by the broker with group.consumer.heartbeat.interval.ms,
+         * and this option is left out of the consumer configuration.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1301,13 +1323,13 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum amount of data per-partition the server will return. The
-         * maximum total memory used for a request will be #partitions *
-         * max.partition.fetch.bytes. This size must be at least as large as the
-         * maximum message size the server allows or else it is possible for the
-         * producer to send messages larger than the consumer can fetch. If that
-         * happens, the consumer can get stuck trying to fetch a large message
-         * on a certain partition.
+         * The maximum amount of data per-partition the server will return. This
+         * is not an absolute maximum, if the first record batch in the first
+         * non-empty partition of the fetch is larger than this value, the batch
+         * will still be returned to ensure that the consumer can make progress.
+         * The maximum record batch size accepted by the broker is defined via
+         * message.max.bytes (broker config) or max.message.bytes (topic
+         * config). See fetchMaxBytes for limiting the consumer request size.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1322,13 +1344,13 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum amount of data per-partition the server will return. The
-         * maximum total memory used for a request will be #partitions *
-         * max.partition.fetch.bytes. This size must be at least as large as the
-         * maximum message size the server allows or else it is possible for the
-         * producer to send messages larger than the consumer can fetch. If that
-         * happens, the consumer can get stuck trying to fetch a large message
-         * on a certain partition.
+         * The maximum amount of data per-partition the server will return. This
+         * is not an absolute maximum, if the first record batch in the first
+         * non-empty partition of the fetch is larger than this value, the batch
+         * will still be returned to ensure that the consumer can make progress.
+         * The maximum record batch size accepted by the broker is defined via
+         * message.max.bytes (broker config) or max.message.bytes (topic
+         * config). See fetchMaxBytes for limiting the consumer request size.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1353,6 +1375,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 300000
          * Group: consumer
          * 
          * @param maxPollIntervalMs the value to set
@@ -1373,6 +1396,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 300000
          * Group: consumer
          * 
          * @param maxPollIntervalMs the value to set
@@ -1448,13 +1472,19 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The class name of the partition assignment strategy that the client
-         * will use to distribute partition ownership amongst consumer instances
-         * when group management is used.
+         * The class names of the partition assignment strategies, ordered by
+         * preference, that the client will use to distribute partition
+         * ownership amongst consumer instances when group management is used.
+         * Multiple class names can be separated by comma. If not set, the Kafka
+         * default is used: org.apache.kafka.clients.consumer.RangeAssignor and
+         * org.apache.kafka.clients.consumer.CooperativeStickyAssignor. This
+         * uses the RangeAssignor, but allows upgrading to the
+         * CooperativeStickyAssignor with a single rolling restart that removes
+         * the RangeAssignor from the list. This option is only used when
+         * groupProtocol is set to classic.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: org.apache.kafka.clients.consumer.RangeAssignor
          * Group: consumer
          * 
          * @param partitionAssignor the value to set
@@ -1621,8 +1651,18 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timeout used to detect failures when using Kafka's group
-         * management facilities.
+         * The timeout used to detect client failures when using Kafka's group
+         * management facility. The client sends periodic heartbeats to indicate
+         * its liveness to the broker. If no heartbeats are received by the
+         * broker before the expiration of this session timeout, then the broker
+         * will remove this client from the group and initiate a rebalance. Note
+         * that the value must be in the allowable range as configured in the
+         * broker configuration by group.min.session.timeout.ms and
+         * group.max.session.timeout.ms. This option is only used when
+         * groupProtocol is set to classic. When groupProtocol is set to
+         * consumer, the session timeout is controlled by the broker with
+         * group.consumer.session.timeout.ms, and this option is left out of the
+         * consumer configuration.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1637,8 +1677,18 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timeout used to detect failures when using Kafka's group
-         * management facilities.
+         * The timeout used to detect client failures when using Kafka's group
+         * management facility. The client sends periodic heartbeats to indicate
+         * its liveness to the broker. If no heartbeats are received by the
+         * broker before the expiration of this session timeout, then the broker
+         * will remove this client from the group and initiate a rebalance. Note
+         * that the value must be in the allowable range as configured in the
+         * broker configuration by group.min.session.timeout.ms and
+         * group.max.session.timeout.ms. This option is only used when
+         * groupProtocol is set to classic. When groupProtocol is set to
+         * consumer, the session timeout is controlled by the broker with
+         * group.consumer.session.timeout.ms, and this option is left out of the
+         * consumer configuration.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1657,7 +1707,10 @@ public interface KafkaEndpointBuilderFactory {
          * This enables the use of a specific Avro reader for use with the in
          * multiple Schema registries documentation with Avro Deserializers
          * implementation. This option is only available externally (not
-         * standard Apache Kafka).
+         * standard Apache Kafka). When schemaRegistryVendor is set, it is set
+         * under the property of the vendor (for apicurio
+         * apicurio.registry.use-specific-avro-reader, for aws-glue
+         * avroRecordType=SPECIFIC_RECORD).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1675,7 +1728,10 @@ public interface KafkaEndpointBuilderFactory {
          * This enables the use of a specific Avro reader for use with the in
          * multiple Schema registries documentation with Avro Deserializers
          * implementation. This option is only available externally (not
-         * standard Apache Kafka).
+         * standard Apache Kafka). When schemaRegistryVendor is set, it is set
+         * under the property of the vendor (for apicurio
+         * apicurio.registry.use-specific-avro-reader, for aws-glue
+         * avroRecordType=SPECIFIC_RECORD).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1758,10 +1814,35 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The format of the record values in the schema registry, which selects
+         * the serializer and deserializer of the schemaRegistryVendor. Not
+         * every vendor supports every format: azure supports only avro. Only
+         * used when schemaRegistryVendor is set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: avro
+         * Group: schema
+         * 
+         * @param schemaFormat the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaFormat(String schemaFormat) {
+            doSetProperty("schemaFormat", schemaFormat);
+            return this;
+        }
+        /**
          * URL of the schema registry servers to use. The format is
          * host1:port1,host2:port2. This is known as schema.registry.url in
          * multiple Schema registries documentation. This option is only
-         * available externally (not standard Apache Kafka).
+         * available externally (not standard Apache Kafka). When
+         * schemaRegistryVendor is set, the URL is set under the property of the
+         * vendor: schema.registry.url for confluent, apicurio.registry.url for
+         * apicurio (the URL of the registry API, such as
+         * http://localhost:8080/apis/registry/v3), schema.registry.url for
+         * azure (the fully qualified namespace, such as
+         * my-namespace.servicebus.windows.net), and endpoint for aws-glue
+         * (optional, as Glue is addressed by the AWS region).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1772,6 +1853,29 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder schemaRegistryURL(String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+        /**
+         * The schema registry vendor, which sets up the value serializer
+         * (producer), the value deserializer (consumer) and the registry
+         * properties of the vendor for the schemaFormat, so that you do not
+         * need to know the class names or the property names of the vendor. The
+         * schemaRegistryURL is set as the registry URL of the vendor. A
+         * valueSerializer or valueDeserializer other than the default, and
+         * additionalProperties, take precedence. The serde jars of the vendor
+         * must be on the classpath, as Camel does not include them. Leave it
+         * unset to configure the serializer, deserializer and registry
+         * properties yourself.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryVendor the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryVendor(String schemaRegistryVendor) {
+            doSetProperty("schemaRegistryVendor", schemaRegistryVendor);
             return this;
         }
         /**
@@ -1839,10 +1943,11 @@ public interface KafkaEndpointBuilderFactory {
          * (typically operating system usernames). The rules are evaluated in
          * order, and the first rule that matches a principal name is used to
          * map it to a short name. Any later rules in the list are ignored. By
-         * default, principal names of the form {username}/{hostname}{REALM} are
-         * mapped to {username}. For more details on the format, please see the
-         * Security Authorization and ACLs documentation (at the Apache Kafka
-         * project website). Multiple values can be separated by comma.
+         * default, principal names made of a username, a hostname and a
+         * Kerberos realm are mapped to the username. For more details on the
+         * format, please see the Security Authorization and ACLs documentation
+         * (at the Apache Kafka project website). Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2097,6 +2202,103 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The OAuth2 client id to log in to the schema registry with client
+         * credentials. Used with schemaRegistryVendor confluent and apicurio.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+            doSetProperty("schemaRegistryOauthClientId", schemaRegistryOauthClientId);
+            return this;
+        }
+        /**
+         * The OAuth2 client secret to log in to the schema registry with client
+         * credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+            doSetProperty("schemaRegistryOauthClientSecret", schemaRegistryOauthClientSecret);
+            return this;
+        }
+        /**
+         * The OAuth2 scope to ask for when logging in to the schema registry
+         * with client credentials (optional).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryOauthScope(String schemaRegistryOauthScope) {
+            doSetProperty("schemaRegistryOauthScope", schemaRegistryOauthScope);
+            return this;
+        }
+        /**
+         * The token endpoint of the OAuth2 server to log in to the schema
+         * registry with client credentials, with schemaRegistryOauthClientId
+         * and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor
+         * confluent (bearer.auth.issuer.endpoint.url) and apicurio
+         * (apicurio.registry.auth.service.token.endpoint, such as the token
+         * endpoint of a Keycloak realm).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthTokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+            doSetProperty("schemaRegistryOauthTokenEndpoint", schemaRegistryOauthTokenEndpoint);
+            return this;
+        }
+        /**
+         * The password to log in to the schema registry with basic auth, with
+         * schemaRegistryUsername. For Confluent Cloud, the API secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryPassword(String schemaRegistryPassword) {
+            doSetProperty("schemaRegistryPassword", schemaRegistryPassword);
+            return this;
+        }
+        /**
+         * The username to log in to the schema registry with basic auth, with
+         * schemaRegistryPassword. Used with schemaRegistryVendor confluent
+         * (basic.auth.user.info, which is the API key for Confluent Cloud) and
+         * apicurio (apicurio.registry.auth.username). The azure and aws-glue
+         * vendors log in with the credentials of the environment instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryUsername(String schemaRegistryUsername) {
+            doSetProperty("schemaRegistryUsername", schemaRegistryUsername);
+            return this;
+        }
+        /**
          * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT,
          * SASL_SSL and SSL are supported.
          * 
@@ -2170,15 +2372,15 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The list of protocols enabled for SSL connections. The default is
-         * TLSv1.2,TLSv1.3 when running with Java 11 or newer, TLSv1.2
-         * otherwise. With the default value for Java 11, clients and servers
-         * will prefer TLSv1.3 if both support it and fallback to TLSv1.2
-         * otherwise (assuming both support at least TLSv1.2). This default
-         * should be fine for most cases. Also see the config documentation for
-         * SslProtocol.
+         * TLSv1.2,TLSv1.3. This means that clients and servers will prefer
+         * TLSv1.3 if both support it and fallback to TLSv1.2 otherwise
+         * (assuming both support at least TLSv1.2). This default should be fine
+         * for most use cases. Also see the documentation of sslProtocol to
+         * understand how it can impact the TLS version negotiation behavior.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          * 
          * @param sslEnabledProtocols the value to set
@@ -2271,7 +2473,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The file format of the key store file. This is optional for the
-         * client. The default value is JKS.
+         * client. The supported values are JKS, PKCS12 and PEM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2287,18 +2489,17 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The SSL protocol used to generate the SSLContext. The default is
-         * TLSv1.3 when running with Java 11 or newer, TLSv1.2 otherwise. This
-         * value should be fine for most use cases. Allowed values in recent
-         * JVMs are TLSv1.2 and TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may
-         * be supported in older JVMs, but their usage is discouraged due to
-         * known security vulnerabilities. With the default value for this
-         * config and sslEnabledProtocols, clients will downgrade to TLSv1.2 if
-         * the server does not support TLSv1.3. If this config is set to
-         * TLSv1.2, clients will not use TLSv1.3 even if it is one of the values
-         * in sslEnabledProtocols and the server only supports TLSv1.3.
+         * TLSv1.3, which should be fine for most use cases. A typical
+         * alternative to the default is TLSv1.2. Allowed values for this config
+         * are dependent on the JVM. Clients using the defaults for this config
+         * and sslEnabledProtocols will downgrade to TLSv1.2 if the server does
+         * not support TLSv1.3. If this config is set to TLSv1.2, however,
+         * clients will not use TLSv1.3 even if it is one of the values in
+         * sslEnabledProtocols and the server only supports TLSv1.3.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.3
          * Group: security
          * 
          * @param sslProtocol the value to set
@@ -2372,7 +2573,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The file format of the trust store file. The default value is JKS.
+         * The file format of the trust store file. The supported values are
+         * JKS, PKCS12 and PEM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2891,9 +3093,11 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * A list of classes to use as metrics reporters. Implementing the
-         * MetricReporter interface allows plugging in classes that will be
-         * notified of new metric creation. The JmxReporter is always included
-         * to register JMX statistics.
+         * org.apache.kafka.common.metrics.MetricsReporter interface allows
+         * plugging in classes that will be notified of new metric creation.
+         * When custom reporters are set and
+         * org.apache.kafka.common.metrics.JmxReporter is needed, it has to be
+         * explicitly added to the list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2970,7 +3174,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
-         * data.
+         * data. If the value is -1, the OS default will be used.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -2986,7 +3190,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
-         * data.
+         * data. If the value is -1, the OS default will be used.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3041,10 +3245,12 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time to wait before attempting to reconnect to a given
-         * host. This avoids repeatedly connecting to a host in a tight loop.
-         * This backoff applies to all requests sent by the consumer to the
-         * broker.
+         * The base amount of time to wait before attempting to reconnect to a
+         * given host. This avoids repeatedly connecting to a host in a tight
+         * loop. This backoff applies to all connection attempts by the client
+         * to a broker. This value is the initial backoff value and will
+         * increase exponentially for each consecutive connection failure, up to
+         * the reconnectBackoffMaxMs value.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3059,10 +3265,12 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time to wait before attempting to reconnect to a given
-         * host. This avoids repeatedly connecting to a host in a tight loop.
-         * This backoff applies to all requests sent by the consumer to the
-         * broker.
+         * The base amount of time to wait before attempting to reconnect to a
+         * given host. This avoids repeatedly connecting to a host in a tight
+         * loop. This backoff applies to all connection attempts by the client
+         * to a broker. This value is the initial backoff value and will
+         * increase exponentially for each consecutive connection failure, up to
+         * the reconnectBackoffMaxMs value.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3166,7 +3374,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket write buffer size.
+         * The size of the TCP send buffer (SO_SNDBUF) to use when sending data.
+         * If the value is -1, the OS default will be used.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3181,7 +3390,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket write buffer size.
+         * The size of the TCP send buffer (SO_SNDBUF) to use when sending data.
+         * If the value is -1, the OS default will be used.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3271,13 +3481,13 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * The total bytes of memory the producer can use to buffer records
          * waiting to be sent to the server. If records are sent faster than
-         * they can be delivered to the server, the producer will either block
-         * or throw an exception based on the preference specified by
-         * block.on.buffer.full.This setting should correspond roughly to the
-         * total memory the producer will use, but is not a hard bound since not
-         * all memory the producer uses is used for buffering. Some additional
-         * memory will be used for compression (if compression is enabled) as
-         * well as for maintaining in-flight requests.
+         * they can be delivered to the server, the producer will block for
+         * maxBlockMs after which it will fail with an exception. This setting
+         * should correspond roughly to the total memory the producer will use,
+         * but is not a hard bound since not all memory the producer uses is
+         * used for buffering. Some additional memory will be used for
+         * compression (if compression is enabled) as well as for maintaining
+         * in-flight requests.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3294,13 +3504,13 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * The total bytes of memory the producer can use to buffer records
          * waiting to be sent to the server. If records are sent faster than
-         * they can be delivered to the server, the producer will either block
-         * or throw an exception based on the preference specified by
-         * block.on.buffer.full.This setting should correspond roughly to the
-         * total memory the producer will use, but is not a hard bound since not
-         * all memory the producer uses is used for buffering. Some additional
-         * memory will be used for compression (if compression is enabled) as
-         * well as for maintaining in-flight requests.
+         * they can be delivered to the server, the producer will block for
+         * maxBlockMs after which it will fail with an exception. This setting
+         * should correspond roughly to the total memory the producer will use,
+         * but is not a hard bound since not all memory the producer uses is
+         * used for buffering. Some additional memory will be used for
+         * compression (if compression is enabled) as well as for maintaining
+         * in-flight requests.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3337,7 +3547,12 @@ public interface KafkaEndpointBuilderFactory {
          * to send() returns. This limits the total time that a record will be
          * delayed prior to sending, the time to await acknowledgement from the
          * broker (if expected), and the time allowed for retriable send
-         * failures.
+         * failures. The producer may report failure to send a record earlier
+         * than this config if either an unrecoverable error is encountered, the
+         * retries have been exhausted, or the record is added to a batch which
+         * reached an earlier delivery expiration deadline. The value of this
+         * config should be greater than or equal to the sum of requestTimeoutMs
+         * and lingerMs.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3356,7 +3571,12 @@ public interface KafkaEndpointBuilderFactory {
          * to send() returns. This limits the total time that a record will be
          * delayed prior to sending, the time to await acknowledgement from the
          * broker (if expected), and the time allowed for retriable send
-         * failures.
+         * failures. The producer may report failure to send a record earlier
+         * than this config if either an unrecoverable error is encountered, the
+         * retries have been exhausted, or the record is added to a batch which
+         * reached an earlier delivery expiration deadline. The value of this
+         * config should be greater than or equal to the sum of requestTimeoutMs
+         * and lingerMs.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3470,8 +3690,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The serializer class for keys (defaults to the same as for messages
-         * if nothing is given).
+         * The serializer class for keys. It must implement the
+         * org.apache.kafka.common.serialization.Serializer interface.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3496,14 +3716,17 @@ public interface KafkaEndpointBuilderFactory {
          * will wait for up to the given delay to allow other records to be sent
          * so that they can be batched together. This can be thought of as
          * analogous to Nagle's algorithm in TCP. This setting gives the upper
-         * bound on the delay for batching: once we get batch.size worth of
-         * records for a partition, it will be sent immediately regardless of
+         * bound on the delay for batching: once we get producerBatchSize worth
+         * of records for a partition, it will be sent immediately regardless of
          * this setting, however, if we have fewer than this many bytes
          * accumulated for this partition, we will 'linger' for the specified
-         * time waiting for more records to show up. This setting defaults to 0
-         * (i.e., no delay). Setting linger.ms=5, for example, would have the
+         * time waiting for more records to show up. This setting defaults to 5
+         * (i.e., 5ms delay). Increasing it to 50, for example, would have the
          * effect of reducing the number of requests sent but would add up to
-         * 5ms of latency to records sent in the absence of load.
+         * 50ms of latency to records sent in the absence of load. The default
+         * changed from 0 to 5 in Apache Kafka 4.0 as the efficiency gains from
+         * larger batches typically result in similar or lower producer latency
+         * despite the increased linger.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3528,14 +3751,17 @@ public interface KafkaEndpointBuilderFactory {
          * will wait for up to the given delay to allow other records to be sent
          * so that they can be batched together. This can be thought of as
          * analogous to Nagle's algorithm in TCP. This setting gives the upper
-         * bound on the delay for batching: once we get batch.size worth of
-         * records for a partition, it will be sent immediately regardless of
+         * bound on the delay for batching: once we get producerBatchSize worth
+         * of records for a partition, it will be sent immediately regardless of
          * this setting, however, if we have fewer than this many bytes
          * accumulated for this partition, we will 'linger' for the specified
-         * time waiting for more records to show up. This setting defaults to 0
-         * (i.e., no delay). Setting linger.ms=5, for example, would have the
+         * time waiting for more records to show up. This setting defaults to 5
+         * (i.e., 5ms delay). Increasing it to 50, for example, would have the
          * effect of reducing the number of requests sent but would add up to
-         * 5ms of latency to records sent in the absence of load.
+         * 50ms of latency to records sent in the absence of load. The default
+         * changed from 0 to 5 in Apache Kafka 4.0 as the efficiency gains from
+         * larger batches typically result in similar or lower producer latency
+         * despite the increased linger.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3602,8 +3828,14 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * The maximum number of unacknowledged requests the client will send on
          * a single connection before blocking. Note that if this setting is set
-         * to be greater than 1 and there are failed sends, there is a risk of
-         * message re-ordering due to retries (i.e., if retries are enabled).
+         * to be greater than 1 and enableIdempotence is set to false, there is
+         * a risk of message reordering after a failed send due to retries
+         * (i.e., if retries are enabled); if retries are disabled or if
+         * enableIdempotence is set to true, ordering will be preserved.
+         * Additionally, enabling idempotence requires the value of this setting
+         * to be less than or equal to 5, because the broker only retains at
+         * most 5 batches for each producer. If the value is more than 5,
+         * previous batches may be removed on the broker side.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3620,8 +3852,14 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * The maximum number of unacknowledged requests the client will send on
          * a single connection before blocking. Note that if this setting is set
-         * to be greater than 1 and there are failed sends, there is a risk of
-         * message re-ordering due to retries (i.e., if retries are enabled).
+         * to be greater than 1 and enableIdempotence is set to false, there is
+         * a risk of message reordering after a failed send due to retries
+         * (i.e., if retries are enabled); if retries are disabled or if
+         * enableIdempotence is set to true, ordering will be preserved.
+         * Additionally, enabling idempotence requires the value of this setting
+         * to be less than or equal to 5, because the broker only retains at
+         * most 5 batches for each producer. If the value is more than 5,
+         * previous batches may be removed on the broker side.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3637,11 +3875,12 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum size of a request. This is also effectively a cap on the
-         * maximum record size. Note that the server has its own cap on record
-         * size which may be different from this. This setting will limit the
+         * The maximum size of a request in bytes. This setting will limit the
          * number of record batches the producer will send in a single request
-         * to avoid sending huge requests.
+         * to avoid sending huge requests. This is also effectively a cap on the
+         * maximum uncompressed record batch size. Note that the server has its
+         * own cap on the record batch size (after compression if compression is
+         * enabled) which may be different from this.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3656,11 +3895,12 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum size of a request. This is also effectively a cap on the
-         * maximum record size. Note that the server has its own cap on record
-         * size which may be different from this. This setting will limit the
+         * The maximum size of a request in bytes. This setting will limit the
          * number of record batches the producer will send in a single request
-         * to avoid sending huge requests.
+         * to avoid sending huge requests. This is also effectively a cap on the
+         * maximum uncompressed record batch size. Note that the server has its
+         * own cap on the record batch size (after compression if compression is
+         * enabled) which may be different from this.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3676,8 +3916,13 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The partitioner class for partitioning messages amongst sub-topics.
-         * The default partitioner is based on the hash of the key.
+         * The partitioner class that determines which partition to send a
+         * record to. If not set, the default partitioning logic is used: a
+         * record with a key goes to a partition chosen by a hash of the key,
+         * and a record without a key goes to a sticky partition that changes
+         * when at least producerBatchSize bytes have been produced to it. A
+         * custom partitioner implements the
+         * org.apache.kafka.clients.producer.Partitioner interface.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3878,9 +4123,13 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time the broker will wait trying to meet the
-         * request.required.acks requirement before sending back an error to the
-         * client.
+         * The configuration controls the maximum amount of time the client will
+         * wait for the response of a request. If the response is not received
+         * before the timeout elapses, the client will resend the request if
+         * necessary or fail the request if retries are exhausted. This should
+         * be larger than replica.lag.time.max.ms (a broker configuration) to
+         * reduce the possibility of message duplication due to unnecessary
+         * producer retries.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3895,9 +4144,13 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time the broker will wait trying to meet the
-         * request.required.acks requirement before sending back an error to the
-         * client.
+         * The configuration controls the maximum amount of time the client will
+         * wait for the response of a request. If the response is not received
+         * before the timeout elapses, the client will resend the request if
+         * necessary or fail the request if retries are exhausted. This should
+         * be larger than replica.lag.time.max.ms (a broker configuration) to
+         * reduce the possibility of message duplication due to unnecessary
+         * producer retries.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3913,22 +4166,25 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Number of times to retry a request that fails with a transient error.
          * Setting a value greater than zero will cause the client to resend any
-         * record that has failed to be sent due to a potentially transient
-         * error. Note that this retry is no different from if the client
-         * re-sending the record upon receiving the error. Produce requests will
-         * be failed before the number of retries has been exhausted if the
-         * timeout configured by delivery.timeout.ms expires first before
-         * successful acknowledgement. Users should generally prefer to leave
-         * this config unset and instead use delivery.timeout.ms to control
-         * retry behavior. Enabling idempotence requires this config value to be
+         * record whose send fails with a potentially transient error. Requests
+         * will be retried this many times until they succeed, fail with a
+         * non-transient error, or the deliveryTimeoutMs expires. Note that this
+         * automatic retry will simply resend the same record upon receiving the
+         * error. Setting a value of zero will disable this automatic retry
+         * behaviour, so that the transient errors will be propagated to the
+         * application to be handled. Users should generally prefer to leave
+         * this config unset and instead use deliveryTimeoutMs to control retry
+         * behavior. Enabling idempotence requires this config value to be
          * greater than 0. If conflicting configurations are set and idempotence
          * is not explicitly enabled, idempotence is disabled. Allowing retries
          * while setting enable.idempotence to false and
-         * max.in.flight.requests.per.connection to 1 will potentially change
-         * the ordering of records, because if two batches are sent to a single
-         * partition, and the first fails and is retried but the second
-         * succeeds; then the records in the second batch may appear first.
+         * max.in.flight.requests.per.connection to greater than 1 will
+         * potentially change the ordering of records, because if two batches
+         * are sent to a single partition, and the first fails and is retried
+         * but the second succeeds; then the records in the second batch may
+         * appear first.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3942,22 +4198,25 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Number of times to retry a request that fails with a transient error.
          * Setting a value greater than zero will cause the client to resend any
-         * record that has failed to be sent due to a potentially transient
-         * error. Note that this retry is no different from if the client
-         * re-sending the record upon receiving the error. Produce requests will
-         * be failed before the number of retries has been exhausted if the
-         * timeout configured by delivery.timeout.ms expires first before
-         * successful acknowledgement. Users should generally prefer to leave
-         * this config unset and instead use delivery.timeout.ms to control
-         * retry behavior. Enabling idempotence requires this config value to be
+         * record whose send fails with a potentially transient error. Requests
+         * will be retried this many times until they succeed, fail with a
+         * non-transient error, or the deliveryTimeoutMs expires. Note that this
+         * automatic retry will simply resend the same record upon receiving the
+         * error. Setting a value of zero will disable this automatic retry
+         * behaviour, so that the transient errors will be propagated to the
+         * application to be handled. Users should generally prefer to leave
+         * this config unset and instead use deliveryTimeoutMs to control retry
+         * behavior. Enabling idempotence requires this config value to be
          * greater than 0. If conflicting configurations are set and idempotence
          * is not explicitly enabled, idempotence is disabled. Allowing retries
          * while setting enable.idempotence to false and
-         * max.in.flight.requests.per.connection to 1 will potentially change
-         * the ordering of records, because if two batches are sent to a single
-         * partition, and the first fails and is retried but the second
-         * succeeds; then the records in the second batch may appear first.
+         * max.in.flight.requests.per.connection to greater than 1 will
+         * potentially change the ordering of records, because if two batches
+         * are sent to a single partition, and the first fails and is retried
+         * but the second succeeds; then the records in the second batch may
+         * appear first.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -4060,7 +4319,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The serializer class for messages.
+         * The serializer class for values (the message body). It must implement
+         * the org.apache.kafka.common.serialization.Serializer interface.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4207,10 +4467,35 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The format of the record values in the schema registry, which selects
+         * the serializer and deserializer of the schemaRegistryVendor. Not
+         * every vendor supports every format: azure supports only avro. Only
+         * used when schemaRegistryVendor is set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: avro
+         * Group: schema
+         * 
+         * @param schemaFormat the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaFormat(String schemaFormat) {
+            doSetProperty("schemaFormat", schemaFormat);
+            return this;
+        }
+        /**
          * URL of the schema registry servers to use. The format is
          * host1:port1,host2:port2. This is known as schema.registry.url in
          * multiple Schema registries documentation. This option is only
-         * available externally (not standard Apache Kafka).
+         * available externally (not standard Apache Kafka). When
+         * schemaRegistryVendor is set, the URL is set under the property of the
+         * vendor: schema.registry.url for confluent, apicurio.registry.url for
+         * apicurio (the URL of the registry API, such as
+         * http://localhost:8080/apis/registry/v3), schema.registry.url for
+         * azure (the fully qualified namespace, such as
+         * my-namespace.servicebus.windows.net), and endpoint for aws-glue
+         * (optional, as Glue is addressed by the AWS region).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4221,6 +4506,29 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder schemaRegistryURL(String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+        /**
+         * The schema registry vendor, which sets up the value serializer
+         * (producer), the value deserializer (consumer) and the registry
+         * properties of the vendor for the schemaFormat, so that you do not
+         * need to know the class names or the property names of the vendor. The
+         * schemaRegistryURL is set as the registry URL of the vendor. A
+         * valueSerializer or valueDeserializer other than the default, and
+         * additionalProperties, take precedence. The serde jars of the vendor
+         * must be on the classpath, as Camel does not include them. Leave it
+         * unset to configure the serializer, deserializer and registry
+         * properties yourself.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryVendor the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryVendor(String schemaRegistryVendor) {
+            doSetProperty("schemaRegistryVendor", schemaRegistryVendor);
             return this;
         }
         /**
@@ -4288,10 +4596,11 @@ public interface KafkaEndpointBuilderFactory {
          * (typically operating system usernames). The rules are evaluated in
          * order, and the first rule that matches a principal name is used to
          * map it to a short name. Any later rules in the list are ignored. By
-         * default, principal names of the form {username}/{hostname}{REALM} are
-         * mapped to {username}. For more details on the format, please see the
-         * Security Authorization and ACLs documentation (at the Apache Kafka
-         * project website). Multiple values can be separated by comma.
+         * default, principal names made of a username, a hostname and a
+         * Kerberos realm are mapped to the username. For more details on the
+         * format, please see the Security Authorization and ACLs documentation
+         * (at the Apache Kafka project website). Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4546,6 +4855,103 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The OAuth2 client id to log in to the schema registry with client
+         * credentials. Used with schemaRegistryVendor confluent and apicurio.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+            doSetProperty("schemaRegistryOauthClientId", schemaRegistryOauthClientId);
+            return this;
+        }
+        /**
+         * The OAuth2 client secret to log in to the schema registry with client
+         * credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+            doSetProperty("schemaRegistryOauthClientSecret", schemaRegistryOauthClientSecret);
+            return this;
+        }
+        /**
+         * The OAuth2 scope to ask for when logging in to the schema registry
+         * with client credentials (optional).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryOauthScope(String schemaRegistryOauthScope) {
+            doSetProperty("schemaRegistryOauthScope", schemaRegistryOauthScope);
+            return this;
+        }
+        /**
+         * The token endpoint of the OAuth2 server to log in to the schema
+         * registry with client credentials, with schemaRegistryOauthClientId
+         * and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor
+         * confluent (bearer.auth.issuer.endpoint.url) and apicurio
+         * (apicurio.registry.auth.service.token.endpoint, such as the token
+         * endpoint of a Keycloak realm).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthTokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+            doSetProperty("schemaRegistryOauthTokenEndpoint", schemaRegistryOauthTokenEndpoint);
+            return this;
+        }
+        /**
+         * The password to log in to the schema registry with basic auth, with
+         * schemaRegistryUsername. For Confluent Cloud, the API secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryPassword(String schemaRegistryPassword) {
+            doSetProperty("schemaRegistryPassword", schemaRegistryPassword);
+            return this;
+        }
+        /**
+         * The username to log in to the schema registry with basic auth, with
+         * schemaRegistryPassword. Used with schemaRegistryVendor confluent
+         * (basic.auth.user.info, which is the API key for Confluent Cloud) and
+         * apicurio (apicurio.registry.auth.username). The azure and aws-glue
+         * vendors log in with the credentials of the environment instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryUsername(String schemaRegistryUsername) {
+            doSetProperty("schemaRegistryUsername", schemaRegistryUsername);
+            return this;
+        }
+        /**
          * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT,
          * SASL_SSL and SSL are supported.
          * 
@@ -4619,15 +5025,15 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The list of protocols enabled for SSL connections. The default is
-         * TLSv1.2,TLSv1.3 when running with Java 11 or newer, TLSv1.2
-         * otherwise. With the default value for Java 11, clients and servers
-         * will prefer TLSv1.3 if both support it and fallback to TLSv1.2
-         * otherwise (assuming both support at least TLSv1.2). This default
-         * should be fine for most cases. Also see the config documentation for
-         * SslProtocol.
+         * TLSv1.2,TLSv1.3. This means that clients and servers will prefer
+         * TLSv1.3 if both support it and fallback to TLSv1.2 otherwise
+         * (assuming both support at least TLSv1.2). This default should be fine
+         * for most use cases. Also see the documentation of sslProtocol to
+         * understand how it can impact the TLS version negotiation behavior.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          * 
          * @param sslEnabledProtocols the value to set
@@ -4720,7 +5126,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The file format of the key store file. This is optional for the
-         * client. The default value is JKS.
+         * client. The supported values are JKS, PKCS12 and PEM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4736,18 +5142,17 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The SSL protocol used to generate the SSLContext. The default is
-         * TLSv1.3 when running with Java 11 or newer, TLSv1.2 otherwise. This
-         * value should be fine for most use cases. Allowed values in recent
-         * JVMs are TLSv1.2 and TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may
-         * be supported in older JVMs, but their usage is discouraged due to
-         * known security vulnerabilities. With the default value for this
-         * config and sslEnabledProtocols, clients will downgrade to TLSv1.2 if
-         * the server does not support TLSv1.3. If this config is set to
-         * TLSv1.2, clients will not use TLSv1.3 even if it is one of the values
-         * in sslEnabledProtocols and the server only supports TLSv1.3.
+         * TLSv1.3, which should be fine for most use cases. A typical
+         * alternative to the default is TLSv1.2. Allowed values for this config
+         * are dependent on the JVM. Clients using the defaults for this config
+         * and sslEnabledProtocols will downgrade to TLSv1.2 if the server does
+         * not support TLSv1.3. If this config is set to TLSv1.2, however,
+         * clients will not use TLSv1.3 even if it is one of the values in
+         * sslEnabledProtocols and the server only supports TLSv1.3.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.3
          * Group: security
          * 
          * @param sslProtocol the value to set
@@ -4821,7 +5226,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The file format of the trust store file. The default value is JKS.
+         * The file format of the trust store file. The supported values are
+         * JKS, PKCS12 and PEM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5238,9 +5644,11 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * A list of classes to use as metrics reporters. Implementing the
-         * MetricReporter interface allows plugging in classes that will be
-         * notified of new metric creation. The JmxReporter is always included
-         * to register JMX statistics.
+         * org.apache.kafka.common.metrics.MetricsReporter interface allows
+         * plugging in classes that will be notified of new metric creation.
+         * When custom reporters are set and
+         * org.apache.kafka.common.metrics.JmxReporter is needed, it has to be
+         * explicitly added to the list.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5317,7 +5725,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
-         * data.
+         * data. If the value is -1, the OS default will be used.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -5333,7 +5741,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
-         * data.
+         * data. If the value is -1, the OS default will be used.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -5388,10 +5796,12 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time to wait before attempting to reconnect to a given
-         * host. This avoids repeatedly connecting to a host in a tight loop.
-         * This backoff applies to all requests sent by the consumer to the
-         * broker.
+         * The base amount of time to wait before attempting to reconnect to a
+         * given host. This avoids repeatedly connecting to a host in a tight
+         * loop. This backoff applies to all connection attempts by the client
+         * to a broker. This value is the initial backoff value and will
+         * increase exponentially for each consecutive connection failure, up to
+         * the reconnectBackoffMaxMs value.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -5406,10 +5816,12 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount of time to wait before attempting to reconnect to a given
-         * host. This avoids repeatedly connecting to a host in a tight loop.
-         * This backoff applies to all requests sent by the consumer to the
-         * broker.
+         * The base amount of time to wait before attempting to reconnect to a
+         * given host. This avoids repeatedly connecting to a host in a tight
+         * loop. This backoff applies to all connection attempts by the client
+         * to a broker. This value is the initial backoff value and will
+         * increase exponentially for each consecutive connection failure, up to
+         * the reconnectBackoffMaxMs value.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -5513,7 +5925,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket write buffer size.
+         * The size of the TCP send buffer (SO_SNDBUF) to use when sending data.
+         * If the value is -1, the OS default will be used.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -5528,7 +5941,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket write buffer size.
+         * The size of the TCP send buffer (SO_SNDBUF) to use when sending data.
+         * If the value is -1, the OS default will be used.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -5596,10 +6010,35 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The format of the record values in the schema registry, which selects
+         * the serializer and deserializer of the schemaRegistryVendor. Not
+         * every vendor supports every format: azure supports only avro. Only
+         * used when schemaRegistryVendor is set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: avro
+         * Group: schema
+         * 
+         * @param schemaFormat the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaFormat(String schemaFormat) {
+            doSetProperty("schemaFormat", schemaFormat);
+            return this;
+        }
+        /**
          * URL of the schema registry servers to use. The format is
          * host1:port1,host2:port2. This is known as schema.registry.url in
          * multiple Schema registries documentation. This option is only
-         * available externally (not standard Apache Kafka).
+         * available externally (not standard Apache Kafka). When
+         * schemaRegistryVendor is set, the URL is set under the property of the
+         * vendor: schema.registry.url for confluent, apicurio.registry.url for
+         * apicurio (the URL of the registry API, such as
+         * http://localhost:8080/apis/registry/v3), schema.registry.url for
+         * azure (the fully qualified namespace, such as
+         * my-namespace.servicebus.windows.net), and endpoint for aws-glue
+         * (optional, as Glue is addressed by the AWS region).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5610,6 +6049,29 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+        /**
+         * The schema registry vendor, which sets up the value serializer
+         * (producer), the value deserializer (consumer) and the registry
+         * properties of the vendor for the schemaFormat, so that you do not
+         * need to know the class names or the property names of the vendor. The
+         * schemaRegistryURL is set as the registry URL of the vendor. A
+         * valueSerializer or valueDeserializer other than the default, and
+         * additionalProperties, take precedence. The serde jars of the vendor
+         * must be on the classpath, as Camel does not include them. Leave it
+         * unset to configure the serializer, deserializer and registry
+         * properties yourself.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: schema
+         * 
+         * @param schemaRegistryVendor the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryVendor(String schemaRegistryVendor) {
+            doSetProperty("schemaRegistryVendor", schemaRegistryVendor);
             return this;
         }
         /**
@@ -5677,10 +6139,11 @@ public interface KafkaEndpointBuilderFactory {
          * (typically operating system usernames). The rules are evaluated in
          * order, and the first rule that matches a principal name is used to
          * map it to a short name. Any later rules in the list are ignored. By
-         * default, principal names of the form {username}/{hostname}{REALM} are
-         * mapped to {username}. For more details on the format, please see the
-         * Security Authorization and ACLs documentation (at the Apache Kafka
-         * project website). Multiple values can be separated by comma.
+         * default, principal names made of a username, a hostname and a
+         * Kerberos realm are mapped to the username. For more details on the
+         * format, please see the Security Authorization and ACLs documentation
+         * (at the Apache Kafka project website). Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5935,6 +6398,103 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The OAuth2 client id to log in to the schema registry with client
+         * credentials. Used with schemaRegistryVendor confluent and apicurio.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryOauthClientId(String schemaRegistryOauthClientId) {
+            doSetProperty("schemaRegistryOauthClientId", schemaRegistryOauthClientId);
+            return this;
+        }
+        /**
+         * The OAuth2 client secret to log in to the schema registry with client
+         * credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryOauthClientSecret(String schemaRegistryOauthClientSecret) {
+            doSetProperty("schemaRegistryOauthClientSecret", schemaRegistryOauthClientSecret);
+            return this;
+        }
+        /**
+         * The OAuth2 scope to ask for when logging in to the schema registry
+         * with client credentials (optional).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryOauthScope(String schemaRegistryOauthScope) {
+            doSetProperty("schemaRegistryOauthScope", schemaRegistryOauthScope);
+            return this;
+        }
+        /**
+         * The token endpoint of the OAuth2 server to log in to the schema
+         * registry with client credentials, with schemaRegistryOauthClientId
+         * and schemaRegistryOauthClientSecret. Used with schemaRegistryVendor
+         * confluent (bearer.auth.issuer.endpoint.url) and apicurio
+         * (apicurio.registry.auth.service.token.endpoint, such as the token
+         * endpoint of a Keycloak realm).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryOauthTokenEndpoint the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryOauthTokenEndpoint(String schemaRegistryOauthTokenEndpoint) {
+            doSetProperty("schemaRegistryOauthTokenEndpoint", schemaRegistryOauthTokenEndpoint);
+            return this;
+        }
+        /**
+         * The password to log in to the schema registry with basic auth, with
+         * schemaRegistryUsername. For Confluent Cloud, the API secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryPassword(String schemaRegistryPassword) {
+            doSetProperty("schemaRegistryPassword", schemaRegistryPassword);
+            return this;
+        }
+        /**
+         * The username to log in to the schema registry with basic auth, with
+         * schemaRegistryPassword. Used with schemaRegistryVendor confluent
+         * (basic.auth.user.info, which is the API key for Confluent Cloud) and
+         * apicurio (apicurio.registry.auth.username). The azure and aws-glue
+         * vendors log in with the credentials of the environment instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param schemaRegistryUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder schemaRegistryUsername(String schemaRegistryUsername) {
+            doSetProperty("schemaRegistryUsername", schemaRegistryUsername);
+            return this;
+        }
+        /**
          * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT,
          * SASL_SSL and SSL are supported.
          * 
@@ -6008,15 +6568,15 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The list of protocols enabled for SSL connections. The default is
-         * TLSv1.2,TLSv1.3 when running with Java 11 or newer, TLSv1.2
-         * otherwise. With the default value for Java 11, clients and servers
-         * will prefer TLSv1.3 if both support it and fallback to TLSv1.2
-         * otherwise (assuming both support at least TLSv1.2). This default
-         * should be fine for most cases. Also see the config documentation for
-         * SslProtocol.
+         * TLSv1.2,TLSv1.3. This means that clients and servers will prefer
+         * TLSv1.3 if both support it and fallback to TLSv1.2 otherwise
+         * (assuming both support at least TLSv1.2). This default should be fine
+         * for most use cases. Also see the documentation of sslProtocol to
+         * understand how it can impact the TLS version negotiation behavior.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          * 
          * @param sslEnabledProtocols the value to set
@@ -6109,7 +6669,7 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The file format of the key store file. This is optional for the
-         * client. The default value is JKS.
+         * client. The supported values are JKS, PKCS12 and PEM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6125,18 +6685,17 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The SSL protocol used to generate the SSLContext. The default is
-         * TLSv1.3 when running with Java 11 or newer, TLSv1.2 otherwise. This
-         * value should be fine for most use cases. Allowed values in recent
-         * JVMs are TLSv1.2 and TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may
-         * be supported in older JVMs, but their usage is discouraged due to
-         * known security vulnerabilities. With the default value for this
-         * config and sslEnabledProtocols, clients will downgrade to TLSv1.2 if
-         * the server does not support TLSv1.3. If this config is set to
-         * TLSv1.2, clients will not use TLSv1.3 even if it is one of the values
-         * in sslEnabledProtocols and the server only supports TLSv1.3.
+         * TLSv1.3, which should be fine for most use cases. A typical
+         * alternative to the default is TLSv1.2. Allowed values for this config
+         * are dependent on the JVM. Clients using the defaults for this config
+         * and sslEnabledProtocols will downgrade to TLSv1.2 if the server does
+         * not support TLSv1.3. If this config is set to TLSv1.2, however,
+         * clients will not use TLSv1.3 even if it is one of the values in
+         * sslEnabledProtocols and the server only supports TLSv1.3.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.3
          * Group: security
          * 
          * @param sslProtocol the value to set
@@ -6210,7 +6769,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The file format of the trust store file. The default value is JKS.
+         * The file format of the trust store file. The supported values are
+         * JKS, PKCS12 and PEM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

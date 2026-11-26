@@ -28,7 +28,12 @@ import org.apache.camel.component.netty.NettyServerBootstrapFactory;
  * To use this, just define a {@link NettyServerBootstrapConfiguration} configuration, and set this using
  * {@link #setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration)}. Then call the
  * {@link #start()} to initialize this shared server.
+ *
+ * @deprecated the shared Netty HTTP server was added for OSGi/Karaf, so that several applications in one JVM could use
+ *             the same port. Use a netty-http consumer per port, where several routes can use the same port, or the
+ *             platform-http component.
  */
+@Deprecated
 public interface NettySharedHttpServer extends Service {
 
     /**

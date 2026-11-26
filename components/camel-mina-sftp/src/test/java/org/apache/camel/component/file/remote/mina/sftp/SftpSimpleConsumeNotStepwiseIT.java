@@ -28,7 +28,7 @@ public class SftpSimpleConsumeNotStepwiseIT extends SftpSimpleConsumeIT {
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&stepwise=false&knownHostsFile="
+                     + "?username=admin&password=admin&disconnect=true&stepwise=false&knownHostsFile="
                      + service.getKnownHostsFile()).routeId("foo")
                         .autoStartup(false).to("mock:result");
             }

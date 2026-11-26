@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
@@ -108,6 +109,26 @@ class CamelSanitizerExtensionTest {
             assertTrue(failure.getTestIdentifier().isTest(), failure.getTestIdentifier().getDisplayName());
             assertInstanceOf(SanitizerViolationError.class, failure.getException());
         }
+    }
+
+    @Test
+    void aTestClassTurnsTheWatchWindowsOffForItself() {
+        // the watch windows of rule R3 are on in a test (1 in 100 points), unless the class turns them off
+        TestExecutionSummary summary = run(WatchWindowsByDefault.class);
+        assertEquals(1, summary.getTestsSucceededCount(), () -> summary.getFailures().toString());
+        TestExecutionSummary off = run(WatchWindowsOff.class);
+        assertEquals(1, off.getTestsSucceededCount(), () -> off.getFailures().toString());
+    }
+
+    @Test
+    void aSamplingBelowMinusOneFailsTheClass() {
+        // as camel.sanitizer.overlapSampling below 0 fails the start of the context, -5 is not taken as the default
+        TestExecutionSummary summary = run(SamplingBelowMinusOne.class);
+        assertEquals(0, summary.getTestsSucceededCount());
+        assertEquals(1, summary.getFailures().size(), () -> summary.getFailures().toString());
+        Throwable failure = summary.getFailures().get(0).getException();
+        assertInstanceOf(IllegalArgumentException.class, failure);
+        assertTrue(failure.getMessage().contains("overlapSampling = -5"), failure::getMessage);
     }
 
     @Test
@@ -193,6 +214,40 @@ class CamelSanitizerExtensionTest {
         @RepeatedTest(2)
         void breaksTheRuleEachTime() {
             template.send("direct:broken", e -> e.getMessage().setBody("x"));
+        }
+    }
+
+    @CamelSanitizer
+    static class WatchWindowsByDefault extends ContextTestSupport {
+        @Test
+        void watchesAt1In100Points() {
+            // unless camel.sanitizer.overlapSampling is set for the run (0 turns the windows off)
+            int sampling = Integer.getInteger("camel.sanitizer.overlapSampling", 100);
+            Overlaps overlaps = Sanitizer.get(context).getOverlaps();
+            if (sampling == 0) {
+                assertNull(overlaps);
+            } else {
+                assertEquals(sampling, overlaps.getSampling());
+            }
+        }
+    }
+
+    @CamelSanitizer(overlapSampling = -5)
+    static class SamplingBelowMinusOne extends ContextTestSupport {
+        @Test
+        void neverRuns() {
+            // the class fails before its tests
+        }
+    }
+
+    @CamelSanitizer(overlapSampling = 0)
+    static class WatchWindowsOff extends ContextTestSupport {
+        @Test
+        void watchesNothing() {
+            assertNotNull(Sanitizer.get(context));
+            assertNull(Sanitizer.get(context).getOverlaps());
+            assertTrue(context.getCamelContextExtension().getStepListeners().stream()
+                    .noneMatch(SanitizerOverlapListener.class::isInstance));
         }
     }
 

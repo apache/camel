@@ -18,15 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 @CommandDefinition(name = "generate", description = "Generate source code (use --help to see sub commands)",
                    generateHelp = true, sortOptions = true)
 public class CodeGenerator extends CamelCommand {
-
-    public CodeGenerator(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {

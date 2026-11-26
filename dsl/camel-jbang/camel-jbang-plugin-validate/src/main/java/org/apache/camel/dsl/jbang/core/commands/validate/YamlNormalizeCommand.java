@@ -38,7 +38,6 @@ import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -78,10 +77,6 @@ public class YamlNormalizeCommand extends CamelCommand {
 
     @Arguments(required = true, description = "The Camel YAML source files to normalize.", paramLabel = "files")
     List<String> files = new ArrayList<>();
-
-    public YamlNormalizeCommand(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     public Integer doCall() throws Exception {
@@ -146,7 +141,7 @@ public class YamlNormalizeCommand extends CamelCommand {
         Path target = workDir.resolve("normalized.yaml");
         NormalizeDumpRoutesStrategy strategy = new NormalizeDumpRoutesStrategy(perFileDir, target, names, unattributed);
 
-        Run run = new Run(getMain()) {
+        Run run = new Run() {
             @Override
             protected void doAddInitialProperty(KameletMain main) {
                 main.addInitialProperty("camel.main.dumpRoutes", "yaml");
@@ -169,6 +164,8 @@ public class YamlNormalizeCommand extends CamelCommand {
                 });
             }
         };
+        run.setCamelMain(getMain());
+        run.setWorkDir(workDir);
         run.mavenResolver = mavenResolver;
         run.files = matched;
         run.executionLimitOptions.maxSeconds = 1;

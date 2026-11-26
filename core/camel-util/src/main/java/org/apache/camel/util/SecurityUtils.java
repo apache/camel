@@ -185,8 +185,10 @@ public final class SecurityUtils {
                 "component:ftps",
                 "component:mina",
                 "component:mllp",
+                "component:nats",
                 "component:netty",
                 "component:nettyhttp",
+                "component:pulsar",
                 "component:smpp",
                 "component:smpps"));
         owners.put("httpshostnameverificationenabled", Set.of(
@@ -375,6 +377,7 @@ public final class SecurityUtils {
         keys.put("camel.management.uploadenabled", new SecurityOption(INSECURE_DEV, "true"));
         keys.put("camel.server.jwtallowmissingissuerandaudience", new SecurityOption(INSECURE_DEV, "true"));
         keys.put("camel.ssl.trustallcertificates", new SecurityOption(INSECURE_SSL, "true"));
+        keys.put("camel.vault.cyberark.verifyssl", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         // SECURITY-KEYS: END
         SECURITY_KEYS = Collections.unmodifiableMap(keys);
     }

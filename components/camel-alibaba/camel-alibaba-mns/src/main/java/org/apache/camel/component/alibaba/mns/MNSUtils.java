@@ -72,10 +72,6 @@ public final class MNSUtils {
     public static ClientConfigurations createClientConfigurations(MNSEndpoint endpoint, Exchange exchange) {
         return new ClientConfigurations(
                 resolveOperation(endpoint, exchange),
-                resolveAccessKey(endpoint),
-                resolveSecretKey(endpoint),
-                endpoint.getRegion(),
-                endpoint.getAccountEndpoint(),
                 resolveQueueName(endpoint, exchange),
                 resolveTopicName(endpoint, exchange));
     }

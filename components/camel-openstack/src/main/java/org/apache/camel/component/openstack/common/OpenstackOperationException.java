@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openstack.common;
 
+@Deprecated(since = "4.24")
 public class OpenstackOperationException extends OpenstackException {
 
     private final String operation;

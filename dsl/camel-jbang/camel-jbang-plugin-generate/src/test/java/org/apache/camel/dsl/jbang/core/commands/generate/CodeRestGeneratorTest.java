@@ -120,7 +120,7 @@ class CodeRestGeneratorTest {
         // the routes had no steps and a description under from: 19 errors of camel validate yaml, and camel run
         // failed with "Route ... has no output processors" (CAMEL-26933)
         Path rest = dir.resolve("rest.yaml");
-        CodeRestGenerator command = new CodeRestGenerator(new CamelJBangMain().withPrinter(printer));
+        CodeRestGenerator command = new CamelJBangMain().withPrinter(printer).command(new CodeRestGenerator());
         CommandLineTestHelper.parse(command, "--input=" + SPEC, "--routes", "--output=" + rest);
 
         assertThat(command.doCall()).as(printer.getOutput()).isZero();
@@ -170,7 +170,7 @@ class CodeRestGeneratorTest {
     }
 
     private int generate(String spec, Path packageDir, String... args) throws Exception {
-        CodeRestGenerator command = new CodeRestGenerator(new CamelJBangMain().withPrinter(printer)) {
+        CodeRestGenerator command = new CodeRestGenerator() {
             @Override
             Path packageDirectory() {
                 return packageDir;
@@ -183,6 +183,7 @@ class CodeRestGeneratorTest {
                 return tempDirectory;
             }
         };
+        command.setCamelMain(new CamelJBangMain().withPrinter(printer));
         CommandLineTestHelper.parse(command, Stream.concat(
                 Stream.of("--input=" + spec, "--dto", "--output=" + dir.resolve("rest.yaml")),
                 Stream.of(args)).toArray(String[]::new));

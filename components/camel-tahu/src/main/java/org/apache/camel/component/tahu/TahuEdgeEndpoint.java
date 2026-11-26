@@ -107,7 +107,7 @@ public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilte
     private volatile BdSeqManager bdSeqManager;
 
     @UriParam(label = "producer,advanced",
-              description = "Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files. This path will contain files named as \"<Edge Node ID>-bdSeqNum\" and must be writable by the executing process' user. Applies to the edge node endpoint only.",
+              description = "Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files. This path will contain files named as the Edge Node ID followed by \"-bdSeqNum\" and must be writable by the executing process' user. Applies to the edge node endpoint only.",
               defaultValue = "${sys:java.io.tmpdir}/CamelTahuTemp")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String bdSeqNumPath;

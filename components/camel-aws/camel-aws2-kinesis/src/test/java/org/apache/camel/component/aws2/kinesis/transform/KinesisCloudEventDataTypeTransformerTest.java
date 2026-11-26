@@ -19,10 +19,12 @@ package org.apache.camel.component.aws2.kinesis.transform;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.cloudevents.CloudEvent;
+import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -31,6 +33,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class KinesisCloudEventDataTypeTransformerTest {
@@ -38,6 +41,31 @@ class KinesisCloudEventDataTypeTransformerTest {
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
     private final KinesisCloudEventDataTypeTransformer transformer = new KinesisCloudEventDataTypeTransformer();
+
+    @Test
+    void theSourceIsTheStream() throws Exception {
+        // CAMEL-27101: the source was built from the partition key that the sender sets on each record
+        for (String partitionKey : List.of("pk1", "pk2")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(Kinesis2Constants.STREAM_NAME, "orders");
+            exchange.getMessage().setHeader(Kinesis2Constants.PARTITION_KEY, partitionKey);
+            exchange.getMessage().setHeader(Kinesis2Constants.SHARD_ID, "shardId-000000000000");
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            assertEquals("aws.kinesis.stream.orders", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+            assertEquals("shardId-000000000000", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+        }
+    }
+
+    @Test
+    void theSourceIsNotThePartitionKey() throws Exception {
+        // a message without the stream name of the consumer gets no source
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(Kinesis2Constants.PARTITION_KEY, "pk1");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+    }
 
     @Test
     void theBodyTypesSayTheBody() throws Exception {

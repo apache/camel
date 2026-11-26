@@ -18,16 +18,20 @@ package org.apache.camel.support.component;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.timer.TimerEndpoint;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EndpointOptionEdgeCasesTest extends ContextTestSupport {
 
@@ -78,6 +82,40 @@ public class EndpointOptionEdgeCasesTest extends ContextTestSupport {
         assertEquals("my:channel/foo", factory.buildUri("my", Map.of("type", "channel", "typeId", "foo")));
         assertEquals("my:channel", factory.buildUri("my", Map.of("type", "channel")));
         assertEquals("my:C:\\dir/p$1", factory.buildUri("my", Map.of("type", "C:\\dir", "typeId", "p$1")));
+    }
+
+    @Test
+    public void testOptionalPlaceholderInPathParameter() throws Exception {
+        EndpointUriFactory factory = context.getCamelContextExtension().getEndpointUriFactory("file");
+
+        // the ? of an optional placeholder in the path is not the start of the query (CAMEL-27361)
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("directoryName", "target/data/{{?subDir}}");
+        map.put("noop", "true");
+        map.put("antInclude", "*.txt");
+        String uri = factory.buildUri("file", map, false);
+        assertEquals("file:target/data/{{?subDir}}?noop=true&antInclude=*.txt", uri);
+
+        // and the options are not lost when the placeholder is resolved
+        FileEndpoint endpoint = context.getEndpoint(uri, FileEndpoint.class);
+        assertEquals("target/data", endpoint.getConfiguration().getDirectory());
+        assertTrue(endpoint.isNoop());
+        assertEquals("*.txt", endpoint.getAntInclude());
+    }
+
+    @Test
+    public void testQuestionMarkInPathParameter() throws Exception {
+        MyEndpointUriFactory factory = new MyEndpointUriFactory();
+        factory.setCamelContext(context);
+
+        // a ? in the path (not in a placeholder) still makes the query start with &
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("type", "channel?x=1");
+        map.put("foo", "bar");
+        assertEquals("my:channel?x=1&foo=bar", factory.buildUri("my", map, false));
+
+        map.put("type", "{{?channel}}");
+        assertEquals("my:{{?channel}}?foo=bar", factory.buildUri("my", map, false));
     }
 
     @Test

@@ -410,6 +410,56 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     }
 
     @Override
+    public void startRouteGroup(String routeGroup) throws Exception {
+        lock.lock();
+        try {
+            List<RouteHolder> group = routesOfGroup(routeGroup);
+            for (RouteHolder route : group) {
+                // as startRoute: the controller takes care that the route is started, and the manual start cancels a
+                // restart task (and clears an exhausted state)
+                route.get().setRouteController(this);
+                routeManager.release(route);
+            }
+            try {
+                super.startRouteGroup(routeGroup);
+            } catch (Exception e) {
+                // as startRoute: the routes of the group that did not start are moved to the controller supervision,
+                // so they get (eventually) restarted
+                for (RouteHolder route : group) {
+                    if (route.getStatus().isStopped()) {
+                        LOG.debug("Route {} of route group {} failed to start and is moved to the controller supervision",
+                                route.getId(), routeGroup);
+                        EventHelper.notifyRouteRestartingFailure(getCamelContext(), route.get(), 0, e, false);
+                        routeManager.start(route);
+                    }
+                }
+                throw e;
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void stopRouteGroup(String routeGroup) throws Exception {
+        lock.lock();
+        try {
+            for (RouteHolder route : routesOfGroup(routeGroup)) {
+                // as stopRoute: a route stopped manually is no longer started by its restart task
+                routeManager.release(route);
+                route.get().setRouteController(null);
+            }
+            super.stopRouteGroup(routeGroup);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private List<RouteHolder> routesOfGroup(String routeGroup) {
+        return routes.stream().filter(r -> routeGroup.equals(r.get().getGroup())).toList();
+    }
+
+    @Override
     public Collection<Route> getControlledRoutes() {
         return routes.stream()
                 .map(RouteHolder::get)
@@ -745,15 +795,23 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                                         // remember exhausted routes
                                         routeManager.exhausted.put(r, task);
 
-                                        // store as last error on route as it was exhausted
-                                        Throwable t = getRestartException(route.getId());
-                                        EventHelper.notifyRouteRestartingFailure(getCamelContext(), r.get(), attempts, t, true);
-
-                                        if (unhealthyOnExhausted) {
+                                        if (!isControlled(r)) {
+                                            // the route was removed after the check above: removeRoute releases the
+                                            // route without the lock of this controller (see onRemove), and nothing
+                                            // would take the removed route out of exhausted again
+                                            routeManager.exhausted.remove(r, task);
+                                        } else {
                                             // store as last error on route as it was exhausted
-                                            if (t != null) {
-                                                DefaultRouteError.set(getCamelContext(), r.getId(), RouteError.Phase.START, t,
-                                                        true);
+                                            Throwable t = getRestartException(route.getId());
+                                            EventHelper.notifyRouteRestartingFailure(getCamelContext(), r.get(), attempts, t,
+                                                    true);
+
+                                            if (unhealthyOnExhausted) {
+                                                // store as last error on route as it was exhausted
+                                                if (t != null) {
+                                                    DefaultRouteError.set(getCamelContext(), r.getId(), RouteError.Phase.START,
+                                                            t, true);
+                                                }
                                             }
                                         }
                                     }
@@ -769,6 +827,22 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
                         return task;
                     });
+
+            if (!isControlled(route)) {
+                // the route was removed meanwhile (a failed start releases the route lock of the CamelContext before
+                // it gets here, and removeRoute releases the route without the lock of this controller, see onRemove):
+                // do not leave a restart task for a removed route
+                release(route);
+            }
+        }
+
+        /**
+         * Whether the route is still controlled by this controller, that is not removed. ManagedRoutePolicy.onRemove
+         * removes the route from the controlled routes before it releases it (without the lock of this controller), so
+         * a restart task or an exhausted entry added before this check returns false is removed by that release.
+         */
+        private boolean isControlled(RouteHolder route) {
+            return DefaultSupervisingRouteController.this.routes.contains(route);
         }
 
         /**
@@ -977,6 +1051,11 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
         @Override
         public void onRemove(Route route) {
+            // this is the lock of the policy, not the lock of the controller: removeRoute holds the route lock of the
+            // CamelContext here, and a manual start or stop holds the lock of the controller while it waits for the
+            // route lock, so taking the lock of the controller here could deadlock. The route manager checks that a
+            // route is still controlled (isControlled) after it adds a restart task or an exhausted entry, and the route
+            // is removed from the controlled routes before it is released, so the release or that check catches it.
             lock.lock();
             try {
                 routes.removeIf(

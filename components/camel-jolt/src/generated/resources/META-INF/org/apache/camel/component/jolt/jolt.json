@@ -35,7 +35,7 @@
     "CamelJoltContext": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Map<String, Object>", "deprecated": false, "autowired": false, "secret": false, "description": "The context", "constantName": "org.apache.camel.component.jolt.JoltConstants#JOLT_CONTEXT" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "map", "list", "text", "bytes", "stream", "file" ], "format": "json", "byOption": [ { "option": "inputType", "value": "JsonString", "carriers": [ "text", "bytes", "stream", "file" ] } ], "description": "Parsed JSON (a Map or a List), or JSON as text, bytes, a stream or a file, which is parsed. Text that does not start with { or [ reaches the spec as it is. With inputType=JsonString the body is always parsed as JSON" },
+    "producerIn": { "carriers": [ "map", "list", "text", "bytes", "stream", "file" ], "format": "json", "byOption": [ { "option": "inputType", "value": "JsonString", "carriers": [ "text", "bytes", "stream", "file" ] } ], "description": "Parsed JSON (a Map or a List), or JSON as text, bytes, a stream, a file or a Jackson JsonNode, which is parsed. Text that does not start with { or [ reaches the spec as it is. With inputType=JsonString the body is always parsed as JSON" },
     "producerOut": { "carriers": [ "map", "list" ], "format": "json", "byOption": [ { "option": "outputType", "value": "JsonString", "carriers": [ "text" ], "javaType": "java.lang.String" } ], "description": "The JSON the spec makes: a Map for an object, a List for an array; JSON text with outputType=JsonString" }
   },
   "properties": {

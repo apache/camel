@@ -21,7 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,6 +50,7 @@ public final class LogWriter implements AutoCloseable {
 
     private final LogSupervisor flushPolicy;
     private final TransactionLog transactionLog;
+    private final List<EntryInfo.CachedEntryInfo> initialEntryInfos;
 
     private long startOfRecords;
 
@@ -72,15 +77,127 @@ public final class LogWriter implements AutoCloseable {
      * @throws IOException    in case of I/O errors
      */
     LogWriter(File logFile, LogSupervisor logSupervisor, int maxRecordCount) throws IOException {
-        this.fileChannel = FileChannel.open(logFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
-                StandardOpenOption.TRUNCATE_EXISTING);
+        this(logFile, logSupervisor, maxRecordCount, List.of());
+    }
 
-        final Header header = Header.WA_DEFAULT_V1;
-        writeHeader(header);
-
+    /**
+     * Constructs a new log writer whose new log holds the given entries first. Without entries, the file is truncated,
+     * as with the other constructors. With entries, the file is replaced only once the new log is on disk: the header
+     * and the entries are written to a temporary file in the same directory, which is forced to disk and then moved
+     * atomically over the file. If that is not possible (the temporary file cannot be written, or the file system
+     * cannot move it atomically over the file), a WARN is logged and the file is truncated and written in place, as
+     * without entries, and forced to disk right after the entries.
+     *
+     * @param  logFile        the transaction log file
+     * @param  logSupervisor  the log supervisor {@link LogSupervisor} for the writer
+     * @param  maxRecordCount the maximum number of records to keep in the file. Beyond this count, entries will be
+     *                        rolled-over.
+     * @param  entries        the entries the new log holds first (fewer than maxRecordCount)
+     * @throws IOException    in case of I/O errors
+     */
+    LogWriter(File logFile, LogSupervisor logSupervisor, int maxRecordCount, List<LogEntry> entries) throws IOException {
         this.flushPolicy = logSupervisor;
         this.transactionLog = new TransactionLog(maxRecordCount);
-        this.flushPolicy.start(this::tryFlush);
+
+        // with entries, the new log replaces the file a symbolic link points to, not the link
+        final Path path = entries.isEmpty() || !Files.exists(logFile.toPath())
+                ? logFile.toPath() : logFile.toPath().toRealPath();
+        final boolean replaced = !entries.isEmpty() && replace(path, entries);
+        // after the replacement, the file already holds the header and the entries: they are written again below at
+        // the same positions (the same bytes), so the positions and the layers are built as for a new log
+        this.fileChannel = replaced
+                ? FileChannel.open(path, StandardOpenOption.WRITE)
+                : FileChannel.open(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+                        StandardOpenOption.TRUNCATE_EXISTING);
+        try {
+            final Header header = Header.WA_DEFAULT_V1;
+            writeHeader(header);
+
+            final List<EntryInfo.CachedEntryInfo> entryInfos = new ArrayList<>(entries.size());
+            for (LogEntry entry : entries) {
+                entryInfos.add(append(entry));
+            }
+            this.initialEntryInfos = List.copyOf(entryInfos);
+
+            if (!entries.isEmpty()) {
+                // without the replacement, the entries are on disk only from here on
+                flush();
+            }
+
+            this.flushPolicy.start(this::tryFlush);
+        } catch (IOException | RuntimeException e) {
+            try {
+                fileChannel.close();
+            } catch (IOException suppressed) {
+                e.addSuppressed(suppressed);
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Replaces the file by a new log with the header and the entries: writes them to a temporary file in the same
+     * directory, forces it to disk and moves it atomically over the file. Until the move the file is unchanged.
+     *
+     * @return false, after a WARN, if the file could not be replaced (it is then unchanged)
+     */
+    private static boolean replace(Path target, List<LogEntry> entries) {
+        final Path tmp = target.resolveSibling(target.getFileName() + ".tmp");
+        boolean created = false;
+        try {
+            try (FileChannel channel = FileChannel.open(tmp, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+                    StandardOpenOption.TRUNCATE_EXISTING)) {
+                created = true;
+                write(channel, Header.WA_DEFAULT_V1);
+                for (LogEntry entry : entries) {
+                    write(channel, entry);
+                }
+                channel.force(true);
+            }
+
+            // the new log keeps the permissions of the previous one, as a truncated file would. A file system that
+            // cannot change them (such as FAT) does not prevent the replacement
+            if (Files.exists(target)) {
+                try {
+                    Files.setPosixFilePermissions(tmp, Files.getPosixFilePermissions(target));
+                } catch (UnsupportedOperationException | IOException e) {
+                    LOG.debug("Cannot give {} the permissions of {}: {}", tmp, target, e.getMessage());
+                }
+            }
+
+            // atomically or not at all: a move that is not atomic deletes the log first and may copy the file
+            Files.move(tmp, target, StandardCopyOption.ATOMIC_MOVE);
+        } catch (IOException | RuntimeException e) {
+            if (created) {
+                try {
+                    Files.deleteIfExists(tmp);
+                } catch (IOException suppressed) {
+                    LOG.debug("Cannot delete {}: {}", tmp, suppressed.getMessage());
+                }
+            }
+            LOG.warn("Cannot replace the transaction log {} atomically ({}): truncating and writing it in place instead."
+                     + " A crash before its unconfirmed entries are written again loses them",
+                    target, e.toString());
+            return false;
+        }
+
+        // make the move itself durable, where the file system allows a directory to be forced
+        final Path directory = target.toAbsolutePath().getParent();
+        if (directory != null) {
+            try (FileChannel channel = FileChannel.open(directory, StandardOpenOption.READ)) {
+                channel.force(true);
+            } catch (IOException e) {
+                LOG.debug("Cannot force the directory {} to disk: {}", directory, e.getMessage());
+            }
+        }
+        return true;
+    }
+
+    /**
+     * The entry information of the entries the new log was started with, in their order
+     */
+    List<EntryInfo.CachedEntryInfo> getInitialEntryInfos() {
+        return initialEntryInfos;
     }
 
     /**
@@ -127,14 +244,25 @@ public final class LogWriter implements AutoCloseable {
     }
 
     private void writeHeader(final Header header) throws IOException {
+        write(fileChannel, header);
+
+        startOfRecords = fileChannel.position();
+    }
+
+    private static void write(FileChannel channel, Header header) throws IOException {
         ByteBuffer headerBuffer = ByteBuffer.allocate(Header.BYTES);
 
         headerBuffer.put(header.getFormatName().getBytes());
         headerBuffer.putInt(header.getFileVersion());
 
-        IOUtil.write(fileChannel, headerBuffer);
+        IOUtil.write(channel, headerBuffer);
+    }
 
-        startOfRecords = fileChannel.position();
+    private static void write(FileChannel channel, LogEntry entry) throws IOException {
+        ByteBuffer writeBuffer = ByteBuffer.allocate(LogEntry.size(entry.getKey(), entry.getValue()));
+        IOUtil.serialize(writeBuffer, entry);
+
+        IOUtil.write(channel, writeBuffer);
     }
 
     /**
@@ -216,15 +344,8 @@ public final class LogWriter implements AutoCloseable {
      * @throws IOException in case of lower-level I/O errors
      */
     private EntryInfo.CachedEntryInfo persist(TransactionLog.EntryContainer container) throws IOException {
-        final LogEntry entry = container.logEntry;
-        final byte[] key = entry.getKey();
-        final byte[] value = entry.getValue();
-
-        ByteBuffer writeBuffer = ByteBuffer.allocate(LogEntry.size(key, value));
-        IOUtil.serialize(writeBuffer, entry);
-
         long recordPosition = fileChannel.position();
-        IOUtil.write(fileChannel, writeBuffer);
+        write(fileChannel, container.logEntry);
         container.position = recordPosition;
 
         return EntryInfo.createForCached(recordPosition, container.layerInfo);

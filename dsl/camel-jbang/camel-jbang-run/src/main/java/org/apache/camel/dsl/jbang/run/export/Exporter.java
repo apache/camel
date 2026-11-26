@@ -94,6 +94,7 @@ abstract class Exporter {
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private Printer quietPrinter;
+    private Set<PluginExporter> pluginExporters;
     // Map to store deferred symbolic links: target path in the build dir → original source path
     private Map<Path, Path> deferredSymlinks = new HashMap<>();
 
@@ -309,8 +310,38 @@ abstract class Exporter {
      */
     protected final Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = doResolveDependencies(settings, profile);
+        removePluginDependencies(answer);
         removeDuplicateDependencies(answer);
         return answer;
+    }
+
+    /**
+     * Removes the dependencies the plugins ask to remove, after all dependencies are collected (routes, --dep, plugins
+     * and the runtime exporter). Matched by groupId:artifactId on the coordinates as collected, in any notation, see
+     * {@link PluginExporter#getDependenciesToRemove(RuntimeType)}. The camel-main runtime can still add camel:health
+     * afterwards.
+     */
+    private void removePluginDependencies(Set<String> answer) {
+        if (request.skipPlugins) {
+            return;
+        }
+        Set<String> toBeRemoved = new HashSet<>();
+        for (PluginExporter exporter : pluginExporters()) {
+            for (String d : exporter.getDependenciesToRemove(request.runtime)) {
+                MavenGav gav = MavenGav.parseGav(d);
+                toBeRemoved.add(gav.getGroupId() + ":" + gav.getArtifactId());
+            }
+        }
+        if (!toBeRemoved.isEmpty()) {
+            answer.removeIf(d -> {
+                MavenGav gav = MavenGav.parseGav(d);
+                boolean remove = toBeRemoved.contains(gav.getGroupId() + ":" + gav.getArtifactId());
+                if (remove) {
+                    printer().printf("Removing dependency %s (asked by an export plugin)%n", d);
+                }
+                return remove;
+            });
+        }
     }
 
     /**
@@ -414,7 +445,8 @@ abstract class Exporter {
                 }
             } else if (line.startsWith(DEPENDENCIES_MAIN + "=") && request.runtime == RuntimeType.main) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_MAIN + "="), answer);
-            } else if (line.startsWith(DEPENDENCIES_SPRING_BOOT + "=") && request.runtime == RuntimeType.springBoot) {
+            } else if (line.startsWith(DEPENDENCIES_SPRING_BOOT + "=")
+                    && (request.runtime == RuntimeType.springBoot)) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_SPRING_BOOT + "="), answer);
             } else if (line.startsWith(DEPENDENCIES_QUARKUS + "=") && request.runtime == RuntimeType.quarkus) {
                 addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_QUARKUS + "="), answer);
@@ -1089,6 +1121,19 @@ abstract class Exporter {
     }
 
     /**
+     * The path that camel-cxf-platform-http serves the SOAP services of cxf consumers under (camel-main), which is
+     * {@code cxf.path} on Spring Boot and {@code quarkus.cxf.path} on Quarkus.
+     */
+    protected static final String CXF_PATH = "camel.cxf.path";
+
+    /**
+     * Whether the key is the option of camel-cxf-platform-http that reads the X-Forwarded headers (camel-main).
+     */
+    protected static boolean isCxfUseXForwardedHeaders(String key) {
+        return "camel.cxf.useXForwardedHeaders".equals(key) || "camel.cxf.use-x-forwarded-headers".equals(key);
+    }
+
+    /**
      * Gets the maven repositories
      *
      * @param  prop         settings
@@ -1495,10 +1540,14 @@ abstract class Exporter {
     }
 
     /**
-     * The exporters of the active plugins.
+     * The exporters of the active plugins, looked up once per export (a plugin that cannot be linked is warned about
+     * once).
      */
     protected Set<PluginExporter> pluginExporters() {
-        return new LinkedHashSet<>(exportContext.getPlugins(request.mavenResolver.repos()).exporters());
+        if (pluginExporters == null) {
+            pluginExporters = new LinkedHashSet<>(exportContext.getPlugins(request.mavenResolver.repos()).exporters());
+        }
+        return pluginExporters;
     }
 
     protected Printer outPrinter() {
@@ -1567,6 +1616,7 @@ abstract class Exporter {
         model.put("ArtifactId", ids[1]);
         model.put("Version", ids[2]);
         model.put("AppRuntimeJar", appJar);
+        model.put("War", request.isWarPackaging());
 
         String context = TemplateHelper.processTemplate("readme.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);

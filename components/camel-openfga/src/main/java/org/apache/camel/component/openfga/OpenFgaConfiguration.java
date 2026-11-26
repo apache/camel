@@ -21,6 +21,7 @@ import java.util.Map;
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -127,9 +128,94 @@ public class OpenFgaConfiguration implements Cloneable {
     @UriParam(label = "advanced",
               description = "An existing OpenFgaClient to use. When set, every option describing how to reach the"
                             + " server - apiUrl, storeId, the credentials, the timeouts and sslContextParameters - is"
-                            + " ignored, because they are baked into the client that was handed over.")
+                            + " ignored, because they are baked into the client that was handed over. streamedListObjects"
+                            + " additionally needs an explicit streamingClient, a storeId and a positive readTimeout.")
     @Metadata(autowired = true)
     private OpenFgaClient openFgaClient;
+
+    @UriParam(label = "consumer")
+    private StateRepository<String, String> checkpointRepository;
+
+    @UriParam(label = "consumer")
+    private String checkpointKey;
+
+    @UriParam(label = "consumer,advanced", defaultValue = "30000", javaType = "java.time.Duration")
+    private long changePollTimeout = 30000;
+
+    @UriParam(label = "producer,advanced", defaultValue = "10000")
+    private int streamMaxResults = 10000;
+
+    @UriParam(label = "producer,advanced", defaultValue = "65536")
+    private int streamMaxLineLength = 65536;
+
+    @UriParam(label = "producer,advanced")
+    @Metadata(autowired = true)
+    private OpenFgaStreamingClient streamingClient;
+
+    public StateRepository<String, String> getCheckpointRepository() {
+        return checkpointRepository;
+    }
+
+    /**
+     * Durable cursor storage, required for a readChanges consumer. The repository must persist each update before
+     * returning, retain the previous value on failure, and use finite I/O deadlines. A repository that is a Camel
+     * service and not started yet is started by the consumer and stopped with it; one the application started stays
+     * under the application's control.
+     */
+    public void setCheckpointRepository(StateRepository<String, String> checkpointRepository) {
+        this.checkpointRepository = checkpointRepository;
+    }
+
+    public String getCheckpointKey() {
+        return checkpointKey;
+    }
+
+    /**
+     * Unique durable cursor key for this store, filter and projection. Only one consumer may own the key, including
+     * when configured at component level.
+     */
+    public void setCheckpointKey(String checkpointKey) {
+        this.checkpointKey = checkpointKey;
+    }
+
+    public long getChangePollTimeout() {
+        return changePollTimeout;
+    }
+
+    /** Maximum time to await the readChanges request for one consumer poll, in milliseconds. Must be positive. */
+    public void setChangePollTimeout(long changePollTimeout) {
+        this.changePollTimeout = changePollTimeout;
+    }
+
+    public int getStreamMaxResults() {
+        return streamMaxResults;
+    }
+
+    /** Maximum streamed objects before iteration fails; must be positive. No partial answer is silently truncated. */
+    public void setStreamMaxResults(int streamMaxResults) {
+        this.streamMaxResults = streamMaxResults;
+    }
+
+    public int getStreamMaxLineLength() {
+        return streamMaxLineLength;
+    }
+
+    /** Maximum characters in one streamed JSON record; must be positive. */
+    public void setStreamMaxLineLength(int streamMaxLineLength) {
+        this.streamMaxLineLength = streamMaxLineLength;
+    }
+
+    public OpenFgaStreamingClient getStreamingClient() {
+        return streamingClient;
+    }
+
+    /**
+     * Transport for streamedListObjects. Required with an injected OpenFgaClient, whose HTTP configuration is opaque.
+     * The caller owns this transport's lifecycle. storeId and readTimeout remain required for streaming.
+     */
+    public void setStreamingClient(OpenFgaStreamingClient streamingClient) {
+        this.streamingClient = streamingClient;
+    }
 
     /**
      * The base URL of the OpenFGA HTTP API, without a trailing path. The default assumes OpenFGA running as a sidecar

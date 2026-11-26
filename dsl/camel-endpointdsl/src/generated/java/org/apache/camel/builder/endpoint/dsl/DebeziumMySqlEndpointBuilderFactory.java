@@ -677,8 +677,9 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * Optional list of custom converters that would be used instead of
-         * default ones. The converters are defined using '.type' config option
-         * and configured using options '.'.
+         * default ones. The converters are defined using
+         * '{converter.prefix}.type' config option and configured using options
+         * '{converter.prefix}.{option}'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -931,42 +932,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Only relevant if parallel snapshotting is configured. During parallel
-         * snapshotting, multiple (4) connections open to the database client,
-         * and they each need their own unique connection ID. This offset is
-         * used to generate those IDs from the base configured cluster ID.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: mysql
-         * 
-         * @param databaseServerIdOffset the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMySqlEndpointBuilder databaseServerIdOffset(long databaseServerIdOffset) {
-            doSetProperty("databaseServerIdOffset", databaseServerIdOffset);
-            return this;
-        }
-        /**
-         * Only relevant if parallel snapshotting is configured. During parallel
-         * snapshotting, multiple (4) connections open to the database client,
-         * and they each need their own unique connection ID. This offset is
-         * used to generate those IDs from the base configured cluster ID.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: mysql
-         * 
-         * @param databaseServerIdOffset the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMySqlEndpointBuilder databaseServerIdOffset(String databaseServerIdOffset) {
-            doSetProperty("databaseServerIdOffset", databaseServerIdOffset);
-            return this;
-        }
-        /**
          * The location of the key store file. This is optional and can be used
          * for two-way authentication between the client and the database.
          * 
@@ -1161,7 +1126,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &gt; 0 = num of retries).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1177,7 +1142,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &gt; 0 = num of retries).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1935,7 +1900,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * schema metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.TableMappingStorage of
+         * io.debezium.relational.TableSchema. Defaults to
          * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
          * storage.
          * 
@@ -1954,7 +1920,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * table metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.TableMappingStorage of
+         * io.debezium.relational.Table. Defaults to
          * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
          * storage.
          * 
@@ -1973,12 +1940,13 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':', where the table names could be defined as
-         * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-         * specific connector, and the key columns are a comma-separated list of
-         * columns representing the custom key. For any table without an
-         * explicit key configuration the table's primary key column(s) will be
-         * used as message key. Example:
+         * match the pattern '{fully-qualified table name}:{key columns}', where
+         * the table names could be defined as (DB_NAME.TABLE_NAME) or
+         * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector, and
+         * the key columns are a comma-separated list of columns representing
+         * the custom key. For any table without an explicit key configuration
+         * the table's primary key column(s) will be used as message key.
+         * Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2330,7 +2298,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * Optional list of post processors. The processors are defined using
-         * '.type' config option and configured using options ''.
+         * '{post.processor.prefix}.type' config option and configured using
+         * options '{post.processor.prefix}.{option}'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2707,7 +2676,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * window event (-1 = no limit, 0 = disabled, &gt; 0 = num of retries).
          * Defaults to 0.
          * 
          * The option is a: <code>int</code> type.
@@ -2724,7 +2693,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * window event (-1 = no limit, 0 = disabled, &gt; 0 = num of retries).
          * Defaults to 0.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -3609,6 +3578,24 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          */
         default DebeziumMySqlEndpointBuilder transactionMetadataFactory(String transactionMetadataFactory) {
             doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
+            return this;
+        }
+        /**
+         * Specify the constant that will be provided by Debezium to indicate
+         * that the original value is unavailable and not provided by the
+         * database. If starts with 'hex:' prefix it is expected that the rest
+         * of the string represents hexadecimal encoded octets.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: __debezium_unavailable_value
+         * Group: mysql
+         * 
+         * @param unavailableValuePlaceholder the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder unavailableValuePlaceholder(String unavailableValuePlaceholder) {
+            doSetProperty("unavailableValuePlaceholder", unavailableValuePlaceholder);
             return this;
         }
         /**

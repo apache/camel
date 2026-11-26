@@ -89,8 +89,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseQueryTimeoutMs": getOrCreateConfiguration(target).setDatabaseQueryTimeoutMs(property(camelContext, int.class, value)); return true;
         case "databaseserverid":
         case "databaseServerId": getOrCreateConfiguration(target).setDatabaseServerId(property(camelContext, long.class, value)); return true;
-        case "databaseserveridoffset":
-        case "databaseServerIdOffset": getOrCreateConfiguration(target).setDatabaseServerIdOffset(property(camelContext, long.class, value)); return true;
         case "databasesslkeystore":
         case "databaseSslKeystore": getOrCreateConfiguration(target).setDatabaseSslKeystore(property(camelContext, java.lang.String.class, value)); return true;
         case "databasesslkeystorepassword":
@@ -317,6 +315,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "topicPrefix": getOrCreateConfiguration(target).setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": getOrCreateConfiguration(target).setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": getOrCreateConfiguration(target).setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "usenongracefuldisconnect":
         case "useNongracefulDisconnect": getOrCreateConfiguration(target).setUseNongracefulDisconnect(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -384,8 +384,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseQueryTimeoutMs": return int.class;
         case "databaseserverid":
         case "databaseServerId": return long.class;
-        case "databaseserveridoffset":
-        case "databaseServerIdOffset": return long.class;
         case "databasesslkeystore":
         case "databaseSslKeystore": return java.lang.String.class;
         case "databasesslkeystorepassword":
@@ -612,6 +610,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "topicPrefix": return java.lang.String.class;
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": return java.lang.String.class;
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": return java.lang.String.class;
         case "usenongracefuldisconnect":
         case "useNongracefulDisconnect": return boolean.class;
         default: return null;
@@ -680,8 +680,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseQueryTimeoutMs": return getOrCreateConfiguration(target).getDatabaseQueryTimeoutMs();
         case "databaseserverid":
         case "databaseServerId": return getOrCreateConfiguration(target).getDatabaseServerId();
-        case "databaseserveridoffset":
-        case "databaseServerIdOffset": return getOrCreateConfiguration(target).getDatabaseServerIdOffset();
         case "databasesslkeystore":
         case "databaseSslKeystore": return getOrCreateConfiguration(target).getDatabaseSslKeystore();
         case "databasesslkeystorepassword":
@@ -908,6 +906,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "topicPrefix": return getOrCreateConfiguration(target).getTopicPrefix();
         case "transactionmetadatafactory":
         case "transactionMetadataFactory": return getOrCreateConfiguration(target).getTransactionMetadataFactory();
+        case "unavailablevalueplaceholder":
+        case "unavailableValuePlaceholder": return getOrCreateConfiguration(target).getUnavailableValuePlaceholder();
         case "usenongracefuldisconnect":
         case "useNongracefulDisconnect": return getOrCreateConfiguration(target).isUseNongracefulDisconnect();
         default: return null;

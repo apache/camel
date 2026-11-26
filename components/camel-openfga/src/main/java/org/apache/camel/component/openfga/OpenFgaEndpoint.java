@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -45,9 +45,12 @@ import org.slf4j.LoggerFactory;
  * against.
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "openfga", title = "OpenFGA",
-             syntax = "openfga:operation", producerOnly = true, category = { Category.SECURITY },
+             syntax = "openfga:operation", category = { Category.SECURITY },
              headersClass = OpenFgaConstants.class)
-@BodyTypes(producerIn = @BodyType(value = Carrier.ANY, dependsOn = "object",
+@BodyTypes(consumerOut = @BodyType(value = Carrier.LIST,
+                                   javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>",
+                                   description = "readChanges: one ordered page of change Maps, acknowledged after successful page processing"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "object",
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "batchCheck",
                                                          carriers = {
@@ -73,6 +76,9 @@ import org.slf4j.LoggerFactory;
                                            @BodyType.When(option = "operation", value = "listObjects",
                                                           carriers = Carrier.LIST,
                                                           javaType = "java.util.List<java.lang.String>"),
+                                           @BodyType.When(option = "operation", value = "streamedListObjects",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.apache.camel.component.openfga.OpenFgaObjectIterator"),
                                            @BodyType.When(option = "operation", value = "listRelations",
                                                           carriers = Carrier.LIST,
                                                           javaType = "java.util.List<java.lang.String>"),
@@ -95,11 +101,12 @@ import org.slf4j.LoggerFactory;
                                    description = "check, writeTuples, deleteTuples and write keep the body: the verdict is in the"
                                                  + " CamelOpenFgaAllowed header, the count in CamelOpenFgaWrittenTuples or"
                                                  + " CamelOpenFgaDeletedTuples. batchCheck: the allowed objects of the body;"
-                                                 + " the list operations: a List of String identifiers; readTuples and"
+                                                 + " listObjects, listRelations and listUsers: a List of String identifiers;"
+                                                 + " streamedListObjects: a closeable OpenFgaObjectIterator; readTuples and"
                                                  + " readChanges: a List of Maps with user, relation, object and timestamp"
                                                  + " (and operation for a change); expand: the UsersetTree, or null when the"
                                                  + " object or relation does not resolve"))
-public class OpenFgaEndpoint extends DefaultEndpoint {
+public class OpenFgaEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenFgaEndpoint.class);
 
@@ -115,6 +122,8 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
     private volatile OpenFgaAuthorizer authorizer;
     private volatile SSLContext sslContext;
     private volatile OffsetDateTime startTime;
+    private OpenFgaStreamingClient streamingClient;
+    private boolean ownedStreamingClient;
 
     public OpenFgaEndpoint(final String uri, final Component component, final OpenFgaConfiguration configuration) {
         super(uri, component);
@@ -137,6 +146,23 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
         }
         this.startTime = parseStartTime();
         validateOperationOptions();
+        if (operation == OpenFgaOperation.streamedListObjects) {
+            require(configuration.getStoreId(), "storeId", "names the store to stream objects from");
+            if (configuration.getReadTimeout() <= 0 || configuration.getStreamMaxResults() <= 0
+                    || configuration.getStreamMaxLineLength() <= 0) {
+                throw new IllegalArgumentException(
+                        "Streaming readTimeout, streamMaxResults and streamMaxLineLength must be positive");
+            }
+            streamingClient = configuration.getStreamingClient();
+            if (streamingClient == null) {
+                if (configuration.getOpenFgaClient() != null) {
+                    throw new IllegalArgumentException(
+                            "streamedListObjects with an injected OpenFgaClient requires streamingClient");
+                }
+                streamingClient = OpenFgaClientFactory.createStreamingClient(configuration, sslContext);
+                ownedStreamingClient = true;
+            }
+        }
         authorizer = new OpenFgaAuthorizer(client, configuration, getCamelContext());
     }
 
@@ -170,7 +196,7 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
                     require(configuration.getObject(), "object", "names the resource being accessed");
                 }
             }
-            case listObjects -> {
+            case listObjects, streamedListObjects -> {
                 require(configuration.getUser(), "user", "names the subject to list objects for");
                 require(configuration.getRelation(), "relation", "names the relation to list objects through");
                 require(configuration.getType(), "type", "names the object type to enumerate");
@@ -263,8 +289,14 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        // the SDK holds one HttpClient for the life of the client and, on the Java 17 baseline, HttpClient is not
-        // AutoCloseable - so there is nothing to close here, only a reference to drop
+        // the SDK holds one HttpClient for the life of its client and offers nothing to close it with, so that one is
+        // only a reference to drop; the streaming client is ours when the endpoint built it, and its HttpClient is shut
+        // down, which Java 21 allows
+        if (ownedStreamingClient && streamingClient != null) {
+            streamingClient.close();
+        }
+        streamingClient = null;
+        ownedStreamingClient = false;
         authorizer = null;
         super.doStop();
     }
@@ -281,7 +313,26 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer not supported");
+        if (operation != OpenFgaOperation.readChanges) {
+            throw new UnsupportedOperationException("Only readChanges supports an OpenFGA consumer");
+        }
+        if (configuration.getCheckpointRepository() == null) {
+            throw new IllegalArgumentException("A durable checkpointRepository is required for a readChanges consumer");
+        }
+        require(configuration.getCheckpointKey(), "checkpointKey", "identifies the durable change-log cursor");
+        if (configuration.getChangePollTimeout() <= 0) {
+            throw new IllegalArgumentException("changePollTimeout must be positive");
+        }
+        if (configuration.getPageSize() != null && configuration.getPageSize() <= 0) {
+            throw new IllegalArgumentException("pageSize must be positive");
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getContinuationToken())) {
+            throw new IllegalArgumentException(
+                    "A readChanges consumer resumes from checkpointRepository, not continuationToken");
+        }
+        OpenFgaConsumer consumer = new OpenFgaConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public OpenFgaOperation getOperation() {
@@ -301,6 +352,10 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(OpenFgaConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    OpenFgaStreamingClient getStreamingClient() {
+        return streamingClient;
     }
 
     OpenFgaAuthorizer getAuthorizer() {

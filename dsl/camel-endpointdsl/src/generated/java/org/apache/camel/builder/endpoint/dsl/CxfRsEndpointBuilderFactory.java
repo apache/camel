@@ -831,6 +831,46 @@ public interface CxfRsEndpointBuilderFactory {
             doSetProperty("propagateContexts", propagateContexts);
             return this;
         }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer sends each request without an InvocationCallback and waits
+         * for the response, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfRsEndpointConsumerBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer sends each request without an InvocationCallback and waits
+         * for the response, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfRsEndpointConsumerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     /**
@@ -1446,46 +1486,6 @@ public interface CxfRsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to always process the exchange synchronously. If true, the
-         * producer sends each request without an InvocationCallback and waits
-         * for the response, and the consumer runs the route without a CXF
-         * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, including a bean:
-         * endpoint, unless the endpoint URI sets it.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCxfRsEndpointProducerBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Whether to always process the exchange synchronously. If true, the
-         * producer sends each request without an InvocationCallback and waits
-         * for the response, and the consumer runs the route without a CXF
-         * continuation. The component sets it to the value of its own
-         * synchronous option when it creates the endpoint, including a bean:
-         * endpoint, unless the endpoint URI sets it.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCxfRsEndpointProducerBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
          * To use a custom org.apache.camel.component.cxf.jaxrs.CxfRsBinding to
          * map between the Camel message and the JAX-RS request and response, on
          * the consumer and on the producer. Setting this option sets
@@ -1782,6 +1782,46 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder propagateContexts(String propagateContexts) {
             doSetProperty("propagateContexts", propagateContexts);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer sends each request without an InvocationCallback and waits
+         * for the response, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfRsEndpointProducerBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer sends each request without an InvocationCallback and waits
+         * for the response, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfRsEndpointProducerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -2376,6 +2416,46 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder propagateContexts(String propagateContexts) {
             doSetProperty("propagateContexts", propagateContexts);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer sends each request without an InvocationCallback and waits
+         * for the response, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfRsEndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer sends each request without an InvocationCallback and waits
+         * for the response, and the consumer runs the route without a CXF
+         * continuation. The component sets it to the value of its own
+         * synchronous option when it creates the endpoint, including a bean:
+         * endpoint, unless the endpoint URI sets it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfRsEndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

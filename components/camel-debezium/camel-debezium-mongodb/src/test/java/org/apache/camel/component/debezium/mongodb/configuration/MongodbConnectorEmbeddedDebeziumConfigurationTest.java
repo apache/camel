@@ -55,7 +55,7 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setName("test_config");
         configuration.setMongodbUser("test_db");
         configuration.setTopicPrefix("test_server");
-        configuration.setOffsetStorageFileName("/offset/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
         configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         assertFalse(configuration.validateConfiguration().isValid());
@@ -74,7 +74,7 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setMongodbConnectionString("mongodb://localhost:27017/?replicaSet=rs0");
         configuration.setMongodbPassword("test_pwd");
         configuration.setTopicPrefix("test_server");
-        configuration.setOffsetStorageFileName("/offset/file");
+        configuration.setOffsetStorageFileName("target/offset-file");
         configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         final ConfigurationValidation validation = configuration.validateConfiguration();
@@ -85,7 +85,7 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("mongodb://localhost:27017/?replicaSet=rs0", configuration.getMongodbConnectionString());
         assertEquals("test_pwd", configuration.getMongodbPassword());
         assertEquals("test_server", configuration.getTopicPrefix());
-        assertEquals("/offset/file", configuration.getOffsetStorageFileName());
+        assertEquals("target/offset-file", configuration.getOffsetStorageFileName());
         assertEquals("/database_history/file", configuration.getSchemaHistoryInternalFileFilename());
     }
 

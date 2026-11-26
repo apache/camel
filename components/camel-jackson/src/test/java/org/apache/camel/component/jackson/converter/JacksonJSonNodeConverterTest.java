@@ -22,12 +22,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
@@ -193,6 +196,49 @@ public class JacksonJSonNodeConverterTest extends CamelTestSupport {
     public void convertToBoolean() {
         boolean value = context.getTypeConverter().convertTo(Boolean.class, BooleanNode.TRUE);
         Assertions.assertTrue(value);
+    }
+
+    @Test
+    public void jsonNodeToMapWithoutExchange() {
+        // CAMEL-27301: a type converter can be called without an exchange
+        JsonNode node = new ObjectMapper().valueToTree(Map.of("message", "Bye Camel", "age", 44));
+
+        Map out = context.getTypeConverter().convertTo(Map.class, node);
+        assertNotNull(out);
+
+        Assertions.assertEquals(2, out.size());
+        Assertions.assertEquals("Bye Camel", out.get("message"));
+        Assertions.assertEquals(44, out.get("age"));
+    }
+
+    @Test
+    public void convertWithoutExchange() {
+        JsonNode node = context.getTypeConverter().convertTo(JsonNode.class, "{ \"message\": \"Hello World\" }");
+        assertNotNull(node);
+        Assertions.assertEquals("Hello World", node.get("message").asText());
+
+        node = context.getTypeConverter().convertTo(JsonNode.class, Map.of("message", "Hello Camel"));
+        assertNotNull(node);
+
+        String text = context.getTypeConverter().convertTo(String.class, node);
+        assertThat(text).isEqualToNormalizingNewlines("{\n  \"message\" : \"Hello Camel\"\n}");
+
+        byte[] arr = context.getTypeConverter().convertTo(byte[].class, node);
+        Assertions.assertEquals("{\"message\":\"Hello Camel\"}", new String(arr, StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void simpleBodyFieldOfObjectNode() {
+        // CAMEL-27301: the simple language converts the body to a Map without an exchange for ${body[field]}
+        ObjectNode node = new ObjectMapper().createObjectNode();
+        node.put("name", "Goofy");
+        node.put("age", 44);
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setBody(node);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${body[name]}");
+        Assertions.assertEquals("Goofy", expression.evaluate(exchange, String.class));
     }
 
 }

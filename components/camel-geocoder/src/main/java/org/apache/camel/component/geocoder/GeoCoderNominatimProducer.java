@@ -28,6 +28,7 @@ import com.jayway.jsonpath.Option;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -73,8 +74,9 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
         String geocoded = null;
 
         if (latlng != null) {
-            String lat = StringHelper.before(latlng, ",");
-            String lng = StringHelper.after(latlng, ",");
+            // the latlng header this producer sets has a space after the comma
+            String lat = StringHelper.before(latlng, ",").trim();
+            String lng = StringHelper.after(latlng, ",").trim();
 
             LOG.debug("Geocode for lat/lng {}", latlng);
             geocoded = query(lat, lng);
@@ -94,6 +96,7 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
         params.put("format", "jsonv2");
         params.put("lat", dlat);
         params.put("lon", dlon);
+        addLanguage(params);
 
         return queryForString("reverse", params);
     }
@@ -104,8 +107,16 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
         params.put("addressdetails", "1");
         params.put("q", address);
         params.put("limit", "1");
+        addLanguage(params);
 
         return queryForString("search", params);
+    }
+
+    private void addLanguage(Map<String, String> params) {
+        String language = endpoint.getLanguage();
+        if (ObjectHelper.isNotEmpty(language)) {
+            params.put("accept-language", language);
+        }
     }
 
     private String queryForString(String operation, Map<String, String> params) throws IOException {

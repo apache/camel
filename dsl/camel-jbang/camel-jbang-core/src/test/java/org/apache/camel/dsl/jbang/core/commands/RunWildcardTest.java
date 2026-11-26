@@ -38,7 +38,7 @@ class RunWildcardTest {
     Path dir;
 
     private static Run run(String... args) {
-        Run command = new Run(new CamelJBangMain());
+        Run command = new CamelJBangMain().command(new Run());
         CommandLineTestHelper.parse(command, args);
         return command;
     }

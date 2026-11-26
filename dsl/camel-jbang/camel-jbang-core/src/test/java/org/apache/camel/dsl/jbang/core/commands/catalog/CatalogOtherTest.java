@@ -52,7 +52,7 @@ class CatalogOtherTest extends CamelCommandBaseTestSupport {
     }
 
     private CatalogOther createCommand() {
-        CatalogOther command = new CatalogOther(new CamelJBangMain().withPrinter(printer));
+        CatalogOther command = new CamelJBangMain().withPrinter(printer).command(new CatalogOther());
         // options are normally defaulted by picocli; set them as we construct the command directly
         command.sort = "name";
         command.mavenResolver = new MavenResolverMixin();

@@ -303,7 +303,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     /**
      * A semicolon-separated list of expressions that match fully-qualified
      * tables and column(s) to be used as message key. Each expression must
-     * match the pattern '<fully-qualified table name>:<key columns>', where the
+     * match the pattern '{fully-qualified table name}:{key columns}', where the
      * table names could be defined as (DB_NAME.TABLE_NAME) or
      * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector, and the
      * key columns are a comma-separated list of columns representing the custom
@@ -492,8 +492,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of custom converters that would be used instead of default
-     * ones. The converters are defined using '<converter.prefix>.type' config
-     * option and configured using options '<converter.prefix>.<option>'
+     * ones. The converters are defined using '{converter.prefix}.type' config
+     * option and configured using options '{converter.prefix}.{option}'
      */
     public void setConverters(String converters) {
         this.converters = converters;
@@ -884,9 +884,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for table
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage<io.debezium.relational.Table>.
-     * Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for
-     * in-memory storage.
+     * io.debezium.relational.TableMappingStorage of
+     * io.debezium.relational.Table. Defaults to
+     * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+     * storage.
      */
     public void setMemoryManagementTablesClass(
             String memoryManagementTablesClass) {
@@ -1217,7 +1218,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for schema
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage<io.debezium.relational.TableSchema>. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
+     * io.debezium.relational.TableMappingStorage of
+     * io.debezium.relational.TableSchema. Defaults to
+     * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+     * storage.
      */
     public void setMemoryManagementSchemasClass(
             String memoryManagementSchemasClass) {
@@ -1424,8 +1428,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
      * for Replica Identity at table level. This option will overwrite the
      * existing value in databaseA comma-separated list of regular expressions
      * that match fully-qualified tables and Replica Identity value to be used
-     * in the table. Each expression must match the pattern '<fully-qualified
-     * table name>:<replica identity>', where the table names could be defined
+     * in the table. Each expression must match the pattern '{fully-qualified
+     * table name}:{replica identity}', where the table names could be defined
      * as (SCHEMA_NAME.TABLE_NAME), and the replica identity values are: DEFAULT
      * - Records the old values of the columns of the primary key, if any. This
      * is the default for non-system tables.INDEX index_name - Records the old
@@ -1870,12 +1874,12 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
      * an exception and stop.ALL_TABLES - If no publication exists, the
      * connector will create a new publication for all tables. Note this
      * requires that the configured user has access. If the publication already
-     * exists, it will be used. i.e CREATE PUBLICATION <publication_name> FOR
+     * exists, it will be used. i.e CREATE PUBLICATION {publication_name} FOR
      * ALL TABLES;FILTERED - If no publication exists, the connector will create
      * a new publication for all those tables matchingthe current filter
      * configuration (see table/database include/exclude list properties). If
      * the publication already exists, it will be used. i.e CREATE PUBLICATION
-     * <publication_name> FOR TABLE <tbl1, tbl2, etc>
+     * {publication_name} FOR TABLE {tbl1, tbl2, etc}
      */
     public void setPublicationAutocreateMode(String publicationAutocreateMode) {
         this.publicationAutocreateMode = publicationAutocreateMode;
@@ -1992,8 +1996,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of post processors. The processors are defined using
-     * '<post.processor.prefix>.type' config option and configured using options
-     * '<post.processor.prefix.<option>'
+     * '{post.processor.prefix}.type' config option and configured using options
+     * '{post.processor.prefix}.{option}'
      */
     public void setPostProcessors(String postProcessors) {
         this.postProcessors = postProcessors;

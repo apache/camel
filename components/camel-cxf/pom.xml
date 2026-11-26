@@ -41,6 +41,7 @@
         <module>camel-cxf-transport</module>
         <module>camel-cxf-rest</module>
         <module>camel-cxf-soap</module>
+        <module>camel-cxf-platform-http</module>
         <module>camel-cxf-spring-soap</module>
         <module>camel-cxf-spring-common</module>
         <module>camel-cxf-spring-rest</module>

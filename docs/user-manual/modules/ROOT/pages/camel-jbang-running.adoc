@@ -306,6 +306,19 @@ camel run foo.java --repos=https://packages.atlassian.com/maven-external
 
 TIP: Separate multiple repositories with commas.
 
+Some repositories are known by name, so you can use the name instead of the URL, such as `--repos=confluent`:
+
+[width="100%",cols="1m,3",options="header"]
+|===
+| Name | Repository
+| central | `https://repo1.maven.org/maven2`
+| apache-snapshot | `https://repository.apache.org/snapshots`
+| atlassian | `https://packages.atlassian.com/maven-external`
+| confluent | `https://packages.confluent.io/maven/` (the Confluent serializers and deserializers for Kafka, such as `io.confluent:kafka-avro-serializer`)
+| jboss | `https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content`
+| redhat | `https://maven.repository.redhat.com/ga`
+|===
+
 You can also configure repositories in `application.properties`:
 
 [source,properties]
@@ -421,6 +434,18 @@ example, a route that imports `org.apache.camel.component.aws2.s3.AWS2S3Constant
 headers of the `aws-s3-source` Kamelet gets `camel-aws2-s3` before the route is compiled. A class
 that is only looked up while running still needs the component class itself, so probing whether
 a class is present does not download a component.
+
+A few components need a library that is not one of their dependencies and load its classes without
+asking Camel, so no lookup would happen. Camel CLI looks up a class of the library when a route uses
+the component, which downloads the library in the version Camel manages, and `camel export` adds it
+to the exported project:
+
+* `activemq` and `activemq6`: the JMS connection pool `org.messaginghub:pooled-jms`.
+* `debezium-mysql`: the MySQL JDBC driver `com.mysql:mysql-connector-j`, which is under the GPL.
+* `debezium-db2`: the Db2 JDBC driver `com.ibm.db2:jcc`, which is under the IBM International
+  Program License Agreement.
+
+The other Debezium components come with the JDBC driver of their database.
 
 A dependency you declare yourself, with `--dep`, `camel.jbang.dependencies`, or in the project's
 POM, is on the classpath before any lookup, so it always takes precedence. Use that when a

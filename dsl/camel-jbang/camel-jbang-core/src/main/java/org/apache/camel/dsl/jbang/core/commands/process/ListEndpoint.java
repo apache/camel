@@ -30,9 +30,9 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Argument;
 import org.aesh.command.option.Option;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.EndpointScope;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
@@ -94,9 +94,9 @@ public class ListEndpoint extends ProcessWatchCommand {
     @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
-    public ListEndpoint(CamelJBangMain main) {
-        super(main);
-    }
+    @Option(name = "mask", hasValue = false, defaultValue = "true",
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask = true;
 
     @Override
     public Integer doProcessWatchCall() throws Exception {
@@ -120,7 +120,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                         row.name = ProcessHelper.extractName(root, ph);
                     }
                     row.pid = Long.toString(ph.pid());
-                    row.endpoint = o.getString("uri");
+                    row.endpoint = ListingFormat.masked(o.getString("uri"), mask);
                     row.stub = o.getBooleanOrDefault("stub", false);
                     row.remote = o.getBooleanOrDefault("remote", true);
                     row.scope = EndpointScope.of(row.endpoint, row.remote);

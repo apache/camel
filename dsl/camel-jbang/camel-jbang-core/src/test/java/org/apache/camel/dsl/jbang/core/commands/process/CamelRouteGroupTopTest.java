@@ -50,7 +50,7 @@ class CamelRouteGroupTopTest extends ProcessCommandTestSupport {
     }
 
     private void assertSlowBeforeFast(long firstPid, long secondPid) throws Exception {
-        CamelRouteGroupTop command = new CamelRouteGroupTop(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupTop command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupTop());
         command.sort = "name";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -73,7 +73,7 @@ class CamelRouteGroupTopTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        CamelRouteGroupTop command = new CamelRouteGroupTop(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupTop command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupTop());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();

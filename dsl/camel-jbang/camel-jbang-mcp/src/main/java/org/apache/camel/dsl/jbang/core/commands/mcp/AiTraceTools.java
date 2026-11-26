@@ -33,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.jboss.logging.Logger;
 
 /**
  * MCP Tool for tracing AI-specific exchange flow in running Camel applications.
@@ -44,6 +45,8 @@ import org.apache.camel.util.json.JsonObject;
 @McpSecured
 @ApplicationScoped
 public class AiTraceTools {
+
+    private static final Logger LOG = Logger.getLogger(AiTraceTools.class);
 
     private static final String NAME_OR_PID_DESC
             = "Name or PID of the Camel process. Leave empty to auto-detect (works when exactly one Camel process is running)";
@@ -67,12 +70,15 @@ public class AiTraceTools {
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Trace AI-specific exchange flow in a running Camel application. "
-                        + "Shows token usage, model IDs, guardrail outcomes, completion reasons, "
-                        + "streaming chunk counts, and per-component latency for AI components "
-                        + "(Bedrock, LangChain4j, Docling, Textract, OpenAI, KServe, DJL, "
-                        + "TensorFlow Serving, HuggingFace). "
-                        + "Combines message history with processor statistics filtered to AI steps.")
+          description = "Trace how a running Camel application used AI. Starts with the GenAI calls of the "
+                        + "genai dev console (camel-ai-observability): a summary line, the model calls per model "
+                        + "with their tokens, and the newest agent runs with each model call and tool call (name, "
+                        + "time, tokens, and at camel.aiObservability.level=full the question, the answer, tool "
+                        + "arguments and results). "
+                        + "Then token usage, model IDs, guardrail outcomes, completion reasons and per-component "
+                        + "latency of the AI components (Bedrock, LangChain4j, Docling, Textract, OpenAI, KServe, "
+                        + "DJL, TensorFlow Serving, HuggingFace) from the message history and processor "
+                        + "statistics. " + GenAiTraceReport.CONVERSATION_TOOL + " shows the messages of one run.")
     public AiTraceResult camel_runtime_ai_trace(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID filter (exact match or * for all, default: *)",
@@ -94,8 +100,11 @@ public class AiTraceTools {
             List<AiHeaderInfo> aiHeaders = extractAiHeaders(history);
             List<AiProcessorStat> aiProcessorStats = extractAiProcessorStats(topProcessors);
             AiTraceSummary summary = buildSummary(aiComponents, aiHeaders, aiProcessorStats);
+            JsonObject genAi = loadGenAi(ctx, Map.of(
+                    "limit", String.valueOf(GenAiTraceReport.CONSOLE_LIMIT), "content", "true"));
 
             return new AiTraceResult(
+                    GenAiTraceReport.summary(genAi, filter), GenAiTraceReport.genAi(genAi, filter),
                     p.name(), p.pid(),
                     aiComponents.isEmpty() ? null : aiComponents,
                     aiHeaders.isEmpty() ? null : aiHeaders,
@@ -106,6 +115,48 @@ public class AiTraceTools {
         } catch (Exception e) {
             throw new ToolCallException(
                     "Failed to collect AI trace data: " + e.getMessage(), null);
+        }
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "The conversation of one GenAI agent run of a running Camel application: the system "
+                        + "instructions, the user and assistant messages, and each tool call with its arguments and "
+                        + "result, in order. Take the runId from camel_runtime_ai_trace. The messages are recorded "
+                        + "at camel.aiObservability.level=full only and may hold customers' data; long texts are "
+                        + "cut, and the answer says what was cut.")
+    public GenAiTraceReport.Conversation camel_runtime_ai_conversation(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The runId of an agent run, as camel_runtime_ai_trace lists it") String runId) {
+
+        RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
+        ToolContext ctx = new ToolContext();
+        ctx.selectProcess(p.pid());
+        JsonObject answer = loadGenAi(ctx, Map.of("id", runId));
+        if (!GenAiTraceReport.hasConsole(answer)) {
+            throw new ToolCallException(GenAiTraceReport.NO_CONSOLE, null);
+        }
+        GenAiTraceReport.Conversation conversation = GenAiTraceReport.conversation(answer, runId);
+        if (conversation == null) {
+            throw new ToolCallException(
+                    "No GenAI call with runId " + runId + ": camel_runtime_ai_trace lists the runIds of the newest "
+                                        + "agent runs, and the console keeps the newest 50 runs only.",
+                    null);
+        }
+        return conversation;
+    }
+
+    /**
+     * The answer of the genai dev console, or {@code null} when it cannot be read: the GenAI part of the trace then
+     * says how to turn it on. Not passed through {@link McpToolNames}, as it carries the messages of the models as they
+     * were.
+     */
+    JsonObject loadGenAi(ToolContext ctx, Map<String, String> args) {
+        try {
+            return RuntimeTools.toJsonObject(ToolRegistry.execute("get_genai", ctx, args));
+        } catch (Exception e) {
+            LOG.debugf("The genai dev console cannot be read (%s): the trace shows no GenAI calls", e.getMessage());
+            return null;
         }
     }
 
@@ -289,6 +340,8 @@ public class AiTraceTools {
     // ---- Result records ----
 
     record AiTraceResult(
+            String genAiSummary,
+            GenAiTraceReport.GenAi genAi,
             String processName,
             long pid,
             List<AiComponentInfo> aiComponents,

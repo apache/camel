@@ -49,7 +49,9 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.ai.observability.GenAiErrorSupport;
+import org.apache.camel.component.ai.observability.GenAiMessages;
 import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservabilityLevel;
 import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
@@ -57,6 +59,7 @@ import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolSearchSession;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -158,6 +161,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         Boolean streaming = resolveParameter(in, OpenAIConstants.STREAMING, config.isStreaming(), Boolean.class);
         String outputClass = resolveParameter(in, OpenAIConstants.OUTPUT_CLASS, config.getOutputClass(), String.class);
         String jsonSchema = resolveParameter(in, OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
+        boolean jsonSchemaStrict
+                = resolveParameter(in, OpenAIConstants.JSON_SCHEMA_STRICT, config.isJsonSchemaStrict(), Boolean.class);
 
         List<ChatCompletionMessageParam> messages = buildMessages(exchange, config);
 
@@ -193,10 +198,14 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             // Build OpenAI JSON schema response format from provided schema string
             try {
                 ResponseFormatJsonSchema.JsonSchema.Schema schema = buildSchemaFromJson(jsonSchema);
-                ResponseFormatJsonSchema.JsonSchema jsonSchemaObj = ResponseFormatJsonSchema.JsonSchema.builder()
+                ResponseFormatJsonSchema.JsonSchema.Builder jsonSchemaBuilder = ResponseFormatJsonSchema.JsonSchema.builder()
                         .name("camel_schema")
-                        .schema(schema)
-                        .build();
+                        .schema(schema);
+                if (jsonSchemaStrict) {
+                    // without the option, strict is left out of the request, as before
+                    jsonSchemaBuilder.strict(true);
+                }
+                ResponseFormatJsonSchema.JsonSchema jsonSchemaObj = jsonSchemaBuilder.build();
                 paramsBuilder.responseFormat(
                         ResponseFormatJsonSchema.builder()
                                 .jsonSchema(jsonSchemaObj)
@@ -238,7 +247,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             // Search installs a synthetic tool even when every real tool is omitted, so the agentic loop still runs.
             boolean agenticTools = toolSearchEnabled || hasMcpTools;
             if (Boolean.TRUE.equals(streaming) && agenticTools && config.isAutoToolExecution()) {
-                LOG.info("Streaming with MCP tools is not supported; falling back to non-streaming for the agentic loop");
+                LOG.info("Streaming with tools is not supported; falling back to non-streaming for the tool loop");
                 processNonStreaming(exchange, params, config);
             } else if (Boolean.TRUE.equals(streaming)) {
                 processStreaming(exchange, params);
@@ -357,9 +366,40 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if (!agenticTools || !config.isAutoToolExecution()) {
             // Path A: No tools, or auto-execution disabled. Searchable tools are already omitted from params.
             processNonStreamingSimple(exchange, params, config);
+        } else if (GenAiObservability.isLevel(exchange.getContext(), GenAiObservabilityLevel.DETAILED)) {
+            // Path B, observed as an agent run: each model call and tool call nests under one invoke_agent span
+            processObservedAgentic(exchange, params, config);
         } else {
             // Path B: tools with agentic loop, including a request whose only initial tool is tool search
             processNonStreamingAgentic(exchange, params, config);
+        }
+    }
+
+    private void processObservedAgentic(
+            Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
+            throws Exception {
+        String routeId = ExchangeHelper.getAtRouteId(exchange);
+        GenAiObservation agentRun = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.INVOKE_AGENT)
+                .agentName(routeId != null ? routeId : "openai")
+                .system("openai")
+                .requestModel(params.model().toString())
+                .conversationId(exchange.getMessage().getHeader(OpenAIConstants.CONVERSATION_ID))
+                .componentScheme("openai")
+                .build());
+        agentRun.recordInputMessages(() -> OpenAIGenAiMessages.input(params));
+        try {
+            processNonStreamingAgentic(exchange, params, config);
+            // the model calls carry the token usage; repeating it on the run would count it twice
+            agentRun.recordSuccess(GenAiUsage.of((Long) null, null,
+                    exchange.getMessage().getHeader(OpenAIConstants.FINISH_REASON, String.class), null));
+            agentRun.recordOutputMessages(() -> new GenAiMessages().text(GenAiMessages.ASSISTANT,
+                    exchange.getMessage().getBody(String.class)));
+        } catch (Exception e) {
+            agentRun.recordError(e);
+            throw e;
+        } finally {
+            agentRun.close();
         }
     }
 
@@ -554,6 +594,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 .system("openai")
                 .requestModel(requestModel)
                 .componentScheme("openai")
+                .tracedByFramework(OpenAIClientTracing.tracedByOpenTelemetry(exchange.getContext(), getEndpoint().getClient()))
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
 
@@ -667,16 +708,29 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 .system("openai")
                 .requestModel(requestModel)
                 .componentScheme("openai")
+                .conversationId(exchange.getMessage().getHeader(OpenAIConstants.CONVERSATION_ID))
+                .requestParameter("temperature", params.temperature().orElse(null))
+                .requestParameter("top_p", params.topP().orElse(null))
+                .requestParameter("max_tokens", params.maxCompletionTokens().orElse(null))
+                .tracedByFramework(OpenAIClientTracing.tracedByOpenTelemetry(exchange.getContext(), getEndpoint().getClient()))
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        observation.recordInputMessages(() -> OpenAIGenAiMessages.input(params));
+        observation.recordToolDefinitions(() -> OpenAIGenAiMessages.toolDefinitions(params));
         try {
             ChatCompletion response = getEndpoint().getClient().chat().completions().create(params);
             CompletionUsage usage = response.usage().orElse(null);
+            String finishReason = response.choices().isEmpty() ? null : getFinishReasonString(response.choices().get(0));
             observation.recordSuccess(GenAiUsage.of(
                     usage != null ? usage.promptTokens() : null,
                     usage != null ? usage.completionTokens() : null,
-                    response.choices().isEmpty() ? null : getFinishReasonString(response.choices().get(0)),
+                    finishReason,
                     response.model()));
+            if (usage != null) {
+                observation.recordCachedInputTokens(
+                        usage.promptTokensDetails().flatMap(CompletionUsage.PromptTokensDetails::cachedTokens).orElse(null));
+            }
+            observation.recordOutputMessages(() -> OpenAIGenAiMessages.output(response, finishReason));
             return response;
         } catch (RuntimeException e) {
             GenAiErrorSupport.apply(exchange, e);

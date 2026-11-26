@@ -164,7 +164,13 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the name of the JetStream stream to use.
+         * The name of the JetStream stream. The consumer reads from this stream
+         * (it is required for a JetStream consumer). When the stream does not
+         * exist, the consumer creates it with the subject of the topic. The
+         * producer creates it in the same way, unless another stream already
+         * takes in the subject. The producer publishes to the subject, and the
+         * message is stored by the stream that takes in the subject, whatever
+         * its name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -942,6 +948,48 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the NATS server matches the
+         * host Camel connects to, when TLS is used. The client then keeps the
+         * host name of a server for TLS, and connects to the fastest of its IP
+         * addresses. A server that is given, or that the cluster announces, by
+         * its IP address needs a certificate that names that address. When
+         * disabled, any certificate trusted by the JVM, or by the
+         * sslContextParameters, is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the NATS server matches the
+         * host Camel connects to, when TLS is used. The client then keeps the
+         * host name of a server for TLS, and connects to the fastest of its IP
+         * addresses. A server that is given, or that the cluster announces, by
+         * its IP address needs a certificate that names that address. When
+         * disabled, any certificate trusted by the JVM, or by the
+         * sslContextParameters, is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Set secure option indicating TLS is required.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1421,7 +1469,13 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the name of the JetStream stream to use.
+         * The name of the JetStream stream. The consumer reads from this stream
+         * (it is required for a JetStream consumer). When the stream does not
+         * exist, the consumer creates it with the subject of the topic. The
+         * producer creates it in the same way, unless another stream already
+         * takes in the subject. The producer publishes to the subject, and the
+         * message is stored by the stream that takes in the subject, whatever
+         * its name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1776,7 +1830,11 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request timeout in milliseconds.
+         * Request timeout in milliseconds. With JetStream, the time to wait for
+         * the acknowledgement of a published message. With jetstreamAsync=true,
+         * the NATS client also gives up on the acknowledgement after
+         * requestCleanupInterval (to twice that), so a longer wait needs a
+         * longer requestCleanupInterval too.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1791,7 +1849,11 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request timeout in milliseconds.
+         * Request timeout in milliseconds. With JetStream, the time to wait for
+         * the acknowledgement of a published message. With jetstreamAsync=true,
+         * the NATS client also gives up on the acknowledgement after
+         * requestCleanupInterval (to twice that), so a longer wait needs a
+         * longer requestCleanupInterval too.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1820,6 +1882,48 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder credentialsFilePath(String credentialsFilePath) {
             doSetProperty("credentialsFilePath", credentialsFilePath);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the NATS server matches the
+         * host Camel connects to, when TLS is used. The client then keeps the
+         * host name of a server for TLS, and connects to the fastest of its IP
+         * addresses. A server that is given, or that the cluster announces, by
+         * its IP address needs a certificate that names that address. When
+         * disabled, any certificate trusted by the JVM, or by the
+         * sslContextParameters, is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the NATS server matches the
+         * host Camel connects to, when TLS is used. The client then keeps the
+         * host name of a server for TLS, and connects to the fastest of its IP
+         * addresses. A server that is given, or that the cluster announces, by
+         * its IP address needs a certificate that names that address. When
+         * disabled, any certificate trusted by the JVM, or by the
+         * sslContextParameters, is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**
@@ -2193,7 +2297,13 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the name of the JetStream stream to use.
+         * The name of the JetStream stream. The consumer reads from this stream
+         * (it is required for a JetStream consumer). When the stream does not
+         * exist, the consumer creates it with the subject of the topic. The
+         * producer creates it in the same way, unless another stream already
+         * takes in the subject. The producer publishes to the subject, and the
+         * message is stored by the stream that takes in the subject, whatever
+         * its name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2551,6 +2661,48 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the NATS server matches the
+         * host Camel connects to, when TLS is used. The client then keeps the
+         * host name of a server for TLS, and connects to the fastest of its IP
+         * addresses. A server that is given, or that the cluster announces, by
+         * its IP address needs a certificate that names that address. When
+         * disabled, any certificate trusted by the JVM, or by the
+         * sslContextParameters, is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the NATS server matches the
+         * host Camel connects to, when TLS is used. The client then keeps the
+         * host name of a server for TLS, and connects to the fastest of its IP
+         * addresses. A server that is given, or that the cluster announces, by
+         * its IP address needs a certificate that names that address. When
+         * disabled, any certificate trusted by the JVM, or by the
+         * sslContextParameters, is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Set secure option indicating TLS is required.
          * 
          * The option is a: <code>boolean</code> type.
@@ -2897,8 +3049,8 @@ public interface NatsEndpointBuilderFactory {
             return "CamelNatsStatusError";
         }
         /**
-         * Number of times this message has been delivered (1 = first, 1 then
-         * message has been redelivered).
+         * Number of times this message has been delivered (1 = first, &gt; 1
+         * then message has been redelivered).
          * 
          * The option is a: {@code long} type.
          * 

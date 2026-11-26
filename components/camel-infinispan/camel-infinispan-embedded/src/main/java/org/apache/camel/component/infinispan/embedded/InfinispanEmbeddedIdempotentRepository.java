@@ -18,9 +18,11 @@ package org.apache.camel.component.infinispan.embedded;
 
 import java.util.function.Supplier;
 
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.infinispan.InfinispanIdempotentRepository;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InMemoryStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -33,7 +35,7 @@ import org.infinispan.manager.EmbeddedCacheManager;
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Infinispan Embedded message id repository")
-public class InfinispanEmbeddedIdempotentRepository extends InfinispanIdempotentRepository {
+public class InfinispanEmbeddedIdempotentRepository extends InfinispanIdempotentRepository implements InMemoryStrategy {
 
     private Supplier<BasicCache<String, Boolean>> cache;
     private InfinispanEmbeddedManager manager;
@@ -74,6 +76,15 @@ public class InfinispanEmbeddedIdempotentRepository extends InfinispanIdempotent
     @Override
     protected BasicCache<String, Boolean> getCache() {
         return cache.get();
+    }
+
+    /**
+     * Whether the keys are kept only in memory; see {@link InfinispanEmbeddedUtil#isInMemory(BasicCache)}.
+     */
+    @Override
+    @ManagedAttribute(description = "Whether the keys are kept only in memory (lost when the application stops)")
+    public boolean isInMemory() {
+        return isStarted() && InfinispanEmbeddedUtil.isInMemory(getCache());
     }
 
     public void setCacheName(String cacheName) {

@@ -33,7 +33,6 @@ import org.aesh.command.option.Argument;
 import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.aesh.command.option.OptionList;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -115,10 +114,6 @@ public class CamelStubAction extends ActionWatchCommand {
     private MessageTableHelper tableHelper;
     private final Map<String, Ansi.Color> exchangeIdColors = new HashMap<>();
     private int exchangeIdColorsIndex = 1;
-
-    public CamelStubAction(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     protected Integer doWatchCall() throws Exception {

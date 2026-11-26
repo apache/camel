@@ -287,8 +287,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private int snapshotDatabaseErrorsMaxRetries = 0;
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String topicPrefix;
@@ -352,15 +350,17 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Controls how the connector holds locks on tables while performing the
-     * schema snapshot. The default is 'shared', which means the connector will
-     * hold a table lock that prevents exclusive table access for just the
-     * initial portion of the snapshot while the database schemas and other
-     * metadata are being read. The remaining work in a snapshot involves
-     * selecting all rows from each table, and this is done using a flashback
-     * query that requires no locks. However, in some cases it may be desirable
-     * to avoid locks entirely which can be done by specifying 'none'. This mode
-     * is only safe to use if no schema changes are happening while the snapshot
-     * is taken.
+     * snapshot. The default is 'shared', which means the connector will hold a
+     * ROW SHARE table lock for the duration of the snapshot. The lock allows
+     * other sessions to read and write the table and prevents most DDL on it;
+     * however, Oracle non-blocking DDL such as ALTER TABLE ADD COLUMN is still
+     * permitted and would invalidate the flashback query used to read the table
+     * data (ORA-01466). Specifying 'extended' holds a SHARE table lock instead,
+     * which prevents all DDL but also blocks writes to the table for the
+     * duration of the snapshot. In some cases it may be desirable to avoid
+     * locks entirely which can be done by specifying 'none'. This mode is only
+     * safe to use if no schema changes are happening while the snapshot is
+     * taken.
      */
     public void setSnapshotLockingMode(String snapshotLockingMode) {
         this.snapshotLockingMode = snapshotLockingMode;
@@ -373,7 +373,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     /**
      * A semicolon-separated list of expressions that match fully-qualified
      * tables and column(s) to be used as message key. Each expression must
-     * match the pattern '<fully-qualified table name>:<key columns>', where the
+     * match the pattern '{fully-qualified table name}:{key columns}', where the
      * table names could be defined as (DB_NAME.TABLE_NAME) or
      * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector, and the
      * key columns are a comma-separated list of columns representing the custom
@@ -529,8 +529,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of custom converters that would be used instead of default
-     * ones. The converters are defined using '<converter.prefix>.type' config
-     * option and configured using options '<converter.prefix>.<option>'
+     * ones. The converters are defined using '{converter.prefix}.type' config
+     * option and configured using options '{converter.prefix}.{option}'
      */
     public void setConverters(String converters) {
         this.converters = converters;
@@ -897,8 +897,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specifies the inner body the Ehcache <cache/> tag for the schema changes
-     * cache, but should not include the <key-type/> nor the <value-type/>
+     * Specifies the inner body the Ehcache 'cache' tag for the schema changes
+     * cache, but should not include the 'key-type' nor the 'value-type'
      * attributes as these are managed by Debezium.
      */
     public void setLogMiningBufferEhcacheSchemachangesConfig(
@@ -1005,9 +1005,10 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for table
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage<io.debezium.relational.Table>.
-     * Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for
-     * in-memory storage.
+     * io.debezium.relational.TableMappingStorage of
+     * io.debezium.relational.Table. Defaults to
+     * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+     * storage.
      */
     public void setMemoryManagementTablesClass(
             String memoryManagementTablesClass) {
@@ -1442,7 +1443,10 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     /**
      * The fully-qualified class name of the storage implementation for schema
      * metadata. The class must implement
-     * io.debezium.relational.TableMappingStorage<io.debezium.relational.TableSchema>. Defaults to io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory storage.
+     * io.debezium.relational.TableMappingStorage of
+     * io.debezium.relational.TableSchema. Defaults to
+     * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
+     * storage.
      */
     public void setMemoryManagementSchemasClass(
             String memoryManagementSchemasClass) {
@@ -1508,9 +1512,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specifies the inner body the Ehcache <cache/> tag for the processed
-     * transaction cache, but should not include the <key-type/> nor the
-     * <value-type/> attributes as these are managed by Debezium.
+     * Specifies the inner body the Ehcache 'cache' tag for the processed
+     * transaction cache, but should not include the 'key-type' nor the
+     * 'value-type' attributes as these are managed by Debezium.
      */
     public void setLogMiningBufferEhcacheProcessedtransactionsConfig(
             String logMiningBufferEhcacheProcessedtransactionsConfig) {
@@ -1572,7 +1576,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Specifies any Ehcache global configurations such as services or
-     * persistence. This cannot include <cache/> nor <default-serializers/> tags
+     * persistence. This cannot include 'cache' nor 'default-serializers' tags
      * as these are managed by Debezium.
      */
     public void setLogMiningBufferEhcacheGlobalConfig(
@@ -1925,8 +1929,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specifies the inner body the Ehcache <cache/> tag for the transaction
-     * cache, but should not include the <key-type/> nor the <value-type/>
+     * Specifies the inner body the Ehcache 'cache' tag for the transaction
+     * cache, but should not include the 'key-type' nor the 'value-type'
      * attributes as these are managed by Debezium.
      */
     public void setLogMiningBufferEhcacheTransactionsConfig(
@@ -2188,19 +2192,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The number of attempts to retry database errors during snapshots before
-     * failing.
-     */
-    public void setSnapshotDatabaseErrorsMaxRetries(
-            int snapshotDatabaseErrorsMaxRetries) {
-        this.snapshotDatabaseErrorsMaxRetries = snapshotDatabaseErrorsMaxRetries;
-    }
-
-    public int getSnapshotDatabaseErrorsMaxRetries() {
-        return snapshotDatabaseErrorsMaxRetries;
-    }
-
-    /**
      * Topic prefix that identifies and provides a namespace for the particular
      * database server/cluster is capturing changes. The topic prefix should be
      * unique across all other connectors, since it is used as a prefix for all
@@ -2295,9 +2286,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specifies the inner body the Ehcache <cache/> tag for the events cache,
-     * but should not include the <key-type/> nor the <value-type/> attributes
-     * as these are managed by Debezium.
+     * Specifies the inner body the Ehcache 'cache' tag for the events cache,
+     * but should not include the 'key-type' nor the 'value-type' attributes as
+     * these are managed by Debezium.
      */
     public void setLogMiningBufferEhcacheEventsConfig(
             String logMiningBufferEhcacheEventsConfig) {
@@ -2413,8 +2404,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of post processors. The processors are defined using
-     * '<post.processor.prefix>.type' config option and configured using options
-     * '<post.processor.prefix.<option>'
+     * '{post.processor.prefix}.type' config option and configured using options
+     * '{post.processor.prefix}.{option}'
      */
     public void setPostProcessors(String postProcessors) {
         this.postProcessors = postProcessors;
@@ -2648,7 +2639,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.databases.ddl", schemaHistoryInternalStoreOnlyCapturedDatabasesDdl);
-        addPropertyIfNotNull(configBuilder, "snapshot.database.errors.max.retries", snapshotDatabaseErrorsMaxRetries);
         addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.track.rs_id", logMiningBufferTrackRsId);

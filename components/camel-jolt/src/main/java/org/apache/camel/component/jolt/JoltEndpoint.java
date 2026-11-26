@@ -44,6 +44,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.JsonNode;
 
 /**
  * JSON to JSON transformation using JOLT.
@@ -58,15 +59,19 @@ import org.apache.camel.util.ObjectHelper;
                                                             carriers = {
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
                                                                     Carrier.FILE }),
-                                  description = "Parsed JSON (a Map or a List), or JSON as text, bytes, a stream or a file,"
-                                                + " which is parsed. Text that does not start with { or [ reaches the spec as"
-                                                + " it is. With inputType=JsonString the body is always parsed as JSON"),
+                                  description = "Parsed JSON (a Map or a List), or JSON as text, bytes, a stream, a file or a"
+                                                + " Jackson JsonNode, which is parsed. Text that does not start with { or ["
+                                                + " reaches the spec as it is. With inputType=JsonString the body is always"
+                                                + " parsed as JSON"),
            producerOut = @BodyType(value = { Carrier.MAP, Carrier.LIST }, format = "json",
                                    byOption = @BodyType.When(option = "outputType", value = "JsonString",
                                                              carriers = Carrier.TEXT, javaType = "java.lang.String"),
                                    description = "The JSON the spec makes: a Map for an object, a List for an array; JSON text"
                                                  + " with outputType=JsonString"))
 public class JoltEndpoint extends ResourceEndpoint {
+
+    // the package of the Jackson 2 nodes (ObjectNode, ArrayNode, ...), checked by name as Jackson 2 is no dependency
+    private static final String JACKSON2_NODE_PACKAGE = "com.fasterxml.jackson.databind.node.";
 
     private JoltTransform transform;
 
@@ -230,7 +235,12 @@ public class JoltEndpoint extends ResourceEndpoint {
         }
 
         Object input;
-        if (getInputType() == JoltInputOutputType.JsonString) {
+        Object in = exchange.getIn().getBody();
+        if (isJsonNode(in)) {
+            // Jolt only works on Map and List trees, so a Jackson node is parsed from its JSON text,
+            // which gives the same tree as the same JSON given as text
+            input = JsonUtils.jsonToObject(in.toString());
+        } else if (getInputType() == JoltInputOutputType.JsonString) {
             input = JsonUtils.jsonToObject(exchange.getIn().getBody(InputStream.class));
         } else {
             input = hydratedInput(exchange);
@@ -274,6 +284,14 @@ public class JoltEndpoint extends ResourceEndpoint {
             return JsonUtils.jsonToObject(exchange.getIn().getMandatoryBody(InputStream.class));
         }
         return body;
+    }
+
+    /**
+     * Whether the body is a Jackson 3 or Jackson 2 JsonNode, whose toString() is its JSON text
+     */
+    private static boolean isJsonNode(Object body) {
+        return body instanceof JsonNode
+                || body != null && body.getClass().getName().startsWith(JACKSON2_NODE_PACKAGE);
     }
 
     /**

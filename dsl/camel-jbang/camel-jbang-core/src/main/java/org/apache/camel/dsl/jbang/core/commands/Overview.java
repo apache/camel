@@ -112,10 +112,6 @@ public class Overview extends CamelCommand {
     @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
     boolean showPrompt;
 
-    public Overview(CamelJBangMain main) {
-        super(main);
-    }
-
     @Override
     public boolean isJsonOutput() {
         return "json".equals(format);
@@ -190,7 +186,8 @@ public class Overview extends CamelCommand {
         }
         printer().printDiagnostic("Explaining " + overview.flows().size() + " routes with " + client.model() + " ("
                                   + client.apiType() + ")...");
-        String answer = client.generate(system, user);
+        LlmClient.GenerateResponse generateResponse = client.generate(system, user);
+        String answer = generateResponse != null ? generateResponse.text() : null;
         if (answer == null || answer.isBlank()) {
             throw CliException.failure("Failed to get an answer from the LLM");
         }

@@ -244,6 +244,78 @@ class RunPipelineTest {
     }
 
     @Test
+    void mcpEnabledFromTheCommandLineAppliesTheMcpTags() {
+        // camel run --prop camel.server.mcp-enabled=true --mcp-tags=crm (CAMEL-27404)
+        RunRequest request = request();
+        request.applicationProperties = new String[] { "camel.server.mcp-enabled=true" };
+        request.mcpTags = "crm";
+        KameletMain main = new KameletMain("jbang");
+        RunPipeline pipeline = new RunPipeline(request);
+
+        assertThat(pipeline.isAiToolMcpServerEnabled(new Properties())).isTrue();
+        assertThat(pipeline.isAiToolMcpServerEnabled(null)).isTrue();
+        pipeline.applyMcpTagsOverride(main);
+        assertThat(main.getOverrideProperties().getProperty("camel.server.mcp-tags")).isEqualTo("crm");
+
+        request.applicationProperties = new String[] { "camel.server.mcpEnabled = true" };
+        assertThat(pipeline.isAiToolMcpServerEnabled(null)).isTrue();
+    }
+
+    @Test
+    void mcpEnabledFromAJvmSystemProperty() {
+        RunRequest request = request();
+        RunPipeline pipeline = new RunPipeline(request);
+        assertThat(pipeline.isAiToolMcpServerEnabled(null)).isFalse();
+
+        System.setProperty("camel.server.mcp-enabled", "true");
+        try {
+            assertThat(pipeline.isAiToolMcpServerEnabled(null)).isTrue();
+        } finally {
+            System.clearProperty("camel.server.mcp-enabled");
+        }
+    }
+
+    @Test
+    void theCommandLineWinsOverTheProfileForMcpEnabled() {
+        RunRequest request = request();
+        request.applicationProperties = new String[] { "camel.server.mcp-enabled=false" };
+        Properties profile = new Properties();
+        profile.setProperty("camel.server.mcp-enabled", "true");
+
+        assertThat(new RunPipeline(request).isAiToolMcpServerEnabled(profile)).isFalse();
+    }
+
+    @Test
+    void mcpStdioFromTheCommandLine() {
+        RunRequest request = request();
+        request.applicationProperties = new String[] { "camel.server.mcp-transport=stdio" };
+
+        assertThat(RunPipeline.isMcpStdioEnabled(request, null)).isTrue();
+
+        request.applicationProperties = null;
+        assertThat(RunPipeline.isMcpStdioEnabled(request, null)).isFalse();
+        System.setProperty("camel.server.mcp-transport", "stdio");
+        try {
+            assertThat(RunPipeline.isMcpStdioEnabled(request, null)).isTrue();
+        } finally {
+            System.clearProperty("camel.server.mcp-transport");
+        }
+    }
+
+    @Test
+    void applyMcpTagsOverrideForStdioOfTheProfile() {
+        RunRequest request = request();
+        request.mcpTags = "agent";
+        KameletMain main = new KameletMain("jbang");
+        Properties profile = new Properties();
+        profile.setProperty("camel.server.mcp-transport", "stdio");
+
+        new RunPipeline(request).applyMcpStdioRuntimeOptions(main, profile);
+
+        assertThat(main.getOverrideProperties().getProperty("camel.server.mcp-tags")).isEqualTo("agent");
+    }
+
+    @Test
     void mcpStdioOfTheProfile() {
         Properties profile = new Properties();
         profile.setProperty("camel.server.mcp-transport", " STDIO ");

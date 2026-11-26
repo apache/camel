@@ -143,6 +143,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
         warnIfIdempotentOptionsUnused();
+        warnIfConsumerOptionsConflict();
 
         if (ObjectHelper.isNotEmpty(getReadLock())) {
             readLockCheck();

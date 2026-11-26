@@ -40,7 +40,7 @@ class ListInternalTaskTest extends ProcessCommandTestSupport {
         root.put("context", contextObj());
         writeStatusFile(TEST_PID, root);
 
-        ListInternalTask command = new ListInternalTask(new CamelJBangMain().withPrinter(printer));
+        ListInternalTask command = new CamelJBangMain().withPrinter(printer).command(new ListInternalTask());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -63,7 +63,7 @@ class ListInternalTaskTest extends ProcessCommandTestSupport {
         root.put("internal-tasks", taskContainer(task("reload", "Blocked")));
         writeStatusFile(TEST_PID, root);
 
-        ListInternalTask command = new ListInternalTask(new CamelJBangMain().withPrinter(printer));
+        ListInternalTask command = new CamelJBangMain().withPrinter(printer).command(new ListInternalTask());
         command.sort = "pid";
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -89,7 +89,7 @@ class ListInternalTaskTest extends ProcessCommandTestSupport {
         root.put("internal-tasks", taskContainer(task("sync", "Done")));
         writeStatusFile(TEST_PID, root);
 
-        ListInternalTask command = new ListInternalTask(new CamelJBangMain().withPrinter(printer));
+        ListInternalTask command = new CamelJBangMain().withPrinter(printer).command(new ListInternalTask());
         command.sort = "pid";
         command.jsonOutput = true;
 

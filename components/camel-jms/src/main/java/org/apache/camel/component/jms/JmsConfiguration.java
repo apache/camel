@@ -31,7 +31,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -68,6 +68,9 @@ public class JmsConfiguration implements Cloneable {
     private JmsOperations jmsOperations;
     private ConnectionFactory templateConnectionFactory;
     private ConnectionFactory listenerConnectionFactory;
+    // not options: they are only used in the message of the error when no connection factory is set
+    private String endpointUriForErrors;
+    private String connectionFactoryNotAutowiredReason;
 
     @UriParam(description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
@@ -165,7 +168,7 @@ public class JmsConfiguration implements Cloneable {
     private int replyToConcurrentConsumers = 1;
     @UriParam(defaultValue = "-1", label = "advanced",
               description = "The number of messages per task. -1 is unlimited."
-                            + " If you use a range for concurrent consumers (eg min < max), then this option can be used to set"
+                            + " If you use a range for concurrent consumers (eg the minimum is lower than the maximum), then this option can be used to set"
                             + " a value to eg 100 to control how fast the consumers will shrink when less work is required.")
     private int maxMessagesPerTask = -1;
     @UriParam(label = "advanced",
@@ -523,9 +526,10 @@ public class JmsConfiguration implements Cloneable {
               description = "When using InOut exchange pattern use this JMS property instead of JMSCorrelationID" +
                             " JMS property to correlate reply message. Difference between this and 'correlationProperty'" +
                             " is that 'correlationProperty' tells which request property holds the correlation id value and" +
-                            " it does not affect the selector for the reply (JMSCorrelationID=&lt;correlation id&gt;), while" +
-                            " 'replyCorrelationProperty' tells which reply property will hold the correlation id value and" +
-                            " it does affect the selector for the reply (&lt;replyCorrelationProperty&gt;=&lt;correlation id&gt;)")
+                            " it does not affect the selector for the reply (the selector matches the JMSCorrelationID with" +
+                            " the correlation id), while 'replyCorrelationProperty' tells which reply property will hold the" +
+                            " correlation id value and it does affect the selector for the reply (the selector matches the" +
+                            " replyCorrelationProperty property with the correlation id)")
     private String replyCorrelationProperty;
     @UriParam(label = "producer,advanced",
               description = "This option is used to allow additional headers which may have values that are invalid according to JMS specification."
@@ -1956,8 +1960,41 @@ public class JmsConfiguration implements Cloneable {
      * Factory method which allows derived classes to customize the lazy creation
      */
     protected ConnectionFactory createConnectionFactory() {
-        ObjectHelper.notNull(connectionFactory, "connectionFactory");
+        if (connectionFactory == null) {
+            throw new IllegalArgumentException(missingConnectionFactoryMessage());
+        }
         return null;
+    }
+
+    /**
+     * The message of the error when no connection factory is set: it names the endpoint, and says why the component did
+     * not autowire a connection factory, when they are known.
+     */
+    private String missingConnectionFactoryMessage() {
+        StringBuilder sb = new StringBuilder("connectionFactory must be specified");
+        if (endpointUriForErrors != null) {
+            String scheme = StringHelper.before(endpointUriForErrors, ":", endpointUriForErrors);
+            sb.append(" on the ").append(scheme).append(" component or on the endpoint ").append(endpointUriForErrors);
+        }
+        if (connectionFactoryNotAutowiredReason != null) {
+            sb.append(". ").append(connectionFactoryNotAutowiredReason);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Sets the uri of the endpoint that uses this configuration, which the error of a missing connection factory names.
+     */
+    void setEndpointUriForErrors(String endpointUriForErrors) {
+        this.endpointUriForErrors = endpointUriForErrors;
+    }
+
+    /**
+     * Sets why the component did not autowire a connection factory, and what to do, which the error of a missing
+     * connection factory gives.
+     */
+    void setConnectionFactoryNotAutowiredReason(String connectionFactoryNotAutowiredReason) {
+        this.connectionFactoryNotAutowiredReason = connectionFactoryNotAutowiredReason;
     }
 
     /**

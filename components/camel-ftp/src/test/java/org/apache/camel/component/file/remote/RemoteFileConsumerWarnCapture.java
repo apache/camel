@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.logging.log4j.Level;
@@ -28,13 +29,16 @@ import org.apache.logging.log4j.core.config.Property;
 
 /**
  * Captures the WARN messages of the remote file consumer, between {@link #attach()} and {@link #detach()}.
+ * <p>
+ * Each instance uses a unique appender name so that two instances attached at the same time do not collide on the root
+ * logger, and {@link #detach()} of one does not remove the other.
  */
 public class RemoteFileConsumerWarnCapture extends AbstractAppender {
 
     private final List<String> messages = new CopyOnWriteArrayList<>();
 
     public RemoteFileConsumerWarnCapture() {
-        super("RemoteFileConsumerWarnCapture", null, null, true, Property.EMPTY_ARRAY);
+        super("RemoteFileConsumerWarnCapture-" + UUID.randomUUID(), null, null, true, Property.EMPTY_ARRAY);
     }
 
     public void attach() {

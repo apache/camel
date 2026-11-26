@@ -285,6 +285,21 @@ YAML::
 ----
 ====
 
+=== JetStream producer
+
+With `jetstreamEnabled=true`, the producer publishes each message to JetStream and waits until the stream that takes
+in the subject has stored it. Sending fails with `503 No Responders Available For Request` when no stream takes in the
+subject. On a server without JetStream, the message is published as plain NATS.
+
+When `jetstreamName` is set, the producer checks at startup that this stream exists. When it does not, and no other
+stream takes in the subject, the producer creates it with the subject of the topic, as the consumer does. When the
+stream cannot be checked or created, the producer logs a WARN and starts anyway. The message is stored by the stream
+that takes in the subject, whatever its name.
+
+`requestTimeout` is how long the producer waits for the acknowledgement. With `jetstreamAsync=true` (the default), the
+NATS client also gives up on the acknowledgement after `requestCleanupInterval` (5 seconds by default) to twice that,
+so set both to wait longer.
+
 === Manual Acknowledgment (JetStream)
 
 When consuming from JetStream, by default messages are automatically acknowledged

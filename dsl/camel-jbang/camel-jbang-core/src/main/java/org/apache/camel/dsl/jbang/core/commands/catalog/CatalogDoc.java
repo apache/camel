@@ -36,7 +36,6 @@ import org.aesh.command.option.Mixin;
 import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
@@ -140,10 +139,6 @@ public class CatalogDoc extends CamelCommand {
             Map.entry(BodyTypeModel.EIP_STEPS, "Steps"));
 
     CamelCatalog catalog;
-
-    public CatalogDoc(CamelJBangMain main) {
-        super(main);
-    }
 
     CamelCatalog loadCatalog() throws Exception {
         return CatalogBaseCommand.loadCatalog(runtime, camelVersion, quarkusPlatform, mavenResolver);

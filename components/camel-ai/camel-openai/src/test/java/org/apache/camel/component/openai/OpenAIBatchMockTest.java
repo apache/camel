@@ -70,6 +70,12 @@ public class OpenAIBatchMockTest extends CamelTestSupport {
                 from("direct:createStructured")
                         .to("openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini"
                             + "&outputClass=org.apache.camel.component.openai.OpenAIBatchMockTest$Ticket");
+                from("direct:createStrict")
+                        .to("openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini&jsonSchemaStrict=true"
+                            + "&jsonSchema={\"type\":\"object\",\"properties\":{\"category\":{\"type\":\"string\"}}}");
+                from("direct:createResponsesStrict")
+                        .to("openai:batch?batchEndpoint=/v1/responses&model=gpt-4o-mini&jsonSchemaStrict=true"
+                            + "&jsonSchema={\"type\":\"object\",\"properties\":{\"category\":{\"type\":\"string\"}}}");
                 from("direct:createResponses")
                         .to("openai:batch?batchEndpoint=/v1/responses&model=gpt-4o-mini&maxTokens=50&temperature=0"
                             + "&systemMessage=Classify the ticket&developerMessage=Be terse");
@@ -185,6 +191,21 @@ public class OpenAIBatchMockTest extends CamelTestSupport {
                 .contains("\"name\":\"camel_schema\"")
                 .contains("\"properties\":{\"category\":{\"type\":\"string\"}}")
                 .doesNotContain("\"strict\":true");
+    }
+
+    @Test
+    void shouldBuildStrictSchemaChatLines() {
+        // jsonSchemaStrict: strict true in the JSON schema format of the line
+        template.requestBody("direct:createStrict", Map.of("ticket-1", "I was charged twice"));
+        assertThat(openAIMock.getBatchStore().getUploadedFile().trim())
+                .contains("\"type\":\"json_schema\"", "\"strict\":true");
+    }
+
+    @Test
+    void shouldBuildStrictSchemaResponsesLines() {
+        template.requestBody("direct:createResponsesStrict", Map.of("ticket-1", "I was charged twice"));
+        assertThat(openAIMock.getBatchStore().getUploadedFile().trim())
+                .contains("\"type\":\"json_schema\"", "\"strict\":true");
     }
 
     @Test

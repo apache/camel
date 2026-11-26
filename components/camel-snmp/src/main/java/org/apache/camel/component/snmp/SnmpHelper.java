@@ -77,12 +77,20 @@ final class SnmpHelper {
     }
 
     private static USM internalCreateAndSetUSM(SnmpEndpoint endpoint) {
+        USM usm = createUSM(endpoint);
+        SecurityModels.getInstance().addSecurityModel(usm);
+        return usm;
+    }
+
+    /**
+     * Creates a USM with the user of the endpoint, without registering it in the JVM-wide {@link SecurityModels}.
+     */
+    static USM createUSM(SnmpEndpoint endpoint) {
         if (endpoint.getSecurityName() == null) {
-            throw new IllegalArgumentException("SecurityNme is required for SNMP v3");
+            throw new IllegalArgumentException("SecurityName is required for SNMP v3");
         }
 
         USM usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
-        SecurityModels.getInstance().addSecurityModel(usm);
 
         OID authProtocol = convertAuthenticationProtocol(endpoint.getAuthenticationProtocol());
 

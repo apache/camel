@@ -37,7 +37,7 @@ class CamelRouteGroupStatusTest extends ProcessCommandTestSupport {
     void testDisplaysRouteGroup() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithGroup("orderGroup", "Started", "10", "0"));
 
-        CamelRouteGroupStatus command = new CamelRouteGroupStatus(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStatus());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
@@ -59,7 +59,7 @@ class CamelRouteGroupStatusTest extends ProcessCommandTestSupport {
     void testRunningFilterExcludesSuspendedGroups() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithGroup("suspendedGroup", "Suspended", "0", "0"));
 
-        CamelRouteGroupStatus command = new CamelRouteGroupStatus(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStatus());
         command.running = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -80,7 +80,7 @@ class CamelRouteGroupStatusTest extends ProcessCommandTestSupport {
         // group mean=5 should be filtered out when --filter-mean=20
         writeStatusFile(TEST_PID, buildStatusWithGroup("fastGroup", "Started", "5", "0"));
 
-        CamelRouteGroupStatus command = new CamelRouteGroupStatus(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStatus());
         command.mean = 20;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
@@ -98,7 +98,7 @@ class CamelRouteGroupStatusTest extends ProcessCommandTestSupport {
 
     @Test
     void testEmptyOutputWhenNoProcesses() throws Exception {
-        CamelRouteGroupStatus command = new CamelRouteGroupStatus(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStatus());
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle current = mockCurrentHandle();
@@ -117,7 +117,7 @@ class CamelRouteGroupStatusTest extends ProcessCommandTestSupport {
     void testJsonOutput() throws Exception {
         writeStatusFile(TEST_PID, buildStatusWithGroup("shippingGroup", "Started", "30", "1"));
 
-        CamelRouteGroupStatus command = new CamelRouteGroupStatus(new CamelJBangMain().withPrinter(printer));
+        CamelRouteGroupStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteGroupStatus());
         command.jsonOutput = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {

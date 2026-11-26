@@ -105,28 +105,6 @@ public interface CxfComponentBuilderFactory {
             return this;
         }
     
-        
-        /**
-         * Whether to always process the exchange synchronously. If true, the
-         * producer invokes the CXF Client without a callback and waits until
-         * the invocation returns, and the consumer runs the route without a CXF
-         * continuation. The component sets the value on each endpoint that it
-         * creates, including a bean: endpoint, unless the endpoint URI sets
-         * synchronous.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default CxfComponentBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    
         /**
          * Whether to allow CXF to keep the last message part of an incoming
          * SOAP message as a javax.xml.transform.Source read from the stream,
@@ -169,6 +147,28 @@ public interface CxfComponentBuilderFactory {
          */
         default CxfComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to always process the exchange synchronously. If true, the
+         * producer invokes the CXF Client without a callback and waits until
+         * the invocation returns, and the consumer runs the route without a CXF
+         * continuation. The component sets the value on each endpoint that it
+         * creates, including a bean: endpoint, unless the endpoint URI sets
+         * synchronous.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default CxfComponentBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     
@@ -226,9 +226,9 @@ public interface CxfComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((CxfComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CxfComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "synchronous": ((CxfComponent) component).setSynchronous((boolean) value); return true;
             case "allowStreaming": ((CxfComponent) component).setAllowStreaming((java.lang.Boolean) value); return true;
             case "autowiredEnabled": ((CxfComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "synchronous": ((CxfComponent) component).setSynchronous((boolean) value); return true;
             case "headerFilterStrategy": ((CxfComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "useGlobalSslContextParameters": ((CxfComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

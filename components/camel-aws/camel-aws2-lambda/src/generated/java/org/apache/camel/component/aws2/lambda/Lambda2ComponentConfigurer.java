@@ -42,8 +42,12 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "invocationtype":
+        case "invocationType": getOrCreateConfiguration(target).setInvocationType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "logtype":
+        case "logType": getOrCreateConfiguration(target).setLogType(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.lambda.Lambda2Operations.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
@@ -95,8 +99,12 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "invocationtype":
+        case "invocationType": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "logtype":
+        case "logType": return java.lang.String.class;
         case "operation": return org.apache.camel.component.aws2.lambda.Lambda2Operations.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
@@ -144,8 +152,12 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "invocationtype":
+        case "invocationType": return getOrCreateConfiguration(target).getInvocationType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "logtype":
+        case "logType": return getOrCreateConfiguration(target).getLogType();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "overrideendpoint":
         case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.packaging;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Common set of configuration options used by Camel Main, Camel Spring Boot and other runtimes.
  */
@@ -60,6 +62,8 @@ public class MyConfiguration {
     private String threadNamePattern;
     private String routeFilterIncludePattern;
     private String routeFilterExcludePattern;
+    @Metadata(defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
+    private boolean verifySsl = true;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -536,6 +540,17 @@ public class MyConfiguration {
      */
     public void setRouteFilterExcludePattern(String exclude) {
         this.routeFilterExcludePattern = exclude;
+    }
+
+    public boolean isVerifySsl() {
+        return verifySsl;
+    }
+
+    /**
+     * Whether to verify SSL certificates
+     */
+    public void setVerifySsl(boolean verifySsl) {
+        this.verifySsl = verifySsl;
     }
 
 }

@@ -49,7 +49,7 @@ class ListingContractTest extends ProcessCommandTestSupport {
         broken.remove("routes");
         writeStatusFile(OTHER_PID, broken);
 
-        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        CamelContextStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelContextStatus());
         command.jsonOutput = true;
 
         assertThat(call(command::doCall, TEST_PID, OTHER_PID)).isZero();
@@ -63,7 +63,7 @@ class ListingContractTest extends ProcessCommandTestSupport {
     void nameThatMatchesNothingIsNotFound() throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("orders", 5));
 
-        CamelRouteStatus command = new CamelRouteStatus(new CamelJBangMain().withPrinter(printer));
+        CamelRouteStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelRouteStatus());
         command.name = "billing";
 
         assertThatThrownBy(() -> call(command::doCall, TEST_PID))
@@ -83,7 +83,7 @@ class ListingContractTest extends ProcessCommandTestSupport {
         root.put("routes", new JsonArray(List.of(route("a", "Started"), route("b", "Stopped"))));
         writeStatusFile(TEST_PID, root);
 
-        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        CamelContextStatus command = new CamelJBangMain().withPrinter(printer).command(new CamelContextStatus());
         command.jsonOutput = true;
 
         assertThat(call(command::doCall, TEST_PID)).isZero();
@@ -107,7 +107,7 @@ class ListingContractTest extends ProcessCommandTestSupport {
     void psJsonHasNumbersAndFailed() throws Exception {
         writeStatusFile(TEST_PID, buildContextStatus("orders", 5));
 
-        ListProcess command = new ListProcess(new CamelJBangMain().withPrinter(printer));
+        ListProcess command = new CamelJBangMain().withPrinter(printer).command(new ListProcess());
         command.jsonOutput = true;
 
         assertThat(call(command::doCall, TEST_PID)).isZero();

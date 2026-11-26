@@ -30,8 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public class FCProducer extends DefaultProducer {
 
-    private Client fcClient;
-
     public FCProducer(FCEndpoint endpoint) {
         super(endpoint);
     }
@@ -45,18 +43,16 @@ public class FCProducer extends DefaultProducer {
             throw new IllegalArgumentException("Operation name not found");
         }
 
-        if (fcClient == null) {
-            fcClient = endpoint.initClient();
-        }
+        Client fcClient = endpoint.initClient();
 
         switch (configuration.operation()) {
-            case FCOperations.INVOKE_FUNCTION -> invokeFunction(exchange, configuration);
-            case FCOperations.GET_FUNCTION -> getFunction(exchange, configuration);
+            case FCOperations.INVOKE_FUNCTION -> invokeFunction(exchange, configuration, fcClient);
+            case FCOperations.GET_FUNCTION -> getFunction(exchange, configuration, fcClient);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.operation());
         }
     }
 
-    private void invokeFunction(Exchange exchange, ClientConfigurations configuration) throws Exception {
+    private void invokeFunction(Exchange exchange, ClientConfigurations configuration, Client fcClient) throws Exception {
         validateServiceAndFunction(configuration);
 
         InvokeFunctionRequest request = new InvokeFunctionRequest()
@@ -79,7 +75,7 @@ public class FCProducer extends DefaultProducer {
         }
     }
 
-    private void getFunction(Exchange exchange, ClientConfigurations configuration) throws Exception {
+    private void getFunction(Exchange exchange, ClientConfigurations configuration, Client fcClient) throws Exception {
         validateServiceAndFunction(configuration);
 
         GetFunctionRequest request = new GetFunctionRequest();

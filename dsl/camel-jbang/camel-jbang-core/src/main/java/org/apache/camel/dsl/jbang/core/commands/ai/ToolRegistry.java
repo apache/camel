@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ChaosExperimentRun;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
@@ -307,11 +308,16 @@ public final class ToolRegistry {
                                              + " processor has bodyTypes: the body types it has been reached with, across"
                                              + " the messages, and bodyKinds: null, payload, data or collection. More than one"
                                              + " kind needs attention: a step that writes fails for data, one that reads"
-                                             + " fields fails for a payload.")
+                                             + " fields fails for a payload. bodyFormats: the format of the payload from"
+                                             + " its Content-Type (json, xml, csv, yaml, text, binary or the media type), to"
+                                             + " compare with the format the catalog says a step takes. kameletInput:"
+                                             + " the data type a Kamelet the step calls turns the body into, such as"
+                                             + " json for postgresql-sink, which writes a Map as JSON; takesBody false"
+                                             + " when its transformer does not take the body.")
                 .param("routeId", "string", "Route ID or pattern such as orders* to inspect (use * for all routes)",
                         false)
                 .param("brief", "boolean", "Only the overall structure, without the options and expressions", false)
-                .param("varied", "boolean", "Only the steps reached with more than one body type", false)
+                .param("varied", "boolean", "Only the steps reached with more than one body type or format", false)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
                     boolean brief = "true".equalsIgnoreCase(args.get("brief"));
@@ -319,6 +325,7 @@ public final class ToolRegistry {
                         root.put("filter", routeFilter(routeId));
                         root.put("brief", String.valueOf(brief));
                     });
+                    result = withKameletInputs(result, ctx);
                     if ("true".equalsIgnoreCase(args.get("varied"))) {
                         result = onlyVaried(result);
                     }
@@ -754,6 +761,24 @@ public final class ToolRegistry {
                         root.put("limit", String.valueOf(spanLimit));
                     });
                 }));
+
+        register(tool("get_genai",
+                "Get the GenAI calls of the running Camel application from the genai dev console "
+                                   + "(camel-ai-observability): the model calls per model with their tokens, and the "
+                                   + "newest agent runs with their model calls and tool calls in order. Agent runs "
+                                   + "and tool calls need camel.aiObservability.level=detailed, the messages full.")
+                .param("limit", "string", "The number of the newest agent runs and model calls to list (default: 20)",
+                        false)
+                .param("id", "string", "The id of one call to show with its messages", false)
+                .param("content", "string", "true to add the messages of the listed calls (level full only)", false)
+                .executor((ctx, args) -> ctx.executeAction("genai", root -> {
+                    for (String key : new String[] { "limit", "id", "content" }) {
+                        String value = args.get(key);
+                        if (value != null && !value.isBlank()) {
+                            root.put(key, value);
+                        }
+                    }
+                })));
 
         register(tool("get_metrics",
                 "Get Micrometer metrics from the running Camel application. "
@@ -1235,6 +1260,28 @@ public final class ToolRegistry {
     /** The route pattern of the route-dump and route-structure actions: all routes when none is given. */
     private static String routeFilter(String routeId) {
         return routeId != null && !routeId.isBlank() ? routeId : "*";
+    }
+
+    /**
+     * The route structure with the data type each Kamelet a step calls turns the body into (kameletInput, CAMEL-27475),
+     * from the Kamelets of the project directory or of the catalog the integration uses (camel run --kamelets-version);
+     * as it is when it is not JSON or calls no Kamelet.
+     */
+    static String withKameletInputs(String routeStructure, ToolContext ctx) {
+        if (routeStructure == null || !routeStructure.contains("kamelet")) {
+            return routeStructure;
+        }
+        try {
+            if (Jsoner.deserialize(routeStructure) instanceof JsonObject jo
+                    && KameletInput.addTo(jo, ctx.defaultDirectory(), ctx.catalog(),
+                            ctx.pid() > 0 ? ActionClient.kameletsVersionOf(ctx.pid()) : null)
+                       > 0) {
+                return jo.toJson();
+            }
+        } catch (Exception e) {
+            LOG.debug("Cannot add the data types of the Kamelets to the route structure: {}", e.getMessage(), e);
+        }
+        return routeStructure;
     }
 
     /**

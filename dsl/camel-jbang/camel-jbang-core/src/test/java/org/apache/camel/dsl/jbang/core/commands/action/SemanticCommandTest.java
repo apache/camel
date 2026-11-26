@@ -60,7 +60,7 @@ class SemanticCommandTest {
     void imageFileBodyIsSentAsExplicitMedia() throws Exception {
         Path image = home.resolve("input.png");
         Files.write(image, new byte[] { 1, 2, 3 });
-        assertEquals(0, respondImage(new SemanticEvaluate(main()), request -> {
+        assertEquals(0, respondImage(main().command(new SemanticEvaluate()), request -> {
             assertEquals(Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID"))),
                     request.get("body"));
             return jsonUnchecked("{\"status\":\"success\",\"value\":true}");
@@ -75,7 +75,7 @@ class SemanticCommandTest {
         String[] args = named
                 ? new String[] { "--evaluation=inspect", "--body=image:" + image, "--json" }
                 : new String[] { "--expert=inspector", "--operation=boolean", "--input=image:" + image, "--json" };
-        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+        assertEquals(2, respondImage(main().command(new SemanticEvaluate()), request -> {
             throw new AssertionError("Oversized image must not reach evaluation");
         }, 2, args));
         assertError(2, "expert maxImageBytes limit of 2 bytes");
@@ -86,7 +86,7 @@ class SemanticCommandTest {
             "data:image/png;base64,AQID", "AQID",
             "json:{\"$semanticInput\":[{\"type\":\"image\",\"data\":\"data:image/png;base64,AQID\"}]}" })
     void expertLimitAlsoRejectsInlineImageBodies(String body) throws Exception {
-        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+        assertEquals(2, respondImage(main().command(new SemanticEvaluate()), request -> {
             throw new AssertionError("Oversized image must not reach evaluation");
         }, 2, "--evaluation=inspect", "--body=" + body, "--header=content-type=image/png", "--json"));
         assertError(2, "expert maxImageBytes limit of 2 bytes");
@@ -94,7 +94,7 @@ class SemanticCommandTest {
 
     @Test
     void missingExpertImageLimitRejectsWithoutOpeningTheFile() throws Exception {
-        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+        assertEquals(2, respondImage(main().command(new SemanticEvaluate()), request -> {
             throw new AssertionError("Unbounded image must not reach evaluation");
         }, 0, "--expert=inspector", "--operation=boolean", "--input=image:" + home.resolve("missing.png"), "--json"));
         assertError(2, "positive maxImageBytes");
@@ -125,7 +125,7 @@ class SemanticCommandTest {
                         Map.of("eventId", "image-event", "inputType", "image",
                                 "input", Map.of("$semanticInput",
                                         List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")))))));
-        assertEquals(0, respond(new SemanticAudit(main()), request -> response,
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> response,
                 "--event-id=image-event", "--json=" + json));
         if (json) {
             Map<?, ?> input = (Map<?, ?>) json(printer.getStdout()).getMap("record").get("input");
@@ -149,11 +149,11 @@ class SemanticCommandTest {
                         Map.of("eventId", "image-event", "inputType", "image",
                                 "input", Map.of("$semanticInput",
                                         List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")))))));
-        assertEquals(0, respond(new SemanticAudit(main()), request -> response,
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> response,
                 "--event-id=image-event", "--output=" + target));
         assertEquals(response, json(Files.readString(target)));
         assertFalse(printer.getOutput().contains("base64"));
-        assertEquals(1, respond(new SemanticAudit(main()), request -> response,
+        assertEquals(1, respond(main().command(new SemanticAudit()), request -> response,
                 "--event-id=image-event", "--output=" + target));
         assertTrue(printer.getStderr().contains("file already exists"));
         assertEquals(response, json(Files.readString(target)));
@@ -192,7 +192,7 @@ class SemanticCommandTest {
                 {"reference":"classifier","name":"Classifier"}]}
                 """);
         AtomicReference<JsonObject> request = new AtomicReference<>();
-        assertEquals(0, respond(new CamelSemantic(main()), r -> {
+        assertEquals(0, respond(main().command(new CamelSemantic()), r -> {
             request.set(r);
             return response;
         }));
@@ -212,7 +212,7 @@ class SemanticCommandTest {
     @Test
     void emitsMetadataAsOneJsonDocumentIncludingEmptyLists() throws Exception {
         JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
-        assertEquals(0, respond(new CamelSemantic(main()), r -> response, "--json"));
+        assertEquals(0, respond(main().command(new CamelSemantic()), r -> response, "--json"));
         assertEquals(response, json(printer.getStdout()));
         assertEquals("", printer.getStderr());
     }
@@ -228,7 +228,7 @@ class SemanticCommandTest {
                 "minimum":0,"maximum":1,"resultMeaning":"quality","probability":true,
                 "probabilityMeaning":"Likelihood","confidence":false}}]}
                 """);
-        assertEquals(0, respond(new CamelSemantic(main()), r -> {
+        assertEquals(0, respond(main().command(new CamelSemantic()), r -> {
             assertEquals("grader", r.get("expert"));
             assertFalse(r.containsKey("overview"));
             return response;
@@ -248,7 +248,7 @@ class SemanticCommandTest {
 
     @Test
     void unavailableExpertReturnsNotFound() throws Exception {
-        assertEquals(3, respond(new CamelSemantic(main()), r -> jsonUnchecked("{\"operations\":[]}"),
+        assertEquals(3, respond(main().command(new CamelSemantic()), r -> jsonUnchecked("{\"operations\":[]}"),
                 "--expert=unknown", "--json"));
         assertError(3, "unknown");
     }
@@ -256,7 +256,7 @@ class SemanticCommandTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void failedExpertLookupRetainsFailureExitCode(boolean json) throws Exception {
-        assertEquals(1, respond(new CamelSemantic(main()), r -> jsonUnchecked(
+        assertEquals(1, respond(main().command(new CamelSemantic()), r -> jsonUnchecked(
                 "{\"status\":\"failed\",\"error\":\"metadata dispatch failed\"}"),
                 "--expert=guard", "--json=" + json));
         assertFalse(printer.getStderr().contains("NullPointerException"));
@@ -271,7 +271,8 @@ class SemanticCommandTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void textParseErrorsKeepSuggestionsSynopsisAndHelp(boolean evaluate) throws Exception {
-        SemanticActionCommand action = evaluate ? new SemanticEvaluate(main()) : new CamelSemantic(main());
+        SemanticActionCommand action
+                = evaluate ? main().command(new SemanticEvaluate()) : main().command(new CamelSemantic());
         assertEquals(2, command(action).execute("--exper=guard"));
         assertTrue(printer.getStderr().contains("--expert"));
         assertTrue(printer.getStderr().contains("Usage:"));
@@ -283,7 +284,7 @@ class SemanticCommandTest {
     @Test
     void evaluatesNamedDefinitionWithSampleExchangeWithoutDoubleEscaping() throws Exception {
         String body = "A \"quote\"\nwith a backslash \\ and = sign";
-        assertEquals(0, respond(new SemanticEvaluate(main()), r -> {
+        assertEquals(0, respond(main().command(new SemanticEvaluate()), r -> {
             assertEquals("semantic-evaluate", r.get("action"));
             assertEquals("safe", r.get("evaluation"));
             assertEquals(body, r.get("body"));
@@ -299,7 +300,7 @@ class SemanticCommandTest {
 
     @Test
     void evaluatesDirectExpertWithTypedParameters() throws Exception {
-        assertEquals(0, respond(new SemanticEvaluate(main()), r -> {
+        assertEquals(0, respond(main().command(new SemanticEvaluate()), r -> {
             assertEquals("grader", r.get("expert"));
             assertEquals("rank", r.get("operation"));
             assertEquals(List.of("one", "two"), r.get("input"));
@@ -324,7 +325,7 @@ class SemanticCommandTest {
     void readsBodyFileAsText() throws Exception {
         Path input = home.resolve("sample.txt");
         Files.writeString(input, "json:literal\n");
-        assertEquals(0, respond(new SemanticEvaluate(main()), r -> {
+        assertEquals(0, respond(main().command(new SemanticEvaluate()), r -> {
             assertEquals("json:literal\n", r.get("body"));
             return jsonUnchecked("{\"status\":\"success\",\"value\":true}");
         }, "--evaluation=safe", "--body=file:" + input));
@@ -332,7 +333,7 @@ class SemanticCommandTest {
 
     @Test
     void providerFailureHasNonzeroExitAndRetainsTimingInJson() throws Exception {
-        assertEquals(1, respond(new SemanticEvaluate(main()), r -> jsonUnchecked("""
+        assertEquals(1, respond(main().command(new SemanticEvaluate()), r -> jsonUnchecked("""
                 {"status":"failed","error":"provider unavailable","elapsedMillis":23}
                 """), "--evaluation=safe", "--json"));
         assertError(1, "provider unavailable");
@@ -341,14 +342,14 @@ class SemanticCommandTest {
 
     @Test
     void providerFailureWithoutMessageStillHasDiagnostic() throws Exception {
-        assertEquals(1, respond(new SemanticEvaluate(main()), r -> jsonUnchecked(
+        assertEquals(1, respond(main().command(new SemanticEvaluate()), r -> jsonUnchecked(
                 "{\"status\":\"failed\",\"error\":null}"), "--evaluation=safe", "--json"));
         assertError(1, "Semantic action failed");
     }
 
     @Test
     void rejectsDuplicateParameterKeys() throws Exception {
-        assertEquals(2, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--expert=grader",
+        assertEquals(2, command(main().command(new SemanticEvaluate())).execute(Long.toString(pid), "--expert=grader",
                 "--operation=rank", "--input=text", "--parameter=x=first", "--parameter=x=second", "--json"));
         assertError(2, "Duplicate --parameter key: x");
         assertTrue(actionFiles().isEmpty());
@@ -356,7 +357,7 @@ class SemanticCommandTest {
 
     @Test
     void missingBodyFileIsUsageError() throws Exception {
-        assertEquals(2, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe",
+        assertEquals(2, command(main().command(new SemanticEvaluate())).execute(Long.toString(pid), "--evaluation=safe",
                 "--body=file:" + home.resolve("missing.txt"), "--json"));
         assertError(2, "Cannot read input file");
         assertTrue(actionFiles().isEmpty());
@@ -364,7 +365,7 @@ class SemanticCommandTest {
 
     @Test
     void textUsageErrorsGoOnlyToStderr() throws Exception {
-        assertEquals(2, command(new SemanticEvaluate(main())).execute(Long.toString(pid)));
+        assertEquals(2, command(main().command(new SemanticEvaluate())).execute(Long.toString(pid)));
         assertEquals("", printer.getStdout());
         assertTrue(printer.getStderr().contains("Choose --evaluation=<name>, or --expert with --operation and --input"));
         assertTrue(actionFiles().isEmpty());
@@ -372,7 +373,8 @@ class SemanticCommandTest {
 
     @Test
     void unavailableConsoleReturnsNotFound() throws Exception {
-        assertEquals(3, respond(new SemanticEvaluate(main()), r -> new JsonObject(), "--evaluation=safe", "--json"));
+        assertEquals(3,
+                respond(main().command(new SemanticEvaluate()), r -> new JsonObject(), "--evaluation=safe", "--json"));
         assertError(3, "camel-semantic");
     }
 
@@ -380,7 +382,7 @@ class SemanticCommandTest {
     void timeoutCleansRequestAndIgnoresLegacyReply() throws Exception {
         Files.writeString(CommandLineHelper.getCamelDir().resolve(pid + "-output.json"),
                 "{\"status\":\"success\",\"value\":true}");
-        assertEquals(124, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe",
+        assertEquals(124, command(main().command(new SemanticEvaluate())).execute(Long.toString(pid), "--evaluation=safe",
                 "--timeout=150", "--json"));
         assertError(124, "No reply");
         assertTrue(actionFiles().isEmpty());
@@ -392,8 +394,9 @@ class SemanticCommandTest {
             "--variable=global:x=value", "--evaluation=", "--evaluation-timeout=50001", "--timeout=0",
             "--expert=other", "--unknown", "--timeout=not-a-number" })
     void rejectsBadUsageWithoutSendingAnAction(String invalid) throws Exception {
-        assertEquals(2, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe", invalid,
-                "--json"));
+        assertEquals(2,
+                command(main().command(new SemanticEvaluate())).execute(Long.toString(pid), "--evaluation=safe", invalid,
+                        "--json"));
         assertError(2, "");
         assertTrue(actionFiles().isEmpty());
     }
@@ -401,7 +404,7 @@ class SemanticCommandTest {
     @ParameterizedTest
     @ValueSource(strings = { "bad", "=value", "x=json:[bad", "x=json:1 2", "x=json:[1,]", "x=json:" })
     void rejectsMalformedDirectParameters(String parameter) throws Exception {
-        assertEquals(2, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--expert=grader",
+        assertEquals(2, command(main().command(new SemanticEvaluate())).execute(Long.toString(pid), "--expert=grader",
                 "--operation=rank", "--input=text", "--parameter=" + parameter, "--json"));
         assertError(2, "");
         assertTrue(actionFiles().isEmpty());
@@ -410,19 +413,20 @@ class SemanticCommandTest {
     @Test
     void requiresAnIntegrationStatusFileEvenForNumericPid() throws Exception {
         Files.delete(CommandLineHelper.getCamelDir().resolve(pid + "-status.json"));
-        assertEquals(3, command(new CamelSemantic(main())).execute(Long.toString(pid), "--json"));
+        assertEquals(3, command(main().command(new CamelSemantic())).execute(Long.toString(pid), "--json"));
         assertError(3, "No running Camel integration");
         assertTrue(actionFiles().isEmpty());
     }
 
     @Test
     void rejectsAmbiguousIntegrationSelection() throws Exception {
-        CamelSemantic semantic = new CamelSemantic(main()) {
+        CamelSemantic semantic = new CamelSemantic() {
             @Override
             List<Long> findPids(String name) {
                 return List.of(pid, pid);
             }
         };
+        semantic.setCamelMain(main());
         assertEquals(3, command(semantic).execute("--json"));
         assertError(3, "Multiple Camel integrations");
         assertTrue(printer.getStderr().contains(Long.toString(pid)));
@@ -431,7 +435,7 @@ class SemanticCommandTest {
 
     @Test
     void ioFailureIsInternalErrorRatherThanTimeout() throws Exception {
-        CamelSemantic semantic = new CamelSemantic(main()) {
+        CamelSemantic semantic = new CamelSemantic() {
             @Override
             List<Long> findPids(String name) {
                 CommandLineHelper.useHomeDir(home.resolve("missing").toString());
@@ -443,6 +447,7 @@ class SemanticCommandTest {
                 return jsonUnchecked("{\"context\":{\"phase\":4}}");
             }
         };
+        semantic.setCamelMain(main());
         assertEquals(70, command(semantic).execute(Long.toString(pid), "--json"));
         assertError(70, "");
         assertTrue(printer.getStderr().contains("NoSuchFileException"));
@@ -451,11 +456,11 @@ class SemanticCommandTest {
     @Test
     void concurrentClientsReceiveOnlyTheirOwnResponse() throws Exception {
         StringPrinter secondPrinter = new StringPrinter();
-        var first = CompletableFuture.supplyAsync(() -> command(new SemanticEvaluate(main())).execute(Long.toString(pid),
-                "--evaluation=first", "--json"), executor);
-        var second = CompletableFuture.supplyAsync(() -> command(new SemanticEvaluate(
-                new CamelJBangMain()
-                        .withPrinter(secondPrinter)))
+        var first = CompletableFuture
+                .supplyAsync(() -> command(main().command(new SemanticEvaluate())).execute(Long.toString(pid),
+                        "--evaluation=first", "--json"), executor);
+        var second = CompletableFuture.supplyAsync(() -> command(new CamelJBangMain()
+                .withPrinter(secondPrinter).command(new SemanticEvaluate()))
                 .execute(Long.toString(pid), "--evaluation=second", "--json"), executor);
         await().atMost(5, TimeUnit.SECONDS).until(() -> actionFiles().size() == 2);
         List<Path> requests = actionFiles();
@@ -509,7 +514,8 @@ class SemanticCommandTest {
     @ParameterizedTest
     @CsvSource({ "false, true", "false, false", "true, true", "true, false" })
     void jsonParseErrorsWorkBeforeAndAfterInvalidOption(boolean evaluate, boolean jsonFirst) throws Exception {
-        SemanticActionCommand action = evaluate ? new SemanticEvaluate(main()) : new CamelSemantic(main());
+        SemanticActionCommand action
+                = evaluate ? main().command(new SemanticEvaluate()) : main().command(new CamelSemantic());
         String[] args = jsonFirst
                 ? new String[] { "--json", "--exper=guard" }
                 : new String[] { "--exper=guard", "--json" };
@@ -522,7 +528,7 @@ class SemanticCommandTest {
     @ParameterizedTest
     @ValueSource(strings = { "--json=false", "--" })
     void textParseErrorsDoNotEnableJson(String option) throws Exception {
-        assertEquals(2, command(new SemanticEvaluate(main())).execute("--exper=guard", option,
+        assertEquals(2, command(main().command(new SemanticEvaluate())).execute("--exper=guard", option,
                 "--".equals(option) ? "--json" : "--json=false"));
         assertTrue(printer.getStderr().contains("Usage:"));
         assertEquals("", printer.getStdout());
@@ -533,7 +539,8 @@ class SemanticCommandTest {
     @CsvSource({ "3.22.0,false", "4.9.9,true", "4.21.0,false", "4.22.1,true", "4.22.0.redhat-00001,false" })
     void rejectsOlderRuntimesWithoutPublishingRequest(String version, boolean evaluate) throws Exception {
         writeVersion(version);
-        SemanticActionCommand action = evaluate ? new SemanticEvaluate(main()) : new CamelSemantic(main());
+        SemanticActionCommand action
+                = evaluate ? main().command(new SemanticEvaluate()) : main().command(new CamelSemantic());
         String[] args = evaluate
                 ? new String[] { Long.toString(pid), "--evaluation=safe", "--json" }
                 : new String[] { Long.toString(pid), "--json" };
@@ -547,7 +554,8 @@ class SemanticCommandTest {
     @ValueSource(strings = { "4.23.0", "4.24.0-SNAPSHOT", "4.23.0.redhat-00001", "4.24.0", "5.0.0", "unknown" })
     void acceptsSupportedOrUnknownRuntimeVersions(String version) throws Exception {
         writeVersion(version);
-        assertEquals(0, respond(new CamelSemantic(main()), r -> jsonUnchecked("{\"evaluations\":[]}"), "--json"));
+        assertEquals(0,
+                respond(main().command(new CamelSemantic()), r -> jsonUnchecked("{\"evaluations\":[]}"), "--json"));
     }
 
     @ParameterizedTest
@@ -598,7 +606,7 @@ class SemanticCommandTest {
 
     @Test
     void monitoringPreservesProducerOwnedValuesAndOnlySendsReadOptions() throws Exception {
-        assertEquals(0, respond(new SemanticMonitoring(main()), request -> {
+        assertEquals(0, respond(main().command(new SemanticMonitoring()), request -> {
             assertEquals("semantic-monitoring", request.get("action"));
             assertFalse(request.containsKey("history"));
             assertEquals("domainMetrics", request.get("source"));
@@ -615,7 +623,7 @@ class SemanticCommandTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void monitoringRejectsRemovedTimeFilterAsAUsageErrorWithoutSendingARequest(boolean jsonOutput) throws Exception {
-        assertEquals(2, command(new SemanticMonitoring(main())).execute(Long.toString(pid), "--since=yesterday",
+        assertEquals(2, command(main().command(new SemanticMonitoring())).execute(Long.toString(pid), "--since=yesterday",
                 "--json=" + jsonOutput));
         assertTrue(printer.getStderr().contains("--since"), printer.getStderr());
         assertFalse(printer.getStderr().contains("DateTimeParseException"), printer.getStderr());
@@ -630,7 +638,7 @@ class SemanticCommandTest {
 
     @Test
     void caseAndBulkExportAreBoundedWithoutChangingInputPolicy() throws Exception {
-        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> {
             assertEquals("anchor", request.get("caseEventId"));
             assertEquals(150L, request.getLong("maxRecords"));
             assertEquals(false, request.get("includeInput"));
@@ -640,7 +648,7 @@ class SemanticCommandTest {
 
     @Test
     void auditTableKeepsTypedResultsSeparateFromExecution() throws Exception {
-        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> {
             assertEquals("semantic-audit", request.get("action"));
             assertEquals(50L, request.getLong("limit"));
             assertEquals(2, request.size());
@@ -677,7 +685,7 @@ class SemanticCommandTest {
         JsonObject page = json("""
                 {"audit":{"reader":"custom"},"records":[],"nextCursor":"next-page","evicted":3,"cursorExpired":false}
                 """);
-        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> {
             assertEquals("semantic-audit", request.get("action"));
             assertEquals("evaluation", request.get("category"));
             assertEquals("guard", request.get("expert"));
@@ -696,7 +704,7 @@ class SemanticCommandTest {
 
     @Test
     void auditForwardsBoundedTypedResultQueries() throws Exception {
-        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> {
             assertEquals("2026-10-10T08:00:00Z", request.get("since"));
             assertEquals("2026-10-10T09:00:00Z", request.get("until"));
             assertEquals("routeRequest", request.get("definition"));
@@ -719,7 +727,7 @@ class SemanticCommandTest {
         args.add(Long.toString(pid));
         args.addAll(List.of(options.split(" ")));
         args.add("--json");
-        assertEquals(2, command(new SemanticAudit(main())).execute(args.toArray(String[]::new)));
+        assertEquals(2, command(main().command(new SemanticAudit())).execute(args.toArray(String[]::new)));
         assertTrue(actionFiles().isEmpty());
     }
 
@@ -735,7 +743,7 @@ class SemanticCommandTest {
                               "result":{"value":false},"semantics":{"meaning":"Injection detected"}},
                              {"eventId":"evicted-1","unavailable":true}]}
                 """);
-        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> {
             assertEquals("semantic-audit", request.get("action"));
             assertEquals("decision-1", request.get("eventId"));
             assertEquals(2, request.size());
@@ -761,7 +769,7 @@ class SemanticCommandTest {
         input.put("missing", null);
         input.put("items", List.of());
         record.put("input", input);
-        assertEquals(0, respond(new SemanticAudit(main()), request -> new JsonObject(Map.of("record", record)),
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> new JsonObject(Map.of("record", record)),
                 "--event-id=evaluation-1"));
         for (String value : List.of("text:\n", "hello\n", "world", "empty: \"\"", "missing: null", "items: []")) {
             assertTrue(printer.getOutput().contains(value), printer.getOutput());
@@ -772,7 +780,7 @@ class SemanticCommandTest {
     @ParameterizedTest
     @ValueSource(ints = { 1, 200 })
     void auditAcceptsPageLimitBoundsAndEmptyHistory(int limit) throws Exception {
-        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+        assertEquals(0, respond(main().command(new SemanticAudit()), request -> {
             assertEquals((long) limit, request.getLong("limit"));
             return jsonUnchecked("""
                     {"audit":{"enabled":false,"reader":"memory"},"records":[],"evicted":0,"cursorExpired":false}
@@ -791,7 +799,7 @@ class SemanticCommandTest {
             "--category=", "--action=", "--namespace=", "--correlation-id=", "--breadcrumb-id=", "--route-id=", "--cursor=",
             "--event-id=" })
     void auditRejectsInvalidArgumentsBeforeSendingARequest(String option) throws Exception {
-        assertEquals(2, command(new SemanticAudit(main())).execute(Long.toString(pid), option, "--json"));
+        assertEquals(2, command(main().command(new SemanticAudit())).execute(Long.toString(pid), option, "--json"));
         assertError(2, "");
         assertTrue(actionFiles().isEmpty());
     }
@@ -799,7 +807,7 @@ class SemanticCommandTest {
     @ParameterizedTest
     @CsvSource({ "--expert,257", "--cursor,513", "--event-id,257", "--breadcrumb-id,257" })
     void auditRejectsOversizedIdentifiersBeforeSendingARequest(String option, int length) throws Exception {
-        assertEquals(2, command(new SemanticAudit(main())).execute(Long.toString(pid),
+        assertEquals(2, command(main().command(new SemanticAudit())).execute(Long.toString(pid),
                 option + "=" + "x".repeat(length), "--json"));
         assertError(2, option);
         assertTrue(actionFiles().isEmpty());
@@ -811,7 +819,7 @@ class SemanticCommandTest {
             "--limit=50", "--breadcrumb-id=breadcrumb-123", "--until=2026-10-10T09:00:00Z", "--definition=routeRequest",
             "--operation=choice", "--result-type=CHOICE" })
     void auditEventLookupRejectsIgnoredQueryOptions(String option) throws Exception {
-        assertEquals(2, command(new SemanticAudit(main())).execute(Long.toString(pid), "--event-id=decision-1",
+        assertEquals(2, command(main().command(new SemanticAudit())).execute(Long.toString(pid), "--event-id=decision-1",
                 option, "--json"));
         assertError(2, "cannot be combined");
         assertTrue(actionFiles().isEmpty());
@@ -819,7 +827,7 @@ class SemanticCommandTest {
 
     @Test
     void auditQueryFailureHasNonzeroExitAndKeepsTheStableErrorCode() throws Exception {
-        assertEquals(1, respond(new SemanticAudit(main()), request -> jsonUnchecked("""
+        assertEquals(1, respond(main().command(new SemanticAudit()), request -> jsonUnchecked("""
                 {"audit":{"reader":"remote"},"error":"audit_query_failed"}
                 """), "--json"));
         assertError(1, "Audit query failed");
@@ -829,7 +837,7 @@ class SemanticCommandTest {
 
     @Test
     void auditUnavailableEventRetainsItsResponseWithNotFoundExitCode() throws Exception {
-        assertEquals(3, respond(new SemanticAudit(main()), request -> jsonUnchecked("""
+        assertEquals(3, respond(main().command(new SemanticAudit()), request -> jsonUnchecked("""
                 {"audit":{"reader":"memory"},"record":null,"evidence":[]}
                 """), "--event-id=missing-event", "--json"));
         assertError(3, "missing-event");
@@ -840,7 +848,7 @@ class SemanticCommandTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void auditUnavailableCaseReportsTheRequestedAnchor(boolean jsonOutput) throws Exception {
-        assertEquals(3, respond(new SemanticAudit(main()), request -> {
+        assertEquals(3, respond(main().command(new SemanticAudit()), request -> {
             assertEquals("missing-anchor", request.get("caseEventId"));
             return jsonUnchecked("{\"audit\":{\"reader\":\"memory\"},\"records\":[],\"unavailable\":true}");
         }, "--case-event-id=missing-anchor", "--json=" + jsonOutput));
@@ -854,7 +862,7 @@ class SemanticCommandTest {
 
     @Test
     void auditExpiredCursorIsAnExplicitFailureWithRetentionDetails() throws Exception {
-        assertEquals(1, respond(new SemanticAudit(main()), request -> jsonUnchecked("""
+        assertEquals(1, respond(main().command(new SemanticAudit()), request -> jsonUnchecked("""
                 {"audit":{"reader":"memory"},"records":[],"cursorExpired":true,"evicted":9}
                 """), "--cursor=old-page", "--json"));
         assertError(1, "cursor expired");

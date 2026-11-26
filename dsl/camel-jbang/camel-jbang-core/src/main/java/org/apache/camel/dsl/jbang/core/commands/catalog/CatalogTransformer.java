@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aesh.command.CommandDefinition;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.TransformerModel;
 
 @CommandDefinition(name = "transformer", description = "List data type transformers from the Camel Catalog",
@@ -29,10 +28,6 @@ import org.apache.camel.tooling.model.TransformerModel;
                            "Examples:",
                            "  camel catalog transformer" })
 public class CatalogTransformer extends CatalogBaseCommand {
-
-    public CatalogTransformer(CamelJBangMain main) {
-        super(main);
-    }
 
     @Override
     List<Row> collectRows() {

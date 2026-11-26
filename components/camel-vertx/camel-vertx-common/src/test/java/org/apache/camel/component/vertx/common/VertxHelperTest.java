@@ -16,15 +16,21 @@
  */
 package org.apache.camel.component.vertx.common;
 
+import java.net.Socket;
+import java.security.Principal;
+import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
 import io.vertx.core.net.NetClientOptions;
 import io.vertx.core.net.TCPSSLOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustAllTrustManager;
@@ -34,6 +40,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class VertxHelperTest {
 
@@ -117,6 +124,77 @@ public class VertxHelperTest {
         assertThat(options.isSsl()).isTrue();
         assertThat(options.getTrustOptions()).isNotNull();
         assertThat(options.getTrustOptions()).isInstanceOf(TrustManagerFactoryOptions.class);
+    }
+
+    @Test
+    public void testCustomKeyManagerApplied() throws Exception {
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        KeyManagersParameters keyManagers = new KeyManagersParameters();
+        // a key store that does not exist fails if the KeyManagerFactory is used, so the
+        // existing key manager must be used without reading the key store
+        KeyStoreParameters keyStore = new KeyStoreParameters();
+        keyStore.setResource("jsse/does-not-exist.p12");
+        keyManagers.setKeyStore(keyStore);
+
+        X509KeyManager customKeyManager = new X509KeyManager() {
+            @Override
+            public String[] getClientAliases(String keyType, Principal[] issuers) {
+                return null;
+            }
+
+            @Override
+            public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
+                return null;
+            }
+
+            @Override
+            public String[] getServerAliases(String keyType, Principal[] issuers) {
+                return null;
+            }
+
+            @Override
+            public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
+                return null;
+            }
+
+            @Override
+            public X509Certificate[] getCertificateChain(String alias) {
+                return null;
+            }
+
+            @Override
+            public PrivateKey getPrivateKey(String alias) {
+                return null;
+            }
+        };
+
+        keyManagers.setKeyManager(customKeyManager);
+        sslContextParameters.setKeyManagers(keyManagers);
+
+        TCPSSLOptions options = new NetClientOptions();
+        VertxHelper.setupSSLOptions(context, sslContextParameters, options);
+
+        assertThat(options.isSsl()).isTrue();
+        assertThat(options.getKeyCertOptions()).isNotNull();
+        assertThat(options.getKeyCertOptions().getKeyManagerFactory(null).getKeyManagers())
+                .containsExactly(customKeyManager);
+    }
+
+    @Test
+    public void testNonX509KeyManagerRejected() {
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        KeyManagersParameters keyManagers = new KeyManagersParameters();
+        keyManagers.setKeyManager(new KeyManager() {
+            // noop
+        });
+        sslContextParameters.setKeyManagers(keyManagers);
+
+        TCPSSLOptions options = new NetClientOptions();
+
+        // Vert.x can only wrap an X509KeyManager: any other key manager must fail loudly rather than be ignored
+        assertThatThrownBy(() -> VertxHelper.setupSSLOptions(context, sslContextParameters, options))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("X509KeyManager");
     }
 
     @Test

@@ -44,7 +44,9 @@ import org.apache.camel.support.DefaultEndpoint;
                                                                  Carrier.TEXT, Carrier.LIST, Carrier.POJO,
                                                                  Carrier.NULL }),
                                           @BodyType.When(option = "operation", value = "SIMILARITY_SEARCH",
-                                                         carriers = { Carrier.TEXT, Carrier.LIST }) },
+                                                         carriers = { Carrier.TEXT, Carrier.LIST }),
+                                          @BodyType.When(option = "operation", value = "UPSERT",
+                                                         carriers = { Carrier.LIST, Carrier.POJO }) },
                                   description = "ADD takes a Document, a List of Document or of texts, or text (another"
                                                 + " body is added as its text); a List with another element fails."
                                                 + " After spring-ai-embeddings it adds the float[] (or List of float[])"
@@ -54,13 +56,18 @@ import org.apache.camel.support.DefaultEndpoint;
                                                 + " SIMILARITY_SEARCH); the CamelSpringAiVectorStoreDocumentIds header is"
                                                 + " used only without a body. SIMILARITY_SEARCH takes the query text, or"
                                                 + " after spring-ai-embeddings the float[] body with the"
-                                                + " CamelSpringAiEmbeddingInputText header. Otherwise no body fails. The"
-                                                + " CamelSpringAiVectorStoreOperation header overrides operation"),
+                                                + " CamelSpringAiEmbeddingInputText header, or the float[] alone with"
+                                                + " searchByVector. UPSERT writes the float[] (or List of float[]) body of"
+                                                + " spring-ai-embeddings as it is, with the text of the"
+                                                + " CamelSpringAiEmbeddingInputText(s) header, or takes an"
+                                                + " EmbeddedDocument or a List of EmbeddedDocument. Otherwise no body"
+                                                + " fails. The CamelSpringAiVectorStoreOperation header overrides"
+                                                + " operation"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = @BodyType.When(option = "operation", value = "SIMILARITY_SEARCH",
                                                              carriers = Carrier.LIST),
-                                   description = "SIMILARITY_SEARCH gives the List of Document found. ADD and DELETE keep"
-                                                 + " the body, with the ids and the count in headers"))
+                                   description = "SIMILARITY_SEARCH gives the List of Document found. ADD, UPSERT and"
+                                                 + " DELETE keep the body, with the ids and the count in headers"))
 public class SpringAiVectorStoreEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

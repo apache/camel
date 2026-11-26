@@ -119,6 +119,162 @@ class ProjectExporterTest {
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).exists();
     }
 
+    @Test
+    void exportsTomcatWarProjectWithSpringBoot4() throws Exception {
+        assertSpringBootWarProject("4.2.0", "spring-boot-starter-webmvc", null);
+    }
+
+    @Test
+    void exportsTomcatWarProjectWithSpringBoot3WithoutCamelVersion() throws Exception {
+        Path exportDir = dir.resolve("tomcat-export-3-5-0-without-camel-version");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = "3.5.0";
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isEqualTo(1);
+        assertThat(printer.getOutput())
+                .contains("Spring Boot 3.x requires an explicitly selected compatible Camel Spring Boot version");
+        assertThat(exportDir.resolve("pom.xml")).doesNotExist();
+    }
+
+    private void assertSpringBootWarProject(
+            String bootVersion, String expectedWebStarter, String camelSpringBootVersion)
+            throws Exception {
+        Path exportDir = dir.resolve("tomcat-export-" + bootVersion.replace('.', '-'));
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = bootVersion;
+        request.camelSpringBootVersion = camelSpringBootVersion;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+
+        assertThat(pom).contains(
+                "<packaging>war</packaging>",
+                "<artifactId>" + expectedWebStarter + "</artifactId>",
+                "<artifactId>spring-boot-starter-tomcat</artifactId>\n            <scope>provided</scope>",
+                "<artifactId>maven-war-plugin</artifactId>")
+                .doesNotContain("<id>jib</id>");
+
+        Path application;
+        try (Stream<Path> javaFiles = Files.walk(exportDir.resolve("src/main/java"))) {
+            application = javaFiles
+                    .filter(path -> path.getFileName().toString().equals("CamelApplication.java"))
+                    .findFirst()
+                    .orElseThrow();
+        }
+
+        String java = Files.readString(application);
+        assertThat(java).contains(
+                "extends SpringBootServletInitializer",
+                "SpringApplicationBuilder",
+                "configure(",
+                "application.sources(CamelApplication.class)");
+
+        String readme = Files.readString(exportDir.resolve("readme.md"));
+        assertThat(readme)
+                .contains("$CATALINA_BASE/webapps/")
+                .contains(".war")
+                .contains("ROOT.war");
+
+        assertThat(exportDir.resolve("src/main/docker")).doesNotExist();
+    }
+
+    @Test
+    void exportsSpringBootWarWithSpringBootSpecificDependencies() throws Exception {
+        Path exportDir = dir.resolve("tomcat-runtime-dependencies");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = "4.2.0";
+        request.camelVersion = "4.23.0";
+        request.camelSpringBootVersion = "4.23.0";
+
+        DependencyResolver withSpringBootDependency = r -> {
+            int result = resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings)
+                                        + "camel.jbang.dependencies.spring-boot=org.example:spring-boot-only:1.0\n");
+            return result;
+        };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withSpringBootDependency))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        assertThat(pom).contains(
+                "<groupId>org.example</groupId>",
+                "<artifactId>spring-boot-only</artifactId>",
+                "<version>1.0</version>");
+    }
+
+    @Test
+    void rejectsTlsFilesForKubernetesWarExport() throws Exception {
+        Path exportDir = dir.resolve("tomcat-tls-export");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.springBootVersion = "4.2.0";
+        request.camelVersion = "4.23.0";
+        request.camelSpringBootVersion = "4.23.0";
+        request.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
+
+        DependencyResolver withTlsFiles = r -> {
+            int result = resolver.resolve(r);
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.writeString(settings, Files.readString(settings)
+                                        + "camel.jbang.tlsFiles=src/main/tls/keystore.p12\n");
+            return result;
+        };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer)
+                        .withDependencyResolver(withTlsFiles))
+                .export(request);
+
+        assertThat(exit).isNotZero();
+        assertThat(printer.getOutput())
+                .contains(
+                        "TLS files configured with camel.jbang.tlsFiles are not supported with --packaging=war for Kubernetes export");
+    }
+
+    @Test
+    void rejectsCustomWarPomTemplate() throws Exception {
+        Path exportDir = dir.resolve("tomcat-custom-pom-export");
+        ExportRequest request = request(writeRoute("tomcat-route"), exportDir);
+        request.runtime = RuntimeType.springBoot;
+        request.packaging = "war";
+        request.pomTemplateName = "custom-spring-boot-pom.ftl";
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(
+                new ExportContext().withPrinter(printer).withDependencyResolver(resolver))
+                .export(request);
+
+        assertThat(exit).isNotZero();
+        assertThat(printer.getOutput())
+                .contains("Custom POM templates are not supported with --packaging=war");
+    }
+
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "4.10.0")
@@ -315,6 +471,122 @@ class ProjectExporterTest {
             // each project has its own route only
             assertThat(exportDir.resolve("src/main/resources/camel")).isDirectoryContaining("glob:**/" + route)
                     .isDirectoryNotContaining(p -> !p.getFileName().toString().equals(route));
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
+    void cxfConsumerIsServedOnTheHttpServerOfTheRuntime(RuntimeType runtime) throws Exception {
+        Path route = writeRoute("soap");
+        // camel run adds camel-cxf-platform-http for a route with a cxf consumer
+        DependencyResolver cxf = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    dependency=camel:cxf-soap
+                    dependency=camel:cxf-platform-http
+                    """.formatted(route));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.runtime = runtime;
+        request.applicationProperties
+                = new String[] { "camel.cxf.path=/soap", "camel.cxf.useXForwardedHeaders=true" };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(cxf))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        String properties = Files.readString(exportDir.resolve("src/main/resources/application.properties"));
+        switch (runtime) {
+            case main -> {
+                // served on the platform-http server, as in camel run
+                assertThat(pom).contains("<artifactId>camel-cxf-platform-http</artifactId>",
+                        "<artifactId>camel-platform-http-main</artifactId>");
+                assertThat(properties).contains("camel.cxf.path=/soap", "camel.cxf.useXForwardedHeaders=true",
+                        "camel.server.enabled=true");
+            }
+            case springBoot -> {
+                assertThat(pom).doesNotContain("camel-cxf-platform-http");
+                assertThat(properties).contains("cxf.path=/soap", "cxf.servlet.init.use-x-forwarded-headers=true")
+                        .doesNotContain("camel.cxf.");
+            }
+            default -> {
+                assertThat(pom).doesNotContain("camel-cxf-platform-http");
+                assertThat(properties).contains("quarkus.cxf.path=/soap",
+                        "quarkus.http.proxy.proxy-address-forwarding=true",
+                        "quarkus.http.proxy.enable-forwarded-host=true")
+                        .doesNotContain("camel.cxf.");
+            }
+        }
+    }
+
+    @Test
+    void cxfProducersOnlyNeedNoHttpServer() throws Exception {
+        // CAMEL-27391: camel run adds camel-cxf-platform-http only for a cxf consumer
+        Path route = writeRoute("soap");
+        DependencyResolver cxf = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    dependency=camel:cxf-soap
+                    """.formatted(route));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.runtime = RuntimeType.main;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(cxf))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        assertThat(pom).contains("<artifactId>camel-cxf-soap</artifactId>")
+                .doesNotContain("camel-cxf-platform-http", "camel-platform-http-main");
+        assertThat(exportDir.resolve("src/main/resources/application.properties")).content()
+                .doesNotContain("camel.server.enabled");
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RuntimeType.class, names = { "main", "springBoot", "quarkus" })
+    void cxfWithAUsernameTokenHasWsSecurity(RuntimeType runtime) throws Exception {
+        // CAMEL-27395: camel run adds cxf-rt-ws-security of the CXF version for a cxf endpoint with a wsSecurity option
+        Path route = writeRoute("soap");
+        DependencyResolver cxf = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    dependency=camel:cxf-soap
+                    dependency=mvn:org.apache.cxf:cxf-rt-ws-security:4.2.4
+                    """.formatted(route));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.runtime = runtime;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(cxf))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        String pom = Files.readString(exportDir.resolve("pom.xml"));
+        if (runtime == RuntimeType.quarkus) {
+            // the CXF extension of Quarkus, whose version is in the Quarkus Platform BOM
+            assertThat(pom).contains("<groupId>io.quarkiverse.cxf</groupId>",
+                    "<artifactId>quarkus-cxf-rt-ws-security</artifactId>")
+                    .doesNotContain("<artifactId>cxf-rt-ws-security</artifactId>", "4.2.4");
+        } else {
+            assertThat(pom).contains("<groupId>org.apache.cxf</groupId>", "<artifactId>cxf-rt-ws-security</artifactId>",
+                    "<version>4.2.4</version>");
         }
     }
 

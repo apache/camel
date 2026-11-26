@@ -127,12 +127,30 @@ public class KafkaShareEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslPassword": target.getConfiguration().setSaslPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "saslusername":
         case "saslUsername": target.getConfiguration().setSaslUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaformat":
+        case "schemaFormat": target.getConfiguration().setSchemaFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistryoauthclientid":
+        case "schemaRegistryOauthClientId": target.getConfiguration().setSchemaRegistryOauthClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistryoauthclientsecret":
+        case "schemaRegistryOauthClientSecret": target.getConfiguration().setSchemaRegistryOauthClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistryoauthscope":
+        case "schemaRegistryOauthScope": target.getConfiguration().setSchemaRegistryOauthScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistryoauthtokenendpoint":
+        case "schemaRegistryOauthTokenEndpoint": target.getConfiguration().setSchemaRegistryOauthTokenEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistrypassword":
+        case "schemaRegistryPassword": target.getConfiguration().setSchemaRegistryPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaregistryurl":
         case "schemaRegistryURL": target.getConfiguration().setSchemaRegistryURL(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistryusername":
+        case "schemaRegistryUsername": target.getConfiguration().setSchemaRegistryUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistryvendor":
+        case "schemaRegistryVendor": target.getConfiguration().setSchemaRegistryVendor(property(camelContext, java.lang.String.class, value)); return true;
         case "securityprotocol":
         case "securityProtocol": target.getConfiguration().setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "sendbufferbytes":
         case "sendBufferBytes": target.getConfiguration().setSendBufferBytes(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "shareautooffsetreset":
+        case "shareAutoOffsetReset": target.getConfiguration().setShareAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": target.getConfiguration().setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "specificavroreader":
@@ -279,12 +297,30 @@ public class KafkaShareEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslPassword": return java.lang.String.class;
         case "saslusername":
         case "saslUsername": return java.lang.String.class;
+        case "schemaformat":
+        case "schemaFormat": return java.lang.String.class;
+        case "schemaregistryoauthclientid":
+        case "schemaRegistryOauthClientId": return java.lang.String.class;
+        case "schemaregistryoauthclientsecret":
+        case "schemaRegistryOauthClientSecret": return java.lang.String.class;
+        case "schemaregistryoauthscope":
+        case "schemaRegistryOauthScope": return java.lang.String.class;
+        case "schemaregistryoauthtokenendpoint":
+        case "schemaRegistryOauthTokenEndpoint": return java.lang.String.class;
+        case "schemaregistrypassword":
+        case "schemaRegistryPassword": return java.lang.String.class;
         case "schemaregistryurl":
         case "schemaRegistryURL": return java.lang.String.class;
+        case "schemaregistryusername":
+        case "schemaRegistryUsername": return java.lang.String.class;
+        case "schemaregistryvendor":
+        case "schemaRegistryVendor": return java.lang.String.class;
         case "securityprotocol":
         case "securityProtocol": return java.lang.String.class;
         case "sendbufferbytes":
         case "sendBufferBytes": return java.lang.Integer.class;
+        case "shareautooffsetreset":
+        case "shareAutoOffsetReset": return java.lang.String.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return int.class;
         case "specificavroreader":
@@ -432,12 +468,30 @@ public class KafkaShareEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslPassword": return target.getConfiguration().getSaslPassword();
         case "saslusername":
         case "saslUsername": return target.getConfiguration().getSaslUsername();
+        case "schemaformat":
+        case "schemaFormat": return target.getConfiguration().getSchemaFormat();
+        case "schemaregistryoauthclientid":
+        case "schemaRegistryOauthClientId": return target.getConfiguration().getSchemaRegistryOauthClientId();
+        case "schemaregistryoauthclientsecret":
+        case "schemaRegistryOauthClientSecret": return target.getConfiguration().getSchemaRegistryOauthClientSecret();
+        case "schemaregistryoauthscope":
+        case "schemaRegistryOauthScope": return target.getConfiguration().getSchemaRegistryOauthScope();
+        case "schemaregistryoauthtokenendpoint":
+        case "schemaRegistryOauthTokenEndpoint": return target.getConfiguration().getSchemaRegistryOauthTokenEndpoint();
+        case "schemaregistrypassword":
+        case "schemaRegistryPassword": return target.getConfiguration().getSchemaRegistryPassword();
         case "schemaregistryurl":
         case "schemaRegistryURL": return target.getConfiguration().getSchemaRegistryURL();
+        case "schemaregistryusername":
+        case "schemaRegistryUsername": return target.getConfiguration().getSchemaRegistryUsername();
+        case "schemaregistryvendor":
+        case "schemaRegistryVendor": return target.getConfiguration().getSchemaRegistryVendor();
         case "securityprotocol":
         case "securityProtocol": return target.getConfiguration().getSecurityProtocol();
         case "sendbufferbytes":
         case "sendBufferBytes": return target.getConfiguration().getSendBufferBytes();
+        case "shareautooffsetreset":
+        case "shareAutoOffsetReset": return target.getConfiguration().getShareAutoOffsetReset();
         case "shutdowntimeout":
         case "shutdownTimeout": return target.getConfiguration().getShutdownTimeout();
         case "specificavroreader":

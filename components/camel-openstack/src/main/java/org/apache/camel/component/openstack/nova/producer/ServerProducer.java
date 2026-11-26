@@ -35,6 +35,7 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.ServerCreate;
 import org.openstack4j.model.compute.builder.ServerCreateBuilder;
 
+@Deprecated(since = "4.24")
 public class ServerProducer extends AbstractOpenstackProducer {
 
     public ServerProducer(NovaEndpoint endpoint, OSClient client) {

@@ -153,12 +153,14 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            // the mail to mark as read (or unread) once the exchange is done. It is taken now, as the route may change
+            // or remove the mail id header, or replace the message, before it ends
             final String id = exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class);
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     try {
-                        processCommit(exchange, unreadLabelId);
+                        processCommit(exchange, unreadLabelId, id);
                     } finally {
                         inProgress.remove(id);
                     }
@@ -166,7 +168,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
                 public void onFailure(Exchange exchange) {
                     try {
-                        processRollback(exchange, unreadLabelId);
+                        processRollback(exchange, unreadLabelId, id);
                     } finally {
                         inProgress.remove(id);
                     }
@@ -187,21 +189,31 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Strategy to delete the message after being processed.
+     * Strategy to mark the mail of the {@link GoogleMailStreamConstants#MAIL_ID} header as read after being processed.
+     *
+     * @deprecated use {@link #processCommit(Exchange, String, String)}, which the consumer calls instead
      */
+    @Deprecated(since = "4.24.0")
     protected void processCommit(Exchange exchange, String unreadLabelId) {
+        processCommit(exchange, unreadLabelId, exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class));
+    }
+
+    /**
+     * Strategy to mark the mail as read after being processed.
+     *
+     * @param exchange      the exchange
+     * @param unreadLabelId the id of the UNREAD label
+     * @param id            the id of the mail the exchange was created from
+     */
+    protected void processCommit(Exchange exchange, String unreadLabelId, String id) {
         try {
             if (getConfiguration().isMarkAsRead()) {
-                String id = exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class);
-
                 LOG.trace("Marking email {} as read", id);
 
                 List<String> remove = new ArrayList<>();
                 remove.add(unreadLabelId);
                 ModifyMessageRequest mods = new ModifyMessageRequest().setRemoveLabelIds(remove);
-                getClient().users().messages()
-                        .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods)
-                        .execute();
+                getClient().users().messages().modify("me", id, mods).execute();
 
                 LOG.trace("Marked email {} as read", id);
             }
@@ -212,9 +224,25 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Strategy when processing the exchange failed.
+     * Strategy when processing the exchange failed, for the mail of the {@link GoogleMailStreamConstants#MAIL_ID}
+     * header.
+     *
+     * @deprecated use {@link #processRollback(Exchange, String, String)}, which the consumer calls instead
      */
+    @Deprecated(since = "4.24.0")
     protected void processRollback(Exchange exchange, String unreadLabelId) {
+        processRollback(exchange, unreadLabelId,
+                exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class));
+    }
+
+    /**
+     * Strategy when processing the exchange failed.
+     *
+     * @param exchange      the exchange
+     * @param unreadLabelId the id of the UNREAD label
+     * @param id            the id of the mail the exchange was created from
+     */
+    protected void processRollback(Exchange exchange, String unreadLabelId, String id) {
         if (!getConfiguration().isMarkAsRead()) {
             // the mail was never marked as read, so there is nothing to roll back
             return;
@@ -225,8 +253,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             List<String> add = new ArrayList<>();
             add.add(unreadLabelId);
             ModifyMessageRequest mods = new ModifyMessageRequest().setAddLabelIds(add);
-            getClient().users().messages()
-                    .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
+            getClient().users().messages().modify("me", id, mods).execute();
         } catch (Exception e) {
             getExceptionHandler().handleException("Error occurred marking the mail as unread. This exception is ignored.",
                     exchange, e);

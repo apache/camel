@@ -16,9 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.test;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 
+import org.aesh.command.CommandException;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
+import org.aesh.command.metadata.MetadataProviderRegistry;
 import org.apache.camel.catalog.VersionHelper;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
@@ -28,15 +32,7 @@ import org.apache.camel.dsl.jbang.run.common.PluginExporter;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.citrusframework.CitrusVersion;
 import org.citrusframework.jbang.cli.CitrusJBangMain;
-import org.citrusframework.jbang.cli.commands.Agent;
-import org.citrusframework.jbang.cli.commands.AgentRun;
-import org.citrusframework.jbang.cli.commands.AgentStart;
-import org.citrusframework.jbang.cli.commands.AgentStop;
-import org.citrusframework.jbang.cli.commands.CitrusCommand;
-import org.citrusframework.jbang.cli.commands.Inspect;
-import org.citrusframework.jbang.cli.commands.ListTests;
-import org.citrusframework.jbang.cli.commands.Run;
-import picocli.CommandLine;
+import org.citrusframework.jbang.cli._AeshMetadataRegistry;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0", appliesTo = { "export" })
 public class TestPlugin implements Plugin {
@@ -45,43 +41,22 @@ public class TestPlugin implements Plugin {
 
     @Override
     public void customize(CommandTree commandLine, CamelJBangMain main) {
-        commandLine.addSubcommand("test", new CommandTree(new TestCommand(main)));
-    }
+        // the CLI tells aesh to use only its own metadata registry (no class path scan), so register the generated
+        // aesh metadata of the Citrus commands, which the commands of this plugin extend (see TestInit)
+        MetadataProviderRegistry.register(new _AeshMetadataRegistry());
 
-    /**
-     * The test commands of Citrus, which Citrus 5.1 defines with picocli: picocli parses and runs the command line of
-     * camel test.
-     */
-    static CommandLine citrus(CamelJBangMain main) {
         CitrusJBangMain citrus = new CitrusJBangMain();
         citrus.withPrinter(new PipedPrinter(main.getOut()));
 
-        return new CommandLine(new CitrusTests())
-                .addSubcommand("init", new CommandLine(new TestInit(citrus)))
-                .addSubcommand("inspect", new CommandLine(new Inspect(citrus)))
-                .addSubcommand("run", new CommandLine(new Run(citrus)))
-                .addSubcommand("ps", new CommandLine(new ListTests(citrus)), "ls")
-                .addSubcommand("agent", new CommandLine(new Agent(citrus))
-                        .addSubcommand("start", new CommandLine(new AgentStart(citrus)))
-                        .addSubcommand("run", new CommandLine(new AgentRun(citrus)))
-                        .addSubcommand("stop", new CommandLine(new AgentStop(citrus))))
-                .setExecutionStrategy(new CitrusExecutionStrategy(main));
-    }
-
-    @CommandLine.Command(name = "camel test",
-                         description = "Manage tests for Camel applications (use test --help to see sub commands)",
-                         mixinStandardHelpOptions = true)
-    static class CitrusTests implements Callable<Integer> {
-
-        @CommandLine.Spec
-        CommandLine.Model.CommandSpec spec;
-
-        @Override
-        public Integer call() {
-            // defaults to printing the help message
-            spec.commandLine().usage(System.out);
-            return 0;
-        }
+        commandLine.addSubcommand("test", new CommandTree(main.command(new TestCommand()))
+                .addSubcommand("init", new CommandTree(new TestInit(citrus)))
+                .addSubcommand("inspect", new CommandTree(new TestInspect(citrus)))
+                .addSubcommand("run", new CommandTree(new TestRun(citrus)))
+                .addSubcommand("ps", new CommandTree(new TestListTests(citrus)), "ls")
+                .addSubcommand("agent", new CommandTree(new TestAgent(citrus))
+                        .addSubcommand("start", new CommandTree(new TestAgentStart(citrus)))
+                        .addSubcommand("run", new CommandTree(new TestAgentRun(citrus)))
+                        .addSubcommand("stop", new CommandTree(new TestAgentStop(citrus)))));
     }
 
     @Override
@@ -89,63 +64,44 @@ public class TestPlugin implements Plugin {
         return Optional.of(new TestPluginExporter());
     }
 
+    static boolean isCamelLauncherRuntime() {
+        return Boolean.parseBoolean(System.getProperty("camel.launcher", "false"));
+    }
+
     /**
-     * Command execution strategy performs special command preparations and makes sure to set and run the proper Citrus
-     * version for this Camel release.
+     * Executes a Citrus command with the plugin class loader set as the thread context class loader, restoring the
+     * original class loader afterward. Also sets the Citrus and Camel version system properties that Citrus commands
+     * use for Maven artifact resolution. In the Camel Launcher runtime the class loader is already correct.
      */
-    private record CitrusExecutionStrategy(CamelJBangMain main) implements CommandLine.IExecutionStrategy {
+    static CommandResult withClassLoader(
+            CitrusCommandAction action, CommandInvocation invocation)
+            throws CommandException, InterruptedException {
+        System.setProperty("citrus.jbang.version", CitrusVersion.version());
+        System.setProperty("citrus.camel.jbang.version", new VersionHelper().getVersion());
 
-        @Override
-        public int execute(CommandLine.ParseResult parseResult)
-                throws CommandLine.ExecutionException, CommandLine.ParameterException {
-
-            if (!parseResult.errors().isEmpty() || !parseResult.unmatched().isEmpty()) {
-                // Something is wrong with the command - do not adjust anything
-                return new CommandLine.RunLast().execute(parseResult);
+        if (!isCamelLauncherRuntime()) {
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(TestPlugin.class.getClassLoader());
+                return action.execute(invocation);
+            } finally {
+                Thread.currentThread().setContextClassLoader(tccl);
             }
-
-            if (isCitrusCommand(parseResult)) {
-                System.setProperty("citrus.jbang.version", CitrusVersion.version());
-                System.setProperty("citrus.camel.jbang.version", new VersionHelper().getVersion());
-
-                if (!isCamelLauncherRuntime()) {
-                    var tccLoader = Thread.currentThread().getContextClassLoader();
-                    try {
-                        // Update class loader so Citrus is able to resolve resources
-                        ClassLoader cl = TestPlugin.class.getClassLoader();
-                        Thread.currentThread().setContextClassLoader(cl);
-
-                        return new CommandLine.RunLast().execute(parseResult);
-                    } finally {
-                        Thread.currentThread().setContextClassLoader(tccLoader);
-                    }
-                }
-            }
-
-            return new CommandLine.RunLast().execute(parseResult);
         }
+        return action.execute(invocation);
+    }
 
-        /**
-         * Evaluate if the current runtime is using Camel Launcher. Camel launcher sets a System property marking the
-         * runtime nature. If the System property is not present we can assume that the runtime is something different
-         * e.g. Camel JBang.
-         */
-        private boolean isCamelLauncherRuntime() {
-            return Boolean.parseBoolean(System.getProperty("camel.launcher", "false"));
-        }
+    @SuppressWarnings("unchecked")
+    static <T> T readField(Class<?> clazz, String name, Object instance) throws ReflectiveOperationException {
+        Field field = clazz.getDeclaredField(name);
+        field.setAccessible(true);
+        return (T) field.get(instance);
+    }
 
-        /**
-         * Evaluate command user object and check if this is a Citrus command implementation.
-         */
-        private boolean isCitrusCommand(CommandLine.ParseResult parseResult) {
-            CommandLine.ParseResult subcommand = parseResult;
-            while (subcommand.hasSubcommand()) {
-                subcommand = subcommand.subcommand();
-            }
-
-            Object commandObject = subcommand.commandSpec().userObject();
-            return commandObject instanceof CitrusCommand;
-        }
+    @FunctionalInterface
+    interface CitrusCommandAction {
+        CommandResult execute(CommandInvocation invocation)
+                throws CommandException, InterruptedException;
     }
 
     /**

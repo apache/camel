@@ -130,7 +130,7 @@ class EvalExpressionResultTest extends ActionCommandTestSupport {
     }
 
     private EvalExpressionCommand command(String... args) {
-        EvalExpressionCommand command = new EvalExpressionCommand(new CamelJBangMain().withPrinter(printer));
+        EvalExpressionCommand command = new CamelJBangMain().withPrinter(printer).command(new EvalExpressionCommand());
         CommandLineTestHelper.parse(command, args);
         return command;
     }
