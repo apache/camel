@@ -79,7 +79,7 @@ public class SmppProducer extends DefaultProducer {
             }
 
             if (newState.equals(SessionState.UNBOUND) || newState.equals(SessionState.CLOSED)) {
-                if (source == bindingSession.get()) {
+                if (source != null && source == bindingSession.get()) {
                     // the bind of this session failed on this thread, and connectAndBind throws to its caller (the
                     // start, a reconnect attempt or a lazy session creation), which handles it. Reconnecting here
                     // would run the whole reconnect on that thread: inside start(), under the lock stop() needs too
