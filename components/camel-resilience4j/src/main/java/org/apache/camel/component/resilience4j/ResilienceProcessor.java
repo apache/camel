@@ -718,8 +718,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
                 supplier = () -> {
                     CompletableFuture<Exchange> future = callStart.submitted(new CompletableFuture<>());
                     executorService.submit(() -> {
-                        // a call that timed out before it started is not started: its future was already cancelled by
-                        // callStart.cancel() on the timeout, not completed with a TimeoutException
+                        // a call that timed out before it started is not started: callStart.cancel() claimed it on the
+                        // timeout
                         if (callStart.tryStart()) {
                             processTaskAsync(exchange, exchangeWriteGuard, future);
                         }

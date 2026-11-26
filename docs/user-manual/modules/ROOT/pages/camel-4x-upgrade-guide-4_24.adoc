@@ -436,6 +436,16 @@ restart is gone. A class that extends `SedaConsumer` and overrides `doRun()` mus
 instead, and should keep the loop condition `isCurrentStart(start) && isRunAllowed()` of the default implementation.
 The new protected method `isCurrentStart(int start)` returns true while no later start of the consumer has happened.
 
+=== camel-resilience4j - a call that times out before it starts is not started later
+
+In asynchronous mode (`asynchronous=true`) with a timeout, the `timeoutCancelRunningFuture` option (`true` by default)
+now has an effect, where before it had none. A call that times out while its task still waits for a thread of the
+timeout executor service is no longer started once a thread is free, so it no longer reaches the backend after its
+exchange has gone on with the timeout (or the fallback). With a bulkhead, the permit of such a call is released at the
+timeout, and not when a thread takes the call. In synchronous mode with a bulkhead, a call that times out while it waits
+for a thread is not started later either. Set `timeoutCancelRunningFuture=false` to keep the old asynchronous behaviour,
+where the timed out call still runs once a thread is free.
+
 === camel-ehcache - shared CacheManager and changed defaults
 
 The following user-visible changes take effect in 4.24:

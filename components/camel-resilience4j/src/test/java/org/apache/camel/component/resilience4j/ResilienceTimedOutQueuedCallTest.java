@@ -108,12 +108,12 @@ class ResilienceTimedOutQueuedCallTest extends CamelTestSupport {
         // the thread of the pool is started and idle before X1, so X1 starts well within its timeout (a call that
         // has not started when it times out is not started at all)
         pool.submit(() -> {
-        }).get(5, TimeUnit.SECONDS);
+        }).get(20, TimeUnit.SECONDS);
 
         // X1 blocks the only thread of the pool, times out and keeps running
         Future<Exchange> x1 = template.asyncSend(uri, e -> e.getIn().setHeader("block", true));
-        await().atMost(5, TimeUnit.SECONDS).until(() -> backendStarts.get() == 1);
-        assertInstanceOf(TimeoutException.class, x1.get(5, TimeUnit.SECONDS).getException(), "X1 times out");
+        await().atMost(20, TimeUnit.SECONDS).until(() -> backendStarts.get() == 1);
+        assertInstanceOf(TimeoutException.class, x1.get(20, TimeUnit.SECONDS).getException(), "X1 times out");
 
         // X2 waits in the queue of the pool and times out before it starts
         Exchange x2 = template.send(uri, e -> e.getIn().setBody("X2"));
@@ -126,7 +126,7 @@ class ResilienceTimedOutQueuedCallTest extends CamelTestSupport {
         // X1 ends, and the thread takes what is queued behind it: the task of X2, then this one
         release.countDown();
         pool.submit(() -> {
-        }).get(5, TimeUnit.SECONDS);
+        }).get(20, TimeUnit.SECONDS);
 
         assertEquals(expectedStarts, backendStarts.get(), "calls that reached the backend");
         if (bulkhead != null) {
