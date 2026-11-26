@@ -24,6 +24,7 @@ import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,16 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     private volatile FileLock lock;
     // the key of the lock file in LOCK_PATHS while the view holds the lock (written with lock, under stateLock)
     private volatile Path lockPathKey;
+    // The opens of the lock file that acquireLock gave up on and that are still running (an attempt that timed out
+    // keeps running, as the cluster task executor cannot interrupt it), and the key of the lock file to remove from
+    // LOCK_PATHS when the last of them ended (both guarded by stateLock). Closing a channel of the lock file releases the
+    // lock of the process (see LOCK_PATHS), so the file of such an open must not be left to the garbage collector, which
+    // closes it at any time, also while this view or another view of the JVM holds the lock. It is closed as soon as it
+    // is opened, and until then the view keeps the key registered and does not try the lock. If such an open never
+    // returns (a hung mount), no view of this JVM tries the lock again until the JVM restarts: both survive a stop and
+    // start of the view, as the open is still running.
+    private int lateLockFileOpens;
+    private Path lateLockFileOpensKey;
     private int heartbeatTimeoutMultiplier;
     private long acquireLockIntervalMilliseconds;
     private FileLockClusterTaskExecutor clusterTaskExecutor;
@@ -293,7 +304,45 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     private void unregisterLockPath(Path key) {
         if (key != null) {
-            LOCK_PATHS.remove(key, this);
+            stateLock.lock();
+            try {
+                if (lateLockFileOpens > 0) {
+                    // removed when the last late open of the lock file ended
+                    lateLockFileOpensKey = key;
+                } else {
+                    LOCK_PATHS.remove(key, this);
+                }
+            } finally {
+                stateLock.unlock();
+            }
+        }
+    }
+
+    private boolean hasLateLockFileOpens() {
+        stateLock.lock();
+        try {
+            return lateLockFileOpens > 0;
+        } finally {
+            stateLock.unlock();
+        }
+    }
+
+    private void lateLockFileOpenEnded() {
+        boolean last;
+        stateLock.lock();
+        try {
+            lateLockFileOpens--;
+            last = lateLockFileOpens == 0;
+            if (last && lateLockFileOpensKey != null) {
+                LOCK_PATHS.remove(lateLockFileOpensKey, this);
+                lateLockFileOpensKey = null;
+            }
+        } finally {
+            stateLock.unlock();
+        }
+        if (last) {
+            LOGGER.info("The open of lock file {} that timed out has ended, trying the lock again (cluster-member-id={})",
+                    leaderLockPath, localMember.getUuid());
         }
     }
 
@@ -401,7 +450,12 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 if (isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo)
                         || canReclaimLeadership(latestClusterLeaderInfo)) {
                     if (previousClusterLeaderInfo != null && canReclaimLeadership(previousClusterLeaderInfo)) {
-                        // Backoff so the current cluster leader can notice leadership is relinquished
+                        // Backoff so the current cluster leader can notice leadership is relinquished. Only for this
+                        // check: the cluster data still names this member because no leader has written it since the
+                        // last attempt to take the lock failed, so the next check tries again. Otherwise a member
+                        // whose attempt failed (for example on a transient I/O error) would back off for good, and a
+                        // cluster with no other member would stay without a leader.
+                        clusterLeaderInfoRef.compareAndSet(latestClusterLeaderInfo, null);
                         return;
                     }
 
@@ -448,6 +502,11 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             // stopped while the cluster data was read: do not take the lock, even briefly
             return false;
         }
+        if (hasLateLockFileOpens()) {
+            LOGGER.debug("An open of lock file {} that timed out is still running (cluster-member-id={}), not trying the lock",
+                    leaderLockPath, localMember.getUuid());
+            return false;
+        }
         // resolved before the key is registered, so a timeout leaves nothing in LOCK_PATHS
         Path key = lockPathKey();
         if (key == null) {
@@ -468,7 +527,11 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         boolean published = false;
         try {
             newLockFile = createRandomAccessFile(leaderLockPath);
-            newDataFile = createRandomAccessFile(leaderDataPath);
+            if (newLockFile != null) {
+                // null if an open of the lock file is still running: the lock is not tried, so the data file is not
+                // needed
+                newDataFile = createRandomAccessFile(leaderDataPath);
+            }
             if (newLockFile != null && newDataFile != null) {
                 newLock = newLockFile.getChannel().tryLock(0, Math.max(1, newLockFile.getChannel().size()), false);
             }
@@ -571,12 +634,115 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     }
 
     RandomAccessFile createRandomAccessFile(Path path) throws ExecutionException, TimeoutException {
+        if (path.equals(leaderLockPath)) {
+            LockFileOpen open = new LockFileOpen();
+            try {
+                return open.end(clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(open)));
+            } finally {
+                // closes what the attempts opened if the executor gave up (no effect if the call already ended)
+                open.end(null);
+            }
+        }
         return clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<RandomAccessFile, Throwable>() {
             @Override
             public RandomAccessFile get() throws Throwable {
-                return new RandomAccessFile(path.toFile(), "rw");
+                return openFile(path);
             }
         }));
+    }
+
+    RandomAccessFile openFile(Path path) throws IOException {
+        return new RandomAccessFile(path.toFile(), "rw");
+    }
+
+    /**
+     * One open of the lock file by acquireLock. The cluster task executor runs it once per attempt, and an attempt that
+     * timed out keeps running. Every file an attempt opens is returned by {@link #end} or closed: by end if the attempt
+     * finished before the call ended, otherwise as soon as it is opened (see lateLockFileOpens).
+     */
+    private final class LockFileOpen implements ThrowingSupplier<RandomAccessFile, Throwable> {
+        // guarded by stateLock
+        private final List<RandomAccessFile> opened = new ArrayList<>();
+        private int running;
+        private boolean ended;
+
+        @Override
+        public RandomAccessFile get() throws Throwable {
+            stateLock.lock();
+            try {
+                if (ended) {
+                    // an attempt that only starts after the call ended
+                    return null;
+                }
+                running++;
+            } finally {
+                stateLock.unlock();
+            }
+            RandomAccessFile file = null;
+            try {
+                file = openFile(leaderLockPath);
+                return file;
+            } finally {
+                attemptEnded(file);
+            }
+        }
+
+        private void attemptEnded(RandomAccessFile file) {
+            boolean late;
+            stateLock.lock();
+            try {
+                running--;
+                late = ended;
+                if (!late && file != null) {
+                    opened.add(file);
+                }
+            } finally {
+                stateLock.unlock();
+            }
+            if (late) {
+                // this view has not tried the lock since the call ended, and no other view of the JVM has, as the key
+                // is still registered: closing the file releases no lock
+                closeFile(file);
+                lateLockFileOpenEnded();
+            }
+        }
+
+        /**
+         * Ends the call with the file the executor returned. Returns that file, or null if an attempt is still running:
+         * the lock must not be tried then, as closing the file of that attempt later would release it. Closes the other
+         * files the attempts opened.
+         */
+        RandomAccessFile end(RandomAccessFile result) {
+            List<RandomAccessFile> files;
+            boolean stillRunning;
+            stateLock.lock();
+            try {
+                if (ended) {
+                    return null;
+                }
+                ended = true;
+                stillRunning = running > 0;
+                lateLockFileOpens += running;
+                files = new ArrayList<>(opened);
+                opened.clear();
+            } finally {
+                stateLock.unlock();
+            }
+            RandomAccessFile file = stillRunning ? null : result;
+            for (RandomAccessFile f : files) {
+                if (f != file) {
+                    closeFile(f);
+                }
+            }
+            if (stillRunning) {
+                // logged once per wait (acquireLock does not open the lock file again until the wait ended), at WARN
+                // as the wait lasts until the JVM restarts if the open never returns
+                LOGGER.warn(
+                        "An open of lock file {} timed out and is still running. This cluster member, and any other cluster view of this JVM on the same lock file, does not try the lock until it has ended, and if it never ends (for example on a hung mount) not until the JVM restarts (cluster-member-id={})",
+                        leaderLockPath, localMember.getUuid());
+            }
+            return file;
+        }
     }
 
     FileLockClusterLeaderInfo readClusterLeaderInfo() throws Exception {

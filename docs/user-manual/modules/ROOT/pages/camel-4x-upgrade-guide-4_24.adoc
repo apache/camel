@@ -272,6 +272,15 @@ client library) is now a failed poll, as an exception, and the consumer polls ag
 scheduler, it also ended the scheduled task. See the section "camel-core - a VirtualMachineError fails the exchange,
 and Camel does not recover from it".
 
+=== camel-file - a file lock cluster member waits for an open of the lock file that timed out
+
+When an open of the lock file of the file lock cluster service (`FileLockClusterService`) takes longer than
+`clusterDataTaskTimeout`, the open keeps running, and the member no longer tries the lock with a retry meanwhile:
+the file of the late open, closed later by the garbage collector, released the lock of the leader. The member tries
+the lock again once the open has ended, and a WARN names the lock file when the wait starts. If the open never returns
+(for example on a hung network mount), no cluster view of that JVM tries the lock on that file until the JVM restarts,
+so a cluster with no member on another JVM stays without a leader. Previously the retry took the lock in that case.
+
 === camel-jms, camel-spring-rabbitmq - suspending or stopping a consumer waits at most shutdownAwaitTermination for its listener container
 
 Suspending or stopping a consumer of camel-jms (and of the components built on it, such as camel-activemq,
