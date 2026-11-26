@@ -58,10 +58,10 @@ To enable these features, the following component properties combinations must b
 |=======================================================================
 |Num.|Option |Parameter|Value|Required/Optional
 |1|*SSL/TLS*|negotiationType|TLS|Required
-|||keyCertChainResource||Required
-|||keyResource||Required
+|||keyCertChainResource||Required on a consumer. Optional on a producer: only for mutual TLS, together with keyResource
+|||keyResource||Required on a consumer. Optional on a producer: only for mutual TLS, together with keyCertChainResource
 |||keyPassword||Optional
-|||trustCertCollectionResource||Optional
+|||trustCertCollectionResource||Optional. When not set, a producer verifies the server with the default trust store of the JVM
 |2|*Token-based authentication with Google API*|authenticationType|GOOGLE|Required
 |||negotiationType|TLS|Required
 |||serviceAccountResource||Required
@@ -514,6 +514,48 @@ YAML::
       steps:
         - to:
             uri: direct:tls-enable
+----
+====
+
+gRPC service producer with TLS, where only the server is authenticated. The server certificate is verified with
+`trustCertCollectionResource`, or with the default trust store of the JVM when that option is not set. Add
+`keyCertChainResource` and `keyResource` only when the server requires a client certificate (mutual TLS).
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:grpc-tls")
+    .to("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&negotiationType=TLS&trustCertCollectionResource=file:src/test/resources/certs/ca.pem");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:grpc-tls"/>
+  <to uri="grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&amp;synchronous=true&amp;negotiationType=TLS&amp;trustCertCollectionResource=file:src/test/resources/certs/ca.pem"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:grpc-tls
+      steps:
+        - to:
+            uri: grpc://localhost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: pingSyncSync
+              synchronous: true
+              negotiationType: TLS
+              trustCertCollectionResource: "file:src/test/resources/certs/ca.pem"
 ----
 ====
 
