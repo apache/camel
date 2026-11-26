@@ -74,10 +74,10 @@ In each poll the consumer sends one `GetRecords` request to each shard it reads.
 
 The consumer reads up to `maxConcurrentShards` shards (10 by default) at the same time, each on a thread of a thread
 pool of the consumer (named `Kinesis_shard_reader`), which also routes the records of that shard, one after the other.
-A poll ends once all the shards have been read. With `maxConcurrentShards=1`, or a stream of one shard, the consumer
-reads the shards one after the other on its own thread. The thread pool is created when the consumer starts, through
-the xref:manual::threading-model.adoc[ExecutorServiceManager] of Camel, and is shut down when the consumer stops. The
-consumer does not use this pool with `shardId`.
+A poll ends once all the shards have been read. With `maxConcurrentShards=1` (or a value below 1), or a stream of one
+shard, the consumer reads the shards one after the other on its own thread. The thread pool is created when the
+consumer starts, through the xref:manual::threading-model.adoc[ExecutorServiceManager] of Camel, and is shut down when
+the consumer stops. The consumer does not use this pool with `shardId`.
 
 Kinesis limits the reads of each shard:
 

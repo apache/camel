@@ -56,8 +56,8 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
     private int maxResultsPerRequest = 1000;
     @UriParam(label = "consumer", defaultValue = "10",
               description = "Maximum number of shards that the consumer reads at the same time in a poll, each on a thread of a"
-                            + " thread pool of the consumer, which also routes the records of the shard. With 1, or a stream of"
-                            + " one shard, the consumer reads the shards one after the other on its own thread. Not used with"
+                            + " thread pool of the consumer, which also routes the records of the shard. With 1 (or less), or a"
+                            + " stream of one shard, the consumer reads the shards one after the other on its own thread. Not used with"
                             + " shardId, or by the KCL consumer (useKclConsumers).")
     private int maxConcurrentShards = 10;
     @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records",

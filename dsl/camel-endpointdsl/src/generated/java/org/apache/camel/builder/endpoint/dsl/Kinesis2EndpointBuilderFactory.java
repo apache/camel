@@ -172,9 +172,10 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Maximum number of shards that the consumer reads at the same time in
          * a poll, each on a thread of a thread pool of the consumer, which also
-         * routes the records of the shard. With 1, or a stream of one shard,
-         * the consumer reads the shards one after the other on its own thread.
-         * Not used with shardId, or by the KCL consumer (useKclConsumers).
+         * routes the records of the shard. With 1 (or less), or a stream of one
+         * shard, the consumer reads the shards one after the other on its own
+         * thread. Not used with shardId, or by the KCL consumer
+         * (useKclConsumers).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -191,9 +192,10 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Maximum number of shards that the consumer reads at the same time in
          * a poll, each on a thread of a thread pool of the consumer, which also
-         * routes the records of the shard. With 1, or a stream of one shard,
-         * the consumer reads the shards one after the other on its own thread.
-         * Not used with shardId, or by the KCL consumer (useKclConsumers).
+         * routes the records of the shard. With 1 (or less), or a stream of one
+         * shard, the consumer reads the shards one after the other on its own
+         * thread. Not used with shardId, or by the KCL consumer
+         * (useKclConsumers).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
