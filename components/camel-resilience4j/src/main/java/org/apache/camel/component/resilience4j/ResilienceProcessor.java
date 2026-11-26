@@ -26,6 +26,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -634,7 +635,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
             Callable<Exchange> callable;
 
             if (timeLimiter != null) {
-                Supplier<CompletionStage<Exchange>> stage = () -> CompletableFuture.supplyAsync(ftask, executorService);
+                Supplier<CompletionStage<Exchange>> stage = () -> ThreadPoolCall.start(ftask, executorService);
                 if (bulkhead != null) {
                     // the bulkhead goes inside the time limiter, so the permit is held until the task is done,
                     // and not released when the timeout fires while the task is still running
@@ -1007,6 +1008,54 @@ public class ResilienceProcessor extends BaseProcessorSupport
             // this task is either use as callable or supplier
             // therefore we must call process task before returning the response
             return processTask(exchange, exchangeWriteGuard);
+        }
+    }
+
+    /**
+     * A call of the synchronous mode with a timeout, run on the thread pool, as {@code CompletableFuture.supplyAsync}
+     * does: a call that is cancelled before it starts is skipped. The time limiter cancels the call when it times out,
+     * and a call cancelled while it waits in the queue of a {@link ThreadPoolExecutor} is also removed from the queue,
+     * so the calls that timed out do not take the queue slots of the next calls until a thread is free to skip them.
+     */
+    private static final class ThreadPoolCall extends CompletableFuture<Exchange> implements Runnable {
+
+        private final Supplier<Exchange> task;
+        private final ThreadPoolExecutor threadPool;
+
+        private ThreadPoolCall(Supplier<Exchange> task, ThreadPoolExecutor threadPool) {
+            this.task = task;
+            this.threadPool = threadPool;
+        }
+
+        /**
+         * Submits the call; throws {@code RejectedExecutionException} when the thread pool rejects it (the thread pool
+         * that Camel creates rejects a call when all its threads are busy and its queue is full).
+         */
+        static ThreadPoolCall start(Supplier<Exchange> task, ExecutorService executorService) {
+            ThreadPoolCall call = new ThreadPoolCall(
+                    task, executorService instanceof ThreadPoolExecutor tpe ? tpe : null);
+            executorService.execute(call);
+            return call;
+        }
+
+        @Override
+        public void run() {
+            if (!isDone()) {
+                try {
+                    complete(task.get());
+                } catch (Throwable e) {
+                    completeExceptionally(e);
+                }
+            }
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            boolean cancelled = super.cancel(mayInterruptIfRunning);
+            if (cancelled && threadPool != null) {
+                threadPool.remove(this);
+            }
+            return cancelled;
         }
     }
 
