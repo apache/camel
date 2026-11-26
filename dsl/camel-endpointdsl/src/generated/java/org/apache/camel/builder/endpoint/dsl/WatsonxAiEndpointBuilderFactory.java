@@ -46,7 +46,8 @@ public interface WatsonxAiEndpointBuilderFactory {
         }
 
         /**
-         * The watsonx.ai base URL (e.g., https://us-south.ml.cloud.ibm.com).
+         * The watsonx.ai base URL of the region (e.g.,
+         * https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -89,8 +90,9 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
-         * The watsonx.ai WX platform URL for tool operations (e.g.,
-         * https://api.dataplatform.cloud.ibm.com/wx).
+         * The watsonx.ai WX platform URL of the region for tool operations
+         * (e.g., https://api.dataplatform.cloud.ibm.com/wx or
+         * https://api.eu-de.dataplatform.cloud.ibm.com/wx).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -332,7 +334,7 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
-         * Foundation model ID (e.g., ibm/granite-13b-instruct-v2).
+         * Foundation model ID (e.g., ibm/granite-4-h-small).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

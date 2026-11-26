@@ -5,6 +5,29 @@ xref:ROOT:ibm-watsonx-ai-component.adoc[Back to IBM watsonx.ai Component]
 
 == Examples
 
+The examples read the endpoint URLs of your region from property placeholders, so they run in any region:
+
+[cols="1,2,2"]
+|===
+|Placeholder |Option |Value, for example in Dallas (us-south) or Frankfurt (eu-de)
+
+|`{{ibm.watsonx.base-url}}`
+|`baseUrl`
+|`https://us-south.ml.cloud.ibm.com`, `https://eu-de.ml.cloud.ibm.com`
+
+|`{{ibm.watsonx.wx-url}}`
+|`wxUrl` (utility tools only)
+|`https://api.dataplatform.cloud.ibm.com/wx`, `https://api.eu-de.dataplatform.cloud.ibm.com/wx`
+
+|`{{ibm.watsonx.cos-url}}`
+|`cosUrl` (text extraction and classification only)
+|the regional endpoint of your bucket, such as `https://s3.us-south.cloud-object-storage.appdomain.cloud` or
+`https://s3.eu-de.cloud-object-storage.appdomain.cloud`
+|===
+
+The model IDs are those available in IBM Cloud at the time of writing. The models of a region can be listed with
+the `listModels` operation, as the available models change over time.
+
 === Simple Chat
 
 Chat with a simple string message (automatically converted to a user message):
@@ -17,7 +40,7 @@ Java::
 ----
 from("direct:simpleChat")
     .setBody(constant("What is the capital of France?"))
-    .to("ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&modelId=ibm/granite-4-h-small&operation=chat")
+    .to("ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&modelId=ibm/granite-4-h-small&operation=chat")
     .log("Response: ${body}");
 ----
 
@@ -30,7 +53,7 @@ XML::
   <setBody>
     <constant>What is the capital of France?</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;modelId=ibm/granite-4-h-small&amp;operation=chat"/>
+  <to uri="ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;modelId=ibm/granite-4-h-small&amp;operation=chat"/>
   <log message="Response: ${body}"/>
 </route>
 ----
@@ -49,7 +72,7 @@ YAML::
             uri: ibm-watsonx-ai:chat
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               modelId: ibm/granite-4-h-small
               operation: chat
@@ -72,7 +95,7 @@ from("direct:chatWithSystem")
     .setHeader("CamelIBMWatsonxAiSystemMessage",
         constant("You are a helpful assistant. Keep your answers brief."))
     .setBody(constant("What is the capital of Italy?"))
-    .to("ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&modelId=ibm/granite-4-h-small&operation=chat")
+    .to("ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&modelId=ibm/granite-4-h-small&operation=chat")
     .log("Response: ${body}");
 ----
 
@@ -88,7 +111,7 @@ XML::
   <setBody>
     <constant>What is the capital of Italy?</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;modelId=ibm/granite-4-h-small&amp;operation=chat"/>
+  <to uri="ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;modelId=ibm/granite-4-h-small&amp;operation=chat"/>
   <log message="Response: ${body}"/>
 </route>
 ----
@@ -110,7 +133,7 @@ YAML::
             uri: ibm-watsonx-ai:chat
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               modelId: ibm/granite-4-h-small
               operation: chat
@@ -140,7 +163,7 @@ from("direct:streamChat")
       ));
   })
   .to("ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&baseUrl={{ibm.watsonx.base-url}}" +
       "&projectId=yourProjectId" +
       "&modelId=ibm/granite-4-h-small" +
       "&operation=chatStreaming")
@@ -178,7 +201,7 @@ from("vertx-websocket:localhost:8080/chat")
     .setHeader(WatsonxAiConstants.SYSTEM_MESSAGE, constant("You are a helpful assistant."))
     // The WebSocket message body becomes the user question
     .to("ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)" +
-        "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+        "&baseUrl={{ibm.watsonx.base-url}}" +
         "&projectId=yourProjectId" +
         "&modelId=ibm/granite-4-h-small" +
         "&operation=chatStreaming")
@@ -221,7 +244,7 @@ import com.ibm.watsonx.ai.tool.builtin.WikipediaTool;
 // Create ToolService for utility tools (requires wxUrl)
 ToolService toolService = ToolService.builder()
     .apiKey(apiKey)
-    .baseUrl("https://api.dataplatform.cloud.ibm.com/wx")
+    .baseUrl(wxUrl) // the value of {{ibm.watsonx.wx-url}}
     .build();
 
 // Create ToolRegistry with Wikipedia tool
@@ -240,9 +263,9 @@ from("direct:chatWithTools")
     .setHeader("CamelIBMWatsonxAiToolRegistry", constant(toolRegistry))
     // Send to chat
     .to("ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)" +
-        "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+        "&baseUrl={{ibm.watsonx.base-url}}" +
         "&projectId=yourProjectId" +
-        "&modelId=ibm/granite-3-8b-instruct" +
+        "&modelId=ibm/granite-4-h-small" +
         "&operation=chat")
     // Loop while LLM requests tool calls
     .loopDoWhile(simple("${header.CamelIBMWatsonxAiHasToolCalls} == true"))
@@ -251,9 +274,9 @@ from("direct:chatWithTools")
         .to("ibm-watsonx-ai:tools?operation=processToolCalls")
         // Continue conversation with tool results
         .to("ibm-watsonx-ai:chat?apiKey=RAW(yourApiKey)" +
-            "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+            "&baseUrl={{ibm.watsonx.base-url}}" +
             "&projectId=yourProjectId" +
-            "&modelId=ibm/granite-3-8b-instruct" +
+            "&modelId=ibm/granite-4-h-small" +
             "&operation=chat")
     .end()
     .log("Final response: ${body}");
@@ -282,7 +305,7 @@ YAML::
             apiKey: "RAW({{ibm.watsonx.api-key}})"
             baseUrl: "{{ibm.watsonx.base-url}}"
             projectId: "{{ibm.watsonx.project-id}}"
-            modelId: ibm/granite-3-8b-instruct
+            modelId: ibm/granite-4-h-small
             operation: chat
       - loop:
           id: loop-4459
@@ -302,7 +325,7 @@ YAML::
                 parameters:
                   apiKey: RAW({{ibm.watsonx.api-key}})
                   baseUrl: "{{ibm.watsonx.base-url}}"
-                  modelId: ibm/granite-3-8b-instruct
+                  modelId: ibm/granite-4-h-small
                   operation: chat
                   projectId: "{{ibm.watsonx.project-id}}"
       - log:
@@ -318,7 +341,8 @@ The above route:
 4. Uses `processToolCalls` operation to execute tools and update the conversation
 5. Loops until the LLM provides a final answer without tool calls
 
-NOTE: Tool operations require the `wxUrl` configuration (e.g., `https://api.dataplatform.cloud.ibm.com/wx`), which is different from the ML `baseUrl`.
+NOTE: The utility tools (`runTool`, `listTools` and the tools of the `ToolService`) require the `wxUrl` option, the
+watsonx platform URL of your region (`{{ibm.watsonx.wx-url}}`), which differs from the ML `baseUrl`.
 
 === Text Embeddings
 
@@ -333,9 +357,9 @@ from("direct:embed")
       "Quarkus is a Java framework"
   )))
   .to("ibm-watsonx-ai:embed?apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&baseUrl={{ibm.watsonx.base-url}}" +
       "&projectId=yourProjectId" +
-      "&modelId=ibm/slate-125m-english-rtrvr" +
+      "&modelId=ibm/granite-embedding-278m-multilingual" +
       "&operation=embedding")
   .process(exchange -> {
       List<List<Float>> embeddings = exchange.getMessage().getBody(List.class);
@@ -356,7 +380,7 @@ Java::
 ----
 from("direct:embedSingle")
     .setBody(constant("Apache Camel makes integration easy"))
-    .to("ibm-watsonx-ai:embed?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&modelId=ibm/slate-125m-english-rtrvr&operation=embedding")
+    .to("ibm-watsonx-ai:embed?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&modelId=ibm/granite-embedding-278m-multilingual&operation=embedding")
     .log("Embedding vector size: ${header.CamelIBMWatsonxAiEmbeddings[0].size()}");
 ----
 
@@ -369,7 +393,7 @@ XML::
   <setBody>
     <constant>Apache Camel makes integration easy</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:embed?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;modelId=ibm/slate-125m-english-rtrvr&amp;operation=embedding"/>
+  <to uri="ibm-watsonx-ai:embed?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;modelId=ibm/granite-embedding-278m-multilingual&amp;operation=embedding"/>
   <log message="Embedding vector size: ${header.CamelIBMWatsonxAiEmbeddings[0].size()}"/>
 </route>
 ----
@@ -388,9 +412,9 @@ YAML::
             uri: ibm-watsonx-ai:embed
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
-              modelId: ibm/slate-125m-english-rtrvr
+              modelId: ibm/granite-embedding-278m-multilingual
               operation: embedding
         - log:
             message: "Embedding vector size: ${header.CamelIBMWatsonxAiEmbeddings[0].size()}"
@@ -414,9 +438,9 @@ import io.qdrant.client.grpc.Points;
 from("direct:embedAndStore")
   .setBody(constant("Apache Camel makes integration easy"))
   .to("ibm-watsonx-ai:embed?apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&baseUrl={{ibm.watsonx.base-url}}" +
       "&projectId=yourProjectId" +
-      "&modelId=ibm/slate-125m-english-rtrvr" +
+      "&modelId=ibm/granite-embedding-278m-multilingual" +
       "&operation=embedding")
   // Transform to Qdrant format and upsert
   .setHeader(QdrantHeaders.ACTION, constant(QdrantAction.UPSERT))
@@ -458,9 +482,9 @@ from("direct:rerank")
       ));
   })
   .to("ibm-watsonx-ai:rerank?apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&baseUrl={{ibm.watsonx.base-url}}" +
       "&projectId=yourProjectId" +
-      "&modelId=cross-encoder/ms-marco-minilm-l-12-v2" +
+      "&modelId=intfloat/multilingual-e5-large" +
       "&operation=rerank")
   .process(exchange -> {
       List results = exchange.getMessage().getBody(List.class);
@@ -486,9 +510,9 @@ from("direct:rerankTopN")
       "Infinispan is an in-memory store."
   )))
   .to("ibm-watsonx-ai:rerank?apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&baseUrl={{ibm.watsonx.base-url}}" +
       "&projectId=yourProjectId" +
-      "&modelId=cross-encoder/ms-marco-minilm-l-12-v2" +
+      "&modelId=intfloat/multilingual-e5-large" +
       "&operation=rerank")
   .log("Top 3 results: ${body}");
 ----
@@ -505,7 +529,7 @@ Java::
 ----
 from("direct:tokenize")
     .setBody(constant("Hello, how are you today?"))
-    .to("ibm-watsonx-ai:tokenize?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&modelId=ibm/granite-4-h-small&operation=tokenize")
+    .to("ibm-watsonx-ai:tokenize?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&modelId=ibm/granite-4-h-small&operation=tokenize")
     .log("Token count: ${header.CamelIBMWatsonxAiTokenCount}")
     .log("Tokens: ${header.CamelIBMWatsonxAiTokens}");
 ----
@@ -519,7 +543,7 @@ XML::
   <setBody>
     <constant>Hello, how are you today?</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:tokenize?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;modelId=ibm/granite-4-h-small&amp;operation=tokenize"/>
+  <to uri="ibm-watsonx-ai:tokenize?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;modelId=ibm/granite-4-h-small&amp;operation=tokenize"/>
   <log message="Token count: ${header.CamelIBMWatsonxAiTokenCount}"/>
   <log message="Tokens: ${header.CamelIBMWatsonxAiTokens}"/>
 </route>
@@ -539,7 +563,7 @@ YAML::
             uri: ibm-watsonx-ai:tokenize
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               modelId: ibm/granite-4-h-small
               operation: tokenize
@@ -562,7 +586,7 @@ Java::
 ----
 from("direct:detect")
     .setBody(constant("Contact John Smith at john.smith@example.com or call 555-123-4567"))
-    .to("ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&operation=detect&detectPii=true")
+    .to("ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&operation=detect&detectPii=true")
     .choice()
         .when(header("CamelIBMWatsonxAiDetected").isEqualTo(true))
             .log("PII detected! Count: ${header.CamelIBMWatsonxAiDetectionCount}")
@@ -581,7 +605,7 @@ XML::
   <setBody>
     <constant>Contact John Smith at john.smith@example.com or call 555-123-4567</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;operation=detect&amp;detectPii=true"/>
+  <to uri="ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;operation=detect&amp;detectPii=true"/>
   <choice>
     <when>
       <simple>${header.CamelIBMWatsonxAiDetected} == true</simple>
@@ -609,7 +633,7 @@ YAML::
             uri: ibm-watsonx-ai:detect
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               operation: detect
               detectPii: true
@@ -640,7 +664,7 @@ Java::
 ----
 from("direct:detectHap")
     .setBody(constant("Some text that might contain harmful content"))
-    .to("ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&operation=detect&detectHap=true&detectionThreshold=0.5")
+    .to("ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&operation=detect&detectHap=true&detectionThreshold=0.5")
     .choice()
         .when(header("CamelIBMWatsonxAiDetected").isEqualTo(true))
             .log("ALERT: Harmful content detected!")
@@ -658,7 +682,7 @@ XML::
   <setBody>
     <constant>Some text that might contain harmful content</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;operation=detect&amp;detectHap=true&amp;detectionThreshold=0.5"/>
+  <to uri="ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;operation=detect&amp;detectHap=true&amp;detectionThreshold=0.5"/>
   <choice>
     <when>
       <simple>${header.CamelIBMWatsonxAiDetected} == true</simple>
@@ -685,7 +709,7 @@ YAML::
             uri: ibm-watsonx-ai:detect
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               operation: detect
               detectHap: true
@@ -722,7 +746,7 @@ from("direct:detectCustom")
       ));
   })
   .to("ibm-watsonx-ai:detect?apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&baseUrl={{ibm.watsonx.base-url}}" +
       "&projectId=yourProjectId" +
       "&operation=detect")
   .log("Detections: ${body}");
@@ -742,7 +766,7 @@ Java::
 ----
 from("direct:extract")
     .setBody(constant("documents/report.pdf"))
-    .to("ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&operation=textExtraction&cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket&resultConnectionId=your-cos-connection-id&resultBucket=your-output-bucket")
+    .to("ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&operation=textExtraction&cosUrl={{ibm.watsonx.cos-url}}&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket&resultConnectionId=your-cos-connection-id&resultBucket=your-output-bucket")
     .log("Extraction job started: ${header.CamelIBMWatsonxAiExtractionId}")
     .log("Status: ${header.CamelIBMWatsonxAiExtractionStatus}");
 ----
@@ -756,7 +780,7 @@ XML::
   <setBody>
     <constant>documents/report.pdf</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;operation=textExtraction&amp;cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket&amp;resultConnectionId=your-cos-connection-id&amp;resultBucket=your-output-bucket"/>
+  <to uri="ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;operation=textExtraction&amp;cosUrl={{ibm.watsonx.cos-url}}&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket&amp;resultConnectionId=your-cos-connection-id&amp;resultBucket=your-output-bucket"/>
   <log message="Extraction job started: ${header.CamelIBMWatsonxAiExtractionId}"/>
   <log message="Status: ${header.CamelIBMWatsonxAiExtractionStatus}"/>
 </route>
@@ -776,10 +800,10 @@ YAML::
             uri: ibm-watsonx-ai:extract
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               operation: textExtraction
-              cosUrl: "https://s3.us-south.cloud-object-storage.appdomain.cloud"
+              cosUrl: "{{ibm.watsonx.cos-url}}"
               documentConnectionId: your-cos-connection-id
               documentBucket: your-input-bucket
               resultConnectionId: your-cos-connection-id
@@ -803,7 +827,7 @@ Java::
 ----
 from("direct:fetchExtraction")
     .setHeader("CamelIBMWatsonxAiExtractionId", constant("your-extraction-job-id"))
-    .to("ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&operation=textExtractionFetch&cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket&resultConnectionId=your-cos-connection-id&resultBucket=your-output-bucket")
+    .to("ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&operation=textExtractionFetch&cosUrl={{ibm.watsonx.cos-url}}&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket&resultConnectionId=your-cos-connection-id&resultBucket=your-output-bucket")
     .log("Extraction status: ${header.CamelIBMWatsonxAiExtractionStatus}");
 ----
 
@@ -816,7 +840,7 @@ XML::
   <setHeader name="CamelIBMWatsonxAiExtractionId">
     <constant>your-extraction-job-id</constant>
   </setHeader>
-  <to uri="ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;operation=textExtractionFetch&amp;cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket&amp;resultConnectionId=your-cos-connection-id&amp;resultBucket=your-output-bucket"/>
+  <to uri="ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;operation=textExtractionFetch&amp;cosUrl={{ibm.watsonx.cos-url}}&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket&amp;resultConnectionId=your-cos-connection-id&amp;resultBucket=your-output-bucket"/>
   <log message="Extraction status: ${header.CamelIBMWatsonxAiExtractionStatus}"/>
 </route>
 ----
@@ -836,10 +860,10 @@ YAML::
             uri: ibm-watsonx-ai:extract
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               operation: textExtractionFetch
-              cosUrl: "https://s3.us-south.cloud-object-storage.appdomain.cloud"
+              cosUrl: "{{ibm.watsonx.cos-url}}"
               documentConnectionId: your-cos-connection-id
               documentBucket: your-input-bucket
               resultConnectionId: your-cos-connection-id
@@ -860,7 +884,7 @@ Java::
 [source,java]
 ----
 from("file:/path/to/documents?noop=true")
-    .to("ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&operation=textExtractionUploadAndFetch&cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket&resultConnectionId=your-cos-connection-id&resultBucket=your-output-bucket")
+    .to("ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&operation=textExtractionUploadAndFetch&cosUrl={{ibm.watsonx.cos-url}}&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket&resultConnectionId=your-cos-connection-id&resultBucket=your-output-bucket")
     .log("Extracted text: ${body}")
     .log("File processed: ${header.CamelFileName}");
 ----
@@ -871,7 +895,7 @@ XML::
 ----
 <route>
   <from uri="file:/path/to/documents?noop=true"/>
-  <to uri="ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;operation=textExtractionUploadAndFetch&amp;cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket&amp;resultConnectionId=your-cos-connection-id&amp;resultBucket=your-output-bucket"/>
+  <to uri="ibm-watsonx-ai:extract?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;operation=textExtractionUploadAndFetch&amp;cosUrl={{ibm.watsonx.cos-url}}&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket&amp;resultConnectionId=your-cos-connection-id&amp;resultBucket=your-output-bucket"/>
   <log message="Extracted text: ${body}"/>
   <log message="File processed: ${header.CamelFileName}"/>
 </route>
@@ -891,10 +915,10 @@ YAML::
             uri: ibm-watsonx-ai:extract
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               operation: textExtractionUploadAndFetch
-              cosUrl: "https://s3.us-south.cloud-object-storage.appdomain.cloud"
+              cosUrl: "{{ibm.watsonx.cos-url}}"
               documentConnectionId: your-cos-connection-id
               documentBucket: your-input-bucket
               resultConnectionId: your-cos-connection-id
@@ -960,7 +984,7 @@ Java::
 ----
 from("direct:classify")
     .setBody(constant("documents/contract.pdf"))
-    .to("ibm-watsonx-ai:classify?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&operation=textClassification&cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket")
+    .to("ibm-watsonx-ai:classify?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&operation=textClassification&cosUrl={{ibm.watsonx.cos-url}}&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket")
     .log("Classification job started: ${header.CamelIBMWatsonxAiClassificationId}");
 ----
 
@@ -973,7 +997,7 @@ XML::
   <setBody>
     <constant>documents/contract.pdf</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:classify?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;operation=textClassification&amp;cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket"/>
+  <to uri="ibm-watsonx-ai:classify?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;operation=textClassification&amp;cosUrl={{ibm.watsonx.cos-url}}&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket"/>
   <log message="Classification job started: ${header.CamelIBMWatsonxAiClassificationId}"/>
 </route>
 ----
@@ -992,10 +1016,10 @@ YAML::
             uri: ibm-watsonx-ai:classify
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               operation: textClassification
-              cosUrl: "https://s3.us-south.cloud-object-storage.appdomain.cloud"
+              cosUrl: "{{ibm.watsonx.cos-url}}"
               documentConnectionId: your-cos-connection-id
               documentBucket: your-input-bucket
         - log:
@@ -1014,7 +1038,7 @@ Java::
 [source,java]
 ----
 from("file:/path/to/documents?noop=true")
-    .to("ibm-watsonx-ai:classify?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&operation=textClassificationUploadAndFetch&cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket")
+    .to("ibm-watsonx-ai:classify?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&operation=textClassificationUploadAndFetch&cosUrl={{ibm.watsonx.cos-url}}&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket")
     .log("Document type: ${header.CamelIBMWatsonxAiClassificationResult}")
     .log("Document classified: ${header.CamelIBMWatsonxAiDocumentClassified}");
 ----
@@ -1025,7 +1049,7 @@ XML::
 ----
 <route>
   <from uri="file:/path/to/documents?noop=true"/>
-  <to uri="ibm-watsonx-ai:classify?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;operation=textClassificationUploadAndFetch&amp;cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket"/>
+  <to uri="ibm-watsonx-ai:classify?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;operation=textClassificationUploadAndFetch&amp;cosUrl={{ibm.watsonx.cos-url}}&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket"/>
   <log message="Document type: ${header.CamelIBMWatsonxAiClassificationResult}"/>
   <log message="Document classified: ${header.CamelIBMWatsonxAiDocumentClassified}"/>
 </route>
@@ -1045,10 +1069,10 @@ YAML::
             uri: ibm-watsonx-ai:classify
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
               operation: textClassificationUploadAndFetch
-              cosUrl: "https://s3.us-south.cloud-object-storage.appdomain.cloud"
+              cosUrl: "{{ibm.watsonx.cos-url}}"
               documentConnectionId: your-cos-connection-id
               documentBucket: your-input-bucket
         - log:
@@ -1077,9 +1101,9 @@ For more control, use the async flow with `textClassificationUpload` and `textCl
 from("direct:startClassification")
   .to("ibm-watsonx-ai:classify?operation=textClassificationUpload" +
       "&apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&baseUrl={{ibm.watsonx.base-url}}" +
       "&projectId=yourProjectId" +
-      "&cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud" +
+      "&cosUrl={{ibm.watsonx.cos-url}}" +
       "&documentConnectionId=your-cos-connection-id" +
       "&documentBucket=your-input-bucket")
   .log("Classification started - ID: ${header.CamelIBMWatsonxAiClassificationId}")
@@ -1090,9 +1114,9 @@ from("direct:startClassification")
     .setHeader("CamelIBMWatsonxAiClassificationId", exchangeProperty("classificationId"))
     .to("ibm-watsonx-ai:classify?operation=textClassificationFetch" +
         "&apiKey=RAW(yourApiKey)" +
-        "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+        "&baseUrl={{ibm.watsonx.base-url}}" +
         "&projectId=yourProjectId" +
-        "&cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud" +
+        "&cosUrl={{ibm.watsonx.cos-url}}" +
         "&documentConnectionId=your-cos-connection-id" +
         "&documentBucket=your-input-bucket")
     .log("Status: ${header.CamelIBMWatsonxAiClassificationStatus}")
@@ -1145,7 +1169,7 @@ Java::
 ----
 from("direct:deleteClassification")
     .setBody(constant("classification-job-id"))
-    .to("ibm-watsonx-ai:classify?operation=textClassificationDeleteRequest&apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket")
+    .to("ibm-watsonx-ai:classify?operation=textClassificationDeleteRequest&apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&cosUrl={{ibm.watsonx.cos-url}}&documentConnectionId=your-cos-connection-id&documentBucket=your-input-bucket")
     .log("Delete success: ${header.CamelIBMWatsonxAiDeleteSuccess}");
 ----
 
@@ -1158,7 +1182,7 @@ XML::
   <setBody>
     <constant>classification-job-id</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:classify?operation=textClassificationDeleteRequest&amp;apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;cosUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket"/>
+  <to uri="ibm-watsonx-ai:classify?operation=textClassificationDeleteRequest&amp;apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;cosUrl={{ibm.watsonx.cos-url}}&amp;documentConnectionId=your-cos-connection-id&amp;documentBucket=your-input-bucket"/>
   <log message="Delete success: ${header.CamelIBMWatsonxAiDeleteSuccess}"/>
 </route>
 ----
@@ -1178,9 +1202,9 @@ YAML::
             parameters:
               operation: textClassificationDeleteRequest
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
-              cosUrl: "https://s3.us-south.cloud-object-storage.appdomain.cloud"
+              cosUrl: "{{ibm.watsonx.cos-url}}"
               documentConnectionId: your-cos-connection-id
               documentBucket: your-input-bucket
         - log:
@@ -1221,7 +1245,7 @@ Java::
 ----
 from("direct:headerInput")
     .setHeader("CamelIBMWatsonxAiInput", constant("What is machine learning?"))
-    .to("ibm-watsonx-ai:gen?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&modelId=ibm/granite-13b-instruct-v2&operation=textGeneration")
+    .to("ibm-watsonx-ai:gen?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&modelId=ibm/granite-4-h-small&operation=textGeneration")
     .log("Generated text: ${body}");
 ----
 
@@ -1234,7 +1258,7 @@ XML::
   <setHeader name="CamelIBMWatsonxAiInput">
     <constant>What is machine learning?</constant>
   </setHeader>
-  <to uri="ibm-watsonx-ai:gen?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;modelId=ibm/granite-13b-instruct-v2&amp;operation=textGeneration"/>
+  <to uri="ibm-watsonx-ai:gen?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;modelId=ibm/granite-4-h-small&amp;operation=textGeneration"/>
   <log message="Generated text: ${body}"/>
 </route>
 ----
@@ -1254,9 +1278,9 @@ YAML::
             uri: ibm-watsonx-ai:gen
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
-              modelId: ibm/granite-13b-instruct-v2
+              modelId: ibm/granite-4-h-small
               operation: textGeneration
         - log:
             message: "Generated text: ${body}"
@@ -1275,7 +1299,7 @@ Java::
 ----
 from("direct:metadata")
     .setBody(constant("Summarize the benefits of cloud computing"))
-    .to("ibm-watsonx-ai:gen?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=yourProjectId&modelId=ibm/granite-13b-instruct-v2&operation=textGeneration")
+    .to("ibm-watsonx-ai:gen?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&projectId=yourProjectId&modelId=ibm/granite-4-h-small&operation=textGeneration")
     .log("Generated: ${body}")
     .log("Input tokens: ${header.CamelIBMWatsonxAiInputTokenCount}")
     .log("Output tokens: ${header.CamelIBMWatsonxAiOutputTokenCount}")
@@ -1291,7 +1315,7 @@ XML::
   <setBody>
     <constant>Summarize the benefits of cloud computing</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:gen?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=yourProjectId&amp;modelId=ibm/granite-13b-instruct-v2&amp;operation=textGeneration"/>
+  <to uri="ibm-watsonx-ai:gen?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=yourProjectId&amp;modelId=ibm/granite-4-h-small&amp;operation=textGeneration"/>
   <log message="Generated: ${body}"/>
   <log message="Input tokens: ${header.CamelIBMWatsonxAiInputTokenCount}"/>
   <log message="Output tokens: ${header.CamelIBMWatsonxAiOutputTokenCount}"/>
@@ -1313,9 +1337,9 @@ YAML::
             uri: ibm-watsonx-ai:gen
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: yourProjectId
-              modelId: ibm/granite-13b-instruct-v2
+              modelId: ibm/granite-4-h-small
               operation: textGeneration
         - log:
             message: "Generated: ${body}"
@@ -1356,12 +1380,16 @@ from("direct:forecast")
       exchange.getIn().setHeader("CamelIBMWatsonxAiForecastData", data);
   })
   .to("ibm-watsonx-ai:forecast?apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&baseUrl={{ibm.watsonx.base-url}}" +
       "&projectId=yourProjectId" +
       "&modelId=ibm/granite-ttm-1536-96-r2" +
       "&operation=forecast")
   .log("Forecast results: ${body}");
 ----
+
+NOTE: A time series model needs at least as many data points as its context length, for example 1536 for
+`ibm/granite-ttm-1536-96-r2`. The IBM Granite TTM models are deprecated in IBM Cloud: check which time series models
+your region offers with the `listModels` operation.
 
 === List Available Models
 
@@ -1374,7 +1402,7 @@ Java::
 [source,java]
 ----
 from("direct:listModels")
-    .to("ibm-watsonx-ai:models?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&operation=listModels")
+    .to("ibm-watsonx-ai:models?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&operation=listModels")
     .log("Available models: ${body}");
 ----
 
@@ -1384,7 +1412,7 @@ XML::
 ----
 <route>
   <from uri="direct:listModels"/>
-  <to uri="ibm-watsonx-ai:models?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;operation=listModels"/>
+  <to uri="ibm-watsonx-ai:models?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;operation=listModels"/>
   <log message="Available models: ${body}"/>
 </route>
 ----
@@ -1401,7 +1429,7 @@ YAML::
             uri: ibm-watsonx-ai:models
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               operation: listModels
         - log:
             message: "Available models: ${body}"
@@ -1419,7 +1447,7 @@ Java::
 [source,java]
 ----
 from("direct:listTasks")
-    .to("ibm-watsonx-ai:tasks?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&operation=listTasks")
+    .to("ibm-watsonx-ai:tasks?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&operation=listTasks")
     .log("Available tasks: ${body}");
 ----
 
@@ -1429,7 +1457,7 @@ XML::
 ----
 <route>
   <from uri="direct:listTasks"/>
-  <to uri="ibm-watsonx-ai:tasks?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;operation=listTasks"/>
+  <to uri="ibm-watsonx-ai:tasks?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;operation=listTasks"/>
   <log message="Available tasks: ${body}"/>
 </route>
 ----
@@ -1446,7 +1474,7 @@ YAML::
             uri: ibm-watsonx-ai:tasks
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               operation: listTasks
         - log:
             message: "Available tasks: ${body}"
@@ -1465,7 +1493,7 @@ Java::
 ----
 from("direct:deploymentChat")
     .setBody(constant("What is the capital of France?"))
-    .to("ibm-watsonx-ai:deploy?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&deploymentId=your-deployment-id&operation=deploymentChat")
+    .to("ibm-watsonx-ai:deploy?apiKey=RAW(yourApiKey)&baseUrl={{ibm.watsonx.base-url}}&deploymentId=your-deployment-id&operation=deploymentChat")
     .log("Response: ${body}");
 ----
 
@@ -1478,7 +1506,7 @@ XML::
   <setBody>
     <constant>What is the capital of France?</constant>
   </setBody>
-  <to uri="ibm-watsonx-ai:deploy?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;deploymentId=your-deployment-id&amp;operation=deploymentChat"/>
+  <to uri="ibm-watsonx-ai:deploy?apiKey=RAW(yourApiKey)&amp;baseUrl={{ibm.watsonx.base-url}}&amp;deploymentId=your-deployment-id&amp;operation=deploymentChat"/>
   <log message="Response: ${body}"/>
 </route>
 ----
@@ -1497,7 +1525,7 @@ YAML::
             uri: ibm-watsonx-ai:deploy
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               deploymentId: your-deployment-id
               operation: deploymentChat
         - log:
@@ -1515,14 +1543,14 @@ Use watsonx.ai utility tools (experimental):
 from("direct:runTool")
   .process(exchange -> {
       // Set tool name
-      exchange.getIn().setHeader("CamelIBMWatsonxAiToolName", "GoogleSearch");
+      exchange.getIn().setHeader("CamelIBMWatsonxAiToolName", "Wikipedia");
       // Set structured input
-      exchange.getIn().setBody(Map.of("q", "Apache Camel integration framework"));
+      exchange.getIn().setBody(Map.of("query", "Apache Camel integration framework"));
       // Optional: set config
       exchange.getIn().setHeader("CamelIBMWatsonxAiToolConfig", Map.of("maxResults", 5));
   })
   .to("ibm-watsonx-ai:tool?apiKey=RAW(yourApiKey)" +
-      "&baseUrl=https://us-south.ml.cloud.ibm.com" +
+      "&wxUrl={{ibm.watsonx.wx-url}}" +
       "&operation=runTool")
   .log("Tool result: ${body}");
 ----
@@ -1538,7 +1566,7 @@ Java::
 [source,java]
 ----
 from("direct:listTools")
-    .to("ibm-watsonx-ai:tools?apiKey=RAW(yourApiKey)&baseUrl=https://us-south.ml.cloud.ibm.com&operation=listTools")
+    .to("ibm-watsonx-ai:tools?apiKey=RAW(yourApiKey)&wxUrl={{ibm.watsonx.wx-url}}&operation=listTools")
     .log("Available tools: ${body}");
 ----
 
@@ -1548,7 +1576,7 @@ XML::
 ----
 <route>
   <from uri="direct:listTools"/>
-  <to uri="ibm-watsonx-ai:tools?apiKey=RAW(yourApiKey)&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;operation=listTools"/>
+  <to uri="ibm-watsonx-ai:tools?apiKey=RAW(yourApiKey)&amp;wxUrl={{ibm.watsonx.wx-url}}&amp;operation=listTools"/>
   <log message="Available tools: ${body}"/>
 </route>
 ----
@@ -1565,7 +1593,7 @@ YAML::
             uri: ibm-watsonx-ai:tools
             parameters:
               apiKey: "RAW(yourApiKey)"
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              wxUrl: "{{ibm.watsonx.wx-url}}"
               operation: listTools
         - log:
             message: "Available tools: ${body}"

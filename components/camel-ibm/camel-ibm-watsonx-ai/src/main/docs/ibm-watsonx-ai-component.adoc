@@ -54,7 +54,7 @@ include::partial$component-endpoint-headers.adoc[]
 You must provide the following options to use this component:
 
 * `apiKey` - Your IBM Cloud API key for authentication
-* `baseUrl` - The watsonx.ai endpoint URL (e.g., https://us-south.ml.cloud.ibm.com)
+* `baseUrl` - The watsonx.ai endpoint URL of your region, such as `https://us-south.ml.cloud.ibm.com` (Dallas) or `https://eu-de.ml.cloud.ibm.com` (Frankfurt)
 * `projectId` or `spaceId` - Your IBM Cloud project or deployment space ID
 * `modelId` - The foundation model ID (for model-specific operations)
 * (optional) `documentConnectionId`, `documentBucket`, `cosUrl` - needed by services like `textExtraction` or `textClassification`
@@ -78,7 +78,7 @@ Java::
 [source,java]
 ----
 from("direct:generate")
-    .to("ibm-watsonx-ai:myLabel?oauthProfile=ibm&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=my-project&modelId=ibm/granite-13b-instruct-v2");
+    .to("ibm-watsonx-ai:myLabel?oauthProfile=ibm&baseUrl={{ibm.watsonx.base-url}}&projectId=my-project&modelId=ibm/granite-4-h-small");
 ----
 
 XML::
@@ -87,7 +87,7 @@ XML::
 ----
 <route>
   <from uri="direct:generate"/>
-  <to uri="ibm-watsonx-ai:myLabel?oauthProfile=ibm&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=my-project&amp;modelId=ibm/granite-13b-instruct-v2"/>
+  <to uri="ibm-watsonx-ai:myLabel?oauthProfile=ibm&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=my-project&amp;modelId=ibm/granite-4-h-small"/>
 </route>
 ----
 
@@ -103,9 +103,9 @@ YAML::
             uri: ibm-watsonx-ai:myLabel
             parameters:
               oauthProfile: ibm
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: my-project
-              modelId: ibm/granite-13b-instruct-v2
+              modelId: ibm/granite-4-h-small
 ----
 ====
 
@@ -232,7 +232,7 @@ before the endpoint.
 
 |Conversational AI, chatbots, Text summarization, Q&A, translation
 |`chat`, `chatStreaming`
-|ibm/granite-4-h-small, meta-llama/llama-3-8b-instruct
+|ibm/granite-4-h-small, meta-llama/llama-3-3-70b-instruct
 
 |Semantic search, similarity matching
 |`embedding`
@@ -240,7 +240,7 @@ before the endpoint.
 
 |RAG document retrieval ranking
 |`rerank`
-|cross-encoder/ms-marco-minilm-l-12-v2
+|intfloat/multilingual-e5-large
 
 |Token counting, context management
 |`tokenize`
@@ -260,7 +260,7 @@ before the endpoint.
 
 |Time series forecasting
 |`forecast`, `deploymentForecast`
-|ibm/granite-ttm-1536-96-r2
+|ibm/granite-ttm-512-96-r2, ibm/granite-ttm-1024-96-r2, ibm/granite-ttm-1536-96-r2 (check the availability in your region with `listModels`)
 
 |Model catalog exploration
 |`listModels`, `listTasks`
@@ -276,7 +276,7 @@ before the endpoint.
 
 |Chat with tool calling (agentic)
 |`chat`, `processToolCalls`
-|ibm/granite-3-8b-instruct, ibm/granite-4-h-small
+|ibm/granite-4-h-small, meta-llama/llama-3-3-70b-instruct, mistralai/mistral-small-3-1-24b-instruct-2503
 |===
 
 == Sub-Pages
@@ -295,9 +295,9 @@ NOTE: This configuration approach works with both Spring Boot (`camel-ibm-watson
 ----
 # watsonx.ai configuration
 camel.component.ibm-watsonx-ai.configuration.api-key=${IBM_WATSONX_API_KEY}
-camel.component.ibm-watsonx-ai.configuration.base-url=https://us-south.ml.cloud.ibm.com
+camel.component.ibm-watsonx-ai.configuration.base-url=${IBM_WATSONX_URL}
 camel.component.ibm-watsonx-ai.configuration.project-id=${IBM_WATSONX_PROJECT_ID}
-camel.component.ibm-watsonx-ai.configuration.model-id=ibm/granite-13b-instruct-v2
+camel.component.ibm-watsonx-ai.configuration.model-id=ibm/granite-4-h-small
 camel.component.ibm-watsonx-ai.configuration.temperature=0.7
 camel.component.ibm-watsonx-ai.configuration.max-new-tokens=200
 ----

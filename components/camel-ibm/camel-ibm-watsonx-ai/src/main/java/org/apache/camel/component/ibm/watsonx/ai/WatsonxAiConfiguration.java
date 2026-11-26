@@ -39,12 +39,13 @@ public class WatsonxAiConfiguration implements Cloneable {
     private String oauthProfile;
 
     // Connection
-    @UriParam(label = "common", description = "The watsonx.ai base URL (e.g., https://us-south.ml.cloud.ibm.com)")
+    @UriParam(label = "common",
+              description = "The watsonx.ai base URL of the region (e.g., https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com)")
     @Metadata(required = true)
     private String baseUrl;
 
     @UriParam(label = "common",
-              description = "The watsonx.ai WX platform URL for tool operations (e.g., https://api.dataplatform.cloud.ibm.com/wx)")
+              description = "The watsonx.ai WX platform URL of the region for tool operations (e.g., https://api.dataplatform.cloud.ibm.com/wx or https://api.eu-de.dataplatform.cloud.ibm.com/wx)")
     private String wxUrl;
 
     // Project/Space Context
@@ -55,7 +56,7 @@ public class WatsonxAiConfiguration implements Cloneable {
     private String spaceId;
 
     // Model
-    @UriParam(label = "producer", description = "Foundation model ID (e.g., ibm/granite-13b-instruct-v2)")
+    @UriParam(label = "producer", description = "Foundation model ID (e.g., ibm/granite-4-h-small)")
     private String modelId;
 
     @UriParam(label = "producer", description = "Deployed model ID (for deployment operations)")

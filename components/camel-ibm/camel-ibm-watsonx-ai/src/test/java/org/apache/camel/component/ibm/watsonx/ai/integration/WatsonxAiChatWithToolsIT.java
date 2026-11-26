@@ -168,7 +168,7 @@ public class WatsonxAiChatWithToolsIT extends WatsonxAiTestSupport {
         uri.append("?apiKey=RAW(").append(apiKey).append(")");
         uri.append("&baseUrl=").append(baseUrl);
         uri.append("&projectId=").append(projectId);
-        uri.append("&modelId=ibm/granite-3-8b-instruct");
+        uri.append("&modelId=ibm/granite-4-h-small");
         uri.append("&operation=chat");
         return uri.toString();
     }

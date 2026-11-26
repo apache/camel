@@ -49,7 +49,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WatsonxAiForecastIT extends WatsonxAiTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatsonxAiForecastIT.class);
-    private static final String FORECAST_MODEL = "ibm/granite-ttm-1536-96-r2";
+    // The granite-ttm models are past their withdrawal date in the model catalogue but still answer in some regions:
+    // -Dcamel.ibm.watsonx.ai.forecastModelId selects another time series model
+    private static final String FORECAST_MODEL
+            = System.getProperty("camel.ibm.watsonx.ai.forecastModelId", "ibm/granite-ttm-1536-96-r2");
 
     @EndpointInject
     private ProducerTemplate template;
@@ -73,7 +76,7 @@ public class WatsonxAiForecastIT extends WatsonxAiTestSupport {
                 .addIdColumn("series_id")
                 .build();
 
-        // The model ibm/granite-ttm-1536-96-r2 requires at least 1536 time points
+        // The default model ibm/granite-ttm-1536-96-r2 requires at least 1536 time points
         // Generate sufficient data points for the model
         final int dataPoints = 1536;
         ForecastData data = ForecastData.create();
