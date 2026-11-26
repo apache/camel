@@ -28,4 +28,11 @@ public interface PineconeInfraService extends InfrastructureService {
     String getPineconeHost();
 
     int getPineconePort();
+
+    /**
+     * The host option of camel-pinecone.
+     */
+    default String host() {
+        return getPineconeEndpointUrl();
+    }
 }
