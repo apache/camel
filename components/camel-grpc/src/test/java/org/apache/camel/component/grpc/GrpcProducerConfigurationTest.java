@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GrpcProducerConfigurationTest extends CamelTestSupport {
     @Test
@@ -56,5 +57,42 @@ class GrpcProducerConfigurationTest extends CamelTestSupport {
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, producer::start);
         assertEquals("serviceAccountResource must be specified", e.getMessage());
+    }
+
+    @Test
+    void googleAuthenticationWithServerOnlyTls() throws Exception {
+        // GOOGLE authentication needs TLS, but not a client certificate: the producer must get past the TLS setup
+        // without keyCertChainResource and keyResource, and only then report the missing serviceAccountResource
+        Endpoint endpoint = context.getEndpoint("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong"
+                                                + "?authenticationType=GOOGLE&negotiationType=TLS");
+
+        Producer producer = endpoint.createProducer();
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, producer::start);
+        assertEquals("serviceAccountResource must be specified", e.getMessage());
+    }
+
+    @Test
+    void tlsWithClientCertificateWithoutKey() throws Exception {
+        Endpoint endpoint = context.getEndpoint("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong"
+                                                + "?negotiationType=TLS"
+                                                + "&keyCertChainResource=file:src/test/resources/certs/client.pem");
+
+        Producer producer = endpoint.createProducer();
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, producer::start);
+        assertTrue(e.getMessage().contains("keyResource"), e.getMessage());
+    }
+
+    @Test
+    void tlsWithClientKeyWithoutCertificate() throws Exception {
+        Endpoint endpoint = context.getEndpoint("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong"
+                                                + "?negotiationType=TLS"
+                                                + "&keyResource=file:src/test/resources/certs/client.key");
+
+        Producer producer = endpoint.createProducer();
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, producer::start);
+        assertTrue(e.getMessage().contains("keyCertChainResource"), e.getMessage());
     }
 }

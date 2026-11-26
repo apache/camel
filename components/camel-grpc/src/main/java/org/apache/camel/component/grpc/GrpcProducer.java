@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.io.InputStream;
+
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import io.grpc.CallCredentials;
@@ -25,6 +27,7 @@ import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -146,24 +149,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("No connection properties (host or port) specified");
         }
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
-            ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
-            ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
-
-            SslContextBuilder sslContextBuilder = GrpcSslContexts.forClient()
-                    .keyManager(
-                            ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                    configuration.getKeyCertChainResource()),
-                            ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                    configuration.getKeyResource()),
-                            configuration.getKeyPassword());
-
-            if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
-                sslContextBuilder
-                        = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                configuration.getTrustCertCollectionResource()));
-            }
-
-            channelBuilder = channelBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());
+            channelBuilder = channelBuilder.sslContext(createSslContext());
         }
 
         channel = channelBuilder.negotiationType(configuration.getNegotiationType())
@@ -172,5 +158,38 @@ public class GrpcProducer extends DefaultAsyncProducer {
                 .maxInboundMessageSize(configuration.getMaxMessageSize())
                 .intercept(configuration.getClientInterceptors())
                 .build();
+    }
+
+    /**
+     * Creates the client SSL context. The server is always verified, with trustCertCollectionResource when set, else
+     * with the default trust store of the JVM. The client authenticates with its own certificate (mutual TLS) only when
+     * both keyCertChainResource and keyResource are set.
+     */
+    private SslContext createSslContext() throws Exception {
+        boolean hasCertChain = ObjectHelper.isNotEmpty(configuration.getKeyCertChainResource());
+        boolean hasKey = ObjectHelper.isNotEmpty(configuration.getKeyResource());
+        if (hasCertChain != hasKey) {
+            throw new IllegalArgumentException(
+                    "Both keyCertChainResource and keyResource must be set to authenticate the client with its own"
+                                               + " certificate (mutual TLS), or none of them to only verify the server, but "
+                                               + (hasCertChain ? "keyResource" : "keyCertChainResource") + " is missing");
+        }
+
+        SslContextBuilder sslContextBuilder = GrpcSslContexts.forClient();
+        if (hasCertChain) {
+            try (InputStream certChain = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(),
+                    configuration.getKeyCertChainResource());
+                 InputStream key = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(),
+                         configuration.getKeyResource())) {
+                sslContextBuilder.keyManager(certChain, key, configuration.getKeyPassword());
+            }
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
+            try (InputStream trustCerts = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(),
+                    configuration.getTrustCertCollectionResource())) {
+                sslContextBuilder.trustManager(trustCerts);
+            }
+        }
+        return GrpcSslContexts.configure(sslContextBuilder).build();
     }
 }
