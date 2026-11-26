@@ -7816,6 +7816,35 @@ scheduled time of its window, but before the (late) timer has run, joins that wi
 checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
 set. Routes that read this header can now see `timeout` as well as `size`.
 
+=== camel-azure-eventhubs - a checkpoint no longer passes an event that is still being processed
+
+The consumer now checkpoints a partition up to the last event below which every delivered event of the partition has
+been processed (successfully or not), and a checkpoint never moves the stored position back. Before, the checkpoint
+was the offset of the event whose exchange completed last. With an asynchronous step in the route, the exchanges of a
+partition complete in any order, so a checkpoint could pass an event that was still being processed, and that event
+was lost if the consumer stopped or the partition moved to another consumer before it completed. A late checkpoint
+write could also move the stored position back, so already processed events were delivered again.
+
+What you may notice:
+
+* With an asynchronous route, the stored checkpoint can lag behind while an earlier event of the partition is still
+  being processed. After a restart at that point, that event is delivered again together with the events completed
+  after it (before, that event was skipped).
+  Routes that process each event synchronously are not affected.
+* An exchange whose completion never runs holds the checkpoint of its partition until the partition is lost or the
+  consumer is restarted, and then its event and the events after it are delivered again. Before, the next checkpoint
+  passed such an event. This happens, for example, when a `seda` endpoint with `discardWhenFull` drops the exchange
+  because its queue is full.
+* The `CamelAzureEventHubsCheckpointUpdatedBy` header is `size` only on the exchange whose completion actually wrote
+  a checkpoint: when the batch size is reached while an earlier event is still being processed, the checkpoint is
+  written by the first completion after that, or by the batch timeout.
+* A failed exchange is still not delivered again: it does not hold the checkpoint back, as before.
+* When a partition is lost to another consumer, the exchanges still in flight for it no longer write checkpoints:
+  the new owner delivers their events again.
+* `EventHubsClientFactory` has a new `createEventProcessorClient` method with a handler for closed partitions, which
+  the consumer now uses. Tests that mock the three-argument method to capture the event handler must mock the
+  four-argument one.
+
 === camel-azure-functions - invokeFunction fails on an HTTP error status, and sends the body as bytes
 
 The `invokeFunction` operation now fails the exchange with an `org.apache.camel.http.base.HttpOperationFailedException`
