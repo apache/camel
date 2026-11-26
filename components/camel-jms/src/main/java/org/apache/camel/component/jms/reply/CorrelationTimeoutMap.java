@@ -91,6 +91,13 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
                      + " thread instead.",
                     key, e.getMessage());
             task.run();
+            return;
+        }
+        if (executorService.isShutdown()) {
+            // the reply manager has stopped: a shut-down executor may drop the task without an exception (the
+            // CallerRuns policy does), and the stop may already have completed the pending tasks, so run it here (if
+            // the executor took it before the shutdown, it still runs only once)
+            task.run();
         }
     }
 
@@ -168,7 +175,7 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
     /**
      * The timeout task of a handler, which runs once: on the executor, in the calling thread when the executor rejects
-     * it, or from {@link #completePendingEvictions()} when the executor never ran it.
+     * it or is shut down, or from {@link #completePendingEvictions()} when the executor never ran it.
      */
     private final class EvictionTask implements Runnable {
 
