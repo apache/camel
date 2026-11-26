@@ -858,9 +858,10 @@ arguments.
 
 The MCP server now refuses an `ai-tool` route whose input schema (`argSchema`) or output schema is not a valid
 JSON Schema 2020-12 document, in every protocol era. It logs an ERROR naming the tool; the route keeps running and
-the other tools are still served. Previously, depending on the start order, such a tool failed the CamelContext
-startup or was left out with a generic WARN from the tool registry, and the stdio transport served it without any
-check. The stdio transport checks the input schema only, because it does not publish output schemas.
+the other tools are still served. Previously, a tool whose route started before the MCP server failed the
+CamelContext startup, and a tool added later was left out with a generic WARN from the tool registry, except in the
+`modern` protocol era, which served it without any check. The stdio transport checks the input schema only, because
+it does not publish output schemas.
 
 === camel-docling - the CamelDoclingOutputFilePath header is a relative path unless outputBaseDirectory is set
 
