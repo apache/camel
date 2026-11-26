@@ -24,8 +24,11 @@ import jakarta.jms.Connection;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StatefulService;
 import org.apache.camel.Suspendable;
+import org.apache.camel.component.sjms.consumer.BatchMessageListenerContainer;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -33,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
 
-public class SjmsConsumer extends DefaultConsumer implements Suspendable {
+public class SjmsConsumer extends DefaultConsumer implements Suspendable, ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SjmsConsumer.class);
 
@@ -177,6 +180,29 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
         if (listenerContainer instanceof StatefulService container && container.isSuspended()) {
             container.resume();
         }
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // not deferred: the graceful shutdown suspends this consumer, so no more messages are received, and then waits
+        // for the inflight and pending exchanges before it stops the consumer
+        return false;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        // with batching, the messages that the listener container still routes before it stops: the batches being
+        // routed, and the buffered messages of an AUTO_ACKNOWLEDGE session, which are routed as a batch while the
+        // consumer is suspended (they are acknowledged on receipt, and would otherwise be lost)
+        if (listenerContainer instanceof BatchMessageListenerContainer batch) {
+            return batch.getPendingExchangesSize();
+        }
+        return 0;
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // noop
     }
 
     public MessageListenerContainer getListenerContainer() {
