@@ -253,9 +253,12 @@ class AWS2S3StreamUploadTimestampGroupingConcurrentExchangesTest {
         }
     }
 
-    private static boolean timeoutTaskWaits() {
+    private boolean timeoutTaskWaits() {
+        // only the threads of this CamelContext (named "Camel (camel-N) thread #M - ..."), not those of another test
+        String threadsOfContext = "(" + camelContext.getName() + ")";
         return Thread.getAllStackTraces().entrySet().stream()
-                .anyMatch(e -> e.getKey().getState() == Thread.State.WAITING
+                .anyMatch(e -> e.getKey().getName().contains(threadsOfContext)
+                        && e.getKey().getState() == Thread.State.WAITING
                         && Arrays.stream(e.getValue())
                                 .anyMatch(frame -> frame.getClassName().endsWith("$StreamingUploadTimeoutTask")));
     }
