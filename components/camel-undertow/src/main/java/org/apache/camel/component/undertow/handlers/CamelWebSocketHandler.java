@@ -526,9 +526,6 @@ public class CamelWebSocketHandler implements HttpHandler {
     }
 
     /**
-     * A {@link ExtendedWebSocketCallback} able to track sending one message to multiple peers.
-     */
-    /**
      * Applies the send timeout to the message sent to one peer. Undertow's own timeout closes the frame of a message
      * that is not written in time and then reports that frame as complete, so a message dropped that way would look as
      * sent. Instead, a message that is not written within the timeout fails, and the connection to the peer, which
@@ -590,6 +587,9 @@ public class CamelWebSocketHandler implements HttpHandler {
         }
     }
 
+    /**
+     * A {@link ExtendedWebSocketCallback} able to track sending one message to multiple peers.
+     */
     static class MultiCallback implements ExtendedWebSocketCallback {
         private final AsyncCallback camelCallback;
         private final Exchange camelExchange;
