@@ -2394,7 +2394,7 @@ a success reply, and the exchange could stay inflight. Compared with 4.23:
   is restarted. Before, the error ended some loops silently (a polling task, a `seda` thread, every route on a shared
   `timer`) and left others running. A consumer that is pushed requests (such as HTTP or `direct`) only fails that
   request. A route that catches the `Error` explicitly keeps its consumer going. Not yet covered: a batch consumer that
-  does not check between the messages of a batch whether it may go on (such as `aws2-kinesis` or `couchdb`) routes the
+  does not check between the messages of a batch whether it may go on (such as `couchdb`) routes the
   rest of the batch it has already fetched before it stops, and a `VirtualMachineError` thrown by a `RoutePolicy`
   fails the exchange without stopping the consumer.
 * A polling consumer whose poll throws another `Error` (such as a `NoClassDefFoundError` of a client library) treats it
@@ -7337,15 +7337,30 @@ that many records, so with the default `delay` of 500 ms it can read up to about
 1000 records per shard in memory while they are routed. The KCL consumer (`useKclConsumers=true`) does not use this
 option.
 
-A graceful shutdown waits until the consumer has routed all the records of the poll that is running. With 1000 records
-per shard and a route that takes 50 ms per record, a poll takes about 50 seconds, which is more than the default
-xref:graceful-shutdown.adoc[shutdown timeout] of 45 seconds. The shutdown is then forced, and the records of the poll
-that are not routed yet fail with a `RouteStoppingException`. Before, a poll held one record per shard. Lower
-`maxResultsPerRequest`, or raise the shutdown timeout, so that the records of a poll are routed within the timeout.
+A stop or suspend of the route ends the poll after the record being routed (see the next section). With
+`shutdownRunningTask` set to `CompleteAllTasks`, a graceful shutdown waits until the consumer has routed all the
+records of the poll that is running: with 1000 records per shard and a route that takes 50 ms per record, a poll takes
+about 50 seconds, which is more than the default xref:graceful-shutdown.adoc[shutdown timeout] of 45 seconds. The
+shutdown is then forced, and the records of the poll that are not routed yet fail with a `RouteStoppingException`.
+Lower `maxResultsPerRequest`, or raise the shutdown timeout, so that the records of a poll are routed within the
+timeout.
 
 To keep the previous behaviour, set `maxResultsPerRequest=1`. See the
 xref:components::aws2-kinesis-component.adoc[AWS Kinesis component] for how `maxResultsPerRequest`, `delay` and
 `greedy` relate to the Kinesis read quotas of a shard.
+
+=== camel-aws2-kinesis - a stop or suspend ends the poll after the record being routed
+
+The polling consumer (without `useKclConsumers`) now stops routing the records of a `GetRecords` response when its
+route is stopped or suspended, after the record it is routing from each shard, as the other batch consumers do (such
+as `aws2-sqs`, `aws2-ddbstream` and `file`). Before, it routed all the records of the poll first (up to
+`maxResultsPerRequest` per shard), so with a slow route a stop could reach the shutdown timeout and be forced, and the
+records not routed by then failed with a `RouteStoppingException`.
+
+The consumer does not move past the records it did not route: after a resume it reads them again (with a new shard
+iterator at the first record it did not route). A route that is stopped and started again gets a new consumer, which starts
+from `iteratorType`, or from its resume strategy, as before. Routes that need the previous behaviour set
+`shutdownRunningTask` to `CompleteAllTasks`.
 
 === camel-aws2-kinesis - shardClosed=fail reports a closed shard once
 

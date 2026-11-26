@@ -85,6 +85,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     // cached one has expired. Like the cached iterators it is not cleared in doStop, and a route that is stopped and
     // started gets a new consumer.
     private final Map<String, String> lastSequenceNumbers = new ConcurrentHashMap<>();
+    // The shards of which no record was routed yet, and whose first response with records was not routed at all as
+    // the route was being stopped or suspended: the sequence number of the first record of that response, where the
+    // next shard iterator starts
+    private final Map<String, String> firstNotRoutedSequenceNumbers = new ConcurrentHashMap<>();
     // The time the consumer asked for the first LATEST iterator of each shard: where it continues a shard from which it
     // has not routed a record yet when that iterator has expired (a LATEST iterator again would skip the records stored
     // in between)
@@ -232,20 +236,55 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             result = getRecords(shardIterator, kinesisConnection);
         }
 
+        List<Record> records = result.records();
+        Queue<Exchange> exchanges = createExchanges(shard, records);
+        int routed;
         try {
-            Queue<Exchange> exchanges = createExchanges(shard, result.records());
-            processedExchangeCount.addAndGet(processBatch(CastUtils.cast(exchanges)));
+            routed = processBatch(CastUtils.cast(exchanges));
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+        processedExchangeCount.addAndGet(routed);
+
+        if (routed < records.size()) {
+            // the route is being stopped or suspended, and processBatch did not route the rest of the records
+            batchCutShort(shard.shardId(), records, routed, exchanges);
+            return;
         }
 
         // remember the last record of the batch, to continue after it when the next shard iterator has expired
         // before it is used (an iterator is valid for 5 minutes)
-        List<Record> records = result.records();
         if (!records.isEmpty()) {
             lastSequenceNumbers.put(shard.shardId(), records.get(records.size() - 1).sequenceNumber());
+            firstNotRoutedSequenceNumbers.remove(shard.shardId());
         }
         updateShardIterator(shard, result.nextShardIterator());
+    }
+
+    /**
+     * Does not move past the records of the response that were not routed, so that the next poll of this consumer
+     * (after a resume) routes them: the next shard iterator of the response is not kept (a null one, of a closed shard,
+     * would mark the shard closed before its last records are routed), and the next poll requests a new iterator at the
+     * first record that was not routed.
+     */
+    private void batchCutShort(String shardId, List<Record> records, int routed, Queue<Exchange> notRouted) {
+        if (routed > 0) {
+            // AFTER_SEQUENCE_NUMBER of the last routed record
+            lastSequenceNumbers.put(shardId, records.get(routed - 1).sequenceNumber());
+            firstNotRoutedSequenceNumbers.remove(shardId);
+        } else if (!lastSequenceNumbers.containsKey(shardId)) {
+            // nothing routed from the shard yet: AT_SEQUENCE_NUMBER of the first record of the response, and not the
+            // configured iterator type again (it would skip these records with LATEST)
+            firstNotRoutedSequenceNumbers.put(shardId, records.get(0).sequenceNumber());
+        }
+        currentShardIterators.remove(shardId);
+        LOG.debug("Routed {} of the {} records of shard {} on stream {} before the consumer stopped or was suspended",
+                routed, records.size(), shardId, getEndpoint().getConfiguration().getStreamName());
+        // processBatch removes the exchanges it routes: those left are never routed, and nothing else gives them back
+        // to the exchange factory
+        for (Exchange exchange : notRouted) {
+            releaseExchange(exchange, true);
+        }
     }
 
     private GetRecordsResponse getRecords(String shardIterator, KinesisConnection kinesisConnection) {
@@ -285,10 +324,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         currentShardIterators.put(shard.shardId(), nextShardIterator == null ? CLOSED_SHARD_ITERATOR : nextShardIterator);
     }
 
+    /**
+     * Routes the exchanges one after the other, and stops when the route is being stopped or suspended (unless its
+     * shutdownRunningTask is CompleteAllTasks): the exchanges that are not routed stay in the queue.
+     */
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int processedExchanges = 0;
-        while (!exchanges.isEmpty()) {
+        while (!exchanges.isEmpty() && isBatchAllowed()) {
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
 
             // use default consumer callback
@@ -338,6 +381,11 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                 // shard again (TRIM_HORIZON, AT_TIMESTAMP, a sequence number) or skip the new ones (LATEST)
                 request.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
                         .startingSequenceNumber(lastSequenceNumber);
+            } else if (firstNotRoutedSequenceNumbers.containsKey(shardId)) {
+                // no record of this shard was routed, and the consumer stopped routing the first response with
+                // records when the route was suspended: start at the first record of that response
+                request.shardIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER)
+                        .startingSequenceNumber(firstNotRoutedSequenceNumbers.get(shardId));
             } else if (latestStartTimes.containsKey(shardId)) {
                 // the shard started at LATEST and the expired iterator returned no record: continue from the time of
                 // that start, so the records stored since then are routed (Kinesis compares this time of the consumer's
