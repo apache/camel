@@ -103,7 +103,7 @@
         <azure-storage-blob-changefeed-version>12.0.0-beta.40</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
         <bouncycastle-version>1.87</bouncycastle-version>
-        <box-java-sdk-version>4.16.4</box-java-sdk-version>
+        <box-java-sdk-version>5.21.0</box-java-sdk-version>
         <braintree-gateway-version>3.55.1</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.7.0</build-helper-maven-plugin-version>
         <bytebuddy-version>1.18.16</bytebuddy-version>

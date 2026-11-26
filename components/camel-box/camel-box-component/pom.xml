@@ -57,6 +57,25 @@
             <groupId>com.box</groupId>
             <artifactId>box-java-sdk</artifactId>
             <version>${box-java-sdk-version}</version>
+            <exclusions>
+                <!-- only the new com.box.sdkgen API uses Jackson 2 and commons-codec, and camel-box uses com.box.sdk -->
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

@@ -187,6 +187,20 @@ The `HybridSignatureComponents` and `HybridEncapsulationComponents` record const
 (`classicalBytes`, `pqcBytes`) to 5 arguments (`classicalBytes`, `pqcBytes`, `classicalAlgorithmId`, `pqcAlgorithmId`,
 `version`). Code that constructs these records directly must be updated.
 
+=== camel-box - Box Java SDK 5
+
+The `camel-box` component is upgraded from Box Java SDK 4.16.4 to 5.21.0. The `com.box.sdk` package, which
+`camel-box` uses, is the same in version 5, so the component options and the calls it makes to Box are unchanged.
+
+Version 5 adds the generated `com.box.sdkgen` package to the same `box-java-sdk` jar, which is about 6 MB now (it was
+about 0.6 MB). That package needs Jackson 2 and `commons-codec`, which `camel-box` excludes, as it only uses
+`com.box.sdk`. Application code that uses `com.box.sdkgen` directly must add `jackson-databind` (2.x) and
+`commons-codec` itself.
+
+Box has deprecated `com.box.sdk.BoxAPIConnection` and its constructors in favour of `com.box.sdkgen.client.BoxClient`.
+Application code that creates a `BoxAPIConnection` itself, for example for the `boxConnection` option of the component,
+compiles with deprecation warnings, but works as before.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
