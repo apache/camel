@@ -88,6 +88,11 @@ public class KubernetesLeadershipController implements Service {
     // (not for a failure caused by stop), read by releaseLeadership
     private volatile boolean lastLeaseCallFailed;
 
+    // whether a request to take an empty lease (with immediate effect) was sent and has not succeeded, with no lookup
+    // since: the API server may have applied it (such as when stop interrupts the request while waiting for the answer).
+    // Written by the refreshes, read by releaseLeadership
+    private volatile boolean emptyLeaseAcquisitionUnconfirmed;
+
     // the System.nanoTime() until which stop and releaseLeadership may wait together (null before stop)
     private volatile Long stopDeadlineNanos;
 
@@ -172,15 +177,20 @@ public class KubernetesLeadershipController implements Service {
     /**
      * Releases the leadership after {@link #stop(long)}: if the leadership of this pod has taken effect and the lease
      * names this pod, the pod is removed from it, so that another pod can take over the leadership at once instead of
-     * when this pod is no longer ready. The release is given up when the time given to {@link #stop(long)} has passed.
-     * It is not tried when the last lookup (of the lease or of the pods) or renewal of the lease failed (after the own
-     * retries of the Kubernetes client), as it would then most likely wait for an API server that does not answer. A
-     * failure is logged, and the lease is then kept until this pod is no longer ready (as before).
+     * when this pod is no longer ready. The same is done when this pod is not leader but the lease may still name it: a
+     * request to take an empty lease may have been applied although it failed (such as when the stop interrupted it
+     * while it waited for the answer), or the last lookup found the lease naming this pod while it was not ready. This
+     * pod does not act as leader then, so another pod may take over the lease at once. The release is given up when the
+     * time given to {@link #stop(long)} has passed. It is not tried when the last lookup (of the lease or of the pods)
+     * or renewal of the lease failed (after the own retries of the Kubernetes client), as it would then most likely
+     * wait for an API server that does not answer. A failure is logged, and the lease is then kept until this pod is no
+     * longer ready (as before).
      */
     public void releaseLeadership() {
         String group = this.lockConfiguration.getGroupName();
         State state = this.currentState;
-        if (state != State.LEADER && state != State.LOSING_LEADERSHIP && state != State.LEADERSHIP_LOST) {
+        if (state != State.LEADER && state != State.LOSING_LEADERSHIP && state != State.LEADERSHIP_LOST
+                && !(state == State.NOT_LEADER && mayNameThisPod())) {
             // when becoming leader, the pod waits for the previous leader to give up the leadership: an empty lease
             // would let another pod take it over with immediate effect while the previous leader may still act as one
             LOG.debug("{} The leadership for group {} has not taken effect ({}), the lease is not released", logPrefix,
@@ -227,6 +237,12 @@ public class KubernetesLeadershipController implements Service {
             // the time for the stop is used up by then
             camelContext.getExecutorServiceManager().shutdownNow(executor);
         }
+    }
+
+    private boolean mayNameThisPod() {
+        LeaderInfo leaderInfo = this.latestLeaderInfo;
+        return this.emptyLeaseAcquisitionUnconfirmed
+                || leaderInfo != null && this.lockConfiguration.getPodName().equals(leaderInfo.getLeader());
     }
 
     private void doReleaseLeadership() {
@@ -567,6 +583,7 @@ public class KubernetesLeadershipController implements Service {
 
         updateLatestLeaderInfo(leaseResource, members);
         leaseCallSucceeded();
+        this.emptyLeaseAcquisitionUnconfirmed = false;
         return true;
     }
 
@@ -660,6 +677,8 @@ public class KubernetesLeadershipController implements Service {
             LOG.debug("{} Lock lease resource is not present in the Kubernetes namespace. A new lease resource will be created",
                     logPrefix);
 
+            // the outcome is unknown until the answer arrives, see releaseLeadership
+            this.emptyLeaseAcquisitionUnconfirmed = true;
             try {
                 HasMetadata newLeaseResource = leaseManager.createNewLeaseResource(kubernetesClient,
                         this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient),
@@ -686,6 +705,8 @@ public class KubernetesLeadershipController implements Service {
 
             boolean canAcquire = !leaderInfo.hasValidLeader();
             if (canAcquire) {
+                // the outcome is unknown until the answer arrives, see releaseLeadership
+                this.emptyLeaseAcquisitionUnconfirmed = leaderInfo.hasEmptyLeader();
                 // Try to be the new leader
                 try {
                     HasMetadata updatedLeaseResource
