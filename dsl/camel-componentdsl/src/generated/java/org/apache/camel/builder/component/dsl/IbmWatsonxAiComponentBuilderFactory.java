@@ -776,7 +776,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
     
         /**
          * Whether the text extraction operations that wait (AndFetch) remove
-         * the output file from Cloud Object Storage once read.
+         * the output file from Cloud Object Storage once read (asynchronously).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -792,7 +792,8 @@ public interface IbmWatsonxAiComponentBuilderFactory {
     
         /**
          * Whether the operations that upload and wait (UploadAndFetch) remove
-         * the uploaded document from Cloud Object Storage at the end.
+         * the uploaded document from Cloud Object Storage once the result is
+         * read (asynchronously).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 

@@ -271,12 +271,12 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     @UriParam(label = "producer",
               description = "Whether the operations that upload and wait (UploadAndFetch) remove the uploaded document"
-                            + " from Cloud Object Storage at the end")
+                            + " from Cloud Object Storage once the result is read (asynchronously)")
     private Boolean removeUploadedFile;
 
     @UriParam(label = "producer",
               description = "Whether the text extraction operations that wait (AndFetch) remove the output file from Cloud"
-                            + " Object Storage once read")
+                            + " Object Storage once read (asynchronously)")
     private Boolean removeOutputFile;
 
     @UriParam(label = "producer", javaType = "java.time.Duration",

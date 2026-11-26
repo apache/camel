@@ -238,7 +238,8 @@ The options of the text extraction (`extractionOutputs`, `extractionMode`, `ocrM
 (`classificationMode`, `ocrMode`, `documentLanguages`, `autoRotationCorrection`) are sent with every request; the
 `CamelIBMWatsonxAiOutputFileName` header names the output file. The operations that wait for the result (`AndFetch`)
 can remove the uploaded document (`removeUploadedFile`) and the output file (`removeOutputFile`) from Cloud Object
-Storage at the end, and wait at most `processingTimeout`, which defaults to the `timeout` of the endpoint.
+Storage once the result is read (the SDK removes them asynchronously, so they can still be listed for a moment), and
+wait at most `processingTimeout`, which defaults to the `timeout` of the endpoint.
 * `textClassificationUploadFile` - Upload file to COS without starting classification
 * `textClassificationDeleteFile` - Delete file from COS
 * `textClassificationDeleteRequest` - Delete classification job

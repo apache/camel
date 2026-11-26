@@ -163,13 +163,15 @@ public class WatsonxAiChatWithToolsIT extends WatsonxAiTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     public void testToolChoice() throws Exception {
-        // a greeting needs no tool: the tool choice makes the model call one anyway, or none
+        // the model knows the answer without a tool: the tool choice makes it call one anyway, or none. (A prompt that
+        // has nothing to look up, such as a greeting, can make the model repeat the forced call until its output is
+        // cut, which watsonx.ai then rejects as invalid JSON.)
         Exchange named = template.send("direct:toolChoice", exchange -> {
-            exchange.getIn().setBody("Say hello.");
+            exchange.getIn().setBody("What is the capital of Italy?");
             exchange.getIn().setHeader(WatsonxAiConstants.TOOL_CHOICE, "wikipedia");
         });
         Exchange required = template.send("direct:toolChoice", exchange -> {
-            exchange.getIn().setBody("Say hello.");
+            exchange.getIn().setBody("What is the capital of Italy?");
             exchange.getIn().setHeader(WatsonxAiConstants.TOOL_CHOICE, "required");
         });
         Exchange none = template.send("direct:toolChoice", exchange -> {
