@@ -169,11 +169,12 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
             Header[] headers = request != null ? request.getHeaders() : response.getHeaders();
             for (Header h : headers) {
                 String value;
-                if (isSensitiveHeader(h.getName())) {
-                    // the value of a credential header is always masked as a whole
+                if (h.isSensitive() || isSensitiveHeader(h.getName())) {
+                    // the value of a credential header, or of a header HttpClient flags as sensitive, is always masked
+                    // as a whole
                     value = getMaskString();
                 } else {
-                    value = getValue(h.isSensitive(), h.getValue());
+                    value = getValue(false, h.getValue());
                 }
                 lines.add(String.format("%s: %s", h.getName(), value));
             }

@@ -22,6 +22,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
@@ -31,6 +33,8 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -112,6 +116,23 @@ public class HttpLoggingActivityMaskHeadersTest extends BaseHttpTest {
         assertFalse(log.contains("response-session-secret"), log);
 
         // other headers are logged as is
+        assertTrue(lines.contains("X-Trace: trace-123"), log);
+    }
+
+    @Test
+    public void headersFlaggedSensitiveAreMasked() {
+        ServiceHelper.startService(listener);
+
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("GET", "/secure");
+        // HttpClient flags a header as sensitive, such as the Authorization header of its own authentication
+        request.addHeader(new BasicHeader("X-Custom-Credential", "Bearer flagged-secret", true));
+        request.addHeader(new BasicHeader("X-Trace", "trace-123"));
+        listener.onRequestSubmitted(this, new DefaultExchange(context), new HttpHost("localhost"), request, null);
+
+        String log = String.join(System.lineSeparator(), listener.logged);
+        List<String> lines = List.of(log.split("\\R"));
+        assertTrue(lines.contains("X-Custom-Credential: xxxxx"), log);
+        assertFalse(log.contains("flagged-secret"), log);
         assertTrue(lines.contains("X-Trace: trace-123"), log);
     }
 

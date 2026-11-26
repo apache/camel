@@ -1601,8 +1601,9 @@ and the component did not use them. If the server asks for Basic credentials, re
 
 With `logHttpActivity=true`, the `LoggingHttpActivityListener` now always masks the value of a request or response
 header that carries a credential, such as `Authorization`, `Proxy-Authorization`, `Cookie`, `Set-Cookie` and
-`X-Api-Key`, and logs for example `Authorization: xxxxx`. Before, these values were logged in clear text, even
-with `logMask=true`, as the masking formatter only masks `key=value`, XML and JSON shapes. The other headers and the
+`X-Api-Key`, or that the HTTP client flags as sensitive, and logs for example `Authorization: xxxxx`. Before, these
+values were logged in clear text, even with `logMask=true`, as the masking formatter only masks `key=value`, XML and
+JSON shapes. The other headers and the
 body are masked as before, only when `logMask=true`.
 
 === camel-platform-http-main, camel-netty-http, camel-undertow - the Authorization header is removed after the login is checked
