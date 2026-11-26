@@ -636,11 +636,23 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 // the route was removed or the policy stopped since this check was scheduled
                 return;
             }
+            // the future of this check, unless another check has been scheduled since
+            ScheduledFuture<?> check = halfOpenCheck;
             try {
                 calculateState(route, null);
             } catch (Exception e) {
                 // the scheduler would keep it in the future of this check, where no one sees it
                 handleException(e);
+            } finally {
+                if (state.get() == STATE_OPEN && halfOpenCheck == check && scheduler == halfOpenScheduler) {
+                    // the circuit is still open and this check scheduled no other one, as suspending or resuming the
+                    // consumer failed (the exception went to the exception handler). The consumer is suspended, so no
+                    // exchange checks the circuit either: check again after halfOpenAfter
+                    LOG.warn("The circuit of route {} is still open after its half open check failed: checking again in {}"
+                             + " millis",
+                            route.getRouteId(), halfOpenAfter);
+                    addHalfOpenTimer(route);
+                }
             }
         }
     }
