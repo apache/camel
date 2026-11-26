@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonClassDescription("The Camel Knative component and the Knative eventing resources (triggers, subscriptions, sink bindings).")
 @JsonPropertyOrder({
         "auto", "channelSinks", "channelSources", "configuration", "enabled", "endpointSinks", "endpointSources",
         "eventSinks", "eventSources", "filterEventType", "filters", "sinkBinding" })

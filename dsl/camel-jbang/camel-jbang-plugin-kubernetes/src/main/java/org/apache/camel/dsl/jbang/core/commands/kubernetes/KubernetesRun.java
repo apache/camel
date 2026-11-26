@@ -116,8 +116,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
     String[] labels;
 
-    @OptionList(name = "trait", valueSeparator = OptionList.NO_SEPARATOR,
-                description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
+    @OptionList(name = "trait", valueSeparator = OptionList.NO_SEPARATOR, completer = TraitCompletionCandidates.class,
+                description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\"."
+                              + " camel kubernetes traits lists the traits and their options.")
     String[] traits;
 
     @Option(name = "wait", hasValue = false, description = "Wait for the deployment to become ready.")

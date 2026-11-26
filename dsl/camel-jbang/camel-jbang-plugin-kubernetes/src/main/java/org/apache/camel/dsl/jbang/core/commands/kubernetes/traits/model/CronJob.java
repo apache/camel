@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonClassDescription("Runs the application as a Kubernetes CronJob on a schedule, instead of a Deployment.")
 @JsonPropertyOrder({
         "enabled", "schedule", "timezone", "startingDeadlineSeconds", "activeDeadlineSeconds", "backoffLimit",
         "durationMaxIdleSeconds" })

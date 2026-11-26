@@ -20,6 +20,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonClassDescription("An Ingress that exposes the Service of the application outside the cluster (not on OpenShift).")
 @JsonPropertyOrder({
         "ingressClass", "annotations", "auto", "enabled", "host", "path", "pathType", "tlsHosts", "tlsSecretName" })
 public class Ingress {

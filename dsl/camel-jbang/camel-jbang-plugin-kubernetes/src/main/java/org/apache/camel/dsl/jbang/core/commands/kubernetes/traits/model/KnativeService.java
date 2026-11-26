@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonClassDescription("Runs the application as a Knative service (serverless, scale to zero) instead of a Deployment.")
 @JsonPropertyOrder({
         "annotations", "auto", "autoscalingMetric", "autoscalingTarget", "class", "enabled", "maxScale",
         "minScale", "rolloutDuration", "timeoutSeconds", "visibility" })
