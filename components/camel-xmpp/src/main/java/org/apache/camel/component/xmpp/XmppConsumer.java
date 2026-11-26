@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -104,10 +105,11 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
         subscribe();
         super.doStart();
+        startRobustConnectionMonitor();
     }
 
     /**
-     * Listens on the acquired connection, enters the room when the endpoint has one, and starts the connection monitor.
+     * Listens on the acquired connection, and enters the room when the endpoint has one.
      */
     private void subscribe() throws Exception {
         if (endpoint.getRoom() == null && endpoint.hasParticipant()) {
@@ -141,7 +143,6 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         }
 
         connection.addConnectionListener(connectionListener);
-        this.startRobustConnectionMonitor();
     }
 
     protected void scheduleDelayedStart() {
@@ -164,6 +165,8 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             connection = endpoint.acquireConnection(this);
             subscribe();
             super.doStart();
+            // once the start succeeded: a failed attempt must not leave a monitor running on the released connection
+            startRobustConnectionMonitor();
             if (delayedStartFailures > 0) {
                 LOG.info("Started the XMPP consumer for endpoint {} after {} failed attempts.",
                         URISupport.sanitizeUri(endpoint.getEndpointUri()), delayedStartFailures);
@@ -174,7 +177,14 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             // release what this attempt acquired: the next attempt starts again from the beginning, and a consumer
             // that is not started must not keep the account's connection
             releaseFailedStart();
-            if (!isRunAllowed()) {
+            if (e instanceof InterruptedException) {
+                // after the release, which disconnects the connection when nobody else uses it
+                Thread.currentThread().interrupt();
+            }
+            // the executor of this thread: the stop shuts it down and clears the field, and getExecutor() would then
+            // create another one that nothing shuts down
+            ScheduledExecutorService executor = scheduledExecutor;
+            if (!isRunAllowed() || executor == null || executor.isShutdown()) {
                 LOG.debug("Not trying again to start the XMPP consumer, as it is stopping: {}", e.toString());
                 return;
             }
@@ -189,7 +199,11 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 LOG.debug("Could not start the XMPP consumer for endpoint {} ({} attempts). Trying again in {} seconds.",
                         uri, delayedStartFailures, endpoint.getConnectionPollDelay(), e);
             }
-            getExecutor().schedule(this::delayedStart, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+            try {
+                executor.schedule(this::delayedStart, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+            } catch (RejectedExecutionException rejected) {
+                LOG.debug("Not trying again to start the XMPP consumer, as it is stopping: {}", e.toString());
+            }
         }
     }
 
