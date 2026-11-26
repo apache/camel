@@ -99,6 +99,16 @@ invocations, so it makes sense to use this feature only for parameters
 that are indeed constant for all invocations -- for example API version
 in path such as `/api/\{version}/users/\{id}`.
 
+The endpoint parameters that are not REST operation's parameters are
+passed to the endpoint of the delegate component. With camel-http, for
+example, the login options of camel-http can be given on the
+rest-openapi endpoint, such as
+`authMethod=Bearer&authBearerToken=mytoken&authenticationPreemptive=true`,
+`authMethod=Basic&authUsername=ann&authPassword=secret&authenticationPreemptive=true`,
+or the `oauth2ClientId`, `oauth2ClientSecret` and `oauth2TokenEndpoint` options.
+Each rest-openapi endpoint uses its own options, also when other
+rest-openapi endpoints call the same operation.
+
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
