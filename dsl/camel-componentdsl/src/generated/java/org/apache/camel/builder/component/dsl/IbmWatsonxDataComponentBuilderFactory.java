@@ -208,7 +208,8 @@ public interface IbmWatsonxDataComponentBuilderFactory {
         }
     
         /**
-         * IBM Cloud API key for authentication.
+         * IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for
+         * an access token. Required unless oauthProfile is set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -224,9 +225,10 @@ public interface IbmWatsonxDataComponentBuilderFactory {
     
         /**
          * OAuth profile name for obtaining an access token via the OAuth 2.0
-         * Client Credentials grant. When set, the token is acquired from the
-         * configured identity provider and used as apiKey. Requires camel-oauth
-         * on the classpath.
+         * Client Credentials grant. When set, the token of the configured
+         * identity provider is sent to watsonx.data as a Bearer token instead
+         * of an IBM Cloud API key, and obtained again when it expires. Requires
+         * camel-oauth on the classpath.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
