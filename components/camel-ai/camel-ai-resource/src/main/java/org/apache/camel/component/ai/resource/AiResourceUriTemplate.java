@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ai.resource;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -30,8 +32,9 @@ import java.util.regex.Pattern;
  * <p>
  * Each expression must occupy an entire path segment, for example {@code crm://customers/{id}}. Variables match one
  * non-empty path segment and are returned verbatim (including percent-encoding); they are never decoded, interpreted as
- * Camel expressions, or resolved as property placeholders. Query and fragment expressions are intentionally not
- * supported.
+ * Camel expressions, or resolved as property placeholders. A value that, once percent-decoded, is a {@code .} or
+ * {@code ..} dot segment or contains one between {@code /} or {@code \} separators does not match, including one
+ * followed by path parameters such as {@code ..;x}. Query and fragment expressions are intentionally not supported.
  *
  * @since 4.24
  */
@@ -144,13 +147,79 @@ public final class AiResourceUriTemplate {
         Map<String, String> values = new LinkedHashMap<>();
         for (int i = 0; i < variableNames.size(); i++) {
             String value = matcher.group(i + 1);
-            // Dot segments can be normalized by downstream URI/path consumers.
-            if (".".equals(value) || "..".equals(value)) {
+            // Dot segments can be normalized by downstream URI/path consumers. RFC 3986 makes %2E equivalent to
+            // ".", and a consumer that decodes the value also turns %2F (or %5C) into a path separator.
+            if (containsDotSegment(value)) {
                 return Optional.empty();
             }
             values.put(variableNames.get(i), value);
         }
         return Optional.of(Collections.unmodifiableMap(values));
+    }
+
+    /**
+     * Whether the value, once percent-decoded, is a dot segment or contains one between {@code /} or {@code \}
+     * separators, for example {@code ..}, {@code %2e%2E} or {@code ..%2F..%2Fetc%2Fpasswd}. A segment counts up to its
+     * first {@code ;}, because servers such as Tomcat drop the path parameters of a segment before resolving dot
+     * segments: {@code ..;x} is a dot segment too.
+     */
+    private static boolean containsDotSegment(String value) {
+        String decoded = percentDecode(value);
+        int start = 0;
+        // where the path parameters of the current segment begin, -1 when it has none
+        int parameters = -1;
+        for (int i = 0; i <= decoded.length(); i++) {
+            char c = i < decoded.length() ? decoded.charAt(i) : '/';
+            if (c == ';' && parameters < 0) {
+                parameters = i;
+            } else if (c == '/' || c == '\\') {
+                int length = (parameters < 0 ? i : parameters) - start;
+                if ((length == 1 || length == 2) && decoded.startsWith(".".repeat(length), start)) {
+                    return true;
+                }
+                start = i + 1;
+                parameters = -1;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Decodes percent-encoded octets as UTF-8. Unlike {@code URLDecoder} it keeps {@code +} as is and never throws: a
+     * malformed escape is kept verbatim and invalid UTF-8 becomes the replacement character.
+     */
+    private static String percentDecode(String value) {
+        if (value.indexOf('%') < 0) {
+            return value;
+        }
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            int high = c == '%' && i + 2 < value.length() ? hexDigit(value.charAt(i + 1)) : -1;
+            int low = high >= 0 ? hexDigit(value.charAt(i + 2)) : -1;
+            if (low >= 0) {
+                bytes.write((high << 4) | low);
+                i += 2;
+            } else if (c < 0x80) {
+                // a matched value is ASCII: the pattern allows only percent-encoded octets beyond it
+                bytes.write(c);
+            } else {
+                byte[] encoded = String.valueOf(c).getBytes(StandardCharsets.UTF_8);
+                bytes.write(encoded, 0, encoded.length);
+            }
+        }
+        return bytes.toString(StandardCharsets.UTF_8);
+    }
+
+    private static int hexDigit(char c) {
+        if (c >= '0' && c <= '9') {
+            return c - '0';
+        } else if (c >= 'A' && c <= 'F') {
+            return c - 'A' + 10;
+        } else if (c >= 'a' && c <= 'f') {
+            return c - 'a' + 10;
+        }
+        return -1;
     }
 
     /**
