@@ -1597,6 +1597,18 @@ is now sent with the first request; before, the request failed with `IllegalStat
 when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
 and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
 
+=== camel-http - the producer of a rest-openapi endpoint uses its own options
+
+The http endpoint that camel-http creates for a rest producer, such as a `rest-openapi` producer, now has the options
+of that producer in its uri, such as the login options (`authMethod`, `authUsername`, `authPassword`,
+`authBearerToken`, `authenticationPreemptive` and the `oauth2*` options) given on a `rest-openapi` endpoint. Producers
+that call the same url with different options get their own http endpoint.
+
+Before, all producers for the same url used the http endpoint of the first one created, and its options: for example a
+second `rest-openapi` endpoint of the same operation sent the login of the first one, or none if the first one had
+no login options. The http endpoints of these producers now show their options in the endpoint list, with secret
+values masked.
+
 === camel-platform-http-main, camel-netty-http, camel-undertow - the Authorization header is removed after the login is checked
 
 When Camel checks the credential of an incoming request, the `Authorization` header of the request is now removed from
