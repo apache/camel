@@ -98,6 +98,14 @@ public class AuditMojo extends AbstractMojo {
     private String severity;
 
     /**
+     * Lists the vulnerabilities by artifact, as {@code camel dependency audit --by-artifact}: one row per vulnerable
+     * JAR, with the number of vulnerabilities and the version that fixes all of them, to tell what to upgrade. The JSON
+     * report then also has the artifacts.
+     */
+    @Parameter(property = "camel.audit.byArtifact", defaultValue = "false")
+    private boolean byArtifact;
+
+    /**
      * Fails the build when a vulnerability at or above this severity is found (also when it is below the severity
      * listed): critical, high, medium, low, or none to only report them.
      */
@@ -267,7 +275,9 @@ public class AuditMojo extends AbstractMojo {
                     "No known vulnerabilities" + ("low".equals(listLevel) ? "" : " of " + listLevel + " severity or worse")
                           + " in " + collected.deps().size() + " dependencies of " + name + note + more);
         } else {
-            AuditReport.table(listed).forEach(line -> getLog().warn(line));
+            List<String> table = byArtifact
+                    ? AuditReport.artifactTable(CveScan.artifactRows(listed)) : AuditReport.table(listed);
+            table.forEach(line -> getLog().warn(line));
             getLog().warn(listed.size() + " vulnerabilities in " + CveScan.artifactRows(listed).size() + " of "
                           + collected.deps().size() + " dependencies of " + name + note + more);
         }
@@ -365,7 +375,8 @@ public class AuditMojo extends AbstractMojo {
         try {
             if (jsonReport != null && !jsonReport.getPath().isBlank()) {
                 write(jsonReport.toPath(),
-                        Jsoner.prettyPrint(AuditReport.json(name, scanned, findings, hidden, failOn, failed, osvError)
+                        Jsoner.prettyPrint(AuditReport.json(name, scanned, findings, hidden, failOn, failed, osvError,
+                                byArtifact)
                                 .toJson()));
             }
             if (sarifReport != null && !sarifReport.getPath().isBlank()) {
