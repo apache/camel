@@ -179,7 +179,7 @@ YAML::
 Dear ${headers.name}. You ordered item $variables.esc.xml(${headers.item}) on $variables.esc.xml(${body}).
 ----
 
-With a body of `Monday & Tuesday` the template renders `Monday &amp; Tuesday`.
+With a body of `Monday & Tuesday` the template renders `+Monday &amp; Tuesday+`.
 The same works with `$variables.esc.html(...)`, `$variables.esc.json(...)`, `$variables.esc.sql(...)`, and `$variables.esc.url(...)`.
 
 TIP: A message header works the same way (`setHeader("esc", constant(new EscapeTool()))` and `$headers.esc` in the template),

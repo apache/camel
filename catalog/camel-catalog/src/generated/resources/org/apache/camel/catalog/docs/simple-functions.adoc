@@ -586,7 +586,7 @@ instead of chaining multiple `replace` calls or using a custom bean. The first a
 [width="100%",cols="10%,45%,45%",options="header",]
 |====
 |Kind |Escaping |Example
-|`html` | `&` `<` `>` `"` `'` are replaced with HTML entities | `${escape(html, 'Tom & Jerry')}` returns `Tom &amp; Jerry`
+|`html` | `&` `<` `>` `"` `'` are replaced with HTML entities | `${escape(html, 'Tom & Jerry')}` returns `+Tom &amp; Jerry+`
 |`xml` | `&` `<` `>` `"` `'` are replaced with the five predefined XML entities | `${escape(xml, $\{header.title})}`
 |`json` | quotes, backslashes and control characters are backslash-escaped for use inside a JSON string (surrounding quotes are not added) | `${escape(json, $\{body})}`
 |`js` | as `json`, and also single quotes and `</` so the value can be used inside a JavaScript string literal | `${escape(js, $\{header.msg})}`
@@ -595,25 +595,25 @@ instead of chaining multiple `replace` calls or using a custom bean. The first a
 |====
 
 Without a second argument the function operates on the message body, so if the body is `Monday & Tuesday`
-then `${escape(html)}` returns `Monday &amp; Tuesday`. The kind is case-insensitive, and `javascript` can be used instead of `js`.
+then `${escape(html)}` returns `+Monday &amp; Tuesday+`. The kind is case-insensitive, and `javascript` can be used instead of `js`.
 
 TIP: Prefer parameterized queries over `escape(sql)`; the SQL kind is meant as a last resort for
 components where parameters cannot be used.
 
-The `unescape` function is the inverse of `escape`, and takes the same kinds, so `${unescape(xml, 'Tom &amp; Jerry')}`
+The `unescape` function is the inverse of `escape`, and takes the same kinds, so `+${unescape(xml, 'Tom &amp; Jerry')}+`
 returns `Tom & Jerry`, and `${unescape(url, 'Camel%20in%20Action')}` returns `Camel in Action`:
 
 [width="100%",cols="10%,90%",options="header",]
 |====
 |Kind |Unescaping
-|`html`, `xml` | the five predefined entities `&amp;` `&lt;` `&gt;` `&quot;` `&apos;`, and numeric character references such as `&#39;` or `&#x27;`. Other named entities, such as the HTML `&nbsp;`, are kept as they are.
+|`html`, `xml` | the five predefined entities `+&amp;+` `+&lt;+` `+&gt;+` `+&quot;+` `+&apos;+`, and numeric character references such as `+&#39;+` or `+&#x27;+`. Other named entities, such as the HTML `+&nbsp;+`, are kept as they are.
 |`json` | the backslash escapes `\"` `\\` `\/` `\b` `\f` `\n` `\r` `\t` and `\uXXXX`
 |`js` | as `json`, and also `\'`
 |`sql` | doubled single quotes become one
 |`url` | percent-encoded sequences (decoded as UTF-8), and a `+` becomes a space as in a URL query
 |====
 
-A sequence that is not a valid escape of the kind, such as `&foo;` or `%zz`, is kept as it is.
+A sequence that is not a valid escape of the kind, such as `+&foo;+` or `%zz`, is kept as it is.
 
 The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
 So `${lowercase('Hello World')}` returns `hello world` and `${uppercase('Hello World')}` returns `HELLO WORLD`.
