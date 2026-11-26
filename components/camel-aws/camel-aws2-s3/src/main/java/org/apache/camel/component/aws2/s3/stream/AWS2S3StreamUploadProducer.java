@@ -150,10 +150,11 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         if (executor != null) {
             timeoutCheckerExecutorService = null;
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
-            // wait for a flush the task is running, so that it ends before the stop uploads what is left
+            // wait for a flush the task is running, so that it ends before the stop uploads what is left. A
+            // shutdownAwaitTermination of 0 means no wait: there is then nothing to warn about
             long timeout = getEndpoint().getCamelContext().getExecutorServiceManager().getShutdownAwaitTermination();
             try {
-                if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
+                if (timeout > 0 && !executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
                     LOG.warn("The streamingUploadTimeout task of {} is still running after {} ms, the stop goes on",
                             getConfiguration().getKeyName(), timeout);
                 }
