@@ -29,6 +29,8 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
 public class RemoteFileProducerHealthCheck extends AbstractHealthCheck {
 
     private final RemoteFileProducer<?> producer;
+    // what the last check of the connection found (UP before the first one); AbstractHealthCheck runs one call at a time
+    private State lastState = State.UP;
 
     public RemoteFileProducerHealthCheck(RemoteFileProducer<?> producer) {
         super("camel", "producer:ftp-" + producer.getEndpoint().getConfiguration().getHost());
@@ -39,10 +41,19 @@ public class RemoteFileProducerHealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         Exchange dummy = producer.createExchange();
         Exception cause = null;
+        boolean checked = true;
         try {
-            producer.doPreWriteCheck(dummy, true);
+            // do not wait while the producer uses the connection, such as for an upload, which can last long
+            checked = producer.getOperations().runIfIdle(() -> producer.doPreWriteCheck(dummy, true));
         } catch (Exception e) {
             cause = e;
+        }
+        if (!checked) {
+            // report what the last check found, the connection is checked again when the producer no longer uses it
+            builder.state(lastState);
+            builder.message("FtpProducer is busy, the connection is in use");
+            builder.detail("busy", true);
+            return;
         }
         if (cause != null) {
             builder.down();
@@ -60,5 +71,6 @@ public class RemoteFileProducerHealthCheck extends AbstractHealthCheck {
         } else {
             builder.up();
         }
+        lastState = builder.state();
     }
 }

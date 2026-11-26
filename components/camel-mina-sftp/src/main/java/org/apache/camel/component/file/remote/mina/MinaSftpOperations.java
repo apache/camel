@@ -61,6 +61,7 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.ThrowingRunnable;
 import org.apache.sshd.client.ClientBuilder;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.keyverifier.AcceptAllServerKeyVerifier;
@@ -1740,6 +1741,24 @@ public class MinaSftpOperations
                 }
             }
             return false;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Runs the check, such as the noop of the producer health check, unless another thread holds the lock, such as an
+     * upload, which holds it for the whole transfer. The check runs with the lock held, so an upload that starts
+     * meanwhile waits for it.
+     */
+    @Override
+    public boolean runIfIdle(ThrowingRunnable<Exception> check) throws Exception {
+        if (!lock.tryLock()) {
+            return false;
+        }
+        try {
+            check.run();
+            return true;
         } finally {
             lock.unlock();
         }
