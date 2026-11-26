@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.springai.embeddings;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.Reader;
-import java.nio.ByteBuffer;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.StreamCache;
-import org.apache.camel.WrappedFile;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.DefaultProducer;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.Embedding;
@@ -114,9 +107,10 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
     }
 
     /**
-     * The text to embed of a body, or of an element of a List body: a Spring AI Document as its text, and text, bytes,
-     * a stream, a Reader or a file read as text. Any other value, such as a Map or a POJO, fails as an
-     * InvalidPayloadException instead of being embedded as its toString().
+     * The text to embed of a body, or of an element of a List body: a Spring AI Document as its text, and any other
+     * value as the text Camel converts it to, such as text, bytes, a stream, a file, a char[] or a Netty ByteBuf. A
+     * value Camel reads only as its toString(), such as a Map or a POJO, fails as an InvalidPayloadException instead of
+     * being embedded as that toString() (CAMEL-26512, CAMEL-26553).
      *
      * @param index the index of the element in a List body, or -1 for the body itself
      */
@@ -131,23 +125,19 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
             }
             return document.getText();
         }
-        if (!isReadableAsText(value)) {
+        String text = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, value);
+        if (BodyFacts.isOnlyToString(value, text)) {
             throw new InvalidPayloadException(
                     exchange, String.class, exchange.getMessage(),
-                    listElement(value,
-                            index) + "spring-ai-embeddings embeds text, bytes, a stream, a Reader, a file or a Spring AI Document;"
-                                                                   + " convert the body to text before the endpoint, such"
-                                                                   + " as with convertBodyTo(String) or a marshal to JSON");
+                    listElement(value, index) + "spring-ai-embeddings embeds text, bytes, a stream, a file, a Spring AI"
+                                                                   + " Document or another value Camel converts to its text,"
+                                                                   + " such as a char[], but Camel reads this value only as its"
+                                                                   + " toString(); marshal it first, such as with"
+                                                                   + " marshal().json(), or, when its toString() is the text to"
+                                                                   + " embed, convert the body to text before the endpoint with"
+                                                                   + " convertBodyTo(String.class)");
         }
-        return exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, value);
-    }
-
-    /** A value Camel converts to its text, rather than to the toString() of an object. */
-    private static boolean isReadableAsText(Object value) {
-        return value instanceof CharSequence || value instanceof byte[] || value instanceof ByteBuffer
-                || value instanceof InputStream || value instanceof Reader || value instanceof StreamCache
-                || value instanceof ByteArrayOutputStream
-                || value instanceof File || value instanceof Path || value instanceof WrappedFile;
+        return text;
     }
 
     /**
