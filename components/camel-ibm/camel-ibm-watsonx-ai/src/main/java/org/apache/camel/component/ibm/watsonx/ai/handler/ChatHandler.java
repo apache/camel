@@ -18,6 +18,8 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import com.ibm.watsonx.ai.chat.ChatRequest;
@@ -29,6 +31,7 @@ import com.ibm.watsonx.ai.chat.model.ChatParameters;
 import com.ibm.watsonx.ai.chat.model.PartialChatResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations;
@@ -108,7 +111,7 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
         // The chunks go to the stream consumer of the header, or else to the stream endpoint
         Consumer<String> streamConsumer = in.getHeader(WatsonxAiConstants.STREAM_CONSUMER, Consumer.class);
         if (streamConsumer == null) {
-            streamConsumer = endpoint.getStreamEndpointConsumer();
+            streamConsumer = endpoint.getStreamEndpointConsumer(exchange);
         }
         if (streamConsumer == null) {
             throw new IllegalArgumentException(
@@ -118,17 +121,25 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
         Consumer<String> chunks = streamConsumer;
 
         ChatRequest request = buildChatRequest(exchange, messages);
+        StringBuilder text = new StringBuilder();
+        AtomicReference<Throwable> firstError = new AtomicReference<>();
         com.ibm.watsonx.ai.chat.ChatHandler handler = new com.ibm.watsonx.ai.chat.ChatHandler() {
             @Override
             public void onPartialResponse(String partialResponse, PartialChatResponse partialChatResponse) {
-                if (partialResponse != null && !partialResponse.isEmpty()) {
+                // the chunks of the first answer only (numberOfChoices), and none after an error
+                Integer index = partialChatResponse != null ? partialChatResponse.index() : null;
+                if (firstError.get() == null && partialResponse != null && !partialResponse.isEmpty()
+                        && (index == null || index == 0)) {
+                    text.append(partialResponse);
                     chunks.accept(partialResponse);
                 }
             }
 
             @Override
             public void onError(Throwable error) {
-                // the exchange fails with this error when the stream ends
+                // an error of the stream, or of the stream consumer (which the SDK reports here, and does not stop the
+                // stream for): the exchange fails with the first one
+                firstError.compareAndSet(null, error);
                 LOG.debug("Error during streaming chat", error);
             }
 
@@ -139,10 +150,24 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
         };
 
         ChatService service = endpoint.getChatService();
+        CompletableFuture<ChatResponse> stream = service.chatStreaming(request, handler);
         // the complete answer, with its tool calls and reasoning, once the stream ends
-        ChatResponse response = awaitStream(service.chatStreaming(request, handler));
+        ChatResponse response;
+        try {
+            response = awaitStream(stream);
+        } catch (Exception e) {
+            throw firstError.get() instanceof Exception error ? error : e;
+        }
+        if (firstError.get() != null) {
+            throw firstError.get() instanceof Exception error ? error : new RuntimeCamelException(firstError.get());
+        }
 
         Map<String, Object> headers = chatResponseHeaders(response, messages);
+        // the chunks as they came: the SDK trims the content of its complete answer (but when it splits the reasoning
+        // from the answer with the thinking tags)
+        if (!text.isEmpty() && getConfiguration().getThinkingTags() == null) {
+            headers.put(WatsonxAiConstants.GENERATED_TEXT, text.toString());
+        }
         return WatsonxAiOperationResponse.create(headers.get(WatsonxAiConstants.GENERATED_TEXT), headers);
     }
 }

@@ -564,8 +564,8 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
-         * Chat guardrail: whether watsonx.ai checks the input and the answer
-         * with Granite Guardian.
+         * Chat guardrail: whether watsonx.ai checks the input with Granite
+         * Guardian (watsonx.ai applies it to the input only).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 

@@ -198,7 +198,8 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
                 .messages(messages)
                 .tools(in.getHeader(WatsonxAiConstants.TOOLS, List.class))
                 .parameters(parameters.build())
-                .thinking(buildThinking(exchange))
+                // the SDK turns the thinking of the deployment on for any reasoning setting, so thinking=false sends none
+                .thinking(Boolean.FALSE.equals(getConfiguration().getThinking()) ? null : buildThinking(exchange))
                 .build();
 
         // Call the service

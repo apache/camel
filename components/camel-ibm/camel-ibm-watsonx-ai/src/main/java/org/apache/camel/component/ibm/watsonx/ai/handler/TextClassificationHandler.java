@@ -97,7 +97,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
 
         // Call the service
         TextClassificationService service = endpoint.getTextClassificationService();
-        TextClassificationResponse response = service.startClassification(filePath, parameters(false));
+        TextClassificationResponse response = service.startClassification(filePath, parameters(false, false));
 
         // Build response headers
         Map<String, Object> headers = new HashMap<>();
@@ -151,9 +151,9 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
 
         TextClassificationResponse response;
         if (input.isFile()) {
-            response = service.uploadAndStartClassification(input.file(), parameters(false));
+            response = service.uploadAndStartClassification(input.file(), parameters(false, true));
         } else {
-            response = service.uploadAndStartClassification(input.inputStream(), input.fileName(), parameters(false));
+            response = service.uploadAndStartClassification(input.inputStream(), input.fileName(), parameters(false, true));
         }
 
         Map<String, Object> headers = new HashMap<>();
@@ -169,9 +169,9 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
 
         TextClassificationResponse.ClassificationResult result;
         if (input.isFile()) {
-            result = service.uploadClassifyAndFetch(input.file(), parameters(true));
+            result = service.uploadClassifyAndFetch(input.file(), parameters(true, true));
         } else {
-            result = service.uploadClassifyAndFetch(input.inputStream(), input.fileName(), parameters(true));
+            result = service.uploadClassifyAndFetch(input.inputStream(), input.fileName(), parameters(true, true));
         }
 
         return classificationResult(result);
@@ -190,7 +190,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
 
         // classify a document already in the document bucket and wait for the result
         return classificationResult(
-                endpoint.getTextClassificationService().classifyAndFetch(filePath, parameters(true)));
+                endpoint.getTextClassificationService().classifyAndFetch(filePath, parameters(true, false)));
     }
 
     private static WatsonxAiOperationResponse classificationResult(TextClassificationResponse.ClassificationResult result) {
@@ -208,11 +208,12 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
 
     /**
      * The parameters of the options, or {@code null} when none is set, so that the defaults of the SDK apply. The
-     * removal of the uploaded file applies only to the operations that wait for the result.
+     * removal of the document applies only to the operations that upload it and wait for the result: the SDK would
+     * otherwise delete a document that the route did not upload.
      */
-    TextClassificationParameters parameters(boolean waitForResult) {
+    TextClassificationParameters parameters(boolean waitForResult, boolean uploaded) {
         WatsonxAiConfiguration config = getConfiguration();
-        boolean cleanup = waitForResult && Boolean.TRUE.equals(config.getRemoveUploadedFile());
+        boolean cleanup = waitForResult && uploaded && Boolean.TRUE.equals(config.getRemoveUploadedFile());
         if (config.getOcrMode() == null && config.getClassificationMode() == null && config.getDocumentLanguages() == null
                 && config.getAutoRotationCorrection() == null && config.getProcessingTimeout() == null && !cleanup) {
             return null;
@@ -233,7 +234,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
             builder.autoRotationCorrection(config.getAutoRotationCorrection());
         }
         if (waitForResult) {
-            builder.removeUploadedFile(Boolean.TRUE.equals(config.getRemoveUploadedFile()));
+            builder.removeUploadedFile(cleanup);
         }
         if (config.getProcessingTimeout() != null) {
             builder.timeout(Duration.ofMillis(config.getProcessingTimeout()));

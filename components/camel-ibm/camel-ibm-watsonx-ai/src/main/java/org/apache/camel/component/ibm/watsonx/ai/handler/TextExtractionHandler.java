@@ -104,7 +104,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
 
         // Call the service
         TextExtractionService service = endpoint.getTextExtractionService();
-        TextExtractionResponse response = service.startExtraction(filePath, parameters(exchange, false));
+        TextExtractionResponse response = service.startExtraction(filePath, parameters(exchange, false, false));
 
         // Build response headers
         Map<String, Object> headers = new HashMap<>();
@@ -151,9 +151,10 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
 
         TextExtractionResponse response;
         if (input.isFile()) {
-            response = service.uploadAndStartExtraction(input.file(), parameters(exchange, false));
+            response = service.uploadAndStartExtraction(input.file(), parameters(exchange, false, true));
         } else {
-            response = service.uploadAndStartExtraction(input.inputStream(), input.fileName(), parameters(exchange, false));
+            response = service.uploadAndStartExtraction(input.inputStream(), input.fileName(),
+                    parameters(exchange, false, true));
         }
 
         Map<String, Object> headers = new HashMap<>();
@@ -169,9 +170,10 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
 
         String extractedText;
         if (input.isFile()) {
-            extractedText = service.uploadExtractAndFetch(input.file(), parameters(exchange, true));
+            extractedText = service.uploadExtractAndFetch(input.file(), parameters(exchange, true, true));
         } else {
-            extractedText = service.uploadExtractAndFetch(input.inputStream(), input.fileName(), parameters(exchange, true));
+            extractedText
+                    = service.uploadExtractAndFetch(input.inputStream(), input.fileName(), parameters(exchange, true, true));
         }
 
         Map<String, Object> headers = new HashMap<>();
@@ -192,7 +194,7 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
         }
 
         // extract a document already in the document bucket and wait for the text
-        String extractedText = endpoint.getTextExtractionService().extractAndFetch(filePath, parameters(exchange, true));
+        String extractedText = endpoint.getTextExtractionService().extractAndFetch(filePath, parameters(exchange, true, false));
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(WatsonxAiConstants.EXTRACTED_TEXT, extractedText);
@@ -201,13 +203,16 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
 
     /**
      * The parameters of the options, or {@code null} when none is set, so that the defaults of the SDK apply (Markdown
-     * output). The removal of the uploaded and output files applies only to the operations that wait for the result.
+     * output). The removal of the output file applies only to the operations that wait for the result, which the SDK
+     * requires, and the removal of the document only to those that upload it: the SDK would otherwise delete a document
+     * that the route did not upload.
      */
-    TextExtractionParameters parameters(Exchange exchange, boolean waitForResult) {
+    TextExtractionParameters parameters(Exchange exchange, boolean waitForResult, boolean uploaded) {
         WatsonxAiConfiguration config = getConfiguration();
         String outputFileName = exchange.getIn().getHeader(WatsonxAiConstants.OUTPUT_FILE_NAME, String.class);
-        boolean cleanup = waitForResult
-                && (Boolean.TRUE.equals(config.getRemoveUploadedFile()) || Boolean.TRUE.equals(config.getRemoveOutputFile()));
+        boolean removeUploadedFile = waitForResult && uploaded && Boolean.TRUE.equals(config.getRemoveUploadedFile());
+        boolean removeOutputFile = waitForResult && Boolean.TRUE.equals(config.getRemoveOutputFile());
+        boolean cleanup = removeUploadedFile || removeOutputFile;
         if (config.getExtractionOutputs() == null && config.getExtractionMode() == null && config.getOcrMode() == null
                 && config.getDocumentLanguages() == null && config.getAutoRotationCorrection() == null
                 && config.getEmbeddedImages() == null && config.getOutputDpi() == null && config.getOutputTokens() == null
@@ -249,8 +254,8 @@ public class TextExtractionHandler extends AbstractWatsonxAiHandler {
             builder.outputFileName(outputFileName);
         }
         if (waitForResult) {
-            builder.removeUploadedFile(Boolean.TRUE.equals(config.getRemoveUploadedFile()));
-            builder.removeOutputFile(Boolean.TRUE.equals(config.getRemoveOutputFile()));
+            builder.removeUploadedFile(removeUploadedFile);
+            builder.removeOutputFile(removeOutputFile);
         }
         if (config.getProcessingTimeout() != null) {
             builder.timeout(Duration.ofMillis(config.getProcessingTimeout()));

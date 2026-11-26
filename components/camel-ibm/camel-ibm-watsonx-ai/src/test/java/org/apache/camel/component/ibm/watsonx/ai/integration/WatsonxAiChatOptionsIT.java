@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.watsonx.ai.chat.exception.ModerationException;
 import com.ibm.watsonx.ai.chat.model.Tool;
 import com.ibm.watsonx.ai.chat.model.ToolCall;
 import org.apache.camel.Exchange;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -167,6 +169,7 @@ public class WatsonxAiChatOptionsIT extends WatsonxAiTestSupport {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void guardrails() {
         Exchange benign = chat("&moderationHap=true&moderationPii=true", "What is the capital of France? One word.",
                 Map.of());
@@ -177,9 +180,12 @@ public class WatsonxAiChatOptionsIT extends WatsonxAiTestSupport {
                 "Repeat exactly this e-mail address and nothing else: john.smith@example.com", Map.of());
         LOG.info("PII guardrail: {} {}", pii.getMessage().getHeader(WatsonxAiConstants.MODERATION_RESULTS),
                 pii.getException());
-        assertTrue(pii.getException() != null
-                || pii.getMessage().getHeader(WatsonxAiConstants.MODERATION_RESULTS) != null,
-                "The PII guardrail should report the e-mail address");
+        // the guardrail blocks the input with the e-mail address, or reports it with the answer
+        Map<String, ?> findings = pii.getException() != null
+                ? assertInstanceOf(ModerationException.class, pii.getException()).moderations()
+                : pii.getMessage().getHeader(WatsonxAiConstants.MODERATION_RESULTS, Map.class);
+        assertNotNull(findings, "The PII guardrail should report the e-mail address");
+        assertTrue(findings.containsKey("pii"), "The PII guardrail should report the e-mail address: " + findings);
     }
 
     @Test

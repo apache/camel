@@ -98,7 +98,7 @@ public class TextGenerationHandler extends AbstractWatsonxAiHandler {
         // Get the stream consumer from header
         Consumer<String> consumer = in.getHeader(WatsonxAiConstants.STREAM_CONSUMER, Consumer.class);
         if (consumer == null) {
-            consumer = endpoint.getStreamEndpointConsumer();
+            consumer = endpoint.getStreamEndpointConsumer(exchange);
         }
         if (consumer == null) {
             throw new IllegalArgumentException(
@@ -147,8 +147,10 @@ public class TextGenerationHandler extends AbstractWatsonxAiHandler {
         // Wait for completion, at most the time limit, and stop the stream otherwise
         awaitStream(service.generateStreaming(input, paramsBuilder.build(), handler));
 
-        // Check for errors
-        if (errorHolder[0] != null) {
+        // Check for errors: the exchange fails with the error of the stream itself
+        if (errorHolder[0] instanceof Exception error) {
+            throw error;
+        } else if (errorHolder[0] != null) {
             throw new RuntimeCamelException("Error during streaming text generation", errorHolder[0]);
         }
 

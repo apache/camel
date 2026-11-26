@@ -177,7 +177,8 @@ public class WatsonxAiConfiguration implements Cloneable {
     private Boolean moderationPii;
 
     @UriParam(label = "producer",
-              description = "Chat guardrail: whether watsonx.ai checks the input and the answer with Granite Guardian")
+              description = "Chat guardrail: whether watsonx.ai checks the input with Granite Guardian (watsonx.ai applies"
+                            + " it to the input only)")
     private Boolean moderationGraniteGuardian;
 
     @UriParam(label = "producer", defaultValue = "0.5",

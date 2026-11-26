@@ -142,6 +142,19 @@ class WatsonxAiAuthenticationTest extends CamelTestSupport {
     }
 
     @Test
+    void oauthProfileWithEmptyTokenFailsAtStartup() {
+        TestOAuthClientAuthenticationFactory.tokens = profile -> "";
+        try {
+            Exception e = assertThrows(Exception.class, () -> context.getEndpoint(
+                    "ibm-watsonx-ai:empty?oauthProfile=empty&baseUrl=" + server.baseUrl() + "&operation=chat"));
+            assertInstanceOf(IllegalStateException.class, e.getCause());
+            assertEquals("The OAuth profile empty gave no access token", e.getCause().getMessage());
+        } finally {
+            TestOAuthClientAuthenticationFactory.tokens = WatsonxAiAuthenticationTest::token;
+        }
+    }
+
+    @Test
     void customAuthenticatorIsUsedAsItIs() throws Exception {
         context.getRegistry().bind("testAuthenticator", FakeWatsonxServer.TEST_AUTHENTICATOR);
         Exchange result = template.send(
@@ -160,7 +173,7 @@ class WatsonxAiAuthenticationTest extends CamelTestSupport {
     }
 
     @Test
-    void apiKeyIsExchangedAtIbmCloudIam() throws Exception {
+    void apiKeyUsesTheIbmCloudIamAuthenticator() throws Exception {
         WatsonxAiEndpoint endpoint = context.getEndpoint(
                 "ibm-watsonx-ai:iam?apiKey=my-key&baseUrl=" + server.baseUrl() + "&operation=chat",
                 WatsonxAiEndpoint.class);

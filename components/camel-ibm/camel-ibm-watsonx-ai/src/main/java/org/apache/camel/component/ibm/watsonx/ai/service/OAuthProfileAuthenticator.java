@@ -53,22 +53,27 @@ public final class OAuthProfileAuthenticator implements Authenticator {
 
     @Override
     public String token() {
+        String token;
         try {
-            return factory.resolveToken(camelContext, profileName);
+            token = factory.resolveToken(camelContext, profileName);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot obtain an access token for the OAuth profile " + profileName, e);
         }
+        if (token == null || token.isBlank()) {
+            throw new IllegalStateException("The OAuth profile " + profileName + " gave no access token");
+        }
+        return token;
     }
 
+    /**
+     * Obtains the token in another thread, so that a renewal does not block the caller of a streaming request, which
+     * waits for the stream within a deadline.
+     */
     @Override
     public CompletableFuture<String> tokenAsync() {
-        try {
-            return CompletableFuture.completedFuture(token());
-        } catch (RuntimeException e) {
-            return CompletableFuture.failedFuture(e);
-        }
+        return CompletableFuture.supplyAsync(this::token);
     }
 
     @Override

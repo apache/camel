@@ -32,6 +32,7 @@ import com.ibm.watsonx.ai.timeseries.TimeSeriesService;
 import com.ibm.watsonx.ai.tokenization.TokenizationService;
 import com.ibm.watsonx.ai.tool.ToolService;
 import org.apache.camel.Category;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
@@ -223,10 +224,13 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     protected void doStart() throws Exception {
         super.doStart();
         validateConfiguration();
-        authenticator = WatsonxAiServiceFactory.createAuthenticator(configuration, getCamelContext());
-        if (authenticator instanceof OAuthProfileAuthenticator) {
+        Authenticator created = WatsonxAiServiceFactory.createAuthenticator(configuration, getCamelContext());
+        synchronized (this) {
+            authenticator = created;
+        }
+        if (created instanceof OAuthProfileAuthenticator) {
             // fail at startup rather than at the first exchange when the OAuth profile cannot give a token
-            authenticator.token();
+            created.token();
         }
     }
 
@@ -264,7 +268,10 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
                 && configuration.getAuthenticator() == null) {
             throw new IllegalArgumentException("API key is required (or set oauthProfile or authenticator)");
         }
-        if (configuration.getBaseUrl() == null || configuration.getBaseUrl().isEmpty()) {
+        // the utility tools need the wxUrl rather than the baseUrl
+        if ((configuration.getBaseUrl() == null || configuration.getBaseUrl().isEmpty())
+                && configuration.getOperation() != WatsonxAiOperations.runTool
+                && configuration.getOperation() != WatsonxAiOperations.listTools) {
             throw new IllegalArgumentException("Base URL is required");
         }
     }
@@ -391,9 +398,10 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
 
     /**
      * The consumer of the chunks of the streaming operations that sends each chunk as the body of a message to the
-     * streamEndpoint, or {@code null} when the option is not set.
+     * streamEndpoint, with the id of the exchange that streams as its correlation id, or {@code null} when the option
+     * is not set.
      */
-    public synchronized Consumer<String> getStreamEndpointConsumer() {
+    public synchronized Consumer<String> getStreamEndpointConsumer(Exchange exchange) {
         String uri = configuration.getStreamEndpoint();
         if (uri == null || uri.isBlank()) {
             return null;
@@ -402,7 +410,8 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
             streamTemplate = getCamelContext().createProducerTemplate();
         }
         ProducerTemplate template = streamTemplate;
-        return chunk -> template.sendBody(uri, chunk);
+        String correlationId = exchange.getExchangeId();
+        return chunk -> template.sendBodyAndHeader(uri, chunk, Exchange.CORRELATION_ID, correlationId);
     }
 
     /**

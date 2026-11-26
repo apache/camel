@@ -174,7 +174,9 @@ from("direct:streamChat")
 
 In YAML and XML routes, where no `Consumer` header can be built, the `streamEndpoint` option sends each chunk of
 `chatStreaming` (and `textGenerationStreaming`) as the body of a message to an endpoint. The chunks are sent from the
-threads of the watsonx.ai SDK, in order; the full answer is the body after the endpoint, as with a `Consumer`.
+threads of the watsonx.ai SDK, in order, with the id of the exchange that streams in the `CamelCorrelationId` header;
+the full answer is the body after the endpoint, as with a `Consumer`. When the stream consumer or the endpoint fails,
+the exchange fails with that error.
 
 [source,yaml]
 ----
@@ -239,7 +241,8 @@ answer of a model that writes both in its content
 
 |`moderationHap`, `moderationPii`, `moderationGraniteGuardian`, `moderationThreshold`
 |
-|guardrails on the input and the answer; findings are in the `CamelIBMWatsonxAiModerationResults` header. When a
+|guardrails on the input and the answer (Granite Guardian on the input only); findings are in the
+`CamelIBMWatsonxAiModerationResults` header. When a
 guardrail blocks the input or the answer, the exchange fails with
 `com.ibm.watsonx.ai.chat.exception.ModerationException`, whose `moderations()` gives the findings
 

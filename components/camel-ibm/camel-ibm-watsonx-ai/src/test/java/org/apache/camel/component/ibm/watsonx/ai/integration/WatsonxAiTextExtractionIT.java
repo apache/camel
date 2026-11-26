@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibm.watsonx.ai.integration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -325,7 +326,7 @@ public class WatsonxAiTextExtractionIT extends WatsonxAiTestSupport {
                 exchange.getIn().setBody(fileName);
             });
             LOG.info("Read of the removed upload {}: {}", fileName, read.getException());
-            assertNotNull(read.getException(), "The uploaded file should have been removed");
+            assertInstanceOf(FileNotFoundException.class, read.getException(), "The uploaded file should have been removed");
         });
     }
 

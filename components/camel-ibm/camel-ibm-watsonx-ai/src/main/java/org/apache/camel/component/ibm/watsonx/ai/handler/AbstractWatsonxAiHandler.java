@@ -477,7 +477,7 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         if (seed != null) {
             builder.seed(seed);
         }
-        List<String> stop = toList(in.getHeader(WatsonxAiConstants.STOP), config.getStop());
+        List<String> stop = toLiteralList(in.getHeader(WatsonxAiConstants.STOP), config.getStop());
         if (stop != null) {
             builder.stop(stop);
         }
@@ -529,6 +529,22 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             return null;
         }
         return Arrays.stream(text.split(",")).map(String::trim).filter(v -> !v.isEmpty()).toList();
+    }
+
+    /**
+     * Like {@link #toList(Object, String)}, but the values are kept as they are, such as stop sequences with
+     * significant spaces or a sequence of new lines: only a value that is empty is dropped.
+     */
+    static List<String> toLiteralList(Object header, String option) {
+        Object value = header != null ? header : option;
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(String::valueOf).toList();
+        }
+        List<String> values = Arrays.stream(value.toString().split(",")).filter(v -> !v.isEmpty()).toList();
+        return values.isEmpty() ? null : values;
     }
 
     /**
@@ -685,7 +701,13 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         ForecastData forecastData = toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_DATA),
                 WatsonxAiConstants.FORECAST_DATA);
 
+        ForecastData futureData = toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA),
+                WatsonxAiConstants.FORECAST_FUTURE_DATA);
         if ((inputSchema == null || forecastData == null) && in.getBody() instanceof TimeSeriesRequest request) {
+            if (!futureDataAllowed && (futureData != null
+                    || request.parameters() != null && request.parameters().futureData() != null)) {
+                throw futureDataRefused();
+            }
             if (deploymentId == null || deploymentId.equals(request.deploymentId())) {
                 return request;
             }
@@ -712,13 +734,8 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         if (predictionLength == null) {
             predictionLength = getConfiguration().getPredictionLength();
         }
-        ForecastData futureData = toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA),
-                WatsonxAiConstants.FORECAST_FUTURE_DATA);
         if (futureData != null && !futureDataAllowed) {
-            throw new IllegalArgumentException(
-                    "Future data (header '" + WatsonxAiConstants.FORECAST_FUTURE_DATA
-                                               + "') is accepted by deploymentForecast only: watsonx.ai takes no future data"
-                                               + " for the forecast of a foundation model");
+            throw futureDataRefused();
         }
 
         TimeSeriesParameters parameters = null;
@@ -739,6 +756,13 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
                 .data(forecastData)
                 .parameters(parameters)
                 .build();
+    }
+
+    private static IllegalArgumentException futureDataRefused() {
+        return new IllegalArgumentException(
+                "Future data (header '" + WatsonxAiConstants.FORECAST_FUTURE_DATA + "' or the parameters of the"
+                                            + " TimeSeriesRequest) is accepted by deploymentForecast only: watsonx.ai takes no"
+                                            + " future data for the forecast of a foundation model");
     }
 
     private static InputSchema toInputSchema(Object value) {

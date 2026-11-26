@@ -622,8 +622,8 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
-         * Chat guardrail: whether watsonx.ai checks the input and the answer
-         * with Granite Guardian.
+         * Chat guardrail: whether watsonx.ai checks the input with Granite
+         * Guardian (watsonx.ai applies it to the input only).
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -637,8 +637,8 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
-         * Chat guardrail: whether watsonx.ai checks the input and the answer
-         * with Granite Guardian.
+         * Chat guardrail: whether watsonx.ai checks the input with Granite
+         * Guardian (watsonx.ai applies it to the input only).
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.

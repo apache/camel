@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai.integration;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.ibm.watsonx.ai.core.auth.ibmcloud.IBMCloudAuthenticator;
 import org.apache.camel.Exchange;
@@ -47,21 +46,22 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 })
 public class WatsonxAiOAuthIT extends WatsonxAiTestSupport {
 
-    private static final List<String> TOKENS = new CopyOnWriteArrayList<>();
+    private static final AtomicInteger LOOKUPS = new AtomicInteger();
 
     @BeforeAll
     static void identityProvider() {
         IBMCloudAuthenticator iam = IBMCloudAuthenticator.builder().apiKey(apiKey).build();
+        LOOKUPS.set(0);
         TestOAuthClientAuthenticationFactory.tokens(profile -> {
-            String token = iam.token();
-            TOKENS.add(token);
-            return token;
+            LOOKUPS.incrementAndGet();
+            return iam.token();
         });
     }
 
     @AfterAll
     static void resetIdentityProvider() {
         TestOAuthClientAuthenticationFactory.reset();
+        LOOKUPS.set(0);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class WatsonxAiOAuthIT extends WatsonxAiTestSupport {
         String answer = result.getMessage().getBody(String.class);
         assertFalse(answer == null || answer.isBlank());
         // once at startup, once for the request
-        assertEquals(2, TOKENS.size());
+        assertEquals(2, LOOKUPS.get());
     }
 
     @Override

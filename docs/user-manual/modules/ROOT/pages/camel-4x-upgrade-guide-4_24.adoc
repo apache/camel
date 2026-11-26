@@ -871,6 +871,10 @@ identity provider must therefore issue tokens that watsonx.ai accepts. `apiKey` 
 catalog, as `oauthProfile` or the new `authenticator` option can take its place; an endpoint without any of the three
 still fails to start.
 
+With `apiKey`, all the services of an endpoint now share one IBM Cloud IAM authenticator, which obtains its token with
+the `verifySsl` and `timeout` options of the endpoint: `verifySsl=false` now also applies to the IAM request that
+carries the API key, and a short `timeout` also limits it.
+
 === camel-ibm-watsonx-ai - the tool calling loop sends the whole conversation
 
 When the model answers `chat` with tool calls, `chat` now sets the `CamelIBMWatsonxAiMessages` header to the messages it
@@ -912,7 +916,10 @@ binding for Jackson 2. The SDK fails when it finds no binding, or more than one,
 `com.ibm.watsonx:watsonx-ai-jackson3` next to the component. An application that relied on Jackson coming with the SDK
 still gets it, through the binding.
 
-The SDK sends the API version `2026-10-28` with every request instead of `2026-08-19`.
+The SDK sends the API version `2026-10-28` with every request instead of `2026-08-19`. Some classes of the SDK that
+operations give in the body changed, such as `TextClassificationResponse.ClassificationResult`, which no longer has
+`numberPagesProcessed()`: a route that reads such objects in Java should check the migration notes of the SDK
+(`docs/content/migration/0.40.0-to-0.50.0.md` in its repository).
 
 === camel-ibm-watsonx-ai - chat options, deploymentChat parameters and streaming
 
