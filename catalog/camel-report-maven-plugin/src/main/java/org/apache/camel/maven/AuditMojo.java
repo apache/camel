@@ -33,6 +33,7 @@ import javax.inject.Inject;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.cve.CveArtifact;
 import org.apache.camel.catalog.cve.CveAudit;
 import org.apache.camel.catalog.cve.CveFinding;
 import org.apache.camel.catalog.cve.CveScan;
@@ -275,10 +276,10 @@ public class AuditMojo extends AbstractMojo {
                     "No known vulnerabilities" + ("low".equals(listLevel) ? "" : " of " + listLevel + " severity or worse")
                           + " in " + collected.deps().size() + " dependencies of " + name + note + more);
         } else {
-            List<String> table = byArtifact
-                    ? AuditReport.artifactTable(CveScan.artifactRows(listed)) : AuditReport.table(listed);
+            List<CveArtifact> artifacts = CveScan.artifactRows(listed);
+            List<String> table = byArtifact ? AuditReport.artifactTable(artifacts) : AuditReport.table(listed);
             table.forEach(line -> getLog().warn(line));
-            getLog().warn(listed.size() + " vulnerabilities in " + CveScan.artifactRows(listed).size() + " of "
+            getLog().warn(listed.size() + " vulnerabilities in " + artifacts.size() + " of "
                           + collected.deps().size() + " dependencies of " + name + note + more);
         }
         writeReports(name, collected.deps().size(), remaining, hidden, failed, result.osvError(), catalog);
