@@ -6985,8 +6985,10 @@ gets the UUID (or the timestamp), the first one too: `camel-<uuid>.txt`. The pro
 
 === camel-aws2-s3 - streaming upload writes concurrent exchanges one at a time
 
-With `streamingUploadMode=true` (without `timestampGroupingEnabled`), the producer now writes one exchange at a time,
-so exchanges sent concurrently (concurrent consumers, parallel splits, `threads()`) no longer lose objects or parts.
+With `streamingUploadMode=true`, the producer now writes one exchange at a time, so exchanges sent concurrently
+(concurrent consumers, parallel splits, `threads()`) no longer lose objects or parts. With `timestampGroupingEnabled`,
+the bytes of an exchange are no longer mixed with the bytes of another exchange of the same window, and the
+`streamingUploadTimeout` flush no longer cuts an exchange into two objects.
 The body of an exchange is read while the other exchanges of the same producer wait, and bodies that complete an
 upload of their own (`batchSize` or more, or `batchMessageNumber=1`) are no longer uploaded in parallel. To upload
 large bodies in parallel, use the producer without `streamingUploadMode`.
