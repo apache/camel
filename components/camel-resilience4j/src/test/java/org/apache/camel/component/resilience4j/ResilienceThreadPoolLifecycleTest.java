@@ -53,8 +53,8 @@ class ResilienceThreadPoolLifecycleTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
         context.setExecutorServiceManager(new DefaultExecutorServiceManager(context) {
             @Override
-            public ScheduledExecutorService newDefaultScheduledThreadPool(Object source, String name) {
-                ScheduledExecutorService answer = super.newDefaultScheduledThreadPool(source, name);
+            public ScheduledExecutorService newScheduledThreadPool(Object source, String name, ThreadPoolProfile profile) {
+                ScheduledExecutorService answer = super.newScheduledThreadPool(source, name, profile);
                 scheduledPools.put(name, answer);
                 return answer;
             }
