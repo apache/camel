@@ -107,6 +107,89 @@ public class WatsonxAiConfiguration implements Cloneable {
                             + " call")
     private String toolChoice;
 
+    // Chat output, reasoning, guardrails and streaming
+    @UriParam(label = "producer", enums = "text,json",
+              description = "The format of the chat answer: text, or json for a JSON object. Set jsonSchema for an answer"
+                            + " that follows a JSON schema")
+    private String responseFormat;
+
+    @UriParam(label = "producer",
+              description = "A JSON schema (as JSON text) that the chat answer follows (the json_schema response format)")
+    private String jsonSchema;
+
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Whether the chat answer must follow the jsonSchema strictly")
+    private Boolean jsonSchemaStrict = true;
+
+    @UriParam(label = "producer",
+              description = "Guided decoding of chat: the answer is one of these comma separated choices")
+    private String guidedChoice;
+
+    @UriParam(label = "producer",
+              description = "Guided decoding of chat: the answer matches this regular expression")
+    private String guidedRegex;
+
+    @UriParam(label = "producer",
+              description = "Guided decoding of chat: the answer follows this context free grammar (EBNF)")
+    private String guidedGrammar;
+
+    @UriParam(label = "producer",
+              description = "The random seed of chat sampling, for repeatable answers")
+    private Integer seed;
+
+    @UriParam(label = "producer",
+              description = "Comma separated sequences that stop the generation of the chat answer")
+    private String stop;
+
+    @UriParam(label = "producer",
+              description = "How many answers chat generates for the request (n). The body is the first one, and the"
+                            + " CamelIBMWatsonxAiAssistantMessages header has them all")
+    private Integer numberOfChoices;
+
+    @UriParam(label = "producer",
+              description = "Whether the model of chat reasons before it answers, for the models that support it (chat"
+                            + " template thinking)")
+    private Boolean thinking;
+
+    @UriParam(label = "producer",
+              description = "Whether watsonx.ai returns the reasoning of the model, in the"
+                            + " CamelIBMWatsonxAiReasoningContent header")
+    private Boolean includeReasoning;
+
+    @UriParam(label = "producer", enums = "low,medium,high",
+              description = "How much the model of chat reasons: low, medium or high, for the models that support it")
+    private String reasoningEffort;
+
+    @UriParam(label = "producer",
+              description = "For models that write their reasoning in the answer between tags: the tag of the reasoning,"
+                            + " and optionally the tag of the answer after a comma, such as think,response. The reasoning goes"
+                            + " to the CamelIBMWatsonxAiReasoningContent header and the answer to the body")
+    private String thinkingTags;
+
+    @UriParam(label = "producer",
+              description = "Chat guardrail: whether watsonx.ai checks the input and the answer for hate, abuse and"
+                            + " profanity (HAP)")
+    private Boolean moderationHap;
+
+    @UriParam(label = "producer",
+              description = "Chat guardrail: whether watsonx.ai checks the input and the answer for personal identifiable"
+                            + " information (PII)")
+    private Boolean moderationPii;
+
+    @UriParam(label = "producer",
+              description = "Chat guardrail: whether watsonx.ai checks the input and the answer with Granite Guardian")
+    private Boolean moderationGraniteGuardian;
+
+    @UriParam(label = "producer", defaultValue = "0.5",
+              description = "The threshold (0 to 1) of the HAP and Granite Guardian chat guardrails")
+    private Float moderationThreshold = 0.5f;
+
+    @UriParam(label = "producer",
+              description = "The endpoint URI that receives each chunk of chatStreaming as a message (in the place of the"
+                            + " CamelIBMWatsonxAiStreamConsumer header), such as seda:chunks. The chunks are sent from the"
+                            + " threads of the watsonx.ai SDK")
+    private String streamEndpoint;
+
     // Embedding Parameters
     @UriParam(label = "producer",
               description = "Maximum number of tokens accepted per input for embeddings. Truncates from the end if exceeded.")
@@ -325,6 +408,150 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setToolChoice(String toolChoice) {
         this.toolChoice = toolChoice;
+    }
+
+    public String getResponseFormat() {
+        return responseFormat;
+    }
+
+    public void setResponseFormat(String responseFormat) {
+        this.responseFormat = responseFormat;
+    }
+
+    public String getJsonSchema() {
+        return jsonSchema;
+    }
+
+    public void setJsonSchema(String jsonSchema) {
+        this.jsonSchema = jsonSchema;
+    }
+
+    public Boolean getJsonSchemaStrict() {
+        return jsonSchemaStrict;
+    }
+
+    public void setJsonSchemaStrict(Boolean jsonSchemaStrict) {
+        this.jsonSchemaStrict = jsonSchemaStrict;
+    }
+
+    public String getGuidedChoice() {
+        return guidedChoice;
+    }
+
+    public void setGuidedChoice(String guidedChoice) {
+        this.guidedChoice = guidedChoice;
+    }
+
+    public String getGuidedRegex() {
+        return guidedRegex;
+    }
+
+    public void setGuidedRegex(String guidedRegex) {
+        this.guidedRegex = guidedRegex;
+    }
+
+    public String getGuidedGrammar() {
+        return guidedGrammar;
+    }
+
+    public void setGuidedGrammar(String guidedGrammar) {
+        this.guidedGrammar = guidedGrammar;
+    }
+
+    public Integer getSeed() {
+        return seed;
+    }
+
+    public void setSeed(Integer seed) {
+        this.seed = seed;
+    }
+
+    public String getStop() {
+        return stop;
+    }
+
+    public void setStop(String stop) {
+        this.stop = stop;
+    }
+
+    public Integer getNumberOfChoices() {
+        return numberOfChoices;
+    }
+
+    public void setNumberOfChoices(Integer numberOfChoices) {
+        this.numberOfChoices = numberOfChoices;
+    }
+
+    public Boolean getThinking() {
+        return thinking;
+    }
+
+    public void setThinking(Boolean thinking) {
+        this.thinking = thinking;
+    }
+
+    public Boolean getIncludeReasoning() {
+        return includeReasoning;
+    }
+
+    public void setIncludeReasoning(Boolean includeReasoning) {
+        this.includeReasoning = includeReasoning;
+    }
+
+    public String getReasoningEffort() {
+        return reasoningEffort;
+    }
+
+    public void setReasoningEffort(String reasoningEffort) {
+        this.reasoningEffort = reasoningEffort;
+    }
+
+    public String getThinkingTags() {
+        return thinkingTags;
+    }
+
+    public void setThinkingTags(String thinkingTags) {
+        this.thinkingTags = thinkingTags;
+    }
+
+    public Boolean getModerationHap() {
+        return moderationHap;
+    }
+
+    public void setModerationHap(Boolean moderationHap) {
+        this.moderationHap = moderationHap;
+    }
+
+    public Boolean getModerationPii() {
+        return moderationPii;
+    }
+
+    public void setModerationPii(Boolean moderationPii) {
+        this.moderationPii = moderationPii;
+    }
+
+    public Boolean getModerationGraniteGuardian() {
+        return moderationGraniteGuardian;
+    }
+
+    public void setModerationGraniteGuardian(Boolean moderationGraniteGuardian) {
+        this.moderationGraniteGuardian = moderationGraniteGuardian;
+    }
+
+    public Float getModerationThreshold() {
+        return moderationThreshold;
+    }
+
+    public void setModerationThreshold(Float moderationThreshold) {
+        this.moderationThreshold = moderationThreshold;
+    }
+
+    public String getStreamEndpoint() {
+        return streamEndpoint;
+    }
+
+    public void setStreamEndpoint(String streamEndpoint) {
+        this.streamEndpoint = streamEndpoint;
     }
 
     public Integer getTruncateInputTokens() {

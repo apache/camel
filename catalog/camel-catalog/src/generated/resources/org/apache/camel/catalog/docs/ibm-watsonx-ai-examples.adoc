@@ -170,6 +170,111 @@ from("direct:streamChat")
   .log("Full response: ${body}");
 ----
 
+=== Streaming Chat to an Endpoint
+
+In YAML and XML routes, where no `Consumer` header can be built, the `streamEndpoint` option sends each chunk of
+`chatStreaming` (and `textGenerationStreaming`) as the body of a message to an endpoint. The chunks are sent from the
+threads of the watsonx.ai SDK, in order; the full answer is the body after the endpoint, as with a `Consumer`.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:streamChat
+      steps:
+        - to:
+            uri: ibm-watsonx-ai:chat
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              baseUrl: "{{ibm.watsonx.base-url}}"
+              projectId: yourProjectId
+              modelId: ibm/granite-4-h-small
+              operation: chatStreaming
+              streamEndpoint: seda:chunks
+        - log:
+            message: "Full response: ${body}"
+----
+
+`chatStreaming` sends the tools of the `CamelIBMWatsonxAiTools` header and gives the same headers as `chat`, such as the
+tool calls of the answer, its reasoning and its token counts. The exchange fails with the error of watsonx.ai as soon
+as the stream reports one, and when the stream does not end within the `timeout` of the endpoint (60 seconds by default)
+and 30 seconds more, in which case the stream is stopped.
+
+=== Chat Options: Structured Output, Guided Decoding, Reasoning and Guardrails
+
+The chat options are plain endpoint options, and several have a header that overrides them for one message:
+
+[cols="2,2,3"]
+|===
+|Option |Header |Effect
+
+|`responseFormat` (`text`, `json`)
+|`CamelIBMWatsonxAiResponseFormat`
+|`json` makes the answer a JSON object
+
+|`jsonSchema`, `jsonSchemaStrict`
+|`CamelIBMWatsonxAiJsonSchema` (JSON text or a `Map`)
+|the answer follows the JSON schema
+
+|`guidedChoice`, `guidedRegex`, `guidedGrammar`
+|`CamelIBMWatsonxAiGuidedChoice`
+|guided decoding: the answer is one of the choices, matches the regular expression or follows the grammar. Whether a
+model honours it depends on its runtime: in IBM Cloud, `mistralai/mistral-small-3-1-24b-instruct-2503` does,
+`ibm/granite-4-h-small` and `meta-llama/llama-3-3-70b-instruct` ignore it
+
+|`seed`, `stop`, `numberOfChoices`
+|`CamelIBMWatsonxAiSeed`, `CamelIBMWatsonxAiStop`
+|repeatable sampling, stop sequences, and several answers (all of them in the `CamelIBMWatsonxAiAssistantMessages`
+header)
+
+|`toolChoice`
+|`CamelIBMWatsonxAiToolChoice`
+|`auto`, `required`, `none` or the name of the tool to call
+
+|`thinking`, `includeReasoning`, `reasoningEffort` (`low`, `medium`, `high`), `thinkingTags`
+|`CamelIBMWatsonxAiReasoningEffort`
+|the reasoning of the models that support it; the reasoning of the answer is in the
+`CamelIBMWatsonxAiReasoningContent` header. `thinkingTags` (such as `think,response`) splits the reasoning from the
+answer of a model that writes both in its content
+
+|`moderationHap`, `moderationPii`, `moderationGraniteGuardian`, `moderationThreshold`
+|
+|guardrails on the input and the answer; findings are in the `CamelIBMWatsonxAiModerationResults` header. When a
+guardrail blocks the input or the answer, the exchange fails with
+`com.ibm.watsonx.ai.chat.exception.ModerationException`, whose `moderations()` gives the findings
+
+|`modelId`
+|`CamelIBMWatsonxAiModelId`
+|the model of the request
+|===
+
+`deploymentChat` sends the same parameters and tools, but for the model and the guardrails, which the deployment
+decides. A refusal of the model is in the `CamelIBMWatsonxAiRefusal` header.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:capital
+      steps:
+        - to:
+            uri: ibm-watsonx-ai:chat
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              baseUrl: "{{ibm.watsonx.base-url}}"
+              projectId: yourProjectId
+              modelId: ibm/granite-4-h-small
+              operation: chat
+              jsonSchema: >-
+                {"type": "object", "properties": {"country": {"type": "string"}, "capital": {"type": "string"}},
+                 "required": ["country", "capital"]}
+              moderationHap: true
+        - unmarshal:
+            json: {}
+        - log:
+            message: "The capital is ${body[capital]}"
+----
+
 === Streaming Chat with WebSocket
 
 Stream chat responses to WebSocket clients in real-time, similar to ChatGPT's streaming UI.

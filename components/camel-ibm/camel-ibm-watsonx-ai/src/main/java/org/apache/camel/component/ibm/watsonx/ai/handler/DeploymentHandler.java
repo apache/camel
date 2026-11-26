@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ibm.watsonx.ai.chat.ChatResponse;
+import com.ibm.watsonx.ai.chat.TextChatResponse;
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
+import com.ibm.watsonx.ai.chat.model.ChatParameters;
 import com.ibm.watsonx.ai.deployment.DeploymentChatRequest;
 import com.ibm.watsonx.ai.deployment.DeploymentResource;
 import com.ibm.watsonx.ai.deployment.DeploymentService;
@@ -169,6 +170,7 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
         return WatsonxAiOperationResponse.create(response.toText(), headers);
     }
 
+    @SuppressWarnings("unchecked")
     private WatsonxAiOperationResponse processDeploymentChat(Exchange exchange) {
         Message in = exchange.getIn();
         WatsonxAiConfiguration config = getConfiguration();
@@ -187,30 +189,24 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
         // Get messages from header or body
         List<ChatMessage> messages = getMessages(exchange);
 
-        // Build request - deployment chat API only supports 'messages' and optionally
-        // 'context', 'tools', 'tool_choice', 'tool_choice_option' - no parameters allowed
+        // The parameters of the deployment chat API (the deployment gives the model); a prompt template deployment
+        // may fix some of them
+        ChatParameters.Builder parameters = ChatParameters.builder();
+        applyChatParameters(parameters, exchange);
         DeploymentChatRequest request = DeploymentChatRequest.builder()
                 .deploymentId(deploymentId)
                 .messages(messages)
+                .tools(in.getHeader(WatsonxAiConstants.TOOLS, List.class))
+                .parameters(parameters.build())
+                .thinking(buildThinking(exchange))
                 .build();
 
         // Call the service
         DeploymentService service = endpoint.getDeploymentService();
-        ChatResponse response = service.chat(request);
+        TextChatResponse response = service.chat(request);
 
-        String content = response.toAssistantMessage().content();
-
-        // Build response headers
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(WatsonxAiConstants.GENERATED_TEXT, content);
-        if (response.usage() != null) {
-            headers.put(WatsonxAiConstants.INPUT_TOKEN_COUNT, response.usage().promptTokens());
-            headers.put(WatsonxAiConstants.OUTPUT_TOKEN_COUNT, response.usage().completionTokens());
-        }
-        if (response.finishReason() != null) {
-            headers.put(WatsonxAiConstants.STOP_REASON, response.finishReason().value());
-        }
-
+        Map<String, Object> headers = chatResponseHeaders(response, messages);
+        Object content = headers.get(WatsonxAiConstants.GENERATED_TEXT);
         return WatsonxAiOperationResponse.create(content, headers);
     }
 

@@ -19,14 +19,30 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import com.ibm.watsonx.ai.chat.ChatModeration;
+import com.ibm.watsonx.ai.chat.ChatResponse;
+import com.ibm.watsonx.ai.chat.TextChatResponse;
+import com.ibm.watsonx.ai.chat.model.AssistantMessage;
 import com.ibm.watsonx.ai.chat.model.BaseChatParameters.ToolChoiceOption;
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
+import com.ibm.watsonx.ai.chat.model.ExtractionTags;
 import com.ibm.watsonx.ai.chat.model.SystemMessage;
+import com.ibm.watsonx.ai.chat.model.Thinking;
+import com.ibm.watsonx.ai.chat.model.ThinkingEffort;
 import com.ibm.watsonx.ai.chat.model.UserMessage;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationParameters;
 import com.ibm.watsonx.ai.timeseries.ForecastData;
@@ -35,6 +51,7 @@ import com.ibm.watsonx.ai.timeseries.TimeSeriesParameters;
 import com.ibm.watsonx.ai.timeseries.TimeSeriesRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
@@ -51,6 +68,13 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
     static final String AWS_S3_KEY_HEADER = "CamelAwsS3Key";
     /** The blob name header set by camel-azure-storage-blob ({@code BlobConstants.BLOB_NAME}). */
     static final String AZURE_BLOB_NAME_HEADER = "CamelAzureStorageBlobBlobName";
+
+    /** The default timeout of the watsonx.ai SDK. */
+    static final long DEFAULT_TIMEOUT_MILLIS = 60_000;
+    /** How much longer than the time limit of the generation a stream may take. */
+    static final long STREAM_GRACE_MILLIS = 30_000;
+    /** The name of the JSON schema of the answer, which watsonx.ai requires. */
+    static final String JSON_SCHEMA_NAME = "response";
 
     protected final WatsonxAiEndpoint endpoint;
 
@@ -437,6 +461,199 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         }
 
         applyToolChoice(builder, in.getHeader(WatsonxAiConstants.TOOL_CHOICE, config.getToolChoice(), String.class));
+        applyResponseFormat(builder, in, config);
+
+        List<String> guidedChoice = toList(in.getHeader(WatsonxAiConstants.GUIDED_CHOICE), config.getGuidedChoice());
+        if (guidedChoice != null) {
+            builder.guidedChoice(new LinkedHashSet<>(guidedChoice));
+        }
+        if (config.getGuidedRegex() != null) {
+            builder.guidedRegex(config.getGuidedRegex());
+        }
+        if (config.getGuidedGrammar() != null) {
+            builder.guidedGrammar(config.getGuidedGrammar());
+        }
+        Integer seed = in.getHeader(WatsonxAiConstants.SEED, config.getSeed(), Integer.class);
+        if (seed != null) {
+            builder.seed(seed);
+        }
+        List<String> stop = toList(in.getHeader(WatsonxAiConstants.STOP), config.getStop());
+        if (stop != null) {
+            builder.stop(stop);
+        }
+        if (config.getNumberOfChoices() != null) {
+            builder.n(config.getNumberOfChoices());
+        }
+    }
+
+    private static void applyResponseFormat(ChatParameters.Builder builder, Message in, WatsonxAiConfiguration config) {
+        Object jsonSchema = in.getHeader(WatsonxAiConstants.JSON_SCHEMA);
+        if (jsonSchema == null) {
+            jsonSchema = config.getJsonSchema();
+        }
+        boolean strict = !Boolean.FALSE.equals(config.getJsonSchemaStrict());
+        if (jsonSchema instanceof Map<?, ?> map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> schema = (Map<String, Object>) map;
+            builder.responseAsJsonSchema(JSON_SCHEMA_NAME, schema, strict);
+            return;
+        } else if (jsonSchema != null && !jsonSchema.toString().isBlank()) {
+            builder.responseAsJsonSchema(JSON_SCHEMA_NAME, jsonSchema.toString(), strict);
+            return;
+        }
+        String format = in.getHeader(WatsonxAiConstants.RESPONSE_FORMAT, config.getResponseFormat(), String.class);
+        if (format == null || format.isBlank()) {
+            return;
+        }
+        switch (format.trim().toLowerCase(Locale.ROOT)) {
+            case "text" -> builder.responseAsText();
+            case "json", "json_object" -> builder.responseAsJson();
+            default -> throw new IllegalArgumentException(
+                    "The response format must be text or json (set jsonSchema for a JSON schema), but it is " + format);
+        }
+    }
+
+    /**
+     * A List, or the comma separated values of a String (of the header, or else of the option).
+     */
+    static List<String> toList(Object header, String option) {
+        Object value = header != null ? header : option;
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(String::valueOf).toList();
+        }
+        String text = value.toString();
+        if (text.isEmpty()) {
+            return null;
+        }
+        return Arrays.stream(text.split(",")).map(String::trim).filter(v -> !v.isEmpty()).toList();
+    }
+
+    /**
+     * The reasoning settings of chat: the thinking, includeReasoning, reasoningEffort and thinkingTags options.
+     *
+     * @return the settings, or {@code null} when none is set
+     */
+    protected Thinking buildThinking(Exchange exchange) {
+        WatsonxAiConfiguration config = getConfiguration();
+        String effort = exchange.getIn().getHeader(WatsonxAiConstants.REASONING_EFFORT, config.getReasoningEffort(),
+                String.class);
+        if (config.getThinking() == null && config.getIncludeReasoning() == null && effort == null
+                && config.getThinkingTags() == null) {
+            return null;
+        }
+        Thinking.Builder thinking = Thinking.builder();
+        if (config.getThinking() != null) {
+            thinking.enabled(config.getThinking());
+        }
+        if (config.getIncludeReasoning() != null) {
+            thinking.includeReasoning(config.getIncludeReasoning());
+        }
+        if (effort != null) {
+            thinking.thinkingEffort(ThinkingEffort.valueOf(effort.trim().toUpperCase(Locale.ROOT)));
+        }
+        List<String> tags = toList(null, config.getThinkingTags());
+        if (tags != null && !tags.isEmpty()) {
+            ExtractionTags.Think think = new ExtractionTags.Think("<" + tags.get(0) + ">", "</" + tags.get(0) + ">");
+            thinking.extractionTags(tags.size() > 1
+                    ? ExtractionTags.of(think, new ExtractionTags.Response("<" + tags.get(1) + ">", "</" + tags.get(1) + ">"))
+                    : ExtractionTags.of(think));
+        }
+        return thinking.build();
+    }
+
+    /**
+     * The guardrails of chat: the moderationHap, moderationPii and moderationGraniteGuardian options, on the input and
+     * (but for Granite Guardian, which watsonx.ai applies to the input only) on the answer.
+     *
+     * @return the guardrails, or {@code null} when none is enabled
+     */
+    protected ChatModeration buildModerations() {
+        WatsonxAiConfiguration config = getConfiguration();
+        boolean hap = Boolean.TRUE.equals(config.getModerationHap());
+        boolean pii = Boolean.TRUE.equals(config.getModerationPii());
+        boolean graniteGuardian = Boolean.TRUE.equals(config.getModerationGraniteGuardian());
+        if (!hap && !pii && !graniteGuardian) {
+            return null;
+        }
+        float threshold = config.getModerationThreshold() != null ? config.getModerationThreshold() : 0.5f;
+        ChatModeration.Builder moderations = ChatModeration.builder();
+        if (hap) {
+            moderations.hap(h -> h.input(threshold).output(threshold));
+        }
+        if (pii) {
+            moderations.pii(p -> p.input(true).output(true));
+        }
+        if (graniteGuardian) {
+            moderations.graniteGuardian(g -> g.input(threshold));
+        }
+        return moderations.build();
+    }
+
+    /**
+     * The headers of the answer of chat, chatStreaming and deploymentChat. The generated text is the content of the
+     * first answer. When the model calls tools, the messages that were sent are kept in the messages header, for
+     * processToolCalls. A header without value is removed, so that no value of an earlier answer remains.
+     */
+    protected Map<String, Object> chatResponseHeaders(ChatResponse response, List<ChatMessage> messages) {
+        Map<String, Object> headers = new HashMap<>();
+        if (response.usage() != null) {
+            headers.put(WatsonxAiConstants.INPUT_TOKEN_COUNT, response.usage().promptTokens());
+            headers.put(WatsonxAiConstants.OUTPUT_TOKEN_COUNT, response.usage().completionTokens());
+        }
+        if (response.finishReason() != null) {
+            headers.put(WatsonxAiConstants.STOP_REASON, response.finishReason().value());
+        }
+        headers.put(WatsonxAiConstants.MODERATION_RESULTS,
+                response instanceof TextChatResponse text && text.moderations() != null && !text.moderations().isEmpty()
+                        ? text.moderations() : null);
+
+        List<AssistantMessage> answers = response.toAssistantMessages();
+        AssistantMessage answer = answers.get(0);
+        headers.put(WatsonxAiConstants.GENERATED_TEXT, answer.content());
+        headers.put(WatsonxAiConstants.ASSISTANT_MESSAGE, answer);
+        headers.put(WatsonxAiConstants.ASSISTANT_MESSAGES, answers.size() > 1 ? answers : null);
+        headers.put(WatsonxAiConstants.REASONING_CONTENT, answer.thinking());
+        headers.put(WatsonxAiConstants.REFUSAL, answer.refusal());
+        headers.put(WatsonxAiConstants.HAS_TOOL_CALLS, answer.hasToolCalls());
+        if (answer.hasToolCalls()) {
+            headers.put(WatsonxAiConstants.TOOL_CALLS, answer.toolCalls());
+            // the conversation goes on from these messages, which processToolCalls extends with the tool calls and
+            // their results, whether they came from the body, the system and user message headers or this header
+            headers.put(WatsonxAiConstants.MESSAGES, new ArrayList<>(messages));
+        } else {
+            // no tool calls of a previous answer must be left on the message
+            headers.put(WatsonxAiConstants.TOOL_CALLS, null);
+        }
+        return headers;
+    }
+
+    /**
+     * Waits for the end of a stream, at most the timeout of the endpoint (60 seconds by default, which is also the time
+     * limit of the generation) and 30 seconds more, and stops the stream when the wait ends otherwise.
+     */
+    protected <T> T awaitStream(CompletableFuture<T> future) throws Exception {
+        Long timeout = getConfiguration().getTimeout();
+        long wait = (timeout != null ? timeout : DEFAULT_TIMEOUT_MILLIS) + STREAM_GRACE_MILLIS;
+        try {
+            return future.get(wait, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new RuntimeCamelException("The stream of watsonx.ai did not end within " + wait + " ms", e);
+        } catch (InterruptedException e) {
+            future.cancel(true);
+            Thread.currentThread().interrupt();
+            throw e;
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause() instanceof CompletionException && e.getCause().getCause() != null
+                    ? e.getCause().getCause() : e.getCause();
+            if (cause instanceof Exception exception) {
+                throw exception;
+            }
+            throw new RuntimeCamelException(cause);
+        }
     }
 
     /**

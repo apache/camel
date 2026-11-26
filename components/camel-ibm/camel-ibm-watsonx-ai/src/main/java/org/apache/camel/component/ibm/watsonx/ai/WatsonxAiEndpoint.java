@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai;
 
+import java.util.function.Consumer;
+
 import com.ibm.watsonx.ai.chat.ChatService;
 import com.ibm.watsonx.ai.core.auth.Authenticator;
 import com.ibm.watsonx.ai.deployment.DeploymentService;
@@ -30,9 +32,9 @@ import com.ibm.watsonx.ai.timeseries.TimeSeriesService;
 import com.ibm.watsonx.ai.tokenization.TokenizationService;
 import com.ibm.watsonx.ai.tool.ToolService;
 import org.apache.camel.Category;
-import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.ibm.watsonx.ai.service.OAuthProfileAuthenticator;
 import org.apache.camel.component.ibm.watsonx.ai.service.WatsonxAiServiceFactory;
 import org.apache.camel.spi.BodyType;
@@ -176,6 +178,8 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
 
     // Shared by the services of this endpoint, so that they share one access token
     private Authenticator authenticator;
+    // Sends the chunks of the streaming operations to the streamEndpoint
+    private ProducerTemplate streamTemplate;
 
     // Lazy-initialized service clients
     private TextGenerationService textGenerationService;
@@ -202,7 +206,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public org.apache.camel.Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported for IBM watsonx.ai");
     }
 
@@ -221,6 +225,10 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     protected synchronized void doStop() throws Exception {
         super.doStop();
         authenticator = null;
+        if (streamTemplate != null) {
+            streamTemplate.stop();
+            streamTemplate = null;
+        }
         textGenerationService = null;
         chatService = null;
         embeddingService = null;
@@ -370,6 +378,22 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
             toolService = WatsonxAiServiceFactory.createToolService(configuration, authenticator);
         }
         return toolService;
+    }
+
+    /**
+     * The consumer of the chunks of the streaming operations that sends each chunk as the body of a message to the
+     * streamEndpoint, or {@code null} when the option is not set.
+     */
+    public synchronized Consumer<String> getStreamEndpointConsumer() {
+        String uri = configuration.getStreamEndpoint();
+        if (uri == null || uri.isBlank()) {
+            return null;
+        }
+        if (streamTemplate == null) {
+            streamTemplate = getCamelContext().createProducerTemplate();
+        }
+        ProducerTemplate template = streamTemplate;
+        return chunk -> template.sendBody(uri, chunk);
     }
 
     /**

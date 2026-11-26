@@ -18,7 +18,6 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import com.ibm.watsonx.ai.textgeneration.TextGenerationParameters;
@@ -26,6 +25,7 @@ import com.ibm.watsonx.ai.textgeneration.TextGenerationResponse;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations;
@@ -96,12 +96,16 @@ public class TextGenerationHandler extends AbstractWatsonxAiHandler {
         String input = getInput(exchange);
 
         // Get the stream consumer from header
-        Consumer<String> streamConsumer = in.getHeader(WatsonxAiConstants.STREAM_CONSUMER, Consumer.class);
-        if (streamConsumer == null) {
+        Consumer<String> consumer = in.getHeader(WatsonxAiConstants.STREAM_CONSUMER, Consumer.class);
+        if (consumer == null) {
+            consumer = endpoint.getStreamEndpointConsumer();
+        }
+        if (consumer == null) {
             throw new IllegalArgumentException(
                     "Stream consumer must be provided via header '" + WatsonxAiConstants.STREAM_CONSUMER
-                                               + "' for streaming operations");
+                                               + "' or the streamEndpoint option for streaming operations");
         }
+        Consumer<String> streamConsumer = consumer;
 
         // Build parameters from configuration and headers
         TextGenerationParameters.Builder paramsBuilder = TextGenerationParameters.builder();
@@ -131,18 +135,21 @@ public class TextGenerationHandler extends AbstractWatsonxAiHandler {
                     @Override
                     public void onError(Throwable error) {
                         errorHolder[0] = error;
-                        LOG.error("Error during streaming text generation", error);
+                        LOG.debug("Error during streaming text generation", error);
+                    }
+
+                    @Override
+                    public boolean failOnFirstError() {
+                        return true;
                     }
                 };
 
-        CompletableFuture<Void> future = service.generateStreaming(input, paramsBuilder.build(), handler);
-
-        // Wait for completion
-        future.get();
+        // Wait for completion, at most the time limit, and stop the stream otherwise
+        awaitStream(service.generateStreaming(input, paramsBuilder.build(), handler));
 
         // Check for errors
         if (errorHolder[0] != null) {
-            throw new RuntimeException("Error during streaming text generation", errorHolder[0]);
+            throw new RuntimeCamelException("Error during streaming text generation", errorHolder[0]);
         }
 
         // Build response headers

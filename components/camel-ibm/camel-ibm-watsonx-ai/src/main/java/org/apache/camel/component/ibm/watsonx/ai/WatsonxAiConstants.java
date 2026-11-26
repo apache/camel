@@ -41,7 +41,9 @@ public interface WatsonxAiConstants {
     String GENERATED_TEXT = HEADER_PREFIX + "GeneratedText";
 
     // Model/Deployment
-    @Metadata(label = "producer", description = "The model ID used for the request, reported on the response",
+    @Metadata(label = "producer",
+              description = "The model of chat and chatStreaming for this request, overriding the modelId option; forecast"
+                            + " and deploymentForecast report on the response the model that answered",
               javaType = "String")
     String MODEL_ID = HEADER_PREFIX + "ModelId";
 
@@ -99,6 +101,51 @@ public interface WatsonxAiConstants {
                             + " or the name of the tool the model must call",
               javaType = "String")
     String TOOL_CHOICE = HEADER_PREFIX + "ToolChoice";
+
+    // Chat output, reasoning and guardrails
+    @Metadata(description = "The format of the chat answer, overriding the responseFormat option: text or json",
+              javaType = "String")
+    String RESPONSE_FORMAT = HEADER_PREFIX + "ResponseFormat";
+
+    @Metadata(description = "The JSON schema the chat answer follows, overriding the jsonSchema option: JSON text or a Map",
+              javaType = "String")
+    String JSON_SCHEMA = HEADER_PREFIX + "JsonSchema";
+
+    @Metadata(description = "Guided decoding of chat, overriding the guidedChoice option: the choices of the answer, as a"
+                            + " List or comma separated",
+              javaType = "java.util.List<String>")
+    String GUIDED_CHOICE = HEADER_PREFIX + "GuidedChoice";
+
+    @Metadata(description = "The random seed of chat sampling, overriding the seed option", javaType = "Integer")
+    String SEED = HEADER_PREFIX + "Seed";
+
+    @Metadata(description = "The stop sequences of chat, overriding the stop option: a List, or comma separated",
+              javaType = "java.util.List<String>")
+    String STOP = HEADER_PREFIX + "Stop";
+
+    @Metadata(description = "How much the model of chat reasons, overriding the reasoningEffort option: low, medium or"
+                            + " high",
+              javaType = "String")
+    String REASONING_EFFORT = HEADER_PREFIX + "ReasoningEffort";
+
+    @Metadata(label = "producer", description = "The reasoning of the model that preceded the chat answer, when it gives one",
+              javaType = "String")
+    String REASONING_CONTENT = HEADER_PREFIX + "ReasoningContent";
+
+    @Metadata(label = "producer", description = "The refusal of the model to answer, when it refuses", javaType = "String")
+    String REFUSAL = HEADER_PREFIX + "Refusal";
+
+    @Metadata(label = "producer",
+              description = "All the answers of chat when it generates more than one (numberOfChoices), the body being the"
+                            + " first",
+              javaType = "java.util.List<com.ibm.watsonx.ai.chat.model.AssistantMessage>")
+    String ASSISTANT_MESSAGES = HEADER_PREFIX + "AssistantMessages";
+
+    @Metadata(label = "producer",
+              description = "The findings of the chat guardrails (moderationHap, moderationPii, moderationGraniteGuardian),"
+                            + " by detector",
+              javaType = "java.util.Map")
+    String MODERATION_RESULTS = HEADER_PREFIX + "ModerationResults";
 
     // Embeddings
     @Metadata(description = "The embedding vectors result", javaType = "java.util.List")

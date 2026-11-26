@@ -55,6 +55,18 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "documentConnectionId": getOrCreateConfiguration(target).setDocumentConnectionId(property(camelContext, java.lang.String.class, value)); return true;
         case "frequencypenalty":
         case "frequencyPenalty": getOrCreateConfiguration(target).setFrequencyPenalty(property(camelContext, java.lang.Double.class, value)); return true;
+        case "guidedchoice":
+        case "guidedChoice": getOrCreateConfiguration(target).setGuidedChoice(property(camelContext, java.lang.String.class, value)); return true;
+        case "guidedgrammar":
+        case "guidedGrammar": getOrCreateConfiguration(target).setGuidedGrammar(property(camelContext, java.lang.String.class, value)); return true;
+        case "guidedregex":
+        case "guidedRegex": getOrCreateConfiguration(target).setGuidedRegex(property(camelContext, java.lang.String.class, value)); return true;
+        case "includereasoning":
+        case "includeReasoning": getOrCreateConfiguration(target).setIncludeReasoning(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "jsonschema":
+        case "jsonSchema": getOrCreateConfiguration(target).setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": getOrCreateConfiguration(target).setJsonSchemaStrict(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "logrequests":
@@ -67,6 +79,16 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "maxNewTokens": getOrCreateConfiguration(target).setMaxNewTokens(property(camelContext, java.lang.Integer.class, value)); return true;
         case "modelid":
         case "modelId": getOrCreateConfiguration(target).setModelId(property(camelContext, java.lang.String.class, value)); return true;
+        case "moderationgraniteguardian":
+        case "moderationGraniteGuardian": getOrCreateConfiguration(target).setModerationGraniteGuardian(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "moderationhap":
+        case "moderationHap": getOrCreateConfiguration(target).setModerationHap(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "moderationpii":
+        case "moderationPii": getOrCreateConfiguration(target).setModerationPii(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "moderationthreshold":
+        case "moderationThreshold": getOrCreateConfiguration(target).setModerationThreshold(property(camelContext, java.lang.Float.class, value)); return true;
+        case "numberofchoices":
+        case "numberOfChoices": getOrCreateConfiguration(target).setNumberOfChoices(property(camelContext, java.lang.Integer.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": getOrCreateConfiguration(target).setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class, value)); return true;
@@ -76,19 +98,30 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "presencePenalty": getOrCreateConfiguration(target).setPresencePenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "projectid":
         case "projectId": getOrCreateConfiguration(target).setProjectId(property(camelContext, java.lang.String.class, value)); return true;
+        case "reasoningeffort":
+        case "reasoningEffort": getOrCreateConfiguration(target).setReasoningEffort(property(camelContext, java.lang.String.class, value)); return true;
         case "repetitionpenalty":
         case "repetitionPenalty": getOrCreateConfiguration(target).setRepetitionPenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "reranktopn":
         case "rerankTopN": getOrCreateConfiguration(target).setRerankTopN(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "responseformat":
+        case "responseFormat": getOrCreateConfiguration(target).setResponseFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "resultbucket":
         case "resultBucket": getOrCreateConfiguration(target).setResultBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "resultconnectionid":
         case "resultConnectionId": getOrCreateConfiguration(target).setResultConnectionId(property(camelContext, java.lang.String.class, value)); return true;
         case "returndocuments":
         case "returnDocuments": getOrCreateConfiguration(target).setReturnDocuments(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "seed": getOrCreateConfiguration(target).setSeed(property(camelContext, java.lang.Integer.class, value)); return true;
         case "spaceid":
         case "spaceId": getOrCreateConfiguration(target).setSpaceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "stop": getOrCreateConfiguration(target).setStop(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamendpoint":
+        case "streamEndpoint": getOrCreateConfiguration(target).setStreamEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": getOrCreateConfiguration(target).setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "thinking": getOrCreateConfiguration(target).setThinking(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "thinkingtags":
+        case "thinkingTags": getOrCreateConfiguration(target).setThinkingTags(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "toolchoice":
         case "toolChoice": getOrCreateConfiguration(target).setToolChoice(property(camelContext, java.lang.String.class, value)); return true;
@@ -133,6 +166,18 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "documentConnectionId": return java.lang.String.class;
         case "frequencypenalty":
         case "frequencyPenalty": return java.lang.Double.class;
+        case "guidedchoice":
+        case "guidedChoice": return java.lang.String.class;
+        case "guidedgrammar":
+        case "guidedGrammar": return java.lang.String.class;
+        case "guidedregex":
+        case "guidedRegex": return java.lang.String.class;
+        case "includereasoning":
+        case "includeReasoning": return java.lang.Boolean.class;
+        case "jsonschema":
+        case "jsonSchema": return java.lang.String.class;
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": return java.lang.Boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "logrequests":
@@ -145,6 +190,16 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "maxNewTokens": return java.lang.Integer.class;
         case "modelid":
         case "modelId": return java.lang.String.class;
+        case "moderationgraniteguardian":
+        case "moderationGraniteGuardian": return java.lang.Boolean.class;
+        case "moderationhap":
+        case "moderationHap": return java.lang.Boolean.class;
+        case "moderationpii":
+        case "moderationPii": return java.lang.Boolean.class;
+        case "moderationthreshold":
+        case "moderationThreshold": return java.lang.Float.class;
+        case "numberofchoices":
+        case "numberOfChoices": return java.lang.Integer.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
         case "operation": return org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class;
@@ -154,19 +209,30 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "presencePenalty": return java.lang.Double.class;
         case "projectid":
         case "projectId": return java.lang.String.class;
+        case "reasoningeffort":
+        case "reasoningEffort": return java.lang.String.class;
         case "repetitionpenalty":
         case "repetitionPenalty": return java.lang.Double.class;
         case "reranktopn":
         case "rerankTopN": return java.lang.Integer.class;
+        case "responseformat":
+        case "responseFormat": return java.lang.String.class;
         case "resultbucket":
         case "resultBucket": return java.lang.String.class;
         case "resultconnectionid":
         case "resultConnectionId": return java.lang.String.class;
         case "returndocuments":
         case "returnDocuments": return java.lang.Boolean.class;
+        case "seed": return java.lang.Integer.class;
         case "spaceid":
         case "spaceId": return java.lang.String.class;
+        case "stop": return java.lang.String.class;
+        case "streamendpoint":
+        case "streamEndpoint": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
+        case "thinking": return java.lang.Boolean.class;
+        case "thinkingtags":
+        case "thinkingTags": return java.lang.String.class;
         case "timeout": return java.lang.Long.class;
         case "toolchoice":
         case "toolChoice": return java.lang.String.class;
@@ -212,6 +278,18 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "documentConnectionId": return getOrCreateConfiguration(target).getDocumentConnectionId();
         case "frequencypenalty":
         case "frequencyPenalty": return getOrCreateConfiguration(target).getFrequencyPenalty();
+        case "guidedchoice":
+        case "guidedChoice": return getOrCreateConfiguration(target).getGuidedChoice();
+        case "guidedgrammar":
+        case "guidedGrammar": return getOrCreateConfiguration(target).getGuidedGrammar();
+        case "guidedregex":
+        case "guidedRegex": return getOrCreateConfiguration(target).getGuidedRegex();
+        case "includereasoning":
+        case "includeReasoning": return getOrCreateConfiguration(target).getIncludeReasoning();
+        case "jsonschema":
+        case "jsonSchema": return getOrCreateConfiguration(target).getJsonSchema();
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": return getOrCreateConfiguration(target).getJsonSchemaStrict();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "logrequests":
@@ -224,6 +302,16 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "maxNewTokens": return getOrCreateConfiguration(target).getMaxNewTokens();
         case "modelid":
         case "modelId": return getOrCreateConfiguration(target).getModelId();
+        case "moderationgraniteguardian":
+        case "moderationGraniteGuardian": return getOrCreateConfiguration(target).getModerationGraniteGuardian();
+        case "moderationhap":
+        case "moderationHap": return getOrCreateConfiguration(target).getModerationHap();
+        case "moderationpii":
+        case "moderationPii": return getOrCreateConfiguration(target).getModerationPii();
+        case "moderationthreshold":
+        case "moderationThreshold": return getOrCreateConfiguration(target).getModerationThreshold();
+        case "numberofchoices":
+        case "numberOfChoices": return getOrCreateConfiguration(target).getNumberOfChoices();
         case "oauthprofile":
         case "oauthProfile": return getOrCreateConfiguration(target).getOauthProfile();
         case "operation": return getOrCreateConfiguration(target).getOperation();
@@ -233,19 +321,30 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "presencePenalty": return getOrCreateConfiguration(target).getPresencePenalty();
         case "projectid":
         case "projectId": return getOrCreateConfiguration(target).getProjectId();
+        case "reasoningeffort":
+        case "reasoningEffort": return getOrCreateConfiguration(target).getReasoningEffort();
         case "repetitionpenalty":
         case "repetitionPenalty": return getOrCreateConfiguration(target).getRepetitionPenalty();
         case "reranktopn":
         case "rerankTopN": return getOrCreateConfiguration(target).getRerankTopN();
+        case "responseformat":
+        case "responseFormat": return getOrCreateConfiguration(target).getResponseFormat();
         case "resultbucket":
         case "resultBucket": return getOrCreateConfiguration(target).getResultBucket();
         case "resultconnectionid":
         case "resultConnectionId": return getOrCreateConfiguration(target).getResultConnectionId();
         case "returndocuments":
         case "returnDocuments": return getOrCreateConfiguration(target).getReturnDocuments();
+        case "seed": return getOrCreateConfiguration(target).getSeed();
         case "spaceid":
         case "spaceId": return getOrCreateConfiguration(target).getSpaceId();
+        case "stop": return getOrCreateConfiguration(target).getStop();
+        case "streamendpoint":
+        case "streamEndpoint": return getOrCreateConfiguration(target).getStreamEndpoint();
         case "temperature": return getOrCreateConfiguration(target).getTemperature();
+        case "thinking": return getOrCreateConfiguration(target).getThinking();
+        case "thinkingtags":
+        case "thinkingTags": return getOrCreateConfiguration(target).getThinkingTags();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();
         case "toolchoice":
         case "toolChoice": return getOrCreateConfiguration(target).getToolChoice();

@@ -914,6 +914,21 @@ still gets it, through the binding.
 
 The SDK sends the API version `2026-10-28` with every request instead of `2026-08-19`.
 
+=== camel-ibm-watsonx-ai - chat options, deploymentChat parameters and streaming
+
+`deploymentChat` now sends the chat options of the endpoint and headers (such as `temperature`, `maxCompletionTokens`
+and `topP`) and the tools of the `CamelIBMWatsonxAiTools` header, which it ignored before; a prompt template deployment
+may fix some of them. `chat` and `chatStreaming` read the `CamelIBMWatsonxAiModelId` header as the model of the request,
+in the place of the `modelId` option, so remove this header (which `forecast` sets on its response) before a chat that
+must use the model of its endpoint.
+
+`chatStreaming` now sends the tools of the `CamelIBMWatsonxAiTools` header and gives the same headers as `chat`, such as
+`CamelIBMWatsonxAiToolCalls`. `chatStreaming` and `textGenerationStreaming` fail on the first error that the stream
+reports, with the exception of the watsonx.ai SDK rather than a `RuntimeException` or an `ExecutionException` wrapping
+it, and log the error at DEBUG instead of ERROR. They wait for the end of the stream at most the `timeout` of the
+endpoint (60 seconds by default) and 30 seconds more, and stop the stream when it takes longer, where they used to wait
+without limit.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the

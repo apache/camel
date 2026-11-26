@@ -45,6 +45,18 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "documentConnectionId": target.getConfiguration().setDocumentConnectionId(property(camelContext, java.lang.String.class, value)); return true;
         case "frequencypenalty":
         case "frequencyPenalty": target.getConfiguration().setFrequencyPenalty(property(camelContext, java.lang.Double.class, value)); return true;
+        case "guidedchoice":
+        case "guidedChoice": target.getConfiguration().setGuidedChoice(property(camelContext, java.lang.String.class, value)); return true;
+        case "guidedgrammar":
+        case "guidedGrammar": target.getConfiguration().setGuidedGrammar(property(camelContext, java.lang.String.class, value)); return true;
+        case "guidedregex":
+        case "guidedRegex": target.getConfiguration().setGuidedRegex(property(camelContext, java.lang.String.class, value)); return true;
+        case "includereasoning":
+        case "includeReasoning": target.getConfiguration().setIncludeReasoning(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "jsonschema":
+        case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": target.getConfiguration().setJsonSchemaStrict(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "logrequests":
@@ -57,6 +69,16 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "maxNewTokens": target.getConfiguration().setMaxNewTokens(property(camelContext, java.lang.Integer.class, value)); return true;
         case "modelid":
         case "modelId": target.getConfiguration().setModelId(property(camelContext, java.lang.String.class, value)); return true;
+        case "moderationgraniteguardian":
+        case "moderationGraniteGuardian": target.getConfiguration().setModerationGraniteGuardian(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "moderationhap":
+        case "moderationHap": target.getConfiguration().setModerationHap(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "moderationpii":
+        case "moderationPii": target.getConfiguration().setModerationPii(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "moderationthreshold":
+        case "moderationThreshold": target.getConfiguration().setModerationThreshold(property(camelContext, java.lang.Float.class, value)); return true;
+        case "numberofchoices":
+        case "numberOfChoices": target.getConfiguration().setNumberOfChoices(property(camelContext, java.lang.Integer.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class, value)); return true;
@@ -66,19 +88,30 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "presencePenalty": target.getConfiguration().setPresencePenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "projectid":
         case "projectId": target.getConfiguration().setProjectId(property(camelContext, java.lang.String.class, value)); return true;
+        case "reasoningeffort":
+        case "reasoningEffort": target.getConfiguration().setReasoningEffort(property(camelContext, java.lang.String.class, value)); return true;
         case "repetitionpenalty":
         case "repetitionPenalty": target.getConfiguration().setRepetitionPenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "reranktopn":
         case "rerankTopN": target.getConfiguration().setRerankTopN(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "responseformat":
+        case "responseFormat": target.getConfiguration().setResponseFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "resultbucket":
         case "resultBucket": target.getConfiguration().setResultBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "resultconnectionid":
         case "resultConnectionId": target.getConfiguration().setResultConnectionId(property(camelContext, java.lang.String.class, value)); return true;
         case "returndocuments":
         case "returnDocuments": target.getConfiguration().setReturnDocuments(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "seed": target.getConfiguration().setSeed(property(camelContext, java.lang.Integer.class, value)); return true;
         case "spaceid":
         case "spaceId": target.getConfiguration().setSpaceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "stop": target.getConfiguration().setStop(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamendpoint":
+        case "streamEndpoint": target.getConfiguration().setStreamEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "thinking": target.getConfiguration().setThinking(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "thinkingtags":
+        case "thinkingTags": target.getConfiguration().setThinkingTags(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "toolchoice":
         case "toolChoice": target.getConfiguration().setToolChoice(property(camelContext, java.lang.String.class, value)); return true;
@@ -120,6 +153,18 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "documentConnectionId": return java.lang.String.class;
         case "frequencypenalty":
         case "frequencyPenalty": return java.lang.Double.class;
+        case "guidedchoice":
+        case "guidedChoice": return java.lang.String.class;
+        case "guidedgrammar":
+        case "guidedGrammar": return java.lang.String.class;
+        case "guidedregex":
+        case "guidedRegex": return java.lang.String.class;
+        case "includereasoning":
+        case "includeReasoning": return java.lang.Boolean.class;
+        case "jsonschema":
+        case "jsonSchema": return java.lang.String.class;
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": return java.lang.Boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "logrequests":
@@ -132,6 +177,16 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "maxNewTokens": return java.lang.Integer.class;
         case "modelid":
         case "modelId": return java.lang.String.class;
+        case "moderationgraniteguardian":
+        case "moderationGraniteGuardian": return java.lang.Boolean.class;
+        case "moderationhap":
+        case "moderationHap": return java.lang.Boolean.class;
+        case "moderationpii":
+        case "moderationPii": return java.lang.Boolean.class;
+        case "moderationthreshold":
+        case "moderationThreshold": return java.lang.Float.class;
+        case "numberofchoices":
+        case "numberOfChoices": return java.lang.Integer.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
         case "operation": return org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class;
@@ -141,19 +196,30 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "presencePenalty": return java.lang.Double.class;
         case "projectid":
         case "projectId": return java.lang.String.class;
+        case "reasoningeffort":
+        case "reasoningEffort": return java.lang.String.class;
         case "repetitionpenalty":
         case "repetitionPenalty": return java.lang.Double.class;
         case "reranktopn":
         case "rerankTopN": return java.lang.Integer.class;
+        case "responseformat":
+        case "responseFormat": return java.lang.String.class;
         case "resultbucket":
         case "resultBucket": return java.lang.String.class;
         case "resultconnectionid":
         case "resultConnectionId": return java.lang.String.class;
         case "returndocuments":
         case "returnDocuments": return java.lang.Boolean.class;
+        case "seed": return java.lang.Integer.class;
         case "spaceid":
         case "spaceId": return java.lang.String.class;
+        case "stop": return java.lang.String.class;
+        case "streamendpoint":
+        case "streamEndpoint": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
+        case "thinking": return java.lang.Boolean.class;
+        case "thinkingtags":
+        case "thinkingTags": return java.lang.String.class;
         case "timeout": return java.lang.Long.class;
         case "toolchoice":
         case "toolChoice": return java.lang.String.class;
@@ -196,6 +262,18 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "documentConnectionId": return target.getConfiguration().getDocumentConnectionId();
         case "frequencypenalty":
         case "frequencyPenalty": return target.getConfiguration().getFrequencyPenalty();
+        case "guidedchoice":
+        case "guidedChoice": return target.getConfiguration().getGuidedChoice();
+        case "guidedgrammar":
+        case "guidedGrammar": return target.getConfiguration().getGuidedGrammar();
+        case "guidedregex":
+        case "guidedRegex": return target.getConfiguration().getGuidedRegex();
+        case "includereasoning":
+        case "includeReasoning": return target.getConfiguration().getIncludeReasoning();
+        case "jsonschema":
+        case "jsonSchema": return target.getConfiguration().getJsonSchema();
+        case "jsonschemastrict":
+        case "jsonSchemaStrict": return target.getConfiguration().getJsonSchemaStrict();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "logrequests":
@@ -208,6 +286,16 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "maxNewTokens": return target.getConfiguration().getMaxNewTokens();
         case "modelid":
         case "modelId": return target.getConfiguration().getModelId();
+        case "moderationgraniteguardian":
+        case "moderationGraniteGuardian": return target.getConfiguration().getModerationGraniteGuardian();
+        case "moderationhap":
+        case "moderationHap": return target.getConfiguration().getModerationHap();
+        case "moderationpii":
+        case "moderationPii": return target.getConfiguration().getModerationPii();
+        case "moderationthreshold":
+        case "moderationThreshold": return target.getConfiguration().getModerationThreshold();
+        case "numberofchoices":
+        case "numberOfChoices": return target.getConfiguration().getNumberOfChoices();
         case "oauthprofile":
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "operation": return target.getConfiguration().getOperation();
@@ -217,19 +305,30 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "presencePenalty": return target.getConfiguration().getPresencePenalty();
         case "projectid":
         case "projectId": return target.getConfiguration().getProjectId();
+        case "reasoningeffort":
+        case "reasoningEffort": return target.getConfiguration().getReasoningEffort();
         case "repetitionpenalty":
         case "repetitionPenalty": return target.getConfiguration().getRepetitionPenalty();
         case "reranktopn":
         case "rerankTopN": return target.getConfiguration().getRerankTopN();
+        case "responseformat":
+        case "responseFormat": return target.getConfiguration().getResponseFormat();
         case "resultbucket":
         case "resultBucket": return target.getConfiguration().getResultBucket();
         case "resultconnectionid":
         case "resultConnectionId": return target.getConfiguration().getResultConnectionId();
         case "returndocuments":
         case "returnDocuments": return target.getConfiguration().getReturnDocuments();
+        case "seed": return target.getConfiguration().getSeed();
         case "spaceid":
         case "spaceId": return target.getConfiguration().getSpaceId();
+        case "stop": return target.getConfiguration().getStop();
+        case "streamendpoint":
+        case "streamEndpoint": return target.getConfiguration().getStreamEndpoint();
         case "temperature": return target.getConfiguration().getTemperature();
+        case "thinking": return target.getConfiguration().getThinking();
+        case "thinkingtags":
+        case "thinkingTags": return target.getConfiguration().getThinkingTags();
         case "timeout": return target.getConfiguration().getTimeout();
         case "toolchoice":
         case "toolChoice": return target.getConfiguration().getToolChoice();

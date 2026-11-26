@@ -171,7 +171,8 @@ The IBM watsonx.ai component provides the following operations:
 ==== Chat
 
 * `chat` - Chat with conversation history supporting system, user, and assistant messages
-* `chatStreaming` - Chat with streaming responses via callback consumer
+* `chatStreaming` - Chat with streaming responses via callback consumer (the `CamelIBMWatsonxAiStreamConsumer` header)
+or the `streamEndpoint` option
 
 The messages come from the `CamelIBMWatsonxAiMessages` header when it is set. Otherwise the message body gives them:
 a `List` is the conversation, in which each element is a `ChatMessage` or a `String` (a user message), and any other

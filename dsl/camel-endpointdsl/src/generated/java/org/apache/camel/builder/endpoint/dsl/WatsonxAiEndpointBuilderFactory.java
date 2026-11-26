@@ -276,6 +276,127 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * Guided decoding of chat: the answer is one of these comma separated
+         * choices.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param guidedChoice the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder guidedChoice(String guidedChoice) {
+            doSetProperty("guidedChoice", guidedChoice);
+            return this;
+        }
+        /**
+         * Guided decoding of chat: the answer follows this context free grammar
+         * (EBNF).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param guidedGrammar the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder guidedGrammar(String guidedGrammar) {
+            doSetProperty("guidedGrammar", guidedGrammar);
+            return this;
+        }
+        /**
+         * Guided decoding of chat: the answer matches this regular expression.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param guidedRegex the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder guidedRegex(String guidedRegex) {
+            doSetProperty("guidedRegex", guidedRegex);
+            return this;
+        }
+        /**
+         * Whether watsonx.ai returns the reasoning of the model, in the
+         * CamelIBMWatsonxAiReasoningContent header.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param includeReasoning the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder includeReasoning(Boolean includeReasoning) {
+            doSetProperty("includeReasoning", includeReasoning);
+            return this;
+        }
+        /**
+         * Whether watsonx.ai returns the reasoning of the model, in the
+         * CamelIBMWatsonxAiReasoningContent header.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param includeReasoning the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder includeReasoning(String includeReasoning) {
+            doSetProperty("includeReasoning", includeReasoning);
+            return this;
+        }
+        /**
+         * A JSON schema (as JSON text) that the chat answer follows (the
+         * json_schema response format).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param jsonSchema the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder jsonSchema(String jsonSchema) {
+            doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Whether the chat answer must follow the jsonSchema strictly.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder jsonSchemaStrict(Boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
+         * Whether the chat answer must follow the jsonSchema strictly.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder jsonSchemaStrict(String jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+        /**
          * Maximum completion tokens for chat.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -345,6 +466,164 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default WatsonxAiEndpointBuilder modelId(String modelId) {
             doSetProperty("modelId", modelId);
+            return this;
+        }
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input and the answer
+         * with Granite Guardian.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationGraniteGuardian the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder moderationGraniteGuardian(Boolean moderationGraniteGuardian) {
+            doSetProperty("moderationGraniteGuardian", moderationGraniteGuardian);
+            return this;
+        }
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input and the answer
+         * with Granite Guardian.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationGraniteGuardian the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder moderationGraniteGuardian(String moderationGraniteGuardian) {
+            doSetProperty("moderationGraniteGuardian", moderationGraniteGuardian);
+            return this;
+        }
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input and the answer
+         * for hate, abuse and profanity (HAP).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationHap the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder moderationHap(Boolean moderationHap) {
+            doSetProperty("moderationHap", moderationHap);
+            return this;
+        }
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input and the answer
+         * for hate, abuse and profanity (HAP).
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationHap the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder moderationHap(String moderationHap) {
+            doSetProperty("moderationHap", moderationHap);
+            return this;
+        }
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input and the answer
+         * for personal identifiable information (PII).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationPii the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder moderationPii(Boolean moderationPii) {
+            doSetProperty("moderationPii", moderationPii);
+            return this;
+        }
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input and the answer
+         * for personal identifiable information (PII).
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationPii the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder moderationPii(String moderationPii) {
+            doSetProperty("moderationPii", moderationPii);
+            return this;
+        }
+        /**
+         * The threshold (0 to 1) of the HAP and Granite Guardian chat
+         * guardrails.
+         * 
+         * The option is a: <code>java.lang.Float</code> type.
+         * 
+         * Default: 0.5
+         * Group: producer
+         * 
+         * @param moderationThreshold the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder moderationThreshold(Float moderationThreshold) {
+            doSetProperty("moderationThreshold", moderationThreshold);
+            return this;
+        }
+        /**
+         * The threshold (0 to 1) of the HAP and Granite Guardian chat
+         * guardrails.
+         * 
+         * The option will be converted to a <code>java.lang.Float</code> type.
+         * 
+         * Default: 0.5
+         * Group: producer
+         * 
+         * @param moderationThreshold the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder moderationThreshold(String moderationThreshold) {
+            doSetProperty("moderationThreshold", moderationThreshold);
+            return this;
+        }
+        /**
+         * How many answers chat generates for the request (n). The body is the
+         * first one, and the CamelIBMWatsonxAiAssistantMessages header has them
+         * all.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param numberOfChoices the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder numberOfChoices(Integer numberOfChoices) {
+            doSetProperty("numberOfChoices", numberOfChoices);
+            return this;
+        }
+        /**
+         * How many answers chat generates for the request (n). The body is the
+         * first one, and the CamelIBMWatsonxAiAssistantMessages header has them
+         * all.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param numberOfChoices the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder numberOfChoices(String numberOfChoices) {
+            doSetProperty("numberOfChoices", numberOfChoices);
             return this;
         }
         /**
@@ -439,6 +718,21 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * How much the model of chat reasons: low, medium or high, for the
+         * models that support it.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param reasoningEffort the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder reasoningEffort(String reasoningEffort) {
+            doSetProperty("reasoningEffort", reasoningEffort);
+            return this;
+        }
+        /**
          * Repetition penalty.
          * 
          * The option is a: <code>java.lang.Double</code> type.
@@ -493,6 +787,21 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default WatsonxAiEndpointBuilder rerankTopN(String rerankTopN) {
             doSetProperty("rerankTopN", rerankTopN);
+            return this;
+        }
+        /**
+         * The format of the chat answer: text, or json for a JSON object. Set
+         * jsonSchema for an answer that follows a JSON schema.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param responseFormat the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder responseFormat(String responseFormat) {
+            doSetProperty("responseFormat", responseFormat);
             return this;
         }
         /**
@@ -553,6 +862,67 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * The random seed of chat sampling, for repeatable answers.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param seed the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder seed(Integer seed) {
+            doSetProperty("seed", seed);
+            return this;
+        }
+        /**
+         * The random seed of chat sampling, for repeatable answers.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param seed the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder seed(String seed) {
+            doSetProperty("seed", seed);
+            return this;
+        }
+        /**
+         * Comma separated sequences that stop the generation of the chat
+         * answer.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param stop the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder stop(String stop) {
+            doSetProperty("stop", stop);
+            return this;
+        }
+        /**
+         * The endpoint URI that receives each chunk of chatStreaming as a
+         * message (in the place of the CamelIBMWatsonxAiStreamConsumer header),
+         * such as seda:chunks. The chunks are sent from the threads of the
+         * watsonx.ai SDK.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param streamEndpoint the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder streamEndpoint(String streamEndpoint) {
+            doSetProperty("streamEndpoint", streamEndpoint);
+            return this;
+        }
+        /**
          * Temperature for randomness (0.0 to 2.0).
          * 
          * The option is a: <code>java.lang.Double</code> type.
@@ -578,6 +948,54 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default WatsonxAiEndpointBuilder temperature(String temperature) {
             doSetProperty("temperature", temperature);
+            return this;
+        }
+        /**
+         * Whether the model of chat reasons before it answers, for the models
+         * that support it (chat template thinking).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param thinking the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder thinking(Boolean thinking) {
+            doSetProperty("thinking", thinking);
+            return this;
+        }
+        /**
+         * Whether the model of chat reasons before it answers, for the models
+         * that support it (chat template thinking).
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param thinking the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder thinking(String thinking) {
+            doSetProperty("thinking", thinking);
+            return this;
+        }
+        /**
+         * For models that write their reasoning in the answer between tags: the
+         * tag of the reasoning, and optionally the tag of the answer after a
+         * comma, such as think,response. The reasoning goes to the
+         * CamelIBMWatsonxAiReasoningContent header and the answer to the body.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param thinkingTags the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder thinkingTags(String thinkingTags) {
+            doSetProperty("thinkingTags", thinkingTags);
             return this;
         }
         /**
@@ -1054,7 +1472,9 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiGeneratedText";
         }
         /**
-         * The model ID used for the request, reported on the response.
+         * The model of chat and chatStreaming for this request, overriding the
+         * modelId option; forecast and deploymentForecast report on the
+         * response the model that answered.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1253,6 +1673,135 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         public String iBMWatsonxAiToolChoice() {
             return "CamelIBMWatsonxAiToolChoice";
+        }
+        /**
+         * The format of the chat answer, overriding the responseFormat option:
+         * text or json.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiResponseFormat}.
+         */
+        public String iBMWatsonxAiResponseFormat() {
+            return "CamelIBMWatsonxAiResponseFormat";
+        }
+        /**
+         * The JSON schema the chat answer follows, overriding the jsonSchema
+         * option: JSON text or a Map.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiJsonSchema}.
+         */
+        public String iBMWatsonxAiJsonSchema() {
+            return "CamelIBMWatsonxAiJsonSchema";
+        }
+        /**
+         * Guided decoding of chat, overriding the guidedChoice option: the
+         * choices of the answer, as a List or comma separated.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiGuidedChoice}.
+         */
+        public String iBMWatsonxAiGuidedChoice() {
+            return "CamelIBMWatsonxAiGuidedChoice";
+        }
+        /**
+         * The random seed of chat sampling, overriding the seed option.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiSeed}.
+         */
+        public String iBMWatsonxAiSeed() {
+            return "CamelIBMWatsonxAiSeed";
+        }
+        /**
+         * The stop sequences of chat, overriding the stop option: a List, or
+         * comma separated.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiStop}.
+         */
+        public String iBMWatsonxAiStop() {
+            return "CamelIBMWatsonxAiStop";
+        }
+        /**
+         * How much the model of chat reasons, overriding the reasoningEffort
+         * option: low, medium or high.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiReasoningEffort}.
+         */
+        public String iBMWatsonxAiReasoningEffort() {
+            return "CamelIBMWatsonxAiReasoningEffort";
+        }
+        /**
+         * The reasoning of the model that preceded the chat answer, when it
+         * gives one.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiReasoningContent}.
+         */
+        public String iBMWatsonxAiReasoningContent() {
+            return "CamelIBMWatsonxAiReasoningContent";
+        }
+        /**
+         * The refusal of the model to answer, when it refuses.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiRefusal}.
+         */
+        public String iBMWatsonxAiRefusal() {
+            return "CamelIBMWatsonxAiRefusal";
+        }
+        /**
+         * All the answers of chat when it generates more than one
+         * (numberOfChoices), the body being the first.
+         * 
+         * The option is a: {@code
+         * java.util.List<com.ibm.watsonx.ai.chat.model.AssistantMessage>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiAssistantMessages}.
+         */
+        public String iBMWatsonxAiAssistantMessages() {
+            return "CamelIBMWatsonxAiAssistantMessages";
+        }
+        /**
+         * The findings of the chat guardrails (moderationHap, moderationPii,
+         * moderationGraniteGuardian), by detector.
+         * 
+         * The option is a: {@code java.util.Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiModerationResults}.
+         */
+        public String iBMWatsonxAiModerationResults() {
+            return "CamelIBMWatsonxAiModerationResults";
         }
         /**
          * The embedding vectors result.
