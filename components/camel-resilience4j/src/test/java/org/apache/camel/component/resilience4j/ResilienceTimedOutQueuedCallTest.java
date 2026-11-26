@@ -119,7 +119,8 @@ class ResilienceTimedOutQueuedCallTest extends CamelTestSupport {
         Exchange x2 = template.send(uri, e -> e.getIn().setBody("X2"));
         assertInstanceOf(TimeoutException.class, x2.getException(), "X2 times out");
         assertEquals(1, backendStarts.get(), "X2 has not started when its exchange completes");
-        // the permit of X1 is held while it runs; the one of X2 is released when X2 is cancelled
+        // the permit of X1 is held while it runs; the one of X2 is released when X2 is cancelled. This is read on
+        // purpose now, after X2 timed out and before X1 ends: had X2 kept its permit, one fewer would be available
         int availableWhileX1Runs = bulkhead != null ? bulkhead.getMetrics().getAvailableConcurrentCalls() : -1;
 
         // X1 ends, and the thread takes what is queued behind it: the task of X2, then this one
