@@ -24,7 +24,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.camel.catalog.cve.CveArtifact;
 import org.apache.camel.catalog.cve.CveFinding;
 import org.apache.camel.catalog.cve.CveScan;
 import org.apache.camel.catalog.cve.CvssScore;
@@ -32,8 +34,8 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
- * The parts of {@code camel-report:audit} that need no Maven project: the suppressions, the console table, and the JSON
- * and SARIF reports.
+ * The parts of {@code camel-report:audit} that need no Maven project: the suppressions, the console tables, and the
+ * JSON and SARIF reports.
  */
 final class AuditReport {
 
@@ -105,6 +107,28 @@ final class AuditReport {
                         via != null ? via : "", summary });
             }
         }
+        return lines(rows, Set.of(1));
+    }
+
+    /**
+     * The lines of the console table by artifact, as {@code camel dependency audit --by-artifact}: what to upgrade. The
+     * worst severity and highest score of the vulnerabilities of each JAR, how many there are, the version that fixes
+     * all of them, and the dependency that brings it in.
+     */
+    static List<String> artifactTable(List<CveArtifact> artifacts) {
+        List<String[]> rows = new ArrayList<>();
+        rows.add(new String[] { "SEVERITY", "SCORE", "ARTIFACT", "CVES", "FIXES ALL", "VIA" });
+        for (CveArtifact a : artifacts) {
+            String fix = a.fix() == null ? "none" : a.camelRelease() ? "Camel " + a.fix() : a.fix();
+            rows.add(new String[] {
+                    a.severity(), CvssScore.format(a.score()), a.gav(), String.valueOf(a.cves().size()), fix,
+                    a.via() != null ? a.via() : "" });
+        }
+        return lines(rows, Set.of(1, 3));
+    }
+
+    // the rows in columns, with the numbers of the given columns aligned right
+    private static List<String> lines(List<String[]> rows, Set<Integer> right) {
         int[] width = new int[rows.get(0).length];
         for (String[] row : rows) {
             for (int i = 0; i < row.length; i++) {
@@ -115,7 +139,7 @@ final class AuditReport {
         for (String[] row : rows) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < row.length; i++) {
-                sb.append(i == 1 ? pad(row[i], width[i], true) : pad(row[i], width[i], false));
+                sb.append(pad(row[i], width[i], right.contains(i)));
                 if (i < row.length - 1) {
                     sb.append("  ");
                 }
@@ -130,10 +154,13 @@ final class AuditReport {
         return right ? spaces + text : text + spaces;
     }
 
-    /** The JSON report, in the shape of {@code camel dependency audit --json}, with the suppressed findings. */
+    /**
+     * The JSON report, in the shape of {@code camel dependency audit --json}, with the suppressed findings. With
+     * {@code byArtifact} it also has the findings by artifact, as {@code --by-artifact}.
+     */
     static JsonObject json(
             String project, int scanned, List<CveFinding> findings, Map<CveFinding, String> suppressed, String failOn,
-            boolean failed, String osvError) {
+            boolean failed, String osvError, boolean byArtifact) {
         JsonObject doc = new JsonObject();
         doc.put("source", project);
         doc.put("scanned", scanned);
@@ -154,6 +181,13 @@ final class AuditReport {
             hidden.add(row);
         });
         doc.put("suppressedFindings", hidden);
+        if (byArtifact) {
+            List<CveArtifact> artifacts = CveScan.artifactRows(findings);
+            doc.put("vulnerableArtifacts", artifacts.size());
+            JsonArray rowsByArtifact = new JsonArray();
+            artifacts.forEach(a -> rowsByArtifact.add(a.toJson()));
+            doc.put("artifacts", rowsByArtifact);
+        }
         return doc;
     }
 
