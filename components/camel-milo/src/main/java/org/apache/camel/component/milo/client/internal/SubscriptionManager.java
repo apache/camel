@@ -268,6 +268,11 @@ public class SubscriptionManager {
         private boolean reported;
 
         /**
+         * The highest generation of the connections whose loss report was delivered, guarded by this
+         */
+        private long lossGeneration;
+
+        /**
          * Whether the server refused to monitor the node: its status is that refusal, whatever the communication, until
          * its item is created. Set under the lock of the manager when a call hands the refusal out for delivery, and
          * cleared under it when a call creates the item.
@@ -297,11 +302,18 @@ public class SubscriptionManager {
         }
 
         /**
-         * Delivers a value of the node to the consumer, which ends a loss report.
+         * Delivers a value of the node to the consumer, which ends a loss report, unless a later connection has
+         * delivered a loss report: the value was then queued on a connection that has been replaced, and the report
+         * stays the status of the node until the current connection delivers a value.
          *
          * @param generation the generation of the connection that received the value
          */
         synchronized void deliver(final long generation, final DataValue value) {
+            if (generation < this.lossGeneration) {
+                LOG.debug("Dropping a value of node {} from connection {}: connection {} reported a loss since",
+                        nodeId, generation, this.lossGeneration);
+                return;
+            }
             this.generation = Math.max(this.generation, generation);
             this.reported = false;
             this.valueConsumer.accept(value);
@@ -320,7 +332,7 @@ public class SubscriptionManager {
         /**
          * Delivers a loss report to the consumer, unless the node is reported or refused already, or a later connection
          * has delivered a value. The report of a replaced connection is queued behind its last values, which may race
-         * the first values of its replacement.
+         * the first values of its replacement, and those values are dropped once a later connection reports a loss.
          *
          * @param generation the generation of the connection whose communication was lost
          */
@@ -329,6 +341,7 @@ public class SubscriptionManager {
                 return;
             }
             this.reported = true;
+            this.lossGeneration = Math.max(this.lossGeneration, generation);
             this.valueConsumer.accept(value);
         }
 
