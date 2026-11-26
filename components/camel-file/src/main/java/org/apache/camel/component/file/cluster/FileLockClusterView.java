@@ -401,7 +401,12 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 if (isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo)
                         || canReclaimLeadership(latestClusterLeaderInfo)) {
                     if (previousClusterLeaderInfo != null && canReclaimLeadership(previousClusterLeaderInfo)) {
-                        // Backoff so the current cluster leader can notice leadership is relinquished
+                        // Backoff so the current cluster leader can notice leadership is relinquished. Only for this
+                        // check: the cluster data still names this member because no leader has written it since the
+                        // last attempt to take the lock failed, so the next check tries again. Otherwise a member
+                        // whose attempt failed (for example on a transient I/O error) would back off for good, and a
+                        // cluster with no other member would stay without a leader.
+                        clusterLeaderInfoRef.compareAndSet(latestClusterLeaderInfo, null);
                         return;
                     }
 
