@@ -925,8 +925,8 @@ public class Run extends CamelCommand implements CommandLifecycle {
         }
 
         if (camelVersion != null && !VersionHelper.isCamel4OrNewer(camelVersion)) {
-            printer().printErr("The --camel-version option does not support Camel " + camelVersion
-                               + ": the Camel CLI runs Camel 4.0 or newer.");
+            printer().printErr("Camel version " + camelVersion
+                               + " is not supported: the Camel CLI runs Camel 4.0 or newer.");
             return CliExitCode.USAGE;
         }
 
