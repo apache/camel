@@ -60,6 +60,29 @@ class AiResourceUriTemplateTest {
     }
 
     @Test
+    void matchesLongVariableValues() {
+        AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}/orders/{orderId}");
+        String longValue = "a".repeat(100_000);
+        String longEncodedValue = "%41".repeat(50_000);
+
+        assertThat(template.match("crm://customers/" + longValue + "/orders/" + longEncodedValue))
+                .hasValue(Map.of("id", longValue, "orderId", longEncodedValue));
+        assertThat(template.match("crm://customers/" + longEncodedValue + "/orders/" + longValue))
+                .hasValue(Map.of("id", longEncodedValue, "orderId", longValue));
+    }
+
+    @Test
+    void rejectsLongVariableValuesWithAnInvalidTail() {
+        AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}");
+        String longValue = "a".repeat(100_000);
+
+        assertThat(template.match("crm://customers/" + longValue + "?")).isEmpty();
+        assertThat(template.match("crm://customers/" + longValue + "%4")).isEmpty();
+        assertThat(template.match("crm://customers/" + longValue + "/")).isEmpty();
+        assertThat(template.match("crm://customers/" + longValue + "/extra")).isEmpty();
+    }
+
+    @Test
     void rejectsPercentEncodedDotSegmentsAndEncodedTraversal() {
         AiResourceUriTemplate template = new AiResourceUriTemplate("crm://customers/{id}");
 
