@@ -73,6 +73,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     // the number of onException calls: a connection recovery compares it before and after its attempt, as an
     // onException that comes before the consumers of the new connection are created finds none to drop
     private final AtomicLong connectionFailures = new AtomicLong();
+    // whether a connection failure may be recovered: from doStart until doStop (guarded by connectionLock). A failure
+    // reported later, or a recovery attempt that runs later, must not open a connection that nothing closes any more
+    private boolean recoveryAllowed;
     private ScheduledExecutorService recoverPool;
     private BackgroundTask recoverTask;
     private Future<?> recoverFuture;
@@ -210,17 +213,45 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             }
         }
 
-        invalidateConsumers();
-        scheduleConnectionRecovery();
+        connectionLock.lock();
+        try {
+            if (!recoveryAllowed) {
+                LOG.debug("Listener container is not started. Not recovering the JMS Connection after: {}",
+                        exception.getMessage());
+                return;
+            }
+            invalidateConsumers();
+            scheduleConnectionRecovery();
+        } finally {
+            connectionLock.unlock();
+        }
     }
 
     protected boolean recoverConnection(BackgroundTask task) {
         LOG.debug("Recovering from JMS Connection exception (attempt: {})", task.iteration());
         try {
-            long failures = refreshConnectionAndCountFailures();
+            long failures;
+            connectionLock.lock();
+            try {
+                if (!recoveryAllowed || recoverTask != task) {
+                    // the container was stopped after this attempt was scheduled (doStop clears recoverTask), and may
+                    // have been started again since: this attempt must not open a connection
+                    LOG.debug("Listener container was stopped. Not recovering the JMS Connection (attempt: {})",
+                            task.iteration());
+                    return true;
+                }
+                failures = refreshConnectionAndCountFailures();
+            } finally {
+                connectionLock.unlock();
+            }
             initConsumers();
             connectionLock.lock();
             try {
+                if (recoverTask != task) {
+                    // the container was stopped during this attempt: doShutdown closes what it created with the
+                    // connection, or the consumers belong to the container started again since
+                    return true;
+                }
                 if (consumers == null || connectionFailures.get() != failures) {
                     // the new connection failed during this attempt: onException dropped its consumers while they
                     // were created, or it came before and found none to drop (then the consumers on the failed
@@ -249,19 +280,37 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             LOG.warn(message);
             // make the task runner aware of the exception (will retry)
             throw new TaskRunFailureException(message, e);
+        } catch (Error e) {
+            // the error ends the schedule of the task, which would still answer isRunning(), and then no later
+            // connection failure would be recovered
+            connectionLock.lock();
+            try {
+                task.cancel(false);
+                if (recoverTask == task) {
+                    recoverTask = null;
+                    recoverFuture = null;
+                }
+            } finally {
+                connectionLock.unlock();
+            }
+            throw e;
         }
     }
 
     protected void scheduleConnectionRecovery() {
         connectionLock.lock();
         try {
+            if (!recoveryAllowed) {
+                return;
+            }
             if (recoverPool == null) {
                 recoverPool = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                         "SjmsConnectionRecovery");
             }
             if (recoverTask == null || !recoverTask.isRunning()) {
-                recoverTask = createTask();
-                recoverFuture = recoverTask.schedule(endpoint.getCamelContext(), () -> recoverConnection(recoverTask));
+                BackgroundTask task = createTask();
+                recoverTask = task;
+                recoverFuture = task.schedule(endpoint.getCamelContext(), () -> recoverConnection(task));
             }
         } finally {
             connectionLock.unlock();
@@ -282,6 +331,12 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
+        connectionLock.lock();
+        try {
+            recoveryAllowed = true;
+        } finally {
+            connectionLock.unlock();
+        }
         createConnection();
         initConsumers();
 
@@ -290,6 +345,12 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
+        connectionLock.lock();
+        try {
+            recoveryAllowed = false;
+        } finally {
+            connectionLock.unlock();
+        }
         if (suspendExecutor != null) {
             // let a pending stop or start of the connection finish first
             endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(suspendExecutor);
@@ -298,17 +359,22 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         }
         stopConnection();
         stopConsumers();
-        if (recoverPool != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(recoverPool);
-            recoverPool = null;
-        }
-        if (recoverTask != null && recoverTask.isRunning()) {
-            // cancelled through the task and not through its future, so the task also leaves the
-            // TaskManagerRegistry. Only a run of the task removes it from there, and once the schedule
-            // is cancelled no run is coming
-            recoverTask.cancel(true);
-            recoverTask = null;
-            recoverFuture = null;
+        connectionLock.lock();
+        try {
+            if (recoverPool != null) {
+                endpoint.getCamelContext().getExecutorServiceManager().shutdown(recoverPool);
+                recoverPool = null;
+            }
+            if (recoverTask != null && recoverTask.isRunning()) {
+                // cancelled through the task and not through its future, so the task also leaves the
+                // TaskManagerRegistry. Only a run of the task removes it from there, and once the schedule
+                // is cancelled no run is coming
+                recoverTask.cancel(true);
+                recoverTask = null;
+                recoverFuture = null;
+            }
+        } finally {
+            connectionLock.unlock();
         }
     }
 
@@ -360,8 +426,14 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     @Override
     protected void doShutdown() throws Exception {
-        closeConnection(connection);
-        this.connection = null;
+        // under the lock, so that a connection recovery cannot replace the connection between the close and the null
+        connectionLock.lock();
+        try {
+            closeConnection(connection);
+            this.connection = null;
+        } finally {
+            connectionLock.unlock();
+        }
         // the connection recovery may have created consumers after stopConsumers, they are closed with the connection
         consumerLock.lock();
         try {
@@ -482,6 +554,10 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         try {
             closeConnection(connection);
             this.connection = null;
+            // closing the connection closed its sessions and consumers: drop them, so that initConsumers creates
+            // the consumers of the new connection
+            this.sessions = null;
+            this.consumers = null;
             // read after the old connection is closed and before the new one has this container as exception listener
             long failures = connectionFailures.get();
             createConnection();
