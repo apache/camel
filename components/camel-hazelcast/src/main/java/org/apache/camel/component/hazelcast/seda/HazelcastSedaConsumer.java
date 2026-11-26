@@ -118,14 +118,17 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
         while (queue != null && isRunAllowed()) {
             final boolean transacted = endpoint.getConfiguration().isTransacted();
+            // the transacted consumer reads the outcome of the exchange after the routing is done, so it releases the
+            // exchange itself: a pooled exchange is otherwise reset (and its exception cleared) when it is done.
+            // Created before beginTransacted, so a failure to create it does not leave this thread counted: the stop
+            // would wait for it until the shutdown timeout
+            final Exchange exchange = createExchange(!transacted);
             if (transacted && !beginTransacted()) {
                 // the consumer is stopping
+                releaseExchange(exchange, false);
                 break;
             }
             boolean errorDelay = false;
-            // the transacted consumer reads the outcome of the exchange after the routing is done, so it releases the
-            // exchange itself: a pooled exchange is otherwise reset (and its exception cleared) when it is done
-            final Exchange exchange = createExchange(!transacted);
 
             TransactionContext transactionCtx = null;
             try {

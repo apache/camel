@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -30,10 +31,14 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.engine.PrototypeExchangeFactory;
+import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -55,6 +60,7 @@ class HazelcastSedaTransactedStopTest extends CamelTestSupport {
     private final AtomicInteger started = new AtomicInteger();
     private final AtomicInteger completed = new AtomicInteger();
     private final AtomicLong selfStopMillis = new AtomicLong(-1);
+    private final AtomicBoolean failNextConsumerExchange = new AtomicBoolean();
     private final ExecutorService stopper = Executors.newSingleThreadExecutor();
     private HazelcastInstance member;
 
@@ -68,6 +74,7 @@ class HazelcastSedaTransactedStopTest extends CamelTestSupport {
         config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
         member = Hazelcast.newHazelcastInstance(config);
         CamelContext context = super.createCamelContext();
+        context.getCamelContextExtension().setExchangeFactory(new FailingExchangeFactory(null, failNextConsumerExchange));
         context.getRegistry().bind("hazelcastInstance", member);
         // the time a graceful shutdown of a thread pool waits before it interrupts the threads (10 s by default, which
         // is less than the 45 s that the shutdown strategy waits for the exchanges in flight), scaled down for the test
@@ -148,6 +155,22 @@ class HazelcastSedaTransactedStopTest extends CamelTestSupport {
         assertTrue(selfStopMillis.get() < 4000, "Stopping the consumer took " + selfStopMillis.get() + " ms");
     }
 
+    @Test
+    void exchangeThatCannotBeCreatedDoesNotHoldUpTheStop() throws Exception {
+        // the consumer thread fails to create its exchange and ends: the stop must not wait for it as if it routed one
+        context.getShutdownStrategy().setTimeout(6);
+        failNextConsumerExchange.set(true);
+        context.getRouteController().startRoute("sync");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !failNextConsumerExchange.get());
+
+        long start = System.nanoTime();
+        context.getRouteController().stopRoute("sync");
+        long stopMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+
+        assertTrue(stopMillis < 4000, "Stopping the route took " + stopMillis + " ms");
+        assertEquals(0, started.get());
+    }
+
     private void stopWhileAnExchangeIsRouted(String routeId) throws Exception {
         IQueue<Object> queue = member.getQueue(routeId);
         queue.offer("a");
@@ -216,6 +239,34 @@ class HazelcastSedaTransactedStopTest extends CamelTestSupport {
                         .log("${body}");
             }
         };
+    }
+
+    /**
+     * Fails the creation of the next exchange of a consumer when asked to.
+     */
+    private static final class FailingExchangeFactory extends PrototypeExchangeFactory {
+
+        private final AtomicBoolean failNext;
+
+        FailingExchangeFactory(Consumer consumer, AtomicBoolean failNext) {
+            super(consumer);
+            this.failNext = failNext;
+        }
+
+        @Override
+        public ExchangeFactory newExchangeFactory(Consumer consumer) {
+            FailingExchangeFactory answer = new FailingExchangeFactory(consumer, failNext);
+            answer.setCamelContext(getCamelContext());
+            return answer;
+        }
+
+        @Override
+        public Exchange create(Endpoint fromEndpoint, boolean autoRelease) {
+            if (getConsumer() != null && failNext.compareAndSet(true, false)) {
+                throw new IllegalStateException("Simulated failure to create the exchange");
+            }
+            return super.create(fromEndpoint, autoRelease);
+        }
     }
 
     private void routeStep() throws InterruptedException {
