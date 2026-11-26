@@ -161,7 +161,9 @@ class HazelcastSedaTransactedStopTest extends CamelTestSupport {
         context.getShutdownStrategy().setTimeout(6);
         failNextConsumerExchange.set(true);
         context.getRouteController().startRoute("sync");
-        await().atMost(10, TimeUnit.SECONDS).until(() -> !failNextConsumerExchange.get());
+        // the simulated failure is thrown on the consumer thread on purpose: Awaitility must not fail the test with it,
+        // which it does by default when another thread throws while it waits
+        await().dontCatchUncaughtExceptions().atMost(10, TimeUnit.SECONDS).until(() -> !failNextConsumerExchange.get());
 
         long start = System.nanoTime();
         context.getRouteController().stopRoute("sync");
