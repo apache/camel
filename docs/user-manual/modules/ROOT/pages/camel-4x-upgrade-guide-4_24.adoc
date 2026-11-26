@@ -3149,6 +3149,25 @@ again after its ack deadline, and again after each later delivery.
 Manual acknowledgement (`ackMode=NONE`) is unchanged: the `GooglePubsubAcknowledge` of the synchronous consumer acks
 the ack ids of the exchange given to `ack` or `nack`, so that an aggregated exchange acks every grouped message.
 
+=== camel-google-pubsub - the consumer subscribes or pulls again after any failure, and has a health check
+
+A `google-pubsub` consumer no longer stops getting messages for good while its route stays started. Before, a
+subscriber loop ended after a non-retryable error (such as `PERMISSION_DENIED` while an IAM binding is changed, or
+`NOT_FOUND` while the subscription is created again, with the synchronous or the asynchronous pull), after credentials
+that could not be loaded when an asynchronous subscriber was created, and, without any log line, after an `Error` (such
+as a `NoClassDefFoundError` of client libraries that do not match). The consumer then received nothing until the route
+was restarted. Now such a failure is logged (the first one in a row at ERROR with its stack trace, the next ones in one
+WARN line), given to the `ExceptionHandler` (with `bridgeErrorHandler=true`, to the error handler of the route), and the
+loop subscribes or pulls again every 5 seconds until the cause is gone.
+
+The consumer has a readiness health check: the check of the consumer of the route (`consumer:<routeId>`, with the
+consumer health checks of Camel enabled, the default) is DOWN with the failure while a subscriber loop waits to subscribe
+or pull again. After failed attempts, an asynchronous subscriber only counts as working once it has run for 5 seconds.
+
+A `VirtualMachineError` (such as an `OutOfMemoryError`) of the consumer, or of a route of a message that it received,
+that the route did not catch now stops the consumer until the route is restarted, as for the other consumers that pull
+messages in a loop, and its health check is DOWN meanwhile.
+
 === camel-aws2-s3, camel-azure-storage-blob, camel-aws2-sqs - the consumer deletes or moves what it consumed
 
 With `deleteAfterRead` or `moveAfterRead`, the `aws2-s3` and `azure-storage-blob` consumers now delete or move the

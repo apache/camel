@@ -95,6 +95,12 @@ The component acks or nacks the message it received, also when the route changed
 With manual acknowledgement and the synchronous consumer, the Acknowledgement IDs are taken from the exchange given to
 `ack` or `nack` (see <<Manual Acknowledgement>>).
 
+When the consumer cannot get messages (Pub/Sub cannot be reached, a missing permission or subscription, credentials
+that cannot be loaded), it logs the failure (the first one in a row at ERROR, the next ones in one WARN line), gives it
+to the exception handler (with `bridgeErrorHandler=true`, to the error handler of the route), and subscribes or pulls
+again every 5 seconds until the cause is gone. Meanwhile, with the consumer health checks of Camel enabled, the
+readiness check of the consumer of the route (`consumer:<routeId>`) is DOWN with the failure.
+
 === Delivery Attempts and Dead Letter Queues
 
 When a subscription has a https://cloud.google.com/pubsub/docs/dead-letter-topics[dead-letter policy] configured,
