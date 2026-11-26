@@ -20,7 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
@@ -44,6 +47,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -254,6 +258,29 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals("data.json", BodyFacts.dataFile("json"));
         assertEquals("data.json", BodyFacts.dataFile("MyDataFormat"));
         assertEquals("data.json", BodyFacts.dataFile(null));
+    }
+
+    @Test
+    public void testOnlyTheToStringOfAValue() {
+        // the text ToStringTypeConverter gives for a Map or an object
+        Map<String, Object> map = new LinkedHashMap<>(Map.of("id", 1));
+        assertTrue(BodyFacts.isOnlyToString(map, map.toString()));
+        Object object = new Object();
+        assertTrue(BodyFacts.isOnlyToString(object, object.toString()));
+        // a payload or a single value is text by itself
+        assertFalse(BodyFacts.isOnlyToString("text", "text"));
+        assertFalse(BodyFacts.isOnlyToString(42, "42"));
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bytes.writeBytes("parsed".getBytes(StandardCharsets.UTF_8));
+        assertFalse(BodyFacts.isOnlyToString(bytes, "parsed"));
+        // an id, an address or a point in time, whose toString() is its text
+        UUID uuid = UUID.randomUUID();
+        assertFalse(BodyFacts.isOnlyToString(uuid, uuid.toString()));
+        assertFalse(BodyFacts.isOnlyToString(URI.create("https://camel.apache.org"), "https://camel.apache.org"));
+        assertFalse(BodyFacts.isOnlyToString(Instant.EPOCH, Instant.EPOCH.toString()));
+        // a real converter, which gives other text than toString()
+        char[] chars = "text".toCharArray();
+        assertFalse(BodyFacts.isOnlyToString(chars, "text"));
     }
 
     @Test

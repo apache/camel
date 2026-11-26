@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -215,6 +216,19 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    void numberBodyAndNumberElementAreEmbeddedAsText() {
+        Message result = embed(42);
+
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class).text()).isEqualTo("42");
+
+        result = embed(List.of("hello", 42));
+
+        List<TextSegment> segments = result.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENTS, List.class);
+        assertThat(segments).extracting(TextSegment::text).containsExactly("hello", "42");
+    }
+
+    @Test
     void noBodyFails() {
         assertThatThrownBy(() -> template.requestBody("langchain4j-embeddings:test", (Object) null))
                 .isInstanceOf(CamelExecutionException.class)
@@ -254,6 +268,16 @@ class LangChain4jEmbeddingsBodyTest extends CamelTestSupport {
                 .hasMessageContaining("convert the body to text");
         assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS)).isNull();
         assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENTS)).isNull();
+    }
+
+    @Test
+    void batchWithANullElementFails() {
+        Exchange exchange = send(Arrays.asList("hello", null));
+
+        assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("the element at index 1 of the List body is null")
+                .hasMessageNotContaining("marshal it first");
+        assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS)).isNull();
     }
 
     @Test
