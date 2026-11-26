@@ -16,25 +16,61 @@
  */
 package org.apache.camel.component.jms.integration.spring.tx.error;
 
-import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
+import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
+import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
-public class JMSTransactionRollbackIT extends AbstractSpringJMSITSupport {
+public class JMSTransactionRollbackIT extends CamelSpringTestSupport {
+
+    // Use a dedicated broker with maxDeliveryAttempts=6 (1 initial + 5 retries) to match the
+    // test's expectedMessageCount(6). The shared singleton broker defaults to maxDeliveryAttempts=10,
+    // causing extra redeliveries that make the mock fail with "Expected 6 but was 8/10" on fast
+    // machines, or "Expected 6 but was 5" on slow CI when the latch releases early.
+    @RegisterExtension
+    public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
+            .withCustomConfiguration(configuration -> {
+                AddressSettings addressSettings = new AddressSettings()
+                        .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
+                        .setAutoDeleteQueues(false)
+                        .setDeadLetterAddress(SimpleString.of("DLQ"))
+                        .setExpiryAddress(SimpleString.of("ExpiryQueue"))
+                        .setMaxDeliveryAttempts(6);
+                configuration.addAddressSetting("#", addressSettings);
+            })
+            .build();
+
+    /**
+     * Used by the Spring XML context to obtain the broker address.
+     *
+     * @return the service address
+     */
+    public static String getServiceAddress() {
+        return service.serviceAddress();
+    }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/component/jms/integration/spring/tx/error/JMSTransactionRollbackIT.xml");
     }
 
     @Test
     public void testTransactionRollback() throws Exception {
-        getMockEndpoint("mock:before").expectedMessageCount(6);
+        MockEndpoint before = getMockEndpoint("mock:before");
+        before.expectedMessageCount(6);
+        // Guard against late-arriving extra broker redeliveries on fast machines
+        before.setAssertPeriod(2000);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         template.sendBody("activemq:queue:okay.JMSTransactionRollbackTest", "Hello World");
