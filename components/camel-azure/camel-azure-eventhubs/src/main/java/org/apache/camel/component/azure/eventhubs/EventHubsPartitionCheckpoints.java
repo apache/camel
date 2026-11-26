@@ -91,6 +91,8 @@ final class EventHubsPartitionCheckpoints {
     boolean completed(EventContext eventContext, boolean succeeded) {
         final long sequenceNumber = sequenceNumber(eventContext);
         final Delivered event = delivered.get(sequenceNumber);
+        // identity, not equals: an event delivered again at the same sequence number (after a rebalance) has another
+        // EventContext, and the completion of the earlier delivery must not move the checkpoint
         if (event == null || event.eventContext != eventContext || event.completed) {
             return false;
         }
@@ -164,6 +166,8 @@ final class EventHubsPartitionCheckpoints {
         closed = true;
         waiting = null;
         waitingOnError = null;
+        // nothing is checkpointed after the close, so do not keep the last event (and its data) reachable
+        completedUpTo = null;
         delivered.clear();
     }
 
@@ -180,18 +184,15 @@ final class EventHubsPartitionCheckpoints {
         update.subscribe(unused -> LOG.debug("Processed one event..."),
                 error -> {
                     LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error);
-                    answered(sequenceNumber, false);
-                    if (onError != null) {
-                        onError.run();
-                    }
+                    answered(sequenceNumber, false, onError);
                 },
                 () -> {
                     LOG.debug("Checkpoint updated.");
-                    answered(sequenceNumber, true);
+                    answered(sequenceNumber, true, null);
                 });
     }
 
-    private void answered(long sequenceNumber, boolean ok) {
+    private void answered(long sequenceNumber, boolean ok, Runnable onError) {
         lock.lock();
         try {
             writing = false;
@@ -200,6 +201,11 @@ final class EventHubsPartitionCheckpoints {
             } else if (waiting == null) {
                 // a later checkpoint can write the same position again
                 written = stored;
+            }
+            if (!ok && onError != null) {
+                // under the lock, as the consumer resets the count of the partition under it: run outside, a
+                // checkpoint taken in between would reset the count, and this would then add the events to it again
+                onError.run();
             }
             if (waiting != null) {
                 EventContext next = waiting;
