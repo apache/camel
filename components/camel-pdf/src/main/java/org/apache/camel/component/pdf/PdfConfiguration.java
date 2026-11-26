@@ -68,6 +68,11 @@ public class PdfConfiguration {
                                                   + "TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,"
                                                   + "SYMBOL,ZAPF_DINGBATS")
     private String font = "HELVETICA";
+    @UriParam
+    @Metadata(supportFileReference = true)
+    private String fontFile;
+    // the content of fontFile, loaded when the endpoint is initialized
+    private byte[] fontFileContent;
     @UriParam(defaultValue = "lineTermination")
     private TextProcessingFactory textProcessingFactory = TextProcessingFactory.lineTermination;
 
@@ -170,10 +175,37 @@ public class PdfConfiguration {
     }
 
     /**
-     * Font
+     * One of the 14 standard fonts of PDF. These fonts cover only Latin text: to write other characters, such as
+     * Cyrillic, Greek or Chinese, use the fontFile option.
      */
     public void setFont(String font) {
         this.font = font;
+    }
+
+    public String getFontFile() {
+        return fontFile;
+    }
+
+    /**
+     * A TrueType font file (.ttf) to write the text with, instead of the standard font of the font option. Use it to
+     * write characters that the standard fonts do not have, such as Cyrillic, Greek or Chinese. The font is loaded as a
+     * resource: prefix with classpath:, file: or http: (classpath: is the default). The characters that are used are
+     * embedded in the PDF document.
+     */
+    public void setFontFile(String fontFile) {
+        this.fontFile = fontFile;
+    }
+
+    /**
+     * The content of the font file of the fontFile option, which the endpoint loads when it is initialized. This is not
+     * an endpoint option.
+     */
+    public byte[] getFontFileContent() {
+        return fontFileContent;
+    }
+
+    public void setFontFileContent(byte[] fontFileContent) {
+        this.fontFileContent = fontFileContent;
     }
 
     public TextProcessingFactory getTextProcessingFactory() {

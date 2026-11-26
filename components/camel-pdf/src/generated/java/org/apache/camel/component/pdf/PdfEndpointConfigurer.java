@@ -25,6 +25,8 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "font": target.getPdfConfiguration().setFont(property(camelContext, java.lang.String.class, value)); return true;
+        case "fontfile":
+        case "fontFile": target.getPdfConfiguration().setFontFile(property(camelContext, java.lang.String.class, value)); return true;
         case "fontsize":
         case "fontSize": target.getPdfConfiguration().setFontSize(property(camelContext, float.class, value)); return true;
         case "lazystartproducer":
@@ -49,6 +51,8 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "font": return java.lang.String.class;
+        case "fontfile":
+        case "fontFile": return java.lang.String.class;
         case "fontsize":
         case "fontSize": return float.class;
         case "lazystartproducer":
@@ -74,6 +78,8 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "font": return target.getPdfConfiguration().getFont();
+        case "fontfile":
+        case "fontFile": return target.getPdfConfiguration().getFontFile();
         case "fontsize":
         case "fontSize": return target.getPdfConfiguration().getFontSize();
         case "lazystartproducer":
