@@ -163,9 +163,20 @@ public class PdfProducer extends DefaultProducer {
     }
 
     private void appendToPdfDocument(String text, PDDocument document, ProtectionPolicy protectionPolicy) throws IOException {
-        Collection<String> words = splitStrategy.split(text);
-        Collection<String> lines = lineBuilderStrategy.buildLines(words);
-        writeStrategy.write(lines, document);
+        try {
+            Collection<String> words = splitStrategy.split(text);
+            Collection<String> lines = lineBuilderStrategy.buildLines(words);
+            writeStrategy.write(lines, document);
+        } catch (IllegalArgumentException e) {
+            if (pdfConfiguration.getFontFile() == null) {
+                // PDFBox fails on a character that the standard font cannot show, such as Cyrillic or Chinese
+                throw new IllegalArgumentException(
+                        e.getMessage() + ". The standard fonts of the font option cover only Latin text:"
+                                                   + " use the fontFile option with a TrueType font that has these characters",
+                        e);
+            }
+            throw e;
+        }
         if (protectionPolicy != null) {
             document.protect(protectionPolicy);
         }

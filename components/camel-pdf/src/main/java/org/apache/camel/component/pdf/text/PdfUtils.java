@@ -16,14 +16,33 @@
  */
 package org.apache.camel.component.pdf.text;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.apache.camel.component.pdf.PdfConfiguration;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 import static org.apache.camel.component.pdf.PdfConstants.PDF_PIXEL_SIZE;
 
 public final class PdfUtils {
     private PdfUtils() {
+    }
+
+    /**
+     * The font to write the text with: the font file of the fontFile option, which is embedded in the given document,
+     * or else the standard font of the font option.
+     */
+    public static PDFont createFont(PdfConfiguration pdfConfiguration, PDDocument document) throws IOException {
+        byte[] fontFile = pdfConfiguration.getFontFileContent();
+        if (fontFile != null) {
+            // a Type0 font belongs to the document it is embedded in, so it is loaded for each document
+            return PDType0Font.load(document, new ByteArrayInputStream(fontFile));
+        }
+        return new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont()));
     }
 
     public static float getAverageFontHeight(PDFont font, float fontSize) throws IOException {
