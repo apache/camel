@@ -85,6 +85,8 @@ public class DisruptorReference {
     // the producers that have read the current Disruptor and not yet published on its ring buffer (or failed to): a
     // reconfiguration clears the reference, then waits for them before it drains and halts the Disruptor, so that no
     // exchange is published on a ring buffer whose event handlers have been halted
+    private static final long MAX_PUBLISHES_IN_FLIGHT_PAUSE = TimeUnit.MILLISECONDS.toNanos(1);
+
     private final AtomicInteger publishesInFlight = new AtomicInteger();
 
     // the current Disruptor while it has consumers (the buffered exchanges are only published on such a Disruptor), and
@@ -183,8 +185,24 @@ public class DisruptorReference {
     }
 
     private void awaitPublishesInFlight() {
-        while (publishesInFlight.get() > 0) {
-            LockSupport.parkNanos(1000L);
+        // a producer in flight usually ends within microseconds, but one that waits for a free slot waits for a consumer:
+        // the pause doubles up to 1 ms, so a long wait does not keep a core busy. parkNanos returns at once while the
+        // interrupt flag is set, so on an interrupted thread (such as a CamelContext stop that timed out) the loop would
+        // spin: the flag is cleared for the wait, and set again after it
+        boolean interrupted = Thread.interrupted();
+        try {
+            long pause = 1000L;
+            while (publishesInFlight.get() > 0) {
+                LockSupport.parkNanos(pause);
+                pause = Math.min(pause * 2, MAX_PUBLISHES_IN_FLIGHT_PAUSE);
+                if (Thread.interrupted()) {
+                    interrupted = true;
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 

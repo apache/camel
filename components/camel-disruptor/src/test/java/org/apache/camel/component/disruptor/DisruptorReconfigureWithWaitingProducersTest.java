@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.disruptor;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -35,6 +37,8 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Producers that wait for a free slot on the full ring buffer of a disruptor while a consumer is added (which replaces
@@ -89,6 +93,64 @@ class DisruptorReconfigureWithWaitingProducersTest extends CamelTestSupport {
         template.sendBody(SLOW, "after");
 
         MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
+    }
+
+    @Test
+    void aReconfigurationWaitsForTheProducersWithoutSpinning() throws Exception {
+        reconfigurationWaitsForTheProducersWithoutSpinning(false);
+    }
+
+    @Test
+    void aReconfigurationOnAnInterruptedThreadWaitsForTheProducersWithoutSpinning() throws Exception {
+        // as a CamelContext stop that timed out
+        reconfigurationWaitsForTheProducersWithoutSpinning(true);
+    }
+
+    private void reconfigurationWaitsForTheProducersWithoutSpinning(boolean interrupted) throws Exception {
+        ThreadMXBean threads = ManagementFactory.getThreadMXBean();
+        assumeTrue(threads.isThreadCpuTimeSupported() && threads.isThreadCpuTimeEnabled());
+        List<String> bodies = fillAndWait(SLOW, 1, SLOW_WAITING, false);
+        getMockEndpoint("mock:slow").expectedBodiesReceivedInAnyOrder(bodies);
+
+        // a consumer is added: the reconfiguration waits for the producers in flight, which wait for the busy slow
+        // consumer
+        AtomicBoolean interruptedAfter = new AtomicBoolean();
+        Thread reconfiguration = new Thread(() -> {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+            try {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from(SLOW).routeId("added").to("mock:added");
+                    }
+                });
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+            interruptedAfter.set(Thread.currentThread().isInterrupted());
+        }, "add-consumer");
+        reconfiguration.setDaemon(true);
+        reconfiguration.start();
+        DisruptorReference reference = context.getEndpoint(SLOW, DisruptorEndpoint.class).getDisruptor();
+        await().atMost(20, TimeUnit.SECONDS).until(reference::hasNullReference);
+
+        // the CPU time the reconfiguration uses while it waits half a second: parked, not spinning
+        long cpuBefore = threads.getThreadCpuTime(reconfiguration.threadId());
+        long waitStart = System.nanoTime();
+        await().pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS).until(() -> true);
+        long waited = System.nanoTime() - waitStart;
+        long cpu = threads.getThreadCpuTime(reconfiguration.threadId()) - cpuBefore;
+        releaseSlowConsumer.countDown();
+
+        awaitEnded(reconfiguration);
+        producers.forEach(this::awaitEnded);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
+        assertTrue(cpu < waited / 2,
+                () -> "the reconfiguration used " + TimeUnit.NANOSECONDS.toMillis(cpu) + " ms of CPU in "
+                      + TimeUnit.NANOSECONDS.toMillis(waited) + " ms of waiting");
+        assertEquals(interrupted, interruptedAfter.get(), "the interrupt flag of the thread is kept");
     }
 
     @Test
@@ -175,7 +237,7 @@ class DisruptorReconfigureWithWaitingProducersTest extends CamelTestSupport {
         });
         awaitEnded(reconfiguration);
         await().atMost(20, TimeUnit.SECONDS).until(() -> Thread.getAllStackTraces().keySet().stream()
-                .anyMatch(t -> t.getName().contains("DisruptorBacklog") && isWaitingForFreeSlot(t)));
+                .anyMatch(t -> isBacklogThreadOfThisContext(t) && isWaitingForFreeSlot(t)));
 
         // a second consumer is added meanwhile: the reconfiguration waits for that thread, which publishes on the old
         // ring buffer once the first consumer goes on, and then the rest on the new one
@@ -208,8 +270,9 @@ class DisruptorReconfigureWithWaitingProducersTest extends CamelTestSupport {
         first.expectedBodiesReceivedInAnyOrder(bodies);
 
         // the first consumer route is added, but the thread that would publish what does not fit the ring buffer
-        // cannot be started (as when no native thread can be created): the route starts, the consumer gets what fits
-        // the ring buffer, and the rest stays buffered
+        // cannot be started (an Error that is not a VirtualMachineError; an OutOfMemoryError, such as when no native
+        // thread can be created, is thrown again): the route starts, the consumer gets what fits the ring buffer, and
+        // the rest stays buffered
         backlogThreadError.set(new CannotStartThreadError());
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -291,6 +354,12 @@ class DisruptorReconfigureWithWaitingProducersTest extends CamelTestSupport {
         producer.start();
         failures.add(failure);
         return producer;
+    }
+
+    private boolean isBacklogThreadOfThisContext(Thread thread) {
+        // "Camel (camel-N) thread #M - DisruptorBacklog[...]": not the thread of a disruptor test in another context
+        String name = thread.getName();
+        return name.contains("(" + context.getName() + ")") && name.contains("DisruptorBacklog[");
     }
 
     private boolean isWaitingForFreeSlot(Thread thread) {
