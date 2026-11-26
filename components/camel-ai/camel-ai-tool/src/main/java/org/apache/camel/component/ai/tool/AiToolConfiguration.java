@@ -37,7 +37,10 @@ public class AiToolConfiguration implements Cloneable {
     @Metadata(label = "consumer")
     @UriParam(description = "Comma-separated list of tags used to group tools. "
                             + "Producers filter the registry by these tags to select which tools to expose to the LLM. "
-                            + "When omitted, the tool goes into a default pool available to all producers.")
+                            + "When omitted, the tool goes into a default pool that is added to the tools of every tag "
+                            + "a producer selects with its own tags option "
+                            + "(producers without tags receive no registry tools, "
+                            + "and the MCP server never exposes the default pool).")
     private String tags;
 
     @Metadata(label = "consumer")
