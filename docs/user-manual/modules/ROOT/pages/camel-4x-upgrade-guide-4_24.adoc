@@ -5367,6 +5367,22 @@ now logs a WARN, and an INFO when it refreshes them again.
 Code that sets the `createdAt` of a key older than `lockMaxAgeMillis` and expects the repository that added the key
 to see it as absent, such as a test of the keep-alive, has to check the key with another repository instance.
 
+=== camel-sql - JdbcOrphanLockAwareIdempotentRepository does not remove a key that another instance took over
+
+When another instance took a key over (the first instance could not refresh its lock for longer than
+`lockMaxAgeMillis`), `JdbcOrphanLockAwareIdempotentRepository` on the first instance no longer removes the key or keeps
+it alive: its remove and its keep-alive now only match the `createdAt` that the instance wrote last. Before, the
+remove deleted the lock of the other instance while it still processed the message, so a third instance could take
+the key, and the keep-alive refreshed the lock of the other instance. Such a remove now returns false and logs a WARN.
+A confirm still confirms the key by its key.
+
+The repository adds `AND createdAt < ?` to `deleteString` for a key that it holds, as it already does to `queryString`
+and to the update query. A custom `deleteString` must end with its `WHERE` condition, as a custom `queryString`
+already must. Keep `lockMaxAgeMillis` larger than `lockKeepAliveIntervalMillis` by a few seconds at least: an instance
+matches a `createdAt` earlier than halfway between the two after the one it wrote last. The keep-alive now sends one
+statement per key, in one transaction, instead of a batch. `getProcessorNameMessageIdSet()` now returns the key set of
+the map that holds the `createdAt` of each key: a key can be removed from it, but no longer added.
+
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
 In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the

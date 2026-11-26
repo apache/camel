@@ -17,14 +17,19 @@
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -69,6 +74,11 @@ import org.springframework.transaction.support.TransactionTemplate;
  * inside a transaction of the caller. A confirm that fails later (for example the connection is lost) logs a WARN, and
  * when the repository joins a transaction of the caller (same DataSource), it marks that transaction as rollback only,
  * as a failed add or remove does.
+ * <p/>
+ * When another instance took a key over (this instance could not refresh it for longer than the lockMaxAge), this
+ * instance no longer removes the key nor keeps it alive: the lease is then the one of the other instance, which still
+ * processes the message. The remove and the keep-alive of a key that this instance holds only match the lease that this
+ * instance wrote last (see the Lease class). A confirm still confirms the key, as the message was processed.
  */
 public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdRepository {
 
@@ -77,9 +87,11 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     protected static final String DEFAULT_CONFIRM_QUERY
             = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt = NULL WHERE processorName = ? AND messageId = ?";
 
-    // a concurrent set, so no lock is held while SQL runs: add and remove hold a connection of the pool while they
-    // run, and the keep-alive needs one too, so a lock held across SQL could deadlock with a small pool
-    private final Set<ProcessorNameAndMessageId> processorNameMessageIdSet = ConcurrentHashMap.newKeySet();
+    // the keys this instance holds and keeps alive, each with the lease this instance last wrote for it. A concurrent
+    // map, so no lock is held while SQL runs: add and remove hold a connection of the pool while they run, and the
+    // keep-alive needs one too, so a lock held across SQL could deadlock with a small pool
+    private final Map<ProcessorNameAndMessageId, Lease> leases = new ConcurrentHashMap<>();
+    private final Set<ProcessorNameAndMessageId> processorNameMessageIdSet = leases.keySet();
 
     // the keys whose confirm runs: the confirm takes them out of processorNameMessageIdSet before its UPDATE, so that the
     // keep-alive does not wait for the row lock of the confirm, but this instance still holds them until the confirm ends
@@ -164,9 +176,44 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
 
     @Override
     protected int delete(String key) {
-        int result = super.delete(key);
+        Lease lease = leases.get(new ProcessorNameAndMessageId(processorName, key));
+        int result;
+        if (lease == null) {
+            // not a key that this instance keeps alive (such as a key removed by hand, or one added before a restart of
+            // the JVM, or earlier in the current transaction): deleted by its key
+            result = super.delete(key);
+        } else if (lease.lost) {
+            // the keep-alive found that another instance took the key over: its row is not the lease of this instance
+            result = 0;
+        } else {
+            result = jdbcTemplate.update(getDeleteString() + " AND createdAt < ?", processorName, key, ownedBefore(lease));
+            if (result == 0) {
+                log.warn("Not removing the key {} of processor {} from the idempotent repository: another instance took it"
+                         + " over, as this instance could not refresh its lease for longer than lockMaxAgeMillis, or confirmed"
+                         + " or removed it. The other instance may still process its message.",
+                        key, processorName);
+            }
+        }
         stopKeepAlive(key);
         return result;
+    }
+
+    // the createdAt of a row that is the lease of this instance is earlier than this: see Lease
+    private Timestamp ownedBefore(Lease lease) {
+        return ownedBefore(lease.writtenAt, (lockMaxAgeMillis + lockKeepAliveIntervalMillis) / 2, ZoneId.systemDefault());
+    }
+
+    /**
+     * The lease written at writtenAt plus the margin. A createdAt column without time zone (the default table) holds
+     * the local time of the JVM, which goes back an hour at the end of daylight saving time: a lease written shortly
+     * before would then look later than the instant plus the margin. So the margin is added to the local time too, and
+     * the later of the two is used. For a column with time zone, this matches up to an hour more for a lease written
+     * shortly before that change, as the remove and the keep-alive matched any createdAt before.
+     */
+    static Timestamp ownedBefore(long writtenAt, long margin, ZoneId zone) {
+        long local = LocalDateTime.ofInstant(Instant.ofEpochMilli(writtenAt), zone).plus(margin, ChronoUnit.MILLIS)
+                .atZone(zone).toInstant().toEpochMilli();
+        return new Timestamp(Math.max(writtenAt + margin, local));
     }
 
     /**
@@ -195,8 +242,11 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         // deadlock with a later confirm or remove in the same transaction). It is kept alive again when the confirm fails
         // or its transaction does not commit; not when no row matched, as then there is no lease of this instance.
         // Until the confirm ends, this instance still holds the key (see queryForInt), but does not keep it alive.
+        // The confirm matches the row by its key also when another instance took the key over meanwhile: the message
+        // was processed, so the key is a duplicate from now on (the other instance does not remove it then).
         confirming.add(id);
-        boolean keptAlive = processorNameMessageIdSet.remove(id);
+        Lease lease = leases.remove(id);
+        boolean keptAlive = lease != null;
         boolean completed = false;
         try {
             // in a transaction of its own (or the one of the caller), as add and remove
@@ -207,7 +257,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
                 // an insert of the key earlier in this transaction does not keep it alive after the commit
                 cancelKeepAliveAfterCommit(id);
                 if (keptAlive && TransactionSynchronizationManager.isSynchronizationActive()) {
-                    TransactionSynchronizationManager.registerSynchronization(new KeepAliveUnlessCommitted(this, id));
+                    TransactionSynchronizationManager.registerSynchronization(new KeepAliveUnlessCommitted(this, id, lease));
                 }
                 return true;
             });
@@ -222,7 +272,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             return false;
         } finally {
             if (keptAlive && !completed) {
-                processorNameMessageIdSet.add(id);
+                leases.put(id, lease);
             }
             confirming.remove(id);
         }
@@ -311,7 +361,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         if (jdbcTemplate.queryForObject(getQueryString(), Integer.class, processorName, key) == 0) {
             int result = jdbcTemplate.update(getInsertString(), processorName, key, currentTimestamp);
-            keepAliveAfterCommit(key);
+            keepAliveAfterCommit(key, currentTimestamp);
             return result;
         } else {
             // Row exists — try to claim orphan lock with conditional UPDATE.
@@ -322,7 +372,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             int result = jdbcTemplate.update(orphanLockRecoverQueryString, currentTimestamp, processorName, key, xMillisAgo);
             if (result > 0) {
                 log.debug("Orphan lock seized for key: {}", key);
-                keepAliveAfterCommit(key);
+                keepAliveAfterCommit(key, currentTimestamp);
             }
             return result;
         }
@@ -333,12 +383,37 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
      * transaction rolls back (for example in a transacted route with removeOnFailure=false), the row is not there, so
      * the key must not be kept alive: another node may insert it later, and this node would keep its lease alive.
      */
-    private void keepAliveAfterCommit(String key) {
+    private void keepAliveAfterCommit(String key, Timestamp createdAt) {
         ProcessorNameAndMessageId id = new ProcessorNameAndMessageId(processorName, key);
+        Lease lease = new Lease(createdAt.getTime(), false);
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.registerSynchronization(new KeepAliveAfterCommit(this, id));
+            TransactionSynchronizationManager.registerSynchronization(new KeepAliveAfterCommit(this, id, lease));
         } else {
-            processorNameMessageIdSet.add(id);
+            leases.put(id, lease);
+        }
+    }
+
+    /**
+     * The lease that this instance last wrote for a key it holds: the createdAt of its insert or takeover, or of the
+     * last keep-alive that refreshed it. Another instance takes the key over only when its createdAt is older than the
+     * lockMaxAge, and then writes a createdAt of its own, later than this one by more than the lockMaxAge. A keep-alive
+     * of this instance whose outcome is not known yet (it runs while the key is confirmed or removed, or it failed
+     * after the database committed it) writes about one keep-alive interval later than this one. So the remove and the
+     * keep-alive of the key only match a createdAt earlier than halfway between the two, which leaves room for a late
+     * keep-alive and for the rounding of the createdAt column. When the keep-alive does not match the row, the lease is
+     * lost: the key is no longer kept alive, nor removed, but this instance still holds it (see queryForInt) until it
+     * is removed or confirmed. The clocks of the instances do not need to agree: the other instance compares the stored
+     * createdAt with its own clock, and writes a createdAt from the same clock. A keep-alive of this instance that
+     * committed although it failed, after the keep-alive could not refresh the key for longer than half of lockMaxAge
+     * minus the keep-alive interval, is not told apart from a takeover: the lease is then marked lost.
+     */
+    private static final class Lease {
+        private final long writtenAt;
+        private final boolean lost;
+
+        private Lease(long writtenAt, boolean lost) {
+            this.writtenAt = writtenAt;
+            this.lost = lost;
         }
     }
 
@@ -349,18 +424,21 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     private static final class KeepAliveAfterCommit implements TransactionSynchronization {
         private final JdbcOrphanLockAwareIdempotentRepository repository;
         private final ProcessorNameAndMessageId id;
+        private final Lease lease;
         // set and read by the thread of the transaction
         private boolean cancelled;
 
-        private KeepAliveAfterCommit(JdbcOrphanLockAwareIdempotentRepository repository, ProcessorNameAndMessageId id) {
+        private KeepAliveAfterCommit(JdbcOrphanLockAwareIdempotentRepository repository, ProcessorNameAndMessageId id,
+                                     Lease lease) {
             this.repository = repository;
             this.id = id;
+            this.lease = lease;
         }
 
         @Override
         public void afterCommit() {
             if (!cancelled) {
-                repository.processorNameMessageIdSet.add(id);
+                repository.leases.put(id, lease);
             }
         }
     }
@@ -373,16 +451,19 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     private static final class KeepAliveUnlessCommitted implements TransactionSynchronization {
         private final JdbcOrphanLockAwareIdempotentRepository repository;
         private final ProcessorNameAndMessageId id;
+        private final Lease lease;
 
-        private KeepAliveUnlessCommitted(JdbcOrphanLockAwareIdempotentRepository repository, ProcessorNameAndMessageId id) {
+        private KeepAliveUnlessCommitted(JdbcOrphanLockAwareIdempotentRepository repository, ProcessorNameAndMessageId id,
+                                         Lease lease) {
             this.repository = repository;
             this.id = id;
+            this.lease = lease;
         }
 
         @Override
         public void afterCompletion(int status) {
             if (status != STATUS_COMMITTED) {
-                repository.processorNameMessageIdSet.add(id);
+                repository.leases.put(id, lease);
             }
         }
     }
@@ -449,22 +530,42 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     void keepAlive() {
         // the leases get a later timestamp, taken once the connection was obtained
         long started = System.currentTimeMillis();
+        List<Refresh> refreshes;
         try {
-            transactionTemplate.execute(status -> {
+            refreshes = transactionTemplate.execute(status -> {
                 // take the timestamp and the keys inside the transaction, after the connection was obtained (with the
                 // DataSourceTransactionManager), as waiting for it can take a while
                 Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-                List<Object[]> args = processorNameMessageIdSet.stream()
-                        .map(processorNameMessageId -> new Object[] {
-                                currentTimestamp, processorNameMessageId.processorName, processorNameMessageId.messageId })
-                        .collect(Collectors.toList());
-                // not a key that was confirmed meanwhile (its createdAt is null)
-                return jdbcTemplate.batchUpdate(getUpdateTimestampQuery() + " AND createdAt IS NOT NULL", args);
+                // only the lease of this instance (see Lease), and not a key that was confirmed meanwhile (its createdAt
+                // is null). One statement per key, as a batch may not tell which keys it updated
+                String query = getUpdateTimestampQuery() + " AND createdAt < ?";
+                List<Refresh> result = new ArrayList<>();
+                for (Map.Entry<ProcessorNameAndMessageId, Lease> entry : leases.entrySet()) {
+                    ProcessorNameAndMessageId id = entry.getKey();
+                    Lease lease = entry.getValue();
+                    if (!lease.lost) {
+                        int updated = jdbcTemplate.update(query, currentTimestamp, id.processorName, id.messageId,
+                                ownedBefore(lease));
+                        result.add(new Refresh(
+                                id, lease,
+                                updated > 0 ? new Lease(currentTimestamp.getTime(), false) : new Lease(lease.writtenAt, true)));
+                    }
+                }
+                return result;
             });
         } catch (Exception e) {
             log.error("failed updating createdAt in keepAlive due to ", e);
             warnOnceWhenLeasesMayHaveExpired();
             return;
+        }
+        // once committed; not for a key that was removed or confirmed meanwhile
+        for (Refresh refresh : refreshes) {
+            if (leases.replace(refresh.id, refresh.lease, refresh.next) && refresh.next.lost) {
+                log.warn("The keep-alive of processor {} no longer keeps the key {} alive: another instance took it over, as"
+                         + " this instance could not refresh its lease for longer than lockMaxAgeMillis, or confirmed or"
+                         + " removed it. This instance does not remove the key, and still treats it as a duplicate.",
+                        processorName, refresh.id.messageId);
+            }
         }
         if (leasesMayHaveExpired) {
             leasesMayHaveExpired = false;
@@ -533,6 +634,10 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
 
     public void setLockKeepAliveIntervalMillis(long lockKeepAliveIntervalMillis) {
         this.lockKeepAliveIntervalMillis = lockKeepAliveIntervalMillis;
+    }
+
+    // a lease that a keep-alive refreshed, or found lost
+    private record Refresh(ProcessorNameAndMessageId id, Lease lease, Lease next) {
     }
 
     class LockKeepAliveTask implements Runnable {

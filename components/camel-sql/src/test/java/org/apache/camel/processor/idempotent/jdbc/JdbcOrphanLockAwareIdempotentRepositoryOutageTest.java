@@ -285,7 +285,9 @@ class JdbcOrphanLockAwareIdempotentRepositoryOutageTest {
 
         @Override
         public int update(String sql, Object... args) {
-            if (sql.equals(pausedSql)) {
+            // the repository may add a condition to the statement (the remove of a key it holds)
+            String pauseAt = pausedSql;
+            if (pauseAt != null && sql.startsWith(pauseAt)) {
                 pausedSql = null;
                 paused.countDown();
                 try {
