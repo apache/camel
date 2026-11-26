@@ -581,6 +581,22 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * How the model chooses the tools of chat: auto (the model decides),
+         * required (the model must call a tool), none (the model must not call
+         * a tool), or the name of the tool the model must call.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param toolChoice the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder toolChoice(String toolChoice) {
+            doSetProperty("toolChoice", toolChoice);
+            return this;
+        }
+        /**
          * Top K (top-k sampling).
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -1225,7 +1241,9 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiTools";
         }
         /**
-         * Tool choice option (auto, required, none).
+         * How the model chooses the tools of chat, overriding the toolChoice
+         * option: auto, required, none, or the name of the tool the model must
+         * call.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1285,9 +1303,9 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiTokenCount";
         }
         /**
-         * The token IDs.
+         * The tokens of the input text.
          * 
-         * The option is a: {@code java.util.List<Integer>} type.
+         * The option is a: {@code java.util.List<String>} type.
          * 
          * Group: producer
          * 
@@ -1495,7 +1513,8 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiDetectors";
         }
         /**
-         * Whether harmful content was detected.
+         * Whether harmful content was detected: true when a detector found
+         * something, not counting a Granite Guardian answer of No.
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -1519,7 +1538,8 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiDetectionResults";
         }
         /**
-         * Count of detections found.
+         * Count of the detections that watsonx.ai returned, including Granite
+         * Guardian answers of No.
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -1702,7 +1722,10 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiFoundationModelTasks";
         }
         /**
-         * Filter for foundation models or tasks.
+         * The filter of listModels, in the syntax of the filters parameter of
+         * watsonx.ai, such as function_text_chat, modelid_ibm/granite-4-h-small
+         * or function_rerank,!function_embedding:and (or a
+         * com.ibm.watsonx.ai.foundationmodel.filter.Filter).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1715,7 +1738,7 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiFoundationModelFilter";
         }
         /**
-         * Include tech preview models.
+         * Whether listModels includes the tech preview models.
          * 
          * The option is a: {@code Boolean} type.
          * 

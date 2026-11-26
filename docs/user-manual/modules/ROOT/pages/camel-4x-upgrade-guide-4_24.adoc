@@ -891,6 +891,19 @@ prediction length and, for `deploymentForecast`, its future data were dropped an
 length. The body is now sent with its parameters. `forecast` fails when the `CamelIBMWatsonxAiForecastFutureData`
 header is set, as watsonx.ai takes future data for deployments only.
 
+=== camel-ibm-watsonx-ai - headers that did nothing
+
+The `CamelIBMWatsonxAiToolChoice`, `CamelIBMWatsonxAiFoundationModelFilter` and
+`CamelIBMWatsonxAiFoundationModelTechPreview` headers were documented but never read. `chat` now sends the tool choice
+of the header or of the new `toolChoice` option (`auto`, `required`, `none`, or the name of the tool to call), and
+`listModels` the filter and tech preview flag of the headers. A route that set these headers without effect now gets
+what they ask for.
+
+The `CamelIBMWatsonxAiDetected` header of `detect` is no longer `true` for a Granite Guardian answer of `No`, which
+watsonx.ai returns as a detection when the threshold is low; `CamelIBMWatsonxAiDetectionCount` still counts it.
+`deploymentInfo` looks up a deployment in the project when no space is set, instead of failing. The catalog gives the
+`CamelIBMWatsonxAiTokens` header its actual type, a `List` of `String` tokens.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the

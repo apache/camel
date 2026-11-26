@@ -95,7 +95,9 @@ public interface WatsonxAiConstants {
     @Metadata(description = "The tools available for function calling", javaType = "java.util.List")
     String TOOLS = HEADER_PREFIX + "Tools";
 
-    @Metadata(description = "Tool choice option (auto, required, none)", javaType = "String")
+    @Metadata(description = "How the model chooses the tools of chat, overriding the toolChoice option: auto, required, none,"
+                            + " or the name of the tool the model must call",
+              javaType = "String")
     String TOOL_CHOICE = HEADER_PREFIX + "ToolChoice";
 
     // Embeddings
@@ -113,7 +115,7 @@ public interface WatsonxAiConstants {
     @Metadata(description = "The token count", javaType = "Integer")
     String TOKEN_COUNT = HEADER_PREFIX + "TokenCount";
 
-    @Metadata(description = "The token IDs", javaType = "java.util.List<Integer>")
+    @Metadata(description = "The tokens of the input text", javaType = "java.util.List<String>")
     String TOKENS = HEADER_PREFIX + "Tokens";
 
     // File Input
@@ -170,13 +172,16 @@ public interface WatsonxAiConstants {
               javaType = "java.util.List<com.ibm.watsonx.ai.detection.detector.BaseDetector>")
     String DETECTORS = HEADER_PREFIX + "Detectors";
 
-    @Metadata(description = "Whether harmful content was detected", javaType = "Boolean")
+    @Metadata(description = "Whether harmful content was detected: true when a detector found something, not counting a"
+                            + " Granite Guardian answer of No",
+              javaType = "Boolean")
     String DETECTED = HEADER_PREFIX + "Detected";
 
     @Metadata(description = "Detection results grouped by type", javaType = "java.util.Map")
     String DETECTION_RESULTS = HEADER_PREFIX + "DetectionResults";
 
-    @Metadata(description = "Count of detections found", javaType = "Integer")
+    @Metadata(description = "Count of the detections that watsonx.ai returned, including Granite Guardian answers of No",
+              javaType = "Integer")
     String DETECTION_COUNT = HEADER_PREFIX + "DetectionCount";
 
     // Streaming
@@ -229,10 +234,13 @@ public interface WatsonxAiConstants {
     @Metadata(description = "List of foundation model tasks", javaType = "java.util.List")
     String FOUNDATION_MODEL_TASKS = HEADER_PREFIX + "FoundationModelTasks";
 
-    @Metadata(description = "Filter for foundation models or tasks", javaType = "String")
+    @Metadata(description = "The filter of listModels, in the syntax of the filters parameter of watsonx.ai, such as"
+                            + " function_text_chat, modelid_ibm/granite-4-h-small or function_rerank,!function_embedding:and"
+                            + " (or a com.ibm.watsonx.ai.foundationmodel.filter.Filter)",
+              javaType = "String")
     String FOUNDATION_MODEL_FILTER = HEADER_PREFIX + "FoundationModelFilter";
 
-    @Metadata(description = "Include tech preview models", javaType = "Boolean")
+    @Metadata(description = "Whether listModels includes the tech preview models", javaType = "Boolean")
     String FOUNDATION_MODEL_TECH_PREVIEW = HEADER_PREFIX + "FoundationModelTechPreview";
 
     // Tool Service

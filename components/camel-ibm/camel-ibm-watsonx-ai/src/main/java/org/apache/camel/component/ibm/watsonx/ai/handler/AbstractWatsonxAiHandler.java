@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import com.ibm.watsonx.ai.chat.model.BaseChatParameters.ToolChoiceOption;
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
 import com.ibm.watsonx.ai.chat.model.SystemMessage;
@@ -432,6 +434,23 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         Double headerTopP = in.getHeader(WatsonxAiConstants.TOP_P, Double.class);
         if (headerTopP != null) {
             builder.topP(headerTopP);
+        }
+
+        applyToolChoice(builder, in.getHeader(WatsonxAiConstants.TOOL_CHOICE, config.getToolChoice(), String.class));
+    }
+
+    /**
+     * auto, required and none are the tool choice options of watsonx.ai; any other value names the tool to call.
+     */
+    static void applyToolChoice(ChatParameters.Builder builder, String toolChoice) {
+        if (toolChoice == null || toolChoice.isBlank()) {
+            return;
+        }
+        switch (toolChoice.trim().toLowerCase(Locale.ROOT)) {
+            case "auto" -> builder.toolChoiceOption(ToolChoiceOption.AUTO);
+            case "required" -> builder.toolChoiceOption(ToolChoiceOption.REQUIRED);
+            case "none" -> builder.toolChoiceOption(ToolChoiceOption.NONE);
+            default -> builder.toolChoice(toolChoice.trim());
         }
     }
 

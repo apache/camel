@@ -345,6 +345,10 @@ to them
 5. The next `chat` sends this whole conversation, and the loop goes on until the LLM provides a final answer without
 tool calls. `chat` removes the `CamelIBMWatsonxAiToolCalls` header of an answer without tool calls
 
+The `toolChoice` option, or the `CamelIBMWatsonxAiToolChoice` header, sets how the model uses the tools: `auto` (the
+model decides, the default of watsonx.ai), `required` (the model must call a tool), `none` (the model must not call a
+tool) or the name of a tool, which the model must call.
+
 NOTE: The utility tools (`runTool`, `listTools` and the tools of the `ToolService`) require the `wxUrl` option, the
 watsonx platform URL of your region (`{{ibm.watsonx.wx-url}}`), which differs from the ML `baseUrl`.
 
@@ -755,6 +759,10 @@ from("direct:detectCustom")
       "&operation=detect")
   .log("Detections: ${body}");
 ----
+
+The `CamelIBMWatsonxAiDetected` header is `true` when a detector found something. A Granite Guardian detector with a
+low threshold also returns its answer `No` (a risk below 0.5) as a detection: such an answer is in the body and counted in
+`CamelIBMWatsonxAiDetectionCount`, but does not set `CamelIBMWatsonxAiDetected`.
 
 === Text Extraction from Cloud Object Storage
 
@@ -1474,6 +1482,11 @@ YAML::
             message: "Available models: ${body}"
 ----
 ====
+
+The `CamelIBMWatsonxAiFoundationModelFilter` header filters the models, in the syntax of the `filters` parameter of
+watsonx.ai: for example `function_text_chat` lists the chat models, `function_rerank,!function_embedding:and` the rerank
+models that do not also embed, and `modelid_ibm/granite-4-h-small` one model. The
+`CamelIBMWatsonxAiFoundationModelTechPreview` header set to `true` adds the tech preview models.
 
 === List Supported Tasks
 

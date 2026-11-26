@@ -25,6 +25,7 @@ import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.SystemMessage;
 import com.ibm.watsonx.ai.chat.model.TextContent;
 import com.ibm.watsonx.ai.chat.model.Tool;
+import com.ibm.watsonx.ai.chat.model.ToolCall;
 import com.ibm.watsonx.ai.chat.model.ToolMessage;
 import com.ibm.watsonx.ai.chat.model.UserMessage;
 import com.ibm.watsonx.ai.tool.ToolService;
@@ -159,6 +160,35 @@ public class WatsonxAiChatWithToolsIT extends WatsonxAiTestSupport {
         assertNull(finalExchange.getIn().getHeader(WatsonxAiConstants.TOOL_CALLS));
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testToolChoice() throws Exception {
+        // a greeting needs no tool: the tool choice makes the model call one anyway, or none
+        Exchange named = template.send("direct:toolChoice", exchange -> {
+            exchange.getIn().setBody("Say hello.");
+            exchange.getIn().setHeader(WatsonxAiConstants.TOOL_CHOICE, "wikipedia");
+        });
+        Exchange required = template.send("direct:toolChoice", exchange -> {
+            exchange.getIn().setBody("Say hello.");
+            exchange.getIn().setHeader(WatsonxAiConstants.TOOL_CHOICE, "required");
+        });
+        Exchange none = template.send("direct:toolChoice", exchange -> {
+            exchange.getIn().setBody("What is Apache Camel? Use the wikipedia tool to find out.");
+            exchange.getIn().setHeader(WatsonxAiConstants.TOOL_CHOICE, "none");
+        });
+
+        for (Exchange exchange : List.of(named, required)) {
+            assertNull(exchange.getException());
+            assertTrue(exchange.getMessage().getHeader(WatsonxAiConstants.HAS_TOOL_CALLS, Boolean.class));
+            List<ToolCall> toolCalls = exchange.getMessage().getHeader(WatsonxAiConstants.TOOL_CALLS, List.class);
+            LOG.info("Forced tool calls: {}", toolCalls);
+            assertEquals("wikipedia", toolCalls.get(0).function().name());
+        }
+        assertNull(none.getException());
+        assertFalse(none.getMessage().getHeader(WatsonxAiConstants.HAS_TOOL_CALLS, Boolean.class));
+        LOG.info("Answer without tools: {}", none.getMessage().getBody(String.class));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -184,6 +214,10 @@ public class WatsonxAiChatWithToolsIT extends WatsonxAiTestSupport {
                         .end()
                         .log("Chat completed. Response: ${body}")
                         .to("mock:result");
+
+                from("direct:toolChoice")
+                        .setHeader(WatsonxAiConstants.TOOLS, constant(tools))
+                        .to(buildChatEndpointUri());
             }
         };
     }

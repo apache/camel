@@ -101,6 +101,12 @@ public class WatsonxAiConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Presence penalty for chat")
     private Double presencePenalty;
 
+    @UriParam(label = "producer",
+              description = "How the model chooses the tools of chat: auto (the model decides), required (the model must"
+                            + " call a tool), none (the model must not call a tool), or the name of the tool the model must"
+                            + " call")
+    private String toolChoice;
+
     // Embedding Parameters
     @UriParam(label = "producer",
               description = "Maximum number of tokens accepted per input for embeddings. Truncates from the end if exceeded.")
@@ -311,6 +317,14 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setPresencePenalty(Double presencePenalty) {
         this.presencePenalty = presencePenalty;
+    }
+
+    public String getToolChoice() {
+        return toolChoice;
+    }
+
+    public void setToolChoice(String toolChoice) {
+        this.toolChoice = toolChoice;
     }
 
     public Integer getTruncateInputTokens() {

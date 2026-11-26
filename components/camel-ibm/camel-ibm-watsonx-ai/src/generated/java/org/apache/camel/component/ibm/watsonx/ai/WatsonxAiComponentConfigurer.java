@@ -90,6 +90,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "spaceId": getOrCreateConfiguration(target).setSpaceId(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": getOrCreateConfiguration(target).setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "toolchoice":
+        case "toolChoice": getOrCreateConfiguration(target).setToolChoice(property(camelContext, java.lang.String.class, value)); return true;
         case "topk":
         case "topK": getOrCreateConfiguration(target).setTopK(property(camelContext, java.lang.Integer.class, value)); return true;
         case "topp":
@@ -166,6 +168,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "spaceId": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
         case "timeout": return java.lang.Long.class;
+        case "toolchoice":
+        case "toolChoice": return java.lang.String.class;
         case "topk":
         case "topK": return java.lang.Integer.class;
         case "topp":
@@ -243,6 +247,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "spaceId": return getOrCreateConfiguration(target).getSpaceId();
         case "temperature": return getOrCreateConfiguration(target).getTemperature();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();
+        case "toolchoice":
+        case "toolChoice": return getOrCreateConfiguration(target).getToolChoice();
         case "topk":
         case "topK": return getOrCreateConfiguration(target).getTopK();
         case "topp":

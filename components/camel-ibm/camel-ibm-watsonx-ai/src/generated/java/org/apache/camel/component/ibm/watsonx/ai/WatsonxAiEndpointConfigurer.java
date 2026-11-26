@@ -80,6 +80,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "spaceId": target.getConfiguration().setSpaceId(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "toolchoice":
+        case "toolChoice": target.getConfiguration().setToolChoice(property(camelContext, java.lang.String.class, value)); return true;
         case "topk":
         case "topK": target.getConfiguration().setTopK(property(camelContext, java.lang.Integer.class, value)); return true;
         case "topp":
@@ -153,6 +155,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "spaceId": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
         case "timeout": return java.lang.Long.class;
+        case "toolchoice":
+        case "toolChoice": return java.lang.String.class;
         case "topk":
         case "topK": return java.lang.Integer.class;
         case "topp":
@@ -227,6 +231,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "spaceId": return target.getConfiguration().getSpaceId();
         case "temperature": return target.getConfiguration().getTemperature();
         case "timeout": return target.getConfiguration().getTimeout();
+        case "toolchoice":
+        case "toolChoice": return target.getConfiguration().getToolChoice();
         case "topk":
         case "topK": return target.getConfiguration().getTopK();
         case "topp":

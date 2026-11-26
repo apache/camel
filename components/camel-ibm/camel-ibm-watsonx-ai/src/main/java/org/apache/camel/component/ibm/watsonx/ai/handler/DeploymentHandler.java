@@ -88,26 +88,25 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
                                                + "' or endpoint configuration 'deploymentId'");
         }
 
-        // Get space ID from header or configuration (required for findById)
+        // The deployment is looked up in its space (header or configuration), or else in the project
         String spaceId = in.getHeader(WatsonxAiConstants.SPACE_ID, String.class);
         if (spaceId == null || spaceId.isEmpty()) {
             spaceId = config.getSpaceId();
         }
-        if (spaceId == null || spaceId.isEmpty()) {
+        FindByIdRequest.Builder request = FindByIdRequest.builder().deploymentId(deploymentId);
+        if (spaceId != null && !spaceId.isEmpty()) {
+            request.spaceId(spaceId);
+        } else if (config.getProjectId() != null && !config.getProjectId().isEmpty()) {
+            request.projectId(config.getProjectId());
+        } else {
             throw new IllegalArgumentException(
                     "Space ID must be provided via header '" + WatsonxAiConstants.SPACE_ID
-                                               + "' or endpoint configuration 'spaceId'");
+                                               + "' or endpoint configuration 'spaceId', or a project via 'projectId'");
         }
-
-        // Build request
-        FindByIdRequest request = FindByIdRequest.builder()
-                .deploymentId(deploymentId)
-                .spaceId(spaceId)
-                .build();
 
         // Call the service
         DeploymentService service = endpoint.getDeploymentService();
-        DeploymentResource response = service.findById(request);
+        DeploymentResource response = service.findById(request.build());
 
         // Build response headers
         Map<String, Object> headers = new HashMap<>();

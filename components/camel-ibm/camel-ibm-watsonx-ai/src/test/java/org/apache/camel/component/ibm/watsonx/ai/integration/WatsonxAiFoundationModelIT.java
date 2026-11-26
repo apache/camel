@@ -118,6 +118,29 @@ public class WatsonxAiFoundationModelIT extends WatsonxAiTestSupport {
         assertEquals(tasks.size(), tasksHeader.size(), "Header and body should have same task count");
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testListModelsWithFilter() throws Exception {
+        mockResult.expectedMessageCount(2);
+
+        template.sendBody("direct:listModels", null);
+        template.sendBodyAndHeader("direct:listModels", null, WatsonxAiConstants.FOUNDATION_MODEL_FILTER,
+                "function_rerank");
+
+        mockResult.assertIsSatisfied();
+
+        List<FoundationModel> all = mockResult.getExchanges().get(0).getIn().getBody(List.class);
+        List<FoundationModel> rerank = mockResult.getExchanges().get(1).getIn().getBody(List.class);
+        LOG.info("Rerank models: {}", rerank.stream().map(FoundationModel::modelId).toList());
+
+        assertFalse(rerank.isEmpty(), "The region should offer rerank models");
+        assertTrue(rerank.size() < all.size(), "The filter should reach watsonx.ai");
+        for (FoundationModel model : rerank) {
+            assertTrue(model.functions().stream().anyMatch(f -> "rerank".equals(f.id())),
+                    model.modelId() + " should have the rerank function");
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

@@ -116,7 +116,8 @@ public class DetectionHandler extends AbstractWatsonxAiHandler {
 
         // Process results
         List<DetectionTextResponse> detections = response.detections();
-        boolean hasDetections = !detections.isEmpty();
+        // a Granite Guardian answer of "No" (such as a risk below 0.5 above a low threshold) is not a detection
+        boolean hasDetections = detections.stream().anyMatch(d -> !"No".equalsIgnoreCase(d.detection()));
 
         // Build detection scores map
         Map<String, List<Map<String, Object>>> detectionsByType = new HashMap<>();

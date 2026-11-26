@@ -460,6 +460,23 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * How the model chooses the tools of chat: auto (the model decides),
+         * required (the model must call a tool), none (the model must not call
+         * a tool), or the name of the tool the model must call.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param toolChoice the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder toolChoice(java.lang.String toolChoice) {
+            doSetProperty("toolChoice", toolChoice);
+            return this;
+        }
+    
+        /**
          * Top K (top-k sampling).
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -695,6 +712,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "resultConnectionId": getOrCreateConfiguration((WatsonxAiComponent) component).setResultConnectionId((java.lang.String) value); return true;
             case "returnDocuments": getOrCreateConfiguration((WatsonxAiComponent) component).setReturnDocuments((java.lang.Boolean) value); return true;
             case "temperature": getOrCreateConfiguration((WatsonxAiComponent) component).setTemperature((java.lang.Double) value); return true;
+            case "toolChoice": getOrCreateConfiguration((WatsonxAiComponent) component).setToolChoice((java.lang.String) value); return true;
             case "topK": getOrCreateConfiguration((WatsonxAiComponent) component).setTopK((java.lang.Integer) value); return true;
             case "topP": getOrCreateConfiguration((WatsonxAiComponent) component).setTopP((java.lang.Double) value); return true;
             case "truncateInputTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setTruncateInputTokens((java.lang.Integer) value); return true;
