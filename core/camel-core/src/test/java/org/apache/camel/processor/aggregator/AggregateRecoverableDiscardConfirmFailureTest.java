@@ -143,9 +143,10 @@ class AggregateRecoverableDiscardConfirmFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // the timeout is long enough for A and B to be in one group also on a loaded machine
                 from("direct:timeout")
                         .aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(timeoutRepository)
-                        .completionSize(3).completionTimeout(100).completionTimeoutCheckerInterval(10)
+                        .completionSize(3).completionTimeout(1000).completionTimeoutCheckerInterval(10)
                         .discardOnCompletionTimeout()
                         .to("mock:result");
 
