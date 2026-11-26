@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -111,9 +112,9 @@ class ReplicatedHazelcastAggregationRepositoryOptimisticTest extends HazelcastAg
             }
         });
         camel.start();
-        try {
+        try (ProducerTemplate template = camel.createProducerTemplate()) {
             CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                    () -> camel.createProducerTemplate().sendBodyAndHeader("direct:in", 1, "id", "g"));
+                    () -> template.sendBodyAndHeader("direct:in", 1, "id", "g"));
             UnsupportedOperationException cause = assertInstanceOf(UnsupportedOperationException.class, e.getCause());
             assertEquals(ReplicatedHazelcastAggregationRepository.OPTIMISTIC_LOCKING_NOT_SUPPORTED, cause.getMessage());
             assertEquals(0, camel.getEndpoint("mock:result", MockEndpoint.class).getReceivedCounter());
@@ -168,10 +169,11 @@ class ReplicatedHazelcastAggregationRepositoryOptimisticTest extends HazelcastAg
     }
 
     private static void send(CamelContext camel, CyclicBarrier barrier, int count, AtomicReference<Exception> failure) {
-        try {
+        // one template per sender thread, created before the threads start sending together
+        try (ProducerTemplate template = camel.createProducerTemplate()) {
             barrier.await(10, TimeUnit.SECONDS);
             for (int i = 0; i < count; i++) {
-                camel.createProducerTemplate().sendBodyAndHeader("direct:in", 1, "id", "g");
+                template.sendBodyAndHeader("direct:in", 1, "id", "g");
             }
         } catch (Exception e) {
             failure.compareAndSet(null, e);
