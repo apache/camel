@@ -375,12 +375,18 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         // the destination, it would deadlock trying to acquire BaseService.lock.
         private final Lock destinationLock = new ReentrantLock();
         private volatile TemporaryQueue queue;
-        private final AtomicLong refreshGeneration = new AtomicLong();
+        private final AtomicLong refreshGeneration;
         private volatile long publishedGeneration;
         private final TemporaryQueueResolver custom;
 
         public TemporaryReplyQueueDestinationResolver(TemporaryQueueResolver custom) {
+            this(custom, new AtomicLong());
+        }
+
+        // package-private for testing: a test can pass a refresh generation it controls
+        TemporaryReplyQueueDestinationResolver(TemporaryQueueResolver custom, AtomicLong refreshGeneration) {
             this.custom = custom;
+            this.refreshGeneration = refreshGeneration;
         }
 
         boolean isRefreshPending() {
@@ -442,8 +448,11 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
 
         public void scheduleRefresh() {
-            refreshGeneration.incrementAndGet();
+            // clear replyTo before the new generation is visible: a consumer that resolves this generation publishes
+            // its queue after this write, so the late null cannot overwrite the new queue (no refresh would be pending
+            // any more, and replyTo would stay null until the next connection failure)
             replyTo = null;
+            refreshGeneration.incrementAndGet();
             triggerReplyDestinationRecovery();
         }
 

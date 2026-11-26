@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import jakarta.jms.Connection;
 import jakarta.jms.Destination;
@@ -47,7 +49,9 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 class TemporaryQueueReplyManagerRefreshTest {
@@ -242,6 +246,55 @@ class TemporaryQueueReplyManagerRefreshTest {
             assertThat(resolvedQueue).isNotNull();
             assertThat(destinationResolver.isRefreshPending()).isFalse();
             assertThat(replyManager.getReplyTo()).isEqualTo(resolvedQueue);
+        }
+    }
+
+    @Test
+    void shouldKeepReplyToWhenConsumerResolvesTheNewGenerationDuringTheRefresh() throws Exception {
+        CountingTemporaryQueueResolver resolver = new CountingTemporaryQueueResolver();
+        replyManager = new TemporaryQueueReplyManager(contextExtension.getContext(), resolver);
+        replyManager.setEndpoint(createEndpoint());
+
+        // the exception listener thread pauses right after it has taken the new refresh generation
+        CountDownLatch generationTaken = new CountDownLatch(1);
+        CountDownLatch resume = new CountDownLatch(1);
+        AtomicLong refreshGeneration = spy(new AtomicLong());
+        doAnswer(invocation -> {
+            Object answer = invocation.callRealMethod();
+            generationTaken.countDown();
+            assertThat(resume.await(20, TimeUnit.SECONDS)).isTrue();
+            return answer;
+        }).when(refreshGeneration).incrementAndGet();
+        TemporaryQueueReplyManager.TemporaryReplyQueueDestinationResolver destinationResolver
+                = replyManager.new TemporaryReplyQueueDestinationResolver(resolver, refreshGeneration);
+
+        try (Connection connection = ConnectionFactoryHelper.createConnectionFactory(service).createConnection()) {
+            connection.start();
+            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+            TemporaryQueue firstQueue
+                    = (TemporaryQueue) destinationResolver.resolveDestinationName(session, "temporary", false);
+            assertThat(replyManager.replyTo).isEqualTo(firstQueue);
+
+            // the JMS provider reports a connection failure to the exception listener
+            Thread exceptionListener = new Thread(destinationResolver::scheduleRefresh, "exception-listener");
+            exceptionListener.start();
+            assertThat(generationTaken.await(20, TimeUnit.SECONDS)).isTrue();
+            assertThat(destinationResolver.isRefreshPending()).isTrue();
+
+            // meanwhile a consumer of the listener container recovers and resolves the new generation
+            TemporaryQueue secondQueue
+                    = (TemporaryQueue) destinationResolver.resolveDestinationName(session, "temporary", false);
+            assertThat(secondQueue).isNotNull().isNotEqualTo(firstQueue);
+            assertThat(destinationResolver.isRefreshPending()).isFalse();
+
+            resume.countDown();
+            exceptionListener.join(20000);
+            assertThat(exceptionListener.isAlive()).isFalse();
+
+            // no refresh is pending, so nothing would publish the queue again: replyTo must still be the new queue
+            assertThat(destinationResolver.isRefreshPending()).isFalse();
+            assertThat(replyManager.replyTo).isEqualTo(secondQueue);
         }
     }
 
