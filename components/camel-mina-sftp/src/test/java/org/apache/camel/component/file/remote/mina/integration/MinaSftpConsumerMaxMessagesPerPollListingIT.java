@@ -21,6 +21,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -133,7 +134,10 @@ class MinaSftpConsumerMaxMessagesPerPollListingIT extends CamelTestSupport {
 
         consume("inbox", "&maxMessagesPerPoll=100&stepwise=false");
 
-        mock.assertIsSatisfied();
+        // With the CAMEL-26635 early-stop listing optimization and noop=true, each successive poll
+        // must re-list and skip idempotent entries before finding new files, making later polls
+        // progressively slower under SFTP overhead. 30 seconds avoids flakiness on slow machines.
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         assertEquals(service.directoriesOpened(), service.directoriesClosed(), "directories left open");
     }
 
