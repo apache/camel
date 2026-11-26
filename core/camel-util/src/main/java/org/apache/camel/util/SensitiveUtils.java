@@ -310,6 +310,24 @@ public final class SensitiveUtils {
     // SENSITIVE-PATTERN: END
     ;
 
+    // credential HTTP headers that neither match a sensitive key nor end in a word that marks a credential,
+    // in lower case without dashes
+    private static final Set<String> SENSITIVE_HEADERS = Set.of(
+            "cookie",
+            "proxyauthorization",
+            "setcookie",
+            "xgoogiapjwtassertion",
+            "xhoneycombteam");
+
+    // well-known HTTP headers whose name ends in a word that marks a credential but that carry no secret,
+    // in lower case without dashes
+    private static final Set<String> NOT_SENSITIVE_HEADERS = Set.of(
+            "idempotencykey");
+
+    // the words that mark a credential when they end the name of an HTTP header, in lower case
+    private static final String[] SENSITIVE_HEADER_SUFFIXES = {
+            "token", "key", "secret", "password", "auth", "credential", "credentials" };
+
     private SensitiveUtils() {
     }
 
@@ -347,6 +365,40 @@ public final class SensitiveUtils {
             text = text.substring(lastPeriod + 1);
         }
         return SENSITIVE_KEYS.contains(text);
+    }
+
+    /**
+     * Whether the given HTTP header carries a credential, such as an API key, a session token or a cookie, so that its
+     * value should be masked when the header is logged.
+     * <p>
+     * HTTP headers do not follow the naming of configuration options: most credential headers carry a vendor prefix
+     * (such as {@code X-Amz-Security-Token}), so they do not match a sensitive key as a whole. A header is therefore
+     * also sensitive when its name, in lower case without dashes, ends in {@code token}, {@code key}, {@code secret},
+     * {@code password}, {@code auth}, {@code credential} or {@code credentials}, or when it is a well-known credential
+     * header that the rule misses (such as {@code Cookie} and {@code Set-Cookie}). A few well-known headers end in such
+     * a word but carry no secret (such as {@code Idempotency-Key}) and are not sensitive.
+     *
+     * @param  name the name of the HTTP header
+     * @return      true if the header carries a credential, false otherwise
+     * @since       4.24
+     */
+    public static boolean isSensitiveHeader(String name) {
+        if (name == null || name.isEmpty()) {
+            return false;
+        }
+        String key = name.toLowerCase(Locale.ENGLISH).replace("-", "");
+        if (NOT_SENSITIVE_HEADERS.contains(key)) {
+            return false;
+        }
+        if (containsSensitive(name) || SENSITIVE_HEADERS.contains(key)) {
+            return true;
+        }
+        for (String suffix : SENSITIVE_HEADER_SUFFIXES) {
+            if (key.endsWith(suffix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
