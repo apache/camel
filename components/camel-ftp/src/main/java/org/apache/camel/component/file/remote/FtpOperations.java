@@ -1584,11 +1584,17 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         return last != 0 && System.nanoTime() - last < RECENTLY_USED_NANOS;
     }
 
+    /**
+     * Connects again before a rename or delete when the connection is no longer valid. By default a noop checks that
+     * the connection still works, as the server may have closed it while a long-running route processed the file. With
+     * sendNoop=false only the connection state of the client is checked, as before each poll and before an upload, so
+     * the rename or delete fails if the server has closed the connection meanwhile.
+     */
     private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
         boolean reconnectRequired;
         try {
             boolean connected = isConnected();
-            if (connected && !sendNoop()) {
+            if (connected && endpoint.getConfiguration().isSendNoop() && !sendNoop()) {
                 reconnectRequired = true;
             } else {
                 reconnectRequired = !connected;

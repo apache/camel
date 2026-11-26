@@ -2454,10 +2454,15 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether to send a noop command to check that the connection is still
          * valid, as a pre-write check before uploading files (producer) and
-         * before each poll (consumer). This is enabled by default, which allows
-         * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and then a lost
-         * connection may only be found when the next operation fails.
+         * before each poll (consumer), and for ftp and ftps also before
+         * renaming or deleting a file on the server, such as when the consumer
+         * moves or deletes a processed file. This is enabled by default, which
+         * allows to silently re-connect if the connection was lost. However if
+         * this causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails. For
+         * example a rename or delete after a long-running route then fails if
+         * the server closed the idle connection meanwhile, so the file stays
+         * and is polled again, unless an idempotent repository prevents that.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2474,10 +2479,15 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether to send a noop command to check that the connection is still
          * valid, as a pre-write check before uploading files (producer) and
-         * before each poll (consumer). This is enabled by default, which allows
-         * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and then a lost
-         * connection may only be found when the next operation fails.
+         * before each poll (consumer), and for ftp and ftps also before
+         * renaming or deleting a file on the server, such as when the consumer
+         * moves or deletes a processed file. This is enabled by default, which
+         * allows to silently re-connect if the connection was lost. However if
+         * this causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails. For
+         * example a rename or delete after a long-running route then fails if
+         * the server closed the idle connection meanwhile, so the file stays
+         * and is polled again, unless an idempotent repository prevents that.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4398,10 +4408,15 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether to send a noop command to check that the connection is still
          * valid, as a pre-write check before uploading files (producer) and
-         * before each poll (consumer). This is enabled by default, which allows
-         * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and then a lost
-         * connection may only be found when the next operation fails.
+         * before each poll (consumer), and for ftp and ftps also before
+         * renaming or deleting a file on the server, such as when the consumer
+         * moves or deletes a processed file. This is enabled by default, which
+         * allows to silently re-connect if the connection was lost. However if
+         * this causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails. For
+         * example a rename or delete after a long-running route then fails if
+         * the server closed the idle connection meanwhile, so the file stays
+         * and is polled again, unless an idempotent repository prevents that.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4418,10 +4433,15 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether to send a noop command to check that the connection is still
          * valid, as a pre-write check before uploading files (producer) and
-         * before each poll (consumer). This is enabled by default, which allows
-         * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and then a lost
-         * connection may only be found when the next operation fails.
+         * before each poll (consumer), and for ftp and ftps also before
+         * renaming or deleting a file on the server, such as when the consumer
+         * moves or deletes a processed file. This is enabled by default, which
+         * allows to silently re-connect if the connection was lost. However if
+         * this causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails. For
+         * example a rename or delete after a long-running route then fails if
+         * the server closed the idle connection meanwhile, so the file stays
+         * and is polled again, unless an idempotent repository prevents that.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -5923,10 +5943,15 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether to send a noop command to check that the connection is still
          * valid, as a pre-write check before uploading files (producer) and
-         * before each poll (consumer). This is enabled by default, which allows
-         * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and then a lost
-         * connection may only be found when the next operation fails.
+         * before each poll (consumer), and for ftp and ftps also before
+         * renaming or deleting a file on the server, such as when the consumer
+         * moves or deletes a processed file. This is enabled by default, which
+         * allows to silently re-connect if the connection was lost. However if
+         * this causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails. For
+         * example a rename or delete after a long-running route then fails if
+         * the server closed the idle connection meanwhile, so the file stays
+         * and is polled again, unless an idempotent repository prevents that.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -5943,10 +5968,15 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether to send a noop command to check that the connection is still
          * valid, as a pre-write check before uploading files (producer) and
-         * before each poll (consumer). This is enabled by default, which allows
-         * to silently re-connect if the connection was lost. However if this
-         * causes problems, you can turn this option off, and then a lost
-         * connection may only be found when the next operation fails.
+         * before each poll (consumer), and for ftp and ftps also before
+         * renaming or deleting a file on the server, such as when the consumer
+         * moves or deletes a processed file. This is enabled by default, which
+         * allows to silently re-connect if the connection was lost. However if
+         * this causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails. For
+         * example a rename or delete after a long-running route then fails if
+         * the server closed the idle connection meanwhile, so the file stays
+         * and is polled again, unless an idempotent repository prevents that.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

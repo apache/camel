@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -35,6 +34,10 @@ import java.util.regex.Pattern;
  * Camel expressions, or resolved as property placeholders. A value that, once percent-decoded, is a {@code .} or
  * {@code ..} dot segment or contains one between {@code /} or {@code \} separators does not match, including one
  * followed by path parameters such as {@code ..;x}. Query and fragment expressions are intentionally not supported.
+ * <p>
+ * A concrete URI is matched by walking its path segments against the template's: literal segments must be equal, and a
+ * variable segment must consist of RFC 3986 {@code pchar} characters, with percent-encoded octets kept as they are (so
+ * an encoded slash stays within one segment).
  *
  * @since 4.24
  */
@@ -42,15 +45,11 @@ public final class AiResourceUriTemplate {
 
     private static final Pattern SCHEME = Pattern.compile("[A-Za-z][A-Za-z0-9+.-]*");
     private static final Pattern VARIABLE_NAME = Pattern.compile("[A-Za-z0-9_]+(?:\\.[A-Za-z0-9_]+)*");
-    // RFC 3986 pchar: unreserved / pct-encoded / sub-delims / ":" / "@".
-    // Keep percent-encoded octets intact so an encoded slash remains one segment.
-    private static final String PCHAR_SEGMENT = "(?:[A-Za-z0-9._~!$&'()*+,;=:@-]|%[0-9A-Fa-f]{2})+";
 
     private final String template;
     private final String prefix;
+    private final String pathPrefix;
     private final List<Segment> segments;
-    private final List<String> variableNames;
-    private final Pattern pattern;
 
     public AiResourceUriTemplate(String template) {
         if (template == null || template.isBlank()) {
@@ -113,19 +112,7 @@ public final class AiResourceUriTemplate {
         }
 
         this.segments = List.copyOf(parsedSegments);
-        this.variableNames = List.copyOf(parsedVariables);
-
-        StringBuilder regex = new StringBuilder("^").append(Pattern.quote(prefix));
-        for (Segment segment : segments) {
-            regex.append('/');
-            if (segment.isVariable()) {
-                regex.append('(').append(PCHAR_SEGMENT).append(')');
-            } else {
-                regex.append(Pattern.quote(segment.literal()));
-            }
-        }
-        regex.append('$');
-        this.pattern = Pattern.compile(regex.toString());
+        this.pathPrefix = prefix + "/";
     }
 
     public String getTemplate() {
@@ -137,24 +124,59 @@ public final class AiResourceUriTemplate {
      * not match this template.
      */
     public Optional<Map<String, String>> match(String resourceUri) {
-        if (resourceUri == null) {
-            return Optional.empty();
-        }
-        Matcher matcher = pattern.matcher(resourceUri);
-        if (!matcher.matches()) {
+        if (resourceUri == null || !resourceUri.startsWith(pathPrefix)) {
             return Optional.empty();
         }
         Map<String, String> values = new LinkedHashMap<>();
-        for (int i = 0; i < variableNames.size(); i++) {
-            String value = matcher.group(i + 1);
-            // Dot segments can be normalized by downstream URI/path consumers. RFC 3986 makes %2E equivalent to
-            // ".", and a consumer that decodes the value also turns %2F (or %5C) into a path separator.
-            if (containsDotSegment(value)) {
+        int start = pathPrefix.length();
+        for (int i = 0; i < segments.size(); i++) {
+            int end = resourceUri.indexOf('/', start);
+            boolean last = i == segments.size() - 1;
+            // every segment but the last ends at a '/', and the last one runs to the end of the URI
+            if (last != (end < 0)) {
                 return Optional.empty();
             }
-            values.put(variableNames.get(i), value);
+            Segment segment = segments.get(i);
+            String part = resourceUri.substring(start, last ? resourceUri.length() : end);
+            start = end + 1;
+            if (!segment.isVariable()) {
+                if (!segment.literal().equals(part)) {
+                    return Optional.empty();
+                }
+                continue;
+            }
+            // Dot segments can be normalized by downstream URI/path consumers. RFC 3986 makes %2E equivalent to
+            // ".", and a consumer that decodes the value also turns %2F (or %5C) into a path separator.
+            if (!isSegmentValue(part) || containsDotSegment(part)) {
+                return Optional.empty();
+            }
+            values.put(segment.variable(), part);
         }
         return Optional.of(Collections.unmodifiableMap(values));
+    }
+
+    /** Whether the value is one non-empty path segment of RFC 3986 {@code pchar}, percent-encoded octets included. */
+    private static boolean isSegmentValue(String value) {
+        if (value.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == '%') {
+                if (i + 2 >= value.length() || hexDigit(value.charAt(i + 1)) < 0 || hexDigit(value.charAt(i + 2)) < 0) {
+                    return false;
+                }
+                i += 2;
+            } else if (!isPchar(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Whether the character is an RFC 3986 unreserved or sub-delims character, {@code :} or {@code @}. */
+    private static boolean isPchar(char c) {
+        return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || "-._~!$&'()*+,;=:@".indexOf(c) >= 0;
     }
 
     /**
@@ -201,7 +223,7 @@ public final class AiResourceUriTemplate {
                 bytes.write((high << 4) | low);
                 i += 2;
             } else if (c < 0x80) {
-                // a matched value is ASCII: the pattern allows only percent-encoded octets beyond it
+                // a matched value is ASCII: isSegmentValue allows only percent-encoded octets beyond it
                 bytes.write(c);
             } else {
                 byte[] encoded = String.valueOf(c).getBytes(StandardCharsets.UTF_8);

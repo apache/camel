@@ -980,6 +980,20 @@ all routes and their endpoints from the updated component configuration after ea
 No special configuration is needed for `camel-http`: the fresh endpoints created during the route
 restart carry the newly resolved credentials.
 
+=== Logging HTTP activity
+
+With `logHttpActivity=true` (on the component or the endpoint), the HTTP requests that are sent and the HTTP
+responses that are received are logged, with their headers and body. To control what is logged, configure a
+`LoggingHttpActivityListener` bean with the options you need and set it as `httpActivityListener`.
+
+The value of a header that carries a credential is always masked, also when `logMask` is not enabled. These are the
+headers whose name is a sensitive key of Camel (such as `Authorization`, `Api-Key` or `Token`), and the
+`Proxy-Authorization`, `Cookie`, `Set-Cookie`, `X-Api-Key` and `X-Auth-Token` headers, and any header that the
+HTTP client flags as sensitive. The header name is kept, so the log shows `Authorization: xxxxx`.
+
+With `logMask=true`, the values of the other headers and the body are also masked with the masking formatter of
+Camel, which masks values of sensitive keys such as `password=secret`.
+
 === Advanced Usage
 
 If you need more control over the HTTP producer, you should use the

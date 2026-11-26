@@ -384,13 +384,19 @@ set on the individual exchange and the body is set to the result of the `eagerPo
 each exchange of the batch for an exception (`Exchange.getException()`) and handle it. Do this before using
 `split(body())`, because the split copies only the message, not the exception.
 
-When the route or the consumer is stopped, a partial batch (fewer than `batchSize` messages) is handled
-according to the acknowledgement mode. With `transacted=true` or `CLIENT_ACKNOWLEDGE`, the partial batch is not
-routed. Its messages are not acknowledged, so the broker redelivers them after the restart, with the
-`JMSRedelivered` header set to `true`. The redelivery counts towards the broker's delivery limit. With
-`AUTO_ACKNOWLEDGE`, the messages are already acknowledged, so the partial batch is routed during the stop, within
-the 10-second shutdown wait of the consumer's executor. A batch that is still being processed when the wait
-expires is lost.
+When the route or the consumer is stopped, Camel's graceful shutdown first suspends the consumer, so no more
+messages are received, and waits for the batch being routed before it stops the consumer. A partial batch (fewer
+than `batchSize` messages) is handled according to the acknowledgement mode. With `transacted=true` or
+`CLIENT_ACKNOWLEDGE`, the partial batch is not routed, and no new batch starts while the consumer is suspended. Its
+messages are not acknowledged, so the broker redelivers them after the restart, with the `JMSRedelivered` header set
+to `true`. The redelivery counts towards the broker's delivery limit. With `AUTO_ACKNOWLEDGE`, the messages are
+already acknowledged, so the partial batch is routed as soon as the consumer is suspended, and the graceful shutdown
+waits for it as well. The graceful shutdown waits up to its timeout (45 seconds by default, see
+xref:manual::graceful-shutdown.adoc[Graceful Shutdown]); a batch that is still routed when the timeout is reached
+is lost (`AUTO_ACKNOWLEDGE`) or redelivered (`transacted=true` and `CLIENT_ACKNOWLEDGE`).
+
+A suspended route (for example by a route policy) handles a partial batch in the same way: with `AUTO_ACKNOWLEDGE`
+it is routed right away, and with `transacted=true` or `CLIENT_ACKNOWLEDGE` it is routed after the route is resumed.
 
 With `concurrentConsumers` greater than 1, each consumer collects and routes its own batches, so several
 batches are processed in parallel.

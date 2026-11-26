@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.vertexai;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -404,6 +405,18 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
     void aJsonRequestInAStreamIsSent() {
         Exchange exchange = template.request(META,
                 e -> e.getIn().setBody(new ByteArrayInputStream(JSON_REQUEST.getBytes(StandardCharsets.UTF_8))));
+
+        assertNull(exchange.getException());
+        assertEquals(JSON_REQUEST, predictionService.lastRequest());
+    }
+
+    @Test
+    void aJsonRequestInAByteArrayOutputStreamIsSent() {
+        // the body camel-tika parse produces
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.writeBytes(JSON_REQUEST.getBytes(StandardCharsets.UTF_8));
+
+        Exchange exchange = template.request(META, e -> e.getIn().setBody(body));
 
         assertNull(exchange.getException());
         assertEquals(JSON_REQUEST, predictionService.lastRequest());

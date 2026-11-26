@@ -23,8 +23,8 @@ import java.util.LinkedList;
 
 import org.apache.camel.component.pdf.PdfConfiguration;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import static org.apache.camel.component.pdf.PdfConstants.MIN_CONTENT_WIDTH;
 
@@ -50,13 +50,21 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
      */
     @Override
     public Collection<String> buildLines(Collection<String> splittedText) throws IOException {
+        // the font is only used to measure the text, so a font file is loaded into a document that is not saved
+        try (PDDocument document = new PDDocument()) {
+            PDFont font = PdfUtils.createFont(pdfConfiguration, document);
+            return buildLines(splittedText, font);
+        }
+    }
+
+    private Collection<String> buildLines(Collection<String> splittedText, PDFont font) throws IOException {
         LinkedList<String> wordsList = new LinkedList<>(splittedText);
         Collection<String> lines = new ArrayList<>();
         LineBuilder currentLine = new LineBuilder();
         float allowedLineWidth = getAllowedLineWidth();
         while (!wordsList.isEmpty()) {
             String word = wordsList.removeFirst();
-            if (isWordFitInCurrentLine(currentLine, word, allowedLineWidth)) {
+            if (isWordFitInCurrentLine(currentLine, word, font, allowedLineWidth)) {
                 currentLine.appendWord(word);
                 if (wordsList.isEmpty()) {
                     lines.add(currentLine.buildLine());
@@ -65,7 +73,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
                 lines.add(currentLine.buildLine());
                 wordsList.addFirst(word);
             } else {
-                int splitIndex = findSplitIndex(word, allowedLineWidth);
+                int splitIndex = findSplitIndex(word, font, allowedLineWidth);
                 currentLine.appendWord(word.substring(0, splitIndex));
                 lines.add(currentLine.buildLine());
                 wordsList.addFirst(word.substring(splitIndex));
@@ -74,7 +82,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
         return lines;
     }
 
-    private int findSplitIndex(String word, float allowedLineWidth) throws IOException {
+    private int findSplitIndex(String word, PDFont font, float allowedLineWidth) throws IOException {
         // Using binary search algorithm to find max amount of characters that fit int the line.
 
         int middle = word.length() >> 1;
@@ -83,33 +91,32 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
         int currentSplitIndex = 0;
 
         do {
-            if (isLineFitInLineWidth(word.substring(0, middle), allowedLineWidth)) {
+            if (isLineFitInLineWidth(word.substring(0, middle), font, allowedLineWidth)) {
                 currentSplitIndex = middle;
                 middle += word.substring(middle, end).length() >> 1;
             } else {
                 end = middle;
                 middle = currentSplitIndex + (word.substring(currentSplitIndex, middle).length() >> 1);
             }
-        } while (currentSplitIndex == -1 || !isSplitIndexFound(word, allowedLineWidth, currentSplitIndex));
+        } while (currentSplitIndex == -1 || !isSplitIndexFound(word, font, allowedLineWidth, currentSplitIndex));
 
         return currentSplitIndex;
     }
 
-    private boolean isSplitIndexFound(String word, float allowedLineWidth, int currentSplitIndex) throws IOException {
-        return isLineFitInLineWidth(word.substring(0, currentSplitIndex), allowedLineWidth)
-                && !isLineFitInLineWidth(word.substring(0, currentSplitIndex + 1), allowedLineWidth);
+    private boolean isSplitIndexFound(String word, PDFont font, float allowedLineWidth, int currentSplitIndex)
+            throws IOException {
+        return isLineFitInLineWidth(word.substring(0, currentSplitIndex), font, allowedLineWidth)
+                && !isLineFitInLineWidth(word.substring(0, currentSplitIndex + 1), font, allowedLineWidth);
     }
 
-    private boolean isWordFitInCurrentLine(LineBuilder currentLine, String word, float allowedLineWidth) throws IOException {
+    private boolean isWordFitInCurrentLine(LineBuilder currentLine, String word, PDFont font, float allowedLineWidth)
+            throws IOException {
         LineBuilder lineBuilder = currentLine.copy().appendWord(word);
-        return isLineFitInLineWidth(lineBuilder.buildLine(), allowedLineWidth);
+        return isLineFitInLineWidth(lineBuilder.buildLine(), font, allowedLineWidth);
     }
 
-    private boolean isLineFitInLineWidth(String currentLine, float allowedLineWidth) throws IOException {
-        float fontWidth = PdfUtils.getFontWidth(
-                currentLine,
-                new PDType1Font(Standard14Fonts.FontName.valueOf(pdfConfiguration.getFont())),
-                pdfConfiguration.getFontSize());
+    private boolean isLineFitInLineWidth(String currentLine, PDFont font, float allowedLineWidth) throws IOException {
+        float fontWidth = PdfUtils.getFontWidth(currentLine, font, pdfConfiguration.getFontSize());
 
         return fontWidth <= allowedLineWidth;
     }

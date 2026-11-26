@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.alibaba.kms;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -121,6 +122,37 @@ class KMSInputTest extends CamelTestSupport {
         verify(kmsClient, times(2)).encrypt(request.capture());
         assertThat(Base64.getDecoder().decode(request.getValue().getPlaintext()))
                 .isEqualTo("https://camel.apache.org".getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** The body camel-tika parse produces, a payload like bytes. */
+    @Test
+    void aByteArrayOutputStreamPlaintextHeaderIsEncryptedAsItsText() throws Exception {
+        stubEncrypt();
+        ByteArrayOutputStream plaintext = new ByteArrayOutputStream();
+        plaintext.writeBytes("my secret".getBytes(StandardCharsets.UTF_8));
+
+        Exchange result = template.send("direct:kms",
+                exchange -> exchange.getIn().setHeader(KMSHeaders.PLAINTEXT, plaintext));
+
+        assertThat(result.getException()).isNull();
+        assertThat(encryptedPlaintext()).isEqualTo("my secret".getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** Decoded with the charset of the exchange, not with the platform default its toString() uses. */
+    @Test
+    void aByteArrayOutputStreamPlaintextHeaderIsDecodedWithTheCharsetOfTheExchange() throws Exception {
+        stubEncrypt();
+        String text = "Z\u00fcrich";
+        ByteArrayOutputStream plaintext = new ByteArrayOutputStream();
+        plaintext.writeBytes(text.getBytes(StandardCharsets.ISO_8859_1));
+
+        Exchange result = template.send("direct:kms", exchange -> {
+            exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+            exchange.getIn().setHeader(KMSHeaders.PLAINTEXT, plaintext);
+        });
+
+        assertThat(result.getException()).isNull();
+        assertThat(encryptedPlaintext()).isEqualTo(text.getBytes(StandardCharsets.UTF_8));
     }
 
     @Test

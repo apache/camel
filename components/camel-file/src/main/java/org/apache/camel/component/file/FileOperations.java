@@ -648,8 +648,10 @@ public class FileOperations implements GenericFileOperations<File> {
     private void writeFileByReaderWithCharset(Reader in, File target, String charset, MessageDigest digest)
             throws IOException {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
-        // an encoder that reports characters the charset cannot encode, as Files.newBufferedWriter does
-        CharsetEncoder encoder = Charset.forName(charset).newEncoder();
+        // by default an encoder that reports characters the charset cannot encode, as Files.newBufferedWriter does
+        CharsetErrorAction action = endpoint.getCharsetErrorAction();
+        CharsetEncoder encoder = action != null
+                ? action.newEncoder(Charset.forName(charset)) : Charset.forName(charset).newEncoder();
         OutputStream os = Files.newOutputStream(target.toPath(), StandardOpenOption.WRITE,
                 append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         if (digest != null) {

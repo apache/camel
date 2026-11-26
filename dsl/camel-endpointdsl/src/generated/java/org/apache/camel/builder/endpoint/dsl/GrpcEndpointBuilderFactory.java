@@ -850,7 +850,11 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
-         * The X.509 certificate chain file resource in PEM format link.
+         * The X.509 certificate chain file resource in PEM format link. On a
+         * consumer, this is the certificate of the server and is required for
+         * TLS. On a producer, this is the certificate of the client, set
+         * together with keyResource only for mutual TLS (when the server
+         * requires a client certificate).
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -881,7 +885,11 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
-         * The PKCS#8 private key file resource in PEM format link.
+         * The PKCS#8 private key file resource in PEM format link. On a
+         * consumer, this is the key of the server and is required for TLS. On a
+         * producer, this is the key of the client, set together with
+         * keyCertChainResource only for mutual TLS (when the server requires a
+         * client certificate).
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -950,7 +958,8 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The trusted certificates collection file resource in PEM format for
-         * verifying the remote endpoint's certificate.
+         * verifying the remote endpoint's certificate. When not set, a producer
+         * verifies the server with the default trust store of the JVM.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -1552,7 +1561,11 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
-         * The X.509 certificate chain file resource in PEM format link.
+         * The X.509 certificate chain file resource in PEM format link. On a
+         * consumer, this is the certificate of the server and is required for
+         * TLS. On a producer, this is the certificate of the client, set
+         * together with keyResource only for mutual TLS (when the server
+         * requires a client certificate).
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -1583,7 +1596,11 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
-         * The PKCS#8 private key file resource in PEM format link.
+         * The PKCS#8 private key file resource in PEM format link. On a
+         * consumer, this is the key of the server and is required for TLS. On a
+         * producer, this is the key of the client, set together with
+         * keyCertChainResource only for mutual TLS (when the server requires a
+         * client certificate).
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -1652,7 +1669,8 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The trusted certificates collection file resource in PEM format for
-         * verifying the remote endpoint's certificate.
+         * verifying the remote endpoint's certificate. When not set, a producer
+         * verifies the server with the default trust store of the JVM.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -1998,7 +2016,11 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
-         * The X.509 certificate chain file resource in PEM format link.
+         * The X.509 certificate chain file resource in PEM format link. On a
+         * consumer, this is the certificate of the server and is required for
+         * TLS. On a producer, this is the certificate of the client, set
+         * together with keyResource only for mutual TLS (when the server
+         * requires a client certificate).
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -2029,7 +2051,11 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
-         * The PKCS#8 private key file resource in PEM format link.
+         * The PKCS#8 private key file resource in PEM format link. On a
+         * consumer, this is the key of the server and is required for TLS. On a
+         * producer, this is the key of the client, set together with
+         * keyCertChainResource only for mutual TLS (when the server requires a
+         * client certificate).
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -2098,7 +2124,8 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The trusted certificates collection file resource in PEM format for
-         * verifying the remote endpoint's certificate.
+         * verifying the remote endpoint's certificate. When not set, a producer
+         * verifies the server with the default trust store of the JVM.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.

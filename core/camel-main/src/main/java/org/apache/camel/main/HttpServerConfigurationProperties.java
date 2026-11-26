@@ -47,6 +47,44 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private String fileUploadDirectory;
     @Metadata(label = "advanced")
     private Long maxBodySize;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean mergeFormAttributes = true;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean deleteUploadedFilesOnEnd = true;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean preallocateBodyBuffer = true;
+
+    @Metadata(label = "security")
+    private boolean corsEnabled;
+    @Metadata(label = "security")
+    private String corsOrigins;
+    @Metadata(label = "security")
+    private String corsMethods;
+    @Metadata(label = "security")
+    private String corsHeaders;
+    @Metadata(label = "security")
+    private String corsExposedHeaders;
+    @Metadata(label = "security")
+    private Long corsAccessControlMaxAge;
+
+    @Metadata(label = "security")
+    private boolean sessionEnabled;
+    @Metadata(label = "security", defaultValue = "local", enums = "local,clustered")
+    private String sessionStoreType = "local";
+    @Metadata(label = "security", defaultValue = "vertx-web.session")
+    private String sessionCookieName = "vertx-web.session";
+    @Metadata(label = "security", defaultValue = "/")
+    private String sessionCookiePath = "/";
+    @Metadata(label = "security", defaultValue = "1800000")
+    private long sessionTimeout = 1800000;
+    @Metadata(label = "security")
+    private boolean sessionCookieSecure;
+    @Metadata(label = "security", defaultValue = "true")
+    private boolean sessionCookieHttpOnly = true;
+    @Metadata(label = "security", defaultValue = "strict", enums = "strict,lax,none")
+    private String sessionCookieSameSite = "strict";
+    @Metadata(label = "security", defaultValue = "16")
+    private int sessionIdMinLength = 16;
 
     @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
@@ -182,6 +220,215 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setMaxBodySize(Long maxBodySize) {
         this.maxBodySize = maxBodySize;
+    }
+
+    public boolean isMergeFormAttributes() {
+        return mergeFormAttributes;
+    }
+
+    /**
+     * Whether the form attributes of a request (application/x-www-form-urlencoded or multipart/form-data) are merged
+     * into the request parameters.
+     */
+    public void setMergeFormAttributes(boolean mergeFormAttributes) {
+        this.mergeFormAttributes = mergeFormAttributes;
+    }
+
+    public boolean isDeleteUploadedFilesOnEnd() {
+        return deleteUploadedFilesOnEnd;
+    }
+
+    /**
+     * Whether the uploaded files are deleted from the file upload directory when the response has been sent.
+     */
+    public void setDeleteUploadedFilesOnEnd(boolean deleteUploadedFilesOnEnd) {
+        this.deleteUploadedFilesOnEnd = deleteUploadedFilesOnEnd;
+    }
+
+    public boolean isPreallocateBodyBuffer() {
+        return preallocateBodyBuffer;
+    }
+
+    /**
+     * Whether the buffer for the request body is pre-allocated, using the Content-Length header of the request to size
+     * it.
+     */
+    public void setPreallocateBodyBuffer(boolean preallocateBodyBuffer) {
+        this.preallocateBodyBuffer = preallocateBodyBuffer;
+    }
+
+    public boolean isCorsEnabled() {
+        return corsEnabled;
+    }
+
+    /**
+     * Whether the embedded HTTP server handles CORS (Cross-Origin Resource Sharing): it answers preflight requests and
+     * adds the Access-Control-* headers to the responses of requests with an Origin header.
+     */
+    public void setCorsEnabled(boolean corsEnabled) {
+        this.corsEnabled = corsEnabled;
+    }
+
+    public String getCorsOrigins() {
+        return corsOrigins;
+    }
+
+    /**
+     * Comma-separated list of origins (such as https://app.example.com) allowed to call the embedded HTTP server. A
+     * request from an origin in the list is answered with Access-Control-Allow-Origin and
+     * Access-Control-Allow-Credentials=true. When not set, the origin of every request is allowed (reflected back),
+     * without credentials.
+     */
+    public void setCorsOrigins(String corsOrigins) {
+        this.corsOrigins = corsOrigins;
+    }
+
+    public String getCorsMethods() {
+        return corsMethods;
+    }
+
+    /**
+     * Comma-separated list of the HTTP methods (such as GET,POST) allowed in a CORS request. When not set, the methods
+     * of the Access-Control-Request-Method header of the preflight request are allowed.
+     */
+    public void setCorsMethods(String corsMethods) {
+        this.corsMethods = corsMethods;
+    }
+
+    public String getCorsHeaders() {
+        return corsHeaders;
+    }
+
+    /**
+     * Comma-separated list of the HTTP headers allowed in a CORS request. When not set, the headers of the
+     * Access-Control-Request-Headers header of the preflight request are allowed.
+     */
+    public void setCorsHeaders(String corsHeaders) {
+        this.corsHeaders = corsHeaders;
+    }
+
+    public String getCorsExposedHeaders() {
+        return corsExposedHeaders;
+    }
+
+    /**
+     * Comma-separated list of the HTTP response headers a browser may expose to the calling script, sent as the
+     * Access-Control-Expose-Headers header.
+     */
+    public void setCorsExposedHeaders(String corsExposedHeaders) {
+        this.corsExposedHeaders = corsExposedHeaders;
+    }
+
+    public Long getCorsAccessControlMaxAge() {
+        return corsAccessControlMaxAge;
+    }
+
+    /**
+     * How long (in seconds) a browser may cache the answer of a preflight request, sent as the Access-Control-Max-Age
+     * header. When not set, the header is not sent.
+     */
+    public void setCorsAccessControlMaxAge(Long corsAccessControlMaxAge) {
+        this.corsAccessControlMaxAge = corsAccessControlMaxAge;
+    }
+
+    public boolean isSessionEnabled() {
+        return sessionEnabled;
+    }
+
+    /**
+     * Whether the embedded HTTP server keeps a session for each client, identified by a session cookie.
+     */
+    public void setSessionEnabled(boolean sessionEnabled) {
+        this.sessionEnabled = sessionEnabled;
+    }
+
+    public String getSessionStoreType() {
+        return sessionStoreType;
+    }
+
+    /**
+     * Where the sessions are stored: local (in memory of this application) or clustered (in the cluster of a clustered
+     * Vert.x instance, which must be provided in the registry).
+     */
+    public void setSessionStoreType(String sessionStoreType) {
+        this.sessionStoreType = sessionStoreType;
+    }
+
+    public String getSessionCookieName() {
+        return sessionCookieName;
+    }
+
+    /**
+     * The name of the session cookie.
+     */
+    public void setSessionCookieName(String sessionCookieName) {
+        this.sessionCookieName = sessionCookieName;
+    }
+
+    public String getSessionCookiePath() {
+        return sessionCookiePath;
+    }
+
+    /**
+     * The path of the session cookie.
+     */
+    public void setSessionCookiePath(String sessionCookiePath) {
+        this.sessionCookiePath = sessionCookiePath;
+    }
+
+    public long getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    /**
+     * The time in milliseconds after which a session without activity expires.
+     */
+    public void setSessionTimeout(long sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
+
+    public boolean isSessionCookieSecure() {
+        return sessionCookieSecure;
+    }
+
+    /**
+     * Whether the session cookie has the Secure flag, so browsers only send it over HTTPS.
+     */
+    public void setSessionCookieSecure(boolean sessionCookieSecure) {
+        this.sessionCookieSecure = sessionCookieSecure;
+    }
+
+    public boolean isSessionCookieHttpOnly() {
+        return sessionCookieHttpOnly;
+    }
+
+    /**
+     * Whether the session cookie has the HttpOnly flag, so scripts in the browser cannot read it.
+     */
+    public void setSessionCookieHttpOnly(boolean sessionCookieHttpOnly) {
+        this.sessionCookieHttpOnly = sessionCookieHttpOnly;
+    }
+
+    public String getSessionCookieSameSite() {
+        return sessionCookieSameSite;
+    }
+
+    /**
+     * The SameSite attribute of the session cookie: strict, lax or none.
+     */
+    public void setSessionCookieSameSite(String sessionCookieSameSite) {
+        this.sessionCookieSameSite = sessionCookieSameSite;
+    }
+
+    public int getSessionIdMinLength() {
+        return sessionIdMinLength;
+    }
+
+    /**
+     * The minimum length of the session id.
+     */
+    public void setSessionIdMinLength(int sessionIdMinLength) {
+        this.sessionIdMinLength = sessionIdMinLength;
     }
 
     public boolean isUseGlobalSslContextParameters() {
@@ -688,6 +935,153 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMaxBodySize(long maxBodySize) {
         this.maxBodySize = maxBodySize;
+        return this;
+    }
+
+    /**
+     * Whether the form attributes of a request (application/x-www-form-urlencoded or multipart/form-data) are merged
+     * into the request parameters.
+     */
+    public HttpServerConfigurationProperties withMergeFormAttributes(boolean mergeFormAttributes) {
+        this.mergeFormAttributes = mergeFormAttributes;
+        return this;
+    }
+
+    /**
+     * Whether the uploaded files are deleted from the file upload directory when the response has been sent.
+     */
+    public HttpServerConfigurationProperties withDeleteUploadedFilesOnEnd(boolean deleteUploadedFilesOnEnd) {
+        this.deleteUploadedFilesOnEnd = deleteUploadedFilesOnEnd;
+        return this;
+    }
+
+    /**
+     * Whether the buffer for the request body is pre-allocated, using the Content-Length header of the request to size
+     * it.
+     */
+    public HttpServerConfigurationProperties withPreallocateBodyBuffer(boolean preallocateBodyBuffer) {
+        this.preallocateBodyBuffer = preallocateBodyBuffer;
+        return this;
+    }
+
+    /**
+     * Whether the embedded HTTP server handles CORS (Cross-Origin Resource Sharing).
+     */
+    public HttpServerConfigurationProperties withCorsEnabled(boolean corsEnabled) {
+        this.corsEnabled = corsEnabled;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of origins allowed to call the embedded HTTP server. When not set, the origin of every
+     * request is allowed (reflected back), without credentials.
+     */
+    public HttpServerConfigurationProperties withCorsOrigins(String corsOrigins) {
+        this.corsOrigins = corsOrigins;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of the HTTP methods allowed in a CORS request.
+     */
+    public HttpServerConfigurationProperties withCorsMethods(String corsMethods) {
+        this.corsMethods = corsMethods;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of the HTTP headers allowed in a CORS request.
+     */
+    public HttpServerConfigurationProperties withCorsHeaders(String corsHeaders) {
+        this.corsHeaders = corsHeaders;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of the HTTP response headers a browser may expose to the calling script.
+     */
+    public HttpServerConfigurationProperties withCorsExposedHeaders(String corsExposedHeaders) {
+        this.corsExposedHeaders = corsExposedHeaders;
+        return this;
+    }
+
+    /**
+     * How long (in seconds) a browser may cache the answer of a preflight request.
+     */
+    public HttpServerConfigurationProperties withCorsAccessControlMaxAge(long corsAccessControlMaxAge) {
+        this.corsAccessControlMaxAge = corsAccessControlMaxAge;
+        return this;
+    }
+
+    /**
+     * Whether the embedded HTTP server keeps a session for each client, identified by a session cookie.
+     */
+    public HttpServerConfigurationProperties withSessionEnabled(boolean sessionEnabled) {
+        this.sessionEnabled = sessionEnabled;
+        return this;
+    }
+
+    /**
+     * Where the sessions are stored: local or clustered.
+     */
+    public HttpServerConfigurationProperties withSessionStoreType(String sessionStoreType) {
+        this.sessionStoreType = sessionStoreType;
+        return this;
+    }
+
+    /**
+     * The name of the session cookie.
+     */
+    public HttpServerConfigurationProperties withSessionCookieName(String sessionCookieName) {
+        this.sessionCookieName = sessionCookieName;
+        return this;
+    }
+
+    /**
+     * The path of the session cookie.
+     */
+    public HttpServerConfigurationProperties withSessionCookiePath(String sessionCookiePath) {
+        this.sessionCookiePath = sessionCookiePath;
+        return this;
+    }
+
+    /**
+     * The time in milliseconds after which a session without activity expires.
+     */
+    public HttpServerConfigurationProperties withSessionTimeout(long sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+        return this;
+    }
+
+    /**
+     * Whether the session cookie has the Secure flag, so browsers only send it over HTTPS.
+     */
+    public HttpServerConfigurationProperties withSessionCookieSecure(boolean sessionCookieSecure) {
+        this.sessionCookieSecure = sessionCookieSecure;
+        return this;
+    }
+
+    /**
+     * Whether the session cookie has the HttpOnly flag, so scripts in the browser cannot read it.
+     */
+    public HttpServerConfigurationProperties withSessionCookieHttpOnly(boolean sessionCookieHttpOnly) {
+        this.sessionCookieHttpOnly = sessionCookieHttpOnly;
+        return this;
+    }
+
+    /**
+     * The SameSite attribute of the session cookie: strict, lax or none.
+     */
+    public HttpServerConfigurationProperties withSessionCookieSameSite(String sessionCookieSameSite) {
+        this.sessionCookieSameSite = sessionCookieSameSite;
+        return this;
+    }
+
+    /**
+     * The minimum length of the session id.
+     */
+    public HttpServerConfigurationProperties withSessionIdMinLength(int sessionIdMinLength) {
+        this.sessionIdMinLength = sessionIdMinLength;
         return this;
     }
 
