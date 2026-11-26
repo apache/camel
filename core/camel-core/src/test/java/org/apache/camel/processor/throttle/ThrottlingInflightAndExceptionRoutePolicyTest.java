@@ -25,11 +25,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -43,6 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * Four exchanges are in flight at the same time (four concurrent consumers, at most one inflight exchange), and the
  * test decides the order in which they complete. The half open check of the circuit is run by the test, not by a timer.
+ * <p>
+ * The exception policy keeps suspended only the consumer it suspended when it opened the circuit: not the consumer of
+ * another route that uses the same policy, and not a consumer started again while the circuit is still open.
  */
 class ThrottlingInflightAndExceptionRoutePolicyTest extends ContextTestSupport {
 
@@ -172,12 +177,103 @@ class ThrottlingInflightAndExceptionRoutePolicyTest extends ContextTestSupport {
         assertTrue(consumer.isStarted());
     }
 
-    private void startFourExchanges(String routeId) {
-        for (String body : new String[] { "A", "B", "C", "D" }) {
-            gate(body);
-            template.sendBody("seda:" + routeId, body);
+    @Test
+    void sharedExceptionPolicyKeepsSuspendedOnlyTheConsumerItSuspended() {
+        Route routeA = context.getRoute("sharedA");
+        ServiceSupport consumerA = (ServiceSupport) routeA.getConsumer();
+        ServiceSupport consumerB = (ServiceSupport) context.getRoute("sharedB").getConsumer();
+        ManualHalfOpenPolicy shared = breakers.get("sharedA");
+
+        // B1 succeeds with 3 still in flight on route B: the inflight policy of route B suspends its consumer
+        startExchanges("sharedB", 4, "B1", "B2", "B3", "B4");
+        gate("B1").countDown();
+        awaitSharedDone("sharedB", 1, 1);
+        assertTrue(consumerB.isSuspended());
+        assertEquals("closed", shared.getStateAsString());
+
+        // two failures on route A open the circuit of the shared policy, which suspends the consumer of route A
+        gate("A1").countDown();
+        template.sendBody("seda:sharedA", "A1");
+        awaitSharedDone("sharedA", 1, 2);
+        gate("A2").countDown();
+        template.sendBody("seda:sharedA", "A2");
+        awaitSharedDone("sharedA", 2, 3);
+        assertEquals("opened", shared.getStateAsString());
+        assertTrue(consumerA.isSuspended());
+
+        // the exchanges of route B complete while the circuit is open: the inflight policy of route B resumes its
+        // consumer, as the circuit was not opened for it (the half open check resumes only the consumer of route A)
+        gate("B2").countDown();
+        gate("B3").countDown();
+        gate("B4").countDown();
+        awaitSharedDone("sharedB", 4, 6);
+        assertEquals("opened", shared.getStateAsString());
+        assertTrue(consumerB.isStarted(), "the consumer of route B must be resumed by its inflight policy");
+        assertTrue(consumerA.isSuspended());
+
+        shared.halfOpen(routeA);
+        assertEquals("half opened", shared.getStateAsString());
+        assertTrue(consumerA.isStarted());
+    }
+
+    @Test
+    void consumerStartedAgainWhileTheCircuitIsOpenIsResumedByTheInflightPolicy() throws Exception {
+        String routeId = "inflightFirst";
+        ManualHalfOpenPolicy breaker = breakers.get(routeId);
+
+        startExchanges(routeId, 4, "A", "B", "C", "D");
+        complete(routeId, "A", 1);
+        complete(routeId, "B", 2);
+        complete(routeId, "C", 3);
+        complete(routeId, "D", 4);
+        assertEquals("opened", breaker.getStateAsString());
+        assertTrue(((ServiceSupport) context.getRoute(routeId).getConsumer()).isSuspended());
+
+        // the circuit stays open when the CamelContext is stopped and started again, and the routes start their
+        // consumers, but no half open check is scheduled then
+        context.stop();
+        context.start();
+        ServiceSupport consumer = (ServiceSupport) context.getRoute(routeId).getConsumer();
+        assertTrue(consumer.isStarted());
+        assertEquals("opened", breaker.getStateAsString());
+
+        // F fails with 3 still in flight: the inflight policy suspends the consumer (a new template, as the one of the
+        // test was stopped with the CamelContext)
+        try (ProducerTemplate producer = context.createProducerTemplate()) {
+            startExchanges(producer, routeId, 8, "F", "G", "H", "I");
         }
-        await().atMost(10, TimeUnit.SECONDS).until(() -> entered.get() == 4);
+        complete(routeId, "F", 5);
+        assertTrue(consumer.isSuspended());
+
+        // the inflight policy resumes the consumer when the others are done, as the open circuit did not suspend it
+        complete(routeId, "G", 6);
+        complete(routeId, "H", 7);
+        complete(routeId, "I", 8);
+        assertEquals("opened", breaker.getStateAsString());
+        assertTrue(consumer.isStarted(), "the consumer must be resumed by the inflight policy");
+    }
+
+    private void startFourExchanges(String routeId) {
+        startExchanges(routeId, 4, "A", "B", "C", "D");
+    }
+
+    private void startExchanges(String routeId, int totalEntered, String... bodies) {
+        startExchanges(template, routeId, totalEntered, bodies);
+    }
+
+    private void startExchanges(ProducerTemplate producer, String routeId, int totalEntered, String... bodies) {
+        for (String body : bodies) {
+            gate(body);
+            producer.sendBody("seda:" + routeId, body);
+        }
+        await().atMost(10, TimeUnit.SECONDS).until(() -> entered.get() == totalEntered);
+    }
+
+    // waits until the inflight policy of the route and the shared exception policy (of both routes) are done
+    private void awaitSharedDone(String routeId, int inflightDone, int sharedDone) {
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> inflightPolicies.get(routeId).done.get() == inflightDone
+                        && breakers.get(routeId).done.get() == sharedDone);
     }
 
     // lets the exchange complete, and waits until both policies are done with it
@@ -215,6 +311,21 @@ class ThrottlingInflightAndExceptionRoutePolicyTest extends ContextTestSupport {
                 from("seda:exceptionFirst?concurrentConsumers=4").routeId("exceptionFirst")
                         .routePolicy(breaker2, inflight2)
                         .process(e -> route(e));
+
+                // one exception policy on two routes, each with its own inflight policy
+                ManualHalfOpenPolicy shared = new ManualHalfOpenPolicy();
+                CountingInflightPolicy inflightA = new CountingInflightPolicy();
+                CountingInflightPolicy inflightB = new CountingInflightPolicy();
+                inflightPolicies.put("sharedA", inflightA);
+                inflightPolicies.put("sharedB", inflightB);
+                breakers.put("sharedA", shared);
+                breakers.put("sharedB", shared);
+                from("seda:sharedA?concurrentConsumers=4").routeId("sharedA")
+                        .routePolicy(inflightA, shared)
+                        .process(e -> sharedRoute(e));
+                from("seda:sharedB?concurrentConsumers=4").routeId("sharedB")
+                        .routePolicy(shared, inflightB)
+                        .process(e -> sharedRoute(e));
             }
         };
     }
@@ -225,6 +336,16 @@ class ThrottlingInflightAndExceptionRoutePolicyTest extends ContextTestSupport {
         assertTrue(gate(body).await(20, TimeUnit.SECONDS));
         // the downstream fails, except for C and E
         if (!"C".equals(body) && !"E".equals(body)) {
+            throw new IllegalStateException("Downstream failure: " + body);
+        }
+    }
+
+    private void sharedRoute(Exchange exchange) throws Exception {
+        String body = exchange.getMessage().getBody(String.class);
+        entered.incrementAndGet();
+        assertTrue(gate(body).await(20, TimeUnit.SECONDS));
+        // the downstream of route A fails
+        if (body.startsWith("A")) {
             throw new IllegalStateException("Downstream failure: " + body);
         }
     }

@@ -420,11 +420,12 @@ route created from the template. Route dumps and the JMX attributes of the aggre
 
 === camel-core - throttling route policies on the same route wait for each other
 
-When a route has both `ThrottlingInflightRoutePolicy` and `ThrottlingExceptionRoutePolicy`, each of them now resumes
-the consumer only when the other one no longer keeps it suspended. The inflight policy no longer resumes the consumer
-while the circuit of the exception policy is open, so no new messages are taken until the circuit is half open. When
-the circuit is half open, the exception policy does not resume a consumer that the inflight policy has suspended; the
-inflight policy resumes it when the number of inflight exchanges is low enough again.
+When a route has both `ThrottlingInflightRoutePolicy` and `ThrottlingExceptionRoutePolicy`, each of them now resumes the
+consumer only when the other one no longer keeps it suspended. The inflight policy no longer resumes the consumer while
+the circuit of the exception policy is open and the exception policy suspended that consumer when it opened the circuit,
+so no new messages are taken until the circuit is half open. When the circuit is half open, the exception policy does
+not resume a consumer that the inflight policy has suspended; the inflight policy resumes it when the number of inflight
+exchanges is low enough again.
 
 A custom `RoutePolicySupport` can take part by overriding `isConsumerKeptSuspended(Route)`.
 
