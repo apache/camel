@@ -804,7 +804,8 @@ public class DisruptorReference {
         private final int mask;
 
         PublishesInFlight() {
-            // a power of 2, at least the number of processors, at most 64
+            // a power of 2, at least the number of processors up to 64 cells; with more processors some threads
+            // share a cell, which is still correct (each thread adds and removes its own count in the cell it uses)
             int count = Math.min(64, Integer.highestOneBit(Math.max(1, Runtime.getRuntime().availableProcessors() - 1)) << 1);
             mask = count - 1;
             // a free cache line before the first cell (the array header) and after the last one
