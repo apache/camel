@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
@@ -631,9 +632,13 @@ public final class BodyFacts {
         return BodyTypeRegistry.Kind.DATA;
     }
 
-    /** The payload in its serialized form: text, bytes, a stream or a file. */
+    /**
+     * The payload in its serialized form: text, bytes, a stream or a file. A ByteArrayOutputStream, which camel-tika
+     * parse puts in the body, holds the bytes written to it, and converts to bytes, a stream or text as they do.
+     */
     private static boolean isPayload(Object body) {
-        return body instanceof String || body instanceof byte[] || body instanceof InputStream || body instanceof Reader
+        return body instanceof String || body instanceof byte[] || body instanceof ByteArrayOutputStream
+                || body instanceof InputStream || body instanceof Reader
                 || body instanceof StreamCache || body instanceof WrappedFile<?> || body instanceof File
                 || body instanceof Path;
     }

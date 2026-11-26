@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibm.watsonx.ai;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -397,6 +398,34 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         Instant instant = Instant.parse("2026-01-01T00:00:00Z");
         call(WatsonxAiOperations.chat, instant);
         assertUserMessage(instant.toString(), request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    @Test
+    void chatReadsAByteArrayOutputStreamBodyAsTheUserMessage() throws Exception {
+        // the body camel-tika parse produces, a payload like bytes
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.writeBytes("What is Apache Camel?".getBytes(StandardCharsets.UTF_8));
+
+        call(WatsonxAiOperations.chat, body);
+
+        assertUserMessage("What is Apache Camel?", request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    @Test
+    void chatDecodesAByteArrayOutputStreamBodyWithTheCharsetOfTheExchange() throws Exception {
+        // camel-tika parse sets the charset of the text it writes; toString() would decode with the platform default
+        String text = "Z\u00fcrich";
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.writeBytes(text.getBytes(StandardCharsets.ISO_8859_1));
+
+        Exchange result = template.send("direct:watsonx", exchange -> {
+            exchange.getIn().setHeader(WatsonxAiConstants.OPERATION, WatsonxAiOperations.chat);
+            exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+            exchange.getIn().setBody(body);
+        });
+
+        assertNoException(result);
+        assertUserMessage(text, request("/ml/v1/text/chat").get("messages").get(0));
     }
 
     @Test

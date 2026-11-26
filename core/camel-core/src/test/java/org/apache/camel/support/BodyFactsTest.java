@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -262,6 +263,8 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals(Kind.PAYLOAD, BodyFacts.kindOf("text"));
         assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(new byte[] { 1 }));
         assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(new ByteArrayInputStream(new byte[0])));
+        // the bytes camel-tika parse writes
+        assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(new ByteArrayOutputStream()));
         assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(42));
         assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(Boolean.TRUE));
         // parsed data: fields to read, and a marshal to write it
