@@ -43,6 +43,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -51,6 +52,7 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -85,8 +87,11 @@ import static org.mockito.Mockito.when;
  */
 class SpringRabbitMQConsumerStopTest {
 
-    // how long the consumer waits for its listener container to stop (shutdownAwaitTermination)
+    // how long the consumer waits for its listener container to stop, after the shutdownTimeout of the component
+    // (shutdownAwaitTermination)
     private static final long BOUND = 1000;
+    // how long a listener container waits for the messages it is processing, when it stops
+    private static final long SHUTDOWN_TIMEOUT = 500;
     // much longer than the bound, when the listener container stops in time
     private static final long HEALTHY_BOUND = 30000;
     // the time a suspend or a stop that does not wait for the broker may take on a busy machine: far less than the
@@ -125,6 +130,7 @@ class SpringRabbitMQConsumerStopTest {
         when(admin.declareQueue(any(Queue.class))).thenAnswer(invocation -> invocation.getArgument(0, Queue.class).getName());
         SpringRabbitMQComponent component = context.getComponent("spring-rabbitmq", SpringRabbitMQComponent.class);
         component.setAmqpAdmin(admin);
+        component.setShutdownTimeout(SHUTDOWN_TIMEOUT);
         component.setListenerContainerFactory(this::createListenerContainer);
 
         appender = new AbstractAppender("consumerStop", null, null, true, Property.EMPTY_ARRAY) {
@@ -160,7 +166,10 @@ class SpringRabbitMQConsumerStopTest {
         await("the cancel waits for the broker").atMost(10, TimeUnit.SECONDS).until(channel::isCancelling);
         List<String> warnings = warnings();
         assertEquals(1, warnings.size(), "one WARN for the listener container that stops in the background: " + warnings);
-        assertTrue(warnings.get(0).contains("(queues: [" + name + "]) did not stop within " + BOUND + " millis"),
+        assertTrue(warnings.get(0).contains("(queues: [" + name + "]) did not stop within " + (SHUTDOWN_TIMEOUT + BOUND)
+                                            + " millis (the shutdownTimeout of the component, " + SHUTDOWN_TIMEOUT
+                                            + " millis, plus the shutdownAwaitTermination of the ExecutorServiceManager, "
+                                            + BOUND + " millis)"),
                 warnings.get(0));
         AbstractMessageListenerContainer container = containers.get(0);
         assertFalse(destroyed.contains(container));
@@ -417,9 +426,135 @@ class SpringRabbitMQConsumerStopTest {
         assertTrue(warnings().isEmpty(), "no WARN: " + warnings());
     }
 
+    /**
+     * A route that suspends its own consumer while it processes a message, as a route policy such as
+     * ThrottlingInflightRoutePolicy does when an exchange is done. A listener container waits up to its shutdownTimeout
+     * for the messages it is processing, whichever thread stops it: the suspend waits for the shutdownTimeout and the
+     * bound together, so here it ends in time although the shutdownTimeout is longer than the bound.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "DMLC", "SMLC" })
+    void suspendFromTheListenerThread(String type) throws Exception {
+        context.getComponent("spring-rabbitmq", SpringRabbitMQComponent.class).setShutdownTimeout(3 * BOUND);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(uri(type)).routeId("orders")
+                        .process(exchange -> ServiceHelper
+                                .suspendService(exchange.getContext().getRoute("orders").getConsumer()))
+                        .to("mock:orders");
+            }
+        });
+        context.start();
+        MockEndpoint mock = context.getEndpoint("mock:orders", MockEndpoint.class);
+        mock.expectedBodiesReceived("Hello");
+
+        inAnotherThread(() -> subscribed(0).deliver("Hello"));
+
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
+        SpringRabbitMQConsumer consumer = (SpringRabbitMQConsumer) context.getRoute("orders").getConsumer();
+        assertTrue(consumer.isSuspended());
+        // the suspend did not give up waiting for the listener container
+        assertEquals(1, containers.size());
+        assertFalse(destroyed.contains(containers.get(0)));
+        assertTrue(warnings().isEmpty(), "no WARN: " + warnings());
+    }
+
+    /**
+     * A suspend from another thread while the route processes a message: the simple listener container waits up to its
+     * shutdownTimeout for that message (longer than the bound here), and so does the suspend.
+     */
+    @Test
+    void suspendWaitsForTheMessageThatIsProcessed() throws Exception {
+        context.getComponent("spring-rabbitmq", SpringRabbitMQComponent.class).setShutdownTimeout(10 * BOUND);
+        CountDownLatch processing = new CountDownLatch(1);
+        CountDownLatch done = new CountDownLatch(1);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(uri("SMLC")).routeId("orders")
+                        .process(exchange -> {
+                            processing.countDown();
+                            done.await(20, TimeUnit.SECONDS);
+                        })
+                        .to("mock:orders");
+            }
+        });
+        context.start();
+        MockEndpoint mock = context.getEndpoint("mock:orders", MockEndpoint.class);
+        mock.expectedBodiesReceived("Hello");
+        subscribed(0).deliver("Hello");
+        assertTrue(processing.await(10, TimeUnit.SECONDS), "the route processes the message");
+        SpringRabbitMQConsumer consumer = (SpringRabbitMQConsumer) context.getRoute("orders").getConsumer();
+
+        CompletableFuture<Void> suspend = inAnotherThread(consumer::suspend);
+        await("the suspend starts").atMost(10, TimeUnit.SECONDS).until(consumer::isSuspending);
+
+        // past the bound, the suspend still waits for the message
+        await("the suspend waits for the message").during(2 * BOUND, TimeUnit.MILLISECONDS)
+                .atMost(3 * BOUND, TimeUnit.MILLISECONDS).until(() -> !suspend.isDone());
+        done.countDown();
+        await("the suspend returns").atMost(10, TimeUnit.SECONDS).until(suspend::isDone);
+        suspend.join();
+        mock.assertIsSatisfied();
+        assertTrue(consumer.isSuspended());
+        assertEquals(1, containers.size());
+        assertFalse(destroyed.contains(containers.get(0)));
+        assertTrue(warnings().isEmpty(), "no WARN: " + warnings());
+    }
+
+    @Test
+    void shutdownAwaitTerminationOfZeroWaitsTheLeastTime() throws Exception {
+        context.getExecutorServiceManager().setShutdownAwaitTermination(0);
+        startRoute("DMLC");
+        subscribed(0).stopAnswering();
+
+        suspendThatDoesNotWait();
+
+        List<String> warnings = warnings();
+        assertEquals(1, warnings.size(), "one WARN: " + warnings);
+        assertTrue(warnings.get(0).contains("did not stop within " + (SHUTDOWN_TIMEOUT + 100) + " millis"),
+                warnings.get(0));
+    }
+
+    /**
+     * Once its timeout interrupted its thread, the graceful shutdown goes on suspending the consumers of the other
+     * routes: a consumer whose listener container stops at once still waits for it, and keeps it.
+     */
+    @Test
+    void suspendByAnInterruptedThreadWaitsForAListenerContainerThatStopsAtOnce() throws Exception {
+        context.getExecutorServiceManager().setShutdownAwaitTermination(HEALTHY_BOUND);
+        startRoute("DMLC");
+        subscribed(0);
+        SpringRabbitMQConsumer consumer = (SpringRabbitMQConsumer) context.getRoute("orders").getConsumer();
+        // once, so that the suspend below does not load classes or start threads within the 100 millis it waits
+        consumer.suspend();
+        consumer.resume();
+        subscribed(1);
+        AtomicBoolean interruptKept = new AtomicBoolean();
+
+        CompletableFuture<Void> suspend = inAnotherThread(() -> {
+            Thread.currentThread().interrupt();
+            consumer.suspend();
+            interruptKept.set(Thread.interrupted());
+        });
+
+        await("the suspend returns").atMost(STOP_TIME, TimeUnit.MILLISECONDS).until(suspend::isDone);
+        suspend.join();
+        assertTrue(consumer.isSuspended());
+        assertTrue(interruptKept.get(), "the interrupt is kept");
+        assertEquals(1, containers.size());
+        assertFalse(destroyed.contains(containers.get(0)));
+        assertTrue(warnings().isEmpty(), "no WARN: " + warnings());
+    }
+
     private void startRoute(String type) throws Exception {
-        startRouteFrom("spring-rabbitmq:" + name + "?connectionFactory=#cf&queues=" + name + "&routingKey=new"
-                       + "&messageListenerContainerType=" + type);
+        startRouteFrom(uri(type));
+    }
+
+    private String uri(String type) {
+        return "spring-rabbitmq:" + name + "?connectionFactory=#cf&queues=" + name + "&routingKey=new"
+               + "&messageListenerContainerType=" + type;
     }
 
     private void startRouteFrom(String uri) throws Exception {
@@ -578,6 +713,10 @@ class SpringRabbitMQConsumerStopTest {
 
         private void cancel(String tag) {
             Consumer consumer = consumers.remove(tag);
+            if (consumer == null) {
+                // cancelled before (a listener container that closes the channel of a consumer it cancelled)
+                return;
+            }
             if (!answering) {
                 cancelling.countDown();
                 awaitAnswer();

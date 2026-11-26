@@ -125,13 +125,6 @@ about 34 seconds with 15 seconds.
 cancelling a consumer when the route stops, waits until the connection is closed or for up to the `channelRpcTimeout`
 of the client, 10 minutes by default.
 
-*Suspending or stopping a route.* The consumer stops its listener container, which cancels its consumers and waits
-for the broker to answer. The consumer waits for the listener container to stop at most the `shutdownAwaitTermination`
-of the `ExecutorServiceManager` (10 seconds by default), so that a broker that does not answer does not hold up the
-xref:manual::graceful-shutdown.adoc[graceful shutdown]. When that time elapses, the consumer logs a WARN with the
-endpoint and its queues, and returns: the listener container goes on stopping in the background, and is destroyed once
-the cancel returns. When the route is resumed or started again, the consumer creates a new listener container.
-
 [source,xml]
 ----
 <bean id="rabbitConnectionFactory" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
@@ -154,6 +147,19 @@ spring.rabbitmq.channel-rpc-timeout=30s
 After the connection breaks, the broker requeues the messages that the consumer received but did not acknowledge,
 while the consumer may still process the ones it had already received: expect duplicates after a reconnect, up to
 `prefetchCount` (250 by default) per consumer. Make the processing idempotent, or lower `prefetchCount`.
+
+*Suspending or stopping a route.* The consumer stops its listener container, which cancels its consumers and waits
+for the broker to answer, then waits up to its `shutdownTimeout` (the `shutdownTimeout` of the component, 5 seconds by
+default, unless a custom `listenerContainerFactory` sets another one) for the messages that the route is still
+processing. A route that suspends its own consumer, such as with a route policy when an exchange is done, waits that
+whole `shutdownTimeout`, as the listener container waits for the message that the route is processing; the listener
+container then closes the channel of that message, so the broker delivers it again once the route is resumed (unless
+it was acknowledged on delivery, with `acknowledgeMode=NONE`). The consumer waits for the listener container to stop
+at most the `shutdownTimeout` of the component plus the `shutdownAwaitTermination` of the `ExecutorServiceManager` (10
+seconds by default), so that a broker that does not answer the cancel does not hold up the
+xref:manual::graceful-shutdown.adoc[graceful shutdown]. When that time elapses, the consumer logs a WARN with the
+endpoint and its queues, and returns: the listener container goes on stopping in the background, and is destroyed once
+the cancel returns. When the route is resumed or started again, the consumer creates a new listener container.
 
 === Default Exchange Name
 

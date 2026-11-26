@@ -276,8 +276,11 @@ and Camel does not recover from it".
 
 Suspending or stopping a consumer of camel-jms (and of the components built on it, such as camel-activemq,
 camel-activemq6 and camel-amqp) or of camel-spring-rabbitmq now waits for its listener container to stop at most the
-`shutdownAwaitTermination` of the `ExecutorServiceManager` (10 seconds by default), or until the waiting thread is
-interrupted, as the graceful shutdown does when its timeout elapses. Previously, it waited without bound when the
+`shutdownAwaitTermination` of the `ExecutorServiceManager` (10 seconds by default, at least 100 milliseconds), or until
+the waiting thread is interrupted, as the graceful shutdown does when its timeout elapses. camel-spring-rabbitmq waits
+the `shutdownTimeout` of the component (5 seconds by default), in which the listener container waits for the messages
+in progress, on top of that. camel-jms with `consumerType=Simple` and Spring's `SyncTaskExecutor` as `taskExecutor` also
+waits as long as the route processes messages, as the JMS client does. Previously, it waited without bound when the
 broker did not answer: for the `callTimeout` of ActiveMQ Artemis (30 seconds by default), or for the
 `channelRpcTimeout` of the RabbitMQ client (10 minutes by default), past the shutdown timeout.
 
@@ -288,11 +291,11 @@ ends its non-durable topic subscriptions: the messages published until the new l
 reach the consumer. A camel-jms suspend or stop from the thread that processes a message of the consumer (such as a
 route policy when an exchange is done) still stops the listener container on that thread, without this time limit.
 
-The stop of the listener container runs on a thread pool of the component: the `AsyncStartStopListener` thread pool of
-camel-jms, and a new `SpringRabbitMQStopListenerContainer` thread pool of camel-spring-rabbitmq. camel-jms with
-`asyncStopListener=true` is unchanged. A camel-spring-rabbitmq `shutdownTimeout` above that bound no longer extends the
-suspend: raise the `shutdownAwaitTermination` too (`camelContext.getExecutorServiceManager()
-.setShutdownAwaitTermination(...)`) if the suspend must wait longer for the messages in progress.
+The stop of the listener container runs on a new thread pool of the component: `JmsStopListenerContainer` for
+camel-jms, and `SpringRabbitMQStopListenerContainer` for camel-spring-rabbitmq. camel-jms with
+`asyncStopListener=true` is unchanged. The `shutdownAwaitTermination` can be raised with
+`camelContext.getExecutorServiceManager().setShutdownAwaitTermination(...)`; it is also the time that Camel waits for
+each thread pool to terminate when the CamelContext stops.
 
 === camel-core - a to with an expression in its endpoint uri logs a WARN
 

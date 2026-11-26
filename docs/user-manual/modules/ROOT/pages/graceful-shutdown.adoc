@@ -146,7 +146,12 @@ Set the timeouts of the client that the component uses (such as its connection, 
 calls return when the remote system stops answering. Some consumers bound such calls themselves: the
 xref:components::jms-component.adoc[JMS] and xref:components::spring-rabbitmq-component.adoc[Spring RabbitMQ] consumers
 wait for their listener container to stop at most the `shutdownAwaitTermination` of the `ExecutorServiceManager`
-(10 seconds by default), and let it stop in the background after that.
+(10 seconds by default; Spring RabbitMQ adds the `shutdownTimeout` of the component, in which the listener container
+waits for the messages in progress), and let it stop in the background after that.
+
+That bound is per consumer: with several routes that consume from a broker that does not answer, the graceful shutdown
+waits for them one after the other until its own timeout elapses. Then the shutdown interrupts the suspend in
+progress, and the consumers that it suspends after that wait for their listener container at most 100 milliseconds.
 
 === JMX managed
 

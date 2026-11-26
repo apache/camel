@@ -44,6 +44,8 @@ import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer
 public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringRabbitMQConsumer.class);
+    // the least time to wait for a listener container to stop (also once the waiting thread is interrupted)
+    private static final long MIN_STOP_WAIT = 100;
 
     private volatile AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
@@ -269,14 +271,20 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
     }
 
     /**
-     * Stops the listener container (and destroys it when asked), waiting for it at most the time to wait for a thread
-     * pool to shut down ({@code ExecutorServiceManager.getShutdownAwaitTermination()}, 10 seconds by default).
+     * Stops the listener container (and destroys it when asked), waiting for it at most the {@code shutdownTimeout} of
+     * the component (the time the listener container waits for the messages it is processing, 5 seconds by default)
+     * plus the time to wait for a thread pool to shut down
+     * ({@code ExecutorServiceManager.getShutdownAwaitTermination()}, 10 seconds by default).
      * <p/>
      * The stop of a listener container cancels its consumers (basic.cancel) and waits for the broker to answer, without
      * reacting to an interrupt: on a connection that stopped answering, up to the {@code channelRpcTimeout} of the
      * RabbitMQ client (10 minutes by default) or until the heartbeat closes the connection. So the stop runs on a
      * thread of the component: when the bound elapses, or the waiting thread is interrupted, it goes on in the
      * background, and destroys the listener container once it returns.
+     * <p/>
+     * A stop from a thread that processes a message of the listener container (such as a route policy that suspends the
+     * consumer when an exchange is done) runs on a thread of the component too: the listener container waits up to its
+     * {@code shutdownTimeout} for that message, from whichever thread it is stopped.
      *
      * @param  container the listener container, which the caller detaches from this consumer when it stops in the
      *                   background
@@ -285,7 +293,11 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
      *                   background
      */
     private boolean stopListenerContainer(AbstractMessageListenerContainer container, boolean destroy) {
-        long timeout = getEndpoint().getCamelContext().getExecutorServiceManager().getShutdownAwaitTermination();
+        long awaitTermination = Math.max(MIN_STOP_WAIT,
+                getEndpoint().getCamelContext().getExecutorServiceManager().getShutdownAwaitTermination());
+        long shutdownTimeout = Math.max(0, getEndpoint().getComponent().getShutdownTimeout());
+        long timeout
+                = shutdownTimeout > Long.MAX_VALUE - awaitTermination ? Long.MAX_VALUE : shutdownTimeout + awaitTermination;
         // whether this thread still waits for the stop: the first of the two that sets it to false (this thread when it
         // stops waiting, or the stop when it ends) completes the stop
         AtomicBoolean waiting = new AtomicBoolean(true);
@@ -299,6 +311,7 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
             return true;
         }
 
+        boolean interrupted = false;
         try {
             stop.get(timeout, TimeUnit.MILLISECONDS);
             return true;
@@ -306,22 +319,33 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
             throw stopFailure(e.getCause());
         } catch (TimeoutException e) {
             if (waiting.compareAndSet(true, false)) {
-                LOG.warn("The listener container of {} (queues: {}) did not stop within {} millis (the"
-                         + " shutdownAwaitTermination of the ExecutorServiceManager): it may wait for the broker to answer"
-                         + " the cancel of its consumers, on a connection that stopped answering. It stops in the"
-                         + " background, and the consumer creates a new listener container when it is resumed or started"
-                         + " again.",
-                        getEndpoint(), Arrays.toString(container.getQueueNames()), timeout);
+                LOG.warn("The listener container of {} (queues: {}) did not stop within {} millis (the shutdownTimeout of"
+                         + " the component, {} millis, plus the shutdownAwaitTermination of the ExecutorServiceManager, {}"
+                         + " millis): it may wait for the broker to answer the cancel of its consumers, on a connection"
+                         + " that stopped answering. It stops in the background, and the consumer creates a new listener"
+                         + " container when it is resumed or started again.",
+                        getEndpoint(), Arrays.toString(container.getQueueNames()), timeout, shutdownTimeout,
+                        awaitTermination);
                 return false;
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            // such as the graceful shutdown when its timeout elapses. A listener container that is about to stop (the
+            // broker answers) still stops in time, so that the consumers that the shutdown suspends after this one do
+            // not all give up at once
+            interrupted = true;
+            if (awaitAfterInterrupt(stop)) {
+                return true;
+            }
             if (waiting.compareAndSet(true, false)) {
                 LOG.warn("Interrupted while waiting for the listener container of {} (queues: {}) to stop. It stops in"
                          + " the background, and the consumer creates a new listener container when it is resumed or"
                          + " started again.",
                         getEndpoint(), Arrays.toString(container.getQueueNames()));
                 return false;
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
             }
         }
         // the stop ended meanwhile
@@ -331,6 +355,23 @@ public class SpringRabbitMQConsumer extends DefaultConsumer implements Suspendab
             throw stopFailure(e.getCause());
         }
         return true;
+    }
+
+    /**
+     * Waits for the stop at most {@link #MIN_STOP_WAIT} more, once the waiting thread was interrupted (which cleared
+     * its interrupt status: the caller sets it again).
+     *
+     * @return whether the stop ended meanwhile; when it failed, its exception is thrown
+     */
+    private static boolean awaitAfterInterrupt(CompletableFuture<Void> stop) {
+        try {
+            stop.get(MIN_STOP_WAIT, TimeUnit.MILLISECONDS);
+            return true;
+        } catch (ExecutionException e) {
+            throw stopFailure(e.getCause());
+        } catch (TimeoutException | InterruptedException e) {
+            return false;
+        }
     }
 
     /**
