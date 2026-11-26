@@ -186,8 +186,8 @@ public class DisruptorReference {
                 newDisruptor.halt();
             }
             handlers = new LifecycleAwareExchangeEventHandler[0];
-            LOGGER.warn("Failed to start disruptor {}, producers fail until it is started again ({} buffered exchanges are"
-                        + " kept until then): {}",
+            LOGGER.warn("Failed to start disruptor {}, producers fail until it is started again"
+                        + " ({} exchanges buffered before this failure are kept until then): {}",
                     uri, temporaryExchangeBuffer.size(), e.toString());
             throw e;
         }
