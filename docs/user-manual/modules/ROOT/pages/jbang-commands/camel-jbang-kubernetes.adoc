@@ -24,6 +24,7 @@ camel kubernetes [options]
 | xref:jbang-commands/camel-jbang-kubernetes-export.adoc[export] | Export as Maven project that contains a Kubernetes deployment manifest
 | xref:jbang-commands/camel-jbang-kubernetes-logs.adoc[logs] | Print the logs of a Kubernetes pod
 | xref:jbang-commands/camel-jbang-kubernetes-run.adoc[run] | Run Camel application on Kubernetes
+| xref:jbang-commands/camel-jbang-kubernetes-traits.adoc[traits] | List the traits that configure the Kubernetes manifest, or the options of one trait
 |===
 
 

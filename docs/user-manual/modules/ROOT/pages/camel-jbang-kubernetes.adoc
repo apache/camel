@@ -344,6 +344,8 @@ with `--cluster-type=minikube`, `run` prints a hint when it is not.
 
 == Advanced options
 
+`camel kubernetes traits` lists the traits, and `camel kubernetes traits <trait>` the options of one trait.
+
 xref:camel-jbang-kubernetes-advanced.adoc[Kubernetes Plugin Advanced Options] covers the trait options inherited from Camel K:
 the full container, Service, Ingress and OpenShift Route settings, running as a CronJob, Knative serving and eventing,
 the Jolokia port, mounts, and OpenAPI specs from ConfigMaps.
