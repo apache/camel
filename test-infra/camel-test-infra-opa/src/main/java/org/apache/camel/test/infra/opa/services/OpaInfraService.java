@@ -28,6 +28,13 @@ public interface OpaInfraService extends InfrastructureService {
      */
     String getOpaUrl();
 
+    /**
+     * The serverUrl option of camel-opa.
+     */
+    default String serverUrl() {
+        return getOpaUrl();
+    }
+
     String host();
 
     int port();

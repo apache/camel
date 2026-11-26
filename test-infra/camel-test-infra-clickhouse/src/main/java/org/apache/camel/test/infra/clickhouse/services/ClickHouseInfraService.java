@@ -34,4 +34,26 @@ public interface ClickHouseInfraService extends InfrastructureService {
     String getPassword();
 
     String getDatabaseName();
+
+    /**
+     * The serverUrl option of camel-clickhouse.
+     */
+    default String serverUrl() {
+        return getHttpUrl();
+    }
+
+    /**
+     * The database of camel-clickhouse.
+     */
+    default String database() {
+        return getDatabaseName();
+    }
+
+    default String username() {
+        return getUsername();
+    }
+
+    default String password() {
+        return getPassword();
+    }
 }

@@ -2879,6 +2879,18 @@ with code `1` (fix the route) instead of `70` (internal error), and prints the e
 The stack trace is in the log of the integration, and is no longer printed a second time on stderr (add `--verbose`
 for it). Scripts that checked for `70` after a failed start should check for `1`.
 
+=== camel-jbang - camel infra run names the connection details as properties
+
+The connection details that `camel infra run`, `camel infra get` and `camel infra ps --json` print (and that
+`camel infra run` writes to `~/.camel/infra-<service>-<pid>.json`) were named as the Java methods of the test-infra
+service, such as `getPort` and `getBootstrapServers`, often next to the same detail named as the Camel option, such as
+`port`. They are now named as properties: a getter loses its `get` (`getFtpRootDir` is `ftpRootDir`,
+`getBootstrapServers` is `bootstrapServers`), a getter of a detail that the service also names as the Camel option is
+left out (FTP prints `port`, not `getPort` as well), and so are the deprecated ones (`hostname` of FTP, use `host`).
+ClickHouse, Neo4j, OpenSearch, Pinecone, Weaviate, OPA, OpenFGA and Apicurio Registry now also print their details
+named as the options of their component, such as `serverUrl` of `camel-clickhouse`. A script that reads a `get...` key
+should read the key without `get`, or the Camel option.
+
 === camel-jbang - a Camel version that does not exist exits with 3
 
 A `--camel-version` that was never released, in `camel catalog`, `camel doc` and `camel validate`, now says
