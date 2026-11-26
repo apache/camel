@@ -55,6 +55,10 @@ import org.slf4j.LoggerFactory;
  * are gained this way. If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it
  * will DESTROY this instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself
  * whenever you instantiate {@link HazelcastAggregationRepository} passing a reference to the instance.
+ * <p>
+ * In thread-safe mode the cluster lock of the key is held only while a group is written, not while the Aggregate EIP
+ * reads the group and aggregates, so only one aggregator should update a given correlation key at a time: when two
+ * members aggregate the same key, one can overwrite the group that the other just wrote.
  */
 @Metadata(label = "bean",
           description = "Aggregation repository that uses Hazelcast Cache to store exchanges.",

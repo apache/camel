@@ -5341,6 +5341,20 @@ cluster. The policy now releases the lock when the last route that uses it is re
 it competes for the lock again when a route that uses it is added again (with the same or a new policy instance). So a
 route reloaded on the leader can now move to another node.
 
+=== camel-hazelcast - ReplicatedHazelcastAggregationRepository fails to start with optimistic=true
+
+A `ReplicatedHazelcastAggregationRepository` created with `optimistic=true` could never add a message to a stored group,
+nor complete a stored group: every such update failed with an `OptimisticLockingException` and was tried again, forever
+with the default retry policy of the Aggregate EIP. When two members started the same group at the same time, the first
+message of one of them was lost. A Hazelcast `ReplicatedMap` has no atomic compare-and-set, so the repository now fails
+to start with `optimistic=true` (an `IllegalArgumentException`), and so does the route that uses it. The only route that
+ran before with `optimistic=true` is one whose groups all complete on their first message (for example
+`completionSize(1)`), where the repository is never written; such a route now fails to start too, and runs again with
+`optimistic=false`. Use the repository with `optimistic=false` and without `optimisticLocking` on the Aggregate EIP; the
+xref:components::hazelcast-summary.adoc[Hazelcast component] page says when that mode is safe. When the Aggregate EIP
+has `optimisticLocking` turned on and uses a `ReplicatedHazelcastAggregationRepository` with `optimistic=false`, each
+message still fails, as before, now with an `UnsupportedOperationException` that says so.
+
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 
 The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
