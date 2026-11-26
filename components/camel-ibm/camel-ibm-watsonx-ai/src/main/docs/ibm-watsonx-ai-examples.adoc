@@ -765,6 +765,35 @@ YAML::
 ----
 ====
 
+=== Context and Answer Relevance (RAG guardrails)
+
+`detectContext` grades the documents a RAG route retrieved against the question of the body, and `detectGenerated` the
+answer of the body against its prompt. Both need a watsonx.governance instance in IBM Cloud:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:checkAnswer
+      steps:
+        - setHeader:
+            name: CamelIBMWatsonxAiDetectionPrompt
+            simple: "${variable.question}"
+        - to:
+            uri: ibm-watsonx-ai:detect
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              baseUrl: "{{ibm.watsonx.base-url}}"
+              projectId: yourProjectId
+              governanceInstanceId: yourGovernanceInstanceId
+              operation: detectGenerated
+        - log:
+            message: "Answer relevance: ${header.CamelIBMWatsonxAiDetectionResults}"
+----
+
+For `detectContext`, the `CamelIBMWatsonxAiDetectionContext` header gives the documents (a `List` of texts or URLs), and
+`detectors=faithfulness` grades the body as an answer instead of a question.
+
 === Content Detection with HAP Threshold
 
 Detect harmful content with a custom threshold:

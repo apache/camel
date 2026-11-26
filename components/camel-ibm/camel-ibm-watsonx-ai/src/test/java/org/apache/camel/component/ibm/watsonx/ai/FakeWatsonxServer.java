@@ -60,7 +60,13 @@ final class FakeWatsonxServer implements AutoCloseable {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    record Request(String method, String path, String query, String authorization, String body) {
+    record Request(String method, String path, String query, String authorization, String body,
+            Map<String, List<String>> headers) {
+
+        String header(String name) {
+            return headers.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(name))
+                    .map(e -> e.getValue().get(0)).findFirst().orElse(null);
+        }
 
         JsonNode json() {
             try {
@@ -133,7 +139,8 @@ final class FakeWatsonxServer implements AutoCloseable {
         requests.add(new Request(
                 exchange.getRequestMethod(), path, exchange.getRequestURI().getRawQuery(),
                 exchange.getRequestHeaders().getFirst("Authorization"),
-                new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8)));
+                new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8),
+                Map.copyOf(exchange.getRequestHeaders())));
 
         Response response;
         Deque<Response> queue = responses.get(path);

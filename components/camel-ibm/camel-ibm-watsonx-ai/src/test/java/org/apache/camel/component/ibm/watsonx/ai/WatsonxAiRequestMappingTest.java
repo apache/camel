@@ -171,6 +171,56 @@ class WatsonxAiRequestMappingTest extends CamelTestSupport {
         assertEquals(Boolean.TRUE, result.getMessage().getHeader(WatsonxAiConstants.DETECTED));
     }
 
+    @Test
+    void detectContextWithNamedDetectorsAndGovernanceInstance() {
+        server.respond(DETECTION + "/context", """
+                {"detections":[{"detector_id":"granite_guardian_3_2_5b","detection_type":"faithfulness",
+                 "detection":"factual","score":0.94}]}""");
+        Exchange result = send(uri("detectContext", "detectors=context_relevance,faithfulness&detectionThreshold=0.6"
+                                                    + "&governanceInstanceId=my-governance"),
+                "The capital of France is Paris.",
+                Map.of(WatsonxAiConstants.DETECTION_CONTEXT, List.of("Paris is the capital of France.", "https://x/y")));
+
+        FakeWatsonxServer.Request request = server.lastRequest(DETECTION + "/context");
+        JsonNode json = request.json();
+        assertEquals("The capital of France is Paris.", json.get("input").asText());
+        assertEquals("docs", json.get("context_type").asText());
+        assertEquals(2, json.get("context").size());
+        assertEquals(0.6, json.get("detectors").get("context_relevance").get("threshold").asDouble(), 0.001);
+        assertTrue(json.get("detectors").has("faithfulness"));
+        assertEquals("my-governance", request.header("x-governance-instance-id"));
+        Map<?, ?> results = result.getMessage().getHeader(WatsonxAiConstants.DETECTION_RESULTS, Map.class);
+        assertTrue(results.containsKey("faithfulness"));
+        assertNull(result.getMessage().getHeader(WatsonxAiConstants.DETECTED));
+    }
+
+    @Test
+    void detectGeneratedDefaultsToAnswerRelevance() {
+        server.respond(DETECTION + "/generated", """
+                {"detections":[{"detector_id":"granite_guardian_3_2_5b","detection_type":"answer_relevance",
+                 "detection":"relevant","score":0.97}]}""");
+        Exchange result = send(uri("detectGenerated", ""), "The capital of France is Paris.",
+                Map.of(WatsonxAiConstants.DETECTION_PROMPT, "What is the capital of France?"));
+
+        JsonNode json = server.lastRequest(DETECTION + "/generated").json();
+        assertEquals("What is the capital of France?", json.get("prompt").asText());
+        assertEquals("The capital of France is Paris.", json.get("generated_text").asText());
+        assertTrue(json.get("detectors").has("answer_relevance"));
+        assertEquals(1, result.getMessage().getHeader(WatsonxAiConstants.DETECTION_COUNT));
+    }
+
+    @Test
+    void detectWithGraniteGuardianByName() {
+        server.respond(DETECTION, """
+                {"detections":[]}""");
+        send(uri("detect", "detectors=granite_guardian,pii&detectionThreshold=0.3"), "Hello", Map.of());
+
+        JsonNode detectors = server.lastRequest(DETECTION).json().get("detectors");
+        assertEquals(0.3, detectors.get("granite_guardian").get("threshold").asDouble(), 0.001);
+        assertTrue(detectors.has("pii"));
+        assertFalse(detectors.has("hap"));
+    }
+
     // deployments
 
     @Test

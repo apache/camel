@@ -191,6 +191,24 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * The detectors, comma separated, in the place of detectPii and
+         * detectHap: hap, pii and granite_guardian for detect,
+         * context_relevance and faithfulness for detectContext (default
+         * context_relevance), answer_relevance for detectGenerated (default
+         * answer_relevance). The detectionThreshold applies to all but pii.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param detectors the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder detectors(String detectors) {
+            doSetProperty("detectors", detectors);
+            return this;
+        }
+        /**
          * Whether to detect PII (Personal Identifiable Information).
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
@@ -273,6 +291,22 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         default WatsonxAiEndpointBuilder frequencyPenalty(String frequencyPenalty) {
             doSetProperty("frequencyPenalty", frequencyPenalty);
+            return this;
+        }
+        /**
+         * The watsonx.governance instance that runs the detectors of
+         * detectContext and detectGenerated (and of detect, in the place of the
+         * project or space), which IBM Cloud requires for them.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param governanceInstanceId the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder governanceInstanceId(String governanceInstanceId) {
+            doSetProperty("governanceInstanceId", governanceInstanceId);
             return this;
         }
         /**
@@ -2048,7 +2082,7 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiErrorCode";
         }
         /**
-         * List of detectors to use.
+         * List of detectors to use, overriding the detectors option.
          * 
          * The option is a: {@code
          * java.util.List<com.ibm.watsonx.ai.detection.detector.BaseDetector>}
@@ -2060,6 +2094,32 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         public String iBMWatsonxAiDetectors() {
             return "CamelIBMWatsonxAiDetectors";
+        }
+        /**
+         * The context of detectContext: the documents, as a List of texts or
+         * URLs, or one String.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiDetectionContext}.
+         */
+        public String iBMWatsonxAiDetectionContext() {
+            return "CamelIBMWatsonxAiDetectionContext";
+        }
+        /**
+         * The prompt that the generated text of the body of detectGenerated
+         * answers.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonxAiDetectionPrompt}.
+         */
+        public String iBMWatsonxAiDetectionPrompt() {
+            return "CamelIBMWatsonxAiDetectionPrompt";
         }
         /**
          * Whether harmful content was detected: true when a detector found
@@ -2075,7 +2135,8 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiDetected";
         }
         /**
-         * Detection results grouped by type.
+         * Detection results grouped by type: the detection, score and text (and
+         * start and end for detect, evidence for detectContext) of each.
          * 
          * The option is a: {@code java.util.Map} type.
          * 

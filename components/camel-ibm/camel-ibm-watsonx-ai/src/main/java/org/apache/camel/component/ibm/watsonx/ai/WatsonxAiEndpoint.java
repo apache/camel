@@ -94,7 +94,8 @@ import org.apache.camel.support.DefaultEndpoint;
                                                                  Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
                                           @BodyType.When(option = "operation", value = "runTool",
                                                          carriers = { Carrier.TEXT, Carrier.MAP }) },
-                                  description = "The prompt or text for textGeneration, tokenize, detect and deploymentGenerate,"
+                                  description = "The prompt or text for textGeneration, tokenize, detect, detectContext (the input),"
+                                                + " detectGenerated (the generated text) and deploymentGenerate,"
                                                 + " the file path, ID or file name for the text extraction and classification"
                                                 + " operations that do not upload, read as text unless a header such as"
                                                 + " CamelIBMWatsonxAiInput gives it: a Map or a POJO fails, as Camel reads"
@@ -114,6 +115,10 @@ import org.apache.camel.support.DefaultEndpoint;
                                            @BodyType.When(option = "operation", value = "tokenize", carriers = Carrier.VALUE,
                                                           javaType = "java.lang.Integer"),
                                            @BodyType.When(option = "operation", value = "detect", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "detectContext",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "detectGenerated",
+                                                          carriers = Carrier.LIST),
                                            @BodyType.When(option = "operation", value = "forecast", carriers = Carrier.LIST),
                                            @BodyType.When(option = "operation", value = "deploymentForecast",
                                                           carriers = Carrier.LIST),
@@ -165,6 +170,7 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " List with one List of Floats per input, even for one input; rerank, detect,"
                                                  + " forecast and the list operations a List of results of the watsonx.ai SDK;"
                                                  + " tokenize the token count; the uploadFile and delete operations a Boolean."
+                                                 + " detectContext and detectGenerated give a List of results of the SDK."
                                                  + " processToolCalls leaves the body and puts the messages in the"
                                                  + " CamelIBMWatsonxAiMessages header"))
 public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServiceLocation {

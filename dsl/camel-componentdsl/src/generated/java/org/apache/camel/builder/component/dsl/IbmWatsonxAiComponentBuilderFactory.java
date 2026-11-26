@@ -192,6 +192,25 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * The detectors, comma separated, in the place of detectPii and
+         * detectHap: hap, pii and granite_guardian for detect,
+         * context_relevance and faithfulness for detectContext (default
+         * context_relevance), answer_relevance for detectGenerated (default
+         * answer_relevance). The detectionThreshold applies to all but pii.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param detectors the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder detectors(java.lang.String detectors) {
+            doSetProperty("detectors", detectors);
+            return this;
+        }
+    
+        /**
          * Whether to detect PII (Personal Identifiable Information).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -248,6 +267,23 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder frequencyPenalty(java.lang.Double frequencyPenalty) {
             doSetProperty("frequencyPenalty", frequencyPenalty);
+            return this;
+        }
+    
+        /**
+         * The watsonx.governance instance that runs the detectors of
+         * detectContext and detectGenerated (and of detect, in the place of the
+         * project or space), which IBM Cloud requires for them.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param governanceInstanceId the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder governanceInstanceId(java.lang.String governanceInstanceId) {
+            doSetProperty("governanceInstanceId", governanceInstanceId);
             return this;
         }
     
@@ -989,10 +1025,12 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "deploymentId": getOrCreateConfiguration((WatsonxAiComponent) component).setDeploymentId((java.lang.String) value); return true;
             case "detectHap": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectHap((java.lang.Boolean) value); return true;
             case "detectionThreshold": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectionThreshold((java.lang.Double) value); return true;
+            case "detectors": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectors((java.lang.String) value); return true;
             case "detectPii": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectPii((java.lang.Boolean) value); return true;
             case "documentBucket": getOrCreateConfiguration((WatsonxAiComponent) component).setDocumentBucket((java.lang.String) value); return true;
             case "documentConnectionId": getOrCreateConfiguration((WatsonxAiComponent) component).setDocumentConnectionId((java.lang.String) value); return true;
             case "frequencyPenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setFrequencyPenalty((java.lang.Double) value); return true;
+            case "governanceInstanceId": getOrCreateConfiguration((WatsonxAiComponent) component).setGovernanceInstanceId((java.lang.String) value); return true;
             case "guidedChoice": getOrCreateConfiguration((WatsonxAiComponent) component).setGuidedChoice((java.lang.String) value); return true;
             case "guidedGrammar": getOrCreateConfiguration((WatsonxAiComponent) component).setGuidedGrammar((java.lang.String) value); return true;
             case "guidedRegex": getOrCreateConfiguration((WatsonxAiComponent) component).setGuidedRegex((java.lang.String) value); return true;

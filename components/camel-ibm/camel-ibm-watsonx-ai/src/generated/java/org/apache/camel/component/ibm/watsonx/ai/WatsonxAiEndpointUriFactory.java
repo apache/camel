@@ -24,7 +24,7 @@ public class WatsonxAiEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(55);
+        Set<String> props = new HashSet<>(57);
         props.add("apiKey");
         props.add("authenticator");
         props.add("baseUrl");
@@ -33,9 +33,11 @@ public class WatsonxAiEndpointUriFactory extends org.apache.camel.support.compon
         props.add("detectHap");
         props.add("detectPii");
         props.add("detectionThreshold");
+        props.add("detectors");
         props.add("documentBucket");
         props.add("documentConnectionId");
         props.add("frequencyPenalty");
+        props.add("governanceInstanceId");
         props.add("guidedChoice");
         props.add("guidedGrammar");
         props.add("guidedRegex");

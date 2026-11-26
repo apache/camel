@@ -39,12 +39,15 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "detectPii": target.getConfiguration().setDetectPii(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "detectionthreshold":
         case "detectionThreshold": target.getConfiguration().setDetectionThreshold(property(camelContext, java.lang.Double.class, value)); return true;
+        case "detectors": target.getConfiguration().setDetectors(property(camelContext, java.lang.String.class, value)); return true;
         case "documentbucket":
         case "documentBucket": target.getConfiguration().setDocumentBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "documentconnectionid":
         case "documentConnectionId": target.getConfiguration().setDocumentConnectionId(property(camelContext, java.lang.String.class, value)); return true;
         case "frequencypenalty":
         case "frequencyPenalty": target.getConfiguration().setFrequencyPenalty(property(camelContext, java.lang.Double.class, value)); return true;
+        case "governanceinstanceid":
+        case "governanceInstanceId": target.getConfiguration().setGovernanceInstanceId(property(camelContext, java.lang.String.class, value)); return true;
         case "guidedchoice":
         case "guidedChoice": target.getConfiguration().setGuidedChoice(property(camelContext, java.lang.String.class, value)); return true;
         case "guidedgrammar":
@@ -147,12 +150,15 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "detectPii": return java.lang.Boolean.class;
         case "detectionthreshold":
         case "detectionThreshold": return java.lang.Double.class;
+        case "detectors": return java.lang.String.class;
         case "documentbucket":
         case "documentBucket": return java.lang.String.class;
         case "documentconnectionid":
         case "documentConnectionId": return java.lang.String.class;
         case "frequencypenalty":
         case "frequencyPenalty": return java.lang.Double.class;
+        case "governanceinstanceid":
+        case "governanceInstanceId": return java.lang.String.class;
         case "guidedchoice":
         case "guidedChoice": return java.lang.String.class;
         case "guidedgrammar":
@@ -256,12 +262,15 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "detectPii": return target.getConfiguration().getDetectPii();
         case "detectionthreshold":
         case "detectionThreshold": return target.getConfiguration().getDetectionThreshold();
+        case "detectors": return target.getConfiguration().getDetectors();
         case "documentbucket":
         case "documentBucket": return target.getConfiguration().getDocumentBucket();
         case "documentconnectionid":
         case "documentConnectionId": return target.getConfiguration().getDocumentConnectionId();
         case "frequencypenalty":
         case "frequencyPenalty": return target.getConfiguration().getFrequencyPenalty();
+        case "governanceinstanceid":
+        case "governanceInstanceId": return target.getConfiguration().getGovernanceInstanceId();
         case "guidedchoice":
         case "guidedChoice": return target.getConfiguration().getGuidedChoice();
         case "guidedgrammar":

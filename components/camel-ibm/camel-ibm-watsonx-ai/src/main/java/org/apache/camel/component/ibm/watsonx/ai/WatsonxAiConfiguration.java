@@ -234,6 +234,18 @@ public class WatsonxAiConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Detection threshold (0.0 to 1.0)")
     private Double detectionThreshold;
 
+    @UriParam(label = "producer",
+              description = "The detectors, comma separated, in the place of detectPii and detectHap: hap, pii and"
+                            + " granite_guardian for detect, context_relevance and faithfulness for detectContext (default"
+                            + " context_relevance), answer_relevance for detectGenerated (default answer_relevance). The"
+                            + " detectionThreshold applies to all but pii")
+    private String detectors;
+
+    @UriParam(label = "producer",
+              description = "The watsonx.governance instance that runs the detectors of detectContext and detectGenerated"
+                            + " (and of detect, in the place of the project or space), which IBM Cloud requires for them")
+    private String governanceInstanceId;
+
     // Advanced
     @UriParam(label = "advanced", description = "Request timeout in milliseconds")
     private Long timeout;
@@ -648,6 +660,22 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setDetectionThreshold(Double detectionThreshold) {
         this.detectionThreshold = detectionThreshold;
+    }
+
+    public String getDetectors() {
+        return detectors;
+    }
+
+    public void setDetectors(String detectors) {
+        this.detectors = detectors;
+    }
+
+    public String getGovernanceInstanceId() {
+        return governanceInstanceId;
+    }
+
+    public void setGovernanceInstanceId(String governanceInstanceId) {
+        this.governanceInstanceId = governanceInstanceId;
     }
 
     public Long getTimeout() {

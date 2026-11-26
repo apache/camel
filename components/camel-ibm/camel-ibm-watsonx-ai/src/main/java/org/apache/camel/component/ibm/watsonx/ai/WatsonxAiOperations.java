@@ -59,6 +59,8 @@ public enum WatsonxAiOperations {
 
     // Detection - PII/HAP (DetectionService)
     detect,
+    detectContext,
+    detectGenerated,
 
     // Time Series (TimeSeriesService)
     forecast,

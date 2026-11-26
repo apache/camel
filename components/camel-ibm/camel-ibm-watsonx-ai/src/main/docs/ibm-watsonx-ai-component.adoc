@@ -201,7 +201,15 @@ header or the message body, as for `embedding`.
 
 ==== Content Detection
 
-* `detect` - Detect PII (Personal Identifiable Information) and HAP (Harmful, Abusive, Profane) content in text
+* `detect` - Detect PII (Personal Identifiable Information) and HAP (Harmful, Abusive, Profane) content in text, or
+risks with Granite Guardian
+* `detectContext` - Grade how relevant the context (documents, as texts or URLs) is to the input of the body
+(`context_relevance`), or how faithful the body is to the context (`faithfulness`)
+* `detectGenerated` - Grade how relevant the generated text of the body is to its prompt (`answer_relevance`)
+
+The `detectors` option names the detectors, such as `granite_guardian` for `detect`. In IBM Cloud, the detectors of
+`detectContext` and `detectGenerated` run in a watsonx.governance instance, given by the `governanceInstanceId` option:
+with a project or space only, watsonx.ai answers `detector_not_accessible`.
 
 ==== Document Processing
 

@@ -215,16 +215,25 @@ public interface WatsonxAiConstants {
     String ERROR_CODE = HEADER_PREFIX + "ErrorCode";
 
     // Detection
-    @Metadata(description = "List of detectors to use",
+    @Metadata(description = "List of detectors to use, overriding the detectors option",
               javaType = "java.util.List<com.ibm.watsonx.ai.detection.detector.BaseDetector>")
     String DETECTORS = HEADER_PREFIX + "Detectors";
+
+    @Metadata(description = "The context of detectContext: the documents, as a List of texts or URLs, or one String",
+              javaType = "java.util.List<String>")
+    String DETECTION_CONTEXT = HEADER_PREFIX + "DetectionContext";
+
+    @Metadata(description = "The prompt that the generated text of the body of detectGenerated answers", javaType = "String")
+    String DETECTION_PROMPT = HEADER_PREFIX + "DetectionPrompt";
 
     @Metadata(description = "Whether harmful content was detected: true when a detector found something, not counting a"
                             + " Granite Guardian answer of No",
               javaType = "Boolean")
     String DETECTED = HEADER_PREFIX + "Detected";
 
-    @Metadata(description = "Detection results grouped by type", javaType = "java.util.Map")
+    @Metadata(description = "Detection results grouped by type: the detection, score and text (and start and end for"
+                            + " detect, evidence for detectContext) of each",
+              javaType = "java.util.Map")
     String DETECTION_RESULTS = HEADER_PREFIX + "DetectionResults";
 
     @Metadata(description = "Count of the detections that watsonx.ai returned, including Granite Guardian answers of No",

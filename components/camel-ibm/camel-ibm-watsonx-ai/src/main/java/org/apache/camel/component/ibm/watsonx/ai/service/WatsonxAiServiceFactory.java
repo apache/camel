@@ -160,6 +160,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getProjectId(), builder::projectId);
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         // DetectionService doesn't have modelId
+        applyIfNotNull(config.getGovernanceInstanceId(), builder::governanceInstanceId);
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
         applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
