@@ -38,14 +38,23 @@ public interface WeaviateInfraService extends InfrastructureService {
         return getWeaviateHost() + ":" + getWeaviatePort();
     }
 
+    /**
+     * The scheme option of camel-weaviate.
+     */
     default String scheme() {
         return "http";
     }
 
+    /**
+     * The grpcHost option of camel-weaviate.
+     */
     default String grpcHost() {
         return getWeaviateHost();
     }
 
+    /**
+     * The grpcPort option of camel-weaviate.
+     */
     default int grpcPort() {
         return getWeaviateGrpcPort();
     }

@@ -33,10 +33,16 @@ public interface Neo4jInfraService extends InfrastructureService {
         return getNeo4jDatabaseUri();
     }
 
+    /**
+     * The username option of camel-neo4j.
+     */
     default String username() {
         return getNeo4jDatabaseUser();
     }
 
+    /**
+     * The password option of camel-neo4j.
+     */
     default String password() {
         return getNeo4jDatabasePassword();
     }

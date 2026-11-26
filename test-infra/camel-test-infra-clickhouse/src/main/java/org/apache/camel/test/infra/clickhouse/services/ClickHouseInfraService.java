@@ -49,10 +49,16 @@ public interface ClickHouseInfraService extends InfrastructureService {
         return getDatabaseName();
     }
 
+    /**
+     * The username option of camel-clickhouse.
+     */
     default String username() {
         return getUsername();
     }
 
+    /**
+     * The password option of camel-clickhouse.
+     */
     default String password() {
         return getPassword();
     }
