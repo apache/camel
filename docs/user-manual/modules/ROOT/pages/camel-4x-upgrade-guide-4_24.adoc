@@ -7135,6 +7135,14 @@ Each check looks up these events from 10 minutes before the newest event seen (b
 skips the events seen by an earlier check: CloudTrail can make an event visible after a newer one, and such an update was
 never read. The number of requests is as above, counted over that range.
 
+=== camel-aws-secrets-manager - the calls of the refresh task time out
+
+With `camel.vault.aws.refreshEnabled=true`, each call of the refresh task to CloudTrail or SQS now times out after 10
+seconds, retries included, and the task tries again at its next check. Before, a call that did not get an answer held
+the thread that runs all the periodic tasks of the Camel context for as long as the HTTP client waited. With SQS
+notification, the task no longer waits for messages: it receives with a wait time of 0 seconds, whatever receive wait
+time (long polling) is set on the queue.
+
 === camel-aws2-s3 - a timestamp window uploaded more than once is stored in more than one object
 
 With `streamingUploadMode=true` and `timestampGroupingEnabled=true`, the upload of a time window is completed when it
