@@ -12285,3 +12285,8 @@ The Kamelet catalog 4.24 adds these Kamelets:
   untrusted input or AI agents. A vector (`knn`) search works too.
 * `pgp-encrypt-action` and `pgp-decrypt-action` (Preview) encrypt and sign a message body with OpenPGP, and decrypt it
   and check its signature, with key rings given as `file:`, `classpath:` or `base64:` resources.
+
+=== camel-openapi-validator
+
+* Upgraded Atlassian's request validator to `3.0.0`, changing the Maven artifact from `com.atlassian.oai:swagger-request-validator-core` to `com.atlassian.oai:openapi-request-validator-core`.
+* Validation error messages have changed format in `3.0.0` (for example, `Object has missing required properties (["photoUrls"])` is now `required property 'photoUrls' not found`).

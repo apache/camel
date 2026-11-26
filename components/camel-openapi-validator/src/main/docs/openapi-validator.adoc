@@ -11,7 +11,7 @@
 
 Camel comes with a default client request/response validator for the Camel Rest DSL.
 
-The `camel-openapi-validator` uses the third party https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator]
+The `camel-openapi-validator` uses the third party https://github.com/atlassian/openapi-request-validator[Atlassian OpenAPI Request Validator]
 library instead for client request/response validator. This library is a more extensive validator than
 the default validator from `camel-core`.
 
@@ -58,7 +58,7 @@ required headers, and content types — all based on what is defined in the Open
 
 === Configuring levels of errors
 
-The Atlassian Swagger Request Validator supports configuring https://bitbucket.org/atlassian/swagger-request-validator/src/c6200d0d849ae69be679f7fe01042cd9e84637c4/swagger-request-validator-core/README.md[fine-grained levels]
+The Atlassian OpenAPI Request Validator supports configuring https://github.com/atlassian/openapi-request-validator/blob/master/openapi-request-validator-core/README.md[fine-grained levels]
 for validating. This allows to turn on ignoring some specific errors.
 
 For example, you can ignore query parameters

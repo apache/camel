@@ -365,7 +365,7 @@ YAML::
 
 The validator is pluggable and Camel provides a default implementation out of the box.
 
-However, the `camel-openapi-validator` uses the third party https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator]
+However, the `camel-openapi-validator` uses the third party https://github.com/atlassian/openapi-request-validator[Atlassian OpenAPI Request Validator]
 library instead for client request validator. This library is a more extensive validator than
 the default validator from `camel-core`, such as being able to validate the payload
 is structured according to the OpenAPI specification.
