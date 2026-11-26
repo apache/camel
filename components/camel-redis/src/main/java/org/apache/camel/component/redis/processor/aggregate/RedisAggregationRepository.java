@@ -26,10 +26,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -52,6 +54,7 @@ import org.redisson.api.TransactionOptions;
 import org.redisson.client.codec.ByteArrayCodec;
 import org.redisson.client.codec.Codec;
 import org.redisson.client.codec.StringCodec;
+import org.redisson.client.handler.State;
 import org.redisson.client.protocol.Encoder;
 import org.redisson.codec.CompositeCodec;
 import org.redisson.config.Config;
@@ -88,6 +91,8 @@ public class RedisAggregationRepository extends ServiceSupport
     private static final int SCAN_COUNT = 100;
 
     private RMap<String, Object> cache;
+    /** The active hash with the values as the bytes stored in Redis, for the optimistic compares. */
+    private RMap<String, Object> rawCache;
     private RMap<String, Object> persistedCache;
     private Codec mapCodec;
     /**
@@ -95,21 +100,29 @@ public class RedisAggregationRepository extends ServiceSupport
      */
     private final Set<String> unreadableExchangeIds = ConcurrentHashMap.newKeySet();
     private boolean shutdownRedisson;
+    /**
+     * Optimistic locking: the groups that {@link #get(CamelContext, String)} returned, each with its key and the value
+     * that was read from Redis, to compare the stored group with. A {@link WeakHashMap} compares its keys with
+     * {@code equals()}: the keys are the {@link DefaultExchange} instances that {@code get} creates, which do not
+     * override it, so an entry is found only for the same exchange instance. Weak, so a group that is never updated or
+     * removed does not stay.
+     */
+    private final Map<Exchange, ReadGroup> readGroups = Collections.synchronizedMap(new WeakHashMap<>());
+
+    private record ReadGroup(String key, byte[] value) {
+    }
 
     /**
      * Atomic Lua script for optimistic removal with recovery.
      *
      * <p>
-     * Implements compare-and-swap by comparing the current serialized exchange in the active map with the expected
-     * serialized holder. If they match, the script writes the holder to the recovery map and removes it from the active
-     * map atomically.
+     * Implements compare-and-swap by comparing the current value in the active map with the expected value, which is
+     * the value that {@link #get(CamelContext, String)} read. If they match, the script writes the given exchange (with
+     * the last aggregated message and the properties the aggregator set) to the recovery map and removes the group from
+     * the active map atomically.
      *
      * <p>
-     * Returns 1 on success and 0 if the active exchange does not match the expected holder.
-     *
-     * <p>
-     * The comparison uses serialized bytes. Therefore, the serialization must produce identical bytes for the same
-     * holder when storing and comparing it.
+     * Returns 1 on success and 0 if the active exchange does not match the expected value.
      *
      * <p>
      * The {@code HSET} into the recovery map is intentionally placed before the {@code HDEL} from the active map. Redis
@@ -124,7 +137,7 @@ public class RedisAggregationRepository extends ServiceSupport
                 return 0
             end
 
-            redis.call('HSET', KEYS[2], ARGV[3], current)
+            redis.call('HSET', KEYS[2], ARGV[3], ARGV[4])
             redis.call('HDEL', KEYS[1], ARGV[1])
 
             return 1
@@ -222,9 +235,9 @@ public class RedisAggregationRepository extends ServiceSupport
                 throw new OptimisticLockingException();
             }
         } else {
-            Object oldHolder = marshallHolder(oldExchange);
-            Object newHolder = marshallHolder(newExchange);
-            if (!cache.replace(key, oldHolder, newHolder)) {
+            byte[] oldValue = readValue(key, oldExchange);
+            byte[] newValue = encodeValue(marshallHolder(newExchange));
+            if (!rawCache.replace(key, oldValue, newValue)) {
                 LOG.warn(
                         "Optimistic locking failed for exchange with key {}: RMap#replace returned no Exchanges, while it's expected to replace one",
                         key);
@@ -383,9 +396,51 @@ public class RedisAggregationRepository extends ServiceSupport
         return maximumRedeliveries;
     }
 
+    /**
+     * Gets the group of the correlation key.
+     * <p>
+     * With optimistic locking, {@link #add(CamelContext, String, Exchange, Exchange)} and
+     * {@link #remove(CamelContext, String, Exchange)} compare the stored group with the bytes that this method read
+     * from Redis, not with the exchange they are given serialized again: the Aggregate EIP sets properties on the group
+     * before it removes it, and an aggregation strategy may change the group and return it. With a
+     * {@link #setCodec(Codec) codec} too, the bytes are read as they are stored and kept for the compare, and the
+     * exchange is made of the value that the codec decodes from them: a codec does not always encode a decoded value to
+     * the same bytes (the order of a {@code HashSet} body can change, for example).
+     */
     @Override
     public Exchange get(CamelContext camelContext, String key) {
-        return unmarshallExchange(camelContext, mapName, key, cache.get(key));
+        if (!optimistic) {
+            return unmarshallExchange(camelContext, mapName, key, cache.get(key));
+        }
+        // the bytes stored in Redis, to compare with as they are; the exchange is made of an object decoded from them,
+        // which nothing else references, so an aggregation strategy may change it in place
+        byte[] read = (byte[]) rawCache.get(key);
+        Object value = codec != null && read != null ? decode(read) : read;
+        Exchange exchange = unmarshallExchange(camelContext, mapName, key, value);
+        if (exchange != null) {
+            readGroups.put(exchange, new ReadGroup(key, read));
+        }
+        return exchange;
+    }
+
+    /**
+     * The value to compare the stored group with, for an optimistic update or remove of the group that the exchange
+     * stands for: the bytes that {@link #get(CamelContext, String)} read for this key, or else the exchange as it is
+     * now, encoded as it is stored.
+     */
+    private byte[] readValue(String key, Exchange exchange) {
+        ReadGroup read = readGroups.remove(exchange);
+        if (read != null && read.key().equals(key)) {
+            return read.value();
+        }
+        return encodeValue(marshallHolder(exchange));
+    }
+
+    /**
+     * The value that {@link #marshallHolder(Exchange)} made, as the bytes stored in Redis.
+     */
+    private byte[] encodeValue(Object holder) {
+        return codec != null ? encode(mapCodec.getMapValueEncoder(), holder) : (byte[]) holder;
     }
 
     /**
@@ -459,8 +514,9 @@ public class RedisAggregationRepository extends ServiceSupport
                         RScript.ReturnType.LONG,
                         List.of(mapName, persistenceMapName),
                         encode(mapCodec.getMapKeyEncoder(), key),
-                        encode(mapCodec.getMapValueEncoder(), holder),
-                        encode(mapCodec.getMapKeyEncoder(), exchange.getExchangeId()));
+                        readValue(key, exchange),
+                        encode(mapCodec.getMapKeyEncoder(), exchange.getExchangeId()),
+                        encode(mapCodec.getMapValueEncoder(), holder));
 
                 if (result == null || result.longValue() != 1L) {
                     LOG.warn(
@@ -474,7 +530,7 @@ public class RedisAggregationRepository extends ServiceSupport
                         exchange.getExchangeId(), key);
 
             } else {
-                if (!cache.remove(key, holder)) {
+                if (!rawCache.remove(key, readValue(key, exchange))) {
                     LOG.warn(
                             "Optimistic locking failed for exchange with key {}: RMap#remove removed no Exchanges, while it's expected to remove one.",
                             key);
@@ -586,6 +642,9 @@ public class RedisAggregationRepository extends ServiceSupport
         unreadableExchangeIds.clear();
         mapCodec = codec != null ? codec : CODEC;
         cache = redisson.getMap(mapName, mapCodec);
+        rawCache = codec != null
+                ? redisson.getMap(mapName, new CompositeCodec(codec, ByteArrayCodec.INSTANCE, ByteArrayCodec.INSTANCE))
+                : cache;
         if (codec == null) {
             warnUnreadableEntries(cache, mapName);
         }
@@ -655,8 +714,23 @@ public class RedisAggregationRepository extends ServiceSupport
         }
     }
 
+    /**
+     * Decodes the value with the decoder of the codec of the hashes, as it is read from Redis.
+     */
+    private Object decode(byte[] bytes) {
+        ByteBuf buf = Unpooled.wrappedBuffer(bytes);
+        try {
+            return mapCodec.getMapValueDecoder().decode(buf, new State());
+        } catch (IOException e) {
+            throw new RuntimeCamelException("Cannot decode the value read from Redis", e);
+        } finally {
+            buf.release();
+        }
+    }
+
     @Override
     protected void doStop() throws Exception {
+        readGroups.clear();
         if (redisson != null && shutdownRedisson) {
             redisson.shutdown();
             redisson = null;

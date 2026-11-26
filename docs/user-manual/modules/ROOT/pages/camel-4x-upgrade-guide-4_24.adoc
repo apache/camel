@@ -9746,6 +9746,33 @@ older versions, and the `deserializationFilter` option and the WARN at startup d
 stored by the older version have completed and been recovered, remove the `codec` option to switch to the Java
 serialization read through the deserialization filter.
 
+=== camel-redis - RedisAggregationRepository with optimistic=true completes the groups
+
+With `optimistic=true` (and `optimisticLocking` on the Aggregate EIP), `RedisAggregationRepository` now compares the
+group stored in Redis with the bytes it read from Redis (with the `codec` option too), instead of with the exchange
+serialized again. Before, the remove that completes a group never matched, because the Aggregate EIP sets the
+correlation key property on the group before it removes it: the message that completed a group failed with "Exhausted
+optimistic locking retry attempts" (or was tried again forever with the default retry policy), and a group completed
+by its completion timeout stayed in Redis without being sent. An aggregation strategy that changes the old exchange
+and returns it could not add a second message to a group either.
+
+Groups that Camel 4.23 or older left in Redis this way are read only with the `codec` option set to the codec they
+were stored with, by default `new org.redisson.codec.Kryo5Codec()` (see the previous section). They are then completed
+after the upgrade by the next message of their correlation key, or, when the group records its completion timeout, by
+the completion timeout once the route has started again.
+
+With `useRecovery` (the default), the completed exchange that the repository keeps until it is confirmed is now the
+exchange that the Aggregate EIP removes, with the correlation key, as with `optimistic=false`. With an aggregation
+strategy that returns the old exchange, it has the last message. Before, it was the group as stored before the last
+message, without the correlation key. This fix does not change the format in which the exchanges are stored (the
+change of format in 4.24 is the one of the previous section).
+
+With an aggregation strategy that returns the new exchange and `useRecovery`, the groups now complete, and the recover
+task then sends each group once more, without its last message and marked as redelivered, as with `optimistic=false`:
+the completed exchange is kept under the exchange id of the group as read from Redis, while the Aggregate EIP confirms
+the exchange id of the new exchange. The Aggregate EIP logs a WARN for such a strategy with a recoverable repository.
+Use a strategy that returns the old exchange. Fixing this needs a change in the Aggregate EIP.
+
 === camel-spring-ws - the reply of a consumer, and File and stream bodies of the producer
 
 A `spring-ws` consumer route that sets the body to `null` in a processor, such as with
