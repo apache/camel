@@ -198,7 +198,7 @@ The producer creates its TLS connection with the Thrift `TSSLTransportFactory`, 
 cipher suites and the trust store of `sslParameters` only. The named groups and the signature schemes are not applied
 by the producer, and a `WARN` is logged when they are configured. The producer uses the named groups of the JVM, also
 for the post-quantum preference that `SSLContextParameters` applies elsewhere. See _Components with their own TLS
-stack_ in the {link}.
+stack_ in the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility].
 
 == Errors sent to the client
 
