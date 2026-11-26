@@ -884,6 +884,13 @@ answer must remove the `CamelIBMWatsonxAiMessages` header first, as the header t
 tool calls of an earlier answer, and an operation removes a header it gives no value, such as the
 `CamelIBMWatsonxAiAssistantMessage` header after `processToolCalls`, instead of setting it to `null`.
 
+=== camel-ibm-watsonx-ai - forecast and deploymentForecast send the parameters of a TimeSeriesRequest body
+
+`forecast` and `deploymentForecast` used to send only the schema and the data of a `TimeSeriesRequest` body, so its
+prediction length and, for `deploymentForecast`, its future data were dropped and the model forecast its default
+length. The body is now sent with its parameters. `forecast` fails when the `CamelIBMWatsonxAiForecastFutureData`
+header is set, as watsonx.ai takes future data for deployments only.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the

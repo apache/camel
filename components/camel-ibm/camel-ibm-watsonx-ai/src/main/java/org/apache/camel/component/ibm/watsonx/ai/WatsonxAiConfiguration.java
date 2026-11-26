@@ -113,6 +113,12 @@ public class WatsonxAiConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Whether to return documents in rerank response")
     private Boolean returnDocuments;
 
+    // Time series
+    @UriParam(label = "producer",
+              description = "The number of time steps to forecast (forecast and deploymentForecast). The model forecasts"
+                            + " its own default length when not set")
+    private Integer predictionLength;
+
     // Text Extraction (COS)
     @UriParam(label = "producer", description = "Cloud Object Storage URL")
     private String cosUrl;
@@ -329,6 +335,14 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setReturnDocuments(Boolean returnDocuments) {
         this.returnDocuments = returnDocuments;
+    }
+
+    public Integer getPredictionLength() {
+        return predictionLength;
+    }
+
+    public void setPredictionLength(Integer predictionLength) {
+        this.predictionLength = predictionLength;
     }
 
     public String getCosUrl() {

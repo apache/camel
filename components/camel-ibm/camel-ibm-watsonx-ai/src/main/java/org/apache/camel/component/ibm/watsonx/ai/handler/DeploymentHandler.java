@@ -29,9 +29,7 @@ import com.ibm.watsonx.ai.deployment.FindByIdRequest;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationParameters;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationRequest;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationResponse;
-import com.ibm.watsonx.ai.timeseries.ForecastData;
 import com.ibm.watsonx.ai.timeseries.ForecastResponse;
-import com.ibm.watsonx.ai.timeseries.InputSchema;
 import com.ibm.watsonx.ai.timeseries.TimeSeriesRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -232,36 +230,7 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
                                                + "' or endpoint configuration 'deploymentId'");
         }
 
-        // Get input schema and data from headers or body
-        InputSchema inputSchema = in.getHeader(WatsonxAiConstants.FORECAST_INPUT_SCHEMA, InputSchema.class);
-        ForecastData forecastData = in.getHeader(WatsonxAiConstants.FORECAST_DATA, ForecastData.class);
-
-        // If not in headers, try to get from body as TimeSeriesRequest
-        if (inputSchema == null || forecastData == null) {
-            Object body = in.getBody();
-            if (body instanceof TimeSeriesRequest request) {
-                inputSchema = request.inputSchema();
-                forecastData = request.data();
-            }
-        }
-
-        if (inputSchema == null) {
-            throw new IllegalArgumentException(
-                    "Input schema must be provided via header '" + WatsonxAiConstants.FORECAST_INPUT_SCHEMA
-                                               + "' or as part of TimeSeriesRequest in body");
-        }
-        if (forecastData == null) {
-            throw new IllegalArgumentException(
-                    "Forecast data must be provided via header '" + WatsonxAiConstants.FORECAST_DATA
-                                               + "' or as part of TimeSeriesRequest in body");
-        }
-
-        // Build request with deployment ID
-        TimeSeriesRequest request = TimeSeriesRequest.builder()
-                .deploymentId(deploymentId)
-                .inputSchema(inputSchema)
-                .data(forecastData)
-                .build();
+        TimeSeriesRequest request = getTimeSeriesRequest(exchange, deploymentId, true);
 
         // Call the service
         DeploymentService service = endpoint.getDeploymentService();

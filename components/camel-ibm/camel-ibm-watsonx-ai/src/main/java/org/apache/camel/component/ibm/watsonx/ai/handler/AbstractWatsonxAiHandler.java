@@ -20,12 +20,17 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
 import com.ibm.watsonx.ai.chat.model.SystemMessage;
 import com.ibm.watsonx.ai.chat.model.UserMessage;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationParameters;
+import com.ibm.watsonx.ai.timeseries.ForecastData;
+import com.ibm.watsonx.ai.timeseries.InputSchema;
+import com.ibm.watsonx.ai.timeseries.TimeSeriesParameters;
+import com.ibm.watsonx.ai.timeseries.TimeSeriesRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
@@ -428,5 +433,140 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         if (headerTopP != null) {
             builder.topP(headerTopP);
         }
+    }
+
+    /**
+     * Builds the request of forecast and deploymentForecast. A TimeSeriesRequest body is sent as it is, with its
+     * parameters, unless the input schema and data headers are set: then the request is built from them, with the
+     * prediction length of the header or the predictionLength option, and the future data of its header.
+     *
+     * @param deploymentId      the deployment to forecast with, or {@code null} for a foundation model
+     * @param futureDataAllowed whether the operation sends future data, which only deployments accept
+     */
+    protected TimeSeriesRequest getTimeSeriesRequest(Exchange exchange, String deploymentId, boolean futureDataAllowed) {
+        Message in = exchange.getIn();
+        InputSchema inputSchema = toInputSchema(in.getHeader(WatsonxAiConstants.FORECAST_INPUT_SCHEMA));
+        ForecastData forecastData = toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_DATA),
+                WatsonxAiConstants.FORECAST_DATA);
+
+        if ((inputSchema == null || forecastData == null) && in.getBody() instanceof TimeSeriesRequest request) {
+            if (deploymentId == null || deploymentId.equals(request.deploymentId())) {
+                return request;
+            }
+            return TimeSeriesRequest.builder()
+                    .deploymentId(deploymentId)
+                    .inputSchema(request.inputSchema())
+                    .data(request.data())
+                    .parameters(request.parameters())
+                    .build();
+        }
+
+        if (inputSchema == null) {
+            throw new IllegalArgumentException(
+                    "Input schema must be provided via header '" + WatsonxAiConstants.FORECAST_INPUT_SCHEMA
+                                               + "' or as part of TimeSeriesRequest in body");
+        }
+        if (forecastData == null) {
+            throw new IllegalArgumentException(
+                    "Forecast data must be provided via header '" + WatsonxAiConstants.FORECAST_DATA
+                                               + "' or as part of TimeSeriesRequest in body");
+        }
+
+        Integer predictionLength = in.getHeader(WatsonxAiConstants.FORECAST_PREDICTION_LENGTH, Integer.class);
+        if (predictionLength == null) {
+            predictionLength = getConfiguration().getPredictionLength();
+        }
+        ForecastData futureData = toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA),
+                WatsonxAiConstants.FORECAST_FUTURE_DATA);
+        if (futureData != null && !futureDataAllowed) {
+            throw new IllegalArgumentException(
+                    "Future data (header '" + WatsonxAiConstants.FORECAST_FUTURE_DATA
+                                               + "') is accepted by deploymentForecast only: watsonx.ai takes no future data"
+                                               + " for the forecast of a foundation model");
+        }
+
+        TimeSeriesParameters parameters = null;
+        if (predictionLength != null || futureData != null) {
+            TimeSeriesParameters.Builder builder = TimeSeriesParameters.builder();
+            if (predictionLength != null) {
+                builder.predictionLength(predictionLength);
+            }
+            if (futureData != null) {
+                builder.futureData(futureData);
+            }
+            parameters = builder.build();
+        }
+
+        return TimeSeriesRequest.builder()
+                .deploymentId(deploymentId)
+                .inputSchema(inputSchema)
+                .data(forecastData)
+                .parameters(parameters)
+                .build();
+    }
+
+    private static InputSchema toInputSchema(Object value) {
+        if (value == null || value instanceof InputSchema) {
+            return (InputSchema) value;
+        }
+        if (value instanceof Map<?, ?> map) {
+            InputSchema.Builder builder = InputSchema.builder();
+            Object timestampColumn = valueOf(map, "timestamp_column", "timestampColumn");
+            if (timestampColumn != null) {
+                builder.timestampColumn(timestampColumn.toString());
+            }
+            Object freq = valueOf(map, "freq", "frequency");
+            if (freq != null) {
+                builder.freq(freq.toString());
+            }
+            List<String> idColumns = toStrings(valueOf(map, "id_columns", "idColumns"));
+            if (idColumns != null) {
+                builder.idColumns(idColumns);
+            }
+            List<String> targetColumns = toStrings(valueOf(map, "target_columns", "targetColumns"));
+            if (targetColumns != null) {
+                builder.targetColumns(targetColumns);
+            }
+            return builder.build();
+        }
+        throw new IllegalArgumentException(
+                "The header '" + WatsonxAiConstants.FORECAST_INPUT_SCHEMA + "' must be an InputSchema or a Map, but it is a "
+                                           + value.getClass().getName());
+    }
+
+    private static Object valueOf(Map<?, ?> map, String key, String alternativeKey) {
+        Object value = map.get(key);
+        return value != null ? value : map.get(alternativeKey);
+    }
+
+    private static List<String> toStrings(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof List<?> list) {
+            return list.stream().map(String::valueOf).toList();
+        }
+        return List.of(value.toString().split("\\s*,\\s*"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ForecastData toForecastData(Object value, String header) {
+        if (value == null || value instanceof ForecastData) {
+            return (ForecastData) value;
+        }
+        if (value instanceof Map<?, ?> map) {
+            ForecastData data = ForecastData.create();
+            map.forEach((column, values) -> {
+                if (values instanceof List<?> list) {
+                    data.addAll(String.valueOf(column), list);
+                } else {
+                    data.add(String.valueOf(column), values);
+                }
+            });
+            return data;
+        }
+        throw new IllegalArgumentException(
+                "The header '" + header + "' must be a ForecastData or a Map of column to values, but it is a "
+                                           + value.getClass().getName());
     }
 }

@@ -194,12 +194,24 @@ public interface WatsonxAiConstants {
     String STOP_REASON = HEADER_PREFIX + "StopReason";
 
     // Time Series / Forecast
-    @Metadata(description = "The input schema for time series forecast",
+    @Metadata(description = "The input schema for time series forecast: an InputSchema, or a Map with the keys"
+                            + " timestamp_column, id_columns, freq and target_columns (a List or a comma separated String"
+                            + " for the columns)",
               javaType = "com.ibm.watsonx.ai.timeseries.InputSchema")
     String FORECAST_INPUT_SCHEMA = HEADER_PREFIX + "ForecastInputSchema";
 
-    @Metadata(description = "The forecast data", javaType = "com.ibm.watsonx.ai.timeseries.ForecastData")
+    @Metadata(description = "The forecast data: a ForecastData, or a Map of column name to the List of its values",
+              javaType = "com.ibm.watsonx.ai.timeseries.ForecastData")
     String FORECAST_DATA = HEADER_PREFIX + "ForecastData";
+
+    @Metadata(description = "The number of time steps to forecast, overriding the predictionLength option",
+              javaType = "Integer")
+    String FORECAST_PREDICTION_LENGTH = HEADER_PREFIX + "ForecastPredictionLength";
+
+    @Metadata(description = "The known future values of the exogenous columns, for deploymentForecast only: a ForecastData,"
+                            + " or a Map of column name to the List of its values",
+              javaType = "com.ibm.watsonx.ai.timeseries.ForecastData")
+    String FORECAST_FUTURE_DATA = HEADER_PREFIX + "ForecastFutureData";
 
     @Metadata(description = "The forecast results", javaType = "java.util.List")
     String FORECAST_RESULTS = HEADER_PREFIX + "ForecastResults";

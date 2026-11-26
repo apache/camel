@@ -338,6 +338,23 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * The number of time steps to forecast (forecast and
+         * deploymentForecast). The model forecasts its own default length when
+         * not set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param predictionLength the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder predictionLength(java.lang.Integer predictionLength) {
+            doSetProperty("predictionLength", predictionLength);
+            return this;
+        }
+    
+        /**
          * Presence penalty for chat.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -670,6 +687,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "maxNewTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setMaxNewTokens((java.lang.Integer) value); return true;
             case "modelId": getOrCreateConfiguration((WatsonxAiComponent) component).setModelId((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((WatsonxAiComponent) component).setOperation((org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations) value); return true;
+            case "predictionLength": getOrCreateConfiguration((WatsonxAiComponent) component).setPredictionLength((java.lang.Integer) value); return true;
             case "presencePenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setPresencePenalty((java.lang.Double) value); return true;
             case "repetitionPenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setRepetitionPenalty((java.lang.Double) value); return true;
             case "rerankTopN": getOrCreateConfiguration((WatsonxAiComponent) component).setRerankTopN((java.lang.Integer) value); return true;

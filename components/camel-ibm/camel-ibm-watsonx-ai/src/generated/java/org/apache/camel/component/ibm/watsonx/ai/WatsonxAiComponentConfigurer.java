@@ -70,6 +70,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "oauthprofile":
         case "oauthProfile": getOrCreateConfiguration(target).setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class, value)); return true;
+        case "predictionlength":
+        case "predictionLength": getOrCreateConfiguration(target).setPredictionLength(property(camelContext, java.lang.Integer.class, value)); return true;
         case "presencepenalty":
         case "presencePenalty": getOrCreateConfiguration(target).setPresencePenalty(property(camelContext, java.lang.Double.class, value)); return true;
         case "projectid":
@@ -144,6 +146,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
         case "operation": return org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class;
+        case "predictionlength":
+        case "predictionLength": return java.lang.Integer.class;
         case "presencepenalty":
         case "presencePenalty": return java.lang.Double.class;
         case "projectid":
@@ -219,6 +223,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "oauthprofile":
         case "oauthProfile": return getOrCreateConfiguration(target).getOauthProfile();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "predictionlength":
+        case "predictionLength": return getOrCreateConfiguration(target).getPredictionLength();
         case "presencepenalty":
         case "presencePenalty": return getOrCreateConfiguration(target).getPresencePenalty();
         case "projectid":

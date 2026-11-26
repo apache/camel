@@ -378,6 +378,39 @@ public interface WatsonxAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * The number of time steps to forecast (forecast and
+         * deploymentForecast). The model forecasts its own default length when
+         * not set.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param predictionLength the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder predictionLength(Integer predictionLength) {
+            doSetProperty("predictionLength", predictionLength);
+            return this;
+        }
+        /**
+         * The number of time steps to forecast (forecast and
+         * deploymentForecast). The model forecasts its own default length when
+         * not set.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param predictionLength the value to set
+         * @return the dsl builder
+         */
+        default WatsonxAiEndpointBuilder predictionLength(String predictionLength) {
+            doSetProperty("predictionLength", predictionLength);
+            return this;
+        }
+        /**
          * Presence penalty for chat.
          * 
          * The option is a: <code>java.lang.Double</code> type.
@@ -1546,7 +1579,9 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiStopReason";
         }
         /**
-         * The input schema for time series forecast.
+         * The input schema for time series forecast: an InputSchema, or a Map
+         * with the keys timestamp_column, id_columns, freq and target_columns
+         * (a List or a comma separated String for the columns).
          * 
          * The option is a: {@code com.ibm.watsonx.ai.timeseries.InputSchema}
          * type.
@@ -1560,7 +1595,8 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiForecastInputSchema";
         }
         /**
-         * The forecast data.
+         * The forecast data: a ForecastData, or a Map of column name to the
+         * List of its values.
          * 
          * The option is a: {@code com.ibm.watsonx.ai.timeseries.ForecastData}
          * type.
@@ -1571,6 +1607,36 @@ public interface WatsonxAiEndpointBuilderFactory {
          */
         public String iBMWatsonxAiForecastData() {
             return "CamelIBMWatsonxAiForecastData";
+        }
+        /**
+         * The number of time steps to forecast, overriding the predictionLength
+         * option.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * IBMWatsonxAiForecastPredictionLength}.
+         */
+        public String iBMWatsonxAiForecastPredictionLength() {
+            return "CamelIBMWatsonxAiForecastPredictionLength";
+        }
+        /**
+         * The known future values of the exogenous columns, for
+         * deploymentForecast only: a ForecastData, or a Map of column name to
+         * the List of its values.
+         * 
+         * The option is a: {@code com.ibm.watsonx.ai.timeseries.ForecastData}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * IBMWatsonxAiForecastFutureData}.
+         */
+        public String iBMWatsonxAiForecastFutureData() {
+            return "CamelIBMWatsonxAiForecastFutureData";
         }
         /**
          * The forecast results.

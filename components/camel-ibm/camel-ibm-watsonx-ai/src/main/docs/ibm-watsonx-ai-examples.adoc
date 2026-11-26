@@ -1391,6 +1391,41 @@ from("direct:forecast")
   .log("Forecast results: ${body}");
 ----
 
+The number of steps to forecast comes from the `CamelIBMWatsonxAiForecastPredictionLength` header or the
+`predictionLength` option (the model forecasts its own default length without them). A `TimeSeriesRequest` body is sent
+with its own parameters. The schema and the data can also be Maps, so a YAML or XML route can give them, for example
+from JSON:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:forecast
+      steps:
+        # the body is JSON such as {"schema": {"timestamp_column": "date", "freq": "1h", "target_columns": ["value"]},
+        # "data": {"date": ["2024-01-01T00:00:00", ...], "value": [10.5, ...]}}
+        - unmarshal:
+            json: {}
+        - setHeader:
+            name: CamelIBMWatsonxAiForecastInputSchema
+            simple: "${body[schema]}"
+        - setHeader:
+            name: CamelIBMWatsonxAiForecastData
+            simple: "${body[data]}"
+        - to:
+            uri: ibm-watsonx-ai:forecast
+            parameters:
+              apiKey: "RAW(yourApiKey)"
+              baseUrl: "{{ibm.watsonx.base-url}}"
+              projectId: yourProjectId
+              modelId: ibm/granite-ttm-1536-96-r2
+              operation: forecast
+              predictionLength: 24
+----
+
+`deploymentForecast` also sends the known future values of exogenous columns from the
+`CamelIBMWatsonxAiForecastFutureData` header (a `ForecastData` or a Map), which watsonx.ai accepts for deployments only.
+
 NOTE: A time series model needs at least as many data points as its context length, for example 1536 for
 `ibm/granite-ttm-1536-96-r2`. The IBM Granite TTM models are deprecated in IBM Cloud: check which time series models
 your region offers with the `listModels` operation.
