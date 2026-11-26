@@ -127,6 +127,11 @@ class NettyProducerStrayExceptionTest extends CamelTestSupport {
 
     private void startProducerAndAwaitException(String options) throws Exception {
         Channel channel = startProducer(options);
+        // without a request the read timeout would close the unused channel before a slow greeting arrives; the pool
+        // adds a new one when the request borrows the channel (activateObject)
+        if (channel.pipeline().get("timeout") != null) {
+            channel.pipeline().remove("timeout");
+        }
         // see the exception before the producer's handler gets it, and count down once that handler is done with it
         channel.pipeline().addBefore("handler", "exceptionProbe", new ChannelInboundHandlerAdapter() {
             @Override
