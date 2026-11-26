@@ -243,23 +243,32 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         try {
             LOG.trace("Creating new connection ...");
             XMPPTCPConnection newConnection = createConnectionInternal();
+            boolean created = false;
+            try {
+                newConnection.connect();
 
-            newConnection.connect();
+                newConnection.addSyncStanzaListener(new XmppLogger("INBOUND"), stanza -> true);
+                newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
 
-            newConnection.addSyncStanzaListener(new XmppLogger("INBOUND"), stanza -> true);
-            newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
-
-            if (!newConnection.isAuthenticated()) {
-                if (user != null && createAccount) {
-                    AccountManager accountManager = AccountManager.getInstance(newConnection);
-                    accountManager.createAccount(Localpart.from(user), password);
+                if (!newConnection.isAuthenticated()) {
+                    if (user != null && createAccount) {
+                        AccountManager accountManager = AccountManager.getInstance(newConnection);
+                        accountManager.createAccount(Localpart.from(user), password);
+                    }
+                    login(newConnection);
                 }
-                login(newConnection);
-            }
 
-            // okay new connection was created successfully
-            LOG.debug("Created new connection successfully: {}", newConnection);
-            return newConnection;
+                // okay new connection was created successfully
+                LOG.debug("Created new connection successfully: {}", newConnection);
+                created = true;
+                return newConnection;
+            } finally {
+                if (!created) {
+                    // nobody else has the connection to close it: Smack keeps a connection whose login failed open
+                    // (its socket, reader and writer threads), so that the caller can log in again
+                    newConnection.instantShutdown();
+                }
+            }
         } finally {
             lock.unlock();
         }
