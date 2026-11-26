@@ -179,6 +179,10 @@ YAML::
 When you specify `<transacted/>` in a route, Camel uses transactions for that particular
 route and any other routes that the message may undertake.
 
+The `transacted` applies to the entire route, wherever it is in the route, and the steps keep the order
+they are written in. In the XML and YAML DSL, `transacted` can have nested steps of its own: the steps before it,
+its nested steps and the steps after it all run in the transaction, in that order.
+
 When a route is specified as `<transacted/>`, then under the hood Camel looks up
 the Spring/JTA transaction manager and uses it.
 This is a convention over configuration.
