@@ -467,4 +467,7 @@ Maven users will need to add the following dependency to their `pom.xml`.
 
 where `x.x.x` is the version number of Camel.
 
+The component brings the JSON binding of the watsonx.ai SDK for Jackson 2 (`com.ibm.watsonx:watsonx-ai-jackson2`).
+The SDK accepts exactly one binding, so do not add `com.ibm.watsonx:watsonx-ai-jackson3` as well.
+
 // TODO restore once Spring Boot partials are released

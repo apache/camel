@@ -904,6 +904,16 @@ watsonx.ai returns as a detection when the threshold is low; `CamelIBMWatsonxAiD
 `deploymentInfo` looks up a deployment in the project when no space is set, instead of failing. The catalog gives the
 `CamelIBMWatsonxAiTokens` header its actual type, a `List` of `String` tokens.
 
+=== camel-ibm-watsonx-ai - IBM watsonx.ai Java SDK 0.50.0
+
+The component uses the IBM watsonx.ai Java SDK 0.50.0 (was 0.40.0). The SDK no longer depends on Jackson: it reads and
+writes JSON through a binding module, and the component now depends on `com.ibm.watsonx:watsonx-ai-jackson2`, the
+binding for Jackson 2. The SDK fails when it finds no binding, or more than one, so do not add
+`com.ibm.watsonx:watsonx-ai-jackson3` next to the component. An application that relied on Jackson coming with the SDK
+still gets it, through the binding.
+
+The SDK sends the API version `2026-10-28` with every request instead of `2026-08-19`.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
