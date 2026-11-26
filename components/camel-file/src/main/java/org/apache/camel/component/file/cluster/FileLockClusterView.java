@@ -341,7 +341,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             stateLock.unlock();
         }
         if (last) {
-            LOGGER.info("The open of lock file {} that timed out has ended, trying the lock again (cluster-member-id={})",
+            LOGGER.info("The open of lock file {} that timed out has ended (cluster-member-id={})",
                     leaderLockPath, localMember.getUuid());
         }
     }
@@ -738,7 +738,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 // logged once per wait (acquireLock does not open the lock file again until the wait ended), at WARN
                 // as the wait lasts until the JVM restarts if the open never returns
                 LOGGER.warn(
-                        "An open of lock file {} timed out and is still running. This JVM does not try the lock until the open ends; on a hung mount that takes a JVM restart (cluster-member-id={})",
+                        "An open of lock file {} timed out and is still running. This JVM does not try the lock until the open ends; on a hung mount that takes a JVM restart. If every open is this slow, raise clusterDataTaskTimeout (cluster-member-id={})",
                         leaderLockPath, localMember.getUuid());
             }
             return file;
