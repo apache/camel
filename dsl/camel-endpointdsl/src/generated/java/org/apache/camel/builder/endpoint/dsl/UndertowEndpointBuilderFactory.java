@@ -1083,7 +1083,9 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Timeout in milliseconds when sending to a websocket channel. The
-         * default timeout is 30000 (30 seconds).
+         * default timeout is 30000 (30 seconds). A message that is not sent to
+         * a peer within the timeout fails the exchange, and the connection to
+         * that peer is closed. Use 0 for no timeout.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1099,7 +1101,9 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Timeout in milliseconds when sending to a websocket channel. The
-         * default timeout is 30000 (30 seconds).
+         * default timeout is 30000 (30 seconds). A message that is not sent to
+         * a peer within the timeout fails the exchange, and the connection to
+         * that peer is closed. Use 0 for no timeout.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.

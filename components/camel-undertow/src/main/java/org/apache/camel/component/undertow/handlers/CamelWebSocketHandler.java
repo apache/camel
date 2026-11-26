@@ -34,6 +34,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
@@ -45,12 +48,14 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.ResponseCodeHandler;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.StatusCodes;
+import io.undertow.util.WorkerUtils;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.WebSocketProtocolHandshakeHandler;
 import io.undertow.websockets.core.AbstractReceiveListener;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
 import io.undertow.websockets.core.CloseMessage;
+import io.undertow.websockets.core.WebSocketCallback;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
@@ -68,7 +73,9 @@ import org.apache.camel.converter.IOConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.ChannelListener;
+import org.xnio.IoUtils;
 import org.xnio.Pooled;
+import org.xnio.XnioExecutor;
 
 /**
  * An {@link HttpHandler} that delegates to {@link WebSocketProtocolHandshakeHandler} and provides some wiring to
@@ -126,36 +133,49 @@ public class CamelWebSocketHandler implements HttpHandler {
      * Send the given {@code message} to the given {@code channel} and report the outcome to the given {@code callback}
      * within the given {@code timeoutMillis}.
      *
-     * @param  channel       the channel to send the {@code message} to
-     * @param  message       the message to send
-     * @param  callback      where to report the outcome
-     * @param  timeoutMillis the timeout in milliseconds
-     * @throws IOException
+     * @param channel       the channel to send the {@code message} to
+     * @param message       the message to send, a {@code String} or a {@code byte[]}
+     * @param callback      where to report the outcome
+     * @param timeoutMillis the timeout in milliseconds, none if zero or negative
      */
     private static void send(
             WebSocketChannel channel, Object message, ExtendedWebSocketCallback callback,
-            long timeoutMillis)
-            throws IOException {
+            long timeoutMillis) {
         if (channel.isOpen()) {
+            WebSocketCallback<Void> sendCallback = callback;
+            if (timeoutMillis > 0) {
+                SendTimeoutCallback timeoutCallback = new SendTimeoutCallback(channel, callback, timeoutMillis);
+                timeoutCallback.start();
+                sendCallback = timeoutCallback;
+            }
             if (message instanceof String) {
-                WebSockets.sendText((String) message, channel, callback);
-            } else if (message instanceof byte[]) {
-                ByteBuffer buffer = ByteBuffer.wrap((byte[]) message);
-                WebSockets.sendBinary(buffer, channel, callback, timeoutMillis);
-            } else if (message instanceof Reader) {
-                Reader r = (Reader) message;
-                WebSockets.sendText(IOConverter.toString(r), channel, callback);
-            } else if (message instanceof InputStream) {
-                InputStream in = (InputStream) message;
-                ByteBuffer buffer = ByteBuffer.wrap(IOConverter.toBytes(in));
-                WebSockets.sendBinary(buffer, channel, callback, timeoutMillis);
+                WebSockets.sendText((String) message, channel, sendCallback);
             } else {
-                throw new RuntimeCamelException(
-                        "Unexpected type of message " + message.getClass().getName() + "; expected String, byte[], "
-                                                + Reader.class.getName() + " or " + InputStream.class.getName());
+                // a buffer of its own per peer, as sending moves its position
+                WebSockets.sendBinary(ByteBuffer.wrap((byte[]) message), channel, sendCallback);
             }
         } else {
             callback.closedBeforeSent(channel);
+        }
+    }
+
+    /**
+     * Reads a {@code Reader} or {@code InputStream} message, so that every peer is sent the same text or bytes rather
+     * than what the previous peer left of the stream.
+     *
+     * @return the message as a {@code String} or a {@code byte[]}
+     */
+    private static Object readOnce(Object message) throws IOException {
+        if (message instanceof String || message instanceof byte[]) {
+            return message;
+        } else if (message instanceof Reader) {
+            return IOConverter.toString((Reader) message);
+        } else if (message instanceof InputStream) {
+            return IOConverter.toBytes((InputStream) message);
+        } else {
+            throw new RuntimeCamelException(
+                    "Unexpected type of message " + message.getClass().getName() + "; expected String, byte[], "
+                                            + Reader.class.getName() + " or " + InputStream.class.getName());
         }
     }
 
@@ -322,9 +342,10 @@ public class CamelWebSocketHandler implements HttpHandler {
             return true;
         } else {
             /* There are some peers to send the message to */
+            Object payload = readOnce(message);
             MultiCallback wsCallback = new MultiCallback(targetPeers, camelCallback, camelExchange);
             for (WebSocketChannel peer : targetPeers) {
-                send(peer, message, wsCallback, timeout);
+                send(peer, payload, wsCallback, timeout);
             }
             return false;
         }
@@ -443,6 +464,68 @@ public class CamelWebSocketHandler implements HttpHandler {
     }
 
     /**
+     * Applies the send timeout to the message sent to one peer. Undertow's own timeout closes the frame of a message
+     * that is not written in time and then reports that frame as complete, so a message dropped that way would look as
+     * sent. Instead, a message that is not written within the timeout fails, and the connection to the peer, which
+     * stopped reading, is closed, which also releases the messages that wait for it. Only the first outcome is
+     * reported: the timeout, or the completion or failure of the write.
+     */
+    static final class SendTimeoutCallback implements WebSocketCallback<Void>, Runnable {
+        private final WebSocketChannel channel;
+        private final ExtendedWebSocketCallback delegate;
+        private final long timeoutMillis;
+        private final AtomicBoolean done = new AtomicBoolean();
+        private volatile XnioExecutor.Key timer;
+
+        SendTimeoutCallback(WebSocketChannel channel, ExtendedWebSocketCallback delegate, long timeoutMillis) {
+            this.channel = channel;
+            this.delegate = delegate;
+            this.timeoutMillis = timeoutMillis;
+        }
+
+        /**
+         * Starts the timer, before the message is sent, as the write can complete while it is sent.
+         */
+        void start() {
+            timer = WorkerUtils.executeAfter(channel.getIoThread(), this, timeoutMillis, TimeUnit.MILLISECONDS);
+        }
+
+        @Override
+        public void run() {
+            if (done.compareAndSet(false, true)) {
+                LOG.debug("Closing WebSocket channel {} as a message was not sent within the send timeout of {} millis",
+                        channel, timeoutMillis);
+                delegate.onError(channel, null,
+                        new TimeoutException("Not sent within the send timeout of " + timeoutMillis + " millis"));
+                IoUtils.safeClose(channel);
+            }
+        }
+
+        @Override
+        public void complete(WebSocketChannel channel, Void context) {
+            if (done.compareAndSet(false, true)) {
+                cancelTimer();
+                delegate.complete(channel, context);
+            }
+        }
+
+        @Override
+        public void onError(WebSocketChannel channel, Void context, Throwable throwable) {
+            if (done.compareAndSet(false, true)) {
+                cancelTimer();
+                delegate.onError(channel, context, throwable);
+            }
+        }
+
+        private void cancelTimer() {
+            XnioExecutor.Key key = timer;
+            if (key != null) {
+                key.remove();
+            }
+        }
+    }
+
+    /**
      * A {@link ExtendedWebSocketCallback} able to track sending one message to multiple peers.
      */
     static class MultiCallback implements ExtendedWebSocketCallback {
@@ -505,7 +588,7 @@ public class CamelWebSocketHandler implements HttpHandler {
                     final StringBuilder msg = new StringBuilder(
                             "Delivery to the following WebSocket peer channels has failed: ");
                     for (Entry<String, Throwable> en : errors.entrySet()) {
-                        msg.append("\n    ").append(en.getKey()).append(en.getValue().getMessage());
+                        msg.append("\n    ").append(en.getKey()).append(": ").append(en.getValue().getMessage());
                     }
                     camelExchange.setException(new CamelExchangeException(msg.toString(), camelExchange));
                 }
