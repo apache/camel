@@ -32,6 +32,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
@@ -87,7 +88,7 @@ public class DisruptorReference {
     // exchange is published on a ring buffer whose event handlers have been halted
     private static final long MAX_PUBLISHES_IN_FLIGHT_PAUSE = TimeUnit.MILLISECONDS.toNanos(1);
 
-    private final AtomicInteger publishesInFlight = new AtomicInteger();
+    private final PublishesInFlight publishesInFlight = new PublishesInFlight();
 
     // the current Disruptor while it has consumers (the buffered exchanges are only published on such a Disruptor), and
     // whether a thread publishes the buffered exchanges that did not fit its ring buffer when it was started
@@ -152,7 +153,7 @@ public class DisruptorReference {
         try {
             tryPublishExchangeOnRingBuffer(exchange, ringBuffer);
         } finally {
-            publishesInFlight.decrementAndGet();
+            publishesInFlight.decrement();
         }
     }
 
@@ -161,7 +162,7 @@ public class DisruptorReference {
         try {
             publishExchangeOnRingBuffer(exchange, ringBuffer);
         } finally {
-            publishesInFlight.decrementAndGet();
+            publishesInFlight.decrement();
         }
     }
 
@@ -173,12 +174,12 @@ public class DisruptorReference {
         while (true) {
             // count, then read the reference: a reconfiguration clears the reference, then waits until the count is 0, so
             // either it waits for this producer, or this producer sees the cleared reference
-            publishesInFlight.incrementAndGet();
+            publishesInFlight.increment();
             final Disruptor<ExchangeEvent> currentDisruptor = disruptor.getReference();
             if (currentDisruptor != null) {
                 return currentDisruptor;
             }
-            publishesInFlight.decrementAndGet();
+            publishesInFlight.decrement();
             // wait for the reconfiguration to end without being counted (or fail if the Disruptor is not started)
             getCurrentDisruptor();
         }
@@ -192,7 +193,7 @@ public class DisruptorReference {
         boolean interrupted = Thread.interrupted();
         try {
             long pause = 1000L;
-            while (publishesInFlight.get() > 0) {
+            while (!publishesInFlight.isZero()) {
                 LockSupport.parkNanos(pause);
                 pause = Math.min(pause * 2, MAX_PUBLISHES_IN_FLIGHT_PAUSE);
                 if (Thread.interrupted()) {
@@ -363,7 +364,7 @@ public class DisruptorReference {
             ringBuffer.publish(sequence);
             return true;
         } finally {
-            publishesInFlight.decrementAndGet();
+            publishesInFlight.decrement();
         }
     }
 
@@ -779,6 +780,56 @@ public class DisruptorReference {
 
         public void clear() {
             delayedCommands.clear();
+        }
+    }
+
+    /**
+     * The count of {@link #beginPublish()}, without a write shared by all the producers on each publish: a thread
+     * counts in a cell chosen by its id (the same cell for its increment and its decrement), alone on its cache line.
+     * <p>
+     * A reconfiguration cannot stop waiting while a producer that read the old reference publishes: the producer
+     * increments (a volatile getAndAdd) before its volatile read of the reference, and the reconfiguration clears the
+     * reference (a volatile write) before its volatile reads of the cells, so the cell read sees the increment of a
+     * producer that read the old reference. As a thread decrements the cell it incremented, after it, a cell is never
+     * below 0, and reads 0 only when each increment it holds has its decrement: the cells being read one after the
+     * other can only make the wait longer. A LongAdder does not keep that: it can move a thread to another cell between
+     * its increment and its decrement, so a sum can see the decrement of a producer without its increment, which hides
+     * another producer in flight.
+     */
+    private static final class PublishesInFlight {
+        // 16 longs: 128 bytes, the larger cache line (such as on Apple silicon), so that no two cells share one
+        private static final int PAD = 16;
+
+        private final AtomicLongArray cells;
+        private final int mask;
+
+        PublishesInFlight() {
+            // a power of 2, at least the number of processors, at most 64
+            int count = Math.min(64, Integer.highestOneBit(Math.max(1, Runtime.getRuntime().availableProcessors() - 1)) << 1);
+            mask = count - 1;
+            // a free cache line before the first cell (the array header) and after the last one
+            cells = new AtomicLongArray((count + 2) * PAD);
+        }
+
+        private int index() {
+            return (((int) Thread.currentThread().threadId() & mask) + 1) * PAD;
+        }
+
+        void increment() {
+            cells.getAndIncrement(index());
+        }
+
+        void decrement() {
+            cells.getAndDecrement(index());
+        }
+
+        boolean isZero() {
+            for (int i = PAD; i < cells.length() - PAD; i += PAD) {
+                if (cells.get(i) != 0) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
