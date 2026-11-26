@@ -2888,6 +2888,13 @@ that the version exists before it stores it: a version that does not exist exits
 the repositories cannot be reached the version is stored with a warning. `camel version set` without a version,
 `--runtime`, `--repo` or `--reset` is now a usage error (exit code `2`) instead of doing nothing.
 
+=== camel-jbang - the Camel CLI runs Camel 4 only
+
+`camel run --camel-version` and `camel version set` refuse a Camel 3 version: they print that the Camel CLI runs
+Camel 4.0 or newer and exit with code `2` (usage). Before, the run went on with the CLI of that Camel 3 version, which
+does not know the options of the current CLI, and Camel 3 is no longer maintained. A Camel 3 version stored earlier
+with `camel version set` is refused by `camel run` as well: set a Camel 4 version, or use `camel version set --reset`.
+
 === camel-jbang - a name of a running integration matches only that integration
 
 A name given to `camel stop`, `camel get`, `camel cmd`, `camel trace` and the other commands for running integrations

@@ -28,6 +28,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 
 @CommandDefinition(name = "set", description = "Set/change current Camel version", generateHelp = true,
                    footer = {
@@ -63,6 +64,10 @@ public class VersionSet extends CamelCommand {
         boolean local = !global;
         if (!reset && version == null && repo == null && runtime == null) {
             printer().printErr("Give the Camel version to set, --runtime, --repo, or --reset");
+            return CliExitCode.USAGE;
+        }
+        if (!reset && version != null && !VersionHelper.isCamel4OrNewer(version)) {
+            printer().printErr("Camel version " + version + " is not supported: the Camel CLI runs Camel 4.0 or newer.");
             return CliExitCode.USAGE;
         }
         if (!reset && version != null) {
