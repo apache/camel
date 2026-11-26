@@ -849,16 +849,19 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         void beforeUploadPart() {
             if (buffered == null) {
-                buffered = Arrays.copyOf(state.buffer.toByteArray(), bufferSize);
+                buffered = state.buffer.copyOf(bufferSize);
             }
         }
 
         void restore() {
             // a part uploaded again replaces the part with the same number, and the parts after the restored ones are
             // not completed, so S3 discards them
-            byte[] data = buffered != null ? buffered : Arrays.copyOf(state.buffer.toByteArray(), bufferSize);
-            state.buffer.reset();
-            state.buffer.write(data, 0, data.length);
+            if (buffered != null) {
+                state.buffer.reset();
+                state.buffer.write(buffered, 0, buffered.length);
+            } else {
+                state.buffer.truncate(bufferSize);
+            }
             state.completedParts.subList(completedParts, state.completedParts.size()).clear();
             state.multipartIndex = multipartIndex;
             state.index = index;
@@ -873,7 +876,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         // the runs of the timeout task that failed to upload the buffered data
         int failedTimeoutFlushes;
         List<CompletedPart> completedParts = new ArrayList<>();
-        ByteArrayOutputStream buffer;
+        UploadBuffer buffer;
         String dynamicKeyName;
         UUID id;
         long timestamp;
@@ -883,7 +886,24 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             index = 1;
             multipartIndex = 1;
             part = AWS2S3StreamUploadProducer.this.part.get();
-            buffer = new ByteArrayOutputStream();
+            buffer = new UploadBuffer();
+        }
+    }
+
+    /**
+     * The buffered data of an upload. {@link AggregateMark} keeps or restores the data buffered before an exchange with
+     * at most one copy of it.
+     */
+    private static final class UploadBuffer extends ByteArrayOutputStream {
+
+        // the first bytes of the buffer, in one copy (toByteArray() would copy the whole buffer first)
+        synchronized byte[] copyOf(int length) {
+            return Arrays.copyOf(buf, Math.min(length, count));
+        }
+
+        // drops the bytes after the given length, without a copy
+        synchronized void truncate(int length) {
+            count = Math.min(length, count);
         }
     }
 }

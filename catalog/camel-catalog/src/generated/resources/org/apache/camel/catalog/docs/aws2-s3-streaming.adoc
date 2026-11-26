@@ -86,7 +86,9 @@ The exchanges whose data is buffered have already returned success when the time
 upload does not drop the data. When uploading the buffered data fails, it stays buffered and the next run of the
 timeout (or the next exchange) uploads it again. After three runs that failed to upload it, or when completing the
 upload fails, the multipart upload is aborted and the data is lost: the failure, naming the object and the number of
-exchanges, goes to the `exceptionHandler` of the endpoint when one is set, and is logged at ERROR level otherwise.
+exchanges, goes to the `exceptionHandler` of the endpoint when one is set, and is logged at ERROR level otherwise. The
+`exceptionHandler` option is listed with the consumer options, but this producer uses it too: set it on the endpoint
+URI, for example `exceptionHandler=#myHandler`.
 
 Without `timestampGroupingEnabled`, when an exchange fails (for example because uploading a part failed), its data is
 taken out of the upload again: the data buffered before it stays, and a redelivery of the exchange does not store its
