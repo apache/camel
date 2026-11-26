@@ -6702,6 +6702,17 @@ first ran is no longer served: its messages no longer reach the route and it no 
 sends, and the connection is closed. Clients that open a connection in this window must reconnect after the consumer
 has started.
 
+=== camel-undertow - a WebSocket message not sent within sendTimeout fails the exchange
+
+The `sendTimeout` option of a WebSocket producer (30 seconds by default) now applies to text messages, that is a
+`String` or `Reader` body, and to bodies converted to `String`. Before, it applied only to `byte[]` and `InputStream`
+bodies, so a text message to a peer that stopped reading stayed in flight, with its exchange, until the peer read it
+or the connection closed.
+
+A message that is not sent to a peer within `sendTimeout` now fails the exchange with a `CamelExchangeException`
+caused by a `TimeoutException`, and the connection to that peer is closed. Before, the timeout of a binary message
+only dropped the message, and the exchange completed as if it was sent. Set `sendTimeout` to `0` for no timeout.
+
 === camel-undertow, camel-vertx-http - CamelHttpPath with a query in the endpoint uri
 
 When the endpoint uri of an undertow or vertx-http producer has a query, the `CamelHttpPath` header now goes before
