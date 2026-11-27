@@ -16491,7 +16491,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
-     * Spring AI Vector Store
+     * Store, delete and search documents in a vector database with Spring AI.
      * 
      * Category: ai
      * Since: 4.17
@@ -16500,7 +16500,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-ai-vector-store:storeId</code>
      * 
      * Path parameter: storeId (required)
-     * The id
+     * A name that identifies the endpoint. The component does not use it
+     * otherwise, so endpoints with different names can use different options
+     * for the same vector store.
      * 
      * @param path storeId
      * @return the dsl builder
@@ -16510,7 +16512,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
-     * Spring AI Vector Store
+     * Store, delete and search documents in a vector database with Spring AI.
      * 
      * Category: ai
      * Since: 4.17
@@ -16519,7 +16521,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-ai-vector-store:storeId</code>
      * 
      * Path parameter: storeId (required)
-     * The id
+     * A name that identifies the endpoint. The component does not use it
+     * otherwise, so endpoints with different names can use different options
+     * for the same vector store.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

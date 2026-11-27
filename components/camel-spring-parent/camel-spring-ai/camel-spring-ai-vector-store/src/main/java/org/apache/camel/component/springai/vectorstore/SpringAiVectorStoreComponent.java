@@ -27,7 +27,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component(SpringAiVectorStore.SCHEME)
 public class SpringAiVectorStoreComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints start from. Each endpoint uses a copy, so its own options"
+                            + " replace the options of this configuration.")
     private SpringAiVectorStoreConfiguration configuration;
 
     public SpringAiVectorStoreComponent() {
@@ -44,9 +45,6 @@ public class SpringAiVectorStoreComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * The configuration.
-     */
     public void setConfiguration(SpringAiVectorStoreConfiguration configuration) {
         this.configuration = configuration;
     }
