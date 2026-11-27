@@ -54,9 +54,11 @@
                 <scope>import</scope>
             </dependency>
             <!-- Override Quarkus BOM's maven-resolver 1.x with the 2.x required by MIMA standalone-static.
-                 Quarkus 3.x pins maven-resolver to 1.9.x, but MIMA standalone-static 3.x is compiled against
-                 resolver 2.x (ScopeManagerConfiguration and other 2.x-only classes). Without this override
-                 the ServiceLoader fails to instantiate StandaloneStaticRuntime at test time. -->
+                 Quarkus 3.x pins maven-resolver to 1.9.x and maven core to 3.9.x, but MIMA standalone-static 3.x
+                 is compiled against resolver 2.x and maven-core 3.10.x. RepositorySystemSupplier (in
+                 maven-resolver-provider) and ScopeManagerConfiguration (in maven-resolver-impl) only exist in
+                 2.x/3.10.x. Without these overrides, the ServiceLoader fails to instantiate
+                 StandaloneStaticRuntime at test time (ClassNotFoundException). -->
             <dependency>
                 <groupId>org.apache.maven.resolver</groupId>
                 <artifactId>maven-resolver-api</artifactId>
@@ -91,6 +93,53 @@
                 <groupId>org.apache.maven.resolver</groupId>
                 <artifactId>maven-resolver-transport-file</artifactId>
                 <version>${maven-resolver-version}</version>
+            </dependency>
+            <!-- Override Quarkus BOM's Maven core 3.9.x with the 3.10.x required by MIMA standalone-static 3.x.
+                 maven-resolver-provider contains RepositorySystemSupplier, which is new in 3.10.x. -->
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-resolver-provider</artifactId>
+                <version>${maven-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.inject</groupId>
+                        <artifactId>javax.inject</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.sisu</groupId>
+                        <artifactId>org.eclipse.sisu.inject</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model-builder</artifactId>
+                <version>${maven-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.inject</groupId>
+                        <artifactId>javax.inject</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.sisu</groupId>
+                        <artifactId>org.eclipse.sisu.inject</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings-builder</artifactId>
+                <version>${maven-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.inject</groupId>
+                        <artifactId>javax.inject</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.sisu</groupId>
+                        <artifactId>org.eclipse.sisu.inject</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
