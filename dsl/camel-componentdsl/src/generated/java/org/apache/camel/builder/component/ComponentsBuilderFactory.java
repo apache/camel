@@ -4909,7 +4909,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
-     * Spring AI Vector Store
+     * Store, delete and search documents in a vector database with Spring AI.
      * 
      * Category: ai
      * Since: 4.17

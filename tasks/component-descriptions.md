@@ -347,7 +347,7 @@ or removes its row.
 | camel-spring-ai-chat | spring-ai-chat |  |
 | camel-spring-ai-embeddings | spring-ai-embeddings |  |
 | camel-spring-ai-image | spring-ai-image |  |
-| camel-spring-ai-vector-store | spring-ai-vector-store |  |
+| camel-spring-ai-vector-store | spring-ai-vector-store | yes |
 | camel-spring-batch | spring-batch |  |
 | camel-spring-jdbc | spring-jdbc |  |
 | camel-spring-ldap | spring-ldap |  |

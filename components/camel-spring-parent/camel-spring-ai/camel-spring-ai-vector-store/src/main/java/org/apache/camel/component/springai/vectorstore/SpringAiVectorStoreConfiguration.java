@@ -28,19 +28,33 @@ import org.springframework.ai.vectorstore.VectorStore;
 public class SpringAiVectorStoreConfiguration implements Cloneable {
 
     @Metadata(required = true, autowired = true)
-    @UriParam
+    @UriParam(description = "The Spring AI org.springframework.ai.vectorstore.VectorStore that the producer uses, such as a"
+                            + " Qdrant or PGvector vector store. For ADD and for SIMILARITY_SEARCH of a text, the vector store"
+                            + " embeds the text with its own embedding model.")
     private VectorStore vectorStore;
 
-    @UriParam(defaultValue = "ADD")
+    @UriParam(defaultValue = "ADD",
+              description = "The operation that the producer performs: ADD adds documents, which the vector store embeds;"
+                            + " UPSERT writes documents with their vectors as they are, and replaces a document with the"
+                            + " same id; DELETE deletes documents by id; SIMILARITY_SEARCH finds the documents most similar"
+                            + " to a query. The CamelSpringAiVectorStoreOperation header replaces this option.")
     private SpringAiVectorStoreOperation operation = SpringAiVectorStoreOperation.ADD;
 
-    @UriParam(defaultValue = "5")
+    @UriParam(defaultValue = "5",
+              description = "The maximum number of documents that SIMILARITY_SEARCH returns. The value must not be"
+                            + " negative. The CamelSpringAiVectorStoreTopK header replaces this option.")
     private int topK = 5;
 
-    @UriParam(defaultValue = "0.0")
+    @UriParam(defaultValue = "0.0",
+              description = "The minimum similarity score, from 0 to 1, of the documents that SIMILARITY_SEARCH returns."
+                            + " The default 0.0 accepts all documents. The CamelSpringAiVectorStoreSimilarityThreshold"
+                            + " header replaces this option.")
     private double similarityThreshold = 0.0;
 
-    @UriParam
+    @UriParam(description = "The filter on the metadata of the documents for SIMILARITY_SEARCH, in the portable filter"
+                            + " expression syntax of Spring AI, for example country == 'UK' && year >= 2020. The"
+                            + " CamelSpringAiVectorStoreFilterExpression header replaces this option. DELETE does not"
+                            + " delete by filter.")
     private String filterExpression;
 
     @UriParam(defaultValue = "false",
@@ -55,9 +69,6 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
         return vectorStore;
     }
 
-    /**
-     * The {@link VectorStore} to use for vector operations.
-     */
     public void setVectorStore(VectorStore vectorStore) {
         this.vectorStore = vectorStore;
     }
@@ -66,9 +77,6 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
         return operation;
     }
 
-    /**
-     * The operation to perform on the vector store (ADD, DELETE, SIMILARITY_SEARCH, UPSERT).
-     */
     public void setOperation(SpringAiVectorStoreOperation operation) {
         this.operation = operation;
     }
@@ -77,9 +85,6 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
         return topK;
     }
 
-    /**
-     * The maximum number of similar documents to return for similarity search.
-     */
     public void setTopK(int topK) {
         this.topK = topK;
     }
@@ -88,9 +93,6 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
         return similarityThreshold;
     }
 
-    /**
-     * The minimum similarity score threshold (0-1) for similarity search.
-     */
     public void setSimilarityThreshold(double similarityThreshold) {
         this.similarityThreshold = similarityThreshold;
     }
@@ -99,9 +101,6 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
         return filterExpression;
     }
 
-    /**
-     * Filter expression for metadata-based filtering in searches.
-     */
     public void setFilterExpression(String filterExpression) {
         this.filterExpression = filterExpression;
     }
@@ -110,10 +109,6 @@ public class SpringAiVectorStoreConfiguration implements Cloneable {
         return searchByVector;
     }
 
-    /**
-     * Whether SIMILARITY_SEARCH of a float[] body searches with this vector, instead of the text of the
-     * CamelSpringAiEmbeddingInputText header.
-     */
     public void setSearchByVector(boolean searchByVector) {
         this.searchByVector = searchByVector;
     }
