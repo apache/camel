@@ -124,7 +124,7 @@ or removes its row.
 | camel-bonita | bonita |  |
 | camel-box | box |  |
 | camel-braintree | braintree |  |
-| camel-browse | browse |  |
+| camel-browse | browse | yes |
 | camel-caffeine | caffeine-cache, caffeine-loadcache |  |
 | camel-camunda | camunda |  |
 | camel-cassandraql | cql |  |
