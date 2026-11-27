@@ -49,7 +49,10 @@ public final class XJConstants {
      * converting to xml the attribute holds the type that was in the original json document.
      */
     public static final String TYPE_HINT_TYPE = "type";
-    @Metadata(description = "The XSLT file name", javaType = "String")
+    @Metadata(description = "The path of the file that the producer writes the result to when output=file. It is"
+                            + " required with output=file, and the message body becomes this java.io.File. The"
+                            + " deleteOutputFile option reads it too, to delete the file when the exchange is done.",
+              javaType = "String")
     public static final String XSLT_FILE_NAME = Exchange.XSLT_FILE_NAME;
 
     /**

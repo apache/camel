@@ -148,8 +148,10 @@ public interface CamelEventEndpointBuilderFactory {
         /**
          * What happens to an event when the async queue is full. Block makes
          * the thread that fires the event wait for space, Drop discards the
-         * event with a DEBUG log, and Fail throws an exception, which Camel
-         * logs at WARN and ignores, so the event is lost.
+         * event with a DEBUG log, and Fail discards the event and passes an
+         * IllegalStateException to the exception handler of the consumer, which
+         * logs it at WARN by default, or with bridgeErrorHandler=true hands it
+         * to the error handler of the route.
          * 
          * The option is a:
          * <code>org.apache.camel.component.camelevent.BackpressurePolicy</code>
@@ -168,8 +170,10 @@ public interface CamelEventEndpointBuilderFactory {
         /**
          * What happens to an event when the async queue is full. Block makes
          * the thread that fires the event wait for space, Drop discards the
-         * event with a DEBUG log, and Fail throws an exception, which Camel
-         * logs at WARN and ignores, so the event is lost.
+         * event with a DEBUG log, and Fail discards the event and passes an
+         * IllegalStateException to the exception handler of the consumer, which
+         * logs it at WARN by default, or with bridgeErrorHandler=true hands it
+         * to the error handler of the route.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.camelevent.BackpressurePolicy</code>

@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -135,6 +136,18 @@ class ElasticsearchProducerClientLifecycleTest {
             assertEquals(Boolean.TRUE, template.requestBody("direct:a", "", Boolean.class));
             assertEquals(Boolean.TRUE, template.requestBody("direct:b", "", Boolean.class));
             assertTrue(client.isRunning(), "the client of the component was closed after a request");
+        }
+    }
+
+    @Test
+    void producerWithoutHostAddressesAndClientFailsToStart() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            Endpoint endpoint = context.getEndpoint("elasticsearch:test-cluster?operation=Ping");
+            ElasticsearchProducer producer = (ElasticsearchProducer) endpoint.createProducer();
+
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, producer::start);
+            assertTrue(e.getMessage().contains("hostAddresses"), e.getMessage());
         }
     }
 

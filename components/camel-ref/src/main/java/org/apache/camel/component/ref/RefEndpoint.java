@@ -33,7 +33,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Route messages to an endpoint looked up dynamically by name in the Camel Registry.
+ * Send messages to, or receive messages from, an endpoint that is looked up by name in the Camel registry.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "ref", title = "Ref", syntax = "ref:name",
              remote = false, category = { Category.CORE })
@@ -47,7 +47,10 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;
 
-    @UriPath
+    @UriPath(description = "The name of the Endpoint bound in the Camel registry that this endpoint delegates to."
+                           + " The endpoint is looked up once, when this endpoint is initialized, and startup fails if no"
+                           + " Endpoint is bound under this name. The producer and the consumer are created by the endpoint"
+                           + " that is found.")
     @Metadata(required = true)
     private String name;
 
@@ -64,9 +67,6 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
         return name;
     }
 
-    /**
-     * Name of endpoint to lookup in the registry.
-     */
     public void setName(String name) {
         this.name = name;
     }

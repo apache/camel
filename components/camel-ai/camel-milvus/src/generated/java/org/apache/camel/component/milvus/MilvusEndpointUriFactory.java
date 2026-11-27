@@ -24,12 +24,18 @@ public class MilvusEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(13);
         props.add("action");
+        props.add("caPemPath");
+        props.add("clientKeyPath");
+        props.add("clientPemPath");
         props.add("collection");
         props.add("host");
         props.add("lazyStartProducer");
         props.add("port");
+        props.add("secure");
+        props.add("serverName");
+        props.add("serverPemPath");
         props.add("timeout");
         props.add("token");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

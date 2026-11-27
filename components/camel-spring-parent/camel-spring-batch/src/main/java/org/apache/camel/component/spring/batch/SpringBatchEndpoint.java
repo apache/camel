@@ -35,7 +35,7 @@ import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 
 /**
- * Send messages to Spring Batch for further processing.
+ * Launch Spring Batch jobs, with the message headers as the job parameters.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName",
              remote = false, producerOnly = true, headersClass = SpringBatchConstants.class, category = { Category.WORKFLOW })
@@ -47,14 +47,21 @@ import org.springframework.batch.core.launch.JobLauncher;
                                                  + " headers stay as they were"))
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath(description = "The name of the Spring Batch job to launch. When the endpoint starts, the job is looked up in the"
+                           + " jobRegistry, when one is set, and else in the Camel registry as a Job bean; the endpoint fails"
+                           + " to start when the job is not found. Not used when jobFromHeader is true.")
     @Metadata(required = true)
     private String jobName;
-    @UriParam
+    @UriParam(description = "Whether the producer takes the name of the job to launch from the CamelSpringBatchJobName header"
+                            + " of each message instead of the jobName path, and looks the job up for every message. The"
+                            + " exchange fails when the header is missing. When false, that header is ignored.")
     private boolean jobFromHeader;
-    @UriParam
+    @UriParam(description = "The JobLauncher that runs the job, instead of the jobLauncher of the component. When neither is"
+                            + " set, the endpoint uses the single JobLauncher of the registry and fails to start when there"
+                            + " is none or more than one.")
     private JobLauncher jobLauncher;
-    @UriParam
+    @UriParam(description = "The JobRegistry in which the job is looked up by its name, instead of the jobRegistry of the"
+                            + " component. A job that is not in it is looked up in the Camel registry as a Job bean.")
     private JobRegistry jobRegistry;
 
     private Job job;
@@ -104,9 +111,6 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         return jobName;
     }
 
-    /**
-     * The name of the Spring Batch job located in the registry.
-     */
     public void setJobName(String jobName) {
         this.jobName = jobName;
     }
@@ -115,16 +119,10 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         return jobLauncher;
     }
 
-    /**
-     * Explicitly specifies a JobLauncher to be used.
-     */
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
     }
 
-    /**
-     * Explicitly defines if the jobName should be taken from the headers instead of the URI.
-     */
     public void setJobFromHeader(boolean jobFromHeader) {
         this.jobFromHeader = jobFromHeader;
     }
@@ -137,9 +135,6 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         return jobRegistry;
     }
 
-    /**
-     * Explicitly specifies a JobRegistry to be used.
-     */
     public void setJobRegistry(JobRegistry jobRegistry) {
         this.jobRegistry = jobRegistry;
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.es;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -70,6 +71,7 @@ import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+import org.elasticsearch.client.sniff.SniffOnFailureListener;
 import org.elasticsearch.client.sniff.Sniffer;
 import org.elasticsearch.client.sniff.SnifferBuilder;
 import org.slf4j.Logger;
@@ -143,6 +145,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        ActionContext ctx = null;
         try {
             if (configuration.isDisconnect() && client == null) {
                 startClient();
@@ -151,6 +154,9 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             RestClientOptions options = new RestClientOptions(RequestOptions.DEFAULT, true);
             ElasticsearchTransport transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper), options);
+            // the context records the headers set from the options as they are set, so that the cleanup removes them
+            // also when the exchange fails before the request is sent
+            ctx = new ActionContext(exchange, callback, transport);
             // 2. Index and type will be set by:
             // a. If the incoming body is already an action request
             // b. If the body is not an action request we will use headers if they
@@ -166,46 +172,40 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
             // Set the index/type headers on the exchange if necessary. This is used
             // for type conversion.
-            boolean configIndexName = false;
             String indexName = message.getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
             if (indexName == null) {
                 message.setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, configuration.getIndexName());
-                configIndexName = true;
+                ctx.setConfigIndexName();
             }
 
-            boolean configSize = false;
             Integer size = message.getHeader(ElasticsearchConstants.PARAM_SIZE, Integer.class);
             if (size == null) {
                 message.setHeader(ElasticsearchConstants.PARAM_SIZE, configuration.getSize());
-                configSize = true;
+                ctx.setConfigSize();
             }
 
-            boolean configFrom = false;
             Integer from = message.getHeader(ElasticsearchConstants.PARAM_FROM, Integer.class);
             if (from == null) {
                 message.setHeader(ElasticsearchConstants.PARAM_FROM, configuration.getFrom());
-                configFrom = true;
+                ctx.setConfigFrom();
             }
 
             Boolean enableDocumentOnlyMode = message.getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.class);
             if (enableDocumentOnlyMode == null) {
                 message.setHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, configuration.isEnableDocumentOnlyMode());
+                ctx.setConfigDocumentOnlyMode();
             }
 
-            boolean configWaitForActiveShards = false;
             Integer waitForActiveShards = message.getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
             if (waitForActiveShards == null) {
                 message.setHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, configuration.getWaitForActiveShards());
-                configWaitForActiveShards = true;
+                ctx.setConfigWaitForActiveShards();
             }
 
             Class<?> documentClass = message.getHeader(ElasticsearchConstants.PARAM_DOCUMENT_CLASS, Class.class);
             if (documentClass == null) {
                 documentClass = configuration.getDocumentClass();
             }
-
-            ActionContext ctx = new ActionContext(
-                    exchange, callback, transport, configIndexName, configWaitForActiveShards, configSize, configFrom);
 
             switch (operation) {
                 case Index: {
@@ -252,6 +252,11 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                         ElasticsearchScrollRequestIterator<?> scrollRequestIterator = new ElasticsearchScrollRequestIterator<>(
                                 searchRequestBuilder, new ElasticsearchClient(transport), scrollKeepAliveMs, exchange,
                                 documentClass);
+                        if (configuration.isDisconnect() && clientCreated) {
+                            // the iterator sends the next scroll requests while the body is read, so it closes the
+                            // client when it is closed, and the next exchange creates a new client
+                            scrollRequestIterator.closeOnClose(detachClient(ctx.getTransport()));
+                        }
                         exchange.getIn().setBody(scrollRequestIterator);
                         cleanup(ctx);
                         callback.done(true);
@@ -283,6 +288,9 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             }
         } catch (Exception e) {
             exchange.setException(e);
+            if (ctx != null) {
+                cleanup(ctx);
+            }
             callback.done(true);
             return true;
         }
@@ -440,7 +448,6 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     private <T> void onComplete(CompletableFuture<T> future, ActionContext ctx) {
         final Exchange exchange = ctx.getExchange();
         future.thenAccept(r -> exchange.getIn().setBody(r))
-                .thenAccept(r -> cleanup(ctx))
                 .whenComplete(
                         (r, e) -> {
                             try {
@@ -449,6 +456,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                                             "An error occurred while executing the action", exchange, e));
                                 }
                             } finally {
+                                // also when the request failed, so the headers set from the options are removed
+                                cleanup(ctx);
                                 ctx.getCallback().done(false);
                             }
                         });
@@ -483,6 +492,9 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             if (ctx.isConfigFrom()) {
                 message.removeHeader(ElasticsearchConstants.PARAM_FROM);
             }
+            if (ctx.isConfigDocumentOnlyMode()) {
+                message.removeHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE);
+            }
             if (configuration.isDisconnect() && clientCreated) {
                 closeClient();
                 IOHelper.close(ctx.getTransport());
@@ -495,6 +507,11 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (client == null
+                && (configuration.getHostAddressesList() == null || configuration.getHostAddressesList().isEmpty())) {
+            throw new IllegalArgumentException(
+                    "The hostAddresses option, or the client option of the elasticsearch component, is required");
+        }
         if (!configuration.isDisconnect()) {
             startClient();
         }
@@ -506,13 +523,9 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             try {
                 if (client == null) {
                     LOG.info("Connecting to the Elasticsearch cluster: {}", configuration.getClusterName());
-                    if (configuration.getHostAddressesList() != null
-                            && !configuration.getHostAddressesList().isEmpty()) {
-                        client = createClient();
-                        clientCreated = true;
-                    } else {
-                        LOG.warn("Incorrect ip address and port parameters settings for Elasticsearch cluster");
-                    }
+                    // doStart checked that the host addresses are set when no client is given
+                    client = createClient();
+                    clientCreated = true;
                 }
             } finally {
                 lock.unlock();
@@ -550,13 +563,21 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             }
             return httpClientBuilder;
         });
+        // the sniffer sniffs again after a failure (and then waits sniffAfterFailureDelay) only when the client
+        // tells it about the failure, through this listener
+        final SniffOnFailureListener sniffOnFailureListener
+                = configuration.isEnableSniffer() ? new SniffOnFailureListener() : null;
+        if (sniffOnFailureListener != null) {
+            builder.setFailureListener(sniffOnFailureListener);
+        }
         final RestClient restClient = builder.build();
         restClientRef.set(restClient);
-        if (configuration.isEnableSniffer()) {
+        if (sniffOnFailureListener != null) {
             SnifferBuilder snifferBuilder = Sniffer.builder(restClient);
             snifferBuilder.setSniffIntervalMillis(configuration.getSnifferInterval());
             snifferBuilder.setSniffAfterFailureDelayMillis(configuration.getSniffAfterFailureDelay());
             sniffer = snifferBuilder.build();
+            sniffOnFailureListener.setSniffer(sniffer);
         }
         return restClient;
     }
@@ -587,6 +608,29 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             closeClient();
         }
         super.doStop();
+    }
+
+    /**
+     * Hands the client this producer created, its sniffer and the given transport over to the caller, which closes
+     * them, so that the next exchange creates a new client.
+     */
+    private Closeable detachClient(ElasticsearchTransport transport) {
+        lock.lock();
+        try {
+            final Sniffer detachedSniffer = sniffer;
+            final RestClient detachedClient = client;
+            sniffer = null;
+            client = null;
+            clientCreated = false;
+            return () -> {
+                // the sniffer is closed first, it uses the client
+                IOHelper.close(detachedSniffer);
+                IOHelper.close(detachedClient);
+                IOHelper.close(transport);
+            };
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -646,20 +690,36 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         private final Exchange exchange;
         private final AsyncCallback callback;
         private final ElasticsearchTransport transport;
-        private final boolean configIndexName;
-        private final boolean configWaitForActiveShards;
-        private final boolean configSize;
-        private final boolean configFrom;
+        private boolean configIndexName;
+        private boolean configWaitForActiveShards;
+        private boolean configSize;
+        private boolean configFrom;
+        private boolean configDocumentOnlyMode;
 
-        ActionContext(Exchange exchange, AsyncCallback callback, ElasticsearchTransport transport, boolean configIndexName,
-                      boolean configWaitForActiveShards, boolean configSize, boolean configFrom) {
+        ActionContext(Exchange exchange, AsyncCallback callback, ElasticsearchTransport transport) {
             this.exchange = exchange;
             this.callback = callback;
             this.transport = transport;
-            this.configIndexName = configIndexName;
-            this.configWaitForActiveShards = configWaitForActiveShards;
-            this.configSize = configSize;
-            this.configFrom = configFrom;
+        }
+
+        void setConfigIndexName() {
+            this.configIndexName = true;
+        }
+
+        void setConfigWaitForActiveShards() {
+            this.configWaitForActiveShards = true;
+        }
+
+        void setConfigSize() {
+            this.configSize = true;
+        }
+
+        void setConfigFrom() {
+            this.configFrom = true;
+        }
+
+        void setConfigDocumentOnlyMode() {
+            this.configDocumentOnlyMode = true;
         }
 
         ElasticsearchTransport getTransport() {
@@ -684,6 +744,10 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
         boolean isConfigFrom() {
             return configFrom;
+        }
+
+        boolean isConfigDocumentOnlyMode() {
+            return configDocumentOnlyMode;
         }
 
         Exchange getExchange() {

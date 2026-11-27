@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.common;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -269,11 +271,18 @@ public final class AwsClientBuilderUtil {
      * <li>Static credentials (access key + secret key)</li>
      * </ol>
      * </p>
+     * <p>
+     * When none of these is configured, the SDK default chain is used. A configuration that asks for session or static
+     * credentials but misses one of the keys or the session token fails, instead of falling back to the SDK default
+     * chain.
+     * </p>
      *
-     * @param  config The AWS configuration
-     * @return        The resolved credentials provider, or null to use SDK default chain
+     * @param  config                   The AWS configuration
+     * @return                          The resolved credentials provider, or null to use SDK default chain
+     * @throws IllegalArgumentException when useSessionCredentials is true and the accessKey, secretKey or sessionToken
+     *                                  is missing, or when only one of accessKey and secretKey is set
      */
-    private static AwsCredentialsProvider resolveCredentialsProvider(AwsCommonConfiguration config) {
+    static AwsCredentialsProvider resolveCredentialsProvider(AwsCommonConfiguration config) {
 
         // Priority 1: Default credentials provider (IAM roles, env vars, etc.)
         if (config.isUseDefaultCredentialsProvider()) {
@@ -293,28 +302,47 @@ public final class AwsClientBuilderUtil {
             return ProfileCredentialsProvider.create();
         }
 
+        boolean hasAccessKey = ObjectHelper.isNotEmpty(config.getAccessKey());
+        boolean hasSecretKey = ObjectHelper.isNotEmpty(config.getSecretKey());
+
         // Priority 3: Session credentials (temporary credentials with session token)
         if (config.isUseSessionCredentials()) {
-            if (ObjectHelper.isNotEmpty(config.getAccessKey())
-                    && ObjectHelper.isNotEmpty(config.getSecretKey())
-                    && ObjectHelper.isNotEmpty(config.getSessionToken())) {
-                LOG.trace("Using session credentials");
-                AwsSessionCredentials sessionCredentials = AwsSessionCredentials.create(
-                        config.getAccessKey(),
-                        config.getSecretKey(),
-                        config.getSessionToken());
-                return StaticCredentialsProvider.create(sessionCredentials);
+            List<String> missing = new ArrayList<>(3);
+            if (!hasAccessKey) {
+                missing.add("accessKey");
             }
+            if (!hasSecretKey) {
+                missing.add("secretKey");
+            }
+            if (ObjectHelper.isEmpty(config.getSessionToken())) {
+                missing.add("sessionToken");
+            }
+            if (!missing.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "useSessionCredentials is set to true, but " + String.join(", ", missing)
+                                                   + (missing.size() == 1 ? " is" : " are")
+                                                   + " not set: accessKey, secretKey and sessionToken must be specified");
+            }
+            LOG.trace("Using session credentials");
+            AwsSessionCredentials sessionCredentials = AwsSessionCredentials.create(
+                    config.getAccessKey(),
+                    config.getSecretKey(),
+                    config.getSessionToken());
+            return StaticCredentialsProvider.create(sessionCredentials);
         }
 
         // Priority 4: Static credentials (access key + secret key)
-        if (ObjectHelper.isNotEmpty(config.getAccessKey())
-                && ObjectHelper.isNotEmpty(config.getSecretKey())) {
+        if (hasAccessKey && hasSecretKey) {
             LOG.trace("Using static credentials");
             AwsBasicCredentials basicCredentials = AwsBasicCredentials.create(
                     config.getAccessKey(),
                     config.getSecretKey());
             return StaticCredentialsProvider.create(basicCredentials);
+        }
+        if (hasAccessKey || hasSecretKey) {
+            throw new IllegalArgumentException(
+                    (hasAccessKey ? "accessKey is set, but secretKey is not set" : "secretKey is set, but accessKey is not set")
+                                               + ": both accessKey and secretKey must be specified");
         }
 
         // No explicit credentials - let SDK use its default chain

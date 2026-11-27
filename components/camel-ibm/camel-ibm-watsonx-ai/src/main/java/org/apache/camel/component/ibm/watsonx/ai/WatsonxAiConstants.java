@@ -26,56 +26,71 @@ public interface WatsonxAiConstants {
     String HEADER_PREFIX = "CamelIBMWatsonxAi";
 
     // Operation
-    @Metadata(description = "The operation to perform",
+    @Metadata(description = "The operation to perform. Overrides the operation option.",
               javaType = "org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations")
     String OPERATION = HEADER_PREFIX + "Operation";
 
     // Input/Output
-    @Metadata(description = "The input text/prompt for generation", javaType = "String")
+    @Metadata(description = "The input text, in the place of the body, of textGeneration, textGenerationStreaming,"
+                            + " tokenize, deploymentGenerate, detect, detectContext and detectGenerated (for which it is"
+                            + " the generated text).",
+              javaType = "String")
     String INPUT = HEADER_PREFIX + "Input";
 
-    @Metadata(description = "The list of inputs for batch operations", javaType = "java.util.List<String>")
+    @Metadata(description = "The input texts, in the place of the body, of embedding (the texts to embed) and rerank (the"
+                            + " texts to rank), as a List of Strings.",
+              javaType = "java.util.List<String>")
     String INPUTS = HEADER_PREFIX + "Inputs";
 
-    @Metadata(description = "The generated text output", javaType = "String")
+    @Metadata(description = "The generated text of textGeneration, deploymentGenerate, chat, deploymentChat and the"
+                            + " streaming operations, which is also the body. For chat, the content of the first answer.",
+              javaType = "String")
     String GENERATED_TEXT = HEADER_PREFIX + "GeneratedText";
 
     // Model/Deployment
     @Metadata(label = "producer",
-              description = "The model of chat and chatStreaming for this request, overriding the modelId option; forecast"
-                            + " and deploymentForecast report on the response the model that answered",
+              description = "The model of chat and chatStreaming for this request, overriding the modelId option."
+                            + " embedding, rerank, tokenize, forecast and deploymentForecast set it to the model that"
+                            + " answered.",
               javaType = "String")
     String MODEL_ID = HEADER_PREFIX + "ModelId";
 
-    @Metadata(description = "The deployment ID to use", javaType = "String")
+    @Metadata(description = "The ID of the deployment of the deployment operations. Overrides the deploymentId option.",
+              javaType = "String")
     String DEPLOYMENT_ID = HEADER_PREFIX + "DeploymentId";
 
-    @Metadata(description = "The space ID for deployment operations", javaType = "String")
+    @Metadata(description = "The ID of the deployment space in which deploymentInfo looks the deployment up. Overrides"
+                            + " the spaceId option for deploymentInfo only.",
+              javaType = "String")
     String SPACE_ID = HEADER_PREFIX + "SpaceId";
 
-    @Metadata(description = "The deployment name", javaType = "String")
+    @Metadata(description = "The name of the deployment, set by deploymentInfo.", javaType = "String")
     String DEPLOYMENT_NAME = HEADER_PREFIX + "DeploymentName";
 
-    @Metadata(description = "The deployed asset type", javaType = "String")
+    @Metadata(description = "The type of the asset that the deployment serves, set by deploymentInfo.", javaType = "String")
     String DEPLOYMENT_ASSET_TYPE = HEADER_PREFIX + "DeploymentAssetType";
 
-    @Metadata(description = "The deployment status state", javaType = "String")
+    @Metadata(description = "The state of the deployment, set by deploymentInfo.", javaType = "String")
     String DEPLOYMENT_STATUS = HEADER_PREFIX + "DeploymentStatus";
 
     // Text Generation Parameters
-    @Metadata(description = "Temperature for randomness (0.0 to 2.0)", javaType = "Double")
+    @Metadata(description = "The sampling temperature of text generation and chat. Overrides the temperature option.",
+              javaType = "Double")
     String TEMPERATURE = HEADER_PREFIX + "Temperature";
 
-    @Metadata(description = "Maximum new tokens to generate", javaType = "Integer")
+    @Metadata(description = "The maximum number of tokens to generate. Overrides the maxNewTokens option for text"
+                            + " generation and the maxCompletionTokens option for chat.",
+              javaType = "Integer")
     String MAX_NEW_TOKENS = HEADER_PREFIX + "MaxNewTokens";
 
-    @Metadata(description = "Top P (nucleus sampling)", javaType = "Double")
+    @Metadata(description = "The nucleus sampling of text generation and chat. Overrides the topP option.", javaType = "Double")
     String TOP_P = HEADER_PREFIX + "TopP";
 
-    @Metadata(description = "Top K (top-k sampling)", javaType = "Integer")
+    @Metadata(description = "The top-k sampling of text generation. Overrides the topK option.", javaType = "Integer")
     String TOP_K = HEADER_PREFIX + "TopK";
 
-    @Metadata(description = "Repetition penalty", javaType = "Double")
+    @Metadata(description = "The repetition penalty of text generation. Overrides the repetitionPenalty option.",
+              javaType = "Double")
     String REPETITION_PENALTY = HEADER_PREFIX + "RepetitionPenalty";
 
     // Chat
@@ -86,15 +101,20 @@ public interface WatsonxAiConstants {
               javaType = "java.util.List")
     String MESSAGES = HEADER_PREFIX + "Messages";
 
-    @Metadata(description = "The system message for chat (used to build messages if MESSAGES header is not set)",
+    @Metadata(description = "The system message of chat, chatStreaming and deploymentChat, sent before the user message"
+                            + " when the CamelIBMWatsonxAiMessages header is not set. Ignored when the body is a"
+                            + " ChatMessage or a List of messages.",
               javaType = "String")
     String SYSTEM_MESSAGE = HEADER_PREFIX + "SystemMessage";
 
-    @Metadata(description = "The user message for chat (used to build messages if MESSAGES header is not set, alternative to body)",
+    @Metadata(description = "The user message of chat, chatStreaming and deploymentChat, in the place of the body, when"
+                            + " the CamelIBMWatsonxAiMessages header is not set.",
               javaType = "String")
     String USER_MESSAGE = HEADER_PREFIX + "UserMessage";
 
-    @Metadata(description = "The tools available for function calling", javaType = "java.util.List")
+    @Metadata(description = "The tools that the model of chat, chatStreaming and deploymentChat may call, as a List of"
+                            + " com.ibm.watsonx.ai.chat.model.Tool.",
+              javaType = "java.util.List")
     String TOOLS = HEADER_PREFIX + "Tools";
 
     @Metadata(description = "How the model chooses the tools of chat, overriding the toolChoice option: auto, required, none,"
@@ -150,79 +170,116 @@ public interface WatsonxAiConstants {
     String MODERATION_RESULTS = HEADER_PREFIX + "ModerationResults";
 
     // Embeddings
-    @Metadata(description = "The embedding vectors result", javaType = "java.util.List")
+    @Metadata(description = "The embedding vectors of embedding, one List of Floats per input, which is also the body.",
+              javaType = "java.util.List")
     String EMBEDDINGS = HEADER_PREFIX + "Embeddings";
 
     // Rerank
-    @Metadata(description = "The query for reranking", javaType = "String")
+    @Metadata(description = "The query that rerank ranks the inputs against. Required for rerank.", javaType = "String")
     String RERANK_QUERY = HEADER_PREFIX + "RerankQuery";
 
-    @Metadata(description = "Number of top results to return for reranking", javaType = "Integer")
+    @Metadata(description = "The number of best ranked inputs that rerank returns. Overrides the rerankTopN option.",
+              javaType = "Integer")
     String RERANK_TOP_N = HEADER_PREFIX + "RerankTopN";
 
     // Tokenization
-    @Metadata(description = "The token count", javaType = "Integer")
+    @Metadata(description = "The number of tokens of the input of tokenize, which is also the body.", javaType = "Integer")
     String TOKEN_COUNT = HEADER_PREFIX + "TokenCount";
 
-    @Metadata(description = "The tokens of the input text", javaType = "java.util.List<String>")
+    @Metadata(description = "The tokens of the input of tokenize.", javaType = "java.util.List<String>")
     String TOKENS = HEADER_PREFIX + "Tokens";
 
     // File Input
-    @Metadata(description = "The file to upload", javaType = "java.io.File")
+    @Metadata(description = "The local file that the upload operations of text extraction and text classification upload,"
+                            + " when the body is not a file.",
+              javaType = "java.io.File")
     String FILE = HEADER_PREFIX + "File";
 
-    @Metadata(description = "The file name when using InputStream input", javaType = "String")
+    @Metadata(description = "The name of the document that the upload operations upload when the body is not a file, else"
+                            + " taken from the CamelAwsS3Key, CamelAzureStorageBlobBlobName or CamelFileName header. For"
+                            + " textExtractionReadFile, textExtractionDeleteFile and textClassificationDeleteFile, the name"
+                            + " of the file to read or delete, in the place of the body.",
+              javaType = "String")
     String FILE_NAME = HEADER_PREFIX + "FileName";
 
     // Text Extraction
-    @Metadata(description = "The file path for extraction or classification (for files already in COS), such as"
-                            + " textExtractionAndFetch",
+    @Metadata(description = "The path of the document in the documentBucket that textExtraction, textExtractionAndFetch,"
+                            + " textClassification and textClassificationAndFetch process, in the place of the body.",
               javaType = "String")
     String FILE_PATH = HEADER_PREFIX + "FilePath";
 
     @Metadata(description = "The name of the output file of text extraction, in the result bucket", javaType = "String")
     String OUTPUT_FILE_NAME = HEADER_PREFIX + "OutputFileName";
 
-    @Metadata(description = "The extraction request ID", javaType = "String")
+    @Metadata(description = "The ID of the text extraction request: set by textExtraction, textExtractionUpload and"
+                            + " textExtractionFetch, and read by textExtractionFetch and textExtractionDeleteRequest in the"
+                            + " place of the body.",
+              javaType = "String")
     String EXTRACTION_ID = HEADER_PREFIX + "ExtractionId";
 
-    @Metadata(description = "The extraction status", javaType = "String")
+    @Metadata(description = "The status of the text extraction request, such as submitted, running, completed or failed,"
+                            + " set by textExtraction, textExtractionUpload and textExtractionFetch.",
+              javaType = "String")
     String EXTRACTION_STATUS = HEADER_PREFIX + "ExtractionStatus";
 
-    @Metadata(description = "The extracted text content", javaType = "String")
+    @Metadata(description = "The extracted text of textExtractionUploadAndFetch and textExtractionAndFetch, which is also"
+                            + " the body.",
+              javaType = "String")
     String EXTRACTED_TEXT = HEADER_PREFIX + "ExtractedText";
 
     // COS File Operations
-    @Metadata(description = "The COS bucket name for file operations", javaType = "String")
+    @Metadata(description = "The Cloud Object Storage bucket of the file that textExtractionReadFile,"
+                            + " textExtractionDeleteFile (default the resultBucket) and textClassificationDeleteFile"
+                            + " (default the documentBucket) read or delete.",
+              javaType = "String")
     String BUCKET_NAME = HEADER_PREFIX + "BucketName";
 
-    @Metadata(description = "Whether the upload operation was successful", javaType = "Boolean")
+    @Metadata(description = "Whether textExtractionUploadFile or textClassificationUploadFile uploaded the file, which is"
+                            + " also the body.",
+              javaType = "Boolean")
     String UPLOAD_SUCCESS = HEADER_PREFIX + "UploadSuccess";
 
-    @Metadata(description = "Whether the delete operation was successful", javaType = "Boolean")
+    @Metadata(description = "Whether the DeleteFile or DeleteRequest operation of text extraction or text classification"
+                            + " deleted the file or the request, which is also the body.",
+              javaType = "Boolean")
     String DELETE_SUCCESS = HEADER_PREFIX + "DeleteSuccess";
 
     // Text Classification
-    @Metadata(description = "The classification request ID", javaType = "String")
+    @Metadata(description = "The ID of the text classification request: set by textClassification,"
+                            + " textClassificationUpload and textClassificationFetch, and read by textClassificationFetch"
+                            + " and textClassificationDeleteRequest in the place of the body.",
+              javaType = "String")
     String CLASSIFICATION_ID = HEADER_PREFIX + "ClassificationId";
 
-    @Metadata(description = "The classification status", javaType = "String")
+    @Metadata(description = "The status of the text classification request, such as submitted, running, completed or"
+                            + " failed, set by the text classification operations that start, fetch or wait for it.",
+              javaType = "String")
     String CLASSIFICATION_STATUS = HEADER_PREFIX + "ClassificationStatus";
 
-    @Metadata(description = "The classification result (document type)", javaType = "String")
+    @Metadata(description = "The document type that text classification found, set by textClassificationFetch and the"
+                            + " AndFetch operations of text classification.",
+              javaType = "String")
     String CLASSIFICATION_RESULT = HEADER_PREFIX + "ClassificationResult";
 
-    @Metadata(description = "Whether the document was classified", javaType = "Boolean")
+    @Metadata(description = "Whether text classification classified the document, set by textClassificationFetch and the"
+                            + " AndFetch operations of text classification.",
+              javaType = "Boolean")
     String DOCUMENT_CLASSIFIED = HEADER_PREFIX + "DocumentClassified";
 
-    @Metadata(description = "Error message when classification or extraction fails", javaType = "String")
+    @Metadata(description = "The error message of a failed text extraction or text classification request, set by"
+                            + " textExtractionFetch and textClassificationFetch.",
+              javaType = "String")
     String ERROR_MESSAGE = HEADER_PREFIX + "ErrorMessage";
 
-    @Metadata(description = "Error code when classification or extraction fails", javaType = "String")
+    @Metadata(description = "The error code of a failed text extraction or text classification request, set by"
+                            + " textExtractionFetch and textClassificationFetch.",
+              javaType = "String")
     String ERROR_CODE = HEADER_PREFIX + "ErrorCode";
 
     // Detection
-    @Metadata(description = "List of detectors to use, overriding the detectors option",
+    @Metadata(description = "The detectors of detect, detectContext and detectGenerated, as a List of"
+                            + " com.ibm.watsonx.ai.detection.detector.BaseDetector. Overrides the detectors, detectPii and"
+                            + " detectHap options.",
               javaType = "java.util.List<com.ibm.watsonx.ai.detection.detector.BaseDetector>")
     String DETECTORS = HEADER_PREFIX + "Detectors";
 
@@ -248,17 +305,23 @@ public interface WatsonxAiConstants {
     String DETECTION_COUNT = HEADER_PREFIX + "DetectionCount";
 
     // Streaming
-    @Metadata(description = "Consumer for streaming text", javaType = "java.util.function.Consumer")
+    @Metadata(description = "The java.util.function.Consumer of String that receives each chunk of"
+                            + " textGenerationStreaming and chatStreaming. Overrides the streamEndpoint option; one of them"
+                            + " is required for these operations.",
+              javaType = "java.util.function.Consumer")
     String STREAM_CONSUMER = HEADER_PREFIX + "StreamConsumer";
 
     // Usage/Metadata
-    @Metadata(description = "Input token count", javaType = "Integer")
+    @Metadata(description = "The number of tokens of the input, set by text generation, chat, embedding and rerank.",
+              javaType = "Integer")
     String INPUT_TOKEN_COUNT = HEADER_PREFIX + "InputTokenCount";
 
-    @Metadata(description = "Output token count", javaType = "Integer")
+    @Metadata(description = "The number of tokens that text generation or chat generated.", javaType = "Integer")
     String OUTPUT_TOKEN_COUNT = HEADER_PREFIX + "OutputTokenCount";
 
-    @Metadata(description = "Stop reason for generation", javaType = "String")
+    @Metadata(description = "Why the model stopped generating, as watsonx.ai reports it, such as max_tokens or eos_token"
+                            + " for text generation and stop, length or tool_calls for chat.",
+              javaType = "String")
     String STOP_REASON = HEADER_PREFIX + "StopReason";
 
     // Time Series / Forecast
@@ -281,20 +344,23 @@ public interface WatsonxAiConstants {
               javaType = "com.ibm.watsonx.ai.timeseries.ForecastData")
     String FORECAST_FUTURE_DATA = HEADER_PREFIX + "ForecastFutureData";
 
-    @Metadata(description = "The forecast results", javaType = "java.util.List")
+    @Metadata(description = "The forecast of forecast and deploymentForecast, which is also the body.",
+              javaType = "java.util.List")
     String FORECAST_RESULTS = HEADER_PREFIX + "ForecastResults";
 
-    @Metadata(description = "Number of input data points", javaType = "Integer")
+    @Metadata(description = "The number of data points that forecast or deploymentForecast received.", javaType = "Integer")
     String FORECAST_INPUT_DATA_POINTS = HEADER_PREFIX + "ForecastInputDataPoints";
 
-    @Metadata(description = "Number of output data points", javaType = "Integer")
+    @Metadata(description = "The number of data points that forecast or deploymentForecast returned.", javaType = "Integer")
     String FORECAST_OUTPUT_DATA_POINTS = HEADER_PREFIX + "ForecastOutputDataPoints";
 
     // Foundation Models
-    @Metadata(description = "List of foundation models", javaType = "java.util.List")
+    @Metadata(description = "The foundation models that listModels returns, which are also the body.",
+              javaType = "java.util.List")
     String FOUNDATION_MODELS = HEADER_PREFIX + "FoundationModels";
 
-    @Metadata(description = "List of foundation model tasks", javaType = "java.util.List")
+    @Metadata(description = "The tasks of the foundation models that listTasks returns, which are also the body.",
+              javaType = "java.util.List")
     String FOUNDATION_MODEL_TASKS = HEADER_PREFIX + "FoundationModelTasks";
 
     @Metadata(description = "The filter of listModels, in the syntax of the filters parameter of watsonx.ai, such as"
@@ -307,30 +373,42 @@ public interface WatsonxAiConstants {
     String FOUNDATION_MODEL_TECH_PREVIEW = HEADER_PREFIX + "FoundationModelTechPreview";
 
     // Tool Service
-    @Metadata(description = "The tool name to run", javaType = "String")
+    @Metadata(description = "The name of the utility tool that runTool runs with the body as its input, such as"
+                            + " GoogleSearch or Wikipedia. Required for runTool unless the CamelIBMWatsonxAiToolRequest"
+                            + " header is set.",
+              javaType = "String")
     String TOOL_NAME = HEADER_PREFIX + "ToolName";
 
-    @Metadata(description = "The tool request object", javaType = "com.ibm.watsonx.ai.tool.ToolRequest")
+    @Metadata(description = "The complete request of runTool, in the place of the CamelIBMWatsonxAiToolName and"
+                            + " CamelIBMWatsonxAiToolConfig headers and the body.",
+              javaType = "com.ibm.watsonx.ai.tool.ToolRequest")
     String TOOL_REQUEST = HEADER_PREFIX + "ToolRequest";
 
-    @Metadata(description = "The tool configuration", javaType = "java.util.Map")
+    @Metadata(description = "The configuration of the utility tool, as a Map, when runTool builds the request from the"
+                            + " CamelIBMWatsonxAiToolName header.",
+              javaType = "java.util.Map")
     String TOOL_CONFIG = HEADER_PREFIX + "ToolConfig";
 
-    @Metadata(description = "List of available utility tools", javaType = "java.util.List")
+    @Metadata(description = "The utility tools that listTools returns, which are also the body.", javaType = "java.util.List")
     String UTILITY_TOOLS = HEADER_PREFIX + "UtilityTools";
 
-    @Metadata(description = "Tool registry for chat with tool calling capabilities",
+    @Metadata(description = "The tool registry that processToolCalls runs the tool calls of the model with. Required for"
+                            + " processToolCalls, which keeps it on the message for the next chat.",
               javaType = "com.ibm.watsonx.ai.chat.ToolRegistry")
     String TOOL_REGISTRY = HEADER_PREFIX + "ToolRegistry";
 
-    @Metadata(description = "List of tool calls requested by the assistant, removed when the answer has none",
+    @Metadata(description = "The tool calls of the answer of chat, chatStreaming or deploymentChat. Removed when the"
+                            + " answer has none, and by processToolCalls once it ran them.",
               javaType = "java.util.List<com.ibm.watsonx.ai.chat.model.ToolCall>")
     String TOOL_CALLS = HEADER_PREFIX + "ToolCalls";
 
-    @Metadata(description = "Whether the assistant response contains tool calls", javaType = "Boolean")
+    @Metadata(description = "Whether the answer of chat, chatStreaming or deploymentChat calls tools. processToolCalls"
+                            + " sets it to false once it ran them.",
+              javaType = "Boolean")
     String HAS_TOOL_CALLS = HEADER_PREFIX + "HasToolCalls";
 
-    @Metadata(description = "The full assistant message from chat response",
+    @Metadata(description = "The first answer of chat, chatStreaming or deploymentChat, with its tool calls."
+                            + " processToolCalls reads it, which it requires, and removes it.",
               javaType = "com.ibm.watsonx.ai.chat.model.AssistantMessage")
     String ASSISTANT_MESSAGE = HEADER_PREFIX + "AssistantMessage";
 }
