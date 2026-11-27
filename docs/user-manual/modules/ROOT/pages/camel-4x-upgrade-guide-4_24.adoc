@@ -3580,6 +3580,17 @@ another service, such as `service=marketdata&method=currencies`. Before, its pro
 unchanged. The `Currency` and `CurrencyPair` headers and the body can now be text such as `BTC` and `BTC/USDT`; text
 with a currency that XChange does not know fails the exchange.
 
+=== camel-xchange - the currencyPair option is checked when the endpoint is created, and apiKey and secretKey options
+
+A `currencyPair` option with a currency that XChange does not know, such as `BTC/USTD`, now fails the creation of the
+endpoint, in the same way as the `currency` option. Before, the pair was parsed for each message, which registered the
+unknown currency in XChange and sent the request to the exchange. The check runs after the exchange is created, so
+the currencies that the exchange module registers are accepted.
+
+The new `apiKey` and `secretKey` options set the API keys of the account on the exchange, for example from property
+placeholders or a vault. Without them the exchange module decides, as before. The deprecated
+`XChangeConfiguration.setCurrency(String)` is not called by Camel and sets null for an unknown currency.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
