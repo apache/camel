@@ -2658,13 +2658,15 @@ public class LlmClient {
         // for the OpenAI probe must not widen the Ollama probe scope (e.g. --api-type=ollama
         // --url http://host:11434/v1 must probe /v1/api/tags, not /api/tags, so it correctly fails
         // rather than incorrectly detecting an Ollama server and then failing on /v1/api/generate later).
+        // For the same reason the /v1/models probe is skipped for --api-type=ollama: Ollama answers
+        // /v1/models itself (its OpenAI-compatible API), but the ollama api type calls <url>/api/generate.
         String base = stripTrailingSlash(endpoint);
         String openAiModelsUrl = normalizeOpenAiModelsUrl(endpoint);
         Map<String, String> openAiHeaders = (apiType == null || apiType == ApiType.openai)
                 ? buildOpenAiAuthHeaders(resolveApiKey())
                 : Map.of();
         return tryHealthCheck(base + "/api/tags", Map.of(), false)
-                || tryHealthCheck(openAiModelsUrl, openAiHeaders, false)
+                || apiType != ApiType.ollama && tryHealthCheck(openAiModelsUrl, openAiHeaders, false)
                 || tryHealthCheck(endpoint, Map.of(), false);
     }
 

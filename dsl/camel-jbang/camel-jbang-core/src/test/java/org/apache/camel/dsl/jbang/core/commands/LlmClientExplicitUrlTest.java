@@ -187,4 +187,24 @@ class LlmClientExplicitUrlTest {
             assertThat(v1Slash.detectEndpoint()).isTrue();
         }
     }
+
+    /**
+     * CAMEL-27514: with {@code --api-type=ollama} the client calls {@code <url>/api/generate}, so a URL ending with
+     * {@code /v1} is not an Ollama endpoint, even though Ollama also answers {@code /v1/models} (its OpenAI-compatible
+     * API). Detection must fail up front instead of failing later on {@code /v1/api/generate}.
+     */
+    @Test
+    void withApiTypeOllamaAndV1UrlIsNotReachable() throws Exception {
+        try (FakeLlmServer server = new FakeLlmServer("unused")) {
+            // the server answers /api/tags and /v1/models at its root, as Ollama does
+            LlmClient root = LlmClient.create().withApiType(ApiType.ollama).withUrl(server.url());
+            assertThat(root.detectEndpoint()).isTrue();
+
+            LlmClient v1 = LlmClient.create().withApiType(ApiType.ollama).withUrl(server.url() + "/v1");
+            assertThat(v1.detectEndpoint()).isFalse();
+
+            LlmClient v1Slash = LlmClient.create().withApiType(ApiType.ollama).withUrl(server.url() + "/v1/");
+            assertThat(v1Slash.detectEndpoint()).isFalse();
+        }
+    }
 }
