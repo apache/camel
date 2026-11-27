@@ -40,7 +40,8 @@ public class EndpointHeaderBuilders {
 
     /**
      * A2A (camel-a2a)
-     * A2A endpoint for agent-to-agent communication.
+     * Expose a route as an agent and call remote agents with the Agent2Agent
+     * (A2A) protocol.
      * 
      * Category: ai
      * Since: 4.21
