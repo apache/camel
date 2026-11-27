@@ -4969,7 +4969,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
+     * Launch Spring Batch jobs, with the message headers as the job parameters.
      * 
      * Category: workflow
      * Since: 2.10

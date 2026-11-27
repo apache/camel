@@ -17046,7 +17046,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
+     * Launch Spring Batch jobs, with the message headers as the job parameters.
      * 
      * Category: workflow
      * Since: 2.10
@@ -17055,7 +17055,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-batch:jobName</code>
      * 
      * Path parameter: jobName (required)
-     * The name of the Spring Batch job located in the registry.
+     * The name of the Spring Batch job to launch. When the endpoint starts, the
+     * job is looked up in the jobRegistry, when one is set, and else in the
+     * Camel registry as a Job bean; the endpoint fails to start when the job is
+     * not found. Not used when jobFromHeader is true.
      * 
      * @param path jobName
      * @return the dsl builder
@@ -17065,7 +17068,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
+     * Launch Spring Batch jobs, with the message headers as the job parameters.
      * 
      * Category: workflow
      * Since: 2.10
@@ -17074,7 +17077,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-batch:jobName</code>
      * 
      * Path parameter: jobName (required)
-     * The name of the Spring Batch job located in the registry.
+     * The name of the Spring Batch job to launch. When the endpoint starts, the
+     * job is looked up in the jobRegistry, when one is set, and else in the
+     * Camel registry as a Job bean; the endpoint fails to start when the job is
+     * not found. Not used when jobFromHeader is true.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
