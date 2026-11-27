@@ -100,8 +100,10 @@ public interface AsteriskEndpointBuilderFactory {
          * and the events are not sent in clear text. The Asterisk server must
          * accept AMI over TLS on the port that the component connects to
          * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
-         * of the server is checked with the default trust store of the JVM
-         * (javax.net.ssl.trustStore).
+         * of the server is checked with the default SSL socket factory and
+         * trust store of the JVM (javax.net.ssl.trustStore). The host name of
+         * the server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -121,8 +123,10 @@ public interface AsteriskEndpointBuilderFactory {
          * and the events are not sent in clear text. The Asterisk server must
          * accept AMI over TLS on the port that the component connects to
          * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
-         * of the server is checked with the default trust store of the JVM
-         * (javax.net.ssl.trustStore).
+         * of the server is checked with the default SSL socket factory and
+         * trust store of the JVM (javax.net.ssl.trustStore). The host name of
+         * the server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -372,8 +376,10 @@ public interface AsteriskEndpointBuilderFactory {
          * and the events are not sent in clear text. The Asterisk server must
          * accept AMI over TLS on the port that the component connects to
          * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
-         * of the server is checked with the default trust store of the JVM
-         * (javax.net.ssl.trustStore).
+         * of the server is checked with the default SSL socket factory and
+         * trust store of the JVM (javax.net.ssl.trustStore). The host name of
+         * the server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -393,8 +399,10 @@ public interface AsteriskEndpointBuilderFactory {
          * and the events are not sent in clear text. The Asterisk server must
          * accept AMI over TLS on the port that the component connects to
          * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
-         * of the server is checked with the default trust store of the JVM
-         * (javax.net.ssl.trustStore).
+         * of the server is checked with the default SSL socket factory and
+         * trust store of the JVM (javax.net.ssl.trustStore). The host name of
+         * the server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -533,8 +541,10 @@ public interface AsteriskEndpointBuilderFactory {
          * and the events are not sent in clear text. The Asterisk server must
          * accept AMI over TLS on the port that the component connects to
          * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
-         * of the server is checked with the default trust store of the JVM
-         * (javax.net.ssl.trustStore).
+         * of the server is checked with the default SSL socket factory and
+         * trust store of the JVM (javax.net.ssl.trustStore). The host name of
+         * the server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -554,8 +564,10 @@ public interface AsteriskEndpointBuilderFactory {
          * and the events are not sent in clear text. The Asterisk server must
          * accept AMI over TLS on the port that the component connects to
          * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
-         * of the server is checked with the default trust store of the JVM
-         * (javax.net.ssl.trustStore).
+         * of the server is checked with the default SSL socket factory and
+         * trust store of the JVM (javax.net.ssl.trustStore). The host name of
+         * the server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

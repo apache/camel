@@ -77,7 +77,7 @@ asterisk-java opens the TLS socket with the default `SSLSocketFactory` of the JV
 is checked with the default trust store of the JVM. When the certificate is not signed by a certificate authority that
 the JVM trusts, add it to a trust store and point the JVM to it with the `javax.net.ssl.trustStore` and
 `javax.net.ssl.trustStorePassword` system properties. A custom `SSLContextParameters` is not supported, and the host
-name of the server is not checked against the certificate.
+name of the server is not checked against the certificate: asterisk-java offers neither.
 
 == Examples
 

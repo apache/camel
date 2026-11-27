@@ -97,7 +97,9 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
                             + " the username, the password, the actions and the events are not sent in clear text. The"
                             + " Asterisk server must accept AMI over TLS on the port that the component connects to"
                             + " (tlsenable and tlsbindaddr in the manager.conf file). The certificate of the server is"
-                            + " checked with the default trust store of the JVM (javax.net.ssl.trustStore).")
+                            + " checked with the default SSL socket factory and trust store of the JVM"
+                            + " (javax.net.ssl.trustStore). The host name of the server is not checked against the"
+                            + " certificate, and a custom SSLContext is not supported, as asterisk-java does not offer it.")
     private boolean ssl;
 
     public AsteriskEndpoint(String uri, AsteriskComponent component) {
