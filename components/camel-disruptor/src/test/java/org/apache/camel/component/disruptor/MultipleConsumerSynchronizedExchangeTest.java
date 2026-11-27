@@ -100,4 +100,36 @@ public class MultipleConsumerSynchronizedExchangeTest {
         assertEquals(List.of("failure"), events);
         assertTrue(published.isFailed());
     }
+
+    @Test
+    void testFailureThenSuccessCompletesOnceWhenAllAreDone() throws Exception {
+        Exchange published = new DefaultExchange(context);
+        published.getMessage().setBody("Hello");
+        published.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onComplete(Exchange exchange) {
+                events.add("complete");
+            }
+
+            @Override
+            public void onFailure(Exchange exchange) {
+                events.add("failure");
+            }
+        });
+        MultipleConsumerSynchronizedExchange synchronizedExchange = new MultipleConsumerSynchronizedExchange(published, 2);
+
+        Exchange failedResult = new DefaultExchange(context);
+        failedResult.setException(new IllegalArgumentException("Forced"));
+        synchronizedExchange.consumed(failedResult);
+
+        // the other consumer is still routing the exchange, so it is not completed yet
+        assertTrue(events.isEmpty(), "Events: " + events);
+        assertFalse(published.isFailed());
+
+        synchronizedExchange.consumed(new DefaultExchange(context));
+
+        assertEquals(List.of("failure"), events);
+        assertTrue(published.isFailed());
+        assertEquals("Forced", published.getException().getMessage());
+    }
 }
