@@ -224,7 +224,7 @@ or removes its row.
 | camel-ignite | ignite-cache, ignite-compute, ignite-events, ignite-idgen, ignite-messaging, ignite-queue, ignite-set |  |
 | camel-infinispan | infinispan |  |
 | camel-infinispan-embedded | infinispan-embedded | yes |
-| camel-influxdb | influxdb |  |
+| camel-influxdb | influxdb | yes |
 | camel-influxdb2 | influxdb2 | yes |
 | camel-jcache | jcache |  |
 | camel-jcr | jcr |  |

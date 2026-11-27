@@ -2286,7 +2286,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with InfluxDB v1, a time series database.
+     * Write points to and run queries on InfluxDB v1, a time series database.
      * 
      * Category: database
      * Since: 2.18
