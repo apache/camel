@@ -3030,13 +3030,13 @@ public class StaticEndpointBuilders {
      * Azure Key Vault (camel-azure-key-vault)
      * Create, get, update, delete and purge secrets in Azure Key Vault.
      * 
-     * Category: cloud,cloud
+     * Category: cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
      * 
      * Syntax: <code>azure-key-vault:vaultName</code>
      * 
-     * Path parameter: vaultName
+     * Path parameter: vaultName (required)
      * The name of the key vault. The endpoint builds the vault URL from it with
      * the vault.azure.net domain of the Azure public cloud. Not used to connect
      * when the secretClient option is set.
@@ -3051,13 +3051,13 @@ public class StaticEndpointBuilders {
      * Azure Key Vault (camel-azure-key-vault)
      * Create, get, update, delete and purge secrets in Azure Key Vault.
      * 
-     * Category: cloud,cloud
+     * Category: cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
      * 
      * Syntax: <code>azure-key-vault:vaultName</code>
      * 
-     * Path parameter: vaultName
+     * Path parameter: vaultName (required)
      * The name of the key vault. The endpoint builds the vault URL from it with
      * the vault.azure.net domain of the Azure public cloud. Not used to connect
      * when the secretClient option is set.

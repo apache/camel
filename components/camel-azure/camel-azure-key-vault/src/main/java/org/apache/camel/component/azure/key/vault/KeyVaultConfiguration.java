@@ -31,6 +31,7 @@ public class KeyVaultConfiguration implements Cloneable {
 
     @UriPath(description = "The name of the key vault. The endpoint builds the vault URL from it with the vault.azure.net"
                            + " domain of the Azure public cloud. Not used to connect when the secretClient option is set.")
+    @Metadata(required = true)
     private String vaultName;
     @UriParam(description = "To use a custom com.azure.security.keyvault.secrets.SecretClient. When this option is set, the"
                             + " client decides the vault and the credentials, and the vaultName, credentialType, clientId,"
@@ -52,7 +53,7 @@ public class KeyVaultConfiguration implements Cloneable {
                             + " credential type. Required for CLIENT_SECRET, the default, unless the secretClient option is"
                             + " set. Not used for AZURE_IDENTITY.")
     private String tenantId;
-    @UriParam(label = "producer",
+    @UriParam(label = "producer", defaultValue = "createSecret",
               description = "The operation that the producer performs. The CamelAzureKeyVaultProducerOperation header"
                             + " replaces this option. Every operation except updateSecretProperties takes the name of the"
                             + " secret from the CamelAzureKeyVaultSecretName header.")
