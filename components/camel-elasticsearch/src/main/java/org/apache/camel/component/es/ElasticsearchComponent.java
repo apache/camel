@@ -38,37 +38,79 @@ import org.elasticsearch.client.RestClient;
 @Component("elasticsearch")
 public class ElasticsearchComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use an existing org.elasticsearch.client.RestClient, shared by all the endpoints of the"
+                            + " component, instead of a client that each producer creates. The hostAddresses, timeout,"
+                            + " authentication, SSL, sniffer and disconnect options are then not used, and the producers do not"
+                            + " close the client.")
     private RestClient client;
-    @Metadata
+    @Metadata(description = "The comma-separated list of the nodes to connect to, each as host:port, for example"
+                            + " es1:9200,es2:9200. The port is 9200 if not set, and the scheme is https when enableSSL is set."
+                            + " Required unless the client option is set.")
     private String hostAddresses;
-    @Metadata(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT)
+    @Metadata(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT,
+              description = "The socket timeout in milliseconds: the longest time that the client waits for data from a node"
+                            + " before the request fails. Not used when the client option is set.")
     private int socketTimeout = ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT;
-    @Metadata(defaultValue = "" + ElasticsearchConstants.MAX_RETRY_TIMEOUT)
+    @Metadata(defaultValue = "" + ElasticsearchConstants.MAX_RETRY_TIMEOUT,
+              description = "Deprecated: this option has no effect. It was used by the old low-level REST client and is"
+                            + " ignored by the current client.")
     private int maxRetryTimeout = ElasticsearchConstants.MAX_RETRY_TIMEOUT;
-    @Metadata(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT)
+    @Metadata(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT,
+              description = "The connect timeout in milliseconds: the longest time that the client waits to establish the"
+                            + " connection to a node. Not used when the client option is set.")
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
-    @Metadata(defaultValue = "false")
+    @Metadata(defaultValue = "false",
+              description = "Whether the body of Update is only the partial document to merge into the document. If false,"
+                            + " the body is the request body of the Update API, such as {\"doc\": {...}} or a script. Only JSON"
+                            + " text, bytes, a stream, a file or a Map is read this way. The CamelElasticsearchEnableDocumentOnlyMode"
+                            + " header replaces this option.")
     private boolean enableDocumentOnlyMode;
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "The user name for HTTP basic authentication to the nodes, used only together with password. It"
+                            + " cannot be combined with apiKey. Not used when the client option is set.")
     private String user;
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "The password for HTTP basic authentication to the nodes, used only together with user. Not used"
+                            + " when the client option is set.")
     private String password;
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "API key to authenticate with, sent in the Authorization header instead of a user and password."
+                            + " Either the encoded key as Elasticsearch shows it when the key is created, or the id and the key"
+                            + " separated by a colon (id:key). The key is only sent to the configured hosts and the nodes found"
+                            + " by the sniffer.")
     private String apiKey;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "Whether to connect to the nodes of hostAddresses with HTTPS instead of HTTP. The default"
+                            + " SSLContext of the JVM is used unless sslContextParameters or certificatePath is set.")
     private boolean enableSSL;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The CA certificate, in X.509 format, that the client trusts for HTTPS instead of the default"
+                            + " trust store of the JVM. It is loaded from the classpath by default, or with the prefix"
+                            + " classpath:, file: or http:. It needs enableSSL, and sslContextParameters takes precedence.")
     private String certificatePath;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "To configure security using SSLContextParameters, which sets the protocols, cipher suites, named"
+                            + " groups and signature schemes of the HTTPS connection. It takes precedence over certificatePath,"
+                            + " and it needs enableSSL.")
     private SSLContextParameters sslContextParameters;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether to use the global SSLContextParameters of the CamelContext for an endpoint that has no"
+                            + " sslContextParameters.")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Whether to start the Sniffer of the Elasticsearch REST client, which reads the nodes of the"
+                            + " cluster from its Nodes Info API at an interval and updates the nodes that the client uses. Not"
+                            + " used when the client option is set or autowired, as Spring Boot does.")
     private boolean enableSniffer;
-    @Metadata(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
+    @Metadata(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL,
+              description = "The interval in milliseconds between two reads of the nodes of the cluster, when enableSniffer"
+                            + " is set.")
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
-    @Metadata(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
+    @Metadata(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY,
+              description = "The delay in milliseconds of the read of the nodes that the Sniffer schedules after a failed"
+                            + " request. The component does not register the client listener that reports failures to the"
+                            + " Sniffer, so this option has no effect.")
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
 
     public ElasticsearchComponent() {
@@ -140,18 +182,10 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         return client;
     }
 
-    /**
-     * To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allows
-     * customizing the client with specific settings.
-     */
     public void setClient(RestClient client) {
         this.client = client;
     }
 
-    /**
-     * Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be
-     * left blank for hostAddresses to be considered instead.
-     */
     public String getHostAddresses() {
         return hostAddresses;
     }
@@ -160,9 +194,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         this.hostAddresses = hostAddresses;
     }
 
-    /**
-     * The timeout in ms to wait before the socket will time out.
-     */
     public int getSocketTimeout() {
         return socketTimeout;
     }
@@ -171,9 +202,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         this.socketTimeout = socketTimeout;
     }
 
-    /**
-     * The time in ms to wait before connection will time out.
-     */
     public int getConnectionTimeout() {
         return connectionTimeout;
     }
@@ -182,9 +210,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         this.connectionTimeout = connectionTimeout;
     }
 
-    /**
-     * Basic authenticate user
-     */
     public String getUser() {
         return user;
     }
@@ -193,9 +218,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         this.user = user;
     }
 
-    /**
-     * Password for authenticating
-     */
     public String getPassword() {
         return password;
     }
@@ -204,11 +226,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         this.password = password;
     }
 
-    /**
-     * API key to authenticate with, sent in the Authorization header instead of a user and password. Either the encoded
-     * key as Elasticsearch shows it when the key is created, or the id and the key separated by a colon (id:key). The
-     * key is only sent to the configured hosts and the nodes found by the sniffer.
-     */
     public String getApiKey() {
         return apiKey;
     }
@@ -221,16 +238,10 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         return enableSSL;
     }
 
-    /**
-     * Enable SSL
-     */
     public void setEnableSSL(boolean enableSSL) {
         this.enableSSL = enableSSL;
     }
 
-    /**
-     * The path of the self-signed certificate to use to access to Elasticsearch.
-     */
     public String getCertificatePath() {
         return certificatePath;
     }
@@ -239,13 +250,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         this.certificatePath = certificatePath;
     }
 
-    /**
-     * Indicates whether the body of the message contains only documents. By default, it is set to false to be able to
-     * do the same requests as what the Document API supports (see
-     * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the
-     * migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the
-     * mode, especially if your routes do update operations.
-     */
     public boolean isEnableDocumentOnlyMode() {
         return enableDocumentOnlyMode;
     }
@@ -255,8 +259,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
     }
 
     /**
-     * The time in ms before retry
-     *
      * @deprecated this option has no effect and is ignored by the current client
      */
     @Deprecated
@@ -273,18 +275,10 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         return enableSniffer;
     }
 
-    /**
-     * Enable automatically discover nodes from a running Elasticsearch cluster. If this option is used in conjunction
-     * with Spring Boot, then it's managed by the Spring Boot configuration (see: Disable Sniffer in Spring Boot).
-     */
     public void setEnableSniffer(boolean enableSniffer) {
         this.enableSniffer = enableSniffer;
     }
 
-    /**
-     * The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure
-     * is disabled or when there are no failures between consecutive sniff executions
-     */
     public int getSnifferInterval() {
         return snifferInterval;
     }
@@ -293,9 +287,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         this.snifferInterval = snifferInterval;
     }
 
-    /**
-     * The delay of a sniff execution scheduled after a failure (in milliseconds)
-     */
     public int getSniffAfterFailureDelay() {
         return sniffAfterFailureDelay;
     }
@@ -308,10 +299,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         return sslContextParameters;
     }
 
-    /**
-     * To configure security using SSLContextParameters. When configured, this takes precedence over the
-     * {@code certificatePath} option.
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -321,9 +308,6 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
         return useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;

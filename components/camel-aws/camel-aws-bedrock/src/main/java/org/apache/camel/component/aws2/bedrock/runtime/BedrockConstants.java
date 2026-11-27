@@ -22,64 +22,94 @@ import org.apache.camel.spi.Metadata;
  * Constants used in Camel AWS Bedrock module SDK v2
  */
 public interface BedrockConstants {
-    @Metadata(description = "The operation we want to perform", javaType = "String")
+    @Metadata(description = "The operation that the producer performs. It replaces the operation option.", javaType = "String")
     String OPERATION = "CamelAwsBedrockOperation";
-    @Metadata(description = "The model content type", javaType = "String")
+    @Metadata(description = "The MIME type of the request body of the invoke operations, usually application/json. The invoke"
+                            + " operations fail without it, unless pojoRequest is true.",
+              javaType = "String")
     String MODEL_CONTENT_TYPE = "CamelAwsBedrockContentType";
-    @Metadata(description = "The model accept content type", javaType = "String")
+    @Metadata(description = "The MIME type of the response that the invoke operations ask the model for, usually"
+                            + " application/json. The invoke operations fail without it, unless pojoRequest is true.",
+              javaType = "String")
     String MODEL_ACCEPT_CONTENT_TYPE = "CamelAwsBedrockAcceptContentType";
-    @Metadata(description = "The streaming output mode (complete or chunks)", javaType = "String")
+    @Metadata(description = "The output mode of the streaming operations and converseStream: complete or chunks. It replaces"
+                            + " the streamOutputMode option.",
+              javaType = "String")
     String STREAM_OUTPUT_MODE = "CamelAwsBedrockStreamOutputMode";
-    @Metadata(description = "The completion reason for streaming response", javaType = "String")
+    @Metadata(description = "The reason why the model stopped generating, in the terms of its model family, such as end_turn"
+                            + " or FINISH. Set by the streaming invoke operations when includeStreamingMetadata is true and the"
+                            + " model sends it.",
+              javaType = "String")
     String STREAMING_COMPLETION_REASON = "CamelAwsBedrockCompletionReason";
-    @Metadata(description = "The number of tokens generated in streaming response", javaType = "Integer")
+    @Metadata(description = "The number of tokens that the model generated. Set by the streaming invoke operations when"
+                            + " includeStreamingMetadata is true and the model sends a count.",
+              javaType = "Integer")
     String STREAMING_TOKEN_COUNT = "CamelAwsBedrockTokenCount";
-    @Metadata(description = "The number of chunks received in streaming response", javaType = "Integer")
+    @Metadata(description = "The number of chunks of the response stream. Set by the streaming invoke operations and"
+                            + " converseStream when includeStreamingMetadata is true.",
+              javaType = "Integer")
     String STREAMING_CHUNK_COUNT = "CamelAwsBedrockChunkCount";
-    @Metadata(description = "The conversation messages for Converse API. When not set, the body as text is sent as one"
-                            + " user message.",
+    @Metadata(description = "The messages of the conversation for converse and converseStream, as a List of Message of the"
+                            + " AWS SDK. When not set, the body as text is sent as one user message.",
               javaType = "List<software.amazon.awssdk.services.bedrockruntime.model.Message>")
     String CONVERSE_MESSAGES = "CamelAwsBedrockConverseMessages";
-    @Metadata(description = "The system prompts for Converse API",
+    @Metadata(description = "The system prompts for converse and converseStream, as a List of SystemContentBlock of the AWS"
+                            + " SDK.",
               javaType = "List<software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock>")
     String CONVERSE_SYSTEM = "CamelAwsBedrockConverseSystem";
-    @Metadata(description = "The inference configuration for Converse API",
+    @Metadata(description = "The inference parameters for converse and converseStream, such as maxTokens, temperature and"
+                            + " topP.",
               javaType = "software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration")
     String CONVERSE_INFERENCE_CONFIG = "CamelAwsBedrockConverseInferenceConfig";
-    @Metadata(description = "The tool configuration for Converse API",
+    @Metadata(description = "The tools that the model can ask to use in converse and converseStream, and how it chooses them.",
               javaType = "software.amazon.awssdk.services.bedrockruntime.model.ToolConfiguration")
     String CONVERSE_TOOL_CONFIG = "CamelAwsBedrockConverseToolConfig";
-    @Metadata(description = "The additional model request fields for Converse API",
+    @Metadata(description = "The request fields of the model that the Converse API does not define, for converse and"
+                            + " converseStream, as a Document of the AWS SDK.",
               javaType = "software.amazon.awssdk.core.document.Document")
     String CONVERSE_ADDITIONAL_MODEL_REQUEST_FIELDS = "CamelAwsBedrockConverseAdditionalFields";
-    @Metadata(description = "The stop reason from Converse API response", javaType = "String")
+    @Metadata(description = "The reason why the model stopped generating, such as end_turn, tool_use or max_tokens. Set by"
+                            + " converse, and by converseStream when includeStreamingMetadata is true.",
+              javaType = "String")
     String CONVERSE_STOP_REASON = "CamelAwsBedrockConverseStopReason";
-    @Metadata(description = "The usage metrics from Converse API response",
+    @Metadata(description = "The input, output and total token counts of the request. Set by converse, and by converseStream"
+                            + " when includeStreamingMetadata is true.",
               javaType = "software.amazon.awssdk.services.bedrockruntime.model.TokenUsage")
     String CONVERSE_USAGE = "CamelAwsBedrockConverseUsage";
-    @Metadata(description = "The output message from Converse API response (converse only)",
+    @Metadata(description = "The message that the model returned, with all its content blocks, such as the requests to use a"
+                            + " tool, while the body has only its text. Set by converse only.",
               javaType = "software.amazon.awssdk.services.bedrockruntime.model.Message")
     String CONVERSE_OUTPUT_MESSAGE = "CamelAwsBedrockConverseOutputMessage";
-    @Metadata(description = "The guardrail configuration to apply to the request. converseStream also takes a GuardrailStreamConfiguration",
+    @Metadata(description = "The guardrail to apply in converse and converseStream, as a GuardrailConfiguration of the AWS"
+                            + " SDK; converseStream also takes a GuardrailStreamConfiguration. It replaces the"
+                            + " guardrailIdentifier, guardrailVersion and guardrailTrace options.",
               javaType = "software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration")
     String GUARDRAIL_CONFIG = "CamelAwsBedrockGuardrailConfig";
-    @Metadata(description = "The guardrail identifier to use for the ApplyGuardrail operation", javaType = "String")
+    @Metadata(description = "The ID or ARN of the guardrail for applyGuardrail. It replaces the guardrailIdentifier option."
+                            + " converse and converseStream do not read it.",
+              javaType = "String")
     String GUARDRAIL_IDENTIFIER = "CamelAwsBedrockGuardrailIdentifier";
-    @Metadata(description = "The content blocks for ApplyGuardrail operation. When not set, the body as text is checked.",
+    @Metadata(description = "The content that applyGuardrail checks, as a List of GuardrailContentBlock of the AWS SDK. When"
+                            + " not set, the body as text is checked.",
               javaType = "List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock>")
     String GUARDRAIL_CONTENT = "CamelAwsBedrockGuardrailContent";
-    @Metadata(description = "The source type for ApplyGuardrail operation (INPUT or OUTPUT)", javaType = "String")
+    @Metadata(description = "Whether applyGuardrail checks the content as the input of a model (INPUT) or as its output"
+                            + " (OUTPUT). The default is INPUT.",
+              javaType = "String")
     String GUARDRAIL_SOURCE = "CamelAwsBedrockGuardrailSource";
-    @Metadata(description = "The output content of the ApplyGuardrail response",
+    @Metadata(description = "The output of the guardrail, such as the blocked message or the text with masked content. Set by"
+                            + " applyGuardrail when the guardrail returns it.",
               javaType = "List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailOutputContent>")
     String GUARDRAIL_OUTPUT = "CamelAwsBedrockGuardrailOutput";
-    @Metadata(description = "The trace information from guardrail evaluation",
+    @Metadata(description = "The trace of the guardrail evaluation. Set by converse, and by converseStream when"
+                            + " includeStreamingMetadata is true, when the trace of the guardrail is enabled.",
               javaType = "software.amazon.awssdk.services.bedrockruntime.model.GuardrailTraceAssessment")
     String GUARDRAIL_TRACE = "CamelAwsBedrockGuardrailTrace";
-    @Metadata(description = "The guardrail assessments from ApplyGuardrail response",
+    @Metadata(description = "The assessments of the policies of the guardrail, such as its content and topic policies. Set by"
+                            + " applyGuardrail.",
               javaType = "List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailAssessment>")
     String GUARDRAIL_ASSESSMENTS = "CamelAwsBedrockGuardrailAssessments";
-    @Metadata(description = "The guardrail usage metrics from ApplyGuardrail response",
+    @Metadata(description = "The number of text units that each policy of the guardrail processed. Set by applyGuardrail.",
               javaType = "software.amazon.awssdk.services.bedrockruntime.model.GuardrailUsage")
     String GUARDRAIL_USAGE = "CamelAwsBedrockGuardrailUsage";
 }

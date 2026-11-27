@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai;
 
+import com.ibm.watsonx.ai.core.auth.Authenticator;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -28,23 +28,34 @@ import org.apache.camel.spi.UriParams;
 public class WatsonxAiConfiguration implements Cloneable {
 
     // Authentication
-    @UriParam(label = "security", security = "secret", description = "IBM Cloud API key for authentication")
-    @Metadata(required = true)
+    @UriParam(label = "security", security = "secret",
+              description = "IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for an access token. Required"
+                            + " unless oauthProfile or authenticator is set, or the operation is processToolCalls, which runs"
+                            + " locally.")
     private String apiKey;
 
     @UriParam(label = "security",
-              description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
-                            + "When set, the token is acquired from the configured identity provider and used as apiKey. "
-                            + "Requires camel-oauth on the classpath.")
+              description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant."
+                            + " When set, the token of the configured identity provider is sent to watsonx.ai as a Bearer"
+                            + " token instead of an IBM Cloud API key, and obtained again when it expires. Requires"
+                            + " camel-oauth on the classpath.")
     private String oauthProfile;
 
+    @UriParam(label = "security,advanced",
+              description = "A custom authenticator of the watsonx.ai SDK (com.ibm.watsonx.ai.core.auth.Authenticator)"
+                            + " that gives the token of every request, such as a CP4DAuthenticator for watsonx.ai software"
+                            + " on Cloud Pak for Data. When set, apiKey and oauthProfile are not used.")
+    private Authenticator authenticator;
+
     // Connection
-    @UriParam(label = "common", description = "The watsonx.ai base URL (e.g., https://us-south.ml.cloud.ibm.com)")
-    @Metadata(required = true)
+    @UriParam(label = "common",
+              description = "The watsonx.ai base URL of the region (e.g., https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com)."
+                            + " Required but for the utility tools (runTool, listTools), which use the wxUrl, and"
+                            + " processToolCalls, which runs locally")
     private String baseUrl;
 
     @UriParam(label = "common",
-              description = "The watsonx.ai WX platform URL for tool operations (e.g., https://api.dataplatform.cloud.ibm.com/wx)")
+              description = "The watsonx.ai WX platform URL of the region for tool operations (e.g., https://api.dataplatform.cloud.ibm.com/wx or https://api.eu-de.dataplatform.cloud.ibm.com/wx)")
     private String wxUrl;
 
     // Project/Space Context
@@ -55,7 +66,7 @@ public class WatsonxAiConfiguration implements Cloneable {
     private String spaceId;
 
     // Model
-    @UriParam(label = "producer", description = "Foundation model ID (e.g., ibm/granite-13b-instruct-v2)")
+    @UriParam(label = "producer", description = "Foundation model ID (e.g., ibm/granite-4-h-small)")
     private String modelId;
 
     @UriParam(label = "producer", description = "Deployed model ID (for deployment operations)")
@@ -91,6 +102,96 @@ public class WatsonxAiConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Presence penalty for chat")
     private Double presencePenalty;
 
+    @UriParam(label = "producer",
+              description = "How the model chooses the tools of chat: auto (the model decides), required (the model must"
+                            + " call a tool), none (the model must not call a tool), or the name of the tool the model must"
+                            + " call")
+    private String toolChoice;
+
+    // Chat output, reasoning, guardrails and streaming
+    @UriParam(label = "producer", enums = "text,json",
+              description = "The format of the chat answer: text, or json for a JSON object. Set jsonSchema for an answer"
+                            + " that follows a JSON schema")
+    private String responseFormat;
+
+    @UriParam(label = "producer",
+              description = "A JSON schema (as JSON text) that the chat answer follows (the json_schema response format)")
+    private String jsonSchema;
+
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Whether the chat answer must follow the jsonSchema strictly")
+    private Boolean jsonSchemaStrict = true;
+
+    @UriParam(label = "producer",
+              description = "Guided decoding of chat: the answer is one of these comma separated choices")
+    private String guidedChoice;
+
+    @UriParam(label = "producer",
+              description = "Guided decoding of chat: the answer matches this regular expression")
+    private String guidedRegex;
+
+    @UriParam(label = "producer",
+              description = "Guided decoding of chat: the answer follows this context free grammar (EBNF)")
+    private String guidedGrammar;
+
+    @UriParam(label = "producer",
+              description = "The random seed of chat sampling, for repeatable answers")
+    private Integer seed;
+
+    @UriParam(label = "producer",
+              description = "Comma separated sequences that stop the generation of the chat answer")
+    private String stop;
+
+    @UriParam(label = "producer",
+              description = "How many answers chat generates for the request (n). The body is the first one, and the"
+                            + " CamelIBMWatsonxAiAssistantMessages header has them all")
+    private Integer numberOfChoices;
+
+    @UriParam(label = "producer",
+              description = "Whether the model of chat reasons before it answers, for the models that support it (chat"
+                            + " template thinking)")
+    private Boolean thinking;
+
+    @UriParam(label = "producer",
+              description = "Whether watsonx.ai returns the reasoning of the model, in the"
+                            + " CamelIBMWatsonxAiReasoningContent header")
+    private Boolean includeReasoning;
+
+    @UriParam(label = "producer", enums = "low,medium,high",
+              description = "How much the model of chat reasons: low, medium or high, for the models that support it")
+    private String reasoningEffort;
+
+    @UriParam(label = "producer",
+              description = "For models that write their reasoning in the answer between tags: the tag of the reasoning,"
+                            + " and optionally the tag of the answer after a comma, such as think,response. The reasoning goes"
+                            + " to the CamelIBMWatsonxAiReasoningContent header and the answer to the body")
+    private String thinkingTags;
+
+    @UriParam(label = "producer",
+              description = "Chat guardrail: whether watsonx.ai checks the input and the answer for hate, abuse and"
+                            + " profanity (HAP)")
+    private Boolean moderationHap;
+
+    @UriParam(label = "producer",
+              description = "Chat guardrail: whether watsonx.ai checks the input and the answer for personal identifiable"
+                            + " information (PII)")
+    private Boolean moderationPii;
+
+    @UriParam(label = "producer",
+              description = "Chat guardrail: whether watsonx.ai checks the input with Granite Guardian (watsonx.ai applies"
+                            + " it to the input only)")
+    private Boolean moderationGraniteGuardian;
+
+    @UriParam(label = "producer", defaultValue = "0.5",
+              description = "The threshold (0 to 1) of the HAP and Granite Guardian chat guardrails")
+    private Float moderationThreshold = 0.5f;
+
+    @UriParam(label = "producer",
+              description = "The endpoint URI that receives each chunk of chatStreaming as a message (in the place of the"
+                            + " CamelIBMWatsonxAiStreamConsumer header), such as seda:chunks. The chunks are sent from the"
+                            + " threads of the watsonx.ai SDK")
+    private String streamEndpoint;
+
     // Embedding Parameters
     @UriParam(label = "producer",
               description = "Maximum number of tokens accepted per input for embeddings. Truncates from the end if exceeded.")
@@ -102,6 +203,12 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     @UriParam(label = "producer", description = "Whether to return documents in rerank response")
     private Boolean returnDocuments;
+
+    // Time series
+    @UriParam(label = "producer",
+              description = "The number of time steps to forecast (forecast and deploymentForecast). The model forecasts"
+                            + " its own default length when not set")
+    private Integer predictionLength;
 
     // Text Extraction (COS)
     @UriParam(label = "producer", description = "Cloud Object Storage URL")
@@ -119,6 +226,66 @@ public class WatsonxAiConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "COS bucket for result storage")
     private String resultBucket;
 
+    // Text extraction and classification parameters
+    @UriParam(label = "producer",
+              description = "The outputs of text extraction, comma separated: md (the default), json, html, plain_text,"
+                            + " page_images. The operations that return the text (AndFetch) take one output, but"
+                            + " page_images")
+    private String extractionOutputs;
+
+    @UriParam(label = "producer", enums = "standard,high_quality",
+              description = "The quality of text extraction: standard or high_quality")
+    private String extractionMode;
+
+    @UriParam(label = "producer", enums = "auto,disabled,enabled,forced",
+              description = "The optical character recognition of text extraction and classification: auto, disabled,"
+                            + " enabled or forced")
+    private String ocrMode;
+
+    @UriParam(label = "producer",
+              description = "The languages of the documents of text extraction and classification, comma separated ISO"
+                            + " 639 codes, such as en,fr")
+    private String documentLanguages;
+
+    @UriParam(label = "producer",
+              description = "Whether text extraction and classification correct the rotation of the pages")
+    private Boolean autoRotationCorrection;
+
+    @UriParam(label = "producer",
+              enums = "disabled,enabled_placeholder,enabled_text,enabled_verbalization,enabled_verbalization_all",
+              description = "What text extraction does with the images of the document")
+    private String embeddedImages;
+
+    @UriParam(label = "producer", description = "The resolution of the page images of text extraction")
+    private Integer outputDpi;
+
+    @UriParam(label = "producer",
+              description = "Whether text extraction gives the tokens of the text, with their positions")
+    private Boolean outputTokens;
+
+    @UriParam(label = "producer", enums = "disabled,invoice,ubill,generic_with_semantic",
+              description = "The key-value pair extraction of text extraction")
+    private String kvpMode;
+
+    @UriParam(label = "producer", enums = "exact,binary",
+              description = "How text classification classifies: exact (the document type) or binary (whether it is one)")
+    private String classificationMode;
+
+    @UriParam(label = "producer",
+              description = "Whether the operations that upload and wait (UploadAndFetch) remove the uploaded document"
+                            + " from Cloud Object Storage once the result is read (asynchronously)")
+    private Boolean removeUploadedFile;
+
+    @UriParam(label = "producer",
+              description = "Whether the text extraction operations that wait (AndFetch) remove the output file from Cloud"
+                            + " Object Storage once read (asynchronously)")
+    private Boolean removeOutputFile;
+
+    @UriParam(label = "producer", javaType = "java.time.Duration",
+              description = "How long the text extraction and classification operations that wait (AndFetch) wait for"
+                            + " the result, in milliseconds. Defaults to the timeout of the endpoint")
+    private Long processingTimeout;
+
     // Detection
     @UriParam(label = "producer", description = "Whether to detect PII (Personal Identifiable Information)")
     private Boolean detectPii;
@@ -128,6 +295,18 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     @UriParam(label = "producer", description = "Detection threshold (0.0 to 1.0)")
     private Double detectionThreshold;
+
+    @UriParam(label = "producer",
+              description = "The detectors, comma separated, in the place of detectPii and detectHap: hap, pii and"
+                            + " granite_guardian for detect, context_relevance and faithfulness for detectContext (default"
+                            + " context_relevance), answer_relevance for detectGenerated (default answer_relevance). The"
+                            + " detectionThreshold applies to all but pii")
+    private String detectors;
+
+    @UriParam(label = "producer",
+              description = "The watsonx.governance instance that runs the detectors of detectContext and detectGenerated"
+                            + " (and of detect, in the place of the project or space), which IBM Cloud requires for them")
+    private String governanceInstanceId;
 
     // Advanced
     @UriParam(label = "advanced", description = "Request timeout in milliseconds")
@@ -167,6 +346,14 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setOauthProfile(String oauthProfile) {
         this.oauthProfile = oauthProfile;
+    }
+
+    public Authenticator getAuthenticator() {
+        return authenticator;
+    }
+
+    public void setAuthenticator(Authenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     public String getBaseUrl() {
@@ -289,6 +476,158 @@ public class WatsonxAiConfiguration implements Cloneable {
         this.presencePenalty = presencePenalty;
     }
 
+    public String getToolChoice() {
+        return toolChoice;
+    }
+
+    public void setToolChoice(String toolChoice) {
+        this.toolChoice = toolChoice;
+    }
+
+    public String getResponseFormat() {
+        return responseFormat;
+    }
+
+    public void setResponseFormat(String responseFormat) {
+        this.responseFormat = responseFormat;
+    }
+
+    public String getJsonSchema() {
+        return jsonSchema;
+    }
+
+    public void setJsonSchema(String jsonSchema) {
+        this.jsonSchema = jsonSchema;
+    }
+
+    public Boolean getJsonSchemaStrict() {
+        return jsonSchemaStrict;
+    }
+
+    public void setJsonSchemaStrict(Boolean jsonSchemaStrict) {
+        this.jsonSchemaStrict = jsonSchemaStrict;
+    }
+
+    public String getGuidedChoice() {
+        return guidedChoice;
+    }
+
+    public void setGuidedChoice(String guidedChoice) {
+        this.guidedChoice = guidedChoice;
+    }
+
+    public String getGuidedRegex() {
+        return guidedRegex;
+    }
+
+    public void setGuidedRegex(String guidedRegex) {
+        this.guidedRegex = guidedRegex;
+    }
+
+    public String getGuidedGrammar() {
+        return guidedGrammar;
+    }
+
+    public void setGuidedGrammar(String guidedGrammar) {
+        this.guidedGrammar = guidedGrammar;
+    }
+
+    public Integer getSeed() {
+        return seed;
+    }
+
+    public void setSeed(Integer seed) {
+        this.seed = seed;
+    }
+
+    public String getStop() {
+        return stop;
+    }
+
+    public void setStop(String stop) {
+        this.stop = stop;
+    }
+
+    public Integer getNumberOfChoices() {
+        return numberOfChoices;
+    }
+
+    public void setNumberOfChoices(Integer numberOfChoices) {
+        this.numberOfChoices = numberOfChoices;
+    }
+
+    public Boolean getThinking() {
+        return thinking;
+    }
+
+    public void setThinking(Boolean thinking) {
+        this.thinking = thinking;
+    }
+
+    public Boolean getIncludeReasoning() {
+        return includeReasoning;
+    }
+
+    public void setIncludeReasoning(Boolean includeReasoning) {
+        this.includeReasoning = includeReasoning;
+    }
+
+    public String getReasoningEffort() {
+        return reasoningEffort;
+    }
+
+    public void setReasoningEffort(String reasoningEffort) {
+        this.reasoningEffort = reasoningEffort;
+    }
+
+    public String getThinkingTags() {
+        return thinkingTags;
+    }
+
+    public void setThinkingTags(String thinkingTags) {
+        this.thinkingTags = thinkingTags;
+    }
+
+    public Boolean getModerationHap() {
+        return moderationHap;
+    }
+
+    public void setModerationHap(Boolean moderationHap) {
+        this.moderationHap = moderationHap;
+    }
+
+    public Boolean getModerationPii() {
+        return moderationPii;
+    }
+
+    public void setModerationPii(Boolean moderationPii) {
+        this.moderationPii = moderationPii;
+    }
+
+    public Boolean getModerationGraniteGuardian() {
+        return moderationGraniteGuardian;
+    }
+
+    public void setModerationGraniteGuardian(Boolean moderationGraniteGuardian) {
+        this.moderationGraniteGuardian = moderationGraniteGuardian;
+    }
+
+    public Float getModerationThreshold() {
+        return moderationThreshold;
+    }
+
+    public void setModerationThreshold(Float moderationThreshold) {
+        this.moderationThreshold = moderationThreshold;
+    }
+
+    public String getStreamEndpoint() {
+        return streamEndpoint;
+    }
+
+    public void setStreamEndpoint(String streamEndpoint) {
+        this.streamEndpoint = streamEndpoint;
+    }
+
     public Integer getTruncateInputTokens() {
         return truncateInputTokens;
     }
@@ -311,6 +650,14 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setReturnDocuments(Boolean returnDocuments) {
         this.returnDocuments = returnDocuments;
+    }
+
+    public Integer getPredictionLength() {
+        return predictionLength;
+    }
+
+    public void setPredictionLength(Integer predictionLength) {
+        this.predictionLength = predictionLength;
     }
 
     public String getCosUrl() {
@@ -353,6 +700,110 @@ public class WatsonxAiConfiguration implements Cloneable {
         this.resultBucket = resultBucket;
     }
 
+    public String getExtractionOutputs() {
+        return extractionOutputs;
+    }
+
+    public void setExtractionOutputs(String extractionOutputs) {
+        this.extractionOutputs = extractionOutputs;
+    }
+
+    public String getExtractionMode() {
+        return extractionMode;
+    }
+
+    public void setExtractionMode(String extractionMode) {
+        this.extractionMode = extractionMode;
+    }
+
+    public String getOcrMode() {
+        return ocrMode;
+    }
+
+    public void setOcrMode(String ocrMode) {
+        this.ocrMode = ocrMode;
+    }
+
+    public String getDocumentLanguages() {
+        return documentLanguages;
+    }
+
+    public void setDocumentLanguages(String documentLanguages) {
+        this.documentLanguages = documentLanguages;
+    }
+
+    public Boolean getAutoRotationCorrection() {
+        return autoRotationCorrection;
+    }
+
+    public void setAutoRotationCorrection(Boolean autoRotationCorrection) {
+        this.autoRotationCorrection = autoRotationCorrection;
+    }
+
+    public String getEmbeddedImages() {
+        return embeddedImages;
+    }
+
+    public void setEmbeddedImages(String embeddedImages) {
+        this.embeddedImages = embeddedImages;
+    }
+
+    public Integer getOutputDpi() {
+        return outputDpi;
+    }
+
+    public void setOutputDpi(Integer outputDpi) {
+        this.outputDpi = outputDpi;
+    }
+
+    public Boolean getOutputTokens() {
+        return outputTokens;
+    }
+
+    public void setOutputTokens(Boolean outputTokens) {
+        this.outputTokens = outputTokens;
+    }
+
+    public String getKvpMode() {
+        return kvpMode;
+    }
+
+    public void setKvpMode(String kvpMode) {
+        this.kvpMode = kvpMode;
+    }
+
+    public String getClassificationMode() {
+        return classificationMode;
+    }
+
+    public void setClassificationMode(String classificationMode) {
+        this.classificationMode = classificationMode;
+    }
+
+    public Boolean getRemoveUploadedFile() {
+        return removeUploadedFile;
+    }
+
+    public void setRemoveUploadedFile(Boolean removeUploadedFile) {
+        this.removeUploadedFile = removeUploadedFile;
+    }
+
+    public Boolean getRemoveOutputFile() {
+        return removeOutputFile;
+    }
+
+    public void setRemoveOutputFile(Boolean removeOutputFile) {
+        this.removeOutputFile = removeOutputFile;
+    }
+
+    public Long getProcessingTimeout() {
+        return processingTimeout;
+    }
+
+    public void setProcessingTimeout(Long processingTimeout) {
+        this.processingTimeout = processingTimeout;
+    }
+
     public Boolean getDetectPii() {
         return detectPii;
     }
@@ -375,6 +826,22 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setDetectionThreshold(Double detectionThreshold) {
         this.detectionThreshold = detectionThreshold;
+    }
+
+    public String getDetectors() {
+        return detectors;
+    }
+
+    public void setDetectors(String detectors) {
+        this.detectors = detectors;
+    }
+
+    public String getGovernanceInstanceId() {
+        return governanceInstanceId;
+    }
+
+    public void setGovernanceInstanceId(String governanceInstanceId) {
+        this.governanceInstanceId = governanceInstanceId;
     }
 
     public Long getTimeout() {

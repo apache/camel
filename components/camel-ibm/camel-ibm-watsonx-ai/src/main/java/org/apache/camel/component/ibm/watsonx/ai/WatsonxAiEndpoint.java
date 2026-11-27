@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai;
 
+import java.util.function.Consumer;
+
 import com.ibm.watsonx.ai.chat.ChatService;
+import com.ibm.watsonx.ai.core.auth.Authenticator;
 import com.ibm.watsonx.ai.deployment.DeploymentService;
 import com.ibm.watsonx.ai.detection.DetectionService;
 import com.ibm.watsonx.ai.embedding.EmbeddingService;
@@ -29,9 +32,11 @@ import com.ibm.watsonx.ai.timeseries.TimeSeriesService;
 import com.ibm.watsonx.ai.tokenization.TokenizationService;
 import com.ibm.watsonx.ai.tool.ToolService;
 import org.apache.camel.Category;
-import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.ibm.watsonx.ai.service.OAuthProfileAuthenticator;
 import org.apache.camel.component.ibm.watsonx.ai.service.WatsonxAiServiceFactory;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -42,8 +47,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.OAuthHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
@@ -92,7 +95,8 @@ import org.apache.camel.util.ObjectHelper;
                                                                  Carrier.FILE, Carrier.STREAM, Carrier.BYTES, Carrier.TEXT }),
                                           @BodyType.When(option = "operation", value = "runTool",
                                                          carriers = { Carrier.TEXT, Carrier.MAP }) },
-                                  description = "The prompt or text for textGeneration, tokenize, detect and deploymentGenerate,"
+                                  description = "The prompt or text for textGeneration, tokenize, detect, detectContext (the input),"
+                                                + " detectGenerated (the generated text) and deploymentGenerate,"
                                                 + " the file path, ID or file name for the text extraction and classification"
                                                 + " operations that do not upload, read as text unless a header such as"
                                                 + " CamelIBMWatsonxAiInput gives it: a Map or a POJO fails, as Camel reads"
@@ -112,6 +116,10 @@ import org.apache.camel.util.ObjectHelper;
                                            @BodyType.When(option = "operation", value = "tokenize", carriers = Carrier.VALUE,
                                                           javaType = "java.lang.Integer"),
                                            @BodyType.When(option = "operation", value = "detect", carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "detectContext",
+                                                          carriers = Carrier.LIST),
+                                           @BodyType.When(option = "operation", value = "detectGenerated",
+                                                          carriers = Carrier.LIST),
                                            @BodyType.When(option = "operation", value = "forecast", carriers = Carrier.LIST),
                                            @BodyType.When(option = "operation", value = "deploymentForecast",
                                                           carriers = Carrier.LIST),
@@ -145,6 +153,9 @@ import org.apache.camel.util.ObjectHelper;
                                            @BodyType.When(option = "operation", value = "textClassificationUploadAndFetch",
                                                           carriers = Carrier.POJO,
                                                           javaType = "com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse$ClassificationResult"),
+                                           @BodyType.When(option = "operation", value = "textClassificationAndFetch",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse$ClassificationResult"),
                                            @BodyType.When(option = "operation", value = "textClassificationUploadFile",
                                                           carriers = Carrier.VALUE, javaType = "java.lang.Boolean"),
                                            @BodyType.When(option = "operation", value = "textClassificationDeleteFile",
@@ -159,10 +170,11 @@ import org.apache.camel.util.ObjectHelper;
                                    description = "The generated text for textGeneration, chat, deploymentGenerate, deploymentChat"
                                                  + " and the streaming operations, the extracted text for"
                                                  + " textExtractionUploadAndFetch and textExtractionReadFile, the tool output for"
-                                                 + " runTool, with token counts and the stop reason in headers. embedding gives a"
+                                                 + " runTool, with token counts and the stop reason in headers; textExtractionAndFetch gives the extracted text. embedding gives a"
                                                  + " List with one List of Floats per input, even for one input; rerank, detect,"
                                                  + " forecast and the list operations a List of results of the watsonx.ai SDK;"
                                                  + " tokenize the token count; the uploadFile and delete operations a Boolean."
+                                                 + " detectContext and detectGenerated give a List of results of the SDK."
                                                  + " processToolCalls leaves the body and puts the messages in the"
                                                  + " CamelIBMWatsonxAiMessages header"))
 public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
@@ -173,6 +185,11 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
 
     @UriParam
     private WatsonxAiConfiguration configuration;
+
+    // Shared by the services of this endpoint, so that they share one access token
+    private Authenticator authenticator;
+    // Sends the chunks of the streaming operations to the streamEndpoint
+    private ProducerTemplate streamTemplate;
 
     // Lazy-initialized service clients
     private TextGenerationService textGenerationService;
@@ -199,27 +216,68 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public org.apache.camel.Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported for IBM watsonx.ai");
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        resolveOAuthToken();
         validateConfiguration();
-    }
-
-    private void resolveOAuthToken() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getOauthProfile())) {
-            return;
+        // processToolCalls is a local operation: no authenticator at startup, so an oauthProfile it inherits does not
+        // contact its identity provider (a message header that selects another operation creates it on first use)
+        if (configuration.getOperation() != WatsonxAiOperations.processToolCalls) {
+            Authenticator created = WatsonxAiServiceFactory.createAuthenticator(configuration, getCamelContext());
+            synchronized (this) {
+                authenticator = created;
+            }
+            if (created instanceof OAuthProfileAuthenticator) {
+                // fail at startup rather than at the first exchange when the OAuth profile cannot give a token
+                created.token();
+            }
         }
-        configuration.setApiKey(OAuthHelper.resolveOAuthToken(getCamelContext(), configuration.getOauthProfile()));
+        String streamEndpoint = configuration.getStreamEndpoint();
+        if (streamEndpoint != null && !streamEndpoint.isBlank()) {
+            // created here rather than on first use, so that none is created once the endpoint stops
+            ProducerTemplate template = getCamelContext().createProducerTemplate();
+            synchronized (this) {
+                streamTemplate = template;
+            }
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        ProducerTemplate template;
+        synchronized (this) {
+            template = streamTemplate;
+            streamTemplate = null;
+            authenticator = null;
+            clearServices();
+        }
+        // outside the lock: a stream may still be sending its chunks with the template
+        if (template != null) {
+            template.stop();
+        }
+    }
+
+    /**
+     * The authenticator that the services share: the one created at startup, or else (for a processToolCalls endpoint
+     * whose messages select another operation) one created on first use.
+     */
+    private synchronized Authenticator serviceAuthenticator() {
+        if (!isRunAllowed()) {
+            // a late exchange of a stopped endpoint creates no client, which a restart would otherwise keep
+            throw new IllegalStateException("The endpoint is not started, so it cannot call watsonx.ai");
+        }
+        if (authenticator == null) {
+            authenticator = WatsonxAiServiceFactory.createAuthenticator(configuration, getCamelContext());
+        }
+        return authenticator;
+    }
+
+    private void clearServices() {
         textGenerationService = null;
         chatService = null;
         embeddingService = null;
@@ -241,10 +299,15 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
             return;
         }
 
-        if (configuration.getApiKey() == null || configuration.getApiKey().isEmpty()) {
-            throw new IllegalArgumentException("API key is required");
+        if ((configuration.getApiKey() == null || configuration.getApiKey().isEmpty())
+                && (configuration.getOauthProfile() == null || configuration.getOauthProfile().isEmpty())
+                && configuration.getAuthenticator() == null) {
+            throw new IllegalArgumentException("API key is required (or set oauthProfile or authenticator)");
         }
-        if (configuration.getBaseUrl() == null || configuration.getBaseUrl().isEmpty()) {
+        // the utility tools need the wxUrl rather than the baseUrl
+        if ((configuration.getBaseUrl() == null || configuration.getBaseUrl().isEmpty())
+                && configuration.getOperation() != WatsonxAiOperations.runTool
+                && configuration.getOperation() != WatsonxAiOperations.listTools) {
             throw new IllegalArgumentException("Base URL is required");
         }
     }
@@ -254,7 +317,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TextGenerationService getTextGenerationService() {
         if (textGenerationService == null) {
-            textGenerationService = WatsonxAiServiceFactory.createTextGenerationService(configuration);
+            textGenerationService = WatsonxAiServiceFactory.createTextGenerationService(configuration, serviceAuthenticator());
         }
         return textGenerationService;
     }
@@ -264,7 +327,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized ChatService getChatService() {
         if (chatService == null) {
-            chatService = WatsonxAiServiceFactory.createChatService(configuration);
+            chatService = WatsonxAiServiceFactory.createChatService(configuration, serviceAuthenticator());
         }
         return chatService;
     }
@@ -274,7 +337,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized EmbeddingService getEmbeddingService() {
         if (embeddingService == null) {
-            embeddingService = WatsonxAiServiceFactory.createEmbeddingService(configuration);
+            embeddingService = WatsonxAiServiceFactory.createEmbeddingService(configuration, serviceAuthenticator());
         }
         return embeddingService;
     }
@@ -284,7 +347,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized RerankService getRerankService() {
         if (rerankService == null) {
-            rerankService = WatsonxAiServiceFactory.createRerankService(configuration);
+            rerankService = WatsonxAiServiceFactory.createRerankService(configuration, serviceAuthenticator());
         }
         return rerankService;
     }
@@ -294,7 +357,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TokenizationService getTokenizationService() {
         if (tokenizationService == null) {
-            tokenizationService = WatsonxAiServiceFactory.createTokenizationService(configuration);
+            tokenizationService = WatsonxAiServiceFactory.createTokenizationService(configuration, serviceAuthenticator());
         }
         return tokenizationService;
     }
@@ -304,7 +367,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized DetectionService getDetectionService() {
         if (detectionService == null) {
-            detectionService = WatsonxAiServiceFactory.createDetectionService(configuration);
+            detectionService = WatsonxAiServiceFactory.createDetectionService(configuration, serviceAuthenticator());
         }
         return detectionService;
     }
@@ -314,7 +377,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TextExtractionService getTextExtractionService() {
         if (textExtractionService == null) {
-            textExtractionService = WatsonxAiServiceFactory.createTextExtractionService(configuration);
+            textExtractionService = WatsonxAiServiceFactory.createTextExtractionService(configuration, serviceAuthenticator());
         }
         return textExtractionService;
     }
@@ -324,7 +387,8 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TextClassificationService getTextClassificationService() {
         if (textClassificationService == null) {
-            textClassificationService = WatsonxAiServiceFactory.createTextClassificationService(configuration);
+            textClassificationService
+                    = WatsonxAiServiceFactory.createTextClassificationService(configuration, serviceAuthenticator());
         }
         return textClassificationService;
     }
@@ -334,7 +398,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized TimeSeriesService getTimeSeriesService() {
         if (timeSeriesService == null) {
-            timeSeriesService = WatsonxAiServiceFactory.createTimeSeriesService(configuration);
+            timeSeriesService = WatsonxAiServiceFactory.createTimeSeriesService(configuration, serviceAuthenticator());
         }
         return timeSeriesService;
     }
@@ -354,7 +418,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized DeploymentService getDeploymentService() {
         if (deploymentService == null) {
-            deploymentService = WatsonxAiServiceFactory.createDeploymentService(configuration);
+            deploymentService = WatsonxAiServiceFactory.createDeploymentService(configuration, serviceAuthenticator());
         }
         return deploymentService;
     }
@@ -364,9 +428,35 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
      */
     public synchronized ToolService getToolService() {
         if (toolService == null) {
-            toolService = WatsonxAiServiceFactory.createToolService(configuration);
+            toolService = WatsonxAiServiceFactory.createToolService(configuration, serviceAuthenticator());
         }
         return toolService;
+    }
+
+    /**
+     * The consumer of the chunks of the streaming operations that sends each chunk as the body of a message to the
+     * streamEndpoint, with the id of the exchange that streams as its correlation id, or {@code null} when the option
+     * is not set.
+     */
+    public synchronized Consumer<String> getStreamEndpointConsumer(Exchange exchange) {
+        String uri = configuration.getStreamEndpoint();
+        if (uri == null || uri.isBlank()) {
+            return null;
+        }
+        ProducerTemplate template = streamTemplate;
+        if (template == null) {
+            // no URI in the message, as either can carry credentials
+            throw new IllegalStateException("The endpoint is not started, so it cannot send the chunks to its streamEndpoint");
+        }
+        String correlationId = exchange.getExchangeId();
+        return chunk -> template.sendBodyAndHeader(uri, chunk, Exchange.CORRELATION_ID, correlationId);
+    }
+
+    /**
+     * The authenticator that the services of this endpoint share, created when the endpoint starts.
+     */
+    public synchronized Authenticator getAuthenticator() {
+        return authenticator;
     }
 
     // Getters and Setters

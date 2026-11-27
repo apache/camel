@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and engine management.
+ * Manage the catalogs, schemas, tables, engines and storage registrations of an IBM watsonx.data lakehouse.
  */
 @UriEndpoint(firstVersion = "4.19.0",
              scheme = "ibm-watsonx-data",
@@ -66,7 +66,7 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " is its JSON. The delete operations set no body"))
 public class WatsonxDataEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath(description = "Logical name for the endpoint")
+    @UriPath(description = "A logical name of your choice for the endpoint. It is not sent to watsonx.data.")
     @Metadata(required = true)
     private String label;
 

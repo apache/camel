@@ -85,7 +85,7 @@ class WatsonxAiComponentTest {
     @Test
     void testOperationsEnum() {
         // Verify all operations are defined
-        assertEquals(33, WatsonxAiOperations.values().length);
+        assertEquals(37, WatsonxAiOperations.values().length);
 
         // Verify key operations
         assertNotNull(WatsonxAiOperations.valueOf("textGeneration"));
@@ -95,6 +95,10 @@ class WatsonxAiComponentTest {
         assertNotNull(WatsonxAiOperations.valueOf("embedding"));
         assertNotNull(WatsonxAiOperations.valueOf("rerank"));
         assertNotNull(WatsonxAiOperations.valueOf("tokenize"));
+        assertNotNull(WatsonxAiOperations.valueOf("detectContext"));
+        assertNotNull(WatsonxAiOperations.valueOf("detectGenerated"));
+        assertNotNull(WatsonxAiOperations.valueOf("textExtractionAndFetch"));
+        assertNotNull(WatsonxAiOperations.valueOf("textClassificationAndFetch"));
 
         // Verify new text extraction operations
         assertNotNull(WatsonxAiOperations.valueOf("textExtractionUpload"));

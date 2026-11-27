@@ -33,7 +33,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Convert speech audio to text using IBM Watson Speech to Text
+ * Transcribe audio to text with IBM Watson Speech to Text, and list or get its speech models and custom language
+ * models.
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "ibm-watson-speech-to-text", title = "IBM Watson Speech to Text",
              syntax = "ibm-watson-speech-to-text:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
@@ -70,7 +71,8 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " and listCustomModels a List of LanguageModel"))
 public class WatsonSpeechToTextEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A logical name for the endpoint, for example to tell endpoints apart. The component does not"
+                           + " use it.")
     @Metadata(required = true)
     private String label;
 

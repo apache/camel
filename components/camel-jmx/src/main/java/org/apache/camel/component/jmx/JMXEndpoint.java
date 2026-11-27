@@ -40,7 +40,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Receive JMX notifications.
+ * Receive the notifications of an MBean on a local or remote MBean server, or of a JMX monitor that observes an MBean
+ * attribute.
  *
  * Endpoint that describes a connection to an mbean.
  * <p/>
@@ -76,183 +77,167 @@ public class JMXEndpoint extends DefaultEndpoint implements EndpointServiceLocat
             = "StringToCompare must be specified when monitoring a string attribute.";
     protected static final String ERR_OBSERVED_ATTRIBUTE = "Observed attribute must be specified";
 
-    /**
-     * Server url comes from the remaining endpoint. Use platform to connect to local JVM.
-     */
-    @UriPath
+    @UriPath(description = "The MBean server to connect to: platform for the platform MBean server of the JVM that runs "
+                           + "Camel, or the JMX service URL of a remote MBean server, for example "
+                           + "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi. The monitorType option works only with "
+                           + "platform.")
     private String serverURL;
 
-    /**
-     * The domain for the mbean you're connecting to
-     */
-    @UriParam
+    @UriParam(description = "The domain of the ObjectName of the MBean to listen to, for example java.lang. With "
+                            + "monitorType, the consumer also registers its monitor MBean in this domain.")
     @Metadata(required = true)
     private String objectDomain;
 
-    /**
-     * The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that
-     * get passed.
-     */
-    @UriParam
+    @UriParam(description = "The value of the name key of the ObjectName of the MBean to listen to: the consumer uses the "
+                            + "ObjectName objectDomain:name=objectName. Set either this option or the objectProperties option,"
+                            + " not both.")
     private String objectName;
 
-    /**
-     * The attribute to observe for the monitor bean or consumer.
-     */
-    @UriParam
+    @UriParam(description = "The name of the MBean attribute to observe. With monitorType it is required, and the monitor "
+                            + "observes this attribute. Without monitorType and without notificationFilter, the consumer "
+                            + "receives only the AttributeChangeNotifications of this attribute, selected further by "
+                            + "stringToCompare.")
     private String observedAttribute;
 
-    /**
-     * The frequency to poll the bean to check the monitor (monitor types only).
-     */
-    @UriParam(defaultValue = "10000", javaType = "java.time.Duration")
+    @UriParam(description = "The period at which the monitor reads the value of the observed attribute (the granularity "
+                            + "period of the JMX monitor). Only used with monitorType.",
+              defaultValue = "10000", javaType = "java.time.Duration")
     private long granularityPeriod = 10000;
 
-    /**
-     * The type of monitor to create. One of string, gauge, counter (monitor types only).
-     */
-    @UriParam(enums = "counter,gauge,string")
+    @UriParam(description = "The type of the JMX monitor to create: counter (CounterMonitor), gauge (GaugeMonitor) or string"
+                            + " (StringMonitor). If set, the consumer registers a monitor MBean on the platform MBean server "
+                            + "that observes the observedAttribute of the MBean, and receives the notifications of the monitor"
+                            + " instead of those of the MBean. Only supported when serverURL is platform.",
+              enums = "counter,gauge,string")
     private String monitorType;
 
-    /**
-     * Initial threshold for the monitor. The value must exceed this before notifications are fired (counter monitor
-     * only).
-     */
-    @UriParam(label = "counter")
+    @UriParam(description = "The initial threshold of the counter monitor, which sends a notification when the counter "
+                            + "reaches or exceeds the threshold. The value is converted to the type of the observed attribute,"
+                            + " which must be an integer type. If not set, the threshold is 0. Only used when monitorType is "
+                            + "counter.",
+              label = "counter")
     private int initThreshold;
 
-    /**
-     * The amount to increment the threshold after it's been exceeded (counter monitor only).
-     */
-    @UriParam(label = "counter")
+    @UriParam(description = "The value that the counter monitor adds to the threshold each time the counter reaches it, so "
+                            + "that it sends a notification each time the counter grows by this value. If not set (0), the "
+                            + "threshold does not change. Only used when monitorType is counter.",
+              label = "counter")
     private int offset;
 
-    /**
-     * The value at which the counter is reset to zero (counter monitor only).
-     */
-    @UriParam(label = "counter")
+    @UriParam(description = "The value at which the observed counter wraps around to zero. The counter monitor sets the "
+                            + "threshold back to initThreshold when it exceeds this value, and in difference mode adds it to a"
+                            + " negative difference. If not set (0), the counter is taken not to wrap around. Only used when "
+                            + "monitorType is counter.",
+              label = "counter")
     private int modulus;
 
-    /**
-     * If true, then the value reported in the notification is the difference from the threshold as opposed to the value
-     * itself (counter and gauge monitor only).
-     */
-    @UriParam(label = "counter,gauge")
+    @UriParam(description = "Whether the counter or gauge monitor compares the difference between two successive "
+                            + "observations of the attribute with the thresholds, instead of the value of the attribute "
+                            + "itself. Only used when monitorType is counter or gauge.",
+              label = "counter,gauge")
     private boolean differenceMode;
 
-    /**
-     * If true, the gauge will fire a notification when the high threshold is exceeded (gauge monitor only).
-     */
-    @UriParam(label = "gauge")
+    @UriParam(description = "Whether the gauge monitor sends a notification when the observed value rises to or above "
+                            + "thresholdHigh. After that it sends the next high notification only once the value has fallen to"
+                            + " or below thresholdLow. When monitorType is gauge, notifyHigh, notifyLow or both must be true.",
+              label = "gauge")
     private boolean notifyHigh;
 
-    /**
-     * If true, the gauge will fire a notification when the low threshold is exceeded (gauge monitor only).
-     */
-    @UriParam(label = "gauge")
+    @UriParam(description = "Whether the gauge monitor sends a notification when the observed value falls to or below "
+                            + "thresholdLow. After that it sends the next low notification only once the value has risen to or"
+                            + " above thresholdHigh. When monitorType is gauge, notifyHigh, notifyLow or both must be true.",
+              label = "gauge")
     private boolean notifyLow;
 
-    /**
-     * Value for the gauge's high threshold (gauge monitor only).
-     */
-    @UriParam(label = "gauge")
+    @UriParam(description = "The high threshold of the gauge monitor, converted to the type of the observed attribute. It "
+                            + "must not be lower than thresholdLow. Required when monitorType is gauge.",
+              label = "gauge")
     private Double thresholdHigh;
 
-    /**
-     * Value for the gauge's low threshold (gauge monitor only).
-     */
-    @UriParam(label = "gauge")
+    @UriParam(description = "The low threshold of the gauge monitor, converted to the type of the observed attribute. It "
+                            + "must not be higher than thresholdHigh. Required when monitorType is gauge.",
+              label = "gauge")
     private Double thresholdLow;
 
-    /**
-     * If true, will fire a notification when the string attribute differs from the string to compare (string monitor or
-     * consumer). By default the consumer will notify match if observed attribute and string to compare has been
-     * configured.
-     */
-    @UriParam(label = "consumer,string")
+    @UriParam(description = "Whether to receive a notification when the value of the observed attribute differs from "
+                            + "stringToCompare. With monitorType string, the string monitor sends one each time the value "
+                            + "starts to differ. Without monitorType, the consumer then receives the attribute changes whose "
+                            + "new value differs from stringToCompare, instead of those whose new value matches it.",
+              label = "consumer,string")
     private boolean notifyDiffer;
 
-    /**
-     * If true, will fire a notification when the string attribute matches the string to compare (string monitor or
-     * consumer). By default the consumer will notify match if observed attribute and string to compare has been
-     * configured.
-     */
-    @UriParam(label = "consumer,string")
+    @UriParam(description = "Whether the string monitor sends a notification each time the value of the observed attribute "
+                            + "starts to match stringToCompare. When monitorType is string, notifyMatch, notifyDiffer or both "
+                            + "must be true. Without monitorType this option is not used: the consumer receives the matching "
+                            + "attribute changes unless notifyDiffer is true.",
+              label = "consumer,string")
     private boolean notifyMatch;
 
-    /**
-     * Value for attribute to compare (string monitor or consumer). By default the consumer will notify match if
-     * observed attribute and string to compare has been configured.
-     */
-    @UriParam(label = "consumer,string")
+    @UriParam(description = "The text that the value of the observed attribute is compared with. Required when monitorType "
+                            + "is string. Without monitorType, the consumer compares it with the new value of each "
+                            + "AttributeChangeNotification of the observedAttribute (the text null matches a null value), and "
+                            + "receives every change of the attribute when this option is not set.",
+              label = "consumer,string")
     private String stringToCompare;
 
-    /**
-     * Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then
-     * the raw java object is set as the body.
-     */
-    @UriParam(defaultValue = "xml", enums = "xml,raw")
+    @UriParam(description = "The format of the message body: xml for the notification as XML text, as defined by the "
+                            + "notifications.xsd schema of camel-jmx, or raw for the javax.management.Notification object.",
+              defaultValue = "xml", enums = "xml,raw")
     private String format = "xml";
 
-    /**
-     * Credentials for making a remote connection
-     */
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The user name to authenticate with on a remote MBean server. The consumer passes user and "
+                            + "password to the JMX connector as its credentials. Not used for the platform MBean server.",
+              label = "security", security = "secret")
     private String user;
 
-    /**
-     * Credentials for making a remote connection
-     */
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The password to authenticate with on a remote MBean server. The consumer passes user and "
+                            + "password to the JMX connector as its credentials. Not used for the platform MBean server.",
+              label = "security", security = "secret")
     private String password;
 
-    /**
-     * Reference to a bean that implements the NotificationFilter.
-     */
-    @UriParam(label = "advanced")
+    @UriParam(description = "A javax.management.NotificationFilter that selects the notifications to receive. It replaces "
+                            + "the filter that the consumer builds from observedAttribute and stringToCompare, and with "
+                            + "monitorType it selects among the notifications of the monitor. A remote MBean server receives "
+                            + "the filter serialized and applies it itself, so its class must be on the class path of that "
+                            + "server.",
+              label = "advanced")
     private NotificationFilter notificationFilter;
 
-    /**
-     * Value to handback to the listener when a notification is received. This value will be put in the message header
-     * with the key {@link JMXConstants#JMX_HANDBACK}.
-     */
-    @UriParam(label = "advanced")
+    @UriParam(description = "An object that the MBean server hands back with each notification, which the consumer puts in "
+                            + "the jmx.handback header. With monitorType this option is not used, and the header holds the "
+                            + "monitor MBean instead.",
+              label = "advanced")
     private Object handback;
 
-    /**
-     * If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false,
-     * the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where
-     * 'x' is the configured reconnectionDelay
-     */
-    @UriParam(label = "advanced", defaultValue = "true")
+    @UriParam(description = "Whether the consumer fails to start when it cannot connect to a remote MBean server. If false, "
+                            + "the consumer logs a warning and tries to connect again every reconnectDelay seconds until it "
+                            + "succeeds.",
+              label = "advanced", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
 
-    /**
-     * If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer
-     * will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the
-     * configured reconnectionDelay
-     */
-    @UriParam(label = "advanced")
+    @UriParam(description = "Whether the consumer connects again to a remote MBean server when the connection is closed or "
+                            + "fails, or notifications are lost. It tries every reconnectDelay seconds until it succeeds. When"
+                            + " the JMX connector opens a new connection by itself, the consumer registers its listener again "
+                            + "on that connection.",
+              label = "advanced")
     private boolean reconnectOnConnectionFailure;
 
-    /**
-     * The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to
-     * reconnect a lost connection
-     */
-    @UriParam(label = "advanced", defaultValue = "10")
+    @UriParam(description = "The number of seconds to wait before the next attempt to connect to a remote MBean server: at "
+                            + "startup when testConnectionOnStartup is false, and after a lost connection when "
+                            + "reconnectOnConnectionFailure is true.",
+              label = "advanced", defaultValue = "10")
     private int reconnectDelay = 10;
 
-    /**
-     * Properties for the object name. These values will be used if the objectName param is not set
-     */
-    @UriParam(label = "advanced", prefix = "key.", multiValue = true)
+    @UriParam(description = "The key properties of the ObjectName of the MBean to listen to, for example key.type=Threading "
+                            + "for the ObjectName java.lang:type=Threading. Set either this option or the objectName option, "
+                            + "not both.",
+              label = "advanced", prefix = "key.", multiValue = true)
     private Map<String, String> objectProperties;
 
-    /**
-     * To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to
-     * process and route notifications.
-     */
-    @UriParam(label = "advanced")
+    @UriParam(description = "A shared thread pool that routes the notifications of the consumers that use it. If not set, "
+                            + "each consumer creates its own single-threaded pool, which routes its notifications one at a "
+                            + "time in the order they arrive.",
+              label = "advanced")
     private ExecutorService executorService;
 
     /**

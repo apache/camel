@@ -35,10 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Store and retrieve data from Google Cloud Firestore NoSQL database.
- *
- * Google Firestore Endpoint represents a collection within Firestore and contains configuration to customize the
- * behavior of Consumer and Producer.
+ * Store, retrieve and query documents in Google Cloud Firestore collections.
  */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "google-firestore", title = "Google Firestore",
              syntax = "google-firestore:collectionName",

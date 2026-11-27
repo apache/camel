@@ -31,45 +31,84 @@ import org.apache.solr.client.solrj.SolrClient;
 @UriParams
 public class SolrConfiguration {
 
-    @UriPath
+    @UriPath(description = "The host name of the Solr server. Set it to default to use the host option of the component, or"
+                           + " localhost when that is not set.")
     @Metadata(required = true)
     private String host;
-    @UriPath(defaultValue = "" + SolrConstants.DEFAULT_PORT)
+    @UriPath(defaultValue = "" + SolrConstants.DEFAULT_PORT,
+             description = "The port of the Solr server. If not set, the port option of the component is used, or 8983 when"
+                           + " that is not set.")
     private int port = -1;
-    @UriPath(defaultValue = SolrConstants.DEFAULT_BASE_PATH)
+    @UriPath(defaultValue = SolrConstants.DEFAULT_BASE_PATH,
+             description = "The base path of the Solr server. A path that starts with /solr/ sets the collection and the request"
+                           + " handler instead: in /solr/products/update, products is the collection and /update the request"
+                           + " handler.")
     private String basePath;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The user name for HTTP basic authentication with Solr, used together with the password option by"
+                            + " the client that Camel creates. Not used when the solrClient option is set.")
     private String username;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password for HTTP basic authentication with Solr, used together with the username option by"
+                            + " the client that Camel creates. Not used when the solrClient option is set.")
     private String password;
-    @UriParam
+    @UriParam(description = "The operation that the producer performs. The CamelSolrOperation header replaces this option, and a"
+                            + " body that is a SolrJ request, such as a SolrQuery or an UpdateRequest, replaces both. If none is"
+                            + " set, the body and the headers decide, for example a Map body inserts a document.")
     private SolrOperation operation;
-    @UriParam
+    @UriParam(description = "Whether the producer adds the commit=true parameter to each request, so that Solr commits an insert"
+                            + " or a delete at once.")
     private boolean autoCommit;
-    @UriParam
+    @UriParam(description = "The maximum number of documents that a search returns, which is the rows parameter of Solr (10 by"
+                            + " default in Solr). The CamelSolrSize header replaces this option. Not used for a QueryRequest"
+                            + " body.")
     private Integer size;
-    @UriParam
+    @UriParam(description = "The index of the first document that a search returns, which is the start parameter of Solr (0 by"
+                            + " default in Solr). The CamelSolrFrom header replaces this option. Not used for a QueryRequest"
+                            + " body.")
     private Integer from;
-    @UriParam
+    @UriParam(description = "The name of the collection that the requests go to. The CamelSolrCollection header replaces this"
+                            + " option. If not set, the defaultCollection option of the component is used, or the default"
+                            + " collection of the solrClient.")
     private String collection;
-    @UriParam
+    @UriParam(description = "The path of the request handler, for example /update/json. An insert or a delete sends the update"
+                            + " request to it (/update when not set), and a search sends it as the qt parameter. The"
+                            + " CamelSolrRequestHandler header replaces this option.")
     private String requestHandler;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether a DELETE takes the body as a query, or a collection of queries, instead of the id of the"
+                            + " documents to delete. The CamelSolrDeleteByQuery header replaces this option.")
     private boolean deleteByQuery;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether the client that Camel creates connects to Solr with HTTPS instead of HTTP.")
     private boolean enableSSL;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The X.509 certificate of the certificate authority that the client that Camel creates trusts for"
+                            + " HTTPS. It is loaded from the classpath by default, or with the classpath:, file: or http:"
+                            + " prefix. Not used when the sslContextParameters option is set.")
     @Metadata(supportFileReference = true)
     private String certificatePath;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The TLS configuration (key store, trust store, protocols, cipher suites, named groups) of the client"
+                            + " that Camel creates. It takes precedence over the certificatePath option. If not set, the global"
+                            + " SSL context parameters are used when the useGlobalSslContextParameters option of the component"
+                            + " is enabled.")
     private SSLContextParameters sslContextParameters;
-    @UriParam
+    @UriParam(description = "The time in milliseconds that the client that Camel creates waits for the response to a request. If"
+                            + " not set, the requestTimeout option of the component is used.")
     private Long requestTimeout;
-    @UriParam
+    @UriParam(description = "The time in milliseconds that the client that Camel creates waits to connect to Solr. If not set,"
+                            + " the connectionTimeout option of the component is used.")
     private Long connectionTimeout;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether the producer sends the requests asynchronously. This needs a client that extends"
+                            + " HttpSolrClientBase, such as the HttpJdkSolrClient that Camel creates; with another client the"
+                            + " producer sends the requests synchronously.")
     private boolean async = true;
-    @UriParam
+    @UriParam(description = "To use a custom org.apache.solr.client.solrj.SolrClient. When set, the host, port, basePath,"
+                            + " username, password, enableSSL, certificatePath, sslContextParameters, connectionTimeout and"
+                            + " requestTimeout options do not configure the client. If not set, Camel creates an"
+                            + " HttpJdkSolrClient for the endpoint. Camel does not close a client that is set.")
     @Metadata(label = "advanced")
     private SolrClient solrClient;
 
@@ -150,9 +189,6 @@ public class SolrConfiguration {
         return host;
     }
 
-    /**
-     * The solr instance host name (set to 'default' to use the host name defined on component level)
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -161,9 +197,6 @@ public class SolrConfiguration {
         return port;
     }
 
-    /**
-     * The solr instance base path (usually "/solr")
-     */
     public void setBasePath(String basePath) {
         this.basePath = basePath;
     }
@@ -172,9 +205,6 @@ public class SolrConfiguration {
         return basePath;
     }
 
-    /**
-     * The solr instance port number
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -183,9 +213,6 @@ public class SolrConfiguration {
         return operation;
     }
 
-    /**
-     * What operation to perform
-     */
     public void setOperation(SolrOperation operation) {
         this.operation = operation;
     }
@@ -194,16 +221,10 @@ public class SolrConfiguration {
         return autoCommit;
     }
 
-    /**
-     * If true, each producer insert/delete operation will be automatically performing a commit
-     */
     public void setAutoCommit(boolean autoCommit) {
         this.autoCommit = autoCommit;
     }
 
-    /**
-     * Starting index of the response.
-     */
     public Integer getFrom() {
         return from;
     }
@@ -212,9 +233,6 @@ public class SolrConfiguration {
         this.from = from;
     }
 
-    /**
-     * Size of the response.
-     */
     public Integer getSize() {
         return size;
     }
@@ -223,9 +241,6 @@ public class SolrConfiguration {
         this.size = size;
     }
 
-    /**
-     * The name of the collection to act against
-     */
     public String getCollection() {
         return collection;
     }
@@ -234,9 +249,6 @@ public class SolrConfiguration {
         this.collection = collection;
     }
 
-    /**
-     * The path of the update request handler (use for update requests / set solr parameter qt for search requests)
-     */
     public String getRequestHandler() {
         return requestHandler;
     }
@@ -245,11 +257,6 @@ public class SolrConfiguration {
         this.requestHandler = requestHandler;
     }
 
-    /**
-     * The solr client to connect to solr. When solrClient bean is provided, all connection properties will be used from
-     * that solrClient (host, port, username, password, connectionTimeout, requestTimeout, enableSSL, ...). When not
-     * explicitly configured, camel uses the HttpJdkSolrClient.
-     */
     public SolrClient getSolrClient() {
         return solrClient;
     }
@@ -258,9 +265,6 @@ public class SolrConfiguration {
         this.solrClient = solrClient;
     }
 
-    /**
-     * For the delete instruction, interpret body as query/queries instead of id/ids.
-     */
     public boolean isDeleteByQuery() {
         return deleteByQuery;
     }
@@ -269,9 +273,6 @@ public class SolrConfiguration {
         this.deleteByQuery = deleteByQuery;
     }
 
-    /**
-     * Basic authenticate user
-     */
     public String getUsername() {
         return username;
     }
@@ -280,9 +281,6 @@ public class SolrConfiguration {
         this.username = username;
     }
 
-    /**
-     * Password for authenticating
-     */
     public String getPassword() {
         return password;
     }
@@ -291,9 +289,6 @@ public class SolrConfiguration {
         this.password = password;
     }
 
-    /**
-     * Enable SSL
-     */
     public boolean isEnableSSL() {
         return enableSSL;
     }
@@ -302,10 +297,6 @@ public class SolrConfiguration {
         this.enableSSL = enableSSL;
     }
 
-    /**
-     * The certificate that can be used to access the solr host. It can be loaded by default from classpath, but you can
-     * prefix with classpath:, file:, or http: to load the resource from different systems.
-     */
     public String getCertificatePath() {
         return certificatePath;
     }
@@ -318,18 +309,10 @@ public class SolrConfiguration {
         return sslContextParameters;
     }
 
-    /**
-     * To configure security using SSLContextParameters. When configured, this takes precedence over the
-     * {@code certificatePath} option. This allows configuring named groups, signature schemes, cipher suites, and
-     * protocols for the TLS connection.
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
-    /**
-     * The time in ms to wait before connection will time out.
-     */
     public Long getConnectionTimeout() {
         return connectionTimeout;
     }
@@ -338,9 +321,6 @@ public class SolrConfiguration {
         this.connectionTimeout = connectionTimeout;
     }
 
-    /**
-     * Use async request processing (when supported by the solr client)
-     */
     public boolean isAsync() {
         return async;
     }
@@ -349,9 +329,6 @@ public class SolrConfiguration {
         this.async = async;
     }
 
-    /**
-     * The time in ms to wait before the request will time out (former soTimeout).
-     */
     public Long getRequestTimeout() {
         return requestTimeout;
     }

@@ -20,7 +20,10 @@ import org.apache.camel.spi.Metadata;
 
 public final class JMXConstants {
 
-    @Metadata(label = "consumer", description = "The handback.", javaType = "Object")
+    @Metadata(label = "consumer", description = "The handback object that the consumer registered with its notification"
+                                                + " listener: the value of the handback option, or the monitor MBean when"
+                                                + " monitorType is set.",
+              javaType = "Object")
     public static final String JMX_HANDBACK = "jmx.handback";
 
     private JMXConstants() {
