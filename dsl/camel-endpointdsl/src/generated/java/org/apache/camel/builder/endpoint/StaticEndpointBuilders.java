@@ -19240,7 +19240,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
+     * Sign an XML document or plain text with an enveloped, enveloping or
+     * detached XML signature.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -19249,8 +19250,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmlsecurity-sign:name</code>
      * 
      * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different signer endpoints within the camel context.
+     * The name of the endpoint, chosen freely to tell endpoints apart. The
+     * component does not use it otherwise.
      * 
      * @param path name
      * @return the dsl builder
@@ -19260,7 +19261,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
+     * Sign an XML document or plain text with an enveloped, enveloping or
+     * detached XML signature.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -19269,8 +19271,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmlsecurity-sign:name</code>
      * 
      * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different signer endpoints within the camel context.
+     * The name of the endpoint, chosen freely to tell endpoints apart. The
+     * component does not use it otherwise.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -19282,7 +19284,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
+     * Verify the XML signatures of an XML document and return the signed
+     * content.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -19291,8 +19294,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmlsecurity-verify:name</code>
      * 
      * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different verify endpoints within the camel context.
+     * The name of the endpoint, chosen freely to tell endpoints apart. The
+     * component does not use it otherwise.
      * 
      * @param path name
      * @return the dsl builder
@@ -19302,7 +19305,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
+     * Verify the XML signatures of an XML document and return the signed
+     * content.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -19311,8 +19315,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmlsecurity-verify:name</code>
      * 
      * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different verify endpoints within the camel context.
+     * The name of the endpoint, chosen freely to tell endpoints apart. The
+     * component does not use it otherwise.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

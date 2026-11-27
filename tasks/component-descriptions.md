@@ -391,7 +391,7 @@ or removes its row.
 | camel-workday | workday |  |
 | camel-xchange | xchange | yes |
 | camel-xj | xj | yes |
-| camel-xmlsecurity | xmlsecurity-sign, xmlsecurity-verify |  |
+| camel-xmlsecurity | xmlsecurity-sign, xmlsecurity-verify | yes |
 | camel-xmpp | xmpp | yes |
 | camel-xslt | xslt |  |
 | camel-xslt-saxon | xslt-saxon |  |

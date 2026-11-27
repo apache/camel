@@ -5591,7 +5591,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
+     * Sign an XML document or plain text with an enveloped, enveloping or
+     * detached XML signature.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -5604,7 +5605,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
+     * Verify the XML signatures of an XML document and return the signed
+     * content.
      * 
      * Category: security,transformation
      * Since: 2.12
