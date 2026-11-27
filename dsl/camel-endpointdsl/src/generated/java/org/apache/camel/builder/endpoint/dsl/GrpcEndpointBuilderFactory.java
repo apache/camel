@@ -1028,8 +1028,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The location of the trusted certificates in PEM format that verify
          * the certificate of the other side: of the server for the producer, of
-         * the clients for the consumer. If not set, the producer verifies the
-         * server with the default trust store of the JVM.
+         * the clients for the consumer. For the consumer, these are the CA
+         * certificates whose client certificates the consumer accepts, required
+         * with TLS. If not set, the producer verifies the server with the
+         * default trust store of the JVM.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -1841,8 +1843,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The location of the trusted certificates in PEM format that verify
          * the certificate of the other side: of the server for the producer, of
-         * the clients for the consumer. If not set, the producer verifies the
-         * server with the default trust store of the JVM.
+         * the clients for the consumer. For the consumer, these are the CA
+         * certificates whose client certificates the consumer accepts, required
+         * with TLS. If not set, the producer verifies the server with the
+         * default trust store of the JVM.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -2347,8 +2351,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The location of the trusted certificates in PEM format that verify
          * the certificate of the other side: of the server for the producer, of
-         * the clients for the consumer. If not set, the producer verifies the
-         * server with the default trust store of the JVM.
+         * the clients for the consumer. For the consumer, these are the CA
+         * certificates whose client certificates the consumer accepts, required
+         * with TLS. If not set, the producer verifies the server with the
+         * default trust store of the JVM.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.

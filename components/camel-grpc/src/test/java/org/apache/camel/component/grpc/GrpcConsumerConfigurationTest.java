@@ -72,6 +72,18 @@ class GrpcConsumerConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    void tlsWithoutTrustCertCollectionResourceFailsToStart() {
+        FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
+                () -> consumer.receive(
+                        "grpc:localhost:0/org.apache.camel.component.grpc.PingPong?negotiationType=TLS"
+                                       + "&keyCertChainResource=file:src/test/resources/certs/server.pem"
+                                       + "&keyResource=file:src/test/resources/certs/server.key",
+                        5000));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertTrue(cause.getMessage().contains("trustCertCollectionResource"), cause.getMessage());
+    }
+
+    @Test
     void googleAuthenticationOnConsumerFailsToStart() {
         FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
                 () -> consumer.receive(
