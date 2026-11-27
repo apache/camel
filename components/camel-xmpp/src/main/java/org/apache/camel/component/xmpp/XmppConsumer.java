@@ -80,6 +80,10 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     private volatile ScheduledExecutorService scheduledExecutor;
     // the failed attempts of the delayed start (in the connection poller thread)
     private int delayedStartFailures;
+    // the start subscribes and starts its connection monitor under this lock, after it checked that the consumer is not
+    // stopping, and the stop takes it before it releases the connection: the stop waits for a delayed start that is
+    // subscribing, and a delayed start that got the connection after the stop began gives it back
+    private final Object startLock = new Object();
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -88,8 +92,9 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     @Override
     protected void doStart() throws Exception {
+        XMPPTCPConnection acquired;
         try {
-            connection = endpoint.acquireConnection(this);
+            acquired = endpoint.acquireConnection(this);
         } catch (SmackException e) {
             if (endpoint.isTestConnectionOnStartup()) {
                 throw new RuntimeCamelException("Could not connect to XMPP server.", e);
@@ -103,9 +108,26 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             }
         }
 
-        subscribe();
-        super.doStart();
-        startRobustConnectionMonitor();
+        synchronized (startLock) {
+            if (!isRunAllowed()) {
+                releaseStoppedStart();
+                return;
+            }
+            connection = acquired;
+            subscribe();
+            super.doStart();
+            startRobustConnectionMonitor();
+        }
+    }
+
+    /**
+     * Gives back the connection that a start got after the consumer began to stop: the stop had no connection to
+     * release yet (a delayed start waits for the account's lock while another consumer or producer of the account
+     * connects or logs in).
+     */
+    private void releaseStoppedStart() {
+        LOG.debug("The XMPP consumer was stopped while it was starting. Releasing its connection.");
+        endpoint.releaseConnection(this);
     }
 
     /**
@@ -146,10 +168,31 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     }
 
     protected void scheduleDelayedStart() {
-        LOG.info("Delaying XMPP consumer startup for endpoint {}. Trying again in {} seconds.",
-                URISupport.sanitizeUri(endpoint.getEndpointUri()), endpoint.getConnectionPollDelay());
         delayedStartFailures = 0;
-        getExecutor().schedule(this::delayedStart, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+        if (scheduleDelayedStartAttempt()) {
+            LOG.info("Delaying XMPP consumer startup for endpoint {}. Trying again in {} seconds.",
+                    URISupport.sanitizeUri(endpoint.getEndpointUri()), endpoint.getConnectionPollDelay());
+        }
+    }
+
+    /**
+     * Schedules the next attempt of the delayed start, unless the consumer is stopping: under startLock, so that no
+     * attempt (and no new executor) is created after the stop shut the executor down.
+     */
+    private boolean scheduleDelayedStartAttempt() {
+        synchronized (startLock) {
+            if (!isRunAllowed()) {
+                LOG.debug("Not trying again to start the XMPP consumer, as it is stopping.");
+                return false;
+            }
+            try {
+                getExecutor().schedule(this::delayedStart, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
+            } catch (RejectedExecutionException e) {
+                LOG.debug("Not trying again to start the XMPP consumer, as it is stopping.");
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -162,11 +205,26 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
      */
     private void delayedStart() {
         try {
-            connection = endpoint.acquireConnection(this);
-            subscribe();
-            super.doStart();
-            // once the start succeeded: a failed attempt must not leave a monitor running on the released connection
-            startRobustConnectionMonitor();
+            XMPPTCPConnection acquired = endpoint.acquireConnection(this);
+            synchronized (startLock) {
+                if (!isRunAllowed()) {
+                    releaseStoppedStart();
+                    return;
+                }
+                connection = acquired;
+                try {
+                    subscribe();
+                    super.doStart();
+                } catch (Throwable e) {
+                    // release what this attempt acquired, under startLock so that a stop waiting for it finds nothing
+                    // of it left: the next attempt starts again from the beginning, and a consumer that is not started
+                    // must not keep the account's connection
+                    releaseFailedStart();
+                    throw e;
+                }
+                // once the start succeeded: a failed attempt must not leave a monitor running on the released connection
+                startRobustConnectionMonitor();
+            }
             if (delayedStartFailures > 0) {
                 LOG.info("Started the XMPP consumer for endpoint {} after {} failed attempts.",
                         URISupport.sanitizeUri(endpoint.getEndpointUri()), delayedStartFailures);
@@ -174,17 +232,12 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         } catch (VirtualMachineError e) {
             throw e;
         } catch (Throwable e) {
-            // release what this attempt acquired: the next attempt starts again from the beginning, and a consumer
-            // that is not started must not keep the account's connection
-            releaseFailedStart();
+            // a failed acquireConnection released the consumer from the connection's users itself, and a failed
+            // subscribe() released what it got before it was thrown here
             if (e instanceof InterruptedException) {
-                // after the release, which disconnects the connection when nobody else uses it
                 Thread.currentThread().interrupt();
             }
-            // the executor of this thread: the stop shuts it down and clears the field, and getExecutor() would then
-            // create another one that nothing shuts down
-            ScheduledExecutorService executor = scheduledExecutor;
-            if (!isRunAllowed() || executor == null || executor.isShutdown()) {
+            if (!isRunAllowed()) {
                 LOG.debug("Not trying again to start the XMPP consumer, as it is stopping: {}", e.toString());
                 return;
             }
@@ -199,11 +252,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 LOG.debug("Could not start the XMPP consumer for endpoint {} ({} attempts). Trying again in {} seconds.",
                         uri, delayedStartFailures, endpoint.getConnectionPollDelay(), e);
             }
-            try {
-                executor.schedule(this::delayedStart, endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
-            } catch (RejectedExecutionException rejected) {
-                LOG.debug("Not trying again to start the XMPP consumer, as it is stopping: {}", e.toString());
-            }
+            scheduleDelayedStartAttempt();
         }
     }
 
@@ -313,13 +362,15 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     @Override
     protected void doStop() throws Exception {
+        // stop scheduler first: this cancels a pending delayed start and interrupts a running one
+        shutdownExecutor();
+        synchronized (startLock) {
+            // waits for a delayed start that was subscribing when the stop began (it started its connection monitor on
+            // a new executor); a delayed start that gets here later sees that the consumer is stopping
+            shutdownExecutor();
+        }
         super.doStop();
 
-        // stop scheduler first
-        if (scheduledExecutor != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
-            scheduledExecutor = null;
-        }
         if (connection != null) {
             connection.removeConnectionListener(connectionListener);
         }
@@ -336,6 +387,14 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             }
         }
         releaseConnection();
+    }
+
+    private void shutdownExecutor() {
+        ScheduledExecutorService executor = scheduledExecutor;
+        if (executor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            scheduledExecutor = null;
+        }
     }
 
     private void releaseConnection() {
