@@ -16709,7 +16709,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring Redis (camel-spring-redis)
-     * Send and receive messages from Redis.
+     * Send commands to Redis and receive the messages of Redis Pub/Sub
+     * channels, using Spring Data Redis.
      * 
      * Category: cache
      * Since: 2.11
@@ -16718,10 +16719,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-redis:host:port</code>
      * 
      * Path parameter: host (required)
-     * The host where Redis server is running.
+     * The host name or IP address of the Redis server. The endpoint connects to
+     * it with the JedisConnectionFactory that it creates when connectionFactory
+     * is not set, and does not use it otherwise. If not set, localhost is used.
      * 
      * Path parameter: port (required)
-     * Redis server port number
+     * The port of the Redis server. The endpoint connects to it with the
+     * JedisConnectionFactory that it creates when connectionFactory is not set,
+     * and does not use it otherwise. If not set, 6379 is used.
      * 
      * @param path host:port
      * @return the dsl builder
@@ -16731,7 +16736,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring Redis (camel-spring-redis)
-     * Send and receive messages from Redis.
+     * Send commands to Redis and receive the messages of Redis Pub/Sub
+     * channels, using Spring Data Redis.
      * 
      * Category: cache
      * Since: 2.11
@@ -16740,10 +16746,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-redis:host:port</code>
      * 
      * Path parameter: host (required)
-     * The host where Redis server is running.
+     * The host name or IP address of the Redis server. The endpoint connects to
+     * it with the JedisConnectionFactory that it creates when connectionFactory
+     * is not set, and does not use it otherwise. If not set, localhost is used.
      * 
      * Path parameter: port (required)
-     * Redis server port number
+     * The port of the Redis server. The endpoint connects to it with the
+     * JedisConnectionFactory that it creates when connectionFactory is not set,
+     * and does not use it otherwise. If not set, 6379 is used.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
