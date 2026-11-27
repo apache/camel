@@ -37,7 +37,8 @@ public class AsteriskProducer extends DefaultProducer {
     private final AsteriskConnection connection;
 
     public AsteriskProducer(AsteriskEndpoint endpoint) {
-        this(endpoint, new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword()));
+        this(endpoint, new AsteriskConnection(
+                endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword(), endpoint.isSsl()));
     }
 
     AsteriskProducer(AsteriskEndpoint endpoint, AsteriskConnection connection) {
@@ -45,6 +46,10 @@ public class AsteriskProducer extends DefaultProducer {
 
         this.endpoint = endpoint;
         this.connection = connection;
+    }
+
+    AsteriskConnection getConnection() {
+        return connection;
     }
 
     @Override

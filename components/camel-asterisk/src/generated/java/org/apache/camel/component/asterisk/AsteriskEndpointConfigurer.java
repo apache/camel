@@ -35,6 +35,7 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssl": target.setSsl(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -54,6 +55,7 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "password": return java.lang.String.class;
+        case "ssl": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -74,6 +76,7 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "password": return target.getPassword();
+        case "ssl": return target.isSsl();
         case "username": return target.getUsername();
         default: return null;
         }

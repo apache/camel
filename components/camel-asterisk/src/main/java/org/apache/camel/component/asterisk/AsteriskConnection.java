@@ -38,27 +38,42 @@ public final class AsteriskConnection {
     private final String host;
     private final String username;
     private final String password;
+    private final boolean ssl;
     private ManagerConnection managerConnection;
 
     public AsteriskConnection(String host, String username, String password) {
+        this(host, username, password, false);
+    }
+
+    /**
+     * Creates the connection.
+     *
+     * @param host     the host name of the Asterisk server
+     * @param username the name of the AMI user
+     * @param password the secret of the AMI user
+     * @param ssl      whether to connect to the AMI over TLS instead of plain TCP
+     */
+    public AsteriskConnection(String host, String username, String password, boolean ssl) {
         this.host = host;
         this.username = username;
         this.password = password;
+        this.ssl = ssl;
     }
 
     AsteriskConnection(ManagerConnection managerConnection) {
         this.host = managerConnection.getHostname();
         this.username = managerConnection.getUsername();
         this.password = managerConnection.getPassword();
+        this.ssl = managerConnection.isSsl();
         this.managerConnection = managerConnection;
     }
 
     public void connect() {
         if (managerConnection == null) {
-            LOG.debug("asterisk connection attempt to {} username: {}", host, username);
+            LOG.debug("asterisk connection attempt to {} username: {} ssl: {}", host, username, ssl);
 
             ManagerConnectionFactory factory = new ManagerConnectionFactory(host, username, password);
-            managerConnection = factory.createManagerConnection();
+            managerConnection = ssl ? factory.createSecureManagerConnection() : factory.createManagerConnection();
 
             LOG.debug("asterisk connection established!");
         }
@@ -113,6 +128,10 @@ public final class AsteriskConnection {
             throws IllegalArgumentException, IllegalStateException, IOException, TimeoutException {
 
         return managerConnection.sendAction(action);
+    }
+
+    ManagerConnection getManagerConnection() {
+        return managerConnection;
     }
 
     public ResponseEvents sendEventGeneratingAction(EventGeneratingAction action)

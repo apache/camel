@@ -94,6 +94,48 @@ public interface AsteriskEndpointBuilderFactory {
             doSetProperty("username", username);
             return this;
         }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS on the port that the component connects to
+         * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
+         * of the server is checked with the default trust store of the JVM
+         * (javax.net.ssl.trustStore).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointConsumerBuilder ssl(boolean ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS on the port that the component connects to
+         * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
+         * of the server is checked with the default trust store of the JVM
+         * (javax.net.ssl.trustStore).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointConsumerBuilder ssl(String ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
     }
 
     /**
@@ -324,6 +366,48 @@ public interface AsteriskEndpointBuilderFactory {
             doSetProperty("action", action);
             return this;
         }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS on the port that the component connects to
+         * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
+         * of the server is checked with the default trust store of the JVM
+         * (javax.net.ssl.trustStore).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointProducerBuilder ssl(boolean ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS on the port that the component connects to
+         * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
+         * of the server is checked with the default trust store of the JVM
+         * (javax.net.ssl.trustStore).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointProducerBuilder ssl(String ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
     }
 
     /**
@@ -441,6 +525,48 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AsteriskEndpointBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS on the port that the component connects to
+         * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
+         * of the server is checked with the default trust store of the JVM
+         * (javax.net.ssl.trustStore).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointBuilder ssl(boolean ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS on the port that the component connects to
+         * (tlsenable and tlsbindaddr in the manager.conf file). The certificate
+         * of the server is checked with the default trust store of the JVM
+         * (javax.net.ssl.trustStore).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointBuilder ssl(String ssl) {
+            doSetProperty("ssl", ssl);
             return this;
         }
     }

@@ -92,6 +92,14 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
     @Metadata(required = true)
     private String password;
 
+    @UriParam(label = "security", defaultValue = "false",
+              description = "Whether to connect to the Asterisk Manager Interface (AMI) over TLS instead of plain TCP, so that"
+                            + " the username, the password, the actions and the events are not sent in clear text. The"
+                            + " Asterisk server must accept AMI over TLS on the port that the component connects to"
+                            + " (tlsenable and tlsbindaddr in the manager.conf file). The certificate of the server is"
+                            + " checked with the default trust store of the JVM (javax.net.ssl.trustStore).")
+    private boolean ssl;
+
     public AsteriskEndpoint(String uri, AsteriskComponent component) {
         super(uri, component);
     }
@@ -155,6 +163,14 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
 
     public void setAction(AsteriskAction action) {
         this.action = action;
+    }
+
+    public boolean isSsl() {
+        return ssl;
+    }
+
+    public void setSsl(boolean ssl) {
+        this.ssl = ssl;
     }
 
     public String getHostname() {
