@@ -62,6 +62,67 @@ class SensitiveUtilsTest {
     }
 
     @Test
+    void testIsSensitiveHeader() {
+        // matches a sensitive configuration key as a whole
+        assertThat(SensitiveUtils.isSensitiveHeader("Authorization")).isTrue();
+
+        // vendor headers whose name ends in a word that marks a credential
+        // AWS
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Api-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Auth-Token")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Amz-Security-Token")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Amz-Server-Side-Encryption-Customer-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Amz-Copy-Source-Server-Side-Encryption-Customer-Key")).isTrue();
+        // Azure
+        assertThat(SensitiveUtils.isSensitiveHeader("Ocp-Apim-Subscription-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Functions-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Ms-Encryption-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Ms-Copy-Source-Authorization")).isTrue();
+        // Google
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Goog-Api-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Goog-Encryption-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Serverless-Authorization")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Forwarded-Authorization")).isTrue();
+        // HashiCorp
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Vault-Token")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Consul-Token")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Nomad-Token")).isTrue();
+        // others
+        assertThat(SensitiveUtils.isSensitiveHeader("Private-Token")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("Job-Token")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Shopify-Access-Token")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-RapidAPI-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("DD-API-KEY")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("DD-APPLICATION-KEY")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Sentry-Auth")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Registry-Auth")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("Proxy-Authorization")).isTrue();
+        // case does not matter
+        assertThat(SensitiveUtils.isSensitiveHeader("x-amz-security-token")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-AMZ-SECURITY-TOKEN")).isTrue();
+
+        // credential headers that the rule misses are listed explicitly
+        assertThat(SensitiveUtils.isSensitiveHeader("Cookie")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("Set-Cookie")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Goog-Iap-Jwt-Assertion")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Honeycomb-Team")).isTrue();
+
+        // a well-known header that ends in such a word but carries no secret
+        assertThat(SensitiveUtils.isSensitiveHeader("Idempotency-Key")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("Access-Control-Allow-Credentials")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("Sec-WebSocket-Key")).isFalse();
+
+        // ordinary headers
+        assertThat(SensitiveUtils.isSensitiveHeader("Content-Type")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Trace")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("Accept")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("User-Agent")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("WWW-Authenticate")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader(null)).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("")).isFalse();
+    }
+
+    @Test
     void serverAndVaultSecretOptionsAreSensitive() {
         assertThat(SensitiveUtils.containsSensitive("camel.server.jwtKeystorePassword")).isTrue();
         assertThat(SensitiveUtils.containsSensitive("camel.management.jwtKeystorePassword")).isTrue();
