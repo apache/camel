@@ -31,17 +31,26 @@ public class AvroConsumer extends DefaultConsumer {
         return (AvroEndpoint) super.getEndpoint();
     }
 
+    private volatile boolean registered;
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ((AvroComponent) getEndpoint().getComponent()).register(getEndpoint().getConfiguration()
-                .getUriAuthority(), getEndpoint().getConfiguration().getMessageName(), this);
+        AvroConfiguration configuration = getEndpoint().getConfiguration();
+        ((AvroComponent) getEndpoint().getComponent()).register(configuration.getListenerKey(),
+                configuration.getMessageName(), this);
+        registered = true;
     }
 
     @Override
     protected void doStop() throws Exception {
-        ((AvroComponent) getEndpoint().getComponent()).unregister(getEndpoint().getConfiguration().getUriAuthority(),
-                getEndpoint().getConfiguration().getMessageName());
+        // a consumer that failed to register must not unregister the consumer that holds its message name
+        if (registered) {
+            registered = false;
+            AvroConfiguration configuration = getEndpoint().getConfiguration();
+            ((AvroComponent) getEndpoint().getComponent()).unregister(configuration.getListenerKey(),
+                    configuration.getMessageName(), this);
+        }
         super.doStop();
     }
 }

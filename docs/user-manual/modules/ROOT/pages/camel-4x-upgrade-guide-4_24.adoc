@@ -12684,6 +12684,18 @@ ignored without a message. An endpoint with `sslContextParameters`, or with `use
 global `SSLContextParameters`, now fails to start. Remove the option, and configure the trust store (and the key store
 for a client certificate) with the `javax.net.ssl.*` system properties of the JVM.
 
+=== camel-avro-rpc - consumers on the same host and port must match, protocolLocation is read, uriAuthority is deprecated
+
+The consumers on the same host and port share one Avro server, which the first consumer that starts creates with its
+transport, protocol and `reflectionProtocol`. Before, a later consumer with another transport, protocol or
+`reflectionProtocol` value was added to that server and then served with the wrong protocol or responder, or not at
+all. Such a consumer now fails to start; give it its own port.
+
+The `protocolLocation` option, which had no effect, now loads the protocol from an Avro protocol file in JSON
+(`.avpr`). It is used when neither `protocol` nor `protocolClassName` is set.
+
+The `uriAuthority` option is deprecated. It never had an effect, as the component always set it from the endpoint URI.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
