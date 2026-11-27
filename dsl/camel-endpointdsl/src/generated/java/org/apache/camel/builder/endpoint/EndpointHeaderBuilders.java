@@ -637,7 +637,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS RedshiftData (camel-aws2-redshift)
-     * Perform operations on AWS Redshift using Redshift Data API.
+     * Run SQL statements and read database metadata in Amazon Redshift through
+     * the Amazon Redshift Data API.
      * 
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1
