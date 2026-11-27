@@ -34,8 +34,8 @@ public class CamelCronConfiguration {
 
     @UriParam(description = "The cron expression of when to trigger, with five to seven parts separated by spaces: seconds"
                             + " (optional), minutes, hours, day of month, month, day of week, and year (optional). A"
-                            + " five-part expression has no seconds and follows the Unix cron syntax. A + in the value is"
-                            + " read as a space.")
+                            + " five-part expression has no seconds and follows the Unix cron syntax. camel-spring does not"
+                            + " support the year. A + in the value is read as a space.")
     @Metadata(required = true)
     private String schedule;
 

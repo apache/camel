@@ -30,7 +30,11 @@ public final class CronHelper {
     }
 
     /**
-     * Helper to lookup/create an instance of {@link CamelCronService}
+     * Helper to lookup/create an instance of {@link CamelCronService}.
+     * <p>
+     * Without a name, the only {@link CamelCronService} of the registry is used, or else the one that a module on the
+     * classpath provides. With a name, the bean of the registry with this name is used, or else the cron service of a
+     * module on the classpath whose id is the name, such as quartz or spring. A name that matches neither fails.
      */
     public static CamelCronService resolveCamelCronService(CamelContext context, String name) {
         // Lookup the registry first
@@ -44,8 +48,30 @@ public final class CronHelper {
             return service;
         }
 
-        // Fallback to factory finder
-        return ResolverHelper.resolveBootstrapService(context, FACTORY_KEY, CamelCronService.class).orElse(null);
+        if (ObjectHelper.isEmpty(name)) {
+            // Fallback to factory finder
+            return ResolverHelper.resolveBootstrapService(context, FACTORY_KEY, CamelCronService.class).orElse(null);
+        }
+
+        // the cron service of a module on the classpath, by its id, such as cron/cron-service-quartz
+        service = ResolverHelper.resolveBootstrapService(context, FACTORY_KEY + "-" + name, CamelCronService.class)
+                .orElse(null);
+        if (service != null) {
+            return service;
+        }
+        // a module that has no cron service file of its id: its cron service when the id matches
+        service = ResolverHelper.resolveBootstrapService(context, FACTORY_KEY, CamelCronService.class).orElse(null);
+        if (service != null && name.equals(service.getId())) {
+            return service;
+        }
+        throw new IllegalArgumentException(
+                "Cannot find the CamelCronService " + name + " of the cronService option: no CamelCronService bean has"
+                                           + " this name, and no module on the classpath provides a cron service with"
+                                           + " this id (such as quartz for camel-quartz, or spring for camel-spring)"
+                                           + (service != null
+                                                   ? "; the cron service on the classpath has the id "
+                                                     + service.getId()
+                                                   : ""));
     }
 
 }

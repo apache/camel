@@ -274,6 +274,17 @@ messages, and grew with each one. An exception from a predicate of `onException`
 Split is no longer added to it either, and is logged instead. Use `throwException(MyException.class, "...")`, or
 `exceptionType` and `message`, to get a new exception for each message, with the previous exception as suppressed.
 
+=== camel-cron - cronService can be the id of a cron service, and fails when nothing matches
+
+The `cronService` option can now also be the id of the cron service of a module on the classpath: `quartz` for
+camel-quartz or `spring` for camel-spring. This selects that module when both are on the classpath. When no
+`CamelCronService` bean has the name of `cronService` and no module on the classpath provides a cron service with that
+id, the component now fails to start. Before, it used the cron service found on the classpath without a warning.
+
+With camel-spring, a seven-part schedule (with a year) now fails when the endpoint is created, with a message that
+names the spring cron service. Before, the endpoint was created and the route failed to start, as a Spring cron
+expression has no year.
+
 === camel-support - a scheduled poll consumer is DOWN after a VirtualMachineError until the route is restarted
 
 When a poll of a scheduled poll consumer (such as `file`, `ftp` or `scheduler`) fails with a `VirtualMachineError`
