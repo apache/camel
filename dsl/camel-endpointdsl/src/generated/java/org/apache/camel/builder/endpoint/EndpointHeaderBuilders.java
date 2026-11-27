@@ -1104,8 +1104,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
-     * Based on Cassandra Java Driver provided by DataStax.
+     * Query and update an Apache Cassandra database with CQL statements.
      * 
      * Category: database,bigdata
      * Since: 2.15
