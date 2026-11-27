@@ -260,7 +260,7 @@ or removes its row.
 | camel-langchain4j-web-search | langchain4j-web-search |  |
 | camel-language | language |  |
 | camel-ldap | ldap |  |
-| camel-ldif | ldif |  |
+| camel-ldif | ldif | yes |
 | camel-log | log |  |
 | camel-lucene | lucene |  |
 | camel-lumberjack | lumberjack |  |
