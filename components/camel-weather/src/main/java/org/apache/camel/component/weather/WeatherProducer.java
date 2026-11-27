@@ -51,8 +51,9 @@ public class WeatherProducer extends DefaultProducer {
         }
 
         HttpClient httpClient = getEndpoint().getConfiguration().getHttpClient();
-        String uri = q;
-        HttpGet method = new HttpGet(uri);
+        HttpGet method = new HttpGet(q);
+        // the query with the appid masked, for the header, the log and error messages
+        String uri = WeatherQuery.sanitize(q);
         httpClient.execute(
                 method,
                 response -> {
