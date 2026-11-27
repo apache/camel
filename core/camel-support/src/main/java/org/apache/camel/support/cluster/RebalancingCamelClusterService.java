@@ -54,8 +54,9 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
     protected CamelContext camelContext;
     protected final long periodMillis;
 
-    // whether the previous pass failed (only used by the passes, one at a time)
+    // whether the previous pass failed, and with a VirtualMachineError (only used by the passes, one at a time)
     private boolean previousPassFailed;
+    private boolean previousPassFatal;
 
     public RebalancingCamelClusterService(CamelPreemptiveClusterService delegate, long periodMillis) {
         this.delegate = ObjectHelper.notNull(delegate, "delegate");
@@ -84,6 +85,7 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
             ScheduledExecutorService executor = getCamelContext().getExecutorServiceManager()
                     .newSingleThreadScheduledExecutor(this, "RebalancingClusterService");
             previousPassFailed = false;
+            previousPassFatal = false;
             serializedExecutor = executor;
             executor.execute(() -> reconcileAndReschedule(executor));
         }
@@ -98,6 +100,15 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
             // the pending pass is dropped (a scheduled executor runs its delayed tasks after a plain shutdown), so a
             // start does not add a second chain of passes
             getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            // and a pass that is still running is given up to one period to finish (shutdownNow does not wait for it),
+            // so it does not run at the same time as the first pass after a quick start
+            try {
+                if (!getCamelContext().getExecutorServiceManager().awaitTermination(executor, periodMillis)) {
+                    LOG.debug("The running rebalancing pass did not finish within {} ms of the stop", periodMillis);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
         ServiceHelper.stopService(delegate);
     }
@@ -122,15 +133,20 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         try {
             reconcile();
             previousPassFailed = false;
+            previousPassFatal = false;
         } catch (Throwable e) {
-            if (previousPassFailed) {
-                LOG.debug("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
+            // a VirtualMachineError (such as an OutOfMemoryError) is logged at ERROR, another failure at WARN, each with
+            // the stack trace and only the first time in a row: a failure that repeats every period is logged at DEBUG
+            boolean fatal = ObjectHelper.getVirtualMachineError(e) != null;
+            if (fatal && !previousPassFatal) {
+                LOG.error("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
+            } else if (!fatal && !previousPassFailed) {
+                LOG.warn("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
             } else {
-                LOG.warn("Error while rebalancing the partitions (will try again in {} ms): {}", periodMillis,
-                        e.toString());
-                LOG.debug("Exception thrown while rebalancing the partitions", e);
+                LOG.debug("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
             }
             previousPassFailed = true;
+            previousPassFatal = fatal;
         } finally {
             if (executor == serializedExecutor) {
                 try {
