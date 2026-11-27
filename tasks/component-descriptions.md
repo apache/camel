@@ -113,7 +113,7 @@ or removes its row.
 | camel-azure-eventhubs | azure-eventhubs |  |
 | camel-azure-files | azure-files |  |
 | camel-azure-functions | azure-functions |  |
-| camel-azure-iothub | azure-iothub |  |
+| camel-azure-iothub | azure-iothub | yes |
 | camel-azure-key-vault | azure-key-vault |  |
 | camel-azure-servicebus | azure-servicebus |  |
 | camel-azure-storage-blob | azure-storage-blob |  |
