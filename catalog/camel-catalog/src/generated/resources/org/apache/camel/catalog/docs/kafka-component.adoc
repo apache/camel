@@ -322,7 +322,9 @@ You can use an asynchronous commit as well by configuring the `KafkaManualCommit
 
 Then `commit()` records the offset, and the consumer thread commits it before its next poll, using the Kafka asynchronous commit API.
 So the asynchronous commit can be called from a thread other than the consumer thread, for example after an aggregator.
-A commit called after the partition was revoked from the consumer, for example in a rebalance, is not made.
+A commit of a record that was polled before its partition was revoked from the consumer (for example in a rebalance,
+also when the partition is assigned to the consumer again) or before the route was suspended and resumed is not made:
+the consumer reads that record again.
 
 With the synchronous or the asynchronous commit, a partition that is revoked from the consumer (in a rebalance, or when
 the consumer stops) is committed only up to the last record that the route committed with `KafkaManualCommit.commit()`,

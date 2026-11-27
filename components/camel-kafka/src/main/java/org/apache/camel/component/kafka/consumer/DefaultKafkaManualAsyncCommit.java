@@ -18,17 +18,25 @@ package org.apache.camel.component.kafka.consumer;
 
 public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit implements KafkaAsyncManualCommit {
     private final CommitManager commitManager;
+    // the assignment of the partition to the consumer in which the record was polled
+    private final long assignment;
 
     public DefaultKafkaManualAsyncCommit(KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload,
                                          KafkaManualCommitFactory.KafkaRecordPayload recordPayload,
                                          CommitManager commitManager) {
         super(camelExchangePayload, recordPayload);
         this.commitManager = commitManager;
+        this.assignment = commitManager instanceof AsyncCommitManager async ? async.assignmentOf(recordPayload.partition) : 0;
     }
 
     @Override
     public void commit() {
         // can be called from another thread than the consumer, such as the one of an aggregator
-        commitManager.requestCommit(getPartition(), getRecordOffset());
+        if (commitManager instanceof AsyncCommitManager async) {
+            // not committed if the partition was revoked or lost since the record was polled
+            async.requestCommit(getPartition(), getRecordOffset(), assignment);
+        } else {
+            commitManager.requestCommit(getPartition(), getRecordOffset());
+        }
     }
 }
