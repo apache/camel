@@ -341,7 +341,7 @@ or removes its row.
 | camel-smpp | smpp, smpps |  |
 | camel-snmp | snmp |  |
 | camel-solr | solr | yes |
-| camel-spiffe | spiffe |  |
+| camel-spiffe | spiffe | yes |
 | camel-splunk-hec | splunk-hec |  |
 | camel-spring | spring-event | yes |
 | camel-spring-ai-chat | spring-ai-chat |  |

@@ -16826,7 +16826,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spiffe:label</code>
      * 
      * Path parameter: label
-     * Logical name of the endpoint
+     * Free text to tell several spiffe endpoints apart, for example spiffe:mint
+     * and spiffe:verify. The component does not use the value.
      * 
      * @param path label
      * @return the dsl builder
@@ -16846,7 +16847,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spiffe:label</code>
      * 
      * Path parameter: label
-     * Logical name of the endpoint
+     * Free text to tell several spiffe endpoints apart, for example spiffe:mint
+     * and spiffe:verify. The component does not use the value.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
