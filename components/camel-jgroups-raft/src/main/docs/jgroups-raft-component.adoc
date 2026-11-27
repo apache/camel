@@ -54,7 +54,7 @@ in the `camel-jgroups-raft` JAR unless the application has its own `raft.xml` fi
 
 The `raft.xml` in the JAR is a sample for development and tests:
 
-* it uses UDP multicast (`228.5.5.5`), without authentication or encryption, so any host on the same network that uses
+* it uses UDP multicast (`228.5.5.5`), without authentication or encryption. Any host on the same network that uses
 the same cluster name can join the cluster and take part in the Raft log, and the messages are sent in clear text;
 * it lists `A` as the only member in the `members` attribute of `RAFT`.
 
