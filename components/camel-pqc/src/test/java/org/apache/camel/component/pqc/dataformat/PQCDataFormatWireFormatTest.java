@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <li>reads wire format v2 on unmarshal (round-trip)</li>
  * <li>reads legacy wire format v1 on unmarshal (backward compatibility)</li>
  * <li>rejects truncated, wrong-version, and wrong-format-type headers</li>
- * <li>rejects algorithm mismatches between header and configuration</li>
+ * <li>rejects algorithm mismatches between header and configuration (KEM and symmetric)</li>
  * </ul>
  */
 public class PQCDataFormatWireFormatTest extends CamelTestSupport {
@@ -326,6 +326,32 @@ public class PQCDataFormatWireFormatTest extends CamelTestSupport {
             IOException ex = assertThrows(IOException.class, () -> fmt.unmarshal(exchange, in));
             assertTrue(ex.getMessage().contains("encrypted with KEM algorithm"),
                     "Expected KEM algorithm mismatch error but got: " + ex.getMessage());
+        } finally {
+            fmt.stop();
+        }
+    }
+
+    @Test
+    void symAlgorithmMismatchIsRejected() throws Exception {
+        PQCDataFormat fmt = newFormat();
+        fmt.start();
+        try {
+            Exchange exchange = new DefaultExchange(context());
+            byte[] original = PAYLOAD.getBytes(StandardCharsets.UTF_8);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            fmt.marshal(exchange, original, out);
+            byte[] ciphertext = out.toByteArray();
+
+            // Overwrite the symmetric algorithm ID in the header with ARIA (0x0502) instead of AES (0x0501)
+            int ariaId = PQCAlgorithmId.ARIA.getId();
+            ciphertext[6] = (byte) (ariaId >> 8);
+            ciphertext[7] = (byte) (ariaId & 0xFF);
+
+            ByteArrayInputStream in = new ByteArrayInputStream(ciphertext);
+            IOException ex = assertThrows(IOException.class, () -> fmt.unmarshal(exchange, in));
+            assertTrue(ex.getMessage().contains("encrypted with symmetric algorithm"),
+                    "Expected symmetric algorithm mismatch error but got: " + ex.getMessage());
         } finally {
             fmt.stop();
         }
