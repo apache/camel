@@ -11418,7 +11418,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
-     * LangChain4j Agent component
+     * Send a message to an AI agent of LangChain4j, which can call Camel routes
+     * and MCP servers as tools, and return its answer.
      * 
      * Category: ai
      * Since: 4.14
@@ -11427,7 +11428,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>langchain4j-agent:agentId</code>
      * 
      * Path parameter: agentId (required)
-     * The Agent id
+     * The id of the agent. When none of agent, agentFactory, agentConfiguration
+     * and provider is set, the producer looks up the bean of type Agent with
+     * this name in the registry.
      * 
      * @param path agentId
      * @return the dsl builder
@@ -11437,7 +11440,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
-     * LangChain4j Agent component
+     * Send a message to an AI agent of LangChain4j, which can call Camel routes
+     * and MCP servers as tools, and return its answer.
      * 
      * Category: ai
      * Since: 4.14
@@ -11446,7 +11450,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>langchain4j-agent:agentId</code>
      * 
      * Path parameter: agentId (required)
-     * The Agent id
+     * The id of the agent. When none of agent, agentFactory, agentConfiguration
+     * and provider is set, the producer looks up the bean of type Agent with
+     * this name in the registry.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
