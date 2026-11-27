@@ -36,7 +36,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Produce or consume Apache Avro RPC services.
+ * Call and expose Apache Avro RPC services over HTTP or Netty.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro RPC", syntax = "avro:transport:host:port/messageName",
              category = { Category.RPC }, headersClass = AvroConstants.class)

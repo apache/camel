@@ -38,7 +38,7 @@ import org.apache.camel.support.processor.UnmarshalProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * Use a Camel Data Format as a regular Camel Component.
+ * Marshal or unmarshal the message body with a Camel data format, such as JAXB, CSV or JSON.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation",
              remote = false, producerOnly = true,
@@ -54,10 +54,15 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     private AsyncProcessor processor;
     private DataFormat dataFormat;
 
-    @UriPath(description = "Name of data format")
+    @UriPath(description = "The name of the data format, for example jaxb, csv or jackson. The endpoint gets its own instance"
+                           + " of the data format, configured first from the global camel.dataformat properties of this data"
+                           + " format and then from the other URI parameters of the endpoint. If no data format of this name"
+                           + " can be created, the DataFormat bean of this name in the registry is used.")
     @Metadata(required = true)
     private String name;
-    @UriPath(enums = "marshal,unmarshal")
+    @UriPath(enums = "marshal,unmarshal",
+             description = "Whether the producer marshals the message body into the data format (marshal) or unmarshals"
+                           + " the message body from the data format (unmarshal), as the marshal and unmarshal EIPs do.")
     @Metadata(required = true)
     private String operation;
 
@@ -94,9 +99,6 @@ public class DataFormatEndpoint extends DefaultEndpoint {
         return operation;
     }
 
-    /**
-     * Operation to use either marshal or unmarshal
-     */
     public void setOperation(String operation) {
         this.operation = operation;
     }

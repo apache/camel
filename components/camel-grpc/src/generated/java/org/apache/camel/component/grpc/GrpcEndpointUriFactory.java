@@ -24,7 +24,7 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(48);
         props.add("authenticationType");
         props.add("autoDiscoverClientInterceptors");
         props.add("autoDiscoverServerInterceptors");
@@ -40,8 +40,10 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("initialFlowControlWindow");
         props.add("jwtAlgorithm");
         props.add("jwtIssuer");
+        props.add("jwtMaxTokenAge");
         props.add("jwtSecret");
         props.add("jwtSubject");
+        props.add("jwtTokenLifetime");
         props.add("keepAliveTime");
         props.add("keepAliveTimeout");
         props.add("keyCertChainResource");

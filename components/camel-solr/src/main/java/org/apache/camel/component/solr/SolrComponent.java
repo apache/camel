@@ -68,8 +68,8 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
     private boolean enableSSL;
     @Metadata(label = "security",
               description = "The TLS configuration (key store, trust store, protocols, cipher suites, named groups) of the"
-                            + " clients that Camel creates, for all the endpoints. The sslContextParameters option of an endpoint"
-                            + " replaces it.")
+                            + " clients that Camel creates, for all the endpoints. It is used when the enableSSL option is"
+                            + " enabled. The sslContextParameters option of an endpoint replaces it.")
     private SSLContextParameters sslContextParameters;
     @Metadata(label = "security", defaultValue = "false",
               description = "Whether the endpoints use the global SSL context parameters of the CamelContext when neither the"

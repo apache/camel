@@ -66,8 +66,13 @@ public interface JgroupsComponentBuilderFactory {
         }
     
         /**
-         * Specifies configuration properties of the JChannel used by the
-         * endpoint.
+         * The JGroups configuration of the JChannel that each endpoint creates,
+         * as an XML file, a URL or a classpath resource. If neither this option
+         * nor the channel option is set, the default udp.xml in the JGroups JAR
+         * is used, and a WARN is logged when an endpoint starts. That udp.xml
+         * is meant for development and tests: it uses UDP multicast without
+         * authentication or encryption. In production, set your own
+         * configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

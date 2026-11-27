@@ -24,7 +24,8 @@ public final class AvroConstants {
     public static final String AVRO_HTTP_TRANSPORT = "http";
     public static final String AVRO_MESSAGE_NAME_SEPARATOR = "/";
 
-    @Metadata(description = "The name of the message to send. In consumer overrides message name from URI (if any)",
+    @Metadata(description = "The name of the protocol message to call. The producer reads it, and it takes precedence over the"
+                            + " messageName of the endpoint. The consumer sets it to the name of the called message.",
               javaType = "String")
     public static final String AVRO_MESSAGE_NAME = "CamelAvroMessageName";
 

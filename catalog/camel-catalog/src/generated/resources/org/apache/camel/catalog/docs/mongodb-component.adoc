@@ -724,6 +724,10 @@ updated. All
 http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierOperations[modifier
 operations] from MongoDB are supported.
 
+The body can also be a JSON array of these two documents as text: a `String`, a `byte[]`, an `InputStream` or a
+stream-cached body, as a Kafka or file consumer or an HTTP request delivers it. This also makes the update usable
+from YAML and XML routes.
+
 [NOTE]
 ====
 *Multiupdates* 
@@ -835,6 +839,27 @@ Unordered operations are executed in parallel, and this behavior is not guarante
 Perform an aggregation with the given pipeline contained in the
 body.
 *Aggregations could be long and heavy operations. Use with care.*
+
+The pipeline can be a `List<Bson>`, or a JSON array of its stages as text: a `String`, a `byte[]`, an
+`InputStream` or a stream-cached body. For example, in YAML:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:aggregate
+      steps:
+        - setBody:
+            constant: '[{"$match": {"scientist": "Darwin"}}, {"$group": {"_id": "$scientist", "count": {"$sum": 1}}}]'
+        - to:
+            uri: mongodb:myDb
+            parameters:
+              database: science
+              collection: notableScientists
+              operation: aggregate
+----
+
+In Java, with the Bson builders:
 
 ._Java-only: requires Bson aggregation pipeline_
 

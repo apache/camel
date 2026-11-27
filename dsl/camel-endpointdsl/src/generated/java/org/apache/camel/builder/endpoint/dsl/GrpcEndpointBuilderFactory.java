@@ -750,9 +750,10 @@ public interface GrpcEndpointBuilderFactory {
          * The authentication of the calls, in addition to the transport
          * security. GOOGLE makes the producer send the OAuth2 access tokens of
          * the Google service account in serviceAccountResource, and requires
-         * negotiationType TLS. JWT makes the producer send a JSON Web Token
-         * signed with jwtSecret, and the consumer accept only calls with a
-         * valid token.
+         * negotiationType TLS. GOOGLE is supported only on the producer: a
+         * consumer with GOOGLE fails to start. JWT makes the producer send a
+         * JSON Web Token signed with jwtSecret, and the consumer accept only
+         * calls with a valid token.
          * 
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
@@ -771,9 +772,10 @@ public interface GrpcEndpointBuilderFactory {
          * The authentication of the calls, in addition to the transport
          * security. GOOGLE makes the producer send the OAuth2 access tokens of
          * the Google service account in serviceAccountResource, and requires
-         * negotiationType TLS. JWT makes the producer send a JSON Web Token
-         * signed with jwtSecret, and the consumer accept only calls with a
-         * valid token.
+         * negotiationType TLS. GOOGLE is supported only on the producer: a
+         * consumer with GOOGLE fails to start. JWT makes the producer send a
+         * JSON Web Token signed with jwtSecret, and the consumer accept only
+         * calls with a valid token.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
@@ -837,6 +839,46 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder jwtIssuer(String jwtIssuer) {
             doSetProperty("jwtIssuer", jwtIssuer);
+            return this;
+        }
+        /**
+         * The maximum age of a JSON Web Token that the consumer accepts, in
+         * milliseconds, from its iat (issued at) claim. When set, the consumer
+         * rejects tokens that are older, or that have no iat claim. The
+         * consumer always rejects a token whose exp (expires at) claim has
+         * passed. The default 0 does not check the age, so tokens without an
+         * exp claim are valid until jwtSecret changes. Used when
+         * authenticationType is JWT.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: security
+         * 
+         * @param jwtMaxTokenAge the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder jwtMaxTokenAge(long jwtMaxTokenAge) {
+            doSetProperty("jwtMaxTokenAge", jwtMaxTokenAge);
+            return this;
+        }
+        /**
+         * The maximum age of a JSON Web Token that the consumer accepts, in
+         * milliseconds, from its iat (issued at) claim. When set, the consumer
+         * rejects tokens that are older, or that have no iat claim. The
+         * consumer always rejects a token whose exp (expires at) claim has
+         * passed. The default 0 does not check the age, so tokens without an
+         * exp claim are valid until jwtSecret changes. Used when
+         * authenticationType is JWT.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: security
+         * 
+         * @param jwtMaxTokenAge the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder jwtMaxTokenAge(String jwtMaxTokenAge) {
+            doSetProperty("jwtMaxTokenAge", jwtMaxTokenAge);
             return this;
         }
         /**
@@ -1523,9 +1565,10 @@ public interface GrpcEndpointBuilderFactory {
          * The authentication of the calls, in addition to the transport
          * security. GOOGLE makes the producer send the OAuth2 access tokens of
          * the Google service account in serviceAccountResource, and requires
-         * negotiationType TLS. JWT makes the producer send a JSON Web Token
-         * signed with jwtSecret, and the consumer accept only calls with a
-         * valid token.
+         * negotiationType TLS. GOOGLE is supported only on the producer: a
+         * consumer with GOOGLE fails to start. JWT makes the producer send a
+         * JSON Web Token signed with jwtSecret, and the consumer accept only
+         * calls with a valid token.
          * 
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
@@ -1544,9 +1587,10 @@ public interface GrpcEndpointBuilderFactory {
          * The authentication of the calls, in addition to the transport
          * security. GOOGLE makes the producer send the OAuth2 access tokens of
          * the Google service account in serviceAccountResource, and requires
-         * negotiationType TLS. JWT makes the producer send a JSON Web Token
-         * signed with jwtSecret, and the consumer accept only calls with a
-         * valid token.
+         * negotiationType TLS. GOOGLE is supported only on the producer: a
+         * consumer with GOOGLE fails to start. JWT makes the producer send a
+         * JSON Web Token signed with jwtSecret, and the consumer accept only
+         * calls with a valid token.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
@@ -1642,6 +1686,46 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder jwtSubject(String jwtSubject) {
             doSetProperty("jwtSubject", jwtSubject);
+            return this;
+        }
+        /**
+         * How long a JSON Web Token that the producer sends is valid, in
+         * milliseconds: the token has the iat (issued at) claim and an exp
+         * (expires at) claim this much later. The producer creates a new token
+         * when less than a tenth of the lifetime, at most one minute, is left.
+         * A value of 0 sends a token without iat and exp claims, which is valid
+         * until jwtSecret changes. Used when authenticationType is JWT.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 3600000
+         * Group: security
+         * 
+         * @param jwtTokenLifetime the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder jwtTokenLifetime(long jwtTokenLifetime) {
+            doSetProperty("jwtTokenLifetime", jwtTokenLifetime);
+            return this;
+        }
+        /**
+         * How long a JSON Web Token that the producer sends is valid, in
+         * milliseconds: the token has the iat (issued at) claim and an exp
+         * (expires at) claim this much later. The producer creates a new token
+         * when less than a tenth of the lifetime, at most one minute, is left.
+         * A value of 0 sends a token without iat and exp claims, which is valid
+         * until jwtSecret changes. Used when authenticationType is JWT.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 3600000
+         * Group: security
+         * 
+         * @param jwtTokenLifetime the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder jwtTokenLifetime(String jwtTokenLifetime) {
+            doSetProperty("jwtTokenLifetime", jwtTokenLifetime);
             return this;
         }
         /**
@@ -2029,9 +2113,10 @@ public interface GrpcEndpointBuilderFactory {
          * The authentication of the calls, in addition to the transport
          * security. GOOGLE makes the producer send the OAuth2 access tokens of
          * the Google service account in serviceAccountResource, and requires
-         * negotiationType TLS. JWT makes the producer send a JSON Web Token
-         * signed with jwtSecret, and the consumer accept only calls with a
-         * valid token.
+         * negotiationType TLS. GOOGLE is supported only on the producer: a
+         * consumer with GOOGLE fails to start. JWT makes the producer send a
+         * JSON Web Token signed with jwtSecret, and the consumer accept only
+         * calls with a valid token.
          * 
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
@@ -2050,9 +2135,10 @@ public interface GrpcEndpointBuilderFactory {
          * The authentication of the calls, in addition to the transport
          * security. GOOGLE makes the producer send the OAuth2 access tokens of
          * the Google service account in serviceAccountResource, and requires
-         * negotiationType TLS. JWT makes the producer send a JSON Web Token
-         * signed with jwtSecret, and the consumer accept only calls with a
-         * valid token.
+         * negotiationType TLS. GOOGLE is supported only on the producer: a
+         * consumer with GOOGLE fails to start. JWT makes the producer send a
+         * JSON Web Token signed with jwtSecret, and the consumer accept only
+         * calls with a valid token.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.

@@ -30,9 +30,9 @@ import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,6 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 /**
  * Testing monitoring items over multiple connections
  */
-@Disabled("due to Milo 1.0.5 API migration - certificate-based authentication needs further investigation")
 public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest {
 
     private static final String DIRECT_START_1 = "direct:start1";
@@ -85,6 +84,9 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
     @Produce(DIRECT_START_1)
     protected ProducerTemplate producer1;
 
+    @TempDir
+    Path baseDir;
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();
@@ -97,7 +99,6 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
     protected void configureMiloServer(final MiloServerComponent server) throws Exception {
         super.configureMiloServer(server);
 
-        final Path baseDir = Paths.get("target/testing/cert/default");
         final Path trusted = baseDir.resolve("trusted/certs");
 
         Files.createDirectories(trusted);
@@ -129,15 +130,16 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
 
         // item 1 ... only this one receives
         this.test1Endpoint.setExpectedCount(1);
-        this.test1Endpoint.setSleepForEmptyTest(5_000);
+        testBody(this.test1Endpoint.message(0), assertGoodValue("Foo"));
 
-        // item 2
-        this.test2Endpoint.setExpectedCount(0);
-        this.test2Endpoint.setSleepForEmptyTest(5_000);
+        // item 2 and 3 cannot connect: they only report their node without communication
+        this.test2Endpoint.setExpectedCount(1);
+        testBody(this.test2Endpoint.message(0), assertNoCommunication());
+        this.test2Endpoint.setAssertPeriod(5_000);
 
-        // item 3
-        this.test3Endpoint.setExpectedCount(0);
-        this.test3Endpoint.setSleepForEmptyTest(5_000);
+        this.test3Endpoint.setExpectedCount(1);
+        testBody(this.test3Endpoint.message(0), assertNoCommunication());
+        this.test3Endpoint.setAssertPeriod(5_000);
 
         // set server value
         this.producer1.sendBody("Foo");

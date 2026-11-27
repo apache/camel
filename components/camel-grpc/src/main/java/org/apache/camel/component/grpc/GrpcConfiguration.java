@@ -66,7 +66,8 @@ public class GrpcConfiguration {
     @UriParam(label = "security", defaultValue = "NONE", enums = "NONE,GOOGLE,JWT",
               description = "The authentication of the calls, in addition to the transport security. GOOGLE makes the producer"
                             + " send the OAuth2 access tokens of the Google service account in serviceAccountResource, and requires"
-                            + " negotiationType TLS. JWT makes the producer send a JSON Web Token signed with jwtSecret, and the"
+                            + " negotiationType TLS. GOOGLE is supported only on the producer: a consumer with GOOGLE fails to"
+                            + " start. JWT makes the producer send a JSON Web Token signed with jwtSecret, and the"
                             + " consumer accept only calls with a valid token.")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
 
@@ -88,6 +89,22 @@ public class GrpcConfiguration {
               description = "The subject (sub claim) of the JSON Web Token. The producer puts it in the token, and the consumer"
                             + " accepts only tokens with the same subject.")
     private String jwtSubject;
+
+    @UriParam(label = "producer,security", defaultValue = "3600000", javaType = "java.time.Duration",
+              description = "How long a JSON Web Token that the producer sends is valid, in milliseconds: the token has the iat"
+                            + " (issued at) claim and an exp (expires at) claim this much later. The producer creates a new"
+                            + " token when less than a tenth of the lifetime, at most one minute, is left. A value of 0 sends a"
+                            + " token without iat and exp claims, which is valid until jwtSecret changes. Used when"
+                            + " authenticationType is JWT.")
+    private long jwtTokenLifetime = 3600000;
+
+    @UriParam(label = "consumer,security", javaType = "java.time.Duration",
+              description = "The maximum age of a JSON Web Token that the consumer accepts, in milliseconds, from its iat"
+                            + " (issued at) claim. When set, the consumer rejects tokens that are older, or that have no iat"
+                            + " claim. The consumer always rejects a token whose exp (expires at) claim has passed. The default"
+                            + " 0 does not check the age, so tokens without an exp claim are valid until jwtSecret changes."
+                            + " Used when authenticationType is JWT.")
+    private long jwtMaxTokenAge;
 
     @UriParam(label = "security",
               description = "The location of the Google Cloud service account key file in JSON format, for example"
@@ -353,6 +370,22 @@ public class GrpcConfiguration {
 
     public void setJwtSubject(String jwtSubject) {
         this.jwtSubject = jwtSubject;
+    }
+
+    public long getJwtTokenLifetime() {
+        return jwtTokenLifetime;
+    }
+
+    public void setJwtTokenLifetime(long jwtTokenLifetime) {
+        this.jwtTokenLifetime = jwtTokenLifetime;
+    }
+
+    public long getJwtMaxTokenAge() {
+        return jwtMaxTokenAge;
+    }
+
+    public void setJwtMaxTokenAge(long jwtMaxTokenAge) {
+        this.jwtMaxTokenAge = jwtMaxTokenAge;
     }
 
     public String getServiceAccountResource() {

@@ -82,4 +82,13 @@ class GrpcConsumerConfigurationTest extends CamelTestSupport {
         IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exception.getCause());
         assertTrue(cause.getMessage().contains("trustCertCollectionResource"), cause.getMessage());
     }
+
+    @Test
+    void googleAuthenticationOnConsumerFailsToStart() {
+        FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
+                () -> consumer.receive(
+                        "grpc:localhost:0/org.apache.camel.component.grpc.PingPong?authenticationType=GOOGLE", 5000));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertTrue(cause.getMessage().contains("supported only on the producer"), cause.getMessage());
+    }
 }

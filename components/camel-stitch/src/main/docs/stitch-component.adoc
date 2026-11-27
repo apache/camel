@@ -2,7 +2,7 @@
 :doctitle: Stitch
 :shortname: stitch
 :artifactid: camel-stitch
-:description: Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various integrations.
+:description: Send batches of records to the Stitch Import API, which loads them into a table of the destination data warehouse.
 :since: 3.8
 :supportlevel: Stable
 :tabs-sync-option:

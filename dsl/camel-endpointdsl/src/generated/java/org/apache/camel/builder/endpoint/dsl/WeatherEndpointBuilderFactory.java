@@ -2396,7 +2396,8 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The URL of the request that the consumer or the producer sent to
-         * OpenWeatherMap, with its query parameters.
+         * OpenWeatherMap, with its query parameters. The value of the APPID
+         * parameter is masked as xxxxxx.
          * 
          * The option is a: {@code String} type.
          * 

@@ -19,6 +19,7 @@ package org.apache.camel.saga;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
@@ -43,7 +44,7 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
 
     private CamelContext camelContext;
 
-    private final Map<String, CamelSagaCoordinator> coordinators = new ConcurrentHashMap<>();
+    private final Map<String, InMemorySagaCoordinator> coordinators = new ConcurrentHashMap<>();
 
     private ScheduledExecutorService executorService;
 
@@ -58,7 +59,7 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
         ObjectHelper.notNull(camelContext, "camelContext");
 
         String uuid = camelContext.getUuidGenerator().generateUuid();
-        CamelSagaCoordinator coordinator = new InMemorySagaCoordinator(camelContext, this, uuid);
+        InMemorySagaCoordinator coordinator = new InMemorySagaCoordinator(camelContext, this, uuid);
         coordinators.put(uuid, coordinator);
 
         return CompletableFuture.completedFuture(coordinator);
@@ -104,6 +105,11 @@ public class InMemorySagaService extends ServiceSupport implements CamelSagaServ
         if (this.executorService != null) {
             camelContext.getExecutorServiceManager().shutdownGraceful(this.executorService);
             this.executorService = null;
+        }
+        // the compensations and completions still running will not end: fail them, so their callers do not wait
+        for (Map.Entry<String, InMemorySagaCoordinator> entry : coordinators.entrySet()) {
+            entry.getValue().abortFinalization(new RejectedExecutionException(
+                    "The in-memory saga service stopped before the saga " + entry.getKey() + " was finalized"));
         }
     }
 
