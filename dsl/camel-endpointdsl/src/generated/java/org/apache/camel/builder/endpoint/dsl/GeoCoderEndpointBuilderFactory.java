@@ -152,7 +152,7 @@ public interface GeoCoderEndpointBuilderFactory {
         }
         /**
          * The domain for NTLM proxy authentication. The component does not use
-         * this option, as proxyAuthMethod accepts only Basic and Digest.
+         * this option, as proxyAuthMethod accepts only Basic.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -167,7 +167,7 @@ public interface GeoCoderEndpointBuilderFactory {
         }
         /**
          * The host for NTLM proxy authentication. The component does not use
-         * this option, as proxyAuthMethod accepts only Basic and Digest.
+         * this option, as proxyAuthMethod accepts only Basic.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -181,9 +181,11 @@ public interface GeoCoderEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authentication method for the proxy, Basic or Digest. When it is
-         * set, the producer authenticates to the proxy with proxyAuthUsername
-         * and proxyAuthPassword. Another value fails when the producer starts.
+         * The authentication method for the proxy. Only Basic is supported:
+         * when it is set, the producer authenticates to the proxy with
+         * proxyAuthUsername and proxyAuthPassword, which are sent Base64
+         * encoded in the Proxy-Authorization header. Another value, such as
+         * Digest, fails when the producer starts.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

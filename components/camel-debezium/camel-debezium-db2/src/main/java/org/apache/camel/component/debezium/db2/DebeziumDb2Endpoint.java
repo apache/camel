@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Capture changes from a DB2 database.
+ * Capture the row changes of tables in an IBM Db2 database with the Debezium Db2 connector.
  */
 @UriEndpoint(firstVersion = "3.17.0", scheme = "debezium-db2", title = "Debezium DB2 Connector",
              syntax = "debezium-db2:name", category = { Category.DATABASE }, consumerOnly = true,

@@ -19,15 +19,27 @@ package org.apache.camel.component.kudu;
 import org.apache.camel.spi.Metadata;
 
 public final class KuduConstants {
-    @Metadata(description = "The schema", javaType = "org.apache.kudu.Schema")
+    @Metadata(description = "The org.apache.kudu.Schema with the columns of the table that the CREATE_TABLE operation"
+                            + " creates. Required for CREATE_TABLE.",
+              javaType = "org.apache.kudu.Schema")
     public static final String CAMEL_KUDU_SCHEMA = "CamelKuduSchema";
-    @Metadata(description = "The create table options", javaType = "org.apache.kudu.client.CreateTableOptions")
+    @Metadata(description = "The options of the table that the CREATE_TABLE operation creates, such as its partitioning"
+                            + " and its number of replicas. Required for CREATE_TABLE, and the options must set range or"
+                            + " hash partitioning.",
+              javaType = "org.apache.kudu.client.CreateTableOptions")
     public static final String CAMEL_KUDU_TABLE_OPTIONS = "CamelKuduTableOptions";
-    @Metadata(description = "The projected column names for scan operation", javaType = "java.util.List<String>")
+    @Metadata(description = "The names of the columns that the SCAN operation returns for each row. If not set, the scan"
+                            + " returns all the columns of the table.",
+              javaType = "java.util.List<String>")
     public static final String CAMEL_KUDU_SCAN_COLUMN_NAMES = "CamelKuduScanColumnNames";
-    @Metadata(description = "The predicate for scan operation", javaType = "org.apache.kudu.client.KuduPredicate")
+    @Metadata(description = "The predicate on a column that the rows of the SCAN operation must match. If not set, the"
+                            + " scan returns all the rows of the table.",
+              javaType = "org.apache.kudu.client.KuduPredicate")
     public static final String CAMEL_KUDU_SCAN_PREDICATE = "CamelKuduScanPredicate";
-    @Metadata(description = "The limit on the number of rows for scan operation", javaType = "long")
+    @Metadata(description = "The maximum number of rows that the SCAN operation returns. The value must be a"
+                            + " java.lang.Long, as an Integer or a String fails the exchange. If not set, the number of rows"
+                            + " is not limited.",
+              javaType = "long")
     public static final String CAMEL_KUDU_SCAN_LIMIT = "CamelKuduScanLimit";
 
     private KuduConstants() {

@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.SCHEME_SIGN;
 
 /**
- * Sign XML payloads using the XML signature specification.
+ * Sign an XML document or plain text with an enveloped, enveloping or detached XML signature.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_SIGN, title = "XML Security Sign",
              syntax = "xmlsecurity-sign:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
@@ -56,7 +56,8 @@ import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.S
                                                  + " element with the payload inside for enveloping"))
 public class XmlSignerEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath(description = "The name of the endpoint, chosen freely to tell endpoints apart. The component does not"
+                           + " use it otherwise.")
     @Metadata(required = true)
     private String name;
     @UriParam
@@ -76,10 +77,6 @@ public class XmlSignerEndpoint extends DefaultEndpoint {
         return name;
     }
 
-    /**
-     * The name part in the URI can be chosen by the user to distinguish between different signer endpoints within the
-     * camel context.
-     */
     public void setName(String name) {
         this.name = name;
     }

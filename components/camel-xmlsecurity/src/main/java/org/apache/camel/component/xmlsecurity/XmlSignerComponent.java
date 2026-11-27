@@ -28,7 +28,9 @@ import org.apache.camel.support.DefaultComponent;
 @Component("xmlsecurity-sign")
 public class XmlSignerComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "A shared XmlSignerConfiguration that the endpoints of the component start from: the component copies"
+                            + " it for each new endpoint and then sets the options of the endpoint URI on the copy.")
     private XmlSignerConfiguration signerConfiguration;
 
     public XmlSignerComponent() {
@@ -58,9 +60,6 @@ public class XmlSignerComponent extends DefaultComponent {
         return signerConfiguration;
     }
 
-    /**
-     * To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints.
-     */
     public void setSignerConfiguration(XmlSignerConfiguration signerConfiguration) {
         this.signerConfiguration = signerConfiguration;
     }

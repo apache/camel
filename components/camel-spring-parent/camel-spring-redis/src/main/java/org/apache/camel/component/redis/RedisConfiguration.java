@@ -34,12 +34,14 @@ public class RedisConfiguration {
     private boolean managedListenerContainer;
     private boolean managedConnectionFactory;
 
-    @UriPath(description = "The host name or IP address of the Redis server. The endpoint connects to it with the"
+    @UriPath(defaultValue = "localhost",
+             description = "The host name or IP address of the Redis server. The endpoint connects to it with the"
                            + " JedisConnectionFactory that it creates when connectionFactory is not set, and does not use it"
                            + " otherwise. If not set, localhost is used.")
     @Metadata(required = true)
     private String host;
-    @UriPath(description = "The port of the Redis server. The endpoint connects to it with the JedisConnectionFactory that"
+    @UriPath(defaultValue = "6379",
+             description = "The port of the Redis server. The endpoint connects to it with the JedisConnectionFactory that"
                            + " it creates when connectionFactory is not set, and does not use it otherwise. If not set, 6379"
                            + " is used.")
     @Metadata(required = true)
@@ -51,12 +53,14 @@ public class RedisConfiguration {
                             + " message with SUBSCRIBE, PSUBSCRIBE or a server command that it does not run, such as AUTH,"
                             + " FLUSHDB, INFO or SELECT.")
     private Command command = Command.SET;
-    @UriParam(description = "The channels that the consumer subscribes to, separated by comma. With the PSUBSCRIBE command"
+    @UriParam(label = "consumer",
+              description = "The channels that the consumer subscribes to, separated by comma. With the PSUBSCRIBE command"
                             + " they are patterns, such as news.*, and with SUBSCRIBE channel names. Required by the"
                             + " consumer. The producer does not use it: PUBLISH takes the channel from the"
                             + " CamelRedis.Channel header.")
     private String channels;
-    @UriParam(description = "The org.springframework.data.redis.core.RedisTemplate that the producer runs the commands"
+    @UriParam(label = "producer",
+              description = "The org.springframework.data.redis.core.RedisTemplate that the producer runs the commands"
                             + " with, which also decides how keys and values are serialized. If not set, the redisTemplate"
                             + " of the component is used, and if that is not set either, the endpoint creates a"
                             + " RedisTemplate from connectionFactory and serializer. The consumer does not use it.")

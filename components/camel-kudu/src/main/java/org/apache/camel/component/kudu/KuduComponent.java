@@ -30,7 +30,10 @@ import org.apache.kudu.client.KuduClient;
  */
 @Component("kudu")
 public class KuduComponent extends DefaultComponent {
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use a custom org.apache.kudu.client.KuduClient for all the endpoints of this component. When"
+                            + " it is set or autowired, the endpoints do not create a client for the host and port of their"
+                            + " URI, and do not shut the client down when they stop.")
     private KuduClient kuduClient;
 
     public KuduComponent(CamelContext context) {
@@ -55,10 +58,6 @@ public class KuduComponent extends DefaultComponent {
         return kuduClient;
     }
 
-    /**
-     * To use an existing Kudu client instance, instead of creating a client per endpoint. This allows you to customize
-     * various aspects to the client configuration.
-     */
     public void setKuduClient(KuduClient kuduClient) {
         this.kuduClient = kuduClient;
     }

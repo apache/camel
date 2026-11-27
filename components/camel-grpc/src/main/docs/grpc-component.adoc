@@ -2,7 +2,7 @@
 :doctitle: gRPC
 :shortname: grpc
 :artifactid: camel-grpc
-:description: Expose gRPC endpoints and access external gRPC endpoints.
+:description: Expose gRPC services and call remote gRPC services, with Protocol Buffers messages over HTTP/2.
 :since: 2.19
 :supportlevel: Stable
 :tabs-sync-option:

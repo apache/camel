@@ -30,7 +30,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("cyberark-vault")
 public class CyberArkVaultComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of the component share: each endpoint starts from a copy of"
+                            + " it.")
     private CyberArkVaultConfiguration configuration = new CyberArkVaultConfiguration();
 
     public CyberArkVaultComponent() {
@@ -73,9 +74,6 @@ public class CyberArkVaultComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(CyberArkVaultConfiguration configuration) {
         this.configuration = configuration;
     }

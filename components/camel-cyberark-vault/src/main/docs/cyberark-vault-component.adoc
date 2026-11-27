@@ -2,7 +2,7 @@
 :doctitle: CyberArk Vault
 :shortname: cyberark-vault
 :artifactid: camel-cyberark-vault
-:description: Retrieve secrets from CyberArk Conjur Vault.
+:description: Retrieve and store secrets in CyberArk Conjur.
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:

@@ -36,149 +36,244 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GrpcConfiguration {
 
-    @UriPath
+    @UriPath(description = "The host name or IP address. For the consumer, the address that the gRPC server binds to, such as"
+                           + " localhost or 0.0.0.0. For the producer, the host of the remote gRPC server.")
     @Metadata(required = true)
     private String host;
 
-    @UriPath
+    @UriPath(description = "The port. For the consumer, the port that the gRPC server listens on, where 0 lets the operating"
+                           + " system choose a free port. For the producer, the port of the remote gRPC server.")
     @Metadata(required = true)
     private int port = -1;
 
-    @UriPath
+    @UriPath(description = "The fully qualified name of the gRPC service: the Java package of the classes generated from the"
+                           + " .proto file, a dot, and the service name, for example org.apache.camel.component.grpc.PingPong. The"
+                           + " component loads the generated class of the service (PingPongGrpc in the example) by this name.")
     @Metadata(required = true)
     private String service;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the method that the producer calls, as in the .proto file or as the Java method name."
+                            + " The producer converts it to the lowerCamelCase name of the stub method, so SendPing and send_ping"
+                            + " both call sendPing.")
     private String method;
 
-    @UriParam(label = "security", defaultValue = "PLAINTEXT", enums = "PLAINTEXT,TLS")
+    @UriParam(label = "security", defaultValue = "PLAINTEXT", enums = "PLAINTEXT,TLS",
+              description = "The transport security of the HTTP/2 connection: PLAINTEXT for no encryption, or TLS. With TLS the"
+                            + " consumer requires keyCertChainResource and keyResource, and a certificate from each client.")
     private NegotiationType negotiationType = NegotiationType.PLAINTEXT;
 
-    @UriParam(label = "security", defaultValue = "NONE", enums = "NONE,GOOGLE,JWT")
+    @UriParam(label = "security", defaultValue = "NONE", enums = "NONE,GOOGLE,JWT",
+              description = "The authentication of the calls, in addition to the transport security. GOOGLE makes the producer"
+                            + " send the OAuth2 access tokens of the Google service account in serviceAccountResource, and requires"
+                            + " negotiationType TLS. JWT makes the producer send a JSON Web Token signed with jwtSecret, and the"
+                            + " consumer accept only calls with a valid token.")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
 
-    @UriParam(label = "security", defaultValue = "HMAC256")
+    @UriParam(label = "security", defaultValue = "HMAC256",
+              description = "The HMAC algorithm that signs the JSON Web Token on the producer and verifies it on the consumer.")
     private JwtAlgorithm jwtAlgorithm = JwtAlgorithm.HMAC256;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The secret key of the HMAC algorithm that signs the JSON Web Token on the producer and verifies it"
+                            + " on the consumer. Required when authenticationType is JWT.")
     private String jwtSecret;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The issuer (iss claim) of the JSON Web Token. The producer puts it in the token, and the consumer"
+                            + " accepts only tokens with the same issuer.")
     private String jwtIssuer;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The subject (sub claim) of the JSON Web Token. The producer puts it in the token, and the consumer"
+                            + " accepts only tokens with the same subject.")
     private String jwtSubject;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The location of the Google Cloud service account key file in JSON format, for example"
+                            + " classpath:service-account.json. Required when authenticationType is GOOGLE: the producer sends the"
+                            + " OAuth2 access tokens of this account.")
     @Metadata(supportFileReference = true)
     private String serviceAccountResource;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The location of the X.509 certificate chain in PEM format. For the consumer, the certificate of the"
+                            + " server, required with TLS. For the producer, the certificate of the client for mutual TLS, set"
+                            + " together with keyResource.")
     @Metadata(supportFileReference = true)
     private String keyCertChainResource;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The location of the PKCS#8 private key in PEM format of keyCertChainResource. For the consumer, the"
+                            + " key of the server, required with TLS. For the producer, the key of the client for mutual TLS, set"
+                            + " together with keyCertChainResource.")
     @Metadata(supportFileReference = true)
     private String keyResource;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password of the private key in keyResource, if the key is encrypted.")
     private String keyPassword;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The location of the trusted certificates in PEM format that verify the certificate of the other"
+                            + " side: of the server for the producer, of the clients for the consumer. If not set, the producer"
+                            + " verifies the server with the default trust store of the JVM.")
     @Metadata(supportFileReference = true)
     private String trustCertCollectionResource;
 
-    @UriParam(label = "producer", defaultValue = "SIMPLE", enums = "SIMPLE,STREAMING")
+    @UriParam(label = "producer", defaultValue = "SIMPLE", enums = "SIMPLE,STREAMING",
+              description = "How the producer calls the method. SIMPLE makes one call per exchange. STREAMING sends the body of"
+                            + " each exchange as a message on one shared call, which needs a method with a stream request, and"
+                            + " sends the responses to the streamRepliesTo endpoint.")
     private GrpcProducerStrategy producerStrategy = GrpcProducerStrategy.SIMPLE;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The URI of the endpoint that receives the responses of the server, one exchange per response"
+                            + " message, with the CamelGrpcEventType header. Required with the STREAMING strategy. With the SIMPLE"
+                            + " strategy the responses go to this endpoint instead of the body, unless synchronous is true.")
     private String streamRepliesTo;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The user agent that the producer sends to the server. gRPC Java adds its own user agent after this"
+                            + " value.")
     private String userAgent;
 
-    @UriParam(label = "consumer", defaultValue = "PROPAGATION", enums = "AGGREGATION,PROPAGATION,DELEGATION")
+    @UriParam(label = "consumer", defaultValue = "PROPAGATION", enums = "AGGREGATION,PROPAGATION,DELEGATION",
+              description = "How the consumer handles client streaming and bidirectional streaming calls; unary and server"
+                            + " streaming calls always give one exchange per call. AGGREGATION routes all request messages as one"
+                            + " List when the client completes the stream, and sends the reply of the route. PROPAGATION routes"
+                            + " each request message in its own exchange and sends its reply, unless routeControlledStreamObserver"
+                            + " is true. DELEGATION routes each request message and sends nothing: it requires"
+                            + " routeControlledStreamObserver.")
     private GrpcConsumerStrategy consumerStrategy = GrpcConsumerStrategy.PROPAGATION;
 
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Whether to route an exchange without a body, with the CamelGrpcEventType header set to onCompleted,"
+                            + " when a stream completes. The consumer does it for client and bidirectional streaming calls with the"
+                            + " PROPAGATION or DELEGATION strategy, and the producer to the streamRepliesTo endpoint.")
     private boolean forwardOnCompleted;
 
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Whether to route an exchange with the Throwable as body, and the CamelGrpcEventType header set to"
+                            + " onError, when a stream fails. The consumer does it for client and bidirectional streaming calls"
+                            + " with the PROPAGATION or DELEGATION strategy, and the producer to the streamRepliesTo endpoint.")
     private boolean forwardOnError;
 
-    @UriParam(defaultValue = "" + NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW)
+    @UriParam(defaultValue = "" + NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW,
+              description = "The HTTP/2 flow control window size in bytes of the producer. The consumer uses"
+                            + " initialFlowControlWindow instead.")
     private int flowControlWindow = NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW;
 
-    @UriParam(defaultValue = "" + GrpcUtil.DEFAULT_MAX_MESSAGE_SIZE)
+    @UriParam(defaultValue = "" + GrpcUtil.DEFAULT_MAX_MESSAGE_SIZE,
+              description = "The maximum size in bytes of a message that the consumer or the producer receives. A larger message"
+                            + " fails the call with the RESOURCE_EXHAUSTED status.")
     private int maxMessageSize = GrpcUtil.DEFAULT_MAX_MESSAGE_SIZE;
 
     @UriParam(label = "consumer", defaultValue = "" + Integer.MAX_VALUE)
     private int maxConcurrentCallsPerConnection = Integer.MAX_VALUE;
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether the route sends the responses instead of the consumer. The consumer sets the response"
+                            + " StreamObserver of the call as the grpcResponseObserver exchange property, and the route replies"
+                            + " with a producer with toRouteControlledStreamObserver=true. Not compatible with the AGGREGATION"
+                            + " strategy.")
     private boolean routeControlledStreamObserver;
 
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether the consumer leaves out the exception message from the status description that it sends to"
+                            + " the client when the exchange fails. The description is then Exchange processing failed, and the"
+                            + " status is INTERNAL in both cases.")
     private boolean muteException = true;
 
     private List<ServerInterceptor> serverInterceptors = Collections.emptyList();
 
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether the consumer intercepts the incoming calls with all the io.grpc.ServerInterceptor beans of"
+                            + " the registry.")
     private boolean autoDiscoverServerInterceptors = true;
 
     private List<ClientInterceptor> clientInterceptors = Collections.emptyList();
 
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Whether the producer intercepts the outgoing calls with all the io.grpc.ClientInterceptor beans of"
+                            + " the registry.")
     private boolean autoDiscoverClientInterceptors = true;
 
     @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+              description = "Whether to process synchronously. The producer then calls the method with a blocking stub and waits"
+                            + " for the response, which methods with a stream request do not support. The consumer then routes"
+                            + " unary and server streaming calls synchronously.")
     private boolean synchronous;
 
     @UriParam(defaultValue = "false", label = "producer",
-              description = "Copies exchange properties from original exchange to all exchanges created for route defined by streamRepliesTo.")
+              description = "Whether the exchanges that the producer sends to the streamRepliesTo endpoint get a copy of the"
+                            + " exchange properties of the exchange that made the call. For example, the replies then keep the"
+                            + " grpcResponseObserver property for toRouteControlledStreamObserver.")
     private boolean inheritExchangePropertiesForReplies = false;
 
     @UriParam(defaultValue = "false", label = "producer",
-              description = "Expects that exchange property GrpcConstants.GRPC_RESPONSE_OBSERVER is set. Takes its value and calls onNext, onError and onComplete on that StreamObserver. All other gRPC parameters are ignored.")
+              description = "Whether the producer replies to the client of a consumer with routeControlledStreamObserver=true,"
+                            + " instead of calling a server. It sends the body to the StreamObserver in the grpcResponseObserver"
+                            + " exchange property, as the event in the CamelGrpcEventType header. The other options of the producer"
+                            + " are not used.")
     private boolean toRouteControlledStreamObserver = false;
 
-    @UriParam(label = "consumer", defaultValue = "" + NettyServerBuilder.DEFAULT_FLOW_CONTROL_WINDOW)
+    @UriParam(label = "consumer", defaultValue = "" + NettyServerBuilder.DEFAULT_FLOW_CONTROL_WINDOW,
+              description = "The initial HTTP/2 flow control window size in bytes of the consumer. The consumer then adjusts the"
+                            + " window to the bandwidth-delay product of the connection.")
     private int initialFlowControlWindow = NettyServerBuilder.DEFAULT_FLOW_CONTROL_WINDOW;
 
-    @UriParam(label = "consumer", defaultValue = "7200000")
+    @UriParam(label = "consumer", defaultValue = "7200000",
+              description = "The time in milliseconds without received data after which the consumer sends a keepalive ping to"
+                            + " the client. A value of 1000 days or more disables keepalive.")
     private long keepAliveTime = TimeUnit.NANOSECONDS.toMillis(GrpcUtil.DEFAULT_SERVER_KEEPALIVE_TIME_NANOS);
 
-    @UriParam(label = "consumer", defaultValue = "20000")
+    @UriParam(label = "consumer", defaultValue = "20000",
+              description = "The time in milliseconds that the consumer waits for the reply to a keepalive ping before it closes"
+                            + " the connection.")
     private long keepAliveTimeout = TimeUnit.NANOSECONDS.toMillis(GrpcUtil.DEFAULT_SERVER_KEEPALIVE_TIMEOUT_NANOS);
 
-    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE)
+    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE,
+              description = "The maximum time in milliseconds that a connection exists before the consumer closes it gracefully,"
+                            + " with a random jitter of +/-10%. A value of 1000 days or more, such as the default, means no limit.")
     private long maxConnectionAge = Long.MAX_VALUE;
 
-    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE)
+    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE,
+              description = "The time in milliseconds without outstanding calls after which the consumer closes a connection"
+                            + " gracefully. A value of 1000 days or more, such as the default, means no limit.")
     private long maxConnectionIdle = Long.MAX_VALUE;
 
-    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE)
+    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE,
+              description = "The time in milliseconds that the calls in progress have to complete once maxConnectionAge is"
+                            + " reached, before the consumer cancels them and closes the connection. A value of 1000 days or more,"
+                            + " such as the default, means no limit.")
     private long maxConnectionAgeGrace = Long.MAX_VALUE;
 
-    @UriParam(label = "consumer", defaultValue = "" + GrpcUtil.DEFAULT_MAX_HEADER_LIST_SIZE)
+    @UriParam(label = "consumer", defaultValue = "" + GrpcUtil.DEFAULT_MAX_HEADER_LIST_SIZE,
+              description = "The maximum size in bytes of the metadata (the headers) of a call that the consumer receives.")
     private int maxInboundMetadataSize = GrpcUtil.DEFAULT_MAX_HEADER_LIST_SIZE;
 
-    @UriParam(label = "consumer", defaultValue = "0")
+    @UriParam(label = "consumer", defaultValue = "0",
+              description = "The maximum number of RST_STREAM frames that the consumer accepts from a connection per"
+                            + " maxRstPeriodSeconds, before it closes the connection. Set it together with maxRstPeriodSeconds: the"
+                            + " consumer fails to start if only one of them is greater than 0. 0 means no limit.")
     private int maxRstFramesPerWindow;
 
-    @UriParam(label = "consumer", defaultValue = "0")
+    @UriParam(label = "consumer", defaultValue = "0",
+              description = "The period in seconds of maxRstFramesPerWindow. Set it together with maxRstFramesPerWindow: the"
+                            + " consumer fails to start if only one of them is greater than 0. 0 means no limit.")
     private int maxRstPeriodSeconds;
 
-    @UriParam(label = "consumer", defaultValue = "300000")
+    @UriParam(label = "consumer", defaultValue = "300000",
+              description = "The shortest time in milliseconds between keepalive pings that the consumer permits a client. The"
+                            + " consumer closes the connection of a client that sends pings more often.")
     private long permitKeepAliveTime = TimeUnit.MINUTES.toMillis(5);
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether the consumer permits clients to send keepalive pings (HTTP/2 PING frames) on a connection"
+                            + " without outstanding calls.")
     private boolean permitKeepAliveWithoutCalls;
 
-    /**
-     * Fully qualified service name from the protocol buffer descriptor file (package dot service definition name)
-     */
     public String getService() {
         return service;
     }
@@ -187,9 +282,6 @@ public class GrpcConfiguration {
         this.service = service;
     }
 
-    /**
-     * gRPC method name
-     */
     public String getMethod() {
         return method;
     }
@@ -198,10 +290,6 @@ public class GrpcConfiguration {
         this.method = method;
     }
 
-    /**
-     * The gRPC server host name. This is localhost or 0.0.0.0 when being a consumer or remote server host name when
-     * using producer.
-     */
     public String getHost() {
         return host;
     }
@@ -210,9 +298,6 @@ public class GrpcConfiguration {
         this.host = host;
     }
 
-    /**
-     * The gRPC local or remote server port
-     */
     public int getPort() {
         return port;
     }
@@ -225,16 +310,10 @@ public class GrpcConfiguration {
         return negotiationType;
     }
 
-    /**
-     * Identifies the security negotiation type used for HTTP/2 communication
-     */
     public void setNegotiationType(NegotiationType negotiationType) {
         this.negotiationType = negotiationType;
     }
 
-    /**
-     * Authentication method type in advance to the SSL/TLS negotiation
-     */
     public GrpcAuthType getAuthenticationType() {
         return authenticationType;
     }
@@ -243,9 +322,6 @@ public class GrpcConfiguration {
         this.authenticationType = authenticationType;
     }
 
-    /**
-     * JSON Web Token sign algorithm
-     */
     public JwtAlgorithm getJwtAlgorithm() {
         return jwtAlgorithm;
     }
@@ -254,9 +330,6 @@ public class GrpcConfiguration {
         this.jwtAlgorithm = jwtAlgorithm;
     }
 
-    /**
-     * JSON Web Token secret
-     */
     public String getJwtSecret() {
         return jwtSecret;
     }
@@ -265,9 +338,6 @@ public class GrpcConfiguration {
         this.jwtSecret = jwtSecret;
     }
 
-    /**
-     * JSON Web Token issuer
-     */
     public String getJwtIssuer() {
         return jwtIssuer;
     }
@@ -276,9 +346,6 @@ public class GrpcConfiguration {
         this.jwtIssuer = jwtIssuer;
     }
 
-    /**
-     * JSON Web Token subject
-     */
     public String getJwtSubject() {
         return jwtSubject;
     }
@@ -287,9 +354,6 @@ public class GrpcConfiguration {
         this.jwtSubject = jwtSubject;
     }
 
-    /**
-     * Service Account key file in JSON format resource link supported by the Google Cloud SDK
-     */
     public String getServiceAccountResource() {
         return serviceAccountResource;
     }
@@ -302,11 +366,6 @@ public class GrpcConfiguration {
         return keyCertChainResource;
     }
 
-    /**
-     * The X.509 certificate chain file resource in PEM format link. On a consumer, this is the certificate of the
-     * server and is required for TLS. On a producer, this is the certificate of the client, set together with
-     * keyResource only for mutual TLS (when the server requires a client certificate).
-     */
     public void setKeyCertChainResource(String keyCertChainResource) {
         this.keyCertChainResource = keyCertChainResource;
     }
@@ -315,18 +374,10 @@ public class GrpcConfiguration {
         return keyResource;
     }
 
-    /**
-     * The PKCS#8 private key file resource in PEM format link. On a consumer, this is the key of the server and is
-     * required for TLS. On a producer, this is the key of the client, set together with keyCertChainResource only for
-     * mutual TLS (when the server requires a client certificate).
-     */
     public void setKeyResource(String keyResource) {
         this.keyResource = keyResource;
     }
 
-    /**
-     * The PKCS#8 private key file password
-     */
     public String getKeyPassword() {
         return keyPassword;
     }
@@ -339,25 +390,10 @@ public class GrpcConfiguration {
         return trustCertCollectionResource;
     }
 
-    /**
-     * The trusted certificates collection file resource in PEM format for verifying the remote endpoint's certificate.
-     * When not set, a producer verifies the server with the default trust store of the JVM.
-     */
     public void setTrustCertCollectionResource(String trustCertCollectionResource) {
         this.trustCertCollectionResource = trustCertCollectionResource;
     }
 
-    /**
-     * This option specifies the top-level strategy for processing service requests and responses in streaming mode. If
-     * an aggregation strategy is selected, all requests will be accumulated in the list, then transferred to the flow,
-     * and the accumulated responses will be sent to the sender. If a propagation strategy is selected, request is sent
-     * to the stream, and the response will be immediately sent back to the sender. If a delegation strategy is
-     * selected, request is sent to the stream, but no response generated under the assumption that all necessary
-     * responses will be sent at another part of route. Delegation strategy always comes with
-     * routeControlledStreamObserver=true to be able to achieve the assumption. With routeControlledStreamObserver=true,
-     * the propagation strategy does not send responses either: it sends the requests to the route one at a time, and
-     * the route sends the responses.
-     */
     public GrpcConsumerStrategy getConsumerStrategy() {
         return consumerStrategy;
     }
@@ -370,9 +406,6 @@ public class GrpcConfiguration {
         return forwardOnCompleted;
     }
 
-    /**
-     * Determines if onCompleted events should be pushed to the Camel route.
-     */
     public void setForwardOnCompleted(boolean forwardOnCompleted) {
         this.forwardOnCompleted = forwardOnCompleted;
     }
@@ -381,9 +414,6 @@ public class GrpcConfiguration {
         return forwardOnError;
     }
 
-    /**
-     * Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body.
-     */
     public void setForwardOnError(boolean forwardOnError) {
         this.forwardOnError = forwardOnError;
     }
@@ -392,11 +422,6 @@ public class GrpcConfiguration {
         return producerStrategy;
     }
 
-    /**
-     * The mode used to communicate with a remote gRPC server. In SIMPLE mode a single exchange is translated into a
-     * remote procedure call. In STREAMING mode all exchanges will be sent within the same request (input and output of
-     * the recipient gRPC service must be of type 'stream').
-     */
     public void setProducerStrategy(GrpcProducerStrategy producerStrategy) {
         this.producerStrategy = producerStrategy;
     }
@@ -405,16 +430,10 @@ public class GrpcConfiguration {
         return streamRepliesTo;
     }
 
-    /**
-     * When using STREAMING client mode, it indicates the endpoint where responses should be forwarded.
-     */
     public void setStreamRepliesTo(String streamRepliesTo) {
         this.streamRepliesTo = streamRepliesTo;
     }
 
-    /**
-     * The user agent header passed to the server
-     */
     public String getUserAgent() {
         return userAgent;
     }
@@ -423,9 +442,6 @@ public class GrpcConfiguration {
         this.userAgent = userAgent;
     }
 
-    /**
-     * The HTTP/2 flow control window size (MiB)
-     */
     public int getFlowControlWindow() {
         return flowControlWindow;
     }
@@ -438,19 +454,10 @@ public class GrpcConfiguration {
         return maxMessageSize;
     }
 
-    /**
-     * The maximum message size allowed to be received/sent (MiB)
-     */
     public void setMaxMessageSize(int maxMessageSize) {
         this.maxMessageSize = maxMessageSize;
     }
 
-    /**
-     * Lets the route to take control over stream observer. If this value is set to true, then the response observer of
-     * gRPC call will be set with the name {@link GrpcConstants.GRPC_RESPONSE_OBSERVER} in the Exchange object.
-     * <p>
-     * Please note that the stream observer's onNext(), onError(), onCompleted() methods should be called in the route.
-     */
     public boolean isRouteControlledStreamObserver() {
         return routeControlledStreamObserver;
     }
@@ -463,10 +470,6 @@ public class GrpcConfiguration {
         return muteException;
     }
 
-    /**
-     * If enabled and an Exchange failed processing on the consumer side the status description returned to the client
-     * won't contain the exception's message.
-     */
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
     }
@@ -498,10 +501,6 @@ public class GrpcConfiguration {
         return autoDiscoverServerInterceptors;
     }
 
-    /**
-     * Setting the autoDiscoverServerInterceptors mechanism, if true, the component will look for a ServerInterceptor
-     * instance in the registry automatically otherwise it will skip that checking.
-     */
     public void setAutoDiscoverServerInterceptors(boolean autoDiscoverServerInterceptors) {
         this.autoDiscoverServerInterceptors = autoDiscoverServerInterceptors;
     }
@@ -522,10 +521,6 @@ public class GrpcConfiguration {
         return autoDiscoverClientInterceptors;
     }
 
-    /**
-     * Setting the autoDiscoverClientInterceptors mechanism, if true, the component will look for a ClientInterceptor
-     * instance in the registry automatically otherwise it will skip that checking.
-     */
     public void setAutoDiscoverClientInterceptors(boolean autoDiscoverClientInterceptors) {
         this.autoDiscoverClientInterceptors = autoDiscoverClientInterceptors;
     }
@@ -558,9 +553,6 @@ public class GrpcConfiguration {
         return initialFlowControlWindow;
     }
 
-    /**
-     * Sets the initial flow control window in bytes.
-     */
     public void setInitialFlowControlWindow(int initialFlowControlWindow) {
         this.initialFlowControlWindow = initialFlowControlWindow;
     }
@@ -569,10 +561,6 @@ public class GrpcConfiguration {
         return keepAliveTime;
     }
 
-    /**
-     * Sets a custom keepalive time in milliseconds, the delay time for sending next keepalive ping. A value of
-     * Long.MAX_VALUE or a value greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will disable keepalive.
-     */
     public void setKeepAliveTime(long keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
@@ -581,9 +569,6 @@ public class GrpcConfiguration {
         return keepAliveTimeout;
     }
 
-    /**
-     * Sets a custom keepalive timeout in milliseconds, the timeout for keepalive ping requests.
-     */
     public void setKeepAliveTimeout(long keepAliveTimeout) {
         this.keepAliveTimeout = keepAliveTimeout;
     }
@@ -592,11 +577,6 @@ public class GrpcConfiguration {
         return maxConnectionAge;
     }
 
-    /**
-     * Sets a custom max connection age in milliseconds. Connections lasting longer than which will be gracefully
-     * terminated. A random jitter of +/-10% will be added to the value. A value of Long.MAX_VALUE (the default) or a
-     * value greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection age.
-     */
     public void setMaxConnectionAge(long maxConnectionAge) {
         this.maxConnectionAge = maxConnectionAge;
     }
@@ -605,11 +585,6 @@ public class GrpcConfiguration {
         return maxConnectionIdle;
     }
 
-    /**
-     * Sets a custom max connection idle time in milliseconds. Connection being idle for longer than which will be
-     * gracefully terminated. A value of Long.MAX_VALUE (the default) or a value greater or equal to
-     * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection idle
-     */
     public void setMaxConnectionIdle(long maxConnectionIdle) {
         this.maxConnectionIdle = maxConnectionIdle;
     }
@@ -618,10 +593,6 @@ public class GrpcConfiguration {
         return maxConnectionAgeGrace;
     }
 
-    /**
-     * Sets a custom grace time in milliseconds for the graceful connection termination. A value of Long.MAX_VALUE (the
-     * default) or a value greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE is considered infinite.
-     */
     public void setMaxConnectionAgeGrace(long maxConnectionAgeGrace) {
         this.maxConnectionAgeGrace = maxConnectionAgeGrace;
     }
@@ -630,9 +601,6 @@ public class GrpcConfiguration {
         return maxInboundMetadataSize;
     }
 
-    /**
-     * Sets the maximum size of metadata allowed to be received. The default is 8 KiB.
-     */
     public void setMaxInboundMetadataSize(int maxInboundMetadataSize) {
         this.maxInboundMetadataSize = maxInboundMetadataSize;
     }
@@ -641,10 +609,6 @@ public class GrpcConfiguration {
         return maxRstFramesPerWindow;
     }
 
-    /**
-     * Limits the rate of incoming RST_STREAM frames per connection to maxRstFramesPerWindow per maxRstPeriodSeconds.
-     * This option MUST be used in conjunction with maxRstPeriodSeconds for it to be effective.
-     */
     public void setMaxRstFramesPerWindow(int maxRstFramesPerWindow) {
         this.maxRstFramesPerWindow = maxRstFramesPerWindow;
     }
@@ -653,10 +617,6 @@ public class GrpcConfiguration {
         return maxRstPeriodSeconds;
     }
 
-    /**
-     * Limits the rate of incoming RST_STREAM frames per maxRstPeriodSeconds. This option MUST be used in conjunction
-     * with maxRstFramesPerWindow for it to be effective.
-     */
     public void setMaxRstPeriodSeconds(int maxRstPeriodSeconds) {
         this.maxRstPeriodSeconds = maxRstPeriodSeconds;
     }
@@ -665,10 +625,6 @@ public class GrpcConfiguration {
         return permitKeepAliveTime;
     }
 
-    /**
-     * Sets the most aggressive keep-alive time in milliseconds that clients are permitted to configure. The server will
-     * try to detect clients exceeding this rate and will forcefully close the connection.
-     */
     public void setPermitKeepAliveTime(long permitKeepAliveTime) {
         this.permitKeepAliveTime = permitKeepAliveTime;
     }
@@ -677,10 +633,6 @@ public class GrpcConfiguration {
         return permitKeepAliveWithoutCalls;
     }
 
-    /**
-     * Sets whether to allow clients to send keep-alive HTTP/ 2 PINGs even if there are no outstanding RPCs on the
-     * connection.
-     */
     public void setPermitKeepAliveWithoutCalls(boolean permitKeepAliveWithoutCalls) {
         this.permitKeepAliveWithoutCalls = permitKeepAliveWithoutCalls;
     }

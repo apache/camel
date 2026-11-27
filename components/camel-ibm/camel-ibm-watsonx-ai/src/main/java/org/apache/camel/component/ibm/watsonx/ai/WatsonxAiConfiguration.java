@@ -29,9 +29,10 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     // Authentication
     @UriParam(label = "security", security = "secret",
-              description = "IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for an access token. Required"
-                            + " unless oauthProfile or authenticator is set, or the operation is processToolCalls, which runs"
-                            + " locally.")
+              description = "The IBM Cloud API key, exchanged at IBM Cloud IAM for an access token that is sent to"
+                            + " watsonx.ai. Required unless oauthProfile or authenticator is set, or the operation is"
+                            + " processToolCalls, which runs locally; when several are set, authenticator is used first,"
+                            + " then oauthProfile.")
     private String apiKey;
 
     @UriParam(label = "security",
@@ -49,57 +50,97 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     // Connection
     @UriParam(label = "common",
-              description = "The watsonx.ai base URL of the region (e.g., https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com)."
-                            + " Required but for the utility tools (runTool, listTools), which use the wxUrl, and"
-                            + " processToolCalls, which runs locally")
+              description = "The watsonx.ai API URL of the region, such as https://us-south.ml.cloud.ibm.com or"
+                            + " https://eu-de.ml.cloud.ibm.com. The endpoint does not start without it, unless its"
+                            + " operation is runTool or listTools, which call the wxUrl instead, or processToolCalls, which"
+                            + " runs locally.")
     private String baseUrl;
 
     @UriParam(label = "common",
-              description = "The watsonx.ai WX platform URL of the region for tool operations (e.g., https://api.dataplatform.cloud.ibm.com/wx or https://api.eu-de.dataplatform.cloud.ibm.com/wx)")
+              description = "The watsonx.ai platform (WX) API URL of the region, such as"
+                            + " https://api.dataplatform.cloud.ibm.com/wx or"
+                            + " https://api.eu-de.dataplatform.cloud.ibm.com/wx, which runTool and listTools call. Required"
+                            + " for these two operations.")
     private String wxUrl;
 
     // Project/Space Context
-    @UriParam(label = "common", description = "IBM Cloud project ID")
+    @UriParam(label = "common",
+              description = "The ID of the watsonx.ai project in which the operations of foundation models"
+                            + " (textGeneration, chat, embedding, rerank, tokenize, forecast and their streaming variants),"
+                            + " detection, text extraction and text classification run. Set projectId or spaceId."
+                            + " deploymentInfo looks the deployment up in this project when no space ID is set.")
     private String projectId;
 
-    @UriParam(label = "common", description = "IBM Cloud deployment space ID (alternative to projectId)")
+    @UriParam(label = "common",
+              description = "The ID of the deployment space, in the place of projectId, in which the same operations run."
+                            + " deploymentInfo looks the deployment up in this space; there the CamelIBMWatsonxAiSpaceId"
+                            + " header overrides it.")
     private String spaceId;
 
     // Model
-    @UriParam(label = "producer", description = "Foundation model ID (e.g., ibm/granite-4-h-small)")
+    @UriParam(label = "producer",
+              description = "The ID of the foundation model, such as ibm/granite-4-h-small, of textGeneration, chat,"
+                            + " embedding, rerank, tokenize, forecast and their streaming variants. The"
+                            + " CamelIBMWatsonxAiModelId header overrides it for chat and chatStreaming. The deployment"
+                            + " operations use the model of the deployment instead.")
     private String modelId;
 
-    @UriParam(label = "producer", description = "Deployed model ID (for deployment operations)")
+    @UriParam(label = "producer",
+              description = "The ID of the deployment of deploymentInfo, deploymentGenerate, deploymentChat and"
+                            + " deploymentForecast. The CamelIBMWatsonxAiDeploymentId header overrides it; when neither is"
+                            + " set, these operations fail.")
     private String deploymentId;
 
     // Operation
-    @UriParam(label = "producer", description = "The operation to perform")
+    @UriParam(label = "producer",
+              description = "The operation to perform. The CamelIBMWatsonxAiOperation header overrides it; when neither"
+                            + " is set, the exchange fails.")
     private WatsonxAiOperations operation;
 
     // Text Generation Parameters
-    @UriParam(label = "producer", description = "Temperature for randomness (0.0 to 2.0)")
+    @UriParam(label = "producer",
+              description = "The sampling temperature of text generation and chat (the streaming and deployment"
+                            + " operations included), from 0 to 2: higher values give more random text. The"
+                            + " CamelIBMWatsonxAiTemperature header overrides it.")
     private Double temperature;
 
-    @UriParam(label = "producer", description = "Maximum new tokens to generate")
+    @UriParam(label = "producer",
+              description = "The maximum number of tokens that textGeneration, textGenerationStreaming and"
+                            + " deploymentGenerate generate. Chat uses maxCompletionTokens instead. The"
+                            + " CamelIBMWatsonxAiMaxNewTokens header overrides it.")
     private Integer maxNewTokens;
 
-    @UriParam(label = "producer", description = "Top P (nucleus sampling)")
+    @UriParam(label = "producer",
+              description = "The nucleus sampling of text generation and chat: the model picks the next token from the"
+                            + " most likely tokens whose probabilities add up to this value (0 to 1). The"
+                            + " CamelIBMWatsonxAiTopP header overrides it.")
     private Double topP;
 
-    @UriParam(label = "producer", description = "Top K (top-k sampling)")
+    @UriParam(label = "producer",
+              description = "The top-k sampling of text generation: the model picks the next token from this number of"
+                            + " most likely tokens. Chat does not use it. The CamelIBMWatsonxAiTopK header overrides it.")
     private Integer topK;
 
-    @UriParam(label = "producer", description = "Repetition penalty")
+    @UriParam(label = "producer",
+              description = "The penalty of text generation for repeating tokens it already generated: 1 means no"
+                            + " penalty, and higher values repeat less. Chat does not use it (see frequencyPenalty). The"
+                            + " CamelIBMWatsonxAiRepetitionPenalty header overrides it.")
     private Double repetitionPenalty;
 
     // Chat Parameters
-    @UriParam(label = "producer", description = "Maximum completion tokens for chat")
+    @UriParam(label = "producer",
+              description = "The maximum number of tokens of the answer of chat, chatStreaming and deploymentChat. The"
+                            + " CamelIBMWatsonxAiMaxNewTokens header overrides it.")
     private Integer maxCompletionTokens;
 
-    @UriParam(label = "producer", description = "Frequency penalty for chat")
+    @UriParam(label = "producer",
+              description = "The penalty of chat for tokens in proportion to how often they already appear, from -2 to 2:"
+                            + " positive values make the answer repeat itself less. There is no header for it.")
     private Double frequencyPenalty;
 
-    @UriParam(label = "producer", description = "Presence penalty for chat")
+    @UriParam(label = "producer",
+              description = "The penalty of chat for any token that already appeared, from -2 to 2: positive values make"
+                            + " the model move on to new topics. There is no header for it.")
     private Double presencePenalty;
 
     @UriParam(label = "producer",
@@ -187,21 +228,26 @@ public class WatsonxAiConfiguration implements Cloneable {
     private Float moderationThreshold = 0.5f;
 
     @UriParam(label = "producer",
-              description = "The endpoint URI that receives each chunk of chatStreaming as a message (in the place of the"
-                            + " CamelIBMWatsonxAiStreamConsumer header), such as seda:chunks. The chunks are sent from the"
-                            + " threads of the watsonx.ai SDK")
+              description = "The endpoint URI, such as seda:chunks, that receives each chunk of textGenerationStreaming"
+                            + " and chatStreaming as a message when the CamelIBMWatsonxAiStreamConsumer header is not set."
+                            + " The chunks are sent from the threads of the watsonx.ai SDK, with the exchange ID of the"
+                            + " streaming exchange in the CamelCorrelationId header.")
     private String streamEndpoint;
 
     // Embedding Parameters
     @UriParam(label = "producer",
-              description = "Maximum number of tokens accepted per input for embeddings. Truncates from the end if exceeded.")
+              description = "The maximum number of tokens of each input text of embedding: a longer input is truncated"
+                            + " from the end, so that the request does not fail.")
     private Integer truncateInputTokens;
 
     // Rerank Parameters
-    @UriParam(label = "producer", description = "Number of top results to return for reranking")
+    @UriParam(label = "producer",
+              description = "The number of best ranked inputs that rerank returns. The CamelIBMWatsonxAiRerankTopN header"
+                            + " overrides it.")
     private Integer rerankTopN;
 
-    @UriParam(label = "producer", description = "Whether to return documents in rerank response")
+    @UriParam(label = "producer",
+              description = "Whether each result of rerank includes its input text, besides its index and score.")
     private Boolean returnDocuments;
 
     // Time series
@@ -211,19 +257,32 @@ public class WatsonxAiConfiguration implements Cloneable {
     private Integer predictionLength;
 
     // Text Extraction (COS)
-    @UriParam(label = "producer", description = "Cloud Object Storage URL")
+    @UriParam(label = "producer",
+              description = "The endpoint URL of the IBM Cloud Object Storage region of the document and result buckets,"
+                            + " such as https://s3.us-south.cloud-object-storage.appdomain.cloud. Required for text"
+                            + " extraction and text classification.")
     private String cosUrl;
 
-    @UriParam(label = "producer", description = "COS connection ID for document storage")
+    @UriParam(label = "producer",
+              description = "The ID of the connection asset, in the project or space, that gives watsonx.ai access to the"
+                            + " documentBucket. Required for text extraction and text classification.")
     private String documentConnectionId;
 
-    @UriParam(label = "producer", description = "COS bucket for document storage")
+    @UriParam(label = "producer",
+              description = "The Cloud Object Storage bucket of the documents of text extraction and text classification:"
+                            + " the upload operations upload into it, and the operations with a file path read the document"
+                            + " from it. Required for these operations.")
     private String documentBucket;
 
-    @UriParam(label = "producer", description = "COS connection ID for result storage")
+    @UriParam(label = "producer",
+              description = "The ID of the connection asset, in the project or space, that gives watsonx.ai access to the"
+                            + " resultBucket. Required for text extraction.")
     private String resultConnectionId;
 
-    @UriParam(label = "producer", description = "COS bucket for result storage")
+    @UriParam(label = "producer",
+              description = "The Cloud Object Storage bucket where text extraction writes its output files, which"
+                            + " textExtractionReadFile and textExtractionDeleteFile read and delete unless the"
+                            + " CamelIBMWatsonxAiBucketName header names another bucket. Required for text extraction.")
     private String resultBucket;
 
     // Text extraction and classification parameters
@@ -256,7 +315,7 @@ public class WatsonxAiConfiguration implements Cloneable {
               description = "What text extraction does with the images of the document")
     private String embeddedImages;
 
-    @UriParam(label = "producer", description = "The resolution of the page images of text extraction")
+    @UriParam(label = "producer", description = "The resolution, in dots per inch, of the images that text extraction outputs.")
     private Integer outputDpi;
 
     @UriParam(label = "producer",
@@ -264,7 +323,8 @@ public class WatsonxAiConfiguration implements Cloneable {
     private Boolean outputTokens;
 
     @UriParam(label = "producer", enums = "disabled,invoice,ubill,generic_with_semantic",
-              description = "The key-value pair extraction of text extraction")
+              description = "The key-value pair extraction of text extraction: disabled, invoice, ubill or"
+                            + " generic_with_semantic. When not set, text extraction extracts no key-value pairs.")
     private String kvpMode;
 
     @UriParam(label = "producer", enums = "exact,binary",
@@ -287,13 +347,21 @@ public class WatsonxAiConfiguration implements Cloneable {
     private Long processingTimeout;
 
     // Detection
-    @UriParam(label = "producer", description = "Whether to detect PII (Personal Identifiable Information)")
+    @UriParam(label = "producer",
+              description = "Whether detect looks for personal identifiable information (PII), when neither the detectors"
+                            + " option nor the CamelIBMWatsonxAiDetectors header is set. When neither detectPii nor"
+                            + " detectHap is set, detect uses both detectors.")
     private Boolean detectPii;
 
-    @UriParam(label = "producer", description = "Whether to detect HAP (Harmful, Abusive, Profane content)")
+    @UriParam(label = "producer",
+              description = "Whether detect looks for hate, abuse and profanity (HAP), when neither the detectors option"
+                            + " nor the CamelIBMWatsonxAiDetectors header is set. When neither detectPii nor detectHap is"
+                            + " set, detect uses both detectors.")
     private Boolean detectHap;
 
-    @UriParam(label = "producer", description = "Detection threshold (0.0 to 1.0)")
+    @UriParam(label = "producer",
+              description = "The threshold (0 to 1) of the detectors of detect, detectContext and detectGenerated, but"
+                            + " the PII detector, which takes none. The defaults of watsonx.ai apply when not set.")
     private Double detectionThreshold;
 
     @UriParam(label = "producer",
@@ -309,10 +377,16 @@ public class WatsonxAiConfiguration implements Cloneable {
     private String governanceInstanceId;
 
     // Advanced
-    @UriParam(label = "advanced", description = "Request timeout in milliseconds")
+    @UriParam(label = "advanced",
+              description = "The timeout of each HTTP request to watsonx.ai and to IBM Cloud IAM, in milliseconds; the"
+                            + " watsonx.ai SDK uses 60 seconds when not set. The streaming operations wait for the end of"
+                            + " the stream at most this timeout and 30 seconds more.")
     private Long timeout;
 
-    @UriParam(label = "security", defaultValue = "true", description = "Whether to verify SSL certificates",
+    @UriParam(label = "security", defaultValue = "true",
+              description = "Whether the watsonx.ai SDK verifies the TLS certificates of watsonx.ai, IBM Cloud IAM and"
+                            + " Cloud Object Storage. Set it to false only for testing, as the connections then accept any"
+                            + " certificate.",
               security = "insecure:ssl", insecureValue = "false")
     private Boolean verifySsl = true;
 

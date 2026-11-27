@@ -29,11 +29,9 @@ import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
 public class RedshiftData2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "A logical name of the endpoint, which you choose freely. The producer does not use it.")
-    @Metadata(required = true)
     private String label;
     @UriParam(description = "The operation that the producer performs. The CamelAwsRedshiftDataOperation header replaces this"
-                            + " option.")
-    @Metadata(required = true)
+                            + " option. If neither is set, the exchange fails.")
     private RedshiftData2Operations operation;
     @UriParam(label = "security", security = "secret",
               description = "The access key ID of the AWS credentials. The client uses it with secretKey as static credentials,"
