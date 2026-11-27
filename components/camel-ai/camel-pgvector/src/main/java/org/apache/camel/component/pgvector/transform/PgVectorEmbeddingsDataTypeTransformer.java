@@ -79,19 +79,36 @@ public class PgVectorEmbeddingsDataTypeTransformer extends Transformer {
 
     private static String toJson(Map<String, Object> map) {
         return "{" + map.entrySet().stream()
-                .map(e -> "\"" + escapeJson(String.valueOf(e.getKey())) + "\":" + formatJsonValue(e.getValue()))
+                .map(e -> {
+                    String key = String.valueOf(e.getKey());
+                    return "\"" + escapeJson(rejectNul(key, "name", key)) + "\":" + formatJsonValue(key, e.getValue());
+                })
                 .collect(Collectors.joining(","))
                + "}";
     }
 
-    private static String formatJsonValue(Object value) {
+    private static String formatJsonValue(String key, Object value) {
         if (value == null) {
             return "null";
         }
         if (value instanceof Number || value instanceof Boolean) {
             return String.valueOf(value);
         }
-        return "\"" + escapeJson(String.valueOf(value)) + "\"";
+        return "\"" + escapeJson(rejectNul(key, "value", String.valueOf(value))) + "\"";
+    }
+
+    /**
+     * Fails on a NUL character (U+0000) in the name or value of a metadata key. JSON can write it as an escape, but
+     * PostgreSQL jsonb rejects that escape, so the row would be stored and every later metadata::jsonb filter that
+     * reaches it would fail.
+     */
+    private static String rejectNul(String key, String part, String text) {
+        if (text.indexOf('\u0000') >= 0) {
+            throw new IllegalArgumentException(
+                    "The " + part + " of the metadata key '" + key.replace("\u0000", "\\u0000")
+                                               + "' has a NUL character (U+0000), which PostgreSQL jsonb cannot store");
+        }
+        return text;
     }
 
     /**

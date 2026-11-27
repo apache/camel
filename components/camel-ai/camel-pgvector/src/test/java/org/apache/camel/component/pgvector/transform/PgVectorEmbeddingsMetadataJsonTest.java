@@ -30,10 +30,11 @@ import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The pgvector:embeddings transformer writes the metadata of the TextSegment as valid JSON, with every control
- * character escaped.
+ * character escaped, and fails on a NUL character, which PostgreSQL jsonb cannot store.
  */
 class PgVectorEmbeddingsMetadataJsonTest {
 
@@ -44,12 +45,7 @@ class PgVectorEmbeddingsMetadataJsonTest {
     void controlCharactersOfTheMetadataAreEscaped() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
-            Exchange exchange = new DefaultExchange(context);
-            exchange.getMessage().setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
-                    new Embedding(new float[] { 0.1f, 0.2f }));
-            exchange.getMessage().setBody(TextSegment.from("hello", Metadata.from(KEY, VALUE)));
-
-            new PgVectorEmbeddingsDataTypeTransformer().transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            Exchange exchange = transform(context, Metadata.from(KEY, VALUE));
 
             String json = exchange.getMessage().getHeader(PgVectorHeaders.METADATA, String.class);
             assertThat(json).isEqualTo("{\"title\\u001f\":\"a\\u000cb\\u0001c\\\\d\\\"e\\nf\\tg\\rh\"}");
@@ -58,5 +54,41 @@ class PgVectorEmbeddingsMetadataJsonTest {
             JsonObject parsed = (JsonObject) Jsoner.deserialize(json);
             assertThat(parsed).hasSize(1).containsEntry(KEY, VALUE);
         }
+    }
+
+    @Test
+    void nulInAMetadataValueFailsAndNamesTheKey() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            Metadata metadata = Metadata.from("title", "ok").put("author", "a\u0000b\u0001");
+
+            assertThatThrownBy(() -> transform(context, metadata))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("The value of the metadata key 'author' has a NUL character (U+0000),"
+                                + " which PostgreSQL jsonb cannot store");
+        }
+    }
+
+    @Test
+    void nulInAMetadataKeyFailsAndNamesTheKey() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            Metadata metadata = Metadata.from("ti\u0000tle", "ok");
+
+            assertThatThrownBy(() -> transform(context, metadata))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("The name of the metadata key 'ti\\u0000tle' has a NUL character (U+0000),"
+                                + " which PostgreSQL jsonb cannot store");
+        }
+    }
+
+    private static Exchange transform(DefaultCamelContext context, Metadata metadata) {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
+                new Embedding(new float[] { 0.1f, 0.2f }));
+        exchange.getMessage().setBody(TextSegment.from("hello", metadata));
+
+        new PgVectorEmbeddingsDataTypeTransformer().transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+        return exchange;
     }
 }
