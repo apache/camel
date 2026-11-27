@@ -3356,7 +3356,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Browse (camel-browse)
-     * Inspect the messages received on endpoints supporting BrowsableEndpoint.
+     * Keep the messages sent to the endpoint in memory, so that tests, tools
+     * and the developer console can browse them.
      * 
      * Category: core,monitoring
      * Since: 1.3
@@ -3365,7 +3366,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>browse:name</code>
      * 
      * Path parameter: name (required)
-     * A name which can be any string to uniquely identify the endpoint
+     * The name of the endpoint, which can be any string. The routes that send
+     * to and consume from the same endpoint URI share its list of messages.
      * 
      * @param path name
      * @return the dsl builder
@@ -3375,7 +3377,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Browse (camel-browse)
-     * Inspect the messages received on endpoints supporting BrowsableEndpoint.
+     * Keep the messages sent to the endpoint in memory, so that tests, tools
+     * and the developer console can browse them.
      * 
      * Category: core,monitoring
      * Since: 1.3
@@ -3384,7 +3387,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>browse:name</code>
      * 
      * Path parameter: name (required)
-     * A name which can be any string to uniquely identify the endpoint
+     * The name of the endpoint, which can be any string. The routes that send
+     * to and consume from the same endpoint URI share its list of messages.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

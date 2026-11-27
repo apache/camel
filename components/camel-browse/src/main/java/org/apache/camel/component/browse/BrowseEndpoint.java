@@ -41,10 +41,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * Inspect the messages received on endpoints supporting {@link BrowsableEndpoint}.
- *
- * This can be useful for testing, visualisation tools or debugging. The exchanges sent to the endpoint are all
- * available to be browsed.
+ * Keep the messages sent to the endpoint in memory, so that tests, tools and the developer console can browse them.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name",
              remote = false, internal = true, category = { Category.CORE, Category.MONITORING })
@@ -57,14 +54,20 @@ import org.apache.camel.support.DefaultProducer;
                                                  + " the same exchange, so the body is the one that route ends with"))
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
-    @UriPath(description = "A name which can be any string to uniquely identify the endpoint")
+    @UriPath(description = "The name of the endpoint, which can be any string. The routes that send to and consume from"
+                           + " the same endpoint URI share its list of messages.")
     @Metadata(required = true)
     private String name;
     @UriParam(label = "advanced",
-              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+              description = "The maximum number of messages that the endpoint keeps in memory for browsing. When a new"
+                            + " message goes over the limit, the oldest message is removed from the list. The default is"
+                            + " the browseLimit of the component, and 0 means no limit, so every message is kept until"
+                            + " CamelContext stops.")
     private int browseLimit;
     @UriParam(label = "advanced",
-              description = "To use a predicate to filter whether to include the message for browsing. Return true to include, false to exclude.")
+              description = "A predicate that the producer tests on each message: true keeps the message for browsing,"
+                            + " false skips it. A skipped message is also not passed to the route that consumes from the"
+                            + " endpoint. If not set, every message is kept.")
     private Predicate<Exchange> filter;
 
     private final Lock limitLock = new ReentrantLock();

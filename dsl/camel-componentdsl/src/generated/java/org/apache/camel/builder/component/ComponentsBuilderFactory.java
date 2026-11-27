@@ -1049,7 +1049,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Browse (camel-browse)
-     * Inspect the messages received on endpoints supporting BrowsableEndpoint.
+     * Keep the messages sent to the endpoint in memory, so that tests, tools
+     * and the developer console can browse them.
      * 
      * Category: core,monitoring
      * Since: 1.3
