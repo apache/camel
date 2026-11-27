@@ -97,6 +97,9 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
         }
 
         if (answer) {
+            // the key is ours from now on: if the rename check or the remove below throws, the abort that follows
+            // removes it
+            exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_IDEMPOTENT_ACQUIRED), true);
             // if we acquired during idempotent then check rename also
             answer = rename.acquireExclusiveReadLock(operations, file, exchange);
             if (!answer) {
