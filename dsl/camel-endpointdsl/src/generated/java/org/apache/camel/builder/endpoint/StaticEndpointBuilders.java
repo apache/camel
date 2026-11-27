@@ -9860,7 +9860,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JMX (camel-jmx)
-     * Receive JMX notifications.
+     * Receive the notifications of an MBean on a local or remote MBean server,
+     * or of a JMX monitor that observes an MBean attribute.
      * 
      * Category: monitoring
      * Since: 2.6
@@ -9869,8 +9870,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jmx:serverURL</code>
      * 
      * Path parameter: serverURL
-     * Server url comes from the remaining endpoint. Use platform to connect to
-     * local JVM.
+     * The MBean server to connect to: platform for the platform MBean server of
+     * the JVM that runs Camel, or the JMX service URL of a remote MBean server,
+     * for example service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi. The
+     * monitorType option works only with platform.
      * 
      * @param path serverURL
      * @return the dsl builder
@@ -9880,7 +9883,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JMX (camel-jmx)
-     * Receive JMX notifications.
+     * Receive the notifications of an MBean on a local or remote MBean server,
+     * or of a JMX monitor that observes an MBean attribute.
      * 
      * Category: monitoring
      * Since: 2.6
@@ -9889,8 +9893,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jmx:serverURL</code>
      * 
      * Path parameter: serverURL
-     * Server url comes from the remaining endpoint. Use platform to connect to
-     * local JVM.
+     * The MBean server to connect to: platform for the platform MBean server of
+     * the JVM that runs Camel, or the JMX service URL of a remote MBean server,
+     * for example service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi. The
+     * monitorType option works only with platform.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

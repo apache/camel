@@ -2991,7 +2991,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JMX (camel-jmx)
-     * Receive JMX notifications.
+     * Receive the notifications of an MBean on a local or remote MBean server,
+     * or of a JMX monitor that observes an MBean attribute.
      * 
      * Category: monitoring
      * Since: 2.6
