@@ -17514,8 +17514,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * State Store (camel-state-store)
-     * Perform key-value operations against a pluggable KeyValueRepository
-     * backend.
+     * Store, get and delete key-value entries in a pluggable
+     * KeyValueRepository, such as an in-memory store or a shared cache.
      * 
      * Category: cache
      * Since: 4.23
@@ -17524,7 +17524,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>state-store:storeName</code>
      * 
      * Path parameter: storeName (required)
-     * The name of the state store
+     * The name of the store. The endpoints with the same store name in one
+     * CamelContext share one backend, and the first of them that starts decides
+     * which backend it is and whether its keys are namespaced.
      * 
      * @param path storeName
      * @return the dsl builder
@@ -17534,8 +17536,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * State Store (camel-state-store)
-     * Perform key-value operations against a pluggable KeyValueRepository
-     * backend.
+     * Store, get and delete key-value entries in a pluggable
+     * KeyValueRepository, such as an in-memory store or a shared cache.
      * 
      * Category: cache
      * Since: 4.23
@@ -17544,7 +17546,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>state-store:storeName</code>
      * 
      * Path parameter: storeName (required)
-     * The name of the state store
+     * The name of the store. The endpoints with the same store name in one
+     * CamelContext share one backend, and the first of them that starts decides
+     * which backend it is and whether its keys are namespaced.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

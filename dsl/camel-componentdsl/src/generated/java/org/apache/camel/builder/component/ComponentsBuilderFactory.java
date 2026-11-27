@@ -5098,8 +5098,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * State Store (camel-state-store)
-     * Perform key-value operations against a pluggable KeyValueRepository
-     * backend.
+     * Store, get and delete key-value entries in a pluggable
+     * KeyValueRepository, such as an in-memory store or a shared cache.
      * 
      * Category: cache
      * Since: 4.23
