@@ -102,7 +102,7 @@ or removes its row.
 | camel-aws2-ses | aws2-ses |  |
 | camel-aws2-sns | aws2-sns |  |
 | camel-aws2-sqs | aws2-sqs |  |
-| camel-aws2-step-functions | aws2-step-functions |  |
+| camel-aws2-step-functions | aws2-step-functions | yes |
 | camel-aws2-sts | aws2-sts |  |
 | camel-aws2-textract | aws2-textract |  |
 | camel-aws2-timestream | aws2-timestream |  |
