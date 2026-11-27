@@ -36,62 +36,67 @@ import org.apache.camel.spi.UriParams;
 public class AiToolConfiguration implements Cloneable {
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Comma-separated list of tags used to group tools. "
-                            + "Producers filter the registry by these tags to select which tools to expose to the LLM. "
-                            + "When omitted, the tool goes into a default pool that is added to the tools of every tag "
-                            + "a producer selects with its own tags option "
-                            + "(producers without tags receive no registry tools, "
-                            + "and the MCP server never exposes the default pool).")
+    @UriParam(description = "A comma-separated list of tags to register the tool under. An AI producer (such as openai,"
+                            + " langchain4j-agent or spring-ai-chat) offers the model the tools of the tags in its own tags"
+                            + " option, and the MCP server exposes the tools whose tags match its tag patterns. Without"
+                            + " tags, the tool goes into a default pool that is added to every tag a producer selects,"
+                            + " and that the MCP server never exposes.")
     private String tags;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Human-readable description of what this tool does. "
-                            + "Passed verbatim to the LLM; be precise and action-oriented. "
-                            + "When omitted, defaults to the tool name.")
+    @UriParam(description = "The description of what the tool does, which the model reads as is to decide when to"
+                            + " call the tool, and which MCP clients see in tools/list. If not set or blank, the tool"
+                            + " name is used.")
     private String description;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Tool input parameters. "
-                            + "Format: parameter.NAME=TYPE, parameter.NAME.description=TEXT, "
-                            + "parameter.NAME.required=true or false, parameter.NAME.enum=val1,val2. "
-                            + "Supported types: string, integer, number, boolean. "
-                            + "Mutually exclusive with argSchema.",
+    @UriParam(description = "The input parameters of the tool, set as parameter.NAME=TYPE,"
+                            + " parameter.NAME.description=TEXT, parameter.NAME.required=true or false and"
+                            + " parameter.NAME.enum=VALUE1,VALUE2, from which Camel builds the JSON Schema of the tool"
+                            + " input. TYPE is string, integer, number or boolean, and string when not set or not known."
+                            + " The route receives each argument as a header named NAME, and a call without a required"
+                            + " argument is refused before the route runs. Cannot be combined with argSchema.",
               prefix = "parameter.", multiValue = true)
     private Map<String, String> parameters;
 
-    @UriParam(description = "Raw JSON Schema for tool input parameters. Supports inline JSON and resource "
-                            + "references (classpath:, file:, resource:). Mutually exclusive with the parameter "
-                            + "multi-value options. Use for nested objects, arrays, oneOf, and other complex schemas. "
-                            + "When the schema does not set additionalProperties, Camel adds additionalProperties: false, "
-                            + "so a client that validates the input (such as the MCP server) refuses an undeclared "
-                            + "argument.")
+    @UriParam(description = "The JSON Schema of the tool input, inline or loaded from a resource such as"
+                            + " classpath:schema.json or file:schema.json, for input that the parameter options cannot"
+                            + " describe, such as nested objects, arrays and oneOf. The root must be an object schema"
+                            + " with at least one property, and the route receives each top-level argument as a header."
+                            + " When the schema does not set additionalProperties, Camel adds additionalProperties:"
+                            + " false, so a client that validates the input (such as the MCP server) refuses an"
+                            + " undeclared argument. Cannot be combined with the parameter options.")
     @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String argSchema;
 
     @Metadata(label = "consumer")
-    @UriParam(defaultValue = "false", description = "Whether to populate the message body with the tool arguments "
-                                                    + "as a JSON string, excluding undeclared arguments and reserved names. "
-                                                    + "Declared argument headers remain available. "
-                                                    + "When disabled, the message body is left unchanged.")
+    @UriParam(defaultValue = "false", description = "Whether the route also receives the arguments of the call as a JSON"
+                                                    + " object in the message body, as a String. The body holds the same"
+                                                    + " arguments as the headers, so undeclared arguments and names that"
+                                                    + " start with camel are left out. When false, the route starts"
+                                                    + " without a body.")
     private boolean argumentsAsBody;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Tool output schema fields. "
-                            + "Format: outputParameter.NAME=TYPE, outputParameter.NAME.description=TEXT. "
-                            + "Supported types: string, integer, number, boolean. "
-                            + "Mutually exclusive with outputSchema.",
+    @UriParam(description = "The fields of the structured output of the tool, set as outputParameter.NAME=TYPE and"
+                            + " outputParameter.NAME.description=TEXT, from which Camel builds the output JSON Schema that"
+                            + " MCP clients see in tools/list. TYPE is string, integer, number or boolean. When set, the"
+                            + " route must reply with a JSON body, which the MCP server returns as structured content."
+                            + " Cannot be combined with outputSchema.",
               prefix = "outputParameter.", multiValue = true)
     private Map<String, String> outputParameters;
 
-    @UriParam(description = "Raw JSON Schema describing the tool's structured output. Supports inline JSON and "
-                            + "resource references (classpath:, file:, resource:). Mutually exclusive with the "
-                            + "outputParameter multi-value options. When declared, the route body is parsed as JSON "
-                            + "and exposed as structured content to MCP clients.")
+    @UriParam(description = "The JSON Schema of the structured output of the tool, inline or loaded from a resource"
+                            + " such as classpath:result.json, which MCP clients see in tools/list. When set, the route"
+                            + " must reply with a JSON body, which the MCP server returns as structured content. Cannot"
+                            + " be combined with the outputParameter options.")
     @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String outputSchema;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Optional display title for MCP tool listings. Advisory hint for MCP clients only.")
+    @UriParam(description = "The human-readable title of the tool, which MCP clients can show in tools/list instead of"
+                            + " the name. The AI producers do not send it to the model. If not set, the tool has no"
+                            + " title.")
     private String title;
 
     @Metadata(label = "consumer")
@@ -115,9 +120,10 @@ public class AiToolConfiguration implements Cloneable {
     private Boolean openWorldHint;
 
     @Metadata(label = "consumer", defaultValue = "false")
-    @UriParam(description = "When true, AI producers that support agentic tool loops (such as camel-openai) return "
-                            + "this tool's result directly to the caller without sending it back to the model. "
-                            + "Also published as an MCP tool annotation when the tool is exposed via camel-mcp-server.")
+    @UriParam(description = "Whether the openai producer ends its tool loop with the result of this tool as the reply,"
+                            + " without sending the result back to the model. It does so only when every tool that the"
+                            + " model called in that turn sets returnDirect. The other AI producers ignore it, and some"
+                            + " MCP server engines publish it to clients as a tool annotation.")
     private Boolean returnDirect;
 
     @Metadata(label = "consumer", defaultValue = "false")

@@ -28,28 +28,36 @@ import org.apache.camel.spi.UriPath;
 public class IoTHubConfiguration implements Cloneable {
 
     @UriPath(label = "producer",
-             description = "Default device id used when the message does not carry a device id header.")
+             description = "The ID of the device that sends the message. It must match the DeviceId of the connection string."
+                           + " The CamelAzureIoTHubDeviceId header replaces this option.")
     private String deviceId;
 
     @UriParam(label = "security", secret = true,
-              description = "The IoT Hub device connection string. Can be overridden per message via the "
-                            + "CamelAzureIoTHubConnectionString header.")
+              description = "The connection string of the device, with its HostName, DeviceId and SharedAccessKey. The"
+                            + " producer opens one device client per hub, device and module of the connection string, and"
+                            + " reuses it. The CamelAzureIoTHubConnectionString header replaces this option.")
     private String connectionString;
 
     @UriParam(label = "producer", defaultValue = "MQTT",
-              description = "The protocol used to connect to Azure IoT Hub.")
+              description = "The protocol of the device client. MQTT_WS and AMQPS_WS are MQTT and AMQPS over WebSocket on"
+                            + " port 443. The SDK supports device twin operations only over MQTT, MQTT_WS, AMQPS and"
+                            + " AMQPS_WS.")
     private IotHubClientProtocol protocol = IotHubClientProtocol.MQTT;
 
     @UriParam(label = "producer", defaultValue = "TELEMETRY",
-              description = "How the message body is delivered: telemetry, device twin reported properties, or both.")
+              description = "What the producer sends. TELEMETRY sends the body as a device-to-cloud message, TWIN updates the"
+                            + " reported properties of the device twin, and BOTH does both. The CamelAzureIoTHubDeliveryMode"
+                            + " header replaces this option.")
     private IoTHubDeliveryMode deliveryMode = IoTHubDeliveryMode.TELEMETRY;
 
     @UriParam(label = "producer", defaultValue = "application/json",
-              description = "Content type applied to telemetry messages.")
+              description = "The content type of the telemetry message, which IoT Hub message routing needs to query the"
+                            + " body. The producer always sets the content encoding to UTF-8.")
     private String contentType = "application/json";
 
     @UriParam(label = "producer", defaultValue = "10s",
-              description = "Timeout for telemetry sends and twin reported-property updates.")
+              description = "How long the producer waits for IoT Hub to acknowledge a telemetry message, and for each device"
+                            + " twin request: getting the twin and updating its reported properties.")
     private Duration sendTimeout = Duration.ofSeconds(10);
 
     public String getDeviceId() {

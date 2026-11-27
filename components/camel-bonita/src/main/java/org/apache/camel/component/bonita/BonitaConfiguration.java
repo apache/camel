@@ -27,24 +27,39 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class BonitaConfiguration implements Cloneable {
 
-    @UriPath
+    @UriPath(description = "The operation to perform. Only startCase is supported: it starts a case (an instance) of the"
+                           + " process that the processName option names, with the contract inputs from the message body.")
     @Metadata(required = true)
     private BonitaOperation operation;
-    @UriParam(defaultValue = "localhost")
+    @UriParam(description = "The host name of the Bonita server. The producer calls the REST API under the context path"
+                            + " of the basePath option on this host.",
+              defaultValue = "localhost")
     private String hostname = "localhost";
-    @UriParam(defaultValue = "8080")
+    @UriParam(description = "The HTTP port of the Bonita server.", defaultValue = "8080")
     private String port = "8080";
-    @UriParam(defaultValue = "/bonita")
+    @UriParam(description = "The context path of the Bonita web application on the server, such as /bonita or the path"
+                            + " that a reverse proxy maps to it. The producer calls the REST API, the login and the file"
+                            + " uploads under it. A missing leading slash is added and a trailing slash removed, and /"
+                            + " is the root of the server.",
+              defaultValue = "/bonita")
     private String basePath = "/bonita";
-    @UriParam
+    @UriParam(description = "The exact name of the process to start a case of. When the process is deployed in several"
+                            + " versions, processVersion selects one. The producer fails when it starts if the option is"
+                            + " not set, and fails the exchange if no process has this name.")
     @Metadata(required = true)
     private String processName;
-    @UriParam
+    @UriParam(description = "The version of the process to start a case of. If not set and the process is deployed in"
+                            + " several versions, the producer uses the first one that Bonita returns and logs a WARN"
+                            + " that names it.")
     private String processVersion;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The username of the Bonita account. The producer logs in with it at the loginservice of"
+                            + " Bonita before each request, and fails when it starts if the option is not set.",
+              label = "security", security = "secret")
     @Metadata(required = true)
     private String username;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The password of the Bonita account. The producer logs in with it at the loginservice of"
+                            + " Bonita before each request, and fails when it starts if the option is not set.",
+              label = "security", security = "secret")
     @Metadata(required = true)
     private String password;
 
@@ -52,9 +67,6 @@ public class BonitaConfiguration implements Cloneable {
         return hostname;
     }
 
-    /**
-     * Hostname where Bonita engine runs
-     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -63,9 +75,6 @@ public class BonitaConfiguration implements Cloneable {
         return port;
     }
 
-    /**
-     * Port of the server hosting Bonita engine
-     */
     public void setPort(String port) {
         this.port = port;
     }
@@ -74,10 +83,6 @@ public class BonitaConfiguration implements Cloneable {
         return basePath;
     }
 
-    /**
-     * The context path of the Bonita web application on the server, such as /bonita (the default) or the path that a
-     * reverse proxy maps to it. The REST API, the login and the file uploads are called under it.
-     */
     public void setBasePath(String basePath) {
         this.basePath = basePath;
     }
@@ -86,10 +91,6 @@ public class BonitaConfiguration implements Cloneable {
         return processVersion;
     }
 
-    /**
-     * The version of the process to start a case of. If not set and the process is deployed in several versions, the
-     * first one that Bonita returns is used.
-     */
     public void setProcessVersion(String processVersion) {
         this.processVersion = processVersion;
     }
@@ -98,9 +99,6 @@ public class BonitaConfiguration implements Cloneable {
         return processName;
     }
 
-    /**
-     * Name of the process involved in the operation
-     */
     public void setProcessName(String processName) {
         this.processName = processName;
     }
@@ -109,9 +107,6 @@ public class BonitaConfiguration implements Cloneable {
         return operation;
     }
 
-    /**
-     * Operation to use
-     */
     public void setOperation(BonitaOperation operation) {
         this.operation = operation;
     }
@@ -140,9 +135,6 @@ public class BonitaConfiguration implements Cloneable {
         return username;
     }
 
-    /**
-     * Username to authenticate to Bonita engine.
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -151,9 +143,6 @@ public class BonitaConfiguration implements Cloneable {
         return password;
     }
 
-    /**
-     * Password to authenticate to Bonita engine.
-     */
     public void setPassword(String password) {
         this.password = password;
     }

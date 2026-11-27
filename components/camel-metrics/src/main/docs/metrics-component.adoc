@@ -2,7 +2,7 @@
 :doctitle: Metrics
 :shortname: metrics
 :artifactid: camel-metrics
-:description: Collect various metrics directly from Camel routes using the DropWizard metrics library.
+:description: Update counters, gauges, histograms, meters and timers of a Dropwizard Metrics registry from Camel routes.
 :since: 2.14
 :supportlevel: Stable
 :tabs-sync-option:

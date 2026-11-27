@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Spring AI Vector Store
+ * Store, delete and search documents in a vector database with Spring AI.
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = SpringAiVectorStore.SCHEME, title = "Spring AI Vector Store",
              syntax = "spring-ai-vector-store:storeId", producerOnly = true, category = {
@@ -71,7 +71,8 @@ import org.apache.camel.support.DefaultEndpoint;
 public class SpringAiVectorStoreEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
-    @UriPath(description = "The id")
+    @UriPath(description = "A name that identifies the endpoint. The component does not use it otherwise, so endpoints with"
+                           + " different names can use different options for the same vector store.")
     private final String storeId;
 
     @UriParam

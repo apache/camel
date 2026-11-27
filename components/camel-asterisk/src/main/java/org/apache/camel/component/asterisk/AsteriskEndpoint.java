@@ -34,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Interact with Asterisk PBX Server (VoIP).
+ * Receive events from an Asterisk PBX server and send actions to it over the Asterisk Manager Interface (AMI).
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name",
              category = { Category.MOBILE }, headersClass = AsteriskConstants.class)
@@ -63,22 +63,32 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " the ManagerResponse, an ExtensionStateResponse. A ManagerError is the"
                                                  + " response when Asterisk answers with an error"))
 public class AsteriskEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
-    @UriPath(description = "Name of component")
+    @UriPath(description = "A logical name of the endpoint, for example the name of the Asterisk server. The component does"
+                           + " not use it to connect.")
     @Metadata(required = true)
     private String name;
 
-    @UriParam
+    @UriParam(description = "The host name or IP address of the Asterisk server. The consumer and the producer connect to"
+                            + " the Asterisk Manager Interface (AMI) of this host on port 5038, which cannot be changed.")
     @Metadata(required = true)
     private String hostname;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The AMI action that the producer sends for each message: QUEUE_STATUS for the status of the queues"
+                            + " and their members, SIP_PEERS for the list of SIP peers, or EXTENSION_STATE for the state of the"
+                            + " extension in the CamelAsteriskExtension and CamelAsteriskContext headers. The"
+                            + " CamelAsteriskAction header replaces this option for a message. If neither is set, the"
+                            + " producer fails the message.")
     private AsteriskAction action;
 
-    @UriParam(security = "secret")
+    @UriParam(security = "secret",
+              description = "The name of the AMI user, as defined in the manager.conf file of the Asterisk server. The consumer"
+                            + " and the producer each log in with it when they start.")
     @Metadata(required = true)
     private String username;
 
-    @UriParam(security = "secret")
+    @UriParam(security = "secret",
+              description = "The secret of the AMI user, as defined in the manager.conf file of the Asterisk server.")
     @Metadata(required = true)
     private String password;
 
@@ -127,9 +137,6 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
         return username;
     }
 
-    /**
-     * Login username
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -138,9 +145,6 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
         return password;
     }
 
-    /**
-     * Login password
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -149,9 +153,6 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
         return action;
     }
 
-    /**
-     * What action to perform such as getting queue status, sip peers or extension state.
-     */
     public void setAction(AsteriskAction action) {
         this.action = action;
     }
@@ -160,16 +161,10 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
         return hostname;
     }
 
-    /**
-     * The hostname of the asterisk server
-     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
 
-    /**
-     * Logical name
-     */
     public String getName() {
         return name;
     }

@@ -33,13 +33,16 @@ import org.apache.camel.util.ObjectHelper;
 @Component("azure-iothub")
 public class IoTHubComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that each endpoint copies as its defaults, before the endpoint options are"
+                            + " applied.")
     private IoTHubConfiguration configuration = new IoTHubConfiguration();
     @Metadata(label = "advanced", defaultValue = "5m",
-              description = "Idle time after which a pooled device client is evicted and closed.")
+              description = "How long a pooled device client can be unused before the component closes it. A client is unused"
+                            + " when no producer sends with it. A value of 0 or less uses 5 minutes.")
     private Duration deviceClientIdleTimeout = Duration.ofMinutes(5);
     @Metadata(label = "advanced", defaultValue = "30s",
-              description = "How often the pool is scanned for idle device clients to evict.")
+              description = "How often the component checks the pool for device clients that are unused for longer than"
+                            + " deviceClientIdleTimeout, and closes them. A value of 0 or less uses 30 seconds.")
     private Duration deviceClientEvictionInterval = Duration.ofSeconds(30);
     private volatile DeviceClientPool clientPool;
 
@@ -93,16 +96,10 @@ public class IoTHubComponent extends DefaultComponent {
         super.doStop();
     }
 
-    /**
-     * The shared component configuration.
-     */
     public void setConfiguration(IoTHubConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    /**
-     * Idle time after which a pooled device client is evicted and closed.
-     */
     public void setDeviceClientIdleTimeout(Duration deviceClientIdleTimeout) {
         this.deviceClientIdleTimeout = deviceClientIdleTimeout;
     }
@@ -116,9 +113,6 @@ public class IoTHubComponent extends DefaultComponent {
         return deviceClientIdleTimeout;
     }
 
-    /**
-     * How often the pool is scanned for idle device clients to evict.
-     */
     public void setDeviceClientEvictionInterval(Duration deviceClientEvictionInterval) {
         this.deviceClientEvictionInterval = deviceClientEvictionInterval;
     }

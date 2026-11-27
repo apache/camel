@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Trigger a single message only once at startup (useful for development and testing purposes).
+ * Send a single message to the route once, after the route starts, which is useful for development and testing.
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "once", title = "Once", syntax = "once:name", consumerOnly = true,
              remote = false, category = { Category.CORE, Category.SCHEDULING })
@@ -45,21 +45,40 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " expression"))
 public class OnceEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath(description = "A name of your choice for the endpoint. The consumer also uses it in the name of the thread that"
+                           + " sends the message.")
     @Metadata(required = true)
     private String name;
-    @UriParam(label = "advanced", defaultValue = "1000")
+    @UriParam(label = "advanced", defaultValue = "1000",
+              description = "The number of milliseconds that the consumer waits, after the route has started, before it sends"
+                            + " the message. Use 0 or a negative value to send the message at once. If not set, the delay"
+                            + " option of the component applies.")
     private long delay = 1000;
-    @UriParam
+    @UriParam(description = "The body of the message. The text true or false (in any case) becomes a Boolean, and a whole"
+                            + " number becomes an Integer, or a Long if it is too large for an Integer. A value with a resource"
+                            + " prefix such as file:, classpath: or http: is replaced by the text of that resource, and a value"
+                            + " that starts with language:NAME: is evaluated as an expression, as described for the languages"
+                            + " option of the component. The consumer sets the body last, so an expression can use the"
+                            + " headers, exchange properties and variables. If not set, the body is null.")
     @Metadata(supportFileReference = true)
     private String body;
-    @UriParam(multiValue = true, prefix = "header.")
+    @UriParam(multiValue = true, prefix = "header.",
+              description = "The headers of the message, as key=value pairs, for example header.foo=abc. Each value is"
+                            + " converted, loaded from a resource or evaluated as an expression in the same way as the body"
+                            + " option. A value that results in null sets no header.")
     @Metadata(supportFileReference = true)
     private Map<String, String> headers;
-    @UriParam(label = "advanced", multiValue = true, prefix = "variable.")
+    @UriParam(label = "advanced", multiValue = true, prefix = "variable.",
+              description = "The exchange variables, as key=value pairs, for example variable.foo=abc. Each value is"
+                            + " converted, loaded from a resource or evaluated as an expression in the same way as the body"
+                            + " option. The consumer sets the variables first, so an expression in the other options can use"
+                            + " them.")
     @Metadata(supportFileReference = true)
     private Map<String, String> variables;
-    @UriParam(label = "advanced", multiValue = true, prefix = "exchangeProperty.")
+    @UriParam(label = "advanced", multiValue = true, prefix = "exchangeProperty.",
+              description = "The exchange properties, as key=value pairs, for example exchangeProperty.foo=abc. Each value is"
+                            + " converted, loaded from a resource or evaluated as an expression in the same way as the body"
+                            + " option. The consumer sets them after the variables and before the headers and the body.")
     @Metadata(supportFileReference = true)
     private Map<String, String> exchangeProperties;
 
@@ -97,9 +116,6 @@ public class OnceEndpoint extends DefaultEndpoint {
         return name;
     }
 
-    /**
-     * The logical name
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -108,11 +124,6 @@ public class OnceEndpoint extends DefaultEndpoint {
         return delay;
     }
 
-    /**
-     * The number of milliseconds to wait before triggering.
-     * <p/>
-     * The default value is 1000.
-     */
     public void setDelay(long delay) {
         this.delay = delay;
     }
@@ -121,18 +132,10 @@ public class OnceEndpoint extends DefaultEndpoint {
         return body;
     }
 
-    /**
-     * The data to use as message body. You can externalize the data by using file: or classpath: as prefix and specify
-     * the location of the file.
-     */
     public void setBody(String body) {
         this.body = body;
     }
 
-    /**
-     * The data to use as message headers as key=value pairs. You can externalize the data by using file: or classpath:
-     * as prefix and specify the location of the file.
-     */
     public Map<String, String> getHeaders() {
         return headers;
     }
@@ -145,10 +148,6 @@ public class OnceEndpoint extends DefaultEndpoint {
         return variables;
     }
 
-    /**
-     * The data to use as exchange variables as key=value pairs. You can externalize the data by using file: or
-     * classpath: as prefix and specify the location of the file.
-     */
     public void setVariables(Map<String, String> variables) {
         this.variables = variables;
     }
@@ -157,10 +156,6 @@ public class OnceEndpoint extends DefaultEndpoint {
         return exchangeProperties;
     }
 
-    /**
-     * The data to use as exchange properties as key=value pairs. You can externalize the data by using file: or
-     * classpath: as prefix and specify the location of the file.
-     */
     public void setExchangeProperties(Map<String, String> exchangeProperties) {
         this.exchangeProperties = exchangeProperties;
     }

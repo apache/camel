@@ -29,27 +29,39 @@ public class DnsConstants {
     @Deprecated
     public static final String OPERATION_WIKIPEDIA = DnsType.wikipedia.name();
 
-    @Metadata(label = "lookup dig", description = "The DNS class of the lookup. Should match the values of\n" +
-                                                  "`org.xbill.dns.DClass`. Optional.",
+    @Metadata(label = "lookup dig",
+              description = "The DNS class to query, as a dnsjava DClass mnemonic such as IN (the default), CH"
+                            + " or HS. The lookup operation fails on an unknown class, while dig uses"
+                            + " IN instead.",
               javaType = "String")
     public static final String DNS_CLASS = "CamelDnsClass";
-    @Metadata(label = "lookup dig", description = "The name to lookup", javaType = "String", required = true)
+    @Metadata(label = "lookup dig",
+              description = "The domain name to query. For lookup, a name without a trailing dot can also be tried"
+                            + " with the search domains of the system, while dig always queries the"
+                            + " name as an absolute name.",
+              javaType = "String", required = true)
     public static final String DNS_NAME = "CamelDnsName";
-    @Metadata(label = "ip", description = "The domain name.", javaType = "String", required = true)
+    @Metadata(label = "ip", description = "The host name to resolve to an IP address, with the resolver of the JVM"
+                                          + " (InetAddress.getByName). An IP address literal is returned as is.",
+              javaType = "String", required = true)
     public static final String DNS_DOMAIN = "CamelDnsDomain";
-    @Metadata(label = "dig", description = "The server in particular for the query. If none is given, the default\n" +
-                                           "one specified by the OS will be used. Optional.",
+    @Metadata(label = "dig", description = "The host name or IP address of the DNS server to send the query to, on port 53."
+                                           + " If not set, the first DNS server configured in the operating system is"
+                                           + " used.",
               javaType = "String")
     public static final String DNS_SERVER = "CamelDnsServer";
-    @Metadata(label = "lookup dig", description = "The type of the lookup. Should match the values of `org.xbill.dns.Type`.\n" +
-                                                  "Optional. The dig operation uses A when none or an unknown type is given.",
+    @Metadata(label = "lookup dig",
+              description = "The record type to query, as a dnsjava Type mnemonic such as A (the default), AAAA,"
+                            + " MX or TXT. The lookup operation fails on an unknown type, while dig"
+                            + " uses A instead.",
               javaType = "String")
     public static final String DNS_TYPE = "CamelDnsType";
     /**
      * @deprecated the Wikipedia over DNS service is no longer available
      */
     @Deprecated
-    @Metadata(label = "wikipedia", description = "The term", required = true,
+    @Metadata(label = "wikipedia", description = "The search term, sent as a TXT query for the term followed by .wp.dg.cx.",
+              required = true,
               deprecationNote = "The Wikipedia over DNS service is no longer available")
     public static final String TERM = "CamelDnsTerm";
 
