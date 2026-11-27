@@ -4935,7 +4935,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring Event (camel-spring)
-     * Listen for Spring Application Events.
+     * Publish and receive the Spring ApplicationEvents of the Spring
+     * ApplicationContext.
      * 
      * Category: messaging
      * Since: 1.4

@@ -343,7 +343,7 @@ or removes its row.
 | camel-solr | solr |  |
 | camel-spiffe | spiffe |  |
 | camel-splunk-hec | splunk-hec |  |
-| camel-spring | spring-event |  |
+| camel-spring | spring-event | yes |
 | camel-spring-ai-chat | spring-ai-chat |  |
 | camel-spring-ai-embeddings | spring-ai-embeddings |  |
 | camel-spring-ai-image | spring-ai-image |  |

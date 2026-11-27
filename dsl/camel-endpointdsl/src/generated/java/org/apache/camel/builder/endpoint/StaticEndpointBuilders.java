@@ -16537,7 +16537,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring Event (camel-spring)
-     * Listen for Spring Application Events.
+     * Publish and receive the Spring ApplicationEvents of the Spring
+     * ApplicationContext.
      * 
      * Category: messaging
      * Since: 1.4
@@ -16546,7 +16547,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-event:name</code>
      * 
      * Path parameter: name
-     * Name of endpoint
+     * The name of the endpoint. The producer publishes a body that is not an
+     * ApplicationEvent as a CamelEvent, which only the consumers of endpoints
+     * with the same name receive. Every other ApplicationEvent of the
+     * ApplicationContext, also one that a producer publishes, goes to the
+     * consumers of all spring-event endpoints, whatever their name.
      * 
      * @param path name
      * @return the dsl builder
@@ -16556,7 +16561,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring Event (camel-spring)
-     * Listen for Spring Application Events.
+     * Publish and receive the Spring ApplicationEvents of the Spring
+     * ApplicationContext.
      * 
      * Category: messaging
      * Since: 1.4
@@ -16565,7 +16571,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-event:name</code>
      * 
      * Path parameter: name
-     * Name of endpoint
+     * The name of the endpoint. The producer publishes a body that is not an
+     * ApplicationEvent as a CamelEvent, which only the consumers of endpoints
+     * with the same name receive. Every other ApplicationEvent of the
+     * ApplicationContext, also one that a producer publishes, goes to the
+     * consumers of all spring-event endpoints, whatever their name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
