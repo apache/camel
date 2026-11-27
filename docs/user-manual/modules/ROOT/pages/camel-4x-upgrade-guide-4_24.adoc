@@ -12664,6 +12664,15 @@ ignored without a message. An endpoint with `sslContextParameters`, or with `use
 global `SSLContextParameters`, now fails to start. Remove the option, and configure the trust store (and the key store
 for a client certificate) with the `javax.net.ssl.*` system properties of the JVM.
 
+=== camel-azure-eventgrid, camel-azure-servicebus, camel-azure-eventhubs - a DefaultAzureCredential set as tokenCredential is used
+
+With `credentialType` `AZURE_IDENTITY`, which these components also choose when the `tokenCredential` option is a
+`DefaultAzureCredential`, the clients now authenticate with the configured `tokenCredential` instance. Before, they
+built a new `DefaultAzureCredential` with the default settings, so a credential built with
+`managedIdentityClientId(...)`, `tenantId(...)` or other settings was not used. Without `tokenCredential`,
+`AZURE_IDENTITY` still builds a new `DefaultAzureCredential`. In camel-azure-eventgrid, an explicit `credentialType`
+`TOKEN_CREDENTIAL` or `AZURE_IDENTITY` is no longer replaced when `tokenCredential` is set.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:

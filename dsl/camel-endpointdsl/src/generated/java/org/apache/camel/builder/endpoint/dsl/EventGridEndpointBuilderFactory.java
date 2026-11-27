@@ -136,9 +136,12 @@ public interface EventGridEndpointBuilderFactory {
          * How the producer authenticates: ACCESS_KEY with the
          * azureKeyCredential or accessKey option, TOKEN_CREDENTIAL with the
          * tokenCredential option, or AZURE_IDENTITY with a
-         * DefaultAzureCredential of the Azure Identity library. When one of
-         * these credential options is set, the component chooses the type from
-         * it, so set this option only for AZURE_IDENTITY.
+         * DefaultAzureCredential of the Azure Identity library (the
+         * tokenCredential option when it is set, else a new one). When
+         * tokenCredential is set, an explicit TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY is kept, else the type is AZURE_IDENTITY for a
+         * DefaultAzureCredential and TOKEN_CREDENTIAL for another credential;
+         * when accessKey or azureKeyCredential is set, it is ACCESS_KEY.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -158,9 +161,12 @@ public interface EventGridEndpointBuilderFactory {
          * How the producer authenticates: ACCESS_KEY with the
          * azureKeyCredential or accessKey option, TOKEN_CREDENTIAL with the
          * tokenCredential option, or AZURE_IDENTITY with a
-         * DefaultAzureCredential of the Azure Identity library. When one of
-         * these credential options is set, the component chooses the type from
-         * it, so set this option only for AZURE_IDENTITY.
+         * DefaultAzureCredential of the Azure Identity library (the
+         * tokenCredential option when it is set, else a new one). When
+         * tokenCredential is set, an explicit TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY is kept, else the type is AZURE_IDENTITY for a
+         * DefaultAzureCredential and TOKEN_CREDENTIAL for another credential;
+         * when accessKey or azureKeyCredential is set, it is ACCESS_KEY.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -178,8 +184,10 @@ public interface EventGridEndpointBuilderFactory {
         }
         /**
          * The com.azure.core.credential.TokenCredential that authenticates the
-         * producer with Microsoft Entra ID. When it is set, the accessKey and
-         * azureKeyCredential options are not used.
+         * producer with Microsoft Entra ID, such as a DefaultAzureCredential
+         * built with a managed identity client id or a tenant id; this instance
+         * is used as it is, also with credentialType AZURE_IDENTITY. When it is
+         * set, the accessKey and azureKeyCredential options are not used.
          * 
          * The option is a:
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -195,8 +203,10 @@ public interface EventGridEndpointBuilderFactory {
         }
         /**
          * The com.azure.core.credential.TokenCredential that authenticates the
-         * producer with Microsoft Entra ID. When it is set, the accessKey and
-         * azureKeyCredential options are not used.
+         * producer with Microsoft Entra ID, such as a DefaultAzureCredential
+         * built with a managed identity client id or a tenant id; this instance
+         * is used as it is, also with credentialType AZURE_IDENTITY. When it is
+         * set, the accessKey and azureKeyCredential options are not used.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.TokenCredential</code> type.
