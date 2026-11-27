@@ -860,7 +860,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Send and receive files to Azure storage file share
+     * Read files from and write files to a file share in Azure Files.
      * 
      * Category: cloud,file
      * Since: 3.22

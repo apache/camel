@@ -111,7 +111,7 @@ or removes its row.
 | camel-azure-cosmosdb | azure-cosmosdb | yes |
 | camel-azure-eventgrid | azure-eventgrid |  |
 | camel-azure-eventhubs | azure-eventhubs |  |
-| camel-azure-files | azure-files |  |
+| camel-azure-files | azure-files | yes |
 | camel-azure-functions | azure-functions |  |
 | camel-azure-iothub | azure-iothub | yes |
 | camel-azure-key-vault | azure-key-vault | yes |

@@ -2866,7 +2866,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Send and receive files to Azure storage file share
+     * Read files from and write files to a file share in Azure Files.
      * 
      * Category: cloud,file
      * Since: 3.22
@@ -2875,10 +2875,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-files:account/share</code>
      * 
      * Path parameter: account (required)
-     * The account to use
+     * The name of the storage account, for example myaccount, or the host name
+     * of its file service, for example myaccount.file.core.windows.net. With a
+     * name alone, the component connects to that name with the
+     * .file.core.windows.net suffix, always over HTTPS.
      * 
      * Path parameter: share (required)
-     * The share to use
+     * The name of the file share in the storage account. A path after the share
+     * name in the endpoint URI is the directory, from the share root, that the
+     * consumer polls and that the producer writes to. Without it, the share
+     * root is used.
      * 
      * Path parameter: port
      * Port of the FTP server
@@ -2894,7 +2900,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Send and receive files to Azure storage file share
+     * Read files from and write files to a file share in Azure Files.
      * 
      * Category: cloud,file
      * Since: 3.22
@@ -2903,10 +2909,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-files:account/share</code>
      * 
      * Path parameter: account (required)
-     * The account to use
+     * The name of the storage account, for example myaccount, or the host name
+     * of its file service, for example myaccount.file.core.windows.net. With a
+     * name alone, the component connects to that name with the
+     * .file.core.windows.net suffix, always over HTTPS.
      * 
      * Path parameter: share (required)
-     * The share to use
+     * The name of the file share in the storage account. A path after the share
+     * name in the endpoint URI is the directory, from the share root, that the
+     * consumer polls and that the producer writes to. Without it, the share
+     * root is used.
      * 
      * Path parameter: port
      * Port of the FTP server
