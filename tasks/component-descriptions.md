@@ -316,7 +316,7 @@ or removes its row.
 | camel-quartz | quartz |  |
 | camel-quickfix | quickfix |  |
 | camel-reactive-streams | reactive-streams |  |
-| camel-ref | ref |  |
+| camel-ref | ref | yes |
 | camel-rest | rest, rest-api | yes |
 | camel-rest-openapi | rest-openapi |  |
 | camel-rest-postman | rest-postman |  |

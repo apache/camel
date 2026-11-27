@@ -4483,8 +4483,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Ref (camel-ref)
-     * Route messages to an endpoint looked up dynamically by name in the Camel
-     * Registry.
+     * Send messages to, or receive messages from, an endpoint that is looked up
+     * by name in the Camel registry.
      * 
      * Category: core
      * Since: 1.2

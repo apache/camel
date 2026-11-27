@@ -15259,8 +15259,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ref (camel-ref)
-     * Route messages to an endpoint looked up dynamically by name in the Camel
-     * Registry.
+     * Send messages to, or receive messages from, an endpoint that is looked up
+     * by name in the Camel registry.
      * 
      * Category: core
      * Since: 1.2
@@ -15269,7 +15269,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ref:name</code>
      * 
      * Path parameter: name (required)
-     * Name of endpoint to lookup in the registry.
+     * The name of the Endpoint bound in the Camel registry that this endpoint
+     * delegates to. The endpoint is looked up once, when this endpoint is
+     * initialized, and startup fails if no Endpoint is bound under this name.
+     * The producer and the consumer are created by the endpoint that is found.
      * 
      * @param path name
      * @return the dsl builder
@@ -15279,8 +15282,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Ref (camel-ref)
-     * Route messages to an endpoint looked up dynamically by name in the Camel
-     * Registry.
+     * Send messages to, or receive messages from, an endpoint that is looked up
+     * by name in the Camel registry.
      * 
      * Category: core
      * Since: 1.2
@@ -15289,7 +15292,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ref:name</code>
      * 
      * Path parameter: name (required)
-     * Name of endpoint to lookup in the registry.
+     * The name of the Endpoint bound in the Camel registry that this endpoint
+     * delegates to. The endpoint is looked up once, when this endpoint is
+     * initialized, and startup fails if no Endpoint is bound under this name.
+     * The producer and the consumer are created by the endpoint that is found.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
