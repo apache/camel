@@ -21,7 +21,9 @@ import org.apache.camel.spi.Metadata;
 
 public final class SchedulerConstants {
 
-    @Metadata(description = "The timestamp of the message", javaType = "long")
+    @Metadata(description = "The time when the scheduler fired, in milliseconds since the epoch. Only set when"
+                            + " includeMetadata is true.",
+              javaType = "long")
     public static final String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
     private SchedulerConstants() {

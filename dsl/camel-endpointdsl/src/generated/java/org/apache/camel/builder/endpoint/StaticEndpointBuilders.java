@@ -15422,7 +15422,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Scheduler (camel-scheduler)
-     * Generate messages in specified intervals using
+     * Generate messages on a schedule, by default at a fixed delay using a
      * java.util.concurrent.ScheduledExecutorService.
      * 
      * Category: core,scheduling
@@ -15432,7 +15432,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>scheduler:name</code>
      * 
      * Path parameter: name (required)
-     * The name of the scheduler
+     * The name of the scheduler. The consumers of all endpoints with the same
+     * name share one thread pool of the component, unless the scheduler or
+     * scheduledExecutorService option is set. The threads of that pool are
+     * named after it, and with includeMetadata the consumer sets the
+     * CamelTimerName exchange property to it.
      * 
      * @param path name
      * @return the dsl builder
@@ -15442,7 +15446,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Scheduler (camel-scheduler)
-     * Generate messages in specified intervals using
+     * Generate messages on a schedule, by default at a fixed delay using a
      * java.util.concurrent.ScheduledExecutorService.
      * 
      * Category: core,scheduling
@@ -15452,7 +15456,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>scheduler:name</code>
      * 
      * Path parameter: name (required)
-     * The name of the scheduler
+     * The name of the scheduler. The consumers of all endpoints with the same
+     * name share one thread pool of the component, unless the scheduler or
+     * scheduledExecutorService option is set. The threads of that pool are
+     * named after it, and with includeMetadata the consumer sets the
+     * CamelTimerName exchange property to it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
