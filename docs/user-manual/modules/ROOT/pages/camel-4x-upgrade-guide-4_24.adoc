@@ -12304,7 +12304,9 @@ the scheduled poll consumer (500 milliseconds) replaced the one hour default bef
 OpenWeatherMap twice a second. Set `delay` to keep a shorter interval.
 
 `weatherApi=Hourly` and `weatherApi=Daily` without `period` now query the hourly or the daily forecast, with the length
-that OpenWeatherMap uses by default. Before, they queried the current weather.
+that OpenWeatherMap uses by default. Before, they queried the current weather. The daily forecast
+(`/data/2.5/forecast/daily`) needs a paid OpenWeatherMap subscription, so with a free API key `weatherApi=Daily` now
+fails with HTTP 401: use `weatherApi=Hourly`, or leave `weatherApi` unset for the current weather.
 
 A `weather` endpoint no longer closes an `httpClient` that is set on it when it stops; it closes only the client it
 created itself, and creates a new one when it is started again.
