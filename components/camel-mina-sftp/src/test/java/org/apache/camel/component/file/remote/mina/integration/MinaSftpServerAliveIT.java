@@ -121,7 +121,7 @@ public class MinaSftpServerAliveIT extends MinaSftpServerTestSupport {
             public void configure() {
                 String baseUri = "mina-sftp://localhost:" + service.getPort() + "/" + service.getFtpRootDir()
                                  + "?username=admin&password=admin&strictHostKeyChecking=no&useUserKnownHostsFile=false"
-                                 + "&delay=10000&disconnect=true&noop=true&fileName=serveralivetest.txt";
+                                 + "&disconnect=true&noop=true&fileName=serveralivetest.txt";
 
                 // Route with serverAliveInterval configured
                 from(baseUri + "&serverAliveInterval=30000")

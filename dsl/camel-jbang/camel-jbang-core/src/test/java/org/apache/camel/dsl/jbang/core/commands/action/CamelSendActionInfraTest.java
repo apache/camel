@@ -316,6 +316,56 @@ public class CamelSendActionInfraTest extends CamelCommandBaseTestSupport {
                 "http:localhost:8080/lra-coordinator",
                 "host", "localhost"));
 
+        // CAMEL-22083: the services that got methods named as the options of their component
+        testCases.add(Arguments.of(
+                "clickhouse",
+                createJson("serverUrl", "http://localhost:8123", "database", "default",
+                        "username", "default", "password", "secret"),
+                "clickhouse:default",
+                "serverUrl", "http://localhost:8123"));
+
+        testCases.add(Arguments.of(
+                "neo4j",
+                createJson("databaseUrl", "bolt://localhost:7687", "username", "neo4j", "password", "secret"),
+                "neo4j:myVectors",
+                "databaseUrl", "bolt://localhost:7687"));
+
+        testCases.add(Arguments.of(
+                "opensearch",
+                createJson("hostAddresses", "localhost:9200"),
+                "opensearch:myCluster",
+                "hostAddresses", "localhost:9200"));
+
+        testCases.add(Arguments.of(
+                "pinecone",
+                createJson("host", "http://localhost:5080"),
+                "pinecone:myCollection",
+                "host", "http://localhost:5080"));
+
+        testCases.add(Arguments.of(
+                "weaviate",
+                createJson("host", "localhost:8080", "scheme", "http", "grpcHost", "localhost", "grpcPort", 50051),
+                "weaviate:myCollection",
+                "grpcPort", "50051"));
+
+        testCases.add(Arguments.of(
+                "opa",
+                createJson("serverUrl", "http://localhost:8181"),
+                "opa:authz/allow",
+                "serverUrl", "http://localhost:8181"));
+
+        testCases.add(Arguments.of(
+                "openfga",
+                createJson("apiUrl", "http://localhost:8080"),
+                "openfga:check",
+                "apiUrl", "http://localhost:8080"));
+
+        testCases.add(Arguments.of(
+                "apicurio-registry",
+                createJson("registryUrl", "http://localhost:8080/apis/registry/v3"),
+                "apicurio-registry:myGroup/myArtifact",
+                "registryUrl", "http://localhost:8080/apis/registry/v3"));
+
         return testCases.stream();
     }
 

@@ -33,9 +33,15 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 @Component("mybatis")
 public class MyBatisComponent extends HealthCheckComponent {
 
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "The org.apache.ibatis.session.SqlSessionFactory that opens the MyBatis sessions of all the"
+                            + " endpoints of this component. If not set or autowired, the component builds one from the"
+                            + " file of the configurationUri option.")
     private volatile SqlSessionFactory sqlSessionFactory;
-    @Metadata(defaultValue = "SqlMapConfig.xml", supportFileReference = true)
+    @Metadata(defaultValue = "SqlMapConfig.xml", supportFileReference = true,
+              description = "The location of the MyBatis XML configuration file, which the component reads to build the"
+                            + " SqlSessionFactory when the sqlSessionFactory option is not set. It is loaded from the"
+                            + " classpath, or prefix it with file: or http: for another location.")
     private String configurationUri = "SqlMapConfig.xml";
 
     @Override
@@ -67,9 +73,6 @@ public class MyBatisComponent extends HealthCheckComponent {
         return sqlSessionFactory;
     }
 
-    /**
-     * To use the {@link SqlSessionFactory}
-     */
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
@@ -78,11 +81,6 @@ public class MyBatisComponent extends HealthCheckComponent {
         return configurationUri;
     }
 
-    /**
-     * Location of MyBatis xml configuration file.
-     * <p/>
-     * The default value is: SqlMapConfig.xml loaded from the classpath
-     */
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
     }

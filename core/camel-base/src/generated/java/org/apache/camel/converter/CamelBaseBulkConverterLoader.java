@@ -41,7 +41,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 130;
+        return 133;
     }
 
     @Override
@@ -446,6 +446,33 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.DurationConverter.toDuration((java.lang.String) value);
             }
+        } else if (to == java.time.Instant.class) {
+            if (value instanceof java.lang.String) {
+                Object obj = org.apache.camel.converter.DateTimeConverter.toInstant((java.lang.String) value);
+                if (obj == null) {
+                    return Void.class;
+                } else {
+                    return obj;
+                }
+            }
+        } else if (to == java.time.OffsetDateTime.class) {
+            if (value instanceof java.lang.String) {
+                Object obj = org.apache.camel.converter.DateTimeConverter.toOffsetDateTime((java.lang.String) value);
+                if (obj == null) {
+                    return Void.class;
+                } else {
+                    return obj;
+                }
+            }
+        } else if (to == java.time.ZonedDateTime.class) {
+            if (value instanceof java.lang.String) {
+                Object obj = org.apache.camel.converter.DateTimeConverter.toZonedDateTime((java.lang.String) value);
+                if (obj == null) {
+                    return Void.class;
+                } else {
+                    return obj;
+                }
+            }
         } else if (to == java.util.ArrayList.class) {
             if (value instanceof java.util.Iterator) {
                 return org.apache.camel.converter.CollectionConverter.toArrayList((java.util.Iterator) value);
@@ -640,6 +667,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.sql.Timestamp.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.time.Duration.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.time.Duration.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.time.Instant.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.time.OffsetDateTime.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.time.ZonedDateTime.class), this);
         registry.addConverter(new TypeConvertible<>(java.util.Iterator.class, java.util.ArrayList.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Iterable.class, java.util.ArrayList.class), this);
         registry.addConverter(new TypeConvertible<>(java.util.Map.class, java.util.Collection.class), this);
@@ -1016,6 +1046,18 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.lang.Long.class) {
                 return this;
             }
+            if (from == java.lang.String.class) {
+                return this;
+            }
+        } else if (to == java.time.Instant.class) {
+            if (from == java.lang.String.class) {
+                return this;
+            }
+        } else if (to == java.time.OffsetDateTime.class) {
+            if (from == java.lang.String.class) {
+                return this;
+            }
+        } else if (to == java.time.ZonedDateTime.class) {
             if (from == java.lang.String.class) {
                 return this;
             }

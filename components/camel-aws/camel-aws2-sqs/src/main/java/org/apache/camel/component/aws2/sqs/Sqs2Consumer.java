@@ -53,6 +53,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -581,6 +582,19 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             }
                         } catch (SdkException e) {
                             logException(e, batchEntries);
+                        } catch (VirtualMachineError e) {
+                            // the extender is a periodic task: thrown on, it would end silently and the messages would
+                            // no longer be extended. The consumer stops instead (CAMEL-27515)
+                            LOG.error("Fatal error extending the visibility of the messages of {}. The consumer stops"
+                                      + " consuming until the route is restarted.",
+                                    getEndpoint(), e);
+                            cancel();
+                            handleFatalError(e);
+                            return;
+                        } catch (Exception | Error e) {
+                            // another failure (such as a NoClassDefFoundError of the client) only fails this extension:
+                            // the extender runs again at its next period (CAMEL-27473)
+                            logException(e instanceof Exception ex ? ex : new RuntimeCamelException(e), batchEntries);
                         }
                     }
                 }

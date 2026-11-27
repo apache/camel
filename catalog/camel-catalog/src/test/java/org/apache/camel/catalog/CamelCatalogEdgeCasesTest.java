@@ -74,7 +74,7 @@ public class CamelCatalogEdgeCasesTest {
         assertEquals("dir", map.get("directoryName"));
         assertFalse(map.containsKey("port"));
 
-        // separators that are the same cannot tell which option is omitted
+        // the address of a spring-ws producer is not split at its colons (spring-ws has its own split, CAMEL-27393)
         EndpointValidationResult result = catalog.validateEndpointProperties("spring-ws:http://foo.com/bar");
         assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
 

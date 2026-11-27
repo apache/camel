@@ -935,7 +935,8 @@ public interface Ddb2EndpointBuilderFactory {
         }
         /**
          * The KeySchema that identifies the primary key for this table. From
-         * Camel 2.16.0 the type of this header is List and not KeySchema*.
+         * Camel 2.16.0 the type of this header is a list of KeySchemaElement
+         * and not KeySchema*.
          * 
          * The option is a: {@code
          * List<software.amazon.awssdk.services.dynamodb.model.KeySchemaElement>} type.

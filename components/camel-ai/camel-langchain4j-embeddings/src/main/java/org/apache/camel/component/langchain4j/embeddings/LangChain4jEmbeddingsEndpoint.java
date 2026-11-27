@@ -38,10 +38,11 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              }, headersClass = LangChain4jEmbeddingsHeaders.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.LIST },
-                                  description = "The text to embed: a String, bytes, a stream or a file read as text, or a"
-                                                + " LangChain4j TextSegment; or a non-empty List of them to embed in one batch."
-                                                + " Another body or List element, such as a Map or a POJO, fails, as does no"
-                                                + " body: convert it to text first"),
+                                  description = "The text to embed: a String, bytes, a stream, a file or another value"
+                                                + " Camel converts to its text, such as a char[], or a LangChain4j"
+                                                + " TextSegment; or a non-empty List of them to embed in one batch. A body or"
+                                                + " List element Camel reads only as its toString(), such as a Map or a POJO,"
+                                                + " fails, as does no body: marshal it first"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    description = "The body is kept. The vector goes in the CamelLangChain4jEmbeddingsVector"
                                                  + " header as a float array, with the Embedding and the TextSegment in the"

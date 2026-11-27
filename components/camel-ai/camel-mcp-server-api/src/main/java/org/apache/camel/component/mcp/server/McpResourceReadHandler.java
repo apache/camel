@@ -34,4 +34,19 @@ public interface McpResourceReadHandler {
      * @return the sanitized result, never null
      */
     McpResourceReadResult read();
+
+    /**
+     * Reads the resource contents on behalf of the transport-supplied caller, so the resource route can check who is
+     * asking. The default ignores the context and calls {@link #read()}; the bridge overrides it to stamp the caller
+     * identity onto the resource exchange, as for a tool call. Engines that can determine a caller identity (such as
+     * the Vert.x streamable HTTP transport) call this overload; others keep calling {@link #read()}.
+     *
+     * @param  context the transport-supplied caller context, never null (use {@link McpToolCallContext#EMPTY} when
+     *                 there is no caller identity)
+     * @return         the sanitized result, never null
+     * @since          4.24
+     */
+    default McpResourceReadResult read(McpToolCallContext context) {
+        return read();
+    }
 }

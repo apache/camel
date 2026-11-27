@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.protobuf.ByteString;
 import com.salesforce.eventbus.protobuf.ConsumerEvent;
@@ -97,6 +99,8 @@ public class PubSubApiClient extends ServiceSupport {
     private final Map<String, String> schemaJsonCache = new ConcurrentHashMap<>();
     private final Map<String, TopicInfo> topicInfoCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<PubSubApiConsumer, StreamObserver<FetchRequest>> observerMap = new ConcurrentHashMap<>();
+    // held by subscribe() while it opens a subscription, and by doStop() while it closes the open ones
+    private final Lock subscriptionLock = new ReentrantLock();
 
     private ManagedChannel channel;
     private boolean usePlainTextConnection = false;
@@ -156,21 +160,38 @@ public class PubSubApiClient extends ServiceSupport {
         if (initialReplayId != null) {
             replayId = base64DecodeToByteString(initialReplayId);
         }
-        LOG.info("Subscribing to topic: {}.", topic);
-        final FetchResponseObserver responseObserver
-                = new FetchResponseObserver(consumer, replayPreset, initialReplayId, fallbackToLatestReplayId);
-        StreamObserver<FetchRequest> serverStream = asyncStub.subscribe(responseObserver);
-        LOG.info("Subscribe successful.");
-        responseObserver.setServerStream(serverStream);
-        observerMap.put(consumer, serverStream);
-        FetchRequest.Builder fetchRequestBuilder = FetchRequest.newBuilder()
-                .setReplayPreset(replayPreset)
-                .setTopicName(topic)
-                .setNumRequested(consumer.getBatchSize());
-        if (replayPreset == ReplayPreset.CUSTOM) {
-            fetchRequestBuilder.setReplayId(replayId);
+        // doStop() sets the status to stopping before it takes this lock, so a subscription is either opened and
+        // stored before doStop() closes the open subscriptions, or it is not opened at all
+        subscriptionLock.lock();
+        try {
+            if (isStoppingOrStopped()) {
+                LOG.debug("Client is stopping, not subscribing to topic {}", topic);
+                return;
+            }
+            LOG.info("Subscribing to topic: {}.", topic);
+            final FetchResponseObserver responseObserver
+                    = new FetchResponseObserver(consumer, replayPreset, initialReplayId, fallbackToLatestReplayId);
+            StreamObserver<FetchRequest> serverStream = asyncStub.subscribe(responseObserver);
+            LOG.info("Subscribe successful.");
+            responseObserver.setServerStream(serverStream);
+            observerMap.put(consumer, serverStream);
+            if (responseObserver.isClosed()) {
+                // the call already ended and its callback may have run before the put, so remove it here;
+                // that callback takes care of the resubscribe
+                observerMap.remove(consumer, serverStream);
+                return;
+            }
+            FetchRequest.Builder fetchRequestBuilder = FetchRequest.newBuilder()
+                    .setReplayPreset(replayPreset)
+                    .setTopicName(topic)
+                    .setNumRequested(consumer.getBatchSize());
+            if (replayPreset == ReplayPreset.CUSTOM) {
+                fetchRequestBuilder.setReplayId(replayId);
+            }
+            serverStream.onNext(fetchRequestBuilder.build());
+        } finally {
+            subscriptionLock.unlock();
         }
-        serverStream.onNext(fetchRequestBuilder.build());
     }
 
     public TopicInfo getTopicInfo(String name) {
@@ -231,14 +252,24 @@ public class PubSubApiClient extends ServiceSupport {
     @Override
     protected void doStop() throws Exception {
         LOG.debug("Stopping PubSubApiClient");
-        // stop each open stream
-        observerMap.values().forEach(observer -> {
-            LOG.debug("Stopping subscription");
-            observer.onCompleted();
-        });
+        // the status is already stopping, so once we hold the lock no subscribe() can add a stream any more
+        subscriptionLock.lock();
+        try {
+            // stop each open stream
+            observerMap.values().forEach(observer -> {
+                LOG.debug("Stopping subscription");
+                observer.onCompleted();
+            });
+        } finally {
+            subscriptionLock.unlock();
+        }
 
         channel.shutdown();
-        channel.awaitTermination(10, TimeUnit.SECONDS);
+        if (!channel.awaitTermination(10, TimeUnit.SECONDS)) {
+            LOG.info("Pub/Sub channel did not terminate within 10 seconds after closing the subscriptions,"
+                     + " cancelling the remaining calls");
+            channel.shutdownNow();
+        }
         super.doStop();
     }
 
@@ -290,7 +321,8 @@ public class PubSubApiClient extends ServiceSupport {
         private final boolean fallbackToLatestReplayId;
         private ReplayPreset initialReplayPreset;
         private String replayId;
-        private StreamObserver<FetchRequest> serverStream;
+        private volatile StreamObserver<FetchRequest> serverStream;
+        private volatile boolean closed;
 
         public FetchResponseObserver(PubSubApiConsumer consumer, ReplayPreset initialReplayPreset,
                                      String initialReplayId, boolean fallbackToLatestReplayId) {
@@ -335,7 +367,15 @@ public class PubSubApiClient extends ServiceSupport {
 
         @Override
         public void onError(Throwable throwable) {
-            observerMap.remove(consumer);
+            closed = true;
+            // remove only this stream: a newer subscription of the same consumer may already be stored
+            observerMap.remove(consumer, serverStream);
+            if (isStoppingOrStopped()) {
+                // a call ended by the stop, for example cancelled by shutdownNow(): no error log, login or resubscribe
+                LOG.debug("Subscription to topic {} ended while the client is stopping: {}", consumer.getTopic(),
+                        throwable.getMessage());
+                return;
+            }
             if (throwable instanceof StatusRuntimeException e) {
                 LOG.error("GRPC Exception", e);
                 Metadata trailers = e.getTrailers();
@@ -383,10 +423,10 @@ public class PubSubApiClient extends ServiceSupport {
             } else {
                 LOG.error("An unexpected error occurred.", throwable);
             }
-            resubscribeOnError();
+            resubscribe();
         }
 
-        private void resubscribeOnError() {
+        private void resubscribe() {
             if (isStoppingOrStopped() || channel == null || channel.isShutdown()) {
                 LOG.debug("Client is stopping or channel is shut down, skipping resubscribe");
                 return;
@@ -418,11 +458,23 @@ public class PubSubApiClient extends ServiceSupport {
         @Override
         public void onCompleted() {
             LOG.debug("onCompleted() called by server");
-            observerMap.remove(consumer);
+            closed = true;
+            observerMap.remove(consumer, serverStream);
+            if (isStoppingOrStopped()) {
+                // the server ended the stream that doStop() half-closed
+                return;
+            }
+            // the server ended the subscription while the consumer is still running: subscribe again as on an error
+            LOG.warn("Subscription to topic {} was completed by the server, resubscribing", consumer.getTopic());
+            resubscribe();
         }
 
         public void setServerStream(StreamObserver<FetchRequest> serverStream) {
             this.serverStream = serverStream;
+        }
+
+        boolean isClosed() {
+            return closed;
         }
 
         private void processEvent(String rpcId, ConsumerEvent ce) throws IOException {

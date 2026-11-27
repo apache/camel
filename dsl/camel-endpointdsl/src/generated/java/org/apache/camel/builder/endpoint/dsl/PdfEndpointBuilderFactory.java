@@ -45,7 +45,9 @@ public interface PdfEndpointBuilderFactory {
         }
 
         /**
-         * Font.
+         * One of the 14 standard fonts of PDF. These fonts cover only Latin
+         * text: to write other characters, such as Cyrillic, Greek or Chinese,
+         * use the fontFile option.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -57,6 +59,28 @@ public interface PdfEndpointBuilderFactory {
          */
         default PdfEndpointBuilder font(String font) {
             doSetProperty("font", font);
+            return this;
+        }
+        /**
+         * A TrueType font file (.ttf) to write the text with, instead of the
+         * standard font of the font option. Use it to write characters that the
+         * standard fonts do not have, such as Cyrillic, Greek or Chinese. The
+         * font is loaded as a resource: prefix with classpath:, file: or http:
+         * (classpath: is the default). The characters that are used are
+         * embedded in the PDF document.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param fontFile the value to set
+         * @return the dsl builder
+         */
+        default PdfEndpointBuilder fontFile(String fontFile) {
+            doSetProperty("fontFile", fontFile);
             return this;
         }
         /**

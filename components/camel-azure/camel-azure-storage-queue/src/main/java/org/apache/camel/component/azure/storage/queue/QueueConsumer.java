@@ -157,6 +157,9 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
         InputStream is = data == null ? null : data.toStream();
         message.setBody(is);
         message.setHeaders(QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
+        // the queue the message comes from, which names the CloudEvent source. It is not the QUEUE_NAME header, as that
+        // header overrides the queue of a producer, which would then send to this queue
+        message.setHeader(QueueConstants.CONSUMED_QUEUE_NAME, getConfiguration().getQueueName());
 
         exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
             @Override

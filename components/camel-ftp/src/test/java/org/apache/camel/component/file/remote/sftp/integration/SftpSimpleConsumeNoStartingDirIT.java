@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,7 +43,9 @@ public class SftpSimpleConsumeNoStartingDirIT extends SftpServerTestSupport {
 
             context.getRouteController().startRoute("foo");
 
-            MockEndpoint.assertIsSatisfied(context);
+            // a stall of the first SSH connection (connect timeout is 10s) is retried by the next poll,
+            // so it takes about 13s to consume and about 25s if two connections in a row stall
+            MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         } finally {
             FileUtil.deleteFile(file);
             FileUtil.deleteFile(new File(".camel/a.txt"));

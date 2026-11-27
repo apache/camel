@@ -48,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -212,6 +213,115 @@ class SpringRabbitMQConsumerDeclareTest {
 
         verify(cf, never()).addConnectionListener(any(ConnectionListener.class));
         verify(admin, never()).declareQueue(any(Queue.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "fanout", "headers" })
+    void deadLetterQueueIsBoundWithAnEmptyRoutingKeyWithoutDeadLetterRoutingKey(String type) throws Exception {
+        connectedConnectionFactory();
+        AmqpAdmin admin = admin();
+        addRoute("spring-rabbitmq:orders?connectionFactory=#cf&queues=orders&autoStartup=false"
+                 + "&deadLetterExchange=orders.dlx&deadLetterQueue=orders.dlq&deadLetterExchangeType=" + type);
+
+        context.start();
+
+        ArgumentCaptor<Exchange> exchanges = ArgumentCaptor.forClass(Exchange.class);
+        verify(admin, times(2)).declareExchange(exchanges.capture());
+        assertEquals("orders.dlx", exchanges.getAllValues().get(0).getName());
+        assertEquals(type, exchanges.getAllValues().get(0).getType());
+        Binding binding = deadLetterBinding(admin);
+        assertEquals("orders.dlq", binding.getDestination());
+        assertEquals("orders.dlx", binding.getExchange());
+        assertEquals("", binding.getRoutingKey());
+        // the consumer queue dead-letters with the original routing key
+        Queue queue = consumerQueue(admin);
+        assertEquals("orders.dlx", queue.getArguments().get("x-dead-letter-exchange"));
+        assertFalse(queue.getArguments().containsKey("x-dead-letter-routing-key"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "direct", "fanout", "headers", "topic" })
+    void deadLetterQueueIsBoundWithDeadLetterRoutingKey(String type) throws Exception {
+        connectedConnectionFactory();
+        AmqpAdmin admin = admin();
+        addRoute("spring-rabbitmq:orders?connectionFactory=#cf&queues=orders&autoStartup=false"
+                 + "&deadLetterExchange=orders.dlx&deadLetterQueue=orders.dlq&deadLetterRoutingKey=dead"
+                 + "&deadLetterExchangeType=" + type);
+
+        context.start();
+
+        assertEquals("dead", deadLetterBinding(admin).getRoutingKey());
+        assertEquals("dead", consumerQueue(admin).getArguments().get("x-dead-letter-routing-key"));
+    }
+
+    @Test
+    void deadLetterQueueIsBoundWithTheDeadLetterRoutingKeyQueueArgument() throws Exception {
+        connectedConnectionFactory();
+        AmqpAdmin admin = admin();
+        addRoute("spring-rabbitmq:orders?connectionFactory=#cf&queues=orders&autoStartup=false"
+                 + "&deadLetterExchange=orders.dlx&deadLetterQueue=orders.dlq&arg.queue.x-dead-letter-routing-key=dead");
+
+        context.start();
+
+        assertEquals("dead", deadLetterBinding(admin).getRoutingKey());
+        assertEquals("dead", consumerQueue(admin).getArguments().get("x-dead-letter-routing-key"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "direct", "topic" })
+    void consumerFailsToStartWithDeadLetterQueueWithoutDeadLetterRoutingKey(String type) throws Exception {
+        connectedConnectionFactory();
+        AmqpAdmin admin = admin();
+        addRoute("spring-rabbitmq:orders?connectionFactory=#cf&queues=orders&autoStartup=false"
+                 + "&deadLetterExchange=orders.dlx&deadLetterQueue=orders.dlq&deadLetterExchangeType=" + type);
+
+        Exception e = assertThrows(FailedToStartRouteException.class, () -> context.start());
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, rootCause(e));
+        assertEquals("Configure the deadLetterRoutingKey option to bind the deadLetterQueue orders.dlq to the " + type
+                     + " deadLetterExchange orders.dlx (only a fanout or headers exchange does not need it)",
+                cause.getMessage());
+        // nothing is declared
+        verify(admin, never()).declareExchange(any(Exchange.class));
+        verify(admin, never()).declareQueue(any(Queue.class));
+        verify(admin, never()).declareBinding(any(Binding.class));
+    }
+
+    @Test
+    void deadLetterExchangeWithoutDeadLetterQueueNeedsNoDeadLetterRoutingKey() throws Exception {
+        connectedConnectionFactory();
+        AmqpAdmin admin = admin();
+        addRoute("spring-rabbitmq:orders?connectionFactory=#cf&queues=orders&autoStartup=false"
+                 + "&deadLetterExchange=orders.dlx");
+
+        context.start();
+
+        verify(admin, times(2)).declareExchange(any(Exchange.class));
+        ArgumentCaptor<Binding> bindings = ArgumentCaptor.forClass(Binding.class);
+        verify(admin).declareBinding(bindings.capture());
+        assertEquals("orders", bindings.getValue().getDestination());
+    }
+
+    private static Binding deadLetterBinding(AmqpAdmin admin) {
+        ArgumentCaptor<Binding> bindings = ArgumentCaptor.forClass(Binding.class);
+        verify(admin, times(2)).declareBinding(bindings.capture());
+        // the dead letter queue is declared first
+        return bindings.getAllValues().get(0);
+    }
+
+    private static Queue consumerQueue(AmqpAdmin admin) {
+        ArgumentCaptor<Queue> queues = ArgumentCaptor.forClass(Queue.class);
+        verify(admin, times(2)).declareQueue(queues.capture());
+        assertEquals(List.of("orders.dlq", "orders"), queues.getAllValues().stream().map(Queue::getName).toList());
+        return queues.getAllValues().get(1);
+    }
+
+    private static Throwable rootCause(Throwable e) {
+        Throwable answer = e;
+        while (answer.getCause() != null) {
+            answer = answer.getCause();
+        }
+        return answer;
     }
 
     private BrokerDownConnectionFactory brokerDown() throws IOException {

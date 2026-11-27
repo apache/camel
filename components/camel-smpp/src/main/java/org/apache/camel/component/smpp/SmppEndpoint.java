@@ -34,7 +34,7 @@ import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 
 /**
- * Send and receive SMS messages using a SMSC (Short Message Service Center).
+ * Send and receive SMS messages through an SMSC (Short Message Service Center) with the SMPP protocol.
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
              category = { Category.MOBILE }, lenientProperties = true, headersClass = SmppConstants.class)

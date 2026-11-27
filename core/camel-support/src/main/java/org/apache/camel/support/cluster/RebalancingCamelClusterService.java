@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -47,7 +48,8 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
 
     private static final Logger LOG = LoggerFactory.getLogger(RebalancingCamelClusterService.class);
 
-    protected ScheduledExecutorService serializedExecutor;
+    // set to null by doStop: a pass that runs on an executor that is no longer this one does not schedule the next pass
+    protected volatile ScheduledExecutorService serializedExecutor;
     protected CamelPreemptiveClusterService delegate;
     protected CamelContext camelContext;
     protected final long periodMillis;
@@ -76,19 +78,34 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         super.doStart();
         ServiceHelper.startService(delegate);
         if (serializedExecutor == null) {
-            serializedExecutor = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "RebalancingClusterService");
-            serializedExecutor.execute(this::reconcile);
+            ScheduledExecutorService executor = getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "RebalancingClusterService");
+            serializedExecutor = executor;
+            // each start has its own chain of passes, with its own failure state
+            PassState state = new PassState();
+            executor.execute(() -> reconcileAndReschedule(executor, state));
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (serializedExecutor != null) {
-            getCamelContext().getExecutorServiceManager().shutdown(serializedExecutor);
-        }
+        ScheduledExecutorService executor = serializedExecutor;
         serializedExecutor = null;
+        if (executor != null) {
+            // the pending pass is dropped (a scheduled executor runs its delayed tasks after a plain shutdown), so a
+            // start does not add a second chain of passes
+            getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            // and a pass that is still running is given up to one period to finish (shutdownNow does not wait for it),
+            // so it does not run at the same time as the first pass after a quick start
+            try {
+                if (!getCamelContext().getExecutorServiceManager().awaitTermination(executor, periodMillis)) {
+                    LOG.debug("The running rebalancing pass did not finish within {} ms of the stop", periodMillis);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
         ServiceHelper.stopService(delegate);
     }
 
@@ -104,13 +121,48 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         this.delegate = delegate;
     }
 
+    /**
+     * Runs a rebalancing pass, and schedules the next one on the same executor while it is the executor of this
+     * service, also when the pass fails.
+     */
+    private void reconcileAndReschedule(ScheduledExecutorService executor, PassState state) {
+        try {
+            reconcile();
+            state.previousPassFailed = false;
+            state.previousPassFatal = false;
+        } catch (Throwable e) {
+            // a VirtualMachineError (such as an OutOfMemoryError) is logged at ERROR, another failure at WARN, each with
+            // the stack trace and only the first time in a row of its kind: a failure that repeats every period is
+            // logged at DEBUG, while a failure of the other kind than the one before it (such as an
+            // IllegalStateException right after an OutOfMemoryError) is logged at its own level again
+            boolean fatal = ObjectHelper.getVirtualMachineError(e) != null;
+            if (fatal && !state.previousPassFatal) {
+                LOG.error("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
+            } else if (!fatal && (!state.previousPassFailed || state.previousPassFatal)) {
+                LOG.warn("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
+            } else {
+                LOG.debug("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
+            }
+            state.previousPassFailed = true;
+            state.previousPassFatal = fatal;
+        } finally {
+            if (executor == serializedExecutor) {
+                try {
+                    executor.schedule(() -> reconcileAndReschedule(executor, state), periodMillis,
+                            TimeUnit.MILLISECONDS);
+                } catch (RejectedExecutionException e) {
+                    LOG.debug("Cannot schedule the next rebalancing pass as the service is stopping");
+                }
+            }
+        }
+    }
+
     protected void reconcile() {
         Integer n = members();
         List<String> partitions = partitionList();
         int k = partitions.size();
 
         if (n == null || n == 0 || k == 0) {
-            rescheduleAfterDelay();
             return;
         }
 
@@ -133,7 +185,6 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
 
         rebalanceGroup(main, quota);
         rebalanceGroup(remaining, 1);
-        rescheduleAfterDelay();
     }
 
     protected void rebalanceGroup(List<String> partitions, int quota) {
@@ -278,12 +329,6 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         }
     }
 
-    private void rescheduleAfterDelay() {
-        this.serializedExecutor.schedule(this::reconcile,
-                this.periodMillis,
-                TimeUnit.MILLISECONDS);
-    }
-
     @Override
     public CamelPreemptiveClusterView getView(String namespace) throws Exception {
         return delegate.getView(namespace);
@@ -333,5 +378,16 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
     @Override
     public String getId() {
         return delegate.getId();
+    }
+
+    /**
+     * Whether the previous pass of a chain failed, and with a VirtualMachineError. A chain is the passes of one start:
+     * they run one at a time on its executor, which orders them, so the fields need no synchronization. A pass of the
+     * previous start that is still running after the stop has its own state, and does not change the state of the new
+     * chain.
+     */
+    private static final class PassState {
+        private boolean previousPassFailed;
+        private boolean previousPassFatal;
     }
 }

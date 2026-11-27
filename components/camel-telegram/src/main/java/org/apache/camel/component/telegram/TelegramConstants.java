@@ -24,31 +24,34 @@ import org.apache.camel.spi.Metadata;
  */
 public final class TelegramConstants {
 
-    @Metadata(label = "producer", description = "This header is used by the producer endpoint in order to\n" +
-                                                "resolve the chat id that will receive the message. The recipient chat id can be\n"
-                                                +
-                                                "placed (in order of priority) in message body, in the `CamelTelegramChatId` header\n"
-                                                +
-                                                "or in the endpoint configuration (`chatId` option).\n" +
-                                                "This header is also present in all incoming messages.",
+    @Metadata(label = "producer",
+              description = "The identifier of the chat. The consumer sets it for a received message or channel post. The"
+                            + " producer sends to this chat when the message in the body has no chat id, and uses the chatId"
+                            + " option when this header is not set either.",
               javaType = "Object")
     public static final String TELEGRAM_CHAT_ID = "CamelTelegramChatId";
-    @Metadata(description = "This header is used to identify the media type when\n" +
-                            "the outgoing message is composed of pure binary data. Possible values are strings or enum values\n"
-                            +
-                            "belonging to the `org.apache.camel.component.telegram.TelegramMediaType` enumeration.",
+    @Metadata(description = "The type of the media that the producer sends from a body of binary data, such as a byte array, a"
+                            + " stream or a file: TEXT, PHOTO_PNG, PHOTO_JPG, AUDIO, VIDEO or DOCUMENT, as a TelegramMediaType"
+                            + " or its name. Without this header, a byte array fails, and a stream or a file is sent as text.",
               javaType = "org.apache.camel.component.telegram.TelegramMediaType or String")
     public static final String TELEGRAM_MEDIA_TYPE = "CamelTelegramMediaType";
-    @Metadata(description = "This header is used to provide a caption or title\n" +
-                            "for outgoing binary messages.",
+    @Metadata(description = "The caption of a photo, video or document, or the title of an audio, that the producer sends from a"
+                            + " body of binary data as the CamelTelegramMediaType header sets.",
               javaType = "String")
     public static final String TELEGRAM_MEDIA_TITLE_CAPTION = "CamelTelegramMediaTitleCaption";
-    @Metadata(description = "The reply markup.", javaType = "org.apache.camel.component.telegram.model.ReplyMarkup")
+    @Metadata(description = "The reply markup, such as an inline keyboard, of a photo, audio, video or document that the producer"
+                            + " sends from a body of binary data. It is not used for a text message.",
+              javaType = "org.apache.camel.component.telegram.model.ReplyMarkup")
     public static final String TELEGRAM_MEDIA_MARKUP = "CamelTelegramMediaMarkup";
-    @Metadata(description = "This header is used to format text messages using HTML or Markdown",
+    @Metadata(description = "The parse mode, HTML or MARKDOWN, of a text message that the producer creates from the body, as a"
+                            + " TelegramParseMode or its name. MARKDOWN is the legacy Markdown style of Telegram, not"
+                            + " MarkdownV2. It is not used when the body is already a Telegram message, such as an"
+                            + " OutgoingTextMessage.",
               javaType = "org.apache.camel.component.telegram.TelegramParseMode")
     public static final String TELEGRAM_PARSE_MODE = "CamelTelegramParseMode";
-    @Metadata(description = "The message timestamp.", javaType = "long")
+    @Metadata(description = "The date of a received message or channel post, in milliseconds since the epoch. The consumer"
+                            + " sets it.",
+              javaType = "long")
     public static final String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
     private TelegramConstants() {

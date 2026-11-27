@@ -16,12 +16,22 @@
  */
 package org.apache.camel.support.processor.idempotent;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -83,6 +93,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
                             + " space to allow room for new entries.",
               defaultValue = "1000")
     private long dropOldestFileStore = 1000;
+    private boolean rewriteInPlaceLogged;
 
     public FileIdempotentRepository() {
     }
@@ -213,7 +224,15 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
                     LOG.warn(
                             "Maximum capacity of file store: {} hit at {} bytes. Dropping {} oldest entries from the file store",
                             fileStore, maxFileStoreSize, dropOldestFileStore);
-                    trunkStore();
+                    try {
+                        trunkStore();
+                    } catch (RuntimeException e) {
+                        // the key is stored, so the add succeeded (failing it would take the retry of the message
+                        // for a duplicate): the oldest entries are dropped on the next add instead
+                        LOG.warn(
+                                "Cannot drop the oldest entries from the file store: {} due to: {}. Trying again on the next add.",
+                                fileStore, e.getMessage(), e);
+                    }
                 }
 
                 return true;
@@ -440,10 +459,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             if (!fileStore.exists()) {
                 FileUtil.createNewFile(fileStore);
             }
-            // append to store
+            // append to store (as a single write, so the key is not split from its delimiter)
             fos = new FileOutputStream(fileStore, true);
-            fos.write(key.getBytes());
-            fos.write(STORE_DELIMITER.getBytes());
+            fos.write((key + STORE_DELIMITER).getBytes());
         } catch (IOException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
@@ -478,18 +496,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             if (found) {
                 // rewrite file
                 LOG.debug("Rewriting idempotent filestore: {} due to key: {} removed", fileStore, key);
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(fileStore);
-                    for (String line : lines) {
-                        fos.write(line.getBytes());
-                        fos.write(STORE_DELIMITER.getBytes());
-                    }
-                } catch (IOException e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                } finally {
-                    IOHelper.close(fos, "Rewriting file idempotent repository", LOG);
-                }
+                rewriteStore(lines);
             }
         } finally {
             lock.unlock();
@@ -541,18 +548,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             if (!lines.isEmpty()) {
                 // rewrite file
                 LOG.debug("Rewriting idempotent filestore: {} with {} entries:", fileStore, lines.size());
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(fileStore);
-                    for (String line : lines) {
-                        fos.write(line.getBytes());
-                        fos.write(STORE_DELIMITER.getBytes());
-                    }
-                } catch (IOException e) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                } finally {
-                    IOHelper.close(fos, "Rewriting file idempotent repository", LOG);
-                }
+                rewriteStore(lines);
             } else {
                 // its a small file so recreate the file
                 LOG.debug("Clearing idempotent filestore: {}", fileStore);
@@ -560,6 +556,112 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             }
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * Rewrites the file store with the given keys. The keys are written to a temporary file which then replaces the
+     * file store, so the file store is never left truncated or half written (such as when writing fails, or the JVM
+     * stops while writing). When the temporary file cannot be created or cannot replace the file store (such as a file
+     * store that is a single file mounted into a container), the file store is rewritten in place instead.
+     */
+    private void rewriteStore(List<String> keys) {
+        Path target = fileStore.toPath();
+        Path tmp;
+        try {
+            if (Files.exists(target)) {
+                // replace the real file of a symlinked store (so the link is kept, and the temporary file is on the
+                // same file system as the store)
+                target = target.toRealPath();
+            }
+            tmp = createTemporaryStore(target);
+        } catch (IOException e) {
+            rewriteStoreInPlace(target, keys, "a temporary file cannot be created next to it", e);
+            return;
+        }
+
+        boolean written = false;
+        try {
+            writeStore(tmp, keys);
+            written = true;
+        } finally {
+            if (!written) {
+                // the file store is unchanged
+                FileUtil.deleteFile(tmp.toFile());
+            }
+        }
+
+        try {
+            try {
+                Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            // a failed move leaves the file store unchanged
+            FileUtil.deleteFile(tmp.toFile());
+            rewriteStoreInPlace(target, keys, "a temporary file cannot replace it", e);
+        }
+    }
+
+    /**
+     * Creates the temporary file next to the file store, with the permissions of the file store (before the keys are
+     * written to it, so the keys are never readable with wider permissions than the file store)
+     */
+    private static Path createTemporaryStore(Path target) throws IOException {
+        Path tmp = target.resolveSibling(target.getFileName() + ".tmp");
+        Files.deleteIfExists(tmp);
+        boolean created = false;
+        try {
+            if (Files.exists(target) && Files.getFileAttributeView(target, PosixFileAttributeView.class) != null) {
+                Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(target);
+                Files.createFile(tmp, PosixFilePermissions.asFileAttribute(permissions));
+                created = true;
+                // the umask may have removed some of them
+                Files.setPosixFilePermissions(tmp, permissions);
+            } else {
+                Files.createFile(tmp);
+                created = true;
+            }
+            return tmp;
+        } catch (IOException e) {
+            if (created) {
+                FileUtil.deleteFile(tmp.toFile());
+            }
+            throw e;
+        }
+    }
+
+    private void rewriteStoreInPlace(Path target, List<String> keys, String reason, IOException cause) {
+        if (!rewriteInPlaceLogged) {
+            rewriteInPlaceLogged = true;
+            LOG.warn("Rewriting idempotent filestore: {} in place, as {} due to: {}. A JVM stop or an I/O error while"
+                     + " rewriting can lose entries of the filestore.",
+                    fileStore, reason, cause.getMessage(), cause);
+        } else {
+            LOG.debug("Rewriting idempotent filestore: {} in place, as {} due to: {}", fileStore, reason,
+                    cause.getMessage());
+        }
+        writeStore(target, keys);
+    }
+
+    private void writeStore(Path file, List<String> keys) {
+        try (FileOutputStream fos = new FileOutputStream(file.toFile());
+             OutputStream out = new BufferedOutputStream(fos)) {
+            writeKeys(out, keys);
+            out.flush();
+            fos.getFD().sync();
+        } catch (IOException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    /**
+     * Writes the keys, each followed by the delimiter, when the file store is rewritten
+     */
+    void writeKeys(OutputStream out, List<String> keys) throws IOException {
+        for (String key : keys) {
+            out.write((key + STORE_DELIMITER).getBytes());
         }
     }
 

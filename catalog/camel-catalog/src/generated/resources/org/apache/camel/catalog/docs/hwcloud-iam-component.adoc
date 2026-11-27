@@ -2,7 +2,7 @@
 :doctitle: Huawei Identity and Access Management (IAM)
 :shortname: hwcloud-iam
 :artifactid: camel-huaweicloud-iam
-:description: To securely manage users on Huawei Cloud
+:description: List, read and update the users and user groups of Huawei Cloud Identity and Access Management (IAM).
 :since: 3.11
 :supportlevel: Stable
 :tabs-sync-option:
@@ -264,5 +264,3 @@ YAML::
               serviceKeys: "#myServiceKeyConfig"
 ----
 ====
-
-

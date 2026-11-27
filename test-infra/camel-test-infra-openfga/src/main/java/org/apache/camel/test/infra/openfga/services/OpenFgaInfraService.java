@@ -28,6 +28,13 @@ public interface OpenFgaInfraService extends InfrastructureService {
      */
     String getOpenFgaUrl();
 
+    /**
+     * The apiUrl option of camel-openfga.
+     */
+    default String apiUrl() {
+        return getOpenFgaUrl();
+    }
+
     String host();
 
     int port();

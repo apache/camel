@@ -43,6 +43,7 @@ import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Base64UrlNamingStrategy;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.ExchangeBuilder;
+import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
@@ -169,7 +170,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     private String deadLetterExchange;
     @UriParam(label = "common", description = "The name of the dead letter queue")
     private String deadLetterQueue;
-    @UriParam(label = "common", description = "The routing key for the dead letter exchange")
+    @UriParam(label = "common",
+              description = "The routing key for the dead letter exchange (the x-dead-letter-routing-key of the consumer queue)."
+                            + " An auto-declared deadLetterQueue is bound to the dead letter exchange with this routing key:"
+                            + " it is required for a direct or topic dead letter exchange, and not needed for a fanout or headers one.")
     private String deadLetterRoutingKey;
     @UriParam(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic",
               description = "The type of the dead letter exchange")
@@ -228,7 +232,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                                                          + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
     private StatelessRetryOperationsInterceptor retry;
     @UriParam(label = "consumer", defaultValue = "5",
-              description = "How many times a Rabbitmq consumer will try the same message if Camel failed to process the message (The number of attempts includes the initial try)")
+              description = "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message."
+                            + " The first try is not counted, so 5 means up to 6 tries.")
     private int maximumRetryAttempts = 5;
     @UriParam(label = "consumer", defaultValue = "1000",
               description = "Delay in millis a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
@@ -734,6 +739,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
             // bind dead letter exchange
             if (deadLetterExchange != null) {
+                // validate before anything is declared
+                String dlqBindingKey = deadLetterQueue != null ? deadLetterQueueBindingKey() : null;
                 ExchangeBuilder eb = new ExchangeBuilder(deadLetterExchange, deadLetterExchangeType);
                 eb.withArguments(getDlqExchangeArgs());
                 final org.springframework.amqp.core.Exchange rabbitExchange = eb.build();
@@ -747,12 +754,12 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
                     Binding binding = new Binding(
                             rabbitQueue.getName(), Binding.DestinationType.QUEUE, rabbitExchange.getName(),
-                            deadLetterRoutingKey,
+                            dlqBindingKey,
                             getDlqBindingArgs());
                     admin.declareBinding(binding);
 
                     LOG.info("Auto-declaring durable DeadLetterExchange: {} routingKey: {}", deadLetterExchange,
-                            deadLetterRoutingKey);
+                            dlqBindingKey);
                 }
             }
 
@@ -856,6 +863,34 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
             container.setQueueNames(Base64UrlNamingStrategy.DEFAULT.generateName());
         }
         return String.join(",", container.getQueueNames());
+    }
+
+    /**
+     * The routing key to bind the dead letter queue to the dead letter exchange with. It is the key the consumer queue
+     * dead-letters with (x-dead-letter-routing-key): the deadLetterRoutingKey option, else the
+     * x-dead-letter-routing-key queue argument. Without one, RabbitMQ dead-letters a message with its original routing
+     * key: a fanout or headers exchange ignores the key, so the queue is bound with an empty key; for a direct or topic
+     * exchange, the key to bind with is not known, and a guess could drop the dead letters silently.
+     */
+    private String deadLetterQueueBindingKey() {
+        String answer = deadLetterRoutingKey;
+        if (answer == null) {
+            Object arg = getQueueArgs().get(SpringRabbitMQConstants.DEAD_LETTER_ROUTING_KEY);
+            if (arg != null) {
+                answer = getCamelContext().getTypeConverter().convertTo(String.class, arg);
+            }
+        }
+        if (answer == null) {
+            if (ExchangeTypes.FANOUT.equals(deadLetterExchangeType) || ExchangeTypes.HEADERS.equals(deadLetterExchangeType)) {
+                answer = "";
+            } else {
+                throw new IllegalArgumentException(
+                        String.format("Configure the deadLetterRoutingKey option to bind the deadLetterQueue %s to the %s"
+                                      + " deadLetterExchange %s (only a fanout or headers exchange does not need it)",
+                                deadLetterQueue, deadLetterExchangeType, deadLetterExchange));
+            }
+        }
+        return answer;
     }
 
     private void prepareDeadLetterQueueArgs(Map<String, Object> args) {

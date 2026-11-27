@@ -50,7 +50,7 @@ public class SftpSimpleIPV6ConsumeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("mina-sftp://[::1]:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true" +
+                     + "?username=admin&password=admin&disconnect=true" +
                      "&knownHostsFile=" + service.getKnownHostsFile()).routeId("foo").autoStartup(false)
                         .to("mock:result");
             }

@@ -1229,7 +1229,7 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
+         * is expected to be a java.util.Map with String keys, where the keys
          * are the named parameters of a given JPA query and the values are
          * their corresponding effective values you want to select for. When
          * it's used for producer, Simple expression can be used as a parameter
@@ -1255,7 +1255,7 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * This key/value mapping is used for building the query parameters. It
-         * is expected to be of the generic type java.util.Map where the keys
+         * is expected to be a java.util.Map with String keys, where the keys
          * are the named parameters of a given JPA query and the values are
          * their corresponding effective values you want to select for. When
          * it's used for producer, Simple expression can be used as a parameter

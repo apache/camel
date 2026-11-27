@@ -36,10 +36,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Offers publish/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD/Bayeux protocol.
- *
- * Using this component in combination with the dojo toolkit library it's possible to push Camel messages directly into
- * the browser using an AJAX based mechanism.
+ * Publish messages to web clients and receive their messages with the CometD/Bayeux protocol, through an embedded Jetty
+ * server.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName",
              category = { Category.NETWORKING, Category.MESSAGING }, headersClass = CometdBinding.class)
@@ -70,42 +68,78 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
     private CometdComponent component;
 
     private URI uri;
-    @UriPath(description = "Hostname")
+    @UriPath(description = "The host name or IP address that the embedded Jetty server listens on. Use 0.0.0.0 to listen on"
+                           + " all network interfaces; localhost accepts only local connections.")
     @Metadata(required = true)
     private String host;
-    @UriPath(description = "Host port number")
+    @UriPath(description = "The TCP port that the embedded Jetty server listens on. The producers and consumers with the same"
+                           + " scheme, host and port share one server.")
     @Metadata(required = true)
     private int port;
-    @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.")
+    @UriPath(description = "The name of the Bayeux channel, which is the path of the URI, such as /channel/orders. The"
+                           + " consumer receives the messages that clients publish to this channel, and the producer"
+                           + " publishes to the clients that subscribe to it.")
     @Metadata(required = true)
     private String channelName;
-    @UriParam
+    @UriParam(description = "The directory of static web resources that the server serves from the root path, with the"
+                            + " prefix file: for the file system or classpath: for the classpath, such as"
+                            + " classpath:webapp. Without a value the server serves no static resources. The first endpoint"
+                            + " that starts the server of the host and port sets it.")
     private String baseResource;
-    @UriParam(defaultValue = "240000")
+    @UriParam(defaultValue = "240000",
+              description = "The time in milliseconds that the server holds a /meta/connect request (the long poll of a"
+                            + " client) while it has no message to deliver, before it replies. The first endpoint that"
+                            + " starts the server of the host and port sets it.")
     private int timeout = 240000;
-    @UriParam
+    @UriParam(description = "The time in milliseconds that the server tells the clients to wait after a /meta/connect reply"
+                            + " before they send the next /meta/connect request; 0 means at once. The first endpoint that"
+                            + " starts the server of the host and port sets it.")
     private int interval;
-    @UriParam(defaultValue = "30000")
+    @UriParam(defaultValue = "30000",
+              description = "The time in milliseconds that the server waits for the next /meta/connect request of a client"
+                            + " before it removes the session of that client. The first endpoint that starts the server of"
+                            + " the host and port sets it.")
     private int maxInterval = 30000;
-    @UriParam(defaultValue = "1500")
+    @UriParam(defaultValue = "1500",
+              description = "Passed to the CometD servlet as the multiFrameInterval parameter, which CometD 9 does not read,"
+                            + " so it has no effect.")
     private int multiFrameInterval = 1500;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Passed to the CometD servlet as the JSONCommented parameter, which CometD 9 does not read, so it"
+                            + " has no effect.")
     private boolean jsonCommented = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer adds the attributes of the CometD session of the publishing client as"
+                            + " headers, one header per attribute name. Only String, Integer, Long, Double and Boolean"
+                            + " values are added; the other attributes are skipped.")
     private boolean sessionHeadersEnabled;
-    @UriParam(defaultValue = "1", enums = "0,1,2")
+    @UriParam(defaultValue = "1", enums = "0,1,2",
+              description = "Passed to the CometD servlet as the logLevel parameter, which CometD 9 does not read, so it has"
+                            + " no effect. Set the level of the org.cometd loggers in the logging configuration instead.")
     private int logLevel = 1;
-    @UriParam
+    @UriParam(description = "Whether the server adds the Jetty CrossOriginFilter, which answers the CORS requests of the"
+                            + " origins in allowedOrigins. The filter is mapped to filterPath, so set that option too. The"
+                            + " first endpoint that starts the server of the host and port sets it.")
     private boolean crossOriginFilterOn;
-    @UriParam(defaultValue = "*")
+    @UriParam(defaultValue = "*",
+              description = "The comma-separated list of origins that the cross-origin filter allows, such as"
+                            + " https://app.example.com. A * in an origin matches any characters, * alone allows every"
+                            + " origin, and the filter allows credentials only when every origin is named without a *."
+                            + " Used only when crossOriginFilterOn is true.")
     private String allowedOrigins;
     @UriParam(defaultValue = "websocket,long-polling")
     private String allowedTransports = "websocket,long-polling";
-    @UriParam
+    @UriParam(description = "The servlet path pattern that the cross-origin filter is mapped to, such as /cometd/*. Used only"
+                            + " when crossOriginFilterOn is true; without a value the filter applies to no request.")
     private String filterPath;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "Whether the producer disconnects the local session of its CometD service after each message it"
+                            + " publishes to the channel. CometD does not sweep local sessions, so they stay in the server"
+                            + " until they are disconnected.")
     private boolean disconnectLocalSession;
-    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter headers.")
+    @UriParam(label = "advanced",
+              description = "A custom HeaderFilterStrategy for the headers that are copied between the Camel message and the"
+                            + " ext field of the Bayeux message, in both directions.")
     private HeaderFilterStrategy headerFilterStrategy;
 
     public CometdEndpoint(CometdComponent component, String uri, String remaining) {
@@ -185,11 +219,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return baseResource;
     }
 
-    /**
-     * The root directory for the web resources or classpath. Use the protocol file: or classpath: depending if you want
-     * that the component loads the resource from file system or classpath. Classpath is required for OSGI deployment
-     * where the resources are packaged in the jar
-     */
     public void setBaseResource(String baseResource) {
         this.baseResource = baseResource;
     }
@@ -198,10 +227,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return timeout;
     }
 
-    /**
-     * The server side poll timeout in milliseconds. This is how long the server will hold a reconnect request before
-     * responding.
-     */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
@@ -210,9 +235,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return interval;
     }
 
-    /**
-     * The client side poll timeout in milliseconds. How long a client will wait between reconnects
-     */
     public void setInterval(int interval) {
         this.interval = interval;
     }
@@ -221,10 +243,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return maxInterval;
     }
 
-    /**
-     * The max client side poll timeout in milliseconds. A client will be removed if a connection is not received in
-     * this time.
-     */
     public void setMaxInterval(int maxInterval) {
         this.maxInterval = maxInterval;
     }
@@ -233,9 +251,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return multiFrameInterval;
     }
 
-    /**
-     * The client side poll timeout, if multiple connections are detected from the same browser.
-     */
     public void setMultiFrameInterval(int multiFrameInterval) {
         this.multiFrameInterval = multiFrameInterval;
     }
@@ -244,18 +259,10 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return jsonCommented;
     }
 
-    /**
-     * If true, the server will accept JSON wrapped in a comment and will generate JSON wrapped in a comment. This is a
-     * defence against Ajax Hijacking.
-     */
     public void setJsonCommented(boolean commented) {
         jsonCommented = commented;
     }
 
-    /**
-     * Whether to include the server session headers in the Camel message when creating a Camel Message for incoming
-     * requests.
-     */
     public void setSessionHeadersEnabled(boolean enable) {
         this.sessionHeadersEnabled = enable;
     }
@@ -268,9 +275,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return logLevel;
     }
 
-    /**
-     * Logging level. 0=none, 1=info, 2=debug.
-     */
     public void setLogLevel(int logLevel) {
         this.logLevel = logLevel;
     }
@@ -279,9 +283,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return allowedOrigins;
     }
 
-    /**
-     * The origins domain that support to cross, if the crosssOriginFilterOn is true
-     */
     public void setAllowedOrigins(String allowedOrigins) {
         this.allowedOrigins = allowedOrigins;
     }
@@ -290,9 +291,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return crossOriginFilterOn;
     }
 
-    /**
-     * If true, the server will support for cross-domain filtering
-     */
     public void setCrossOriginFilterOn(boolean crossOriginFilterOn) {
         this.crossOriginFilterOn = crossOriginFilterOn;
     }
@@ -314,9 +312,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         this.allowedTransports = allowedTransports;
     }
 
-    /**
-     * The filterPath will be used by the CrossOriginFilter, if the crosssOriginFilterOn is true
-     */
     public void setFilterPath(String filterPath) {
         this.filterPath = filterPath;
     }
@@ -325,10 +320,6 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return disconnectLocalSession;
     }
 
-    /**
-     * Whether to disconnect local sessions after publishing a message to its channel. Disconnecting local session is
-     * needed as they are not swept by default by CometD, and therefore you can run out of memory.
-     */
     public void setDisconnectLocalSession(boolean disconnectLocalSession) {
         this.disconnectLocalSession = disconnectLocalSession;
     }

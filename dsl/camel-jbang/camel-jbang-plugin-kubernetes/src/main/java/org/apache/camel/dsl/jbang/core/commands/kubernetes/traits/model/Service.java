@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonClassDescription("The Service of the application, generated when the routes expose HTTP.")
 @JsonPropertyOrder({ "auto", "enabled", "nodePort", "type" })
 public class Service {
     @JsonProperty("auto")

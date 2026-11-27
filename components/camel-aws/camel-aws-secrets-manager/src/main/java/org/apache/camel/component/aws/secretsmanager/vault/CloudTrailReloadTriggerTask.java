@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClientBuilder;
@@ -104,18 +105,24 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
     // the largest page that LookupEvents accepts
     private static final int LOOKUP_MAX_RESULTS = 50;
+    // the longest one call to CloudTrail or SQS may take, retries included: the task runs on the thread that runs every
+    // periodic task of the CamelContext, so a call that hangs must not hold that thread for longer than this
+    static final Duration API_CALL_TIMEOUT = Duration.ofSeconds(10);
     // the events that change the value of a secret, looked up one by one
     private static final List<String> UPDATE_EVENT_NAMES
             = List.of(SECRETSMANAGER_UPDATE_EVENT, SECRETSMANAGER_UPDATE_SECRET_EVENT);
     // how far before the newest event seen each check looks again: CloudTrail can make an event visible after a newer
     // one (on average within about 5 minutes, not guaranteed), the default lookBackWindow of the aws-cloudtrail consumer
     private static final Duration LOOK_BACK = Duration.ofMinutes(10);
+    // how many reloads in a row an update triggers when they fail, one per run, before it is marked as seen anyway
+    static final int MAX_RELOAD_ATTEMPTS = 10;
 
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
     private String secrets;
     private CloudTrailClient cloudTrailClient;
     private SqsClient sqsClient;
+    private Duration apiCallTimeout = API_CALL_TIMEOUT;
     private SecretsManagerPropertiesFunction propertiesFunction;
     private volatile Instant lastTime;
     // the time the task started to look for updates: no check looks up events before it
@@ -128,6 +135,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private final Map<String, Instant> updates = new HashMap<>();
     private boolean useSqsNotification;
     private String queueUrl;
+    // the reloads in a row that failed for the updates not marked as seen yet
+    private int failedReloads;
 
     public CloudTrailReloadTriggerTask() {
     }
@@ -172,6 +181,13 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
      */
     public Instant getLastReloadTime() {
         return lastReloadTime;
+    }
+
+    /**
+     * The longest one call to CloudTrail or SQS may take, retries included (for testing).
+     */
+    void setApiCallTimeout(Duration apiCallTimeout) {
+        this.apiCallTimeout = apiCallTimeout;
     }
 
     @Override
@@ -219,8 +235,10 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 queueUrl = awsVaultConfiguration.getSqsQueueUrl();
             }
         }
+        ClientOverrideConfiguration overrideConfiguration
+                = ClientOverrideConfiguration.builder().apiCallTimeout(apiCallTimeout).build();
         if (!useSqsNotification) {
-            CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
+            CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder().overrideConfiguration(overrideConfiguration);
             if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
 
                 AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
@@ -243,7 +261,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 startedAt = lastTime;
             }
         } else {
-            SqsClientBuilder clientBuilder = SqsClient.builder();
+            SqsClientBuilder clientBuilder = SqsClient.builder().overrideConfiguration(overrideConfiguration);
             if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
                 AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
@@ -288,6 +306,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         lastTime = null;
         startedAt = null;
         seenEventIds.clear();
+        failedReloads = 0;
     }
 
     /**
@@ -332,6 +351,10 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     public void run() {
         lastCheckTime = Instant.now();
         boolean triggerReloading = false;
+        // marks what this check found as seen: the events, or the SQS notifications (deleted). When the check triggers
+        // a reload, it runs only once the reload succeeded, so that after a failed reload a later run sees the update
+        // again and reloads again
+        Runnable markSeen = null;
 
         if (!useSqsNotification) {
 
@@ -351,10 +374,13 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
                 LOG.debug("Found {} events", events.size());
                 Instant newest = since;
+                // the events this check sees first, added to seenEventIds when they are marked as seen
+                Map<String, Instant> newEventIds = new HashMap<>();
                 for (Event event : events) {
                     Instant eventTime = event.eventTime();
-                    if (seenEventIds.putIfAbsent(event.eventId(), eventTime) != null) {
-                        // already seen by an earlier check
+                    if (seenEventIds.containsKey(event.eventId())
+                            || newEventIds.putIfAbsent(event.eventId(), eventTime) != null) {
+                        // already seen by an earlier check (or returned by both lookups)
                         continue;
                     }
                     if (newest == null || eventTime.isAfter(newest)) {
@@ -379,20 +405,29 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                         }
                     }
                 }
-                lastTime = newest;
-                // the next lookups do not return the events before their start time again
-                Instant nextStart = lookupStart(newest, started);
-                if (nextStart != null) {
-                    seenEventIds.values().removeIf(t -> t.isBefore(nextStart));
-                }
+                Instant checked = newest;
+                markSeen = () -> {
+                    seenEventIds.putAll(newEventIds);
+                    lastTime = checked;
+                    // the next lookups do not return the events before their start time again
+                    Instant nextStart = lookupStart(checked, started);
+                    if (nextStart != null) {
+                        seenEventIds.values().removeIf(t -> t.isBefore(nextStart));
+                    }
+                };
             } catch (Exception e) {
                 LOG.warn(
                         "Error during AWS Secrets Refresh Task due to {}. This exception is ignored. Will try again on next run.",
                         e.getMessage(), e);
             }
         } else {
+            // the receipt handles of the notifications of the updates found, deleted when they are marked as seen
+            List<String> updateMessages = new ArrayList<>();
+            markSeen = () -> updateMessages.forEach(this::deleteMessage);
             try {
-                ReceiveMessageRequest.Builder request = ReceiveMessageRequest.builder().queueUrl(queueUrl);
+                // no long polling, whatever the receive wait time of the queue: the check runs again after the refresh
+                // period, and it must not wait on the thread of the periodic tasks (nor for longer than the call timeout)
+                ReceiveMessageRequest.Builder request = ReceiveMessageRequest.builder().queueUrl(queueUrl).waitTimeSeconds(0);
 
                 LOG.trace("Receiving messages with request [{}]...", request);
 
@@ -406,6 +441,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
                 if (messageResult != null) {
                     for (Message message : messageResult.messages()) {
+                        boolean update = false;
                         try {
                             JsonNode event = MAPPER.readTree(message.body());
                             JsonNode innerDetail = event.get("detail");
@@ -418,6 +454,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                                 String name = innerDetail.get("requestParameters").get("secretId").asString("");
                                 if (matchSecret(name)) {
                                     updates.put(name, Instant.parse(innerDetail.get("eventTime").asString("")));
+                                    update = true;
                                     if (isReloadEnabled()) {
                                         LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
                                         triggerReloading = true;
@@ -427,12 +464,15 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                         } catch (JacksonException e) {
                             LOG.warn("Unable to parse SQS message body, discarding message: {}", e.getMessage());
                         }
-                        // Always delete the examined message so the queue is drained rather than redelivering it
-                        // on every poll (matched -> reload recorded above; unmatched or malformed -> discarded).
-                        LOG.trace("Deleting message with receipt handle {}...", message.receiptHandle());
-                        sqsClient.deleteMessage(
-                                DeleteMessageRequest.builder().queueUrl(queueUrl)
-                                        .receiptHandle(message.receiptHandle()).build());
+                        if (update) {
+                            // deleted once the reload succeeded: after a failed reload the queue delivers the message
+                            // again (once its visibility timeout is over), and that run reloads again
+                            updateMessages.add(message.receiptHandle());
+                        } else {
+                            // delete the other messages now, so the queue is drained rather than redelivering them
+                            // on every poll (unmatched or malformed -> discarded)
+                            deleteMessage(message.receiptHandle());
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -447,8 +487,48 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             if (reload != null) {
                 // trigger reload
                 lastReloadTime = Instant.now();
-                reload.onReload(this);
+                if (!reload(reload)) {
+                    failedReloads++;
+                    if (failedReloads < MAX_RELOAD_ATTEMPTS) {
+                        LOG.warn("Reloading CamelContext after an update of AWS secrets failed (attempt {} of {})."
+                                 + " The update is not marked as seen, so a later run sees it and reloads again.",
+                                failedReloads, MAX_RELOAD_ATTEMPTS);
+                        return;
+                    }
+                    LOG.warn("Reloading CamelContext after an update of AWS secrets failed {} times in a row."
+                             + " The update is marked as seen: no reload is tried again until the next update.",
+                            failedReloads);
+                }
+                failedReloads = 0;
             }
+        }
+        if (markSeen != null) {
+            markSeen.run();
+        }
+    }
+
+    /**
+     * Reloads the CamelContext, and tells whether the reload succeeded: the reload strategy logs and counts a failed
+     * reload, it does not throw it.
+     */
+    private boolean reload(ContextReloadStrategy reload) {
+        int failed = reload.getFailedCounter();
+        try {
+            reload.onReload(this);
+        } catch (Exception e) {
+            LOG.warn("Error reloading CamelContext due to {}", e.getMessage(), e);
+            return false;
+        }
+        return reload.getFailedCounter() == failed;
+    }
+
+    private void deleteMessage(String receiptHandle) {
+        LOG.trace("Deleting message with receipt handle {}...", receiptHandle);
+        try {
+            sqsClient.deleteMessage(
+                    DeleteMessageRequest.builder().queueUrl(queueUrl).receiptHandle(receiptHandle).build());
+        } catch (Exception e) {
+            LOG.warn("Error deleting SQS message due to {}. The queue delivers it again.", e.getMessage(), e);
         }
     }
 

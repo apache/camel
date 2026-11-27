@@ -244,8 +244,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable application level deadlettering to the subscription deadletter
-         * subqueue if deadletter related headers are set.
+         * Dead-letters the message of a failed exchange instead of abandoning
+         * it, with the exception as the dead-letter reason and its stack trace
+         * as the error description. The message goes to the dead-letter queue
+         * of the queue or subscription it was received from. Applies only in
+         * PEEK_LOCK receive mode, and not when reading a sub-queue (subQueue),
+         * where the message is abandoned.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -260,8 +264,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable application level deadlettering to the subscription deadletter
-         * subqueue if deadletter related headers are set.
+         * Dead-letters the message of a failed exchange instead of abandoning
+         * it, with the exception as the dead-letter reason and its stack trace
+         * as the error description. The message goes to the dead-letter queue
+         * of the queue or subscription it was received from. Applies only in
+         * PEEK_LOCK receive mode, and not when reading a sub-queue (subQueue),
+         * where the message is abandoned.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -574,7 +582,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -591,7 +604,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -622,7 +640,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option is a:
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -637,7 +658,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1057,7 +1081,10 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets OffsetDateTime at which the message should appear in the Service
-         * Bus queue or topic.
+         * Bus queue or topic. Used only by the scheduleMessages producer
+         * operation; sendMessages sends the message at once. In an endpoint URI
+         * or a property use an ISO-8601 date-time with an offset, such as
+         * 2026-11-18T22:00:00Z or 2026-11-18T23:00:00+01:00.
          * 
          * The option is a: <code>java.time.OffsetDateTime</code> type.
          * 
@@ -1072,7 +1099,10 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets OffsetDateTime at which the message should appear in the Service
-         * Bus queue or topic.
+         * Bus queue or topic. Used only by the scheduleMessages producer
+         * operation; sendMessages sends the message at once. In an endpoint URI
+         * or a property use an ISO-8601 date-time with an offset, such as
+         * 2026-11-18T22:00:00Z or 2026-11-18T23:00:00+01:00.
          * 
          * The option will be converted to a
          * <code>java.time.OffsetDateTime</code> type.
@@ -1184,7 +1214,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -1201,7 +1236,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -1232,7 +1272,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option is a:
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1247,7 +1290,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1550,7 +1596,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -1567,7 +1618,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -1598,7 +1654,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option is a:
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1613,7 +1672,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1881,6 +1943,19 @@ public interface ServiceBusEndpointBuilderFactory {
             return "CamelAzureServiceBusPartitionKey";
         }
         /**
+         * The name of the queue or topic the message was received from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusTopicOrQueueName}.
+         */
+        public String azureServiceBusTopicOrQueueName() {
+            return "CamelAzureServiceBusTopicOrQueueName";
+        }
+        /**
          * The representation of message as defined by AMQP protocol.
          * 
          * The option is a: {@code
@@ -1979,9 +2054,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return "CamelAzureServiceBusTo";
         }
         /**
-         * (producer)Overrides the OffsetDateTime at which the message should
-         * appear in the Service Bus queue or topic. (consumer) Gets the
-         * scheduled enqueue time of this message.
+         * (producer) Overrides the OffsetDateTime at which the message should
+         * appear in the Service Bus queue or topic. Used only by the
+         * scheduleMessages operation. (consumer) Gets the scheduled enqueue
+         * time of this message.
          * 
          * The option is a: {@code java.time.OffsetDateTime} type.
          * 

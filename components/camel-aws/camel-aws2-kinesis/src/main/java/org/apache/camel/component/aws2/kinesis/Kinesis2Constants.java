@@ -41,6 +41,9 @@ public interface Kinesis2Constants {
     @Metadata(description = "The shard ID of the shard where the data record was placed.", javaType = "String")
     String SHARD_ID = "CamelAwsKinesisShardId";
 
+    @Metadata(label = "consumer", description = "The name of the stream the record was read from.", javaType = "String")
+    String STREAM_NAME = "CamelAwsKinesisStreamName";
+
     @Metadata(label = "producer",
               description = "A list of partition keys for batch operations. When set, each record in the batch "
                             + "is assigned the partition key at the corresponding index, allowing records to be routed "

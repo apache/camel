@@ -172,7 +172,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * This param can be used when operation is faceDetection or
          * faceVerification, indicating the Base64 character string converted
          * from an image. Any one of imageBase64, imageUrl and imageFilePath
-         * needs to be set, and the priority is imageBase64 imageUrl
+         * needs to be set, and the priority is imageBase64 &gt; imageUrl &gt;
          * imageFilePath. The Image size cannot exceed 10 MB. The image
          * resolution of the narrow sides must be greater than 15 pixels, and
          * that of the wide sides cannot exceed 4096 pixels. The supported image
@@ -193,9 +193,9 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * This param can be used when operation is faceDetection or
          * faceVerification, indicating the local image file path. Any one of
          * imageBase64, imageUrl and imageFilePath needs to be set, and the
-         * priority is imageBase64 imageUrl imageFilePath. Image size cannot
-         * exceed 8 MB, and it is recommended that the image size be less than 1
-         * MB.
+         * priority is imageBase64 &gt; imageUrl &gt; imageFilePath. Image size
+         * cannot exceed 8 MB, and it is recommended that the image size be less
+         * than 1 MB.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -212,11 +212,12 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * This param can be used when operation is faceDetection or
          * faceVerification, indicating the URL of an image. Any one of
          * imageBase64, imageUrl and imageFilePath needs to be set, and the
-         * priority is imageBase64 imageUrl imageFilePath. The options are as
-         * follows: 1.HTTP/HTTPS URLs on the public network 2.OBS URLs. To use
-         * OBS data, authorization is required, including service authorization,
-         * temporary authorization, and anonymous public authorization. For
-         * details, see Configuring the Access Permission of OBS.
+         * priority is imageBase64 &gt; imageUrl &gt; imageFilePath. The options
+         * are as follows: 1.HTTP/HTTPS URLs on the public network 2.OBS URLs.
+         * To use OBS data, authorization is required, including service
+         * authorization, temporary authorization, and anonymous public
+         * authorization. For details, see Configuring the Access Permission of
+         * OBS.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -380,13 +381,14 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * This param can be used when operation is faceLiveDetection,
          * indicating the Base64 character string converted from a video. Any
          * one of videoBase64, videoUrl and videoFilePath needs to be set, and
-         * the priority is videoBase64 videoUrl videoFilePath. Requirements are
-         * as follows: 1.The video size after Base64 encoding cannot exceed 8
-         * MB. It is recommended that the video file be compressed to 200 KB to
-         * 2 MB on the client. 2.The video duration must be 1 to 15 seconds.
-         * 3.The recommended frame rate is 10 fps to 30 fps. 4.The encapsulation
-         * format can be MP4, AVI, FLV, WEBM, ASF, or MOV. 5.The video encoding
-         * format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.
+         * the priority is videoBase64 &gt; videoUrl &gt; videoFilePath.
+         * Requirements are as follows: 1.The video size after Base64 encoding
+         * cannot exceed 8 MB. It is recommended that the video file be
+         * compressed to 200 KB to 2 MB on the client. 2.The video duration must
+         * be 1 to 15 seconds. 3.The recommended frame rate is 10 fps to 30 fps.
+         * 4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV.
+         * 5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1,
+         * VP8, VP9, or WMV3.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -403,8 +405,8 @@ public interface FaceRecognitionEndpointBuilderFactory {
          * This param can be used when operation is faceLiveDetection,
          * indicating the local video file path. Any one of videoBase64,
          * videoUrl and videoFilePath needs to be set, and the priority is
-         * videoBase64 videoUrl videoFilePath. The video requirements are as
-         * follows: 1.The size of a video file cannot exceed 8 MB. It is
+         * videoBase64 &gt; videoUrl &gt; videoFilePath. The video requirements
+         * are as follows: 1.The size of a video file cannot exceed 8 MB. It is
          * recommended that the video file be compressed to 200 KB to 2 MB on
          * the client. 2.The video duration must be 1 to 15 seconds. 3.The
          * recommended frame rate is 10 fps to 30 fps. 4.The encapsulation
@@ -425,9 +427,9 @@ public interface FaceRecognitionEndpointBuilderFactory {
         /**
          * This param can be used when operation is faceLiveDetection,
          * indicating the URL of a video. Any one of videoBase64, videoUrl and
-         * videoFilePath needs to be set, and the priority is videoBase64
-         * videoUrl videoFilePath. Currently, only the URL of an OBS bucket on
-         * HUAWEI CLOUD is supported and FRS must have the permission to read
+         * videoFilePath needs to be set, and the priority is videoBase64 &gt;
+         * videoUrl &gt; videoFilePath. Currently, only the URL of an OBS bucket
+         * on HUAWEI CLOUD is supported and FRS must have the permission to read
          * data in the OBS bucket. For details about how to enable the read
          * permission, see Service Authorization. The video requirements are as
          * follows: 1.The video size after Base64 encoding cannot exceed 8 MB.

@@ -2,7 +2,7 @@
 :doctitle: Mustache
 :shortname: mustache
 :artifactid: camel-mustache
-:description: Transform messages using a Mustache template.
+:description: Render a Mustache template with the data of the message and use the text it writes as the new message body.
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:

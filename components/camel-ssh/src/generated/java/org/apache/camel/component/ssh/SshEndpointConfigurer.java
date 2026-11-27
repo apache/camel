@@ -24,6 +24,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SshEndpoint target = (SshEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowusernameandpasswordfromheaders":
+        case "allowUsernameAndPasswordFromHeaders": target.getConfiguration().setAllowUsernameAndPasswordFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "authtimeout":
         case "authTimeout": target.getConfiguration().setAuthTimeout(property(camelContext, long.class, value)); return true;
         case "backofferrorthreshold":
@@ -117,6 +119,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowusernameandpasswordfromheaders":
+        case "allowUsernameAndPasswordFromHeaders": return boolean.class;
         case "authtimeout":
         case "authTimeout": return long.class;
         case "backofferrorthreshold":
@@ -206,6 +210,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SshEndpoint target = (SshEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowusernameandpasswordfromheaders":
+        case "allowUsernameAndPasswordFromHeaders": return target.getConfiguration().isAllowUsernameAndPasswordFromHeaders();
         case "authtimeout":
         case "authTimeout": return target.getConfiguration().getAuthTimeout();
         case "backofferrorthreshold":

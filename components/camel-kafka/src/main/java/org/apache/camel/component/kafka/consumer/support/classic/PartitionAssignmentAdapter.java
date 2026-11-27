@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.kafka.consumer.support.classic;
 
+import java.util.Collection;
+
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.common.TopicPartition;
 
 /**
  * Defines a adapters for handling resume operations. Implementations can define different ways to handle how to resume
@@ -40,4 +43,19 @@ public interface PartitionAssignmentAdapter {
      * Callback for custom logic when partitions has been assigned.
      */
     void handlePartitionAssignment();
+
+    /**
+     * Callback for custom logic when partitions has been assigned, with the partitions that were assigned by the
+     * rebalance. With an eager assignor (such as RangeAssignor) these are all the partitions of the consumer. With a
+     * cooperative assignor (such as CooperativeStickyAssignor) or the consumer group protocol, these are only the
+     * partitions added by the rebalance (possibly none): the consumer keeps reading the partitions it already had from
+     * where it is, so an implementation must not move them.
+     *
+     * The default implementation calls {@link #handlePartitionAssignment()}.
+     *
+     * @param partitions the partitions assigned by the rebalance
+     */
+    default void handlePartitionAssignment(Collection<TopicPartition> partitions) {
+        handlePartitionAssignment();
+    }
 }

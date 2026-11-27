@@ -353,8 +353,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of custom converters that would be used instead of default
-     * ones. The converters are defined using '<converter.prefix>.type' config
-     * option and configured using options '<converter.prefix>.<option>'
+     * ones. The converters are defined using '{converter.prefix}.type' config
+     * option and configured using options '{converter.prefix}.{option}'
      */
     public void setConverters(String converters) {
         this.converters = converters;
@@ -1095,10 +1095,10 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * This property contains a comma-separated list of
-     * <dbName>.<collectionName>, for which  the initial snapshot may be a
+     * {dbName}.{collectionName}, for which  the initial snapshot may be a
      * subset of data present in the data source. The subset would be defined by
      * mongodb filter query specified as value for property
-     * snapshot.collection.filter.override.<dbname>.<collectionName>
+     * snapshot.collection.filter.override.{dbname}.{collectionName}
      */
     public void setSnapshotCollectionFilterOverrides(
             String snapshotCollectionFilterOverrides) {
@@ -1124,7 +1124,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     /**
      * The target to capture changes from. For 'database' scope, this is the
      * database name. For 'collection' scope, this is the collection name as
-     * <databaseName>.<collectionName>.
+     * {databaseName}.{collectionName}.
      */
     public void setCaptureTarget(String captureTarget) {
         this.captureTarget = captureTarget;
@@ -1327,8 +1327,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Optional list of post processors. The processors are defined using
-     * '<post.processor.prefix>.type' config option and configured using options
-     * '<post.processor.prefix.<option>'
+     * '{post.processor.prefix}.type' config option and configured using options
+     * '{post.processor.prefix}.{option}'
      */
     public void setPostProcessors(String postProcessors) {
         this.postProcessors = postProcessors;

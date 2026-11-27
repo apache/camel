@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
@@ -38,6 +39,7 @@ import java.util.function.Supplier;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Endpoint;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Route;
+import org.apache.camel.dsl.yaml.validator.BodyOrigin;
 import org.apache.camel.dsl.yaml.validator.EndpointRules;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
@@ -97,10 +99,13 @@ public final class ProjectOverview {
      * The overview of a project.
      *
      * @param files       the route files read, relative to the directory
+     * @param bodies      where the message body of each YAML route comes from, by the key of the route, as the body
+     *                    check of camel validate reads it (CAMEL-25200)
      * @param fingerprint a hash of the route files, to tell whether a summary written earlier is still up to date
      */
     public record Overview(Path directory, List<String> files, List<Route> routes, List<Link> links,
-            List<SystemUse> systems, List<EntryPoint> entryPoints, List<Finding> findings, String fingerprint) {
+            List<SystemUse> systems, List<EntryPoint> entryPoints, List<Finding> findings,
+            Map<String, BodyOrigin> bodies, String fingerprint) {
 
         /**
          * The routes, templates and templated routes; REST operations are entry points and error handlers are how
@@ -186,11 +191,13 @@ public final class ProjectOverview {
         List<Link> links = links(routes, catalog);
         List<SystemUse> systems = systems(routes, catalog);
         List<EntryPoint> entryPoints = entryPoints(routes, links, catalog);
+        // where the body of each YAML route comes from, as camel validate reads it (CAMEL-25200)
+        Map<String, BodyOrigin> bodies = ProjectBodies.analyze(dir, sources, routes, catalog);
         List<Finding> findings
-                = findings(routes, links, catalog, sources.size() > 0 && routes.size() == MAX_ROUTES);
+                = findings(routes, links, bodies, catalog, sources.size() > 0 && routes.size() == MAX_ROUTES);
         return new Overview(
                 dir, List.copyOf(sources.keySet()), List.copyOf(routes), links, systems, entryPoints,
-                findings, fingerprint(sources));
+                findings, Collections.unmodifiableMap(bodies), fingerprint(sources));
     }
 
     // ---- categories ----
@@ -404,7 +411,9 @@ public final class ProjectOverview {
         return EndpointRules.endpoint(e.key()) != null;
     }
 
-    private static List<Finding> findings(List<Route> routes, List<Link> links, CamelCatalog catalog, boolean truncated) {
+    private static List<Finding> findings(
+            List<Route> routes, List<Link> links, Map<String, BodyOrigin> bodies, CamelCatalog catalog,
+            boolean truncated) {
         List<Finding> answer = new ArrayList<>();
         Map<String, List<Route>> byId = new LinkedHashMap<>();
         Set<String> consumed = new LinkedHashSet<>();
@@ -452,6 +461,12 @@ public final class ProjectOverview {
                 }
             }
         }
+        // a step that reads a body the route cannot have, with the message of camel validate
+        bodies.forEach((key, origin) -> {
+            if (origin.problem() != null) {
+                answer.add(new Finding("warning", "body-never-set", origin.problem(), key));
+            }
+        });
         errorRouteLoops(routes, links, answer);
         unhandledFailures(routes, links, catalog, answer);
         for (List<String> cycle : cycles(links)) {
@@ -640,6 +655,24 @@ public final class ProjectOverview {
 
     // ---- JSON ----
 
+    /** Where the body of a route comes from, as the JSON of the overview has it (CAMEL-25200). */
+    static JsonObject bodyJson(BodyOrigin body) {
+        JsonObject jo = new JsonObject();
+        jo.put("origin", body.origin());
+        if (body.via() != null) {
+            jo.put("via", body.via());
+        }
+        if (!body.callers().isEmpty()) {
+            jo.put("callers", new JsonArray(body.callers()));
+        }
+        jo.put("noBody", body.noBody());
+        if (body.setBy() != null) {
+            jo.put("setBy", body.setBy());
+            jo.put("setAt", body.setAt());
+        }
+        return jo;
+    }
+
     /** The overview as the tools answer it, with what an existing summary file adds. */
     public static JsonObject toJson(Overview overview, IntegrationSummary.Summary summary) {
         JsonObject out = new JsonObject();
@@ -659,6 +692,10 @@ public final class ProjectOverview {
             }
             if (r.from() != null) {
                 jo.put("from", r.from().uri());
+            }
+            BodyOrigin body = overview.bodies().get(r.key());
+            if (body != null) {
+                jo.put("bodyFrom", bodyJson(body));
             }
             JsonArray to = new JsonArray();
             r.produces().forEach(e -> to.add(e.uri()));

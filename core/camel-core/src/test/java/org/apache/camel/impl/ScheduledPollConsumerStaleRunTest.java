@@ -19,9 +19,12 @@ package org.apache.camel.impl;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.spi.HttpResponseAware;
 import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledPollConsumer;
@@ -31,7 +34,9 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -60,12 +65,16 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
 
         private volatile boolean forceReadyInPoll;
         private volatile Exception exceptionToThrowOnPoll;
+        private volatile Error errorToThrowOnPoll;
         // set to hold the next poll (the remote call of the poll is in progress)
         private volatile CountDownLatch pollHeld;
         // set to hold the next call of addLastErrorDetail (after the generation check of the poll)
         private volatile CountDownLatch detailHeld;
         // set to hold the next isSuspended() check of a run on the stale-poll thread (when the run has started)
         private volatile CountDownLatch runStartHeld;
+        // set to hold the next getEndpoint() call on the stale-poll thread (when run() has started, before doRun())
+        private volatile CountDownLatch endpointHeld;
+        private final AtomicInteger polls = new AtomicInteger();
         private volatile CountDownLatch release;
 
         StaleConsumer(Endpoint endpoint) {
@@ -74,6 +83,7 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
 
         @Override
         protected int poll() throws Exception {
+            polls.incrementAndGet();
             CountDownLatch held = pollHeld;
             if (held != null) {
                 pollHeld = null;
@@ -83,6 +93,10 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
             if (forceReadyInPoll) {
                 // such as camel-aws2-sqs when its receive call returns
                 forceConsumerAsReady();
+            }
+            Error error = errorToThrowOnPoll;
+            if (error != null) {
+                throw error;
             }
             Exception e = exceptionToThrowOnPoll;
             if (e != null) {
@@ -111,6 +125,17 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
                 awaitRelease(release);
             }
             return super.isSuspended();
+        }
+
+        @Override
+        public Endpoint getEndpoint() {
+            CountDownLatch held = endpointHeld;
+            if (held != null && "stale-poll".equals(Thread.currentThread().getName())) {
+                endpointHeld = null;
+                held.countDown();
+                awaitRelease(release);
+            }
+            return super.getEndpoint();
         }
 
         Map<String, Object> lastErrorDetails() {
@@ -187,7 +212,20 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
     }
 
     private void startPoller() {
-        poller = new Thread(consumer::run, "stale-poll");
+        startPoller(new AtomicReference<>());
+    }
+
+    /**
+     * Starts the poll in another thread, and keeps what the run threw (as the scheduler would see it).
+     */
+    private void startPoller(AtomicReference<Throwable> thrown) {
+        poller = new Thread(() -> {
+            try {
+                consumer.run();
+            } catch (Throwable t) {
+                thrown.set(t);
+            }
+        }, "stale-poll");
         poller.start();
     }
 
@@ -210,6 +248,33 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
         restarter.start();
         await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> restarted.getCount() == 0 || restarter.getState() == Thread.State.WAITING);
+    }
+
+    @Test
+    void runFromBeforeStopDoesNotPoll() throws Exception {
+        newConsumer();
+        consumer.errorToThrowOnPoll = new InternalError("simulated");
+        CountDownLatch endpointHeld = new CountDownLatch(1);
+        consumer.endpointHeld = endpointHeld;
+        consumer.start();
+
+        // the run has started, and is held before its poll
+        startPoller();
+        assertTrue(endpointHeld.await(10, TimeUnit.SECONDS));
+
+        consumer.stop();
+        consumer.start();
+        release.countDown();
+        joinPoller();
+
+        // it does not poll for the restarted consumer, as the fatal error of that poll would be ignored (CAMEL-27515)
+        assertEquals(0, consumer.polls.get(), "The run from before the stop polled for the restarted consumer");
+        assertNull(consumer.getFatalError());
+
+        // the same error of a poll of the restarted consumer stops it
+        consumer.run();
+        assertEquals(1, consumer.polls.get());
+        assertNotNull(consumer.getFatalError());
     }
 
     @Test
@@ -260,6 +325,45 @@ class ScheduledPollConsumerStaleRunTest extends ContextTestSupport {
         assertFalse(consumer.isFirstPollDone(), "the restarted consumer has not polled yet");
         assertEquals(0, consumer.getErrorCounter());
         assertNull(consumer.lastErrorDetails());
+    }
+
+    @Test
+    void errorOfPollFromBeforeStopDoesNotMarkRestartedConsumerDown() throws Exception {
+        newConsumer();
+        final OutOfMemoryError expectedError = new OutOfMemoryError("Simulated error on poll");
+        consumer.errorToThrowOnPoll = expectedError;
+        CountDownLatch pollHeld = new CountDownLatch(1);
+        consumer.pollHeld = pollHeld;
+        consumer.start();
+
+        AtomicReference<Throwable> thrown = new AtomicReference<>();
+        startPoller(thrown);
+        assertTrue(pollHeld.await(10, TimeUnit.SECONDS));
+
+        // stop and start while the poll is in progress, which then throws the Error
+        consumer.stop();
+        consumer.start();
+        release.countDown();
+        joinPoller();
+
+        // the run of the stopped consumer logs the Error, and does not throw it on (CAMEL-27515)
+        assertNull(thrown.get());
+        // the restarted consumer has not polled yet, so the Error does not stop it
+        assertNull(consumer.getFatalError(), "The poll of before the stop stopped the restarted consumer");
+        assertTrue(consumer.isRunAllowed());
+        assertEquals(0, consumer.getErrorCounter());
+
+        // a poll of the restarted consumer is healthy
+        consumer.errorToThrowOnPoll = null;
+        consumer.run();
+        assertEquals(HealthCheck.State.UP, consumer.getHealthCheck().call().getState());
+
+        // the same error of a poll of the restarted consumer stops it
+        consumer.errorToThrowOnPoll = expectedError;
+        consumer.run();
+        assertSame(expectedError, consumer.getFatalError());
+        assertFalse(consumer.isRunAllowed());
+        assertEquals(HealthCheck.State.DOWN, consumer.getHealthCheck().call().getState());
     }
 
     @Test

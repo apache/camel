@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.azure.messaging.eventhubs.EventData;
 import com.azure.messaging.eventhubs.EventProcessorClient;
 import com.azure.messaging.eventhubs.models.EventContext;
 import com.azure.messaging.eventhubs.models.PartitionContext;
@@ -62,6 +63,7 @@ class EventHubsConsumerPerPartitionCheckpointTest {
 
     private EventHubsConsumer consumer;
     private Method processCommit;
+    private long sequenceNumber;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -98,16 +100,17 @@ class EventHubsConsumerPerPartitionCheckpointTest {
     @Test
     void batchSizeCheckpointOnOnePartitionDoesNotResetOtherPartition() throws Exception {
         configuration.setCheckpointBatchSize(2);
-        EventContext partitionZeroContext = eventContext("0");
-        when(partitionZeroContext.updateCheckpointAsync()).thenReturn(Mono.empty());
+        EventContext partitionZeroFirst = eventContext("0");
+        EventContext partitionZeroSecond = eventContext("0");
+        when(partitionZeroSecond.updateCheckpointAsync()).thenReturn(Mono.empty());
 
         invokeProcessCommit(exchange(), eventContext("1"));
-        invokeProcessCommit(exchange(), partitionZeroContext);
-        invokeProcessCommit(exchange(), partitionZeroContext);
+        invokeProcessCommit(exchange(), partitionZeroFirst);
+        invokeProcessCommit(exchange(), partitionZeroSecond);
 
         assertThat(processedEventsForPartition("0")).isZero();
         assertThat(processedEventsForPartition("1")).isEqualTo(1);
-        verify(partitionZeroContext, times(1)).updateCheckpointAsync();
+        verify(partitionZeroSecond, times(1)).updateCheckpointAsync();
     }
 
     @Test
@@ -146,10 +149,12 @@ class EventHubsConsumerPerPartitionCheckpointTest {
         assertThat(getProcessedEventsByPartition()).isEmpty();
         assertThat(getCheckpointTasksByPartition()).isEmpty();
         assertThat(getScheduledTasksByPartition()).isEmpty();
+        assertThat((Map<?, ?>) getField(consumer, "checkpointsByPartition")).isEmpty();
         verify(processorClient).stop();
     }
 
     private void invokeProcessCommit(Exchange exchange, EventContext eventContext) throws Exception {
+        consumer.processDelivered(eventContext);
         processCommit.invoke(consumer, exchange, eventContext);
     }
 
@@ -162,6 +167,9 @@ class EventHubsConsumerPerPartitionCheckpointTest {
         PartitionContext partitionContext = mock(PartitionContext.class);
         when(partitionContext.getPartitionId()).thenReturn(partitionId);
         when(eventContext.getPartitionContext()).thenReturn(partitionContext);
+        EventData eventData = mock(EventData.class);
+        when(eventData.getSequenceNumber()).thenReturn(sequenceNumber++);
+        when(eventContext.getEventData()).thenReturn(eventData);
         return eventContext;
     }
 

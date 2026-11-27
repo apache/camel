@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -88,6 +89,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import static org.apache.camel.processor.ProcessorHelper.prepareMDCParallelTask;
+import static org.apache.camel.util.ObjectHelper.getVirtualMachineError;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -356,9 +358,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                         return doProcess(exchange, callback);
                     }
                 }, exchange);
-            } catch (VirtualMachineError e) {
-                // left as before (thrown on after the callback), as in DelegateSyncProcessor
-                throw e;
             } catch (Throwable e) {
                 // also an Error (such as one of an expression): the callback is called in finally, so an Error thrown
                 // on after it would not fail the exchange
@@ -382,9 +381,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                         .stream().filter(Objects::nonNull).toList();
                 size = ((Collection<ProcessorExchangePair>) pairs).size();
             }
-        } catch (VirtualMachineError e) {
-            // left as before (thrown on), as in DelegateSyncProcessor
-            throw e;
         } catch (Throwable e) {
             // also an Error, such as one of the split expression
             exchange.setException(e);
@@ -470,6 +466,21 @@ public class MulticastProcessor extends BaseProcessorSupport
         final AtomicInteger nbAggregated = new AtomicInteger();
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
+        /**
+         * The indexes that are aggregated or reported to {@link AggregationStrategy#timeout}, in streaming mode with a
+         * timeout: the exchanges are aggregated in the order they complete, so the timeout cannot take the number of
+         * aggregated exchanges as the next index. In ordered mode they are aggregated in index order, so the number is
+         * the next index. Guarded by the lock.
+         */
+        final BitSet handledIndexes;
+        /**
+         * The index of each exchange sent and not aggregated yet, when there is a timeout. The timeout does not read
+         * the index property of the exchange, as an EIP inside the branch can change it (a nested split or multicast
+         * can leave the index property of its own last part on the exchange).
+         */
+        final Map<Exchange, Integer> sentIndexes;
+        // the first failure of a sub-exchange that carries a VirtualMachineError (CAMEL-27515)
+        final AtomicReference<Exception> fatalFailure = new AtomicReference<>();
         @Deprecated(since = "4.19.0")
         final Map<String, String> mdc;
         final ScheduledFuture<?> timeoutTask;
@@ -481,6 +492,8 @@ public class MulticastProcessor extends BaseProcessorSupport
             this.pairs = pairs;
             this.callback = callback;
             this.iterator = pairs.iterator();
+            this.handledIndexes = timeout > 0 && isStreaming() ? new BitSet() : null;
+            this.sentIndexes = timeout > 0 ? new ConcurrentHashMap<>() : null;
             if (timeout > 0) {
                 timeoutTask = schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
             } else {
@@ -548,16 +561,22 @@ public class MulticastProcessor extends BaseProcessorSupport
             try {
                 Exchange exchange;
                 while (!done.get() && (exchange = completion.poll()) != null) {
+                    Integer index = sentIndexes != null ? sentIndexes.remove(exchange) : null;
+                    recordFatalFailure(exchange);
                     doAggregate(result, exchange, original);
-                    if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
+                    if (handledIndexes != null && index != null) {
+                        handledIndexes.set(index);
+                    }
+                    int aggregated = nbAggregated.incrementAndGet();
+                    // read allSent before nbExchangeSent: the sender sets allSent after its last increment of
+                    // nbExchangeSent, so the count read afterwards is final (read the other way round, the count can
+                    // miss the last exchange, which would then never be aggregated)
+                    if (allSent.get() && aggregated >= nbExchangeSent.get()) {
                         doDone(result.get(), true);
                     }
                 }
             } catch (Exception e) {
                 doFailed(e);
-            } catch (VirtualMachineError e) {
-                // left as before, as in DelegateSyncProcessor
-                throw e;
             } catch (Throwable e) {
                 // also an Error of the aggregation strategy: thrown on, it would leave the exchange without its done
                 doFailed(e);
@@ -597,25 +616,35 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
                 while (nbAggregated.get() < nbExchangeSent.get()) {
                     Exchange exchange = completion.pollUnordered();
-                    int index = exchange != null ? getExchangeIndex(exchange) : nbExchangeSent.get();
-                    while (nbAggregated.get() < index) {
-                        int idx = nbAggregated.getAndIncrement();
-                        AggregationStrategy strategy = getAggregationStrategy(null);
-                        if (strategy != null) {
-                            strategy.timeout(result.get() != null ? result.get() : original,
-                                    idx, nbExchangeSent.get(), timeout);
+                    int index = exchange != null ? indexOf(exchange) : nbExchangeSent.get();
+                    if (handledIndexes != null) {
+                        // streaming: report the indexes before it that are not aggregated (not the first nbAggregated
+                        // indexes, as the exchanges are aggregated in the order they complete)
+                        for (int idx = handledIndexes.nextClearBit(0);
+                             idx < index;
+                             idx = handledIndexes.nextClearBit(idx + 1)) {
+                            handledIndexes.set(idx);
+                            nbAggregated.incrementAndGet();
+                            reportTimeout(idx);
+                        }
+                    } else {
+                        // ordered: the first nbAggregated indexes are aggregated
+                        while (nbAggregated.get() < index) {
+                            reportTimeout(nbAggregated.getAndIncrement());
                         }
                     }
                     if (exchange != null) {
+                        recordFatalFailure(exchange);
                         doAggregate(result, exchange, original);
+                        if (handledIndexes != null) {
+                            handledIndexes.set(index);
+                        }
                         nbAggregated.incrementAndGet();
                     }
                 }
                 doTimeoutDone(result.get(), true);
             } catch (Exception e) {
                 doTimeoutFailed(e);
-            } catch (VirtualMachineError e) {
-                throw e;
             } catch (Throwable e) {
                 // also an Error of the aggregation strategy
                 doTimeoutFailed(e);
@@ -624,8 +653,21 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
         }
 
+        private int indexOf(Exchange exchange) {
+            Integer index = sentIndexes != null ? sentIndexes.remove(exchange) : null;
+            return index != null ? index : getExchangeIndex(exchange);
+        }
+
+        private void reportTimeout(int index) {
+            AggregationStrategy strategy = getAggregationStrategy(null);
+            if (strategy != null) {
+                strategy.timeout(result.get() != null ? result.get() : original, index, nbExchangeSent.get(), timeout);
+            }
+        }
+
         protected void doTimeoutDone(Exchange exchange, boolean forceExhaust) {
             if (markDone()) {
+                keepFatalFailure(exchange);
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
         }
@@ -633,7 +675,40 @@ public class MulticastProcessor extends BaseProcessorSupport
         protected void doDone(Exchange exchange, boolean forceExhaust) {
             if (markDone()) {
                 cancelTimeoutTask();
+                keepFatalFailure(exchange);
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
+            }
+        }
+
+        /**
+         * Records the failure of a sub-exchange that carries a {@link VirtualMachineError}, before it is aggregated. In
+         * parallel the other outputs still complete, and a later failure or the aggregation strategy must not replace
+         * or drop it (CAMEL-27515).
+         */
+        private void recordFatalFailure(Exchange subExchange) {
+            Exception e = subExchange.getException();
+            if (getVirtualMachineError(e) != null) {
+                fatalFailure.compareAndSet(null, e);
+            }
+        }
+
+        /**
+         * Fails the result (or the original exchange) with the recorded failure that carries a
+         * {@link VirtualMachineError}, unless it already fails with one. Another exception of the result is added to it
+         * as suppressed.
+         */
+        private void keepFatalFailure(Exchange exchange) {
+            Exception fatal = fatalFailure.get();
+            if (fatal == null) {
+                return;
+            }
+            Exchange target = exchange != null ? exchange : original;
+            Exception other = target.getException();
+            if (getVirtualMachineError(other) == null) {
+                target.setException(fatal);
+                if (other != null && other != fatal) {
+                    ThrowExceptionProcessor.addSuppressed(target, fatal, other);
+                }
             }
         }
 
@@ -654,6 +729,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             if (markDone()) {
                 cancelTimeoutTask();
                 original.setException(e);
+                keepFatalFailure(null);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
             } else {
                 logFailedAfterDone(e);
@@ -673,6 +749,7 @@ public class MulticastProcessor extends BaseProcessorSupport
         protected void doTimeoutFailed(Throwable e) {
             if (markDone()) {
                 original.setException(e);
+                keepFatalFailure(null);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
             } else {
                 logFailedAfterDone(e);
@@ -739,6 +816,9 @@ public class MulticastProcessor extends BaseProcessorSupport
                 Exchange exchange = pair.getExchange();
                 int index = nbExchangeSent.getAndIncrement();
                 updateNewExchange(exchange, index, pairs, hasNext);
+                if (sentIndexes != null) {
+                    sentIndexes.put(exchange, index);
+                }
                 if (!hasNext) {
                     allSent.set(true);
                 }
@@ -816,8 +896,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
             } catch (Exception e) {
                 doFailed(e);
-            } catch (VirtualMachineError e) {
-                throw e;
             } catch (Throwable e) {
                 // also an Error of the iterator of a streaming split
                 doFailed(e);
@@ -855,8 +933,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                 } catch (Exception e) {
                     doFailed(e);
                     return;
-                } catch (VirtualMachineError e) {
-                    throw e;
                 } catch (Throwable e) {
                     // also an Error of the iterator
                     doFailed(e);
@@ -888,6 +964,9 @@ public class MulticastProcessor extends BaseProcessorSupport
             Exchange exchange = pair.getExchange();
             int index = nbExchangeSent.getAndIncrement();
             updateNewExchange(exchange, index, pairs, hasNext);
+            if (sentIndexes != null) {
+                sentIndexes.put(exchange, index);
+            }
             if (!hasNext) {
                 allSent.set(true);
             }
@@ -903,9 +982,6 @@ public class MulticastProcessor extends BaseProcessorSupport
                 sync.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
-            } catch (VirtualMachineError e) {
-                // left as before (thrown on)
-                throw e;
             } catch (Throwable e) {
                 // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
                 exchange.setException(e);
@@ -975,6 +1051,12 @@ public class MulticastProcessor extends BaseProcessorSupport
      * @return             {@code true} to continue processing despite the failure, {@code false} to stop
      */
     protected boolean shouldContinueOnFailure(Exchange subExchange, Exchange original, int index) {
+        if (!isParallelProcessing() && getVirtualMachineError(subExchange.getException()) != null) {
+            // a VirtualMachineError stops a sequential multicast, as stopOnException does: the next outputs are not
+            // called, as the next iterations of a Java loop (CAMEL-27515). In parallel, the other outputs are already
+            // submitted, so they complete as for any failure
+            return false;
+        }
         return !stopOnException;
     }
 
@@ -1089,7 +1171,8 @@ public class MulticastProcessor extends BaseProcessorSupport
                 && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
-            stoppedOnException = isStopOnException() || isStoppedOnFailure(original);
+            stoppedOnException = isStopOnException() || isStoppedOnFailure(original)
+                    || (subExchange != null && getVirtualMachineError(subExchange.getException()) != null);
             exception = true;
         }
 
@@ -1332,9 +1415,6 @@ public class MulticastProcessor extends BaseProcessorSupport
         if (onPrepare != null) {
             try {
                 onPrepare.process(exchange);
-            } catch (VirtualMachineError e) {
-                // left as before (thrown on)
-                throw e;
             } catch (Throwable e) {
                 // also an Error, as for an exception: only this part fails (thrown on, it would fail the whole exchange)
                 exchange.setException(e);

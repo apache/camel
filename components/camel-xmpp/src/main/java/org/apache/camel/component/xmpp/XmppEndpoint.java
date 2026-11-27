@@ -60,7 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Send and receive messages to/from an XMPP chat server.
+ * Send and receive XMPP (Jabber) messages, in private chats and in multi-user chat rooms.
  */
 @UriEndpoint(firstVersion = "1.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant",
              alternativeSyntax = "xmpp:user:password@host:port/participant",
@@ -87,42 +87,95 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     private XmppBinding binding;
 
-    @UriPath
+    @UriPath(description = "The host name or IP address of the XMPP server. It is also the XMPP domain when the serviceName"
+                           + " option is not set. Not used when the connectionConfig option is set.")
     @Metadata(required = true)
     private String host;
-    @UriPath(defaultValue = "5222")
+    @UriPath(defaultValue = "5222",
+             description = "The TCP port of the XMPP server for client connections. Not used when the connectionConfig option"
+                           + " is set.")
     private int port;
-    @UriPath(label = "common")
+    @UriPath(label = "common",
+             description = "The JID (Jabber ID) of the person to chat with: the producer sends the chat messages to it, and the"
+                           + " consumer routes only the chat messages from it (or of every sender, without a participant). The"
+                           + " consumer adds the XMPP domain of the server to a name without a domain, while the producer needs"
+                           + " the full JID. The room option takes precedence over this option.")
     private String participant;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The user name to log in with: the localpart of the JID, without the domain. It can also be set in"
+                            + " the user info of the URI. If not set, the connection logs in anonymously (SASL ANONYMOUS), which"
+                            + " needs a connectionConfig that enables it with performSaslAnonymousAuthentication().")
     private String user;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password of the user. It can also be set in the user info of the URI, as user:password. With"
+                            + " createAccount, it is also the password of the new account.")
     private String password;
-    @UriParam(label = "common,advanced", defaultValue = "Camel")
+    @UriParam(label = "common,advanced", defaultValue = "Camel",
+              description = "The resource part of the full JID (the part after the slash) that the connection logs in with. Used"
+                            + " only when the user option is set.")
     private String resource = "Camel";
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Whether to log in as the user after connecting. Used only when the user option is set; without a"
+                            + " user, the connection always logs in anonymously. If false, the connection is not logged in,"
+                            + " so it can neither send nor receive messages.")
     private boolean login = true;
-    @UriParam(label = "common,advanced")
+    @UriParam(label = "common,advanced",
+              description = "Whether to register the user as a new account on the server (XEP-0077 In-Band Registration),"
+                            + " with the user and password options, before logging in. The registration is done for each new"
+                            + " connection, and the connection fails when the server refuses it, for example because the"
+                            + " account exists already.")
     private boolean createAccount;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The XEP-0045 Multi-User Chat room to enter, as a room JID with the domain of the chat service, for"
+                            + " example conference.jabber.org. A name without a domain is completed with the first Multi-User"
+                            + " Chat service that the server announces."
+                            + " The producer sends the messages to the room, and the consumer routes the messages of the room"
+                            + " and the chat messages of every sender.")
     private String room;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password to enter a password-protected room.")
     private String roomPassword;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The nickname to enter the room with. Used only with the room option. If not set, the user option is"
+                            + " used.")
     private String nickname;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The XMPP domain of the server (its service name), for example example.org when the host is"
+                            + " xmpp.example.org. If not set, the host option is used. Not used when the connectionConfig"
+                            + " option is set.")
     private String serviceName;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "Whether to work with XEP-0060 Publish-Subscribe. The consumer also routes the messages of type"
+                            + " headline and normal, such as pubsub event notifications, and the producer, without a room,"
+                            + " sends the body as a Smack PubSub packet. Setting it to true also sets the doc option to true.")
     private boolean pubsub;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer puts the received Smack Message (org.jivesoftware.smack.packet.Message) in"
+                            + " the body and in the CamelXmppDoc header, instead of the text of the message. The producer,"
+                            + " without a room or pubsub, sends the body as it is: a Smack Stanza or an array of them.")
     private boolean doc;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Whether the consumer and the chat and room producers connect to the XMPP server when they start,"
+                            + " so that a server that cannot be reached fails the start. If false, such a producer connects at"
+                            + " the first message, and the consumer tries again every connectionPollDelay seconds until it is"
+                            + " started. The doc and pubsub producers always connect at the first message.")
     private boolean testConnectionOnStartup = true;
-    @UriParam(label = "consumer", defaultValue = "10")
+    @UriParam(label = "consumer", defaultValue = "10",
+              description = "The delay in seconds between the checks of the consumer's connection, which connect and log in"
+                            + " again a lost connection and enter the room again. It is also the delay between the attempts of"
+                            + " a consumer that could not connect at startup (testConnectionOnStartup=false).")
     private int connectionPollDelay = 10;
-    @UriParam(label = "filter")
+    @UriParam(label = "filter",
+              description = "To use a custom HeaderFilterStrategy to filter the headers. The producer adds the headers that"
+                            + " pass as Jive properties to the XMPP message (the subject and language headers set the subject"
+                            + " and language of the message), and the consumer turns the Jive properties of a received message"
+                            + " into headers.")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom Smack connection configuration, which must be an"
+                            + " org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration (XMPP over TCP), for example to change"
+                            + " the TLS or SASL settings. When set, the host, port and serviceName options are not used to"
+                            + " connect. Endpoints share a connection only when they refer to the same instance.")
     private ConnectionConfiguration connectionConfig;
 
     public XmppEndpoint() {
@@ -243,23 +296,32 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         try {
             LOG.trace("Creating new connection ...");
             XMPPTCPConnection newConnection = createConnectionInternal();
+            boolean created = false;
+            try {
+                newConnection.connect();
 
-            newConnection.connect();
+                newConnection.addSyncStanzaListener(new XmppLogger("INBOUND"), stanza -> true);
+                newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
 
-            newConnection.addSyncStanzaListener(new XmppLogger("INBOUND"), stanza -> true);
-            newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
-
-            if (!newConnection.isAuthenticated()) {
-                if (user != null && createAccount) {
-                    AccountManager accountManager = AccountManager.getInstance(newConnection);
-                    accountManager.createAccount(Localpart.from(user), password);
+                if (!newConnection.isAuthenticated()) {
+                    if (user != null && createAccount) {
+                        AccountManager accountManager = AccountManager.getInstance(newConnection);
+                        accountManager.createAccount(Localpart.from(user), password);
+                    }
+                    login(newConnection);
                 }
-                login(newConnection);
-            }
 
-            // okay new connection was created successfully
-            LOG.debug("Created new connection successfully: {}", newConnection);
-            return newConnection;
+                // okay new connection was created successfully
+                LOG.debug("Created new connection successfully: {}", newConnection);
+                created = true;
+                return newConnection;
+            } finally {
+                if (!created) {
+                    // nobody else has the connection to close it: Smack keeps a connection whose login failed open
+                    // (its socket, reader and writer threads), so that the caller can log in again
+                    newConnection.instantShutdown();
+                }
+            }
         } finally {
             lock.unlock();
         }
@@ -382,9 +444,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return host;
     }
 
-    /**
-     * Hostname for the chat server
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -393,9 +452,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return port;
     }
 
-    /**
-     * Port number for the chat server
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -404,9 +460,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return user;
     }
 
-    /**
-     * User name (without server name). If not specified, anonymous login will be attempted.
-     */
     public void setUser(String user) {
         this.user = user;
     }
@@ -415,9 +468,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return password;
     }
 
-    /**
-     * Password for login
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -426,9 +476,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return resource;
     }
 
-    /**
-     * XMPP resource. The default is Camel.
-     */
     public void setResource(String resource) {
         this.resource = resource;
     }
@@ -437,9 +484,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return login;
     }
 
-    /**
-     * Whether to login the user.
-     */
     public void setLogin(boolean login) {
         this.login = login;
     }
@@ -448,9 +492,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return createAccount;
     }
 
-    /**
-     * If true, an attempt to create an account will be made. Default is false.
-     */
     public void setCreateAccount(boolean createAccount) {
         this.createAccount = createAccount;
     }
@@ -459,20 +500,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return room;
     }
 
-    /**
-     * If this option is specified, the component will connect to MUC (Multi User Chat). Usually, the domain name for
-     * MUC is different from the login domain. For example, if you are superman@jabber.org and want to join the krypton
-     * room, then the room URL is krypton@conference.jabber.org. Note the conference part. It is not a requirement to
-     * provide the full room JID. If the room parameter does not contain the @ symbol, the domain part will be
-     * discovered and added by Camel
-     */
     public void setRoom(String room) {
         this.room = room;
     }
 
-    /**
-     * Password for room
-     */
     public void setRoomPassword(String roomPassword) {
         this.roomPassword = roomPassword;
     }
@@ -486,11 +517,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return participant != null ? participant : user;
     }
 
-    /**
-     * JID (Jabber ID) of the person to chat with: the producer sends the messages to this person, and the consumer only
-     * routes the chat messages from this person (without a participant, the consumer routes the chat messages of every
-     * sender). room parameter has precedence over participant.
-     */
     public void setParticipant(String participant) {
         this.participant = participant;
     }
@@ -506,16 +532,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return nickname != null ? nickname : getUser();
     }
 
-    /**
-     * Use nickname when joining room. If room is specified and nickname is not, user will be used for the nickname.
-     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
-    /**
-     * The name of the service you are connecting to. For Google Talk, this would be gmail.com.
-     */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
@@ -529,9 +549,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return headerFilterStrategy;
     }
 
-    /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-     */
     @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
@@ -541,10 +558,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return connectionConfig;
     }
 
-    /**
-     * To use an existing connection configuration. Currently
-     * {@link org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration} is only supported (XMPP over TCP).
-     */
     public void setConnectionConfig(ConnectionConfiguration connectionConfig) {
         this.connectionConfig = connectionConfig;
     }
@@ -553,12 +566,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return testConnectionOnStartup;
     }
 
-    /**
-     * Specifies whether to test the connection on startup. This is used to ensure that the XMPP client has a valid
-     * connection to the XMPP server when the route starts. Camel throws an exception on startup if a connection cannot
-     * be established. When this option is set to false, Camel will attempt to establish a "lazy" connection when needed
-     * by a producer, and will poll for a consumer connection until the connection is established. Default is true.
-     */
     public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
@@ -567,18 +574,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return connectionPollDelay;
     }
 
-    /**
-     * The amount of time in seconds between polls (in seconds) to verify the health of the XMPP connection, or between
-     * attempts to establish an initial consumer connection. Camel will try to re-establish a connection if it has
-     * become inactive. Default is 10 seconds.
-     */
     public void setConnectionPollDelay(int connectionPollDelay) {
         this.connectionPollDelay = connectionPollDelay;
     }
 
-    /**
-     * Accept pubsub packets on input, default is false
-     */
     public void setPubsub(boolean pubsub) {
         this.pubsub = pubsub;
         if (pubsub) {
@@ -590,10 +589,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return pubsub;
     }
 
-    /**
-     * Set a doc header on the IN message containing a Document form of the incoming packet; default is true if presence
-     * or pubsub are true, otherwise false
-     */
     public void setDoc(boolean doc) {
         this.doc = doc;
     }

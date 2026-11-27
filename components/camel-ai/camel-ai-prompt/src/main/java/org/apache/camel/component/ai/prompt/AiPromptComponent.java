@@ -40,7 +40,8 @@ import static org.apache.camel.component.ai.prompt.AiPrompt.SCHEME;
 @Component(SCHEME)
 public class AiPromptComponent extends DefaultComponent {
 
-    @Metadata(description = "The component configuration")
+    @Metadata(description = "The configuration that every endpoint starts from. The endpoint copies it, and the"
+                            + " options of the endpoint URI replace its values.")
     private AiPromptConfiguration configuration;
 
     public AiPromptComponent() {
@@ -74,9 +75,14 @@ public class AiPromptComponent extends DefaultComponent {
 
         // Extract argument.NAME.* URI options before endpoint property binding.
         // These options configure the prompt's declared arguments, not endpoint properties.
+        // They are added to the arguments of the component (the copy above): the component arguments come first,
+        // and an option of the endpoint replaces the same option of the component.
         Map<String, Object> promptArguments = PropertiesHelper.extractProperties(parameters, "argument.");
         if (!promptArguments.isEmpty()) {
             Map<String, String> orderedArguments = new LinkedHashMap<>();
+            if (config.getArguments() != null) {
+                orderedArguments.putAll(config.getArguments());
+            }
             promptArguments.forEach((key, value) -> orderedArguments.put(key, String.valueOf(value)));
             config.setArguments(orderedArguments);
         }

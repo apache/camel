@@ -24,12 +24,16 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XChangeEndpoint target = (XChangeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "currency": target.getConfiguration().setCurrency(property(camelContext, org.knowm.xchange.currency.Currency.class, value)); return true;
         case "currencypair":
         case "currencyPair": target.getConfiguration().setCurrencyPair(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "method": target.getConfiguration().setMethod(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "service": target.getConfiguration().setService(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class, value)); return true;
         default: return false;
         }
@@ -38,12 +42,16 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
         case "currency": return org.knowm.xchange.currency.Currency.class;
         case "currencypair":
         case "currencyPair": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "method": return org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
         case "service": return org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class;
         default: return null;
         }
@@ -53,12 +61,16 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XChangeEndpoint target = (XChangeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "apikey":
+        case "apiKey": return target.getConfiguration().getApiKey();
         case "currency": return target.getConfiguration().getCurrency();
         case "currencypair":
         case "currencyPair": return target.getConfiguration().getCurrencyPair();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "method": return target.getConfiguration().getMethod();
+        case "secretkey":
+        case "secretKey": return target.getConfiguration().getSecretKey();
         case "service": return target.getConfiguration().getService();
         default: return null;
         }

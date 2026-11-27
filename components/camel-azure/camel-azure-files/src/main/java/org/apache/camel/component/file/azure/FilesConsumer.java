@@ -46,6 +46,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     protected String endpointPath;
 
+    private final String share;
+
     private transient String toString;
 
     public FilesConsumer(FilesEndpoint endpoint, Processor processor,
@@ -53,6 +55,15 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
                          GenericFileProcessStrategy<?> processStrategy) {
         super(endpoint, processor, fileOperations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
+        this.share = endpoint.getConfiguration().getShare();
+    }
+
+    @Override
+    protected Exchange createExchange(GenericFile<ShareFileItem> file) {
+        Exchange answer = super.createExchange(file);
+        // the share the file comes from, which names the CloudEvent source
+        answer.getIn().setHeader(FilesConstants.SHARE_NAME, share);
+        return answer;
     }
 
     @Override

@@ -34,7 +34,9 @@ public class AvroComponent extends DefaultComponent {
 
     private final ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<>();
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "A shared configuration that every endpoint copies as its starting point. The options of the"
+                            + " endpoint URI override its values.")
     private AvroConfiguration configuration;
 
     public AvroComponent() {
@@ -87,16 +89,18 @@ public class AvroComponent extends DefaultComponent {
      * Registers new responder with uri as a key. Registers consumer in responder. In case if responder is already
      * registered by this uri, then register consumer.
      *
-     * @param  uri         URI of the endpoint without message name
+     * @param  uri         host and port of the endpoint
      * @param  messageName message name
      * @param  consumer    consumer that will be registered in providers` registry
      * @throws Exception
      */
-    public void register(String uri, String messageName, AvroConsumer consumer) throws Exception {
+    public synchronized void register(String uri, String messageName, AvroConsumer consumer) throws Exception {
         AvroListener listener = listenerRegistry.get(uri);
         if (listener == null) {
             listener = new AvroListener(consumer.getEndpoint());
             listenerRegistry.put(uri, listener);
+        } else {
+            listener.checkCompatible(consumer.getEndpoint());
         }
         listener.register(messageName, consumer);
     }
@@ -105,11 +109,13 @@ public class AvroComponent extends DefaultComponent {
      * Calls unregister of consumer by the appropriate message name. In case if all consumers are unregistered, then it
      * removes responder from the registry.
      *
-     * @param uri         URI of the endpoint without message name
+     * @param uri         host and port of the endpoint
      * @param messageName message name
+     * @param consumer    the consumer to unregister
      */
-    public void unregister(String uri, String messageName) {
-        if (listenerRegistry.get(uri).unregister(messageName)) {
+    public synchronized void unregister(String uri, String messageName, AvroConsumer consumer) {
+        AvroListener listener = listenerRegistry.get(uri);
+        if (listener != null && listener.unregister(messageName, consumer)) {
             listenerRegistry.remove(uri);
         }
     }
@@ -118,9 +124,6 @@ public class AvroComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * To use a shared {@link AvroConfiguration} to configure options once
-     */
     public void setConfiguration(AvroConfiguration configuration) {
         this.configuration = configuration;
     }

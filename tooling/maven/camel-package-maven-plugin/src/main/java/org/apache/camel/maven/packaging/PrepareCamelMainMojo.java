@@ -94,11 +94,13 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             boolean secret = false;
             boolean required = false;
             String security = null;
+            String insecureValue = null;
             if (as != null) {
                 defaultValue = as.getStringValue("defaultValue");
                 secret = "true".equals(as.getStringValue("secret"));
                 required = "true".equals(as.getStringValue("required"));
                 security = as.getStringValue("security");
+                insecureValue = as.getStringValue("insecureValue");
                 if ("secret".equals(security) && !secret) {
                     secret = true;
                 }
@@ -124,6 +126,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 model.setSecret(secret);
                 model.setRequired(required);
                 model.setSecurity(security);
+                model.setInsecureValue(insecureValue);
                 List<String> enums = null;
                 // add known enums
                 if ("org.apache.camel.LoggingLevel".equals(javaType)) {
@@ -201,6 +204,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 String security = prop.getString("security");
                 if (security != null) {
                     model.setSecurity(security);
+                    model.setInsecureValue(prop.getString("insecureValue"));
                     if ("secret".equals(security) && !model.isSecret()) {
                         model.setSecret(true);
                     }

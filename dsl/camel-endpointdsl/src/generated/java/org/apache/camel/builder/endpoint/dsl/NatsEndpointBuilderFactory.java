@@ -164,7 +164,13 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the name of the JetStream stream to use.
+         * The name of the JetStream stream. The consumer reads from this stream
+         * (it is required for a JetStream consumer). When the stream does not
+         * exist, the consumer creates it with the subject of the topic. The
+         * producer creates it in the same way, unless another stream already
+         * takes in the subject. The producer publishes to the subject, and the
+         * message is stored by the stream that takes in the subject, whatever
+         * its name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1463,7 +1469,13 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the name of the JetStream stream to use.
+         * The name of the JetStream stream. The consumer reads from this stream
+         * (it is required for a JetStream consumer). When the stream does not
+         * exist, the consumer creates it with the subject of the topic. The
+         * producer creates it in the same way, unless another stream already
+         * takes in the subject. The producer publishes to the subject, and the
+         * message is stored by the stream that takes in the subject, whatever
+         * its name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1818,7 +1830,11 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request timeout in milliseconds.
+         * Request timeout in milliseconds. With JetStream, the time to wait for
+         * the acknowledgement of a published message. With jetstreamAsync=true,
+         * the NATS client also gives up on the acknowledgement after
+         * requestCleanupInterval (to twice that), so a longer wait needs a
+         * longer requestCleanupInterval too.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1833,7 +1849,11 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Request timeout in milliseconds.
+         * Request timeout in milliseconds. With JetStream, the time to wait for
+         * the acknowledgement of a published message. With jetstreamAsync=true,
+         * the NATS client also gives up on the acknowledgement after
+         * requestCleanupInterval (to twice that), so a longer wait needs a
+         * longer requestCleanupInterval too.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2277,7 +2297,13 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the name of the JetStream stream to use.
+         * The name of the JetStream stream. The consumer reads from this stream
+         * (it is required for a JetStream consumer). When the stream does not
+         * exist, the consumer creates it with the subject of the topic. The
+         * producer creates it in the same way, unless another stream already
+         * takes in the subject. The producer publishes to the subject, and the
+         * message is stored by the stream that takes in the subject, whatever
+         * its name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3023,8 +3049,8 @@ public interface NatsEndpointBuilderFactory {
             return "CamelNatsStatusError";
         }
         /**
-         * Number of times this message has been delivered (1 = first, 1 then
-         * message has been redelivered).
+         * Number of times this message has been delivered (1 = first, &gt; 1
+         * then message has been redelivered).
          * 
          * The option is a: {@code long} type.
          * 

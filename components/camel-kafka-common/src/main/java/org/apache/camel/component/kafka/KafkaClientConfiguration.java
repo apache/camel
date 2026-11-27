@@ -35,6 +35,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.CipherSuitesParameters;
+import org.apache.camel.support.jsse.JsseParametersHelper;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -48,6 +49,8 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.config.internals.BrokerSecurityConfigs;
 import org.apache.kafka.common.security.auth.SecurityProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base configuration of the Camel Kafka endpoints: the brokers, the client id, the connection, metrics and backoff
@@ -62,6 +65,14 @@ import org.apache.kafka.common.security.auth.SecurityProtocol;
  */
 @UriParams
 public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaClientConfiguration.class);
+
+    /**
+     * Whether the options of sslContextParameters that the Kafka client cannot carry have been logged, so it is done
+     * once per endpoint, not each time the properties of a Kafka client are created.
+     */
+    private volatile boolean droppedSslOptionsLogged;
 
     @UriParam(label = "common",
               description = "URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a "
@@ -112,10 +123,13 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private Integer connectionMaxIdleMs = 540000;
     // receive.buffer.bytes
     @UriParam(label = "common", defaultValue = "65536",
-              description = "The size of the TCP receive buffer (SO_RCVBUF) to use when reading data.")
+              description = "The size of the TCP receive buffer (SO_RCVBUF) to use when reading data. If the value is -1, "
+                            + "the OS default will be used.")
     private Integer receiveBufferBytes = 65536;
     // send.buffer.bytes
-    @UriParam(label = "common", defaultValue = "131072", description = "Socket write buffer size")
+    @UriParam(label = "common", defaultValue = "131072",
+              description = "The size of the TCP send buffer (SO_SNDBUF) to use when sending data. If the value is -1, the "
+                            + "OS default will be used.")
     private Integer sendBufferBytes = 131072;
     // metadata.max.age.ms
     @UriParam(label = "common", defaultValue = "300000",
@@ -125,9 +139,11 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private Integer metadataMaxAgeMs = 300000;
     // metric.reporters
     @UriParam(label = "common",
-              description = "A list of classes to use as metrics reporters. Implementing the MetricReporter interface allows"
-                            + " plugging in classes that will be notified of new metric creation. The JmxReporter is always "
-                            + "included to register JMX statistics.")
+              description = "A list of classes to use as metrics reporters. Implementing the "
+                            + "org.apache.kafka.common.metrics.MetricsReporter interface allows plugging in classes that will "
+                            + "be notified of new metric creation. When custom reporters are set and "
+                            + "org.apache.kafka.common.metrics.JmxReporter is needed, it has to be explicitly added to the "
+                            + "list.")
     private String metricReporters;
     // metrics.num.samples
     @UriParam(label = "common", defaultValue = "2", description = "The number of samples maintained to compute metrics.")
@@ -137,9 +153,10 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private Integer metricsSampleWindowMs = 30000;
     // reconnect.backoff.ms
     @UriParam(label = "common", defaultValue = "50",
-              description = "The amount of time to wait before attempting to reconnect to a given host. This avoids "
-                            + "repeatedly connecting to a host in a tight loop. This backoff applies to all requests sent by "
-                            + "the consumer to the broker.")
+              description = "The base amount of time to wait before attempting to reconnect to a given host. This avoids "
+                            + "repeatedly connecting to a host in a tight loop. This backoff applies to all connection "
+                            + "attempts by the client to a broker. This value is the initial backoff value and will increase "
+                            + "exponentially for each consecutive connection failure, up to the reconnectBackoffMaxMs value.")
     private Integer reconnectBackoffMs = 50;
     // reconnect.backoff.max.ms
     @UriParam(label = "common", defaultValue = "1000",
@@ -181,28 +198,26 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private String sslTruststorePassword;
     // SSL
     // ssl.enabled.protocols
-    @UriParam(label = "common,security",
-              description = "The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3 when running "
-                            + "with Java 11 or newer, TLSv1.2 otherwise. With the default value for Java 11, clients and "
-                            + "servers will prefer TLSv1.3 if both support it and fallback to TLSv1.2 otherwise (assuming both"
-                            + " support at least TLSv1.2). This default should be fine for most cases. Also see the config "
-                            + "documentation for SslProtocol.")
+    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS,
+              description = "The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3. This means "
+                            + "that clients and servers will prefer TLSv1.3 if both support it and fallback to TLSv1.2 "
+                            + "otherwise (assuming both support at least TLSv1.2). This default should be fine for most use "
+                            + "cases. Also see the documentation of sslProtocol to understand how it can impact the TLS "
+                            + "version negotiation behavior.")
     private String sslEnabledProtocols = SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS;
     // ssl.keystore.type
     @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE,
-              description = "The file format of the key store file. This is optional for the client. The default value is "
-                            + "JKS")
+              description = "The file format of the key store file. This is optional for the client. The supported values "
+                            + "are JKS, PKCS12 and PEM.")
     private String sslKeystoreType = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE;
     // ssl.protocol
-    @UriParam(label = "common,security",
-              description = "The SSL protocol used to generate the SSLContext. The default is TLSv1.3 when running with Java"
-                            + " 11 or newer, TLSv1.2 otherwise. This value should be fine for most use cases. Allowed values "
-                            + "in recent JVMs are TLSv1.2 and TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may be supported in "
-                            + "older JVMs, but their usage is discouraged due to known security vulnerabilities. With the "
-                            + "default value for this config and sslEnabledProtocols, clients will downgrade to TLSv1.2 if the"
-                            + " server does not support TLSv1.3. If this config is set to TLSv1.2, clients will not use "
-                            + "TLSv1.3 even if it is one of the values in sslEnabledProtocols and the server only supports "
-                            + "TLSv1.3.")
+    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_PROTOCOL,
+              description = "The SSL protocol used to generate the SSLContext. The default is TLSv1.3, which should be fine "
+                            + "for most use cases. A typical alternative to the default is TLSv1.2. Allowed values for this "
+                            + "config are dependent on the JVM. Clients using the defaults for this config and "
+                            + "sslEnabledProtocols will downgrade to TLSv1.2 if the server does not support TLSv1.3. If this "
+                            + "config is set to TLSv1.2, however, clients will not use TLSv1.3 even if it is one of the values "
+                            + "in sslEnabledProtocols and the server only supports TLSv1.3.")
     private String sslProtocol = SslConfigs.DEFAULT_SSL_PROTOCOL;
     // ssl.provider
     @UriParam(label = "common,security",
@@ -211,7 +226,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     private String sslProvider;
     // ssl.truststore.type
     @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE,
-              description = "The file format of the trust store file. The default value is JKS.")
+              description = "The file format of the trust store file. The supported values are JKS, PKCS12 and PEM.")
     private String sslTruststoreType = SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE;
     // SSL
     // ssl.cipher.suites
@@ -273,8 +288,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
               description = "A list of rules for mapping from principal names to short names (typically operating system "
                             + "usernames). The rules are evaluated in order, and the first rule that matches a principal name "
                             + "is used to map it to a short name. Any later rules in the list are ignored. By default, "
-                            + "principal names of the form {username}/{hostname}{REALM} are mapped to {username}. For more "
-                            + "details on the format, please see the Security Authorization and ACLs documentation (at the "
+                            + "principal names made of a username, a hostname and a Kerberos realm are mapped to the "
+                            + "username. For more details on the format, please see the Security Authorization and ACLs documentation (at the "
                             + "Apache Kafka project website). Multiple values can be separated by comma")
     // sasl.kerberos.principal.to.local.rules
     private String kerberosPrincipalToLocalRules;
@@ -396,6 +411,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
         try {
             KafkaClientConfiguration copy = (KafkaClientConfiguration) clone();
             copy.additionalProperties = new HashMap<>(this.additionalProperties);
+            copy.droppedSslOptionsLogged = false;
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -543,6 +559,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
         String protocol = resolveSecurityProtocol();
         if (sslContextParameters != null) {
             applySslConfigurationFromContext(props, sslContextParameters);
+            logDroppedSslOptions(sslContextParameters);
         }
         applySslConfigurationFromOptions(props, protocol);
 
@@ -636,6 +653,33 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
             addPropertyIfNotEmpty(props, SslConfigs.SSL_PROVIDER_CONFIG, getSslProvider());
             addSslOption(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, getSslTruststoreType(),
                     SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE, true);
+        }
+    }
+
+    /**
+     * The Kafka client builds its TLS connections from the ssl.* properties, which cannot carry the options that only
+     * the SSLContext of {@code SSLContextParameters.createSSLContext} applies: say so once instead of dropping them in
+     * silence. The post-quantum preference of the named groups, which that SSLContext applies when no named groups are
+     * configured, is not an option of the user: losing it is only logged at DEBUG.
+     */
+    private void logDroppedSslOptions(SSLContextParameters sslContextParameters) {
+        if (droppedSslOptionsLogged) {
+            return;
+        }
+        droppedSslOptionsLogged = true;
+
+        List<String> dropped = JsseParametersHelper.engineOnlyParameters(sslContextParameters);
+        if (!dropped.isEmpty()) {
+            LOG.warn("The Kafka client cannot apply the {} of sslContextParameters: it creates its TLS connections from"
+                     + " the ssl.* properties, which have no such settings, so the JVM defaults are used instead",
+                    String.join(", ", dropped));
+        } else if (LOG.isDebugEnabled()) {
+            List<String> postQuantum = JsseParametersHelper.postQuantumNamedGroups(sslContextParameters);
+            if (postQuantum != null) {
+                LOG.debug("The Kafka client cannot apply the post-quantum named group order {} that sslContextParameters"
+                          + " prefers on this JVM: it uses the named group order of the JVM instead",
+                        postQuantum);
+            }
         }
     }
 
@@ -955,7 +999,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * Socket write buffer size
+     * The size of the TCP send buffer (SO_SNDBUF) to use when sending data. If the value is -1, the OS default will be
+     * used.
      */
     public void setSendBufferBytes(Integer sendBufferBytes) {
         this.sendBufferBytes = sendBufferBytes;
@@ -1013,8 +1058,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     /**
      * A list of rules for mapping from principal names to short names (typically operating system usernames). The rules
      * are evaluated in order, and the first rule that matches a principal name is used to map it to a short name. Any
-     * later rules in the list are ignored. By default, principal names of the form {username}/{hostname}@{REALM} are
-     * mapped to {username}. For more details on the format, please see the Security Authorization and ACLs
+     * later rules in the list are ignored. By default, principal names made of a username, a hostname and a Kerberos
+     * realm are mapped to the username. For more details on the format, please see the Security Authorization and ACLs
      * documentation (at the Apache Kafka project website).
      *
      * Multiple values can be separated by comma
@@ -1077,10 +1122,10 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3 when running with Java 11 or
-     * newer, TLSv1.2 otherwise. With the default value for Java 11, clients and servers will prefer TLSv1.3 if both
-     * support it and fallback to TLSv1.2 otherwise (assuming both support at least TLSv1.2). This default should be
-     * fine for most cases. Also see the config documentation for SslProtocol.
+     * The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3. This means that clients and
+     * servers will prefer TLSv1.3 if both support it and fallback to TLSv1.2 otherwise (assuming both support at least
+     * TLSv1.2). This default should be fine for most use cases. Also see the documentation of sslProtocol to understand
+     * how it can impact the TLS version negotiation behavior.
      */
     public void setSslEnabledProtocols(String sslEnabledProtocols) {
         this.sslEnabledProtocols = sslEnabledProtocols;
@@ -1091,7 +1136,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The file format of the key store file. This is optional for the client. The default value is JKS
+     * The file format of the key store file. This is optional for the client. The supported values are JKS, PKCS12 and
+     * PEM.
      */
     public void setSslKeystoreType(String sslKeystoreType) {
         this.sslKeystoreType = sslKeystoreType;
@@ -1102,12 +1148,11 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The SSL protocol used to generate the SSLContext. The default is TLSv1.3 when running with Java 11 or newer,
-     * TLSv1.2 otherwise. This value should be fine for most use cases. Allowed values in recent JVMs are TLSv1.2 and
-     * TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may be supported in older JVMs, but their usage is discouraged due to
-     * known security vulnerabilities. With the default value for this config and sslEnabledProtocols, clients will
-     * downgrade to TLSv1.2 if the server does not support TLSv1.3. If this config is set to TLSv1.2, clients will not
-     * use TLSv1.3 even if it is one of the values in sslEnabledProtocols and the server only supports TLSv1.3.
+     * The SSL protocol used to generate the SSLContext. The default is TLSv1.3, which should be fine for most use
+     * cases. A typical alternative to the default is TLSv1.2. Allowed values for this config are dependent on the JVM.
+     * Clients using the defaults for this config and sslEnabledProtocols will downgrade to TLSv1.2 if the server does
+     * not support TLSv1.3. If this config is set to TLSv1.2, however, clients will not use TLSv1.3 even if it is one of
+     * the values in sslEnabledProtocols and the server only supports TLSv1.3.
      */
     public void setSslProtocol(String sslProtocol) {
         this.sslProtocol = sslProtocol;
@@ -1130,7 +1175,7 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The file format of the trust store file. The default value is JKS.
+     * The file format of the trust store file. The supported values are JKS, PKCS12 and PEM.
      */
     public void setSslTruststoreType(String sslTruststoreType) {
         this.sslTruststoreType = sslTruststoreType;
@@ -1373,7 +1418,8 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The size of the TCP receive buffer (SO_RCVBUF) to use when reading data.
+     * The size of the TCP receive buffer (SO_RCVBUF) to use when reading data. If the value is -1, the OS default will
+     * be used.
      */
     public void setReceiveBufferBytes(Integer receiveBufferBytes) {
         this.receiveBufferBytes = receiveBufferBytes;
@@ -1396,9 +1442,9 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * A list of classes to use as metrics reporters. Implementing the MetricReporter interface allows plugging in
-     * classes that will be notified of new metric creation. The JmxReporter is always included to register JMX
-     * statistics.
+     * A list of classes to use as metrics reporters. Implementing the org.apache.kafka.common.metrics.MetricsReporter
+     * interface allows plugging in classes that will be notified of new metric creation. When custom reporters are set
+     * and org.apache.kafka.common.metrics.JmxReporter is needed, it has to be explicitly added to the list.
      */
     public void setMetricReporters(String metricReporters) {
         this.metricReporters = metricReporters;
@@ -1431,8 +1477,10 @@ public abstract class KafkaClientConfiguration implements Cloneable, HeaderFilte
     }
 
     /**
-     * The amount of time to wait before attempting to reconnect to a given host. This avoids repeatedly connecting to a
-     * host in a tight loop. This backoff applies to all requests sent by the consumer to the broker.
+     * The base amount of time to wait before attempting to reconnect to a given host. This avoids repeatedly connecting
+     * to a host in a tight loop. This backoff applies to all connection attempts by the client to a broker. This value
+     * is the initial backoff value and will increase exponentially for each consecutive connection failure, up to the
+     * reconnectBackoffMaxMs value.
      */
     public void setReconnectBackoffMs(Integer reconnectBackoffMs) {
         this.reconnectBackoffMs = reconnectBackoffMs;

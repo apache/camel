@@ -234,7 +234,8 @@ public interface LangChain4jEmbeddingStoreEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true, SEARCH returns List with text content instead of List.
+         * When true, SEARCH returns a list of strings with the text content
+         * instead of a list of EmbeddingMatch objects.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -249,7 +250,8 @@ public interface LangChain4jEmbeddingStoreEndpointBuilderFactory {
             return this;
         }
         /**
-         * When true, SEARCH returns List with text content instead of List.
+         * When true, SEARCH returns a list of strings with the text content
+         * instead of a list of EmbeddingMatch objects.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

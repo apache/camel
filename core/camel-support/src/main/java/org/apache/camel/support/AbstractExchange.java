@@ -90,6 +90,8 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     private boolean notifyEvent;
     private boolean interruptable = true;
     private boolean interrupted;
+    // calls of the await manager for this exchange (not reset, not copied)
+    private long awaitOrder;
     private boolean routeStop;
     private boolean rollbackOnly;
     private boolean rollbackOnlyLast;
@@ -1060,6 +1062,11 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         if (interruptable) {
             this.interrupted = interrupted;
         }
+    }
+
+    @Override
+    public long nextAwaitOrder() {
+        return ++awaitOrder;
     }
 
     @Override

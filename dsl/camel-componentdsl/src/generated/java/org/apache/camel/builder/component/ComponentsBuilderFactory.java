@@ -47,7 +47,8 @@ public interface ComponentsBuilderFactory {
 
     /**
      * A2A (camel-a2a)
-     * A2A endpoint for agent-to-agent communication.
+     * Expose a route as an agent and call remote agents with the Agent2Agent
+     * (A2A) protocol.
      * 
      * Category: ai
      * Since: 4.21
@@ -88,7 +89,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AI Prompt (camel-ai-prompt)
-     * Consumer endpoint that registers a Camel route as an MCP prompt.
+     * Expose a Camel route as a prompt that MCP clients list and get through
+     * the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.24
@@ -115,8 +117,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AI Tool (camel-ai-tool)
-     * Framework-agnostic consumer endpoint that registers a Camel route as an
-     * LLM tool in the shared AiToolRegistry.
+     * Expose a Camel route as a tool that a model calls through a Camel AI
+     * producer, or that MCP clients call through the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.22
@@ -236,7 +238,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache Qpid Client.
+     * Send and receive messages over AMQP 1.0 with the Apache Qpid JMS client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -262,8 +264,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb when used as a Document Database, or as a
-     * Graph Database
+     * Store, find, update and delete documents, vertices and edges in an
+     * ArangoDB database, and run AQL queries.
      * 
      * Category: database
      * Since: 3.5
@@ -289,7 +291,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Asterisk (camel-asterisk)
-     * Interact with Asterisk PBX Server (VoIP).
+     * Receive events from an Asterisk PBX server and send actions to it over
+     * the Asterisk Manager Interface (AMI).
      * 
      * Category: mobile
      * Since: 2.18
@@ -328,7 +331,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Avro RPC (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
+     * Call and expose Apache Avro RPC services over HTTP or Netty.
      * 
      * Category: rpc
      * Since: 2.10
@@ -341,7 +344,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Bedrock (camel-aws-bedrock)
-     * Invoke Model of AWS Bedrock service.
+     * Invoke Amazon Bedrock foundation models with the InvokeModel and Converse
+     * APIs, and check content with Bedrock guardrails.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -354,7 +358,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
-     * Operate on AWS Bedrock through its Agent.
+     * Start and list the ingestion jobs that sync a data source into an Amazon
+     * Bedrock knowledge base, and poll the status of one.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -367,7 +372,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
-     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * Query Amazon Bedrock knowledge bases, and invoke Amazon Bedrock agents,
+     * inline agents and flows.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -380,7 +386,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS CloudTrail (camel-aws-cloudtrail)
-     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
+     * Receive the management events of an AWS account from Amazon CloudTrail.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -432,7 +438,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Security Hub (camel-aws-security-hub)
-     * Manage and interact with AWS Security Hub for security findings.
+     * Import, query and update security findings in AWS Security Hub.
      * 
      * Category: cloud,security
      * Since: 4.18
@@ -511,7 +517,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances.
+     * Launch, start, stop, reboot, terminate, describe, monitor and tag
+     * instances in AWS Elastic Compute Cloud (EC2).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -524,7 +531,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
-     * Manage AWS ECS cluster instances.
+     * Create, describe, list and delete clusters of AWS Elastic Container
+     * Service (ECS).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -564,7 +572,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances.
+     * Manage users, groups, roles, managed policies, access keys and instance
+     * profiles in AWS Identity and Access Management (IAM).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -629,7 +638,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances.
+     * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -668,7 +677,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS RedshiftData (camel-aws2-redshift)
-     * Perform operations on AWS Redshift using Redshift Data API.
+     * Run SQL statements and read database metadata in Amazon Redshift through
+     * the Amazon Redshift Data API.
      * 
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1
@@ -734,7 +744,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to AWS Simple Notification Topic.
+     * Publish messages to a topic of Amazon Simple Notification Service (SNS).
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -760,7 +770,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
-     * Manage and invoke AWS Step functions.
+     * Manage the state machines and activities of AWS Step Functions, and
+     * start, stop and inspect their executions.
      * 
      * Category: cloud,serverless
      * Since: 4.0
@@ -800,7 +811,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Timestream (camel-aws2-timestream)
-     * Write records and execute queries on AWS time-series database
+     * Write records to and query the time-series data of Amazon Timestream for
+     * LiveAnalytics, and manage its databases, tables, batch load tasks and
+     * scheduled queries.
      * 
      * Category: cloud,database
      * Since: 4.1
@@ -813,7 +826,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Transcribe (camel-aws2-transcribe)
-     * Automatically convert speech to text using AWS Transcribe service
+     * Transcribe speech in audio and video files in S3 to text with Amazon
+     * Transcribe, and manage its custom vocabularies, vocabulary filters and
+     * language models.
      * 
      * Category: cloud,messaging
      * Since: 4.15
@@ -839,8 +854,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
-     * To read and write records to the CosmosDB database on Azure cloud
-     * platform.
+     * Store, read and query items in Azure Cosmos DB, and receive the changes
+     * of a container from its change feed.
      * 
      * Category: cloud,database
      * Since: 3.10
@@ -879,7 +894,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Send and receive files to Azure storage file share
+     * Read files from and write files to a file share in Azure Files.
      * 
      * Category: cloud,file
      * Since: 3.22
@@ -905,7 +920,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure IoT Hub (camel-azure-iothub)
-     * Send device telemetry and device-twin updates to Azure IoT Hub.
+     * Send device-to-cloud telemetry messages and device twin reported
+     * properties to Azure IoT Hub.
      * 
      * Category: cloud,iot,messaging
      * Since: 4.24
@@ -918,9 +934,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Key Vault (camel-azure-key-vault)
-     * Manage secrets and keys in Azure Key Vault Service
+     * Create, get, update, delete and purge secrets in Azure Key Vault.
      * 
-     * Category: cloud,cloud
+     * Category: cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
      * 
@@ -970,7 +986,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
-     * Stores and retrieves messages to/from Azure Storage Queue.
+     * Send messages to and receive messages from the queues of Azure Queue
+     * Storage.
      * 
      * Category: cloud,messaging
      * Since: 3.3
@@ -983,7 +1000,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Bean (camel-bean)
-     * Invoke methods of Java beans stored in Camel registry.
+     * Invoke a method of a Java bean, looked up by name in the Camel registry
+     * or created from a class name.
      * 
      * Category: core,script
      * Since: 1.0
@@ -1009,7 +1027,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Bonita (camel-bonita)
-     * Communicate with a remote Bonita BPM process engine.
+     * Start cases of processes in a remote Bonita engine through its REST API.
      * 
      * Category: workflow
      * Since: 2.19
@@ -1049,7 +1067,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Browse (camel-browse)
-     * Inspect the messages received on endpoints supporting BrowsableEndpoint.
+     * Keep the messages sent to the endpoint in memory, so that tests, tools
+     * and the developer console can browse them.
      * 
      * Category: core,monitoring
      * Since: 1.3
@@ -1129,7 +1148,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Chunk (camel-chunk)
-     * Transform messages using Chunk templating engine.
+     * Transform a message into text with a Chunk template.
      * 
      * Category: transformation
      * Since: 2.15
@@ -1155,7 +1174,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Class (camel-bean)
-     * Invoke methods of Java beans specified by class name.
+     * Invoke a method of a Java bean given by its fully qualified class name.
      * 
      * Category: core,script
      * Since: 2.4
@@ -1264,8 +1283,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CometD (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
+     * Publish messages to web clients and receive their messages with the
+     * CometD/Bayeux protocol, through an embedded Jetty server.
      * 
      * Category: networking,messaging
      * Since: 2.0
@@ -1278,8 +1297,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CometD (Secure) (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
+     * Publish messages to web clients and receive their messages with the
+     * CometD/Bayeux protocol, through an embedded Jetty server.
      * 
      * Category: networking,messaging
      * Since: 2.0
@@ -1292,7 +1311,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
+     * Read, write and watch keys and events in Consul, and query or register
+     * its services, nodes, health checks and sessions.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -1348,8 +1368,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
-     * Based on Cassandra Java Driver provided by DataStax.
+     * Query and update an Apache Cassandra database with CQL statements.
      * 
      * Category: database,bigdata
      * Since: 2.15
@@ -1362,8 +1381,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Cron (camel-cron)
-     * A generic interface for triggering events at times specified through the
-     * Unix cron syntax.
+     * Trigger events at the times of a cron expression, using a cron
+     * implementation such as camel-quartz or camel-spring.
      * 
      * Category: scheduling
      * Since: 3.1
@@ -1376,8 +1395,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Crypto (JCE) (camel-crypto)
-     * Sign and verify exchanges using the Signature Service of the Java
-     * Cryptographic Extension (JCE).
+     * Sign message bodies and verify their signatures with
+     * java.security.Signature of the Java Cryptography Architecture.
      * 
      * Category: security,transformation
      * Since: 2.3
@@ -1418,7 +1437,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CyberArk Vault (camel-cyberark-vault)
-     * Retrieve secrets from CyberArk Conjur Vault.
+     * Retrieve and store secrets in CyberArk Conjur.
      * 
      * Category: cloud,security
      * Since: 4.17
@@ -1444,7 +1463,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Data Format (camel-dataformat)
-     * Use a Camel Data Format as a regular Camel Component.
+     * Marshal or unmarshal the message body with a Camel data format, such as
+     * JAXB, CSV or JSON.
      * 
      * Category: core,transformation
      * Since: 2.12
@@ -1484,7 +1504,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
-     * Capture changes from a DB2 database.
+     * Capture the row changes of tables in an IBM Db2 database with the
+     * Debezium Db2 connector.
      * 
      * Category: database
      * Since: 3.17
@@ -1643,7 +1664,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
+     * Query DNS records and resolve host names to IP addresses, using the
+     * dnsjava library.
      * 
      * Category: networking
      * Since: 2.7
@@ -1765,7 +1787,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to Elasticsearch via Java Client API.
+     * Index, update, get, search and delete documents and indices in
+     * Elasticsearch with the Java API Client.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -1792,8 +1815,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Event (camel-event)
-     * Subscribe to Camel internal events such as route started/stopped and
-     * exchange completed/failed.
+     * Receive the internal events of the CamelContext, such as a route that
+     * started or an exchange that failed.
      * 
      * Category: core,monitoring
      * Since: 4.19
@@ -1846,8 +1869,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * File Watch (camel-file-watch)
-     * Get notified about file events in a directory using
-     * java.nio.file.WatchService.
+     * Receive an event when a file or directory is created, modified or deleted
+     * in a directory of the file system.
      * 
      * Category: file
      * Since: 3.0
@@ -1899,8 +1922,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * FOP (camel-fop)
-     * Render messages into PDF and other output formats supported by Apache
-     * FOP.
+     * Render XSL-FO documents into PDF, PostScript, PNG and other output
+     * formats with Apache FOP.
      * 
      * Category: file,transformation
      * Since: 2.10
@@ -1953,8 +1976,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Geocoder (camel-geocoder)
-     * Find geocodes (latitude and longitude) for a given address or the other
-     * way round.
+     * Look up the latitude and longitude of an address, or the address of a
+     * latitude and longitude, with Google or a Nominatim server.
      * 
      * Category: api,search
      * Since: 2.12
@@ -1967,7 +1990,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Git (camel-git)
-     * Perform operations on git repositories.
+     * Run git operations, such as clone, commit, push and pull, on a local
+     * repository with JGit, and receive its commits, branches and tags.
      * 
      * Category: file
      * Since: 2.16
@@ -1993,7 +2017,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google BigQuery (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics.
+     * Insert rows into Google BigQuery tables.
      * 
      * Category: cloud,bigdata
      * Since: 2.20
@@ -2006,7 +2030,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Access Google Cloud BigQuery service using SQL queries.
+     * Run SQL queries and statements in Google BigQuery.
      * 
      * Category: cloud,messaging
      * Since: 2.23
@@ -2058,7 +2082,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Firestore (camel-google-firestore)
-     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * Store, retrieve and query documents in Google Cloud Firestore
+     * collections.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -2071,7 +2096,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Cloud Functions (camel-google-functions)
-     * Manage and invoke Google Cloud Functions
+     * Manage and call functions in Google Cloud Functions.
      * 
      * Category: cloud
      * Since: 3.9
@@ -2162,7 +2187,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
-     * Transcribe audio to text using Google Cloud Speech-to-Text API
+     * Transcribe audio to text with the Google Cloud Speech-to-Text API.
      * 
      * Category: cloud,ai
      * Since: 4.19
@@ -2242,7 +2267,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * gRPC (camel-grpc)
-     * Expose gRPC endpoints and access external gRPC endpoints.
+     * Expose gRPC services and call remote gRPC services, with Protocol Buffers
+     * messages over HTTP/2.
      * 
      * Category: rpc
      * Since: 2.19
@@ -2413,8 +2439,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Execute selection and mutation queries and natural-id lookups using
-     * Hibernate ORM.
+     * Run HQL queries, look up, insert and upsert entities, and poll entities
+     * from a relational database with Hibernate ORM.
      * 
      * Category: database
      * Since: 4.24
@@ -2427,7 +2453,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * HiveMQ (camel-hivemq)
-     * Camel HiveMQ MQTT Client support
+     * Send messages to and receive messages from an MQTT broker with the HiveMQ
+     * MQTT Client.
      * 
      * Category: messaging,iot
      * Since: 4.23
@@ -2466,8 +2493,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hugging Face (camel-huggingface)
-     * Integration with Hugging Face's Model Hub by using the Deep Java Library
-     * (DJL) Python bridge
+     * Run Hugging Face models for tasks such as text classification,
+     * summarization, chat and speech recognition, in a Python process of Deep
+     * Java Library (DJL).
      * 
      * Category: ai
      * Since: 4.19
@@ -2480,8 +2508,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
-     * To integrate with a fully managed, high-performance message queuing
-     * service on Huawei Cloud
+     * Create, update, query, list and delete Kafka and RabbitMQ instances of
+     * Huawei Cloud Distributed Message Service (DMS).
      * 
      * Category: cloud
      * Since: 3.12
@@ -2509,7 +2537,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
-     * To call serverless functions on Huawei Cloud
+     * Invoke serverless functions in Huawei Cloud FunctionGraph.
      * 
      * Category: cloud,serverless
      * Since: 3.11
@@ -2522,7 +2550,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
-     * To securely manage users on Huawei Cloud
+     * List, read and update the users and user groups of Huawei Cloud Identity
+     * and Access Management (IAM).
      * 
      * Category: cloud
      * Since: 3.11
@@ -2535,7 +2564,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
-     * To identify objects, scenes, and concepts in images on Huawei Cloud
+     * Recognize celebrities and tag the objects, scenes and concepts in images
+     * with Huawei Cloud Image Recognition.
      * 
      * Category: cloud,messaging
      * Since: 3.12
@@ -2562,8 +2592,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
-     * To broadcast messages and connect cloud services through notifications on
-     * Huawei Cloud
+     * Publish messages to topics of Huawei Cloud Simple Message Notification
+     * (SMN).
      * 
      * Category: cloud,messaging
      * Since: 3.8
@@ -2615,8 +2645,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * IBM Watson Language (camel-ibm-watson-language)
-     * Perform natural language processing using IBM Watson Natural Language
-     * Understanding
+     * Analyze text and web pages with IBM Watson Natural Language
+     * Understanding.
      * 
      * Category: ai,cloud
      * Since: 4.16
@@ -2629,7 +2659,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
-     * Convert speech audio to text using IBM Watson Speech to Text
+     * Transcribe audio to text with IBM Watson Speech to Text, and list or get
+     * its speech models and custom language models.
      * 
      * Category: ai,cloud
      * Since: 4.17
@@ -2655,8 +2686,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
-     * Interact with IBM watsonx.ai foundation models for text generation, chat,
-     * embeddings, and more.
+     * Generate text, chat, embed, rerank and tokenize text, extract and
+     * classify documents, detect harmful content and forecast time series with
+     * the foundation models and deployments of IBM watsonx.ai.
      * 
      * Category: ai,cloud
      * Since: 4.18
@@ -2669,8 +2701,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * IBM watsonx.data (camel-ibm-watsonx-data)
-     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
-     * engine management.
+     * Manage the catalogs, schemas, tables, engines and storage registrations
+     * of an IBM watsonx.data lakehouse.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -2683,7 +2715,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Iggy (camel-iggy)
-     * Send and receive message to Apache Iggy streaming platform.
+     * Send messages to and receive messages from topics of the Apache Iggy
+     * message streaming platform.
      * 
      * Category: messaging
      * Since: 4.17
@@ -2828,8 +2861,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Infinispan Embedded (camel-infinispan-embedded)
-     * Read and write from/to Infinispan distributed key/value store and data
-     * grid.
+     * Read and write the entries of caches of an Infinispan cache manager
+     * embedded in the application, and receive their events.
      * 
      * Category: cache,clustering
      * Since: 2.13
@@ -2842,7 +2875,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with InfluxDB v1, a time series database.
+     * Write points to and run queries on InfluxDB v1, a time series database.
      * 
      * Category: database
      * Since: 2.18
@@ -2855,7 +2888,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * InfluxDB2 (camel-influxdb2)
-     * Interact with InfluxDB v2, a time series database.
+     * Write time series data to InfluxDB 2.x.
      * 
      * Category: database
      * Since: 3.20
@@ -2933,7 +2966,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JGroups raft (camel-jgroups-raft)
-     * Exchange messages with JGroups-raft clusters.
+     * Append data to the replicated log of a JGroups-raft cluster, and receive
+     * the leader and follower role changes of the local member.
      * 
      * Category: clustering,messaging
      * Since: 2.24
@@ -2946,7 +2980,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
+     * Create, update and query issues in Atlassian Jira, and poll Jira for new
+     * issues, new comments and changed fields.
      * 
      * Category: document
      * Since: 3.0
@@ -2972,7 +3007,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JMX (camel-jmx)
-     * Receive JMX notifications.
+     * Receive the notifications of an MBean on a local or remote MBean server,
+     * or of a JMX monitor that observes an MBean attribute.
      * 
      * Category: monitoring
      * Since: 2.6
@@ -2985,7 +3021,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JOLT (camel-jolt)
-     * JSON to JSON transformation using JOLT.
+     * Transform JSON to JSON with a JOLT specification.
      * 
      * Category: transformation
      * Since: 2.16
@@ -2998,7 +3034,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JOOQ (camel-jooq)
-     * Store and retrieve Java objects from an SQL database using JOOQ.
+     * Store and consume jOOQ records in an SQL database, and run jOOQ or plain
+     * SQL queries.
      * 
      * Category: database
      * Since: 3.0
@@ -3038,7 +3075,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JSON Schema Validator (camel-json-validator)
-     * Validate JSON payloads using NetworkNT JSON Schema.
+     * Validate the JSON in the message body or in a header against a JSON
+     * Schema, with the NetworkNT JSON Schema Validator.
      * 
      * Category: validation
      * Since: 2.20
@@ -3051,7 +3089,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JSONata (camel-jsonata)
-     * Transforms JSON payload using JSONata transformation.
+     * Transform JSON data with a JSONata expression.
      * 
      * Category: transformation
      * Since: 3.5
@@ -3403,8 +3441,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Kudu (camel-kudu)
-     * Interact with Apache Kudu, a free and open source column-oriented data
-     * store of the Apache Hadoop ecosystem.
+     * Insert, update, upsert, delete and scan rows of Apache Kudu tables, and
+     * create tables.
      * 
      * Category: database,iot,cloud
      * Since: 3.0
@@ -3417,7 +3455,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
-     * LangChain4j Agent component
+     * Send a message to an AI agent of LangChain4j, which can call Camel routes
+     * and MCP servers as tools, and return its answer.
      * 
      * Category: ai
      * Since: 4.14
@@ -3483,7 +3522,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
-     * LangChain4j Web Search Engine
+     * Search the web with a LangChain4j web search engine, such as Tavily or
+     * Google Custom Search.
      * 
      * Category: ai
      * Since: 4.8
@@ -3522,7 +3562,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * LDIF (camel-ldif)
-     * Perform updates on an LDAP server from an LDIF body content.
+     * Apply the changes of an LDIF message body to an LDAP server.
      * 
      * Category: database,security
      * Since: 2.20
@@ -3550,8 +3590,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Log Data (camel-log)
-     * Prints data from the routed message (such as body and headers) to the
-     * logger.
+     * Log the exchanges that pass through a route, or their throughput, with an
+     * SLF4J logger.
      * 
      * Category: core,monitoring
      * Since: 1.1
@@ -3564,7 +3604,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Printer (camel-printer)
-     * Send print jobs to printers.
+     * Send documents as print jobs to local or network printers by using the
+     * Java Print Service API.
      * 
      * Category: document
      * Since: 2.1
@@ -3630,8 +3671,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Metrics (camel-metrics)
-     * Collect various metrics directly from Camel routes using the DropWizard
-     * metrics library.
+     * Update counters, gauges, histograms, meters and timers of a Dropwizard
+     * Metrics registry from Camel routes.
      * 
      * Category: monitoring
      * Since: 2.14
@@ -3658,8 +3699,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -3672,8 +3712,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19
@@ -3686,7 +3726,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Server (camel-milo)
-     * Make telemetry data available as an OPC UA server.
+     * Expose values as variable nodes of an embedded OPC UA server, which OPC
+     * UA clients can read and write.
      * 
      * Category: iot
      * Since: 2.19
@@ -3699,7 +3740,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Milvus (camel-milvus)
-     * Perform operations on the Milvus Vector Database.
+     * Create collections and indexes, and insert, upsert, delete, search and
+     * query entities in the Milvus vector database.
      * 
      * Category: database,ai
      * Since: 4.5
@@ -3738,7 +3780,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Minio (camel-minio)
-     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * Store and retrieve objects in MinIO or another Amazon S3 compatible
+     * object storage.
      * 
      * Category: cloud,file
      * Since: 3.5
@@ -3790,7 +3833,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
-     * Interact with MongoDB GridFS.
+     * Store, read and remove files in a MongoDB GridFS bucket, and receive the
+     * files that are uploaded to it.
      * 
      * Category: database,file
      * Since: 2.18
@@ -3818,7 +3862,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Mustache (camel-mustache)
-     * Transform messages using a Mustache template.
+     * Render a Mustache template with the data of the message and use the text
+     * it writes as the new message body.
      * 
      * Category: transformation
      * Since: 2.12
@@ -3844,8 +3889,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * MyBatis (camel-mybatis)
-     * Performs a query, poll, insert, update or delete in a relational database
-     * using MyBatis.
+     * Query, insert, update or delete rows in a relational database, or poll it
+     * for rows, with MyBatis mapped statements.
      * 
      * Category: database
      * Since: 2.7
@@ -3858,8 +3903,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * MyBatis Bean (camel-mybatis)
-     * Perform queries, inserts, updates or deletes in a relational database
-     * using MyBatis.
+     * Call a method of a MyBatis mapper interface to query, insert, update or
+     * delete rows in a relational database.
      * 
      * Category: database
      * Since: 2.22
@@ -3976,8 +4021,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Once (camel-once)
-     * Trigger a single message only once at startup (useful for development and
-     * testing purposes).
+     * Send a single message to the route once, after the route starts, which is
+     * useful for development and testing.
      * 
      * Category: core,scheduling
      * Since: 4.17
@@ -4243,8 +4288,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * PostgreSQL Replication Slot (camel-pg-replication-slot)
-     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
-     * Replication Slots.
+     * Receive the changes of a PostgreSQL database from a logical replication
+     * slot.
      * 
      * Category: database
      * Since: 3.0
@@ -4270,7 +4315,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * PGVector (camel-pgvector)
-     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * Store, delete and search vector embeddings in a PostgreSQL table with the
+     * pgvector extension.
      * 
      * Category: database,ai
      * Since: 4.19
@@ -4443,8 +4489,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Ref (camel-ref)
-     * Route messages to an endpoint looked up dynamically by name in the Camel
-     * Registry.
+     * Send messages to, or receive messages from, an endpoint that is looked up
+     * by name in the Camel registry.
      * 
      * Category: core
      * Since: 1.2
@@ -4470,8 +4516,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * REST API (camel-rest)
-     * Expose OpenAPI Specification of the REST services defined using Camel
-     * REST DSL.
+     * Expose the OpenAPI document of the REST services that are defined with
+     * the Rest DSL.
      * 
      * Category: core,rest
      * Since: 2.16
@@ -4497,7 +4543,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * REST Postman (camel-rest-postman)
-     * To call and expose REST services using a Postman Collection as contract.
+     * Call the REST APIs described by a Postman Collection, or serve its
+     * requests as a contract-first REST service.
      * 
      * Category: rest,api
      * Since: 4.23
@@ -4523,7 +4570,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * RocketMQ (camel-rocketmq)
-     * Send and receive messages from RocketMQ cluster.
+     * Send messages to and receive messages from Apache RocketMQ topics.
      * 
      * Category: messaging
      * Since: 3.20
@@ -4549,7 +4596,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Saga (camel-saga)
-     * Execute custom actions within a route using the Saga EIP.
+     * Complete or compensate the saga that an exchange takes part in through
+     * the Saga EIP.
      * 
      * Category: clustering
      * Since: 2.21
@@ -4588,7 +4636,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Scheduler (camel-scheduler)
-     * Generate messages in specified intervals using
+     * Generate messages on a schedule, by default at a fixed delay using a
      * java.util.concurrent.ScheduledExecutorService.
      * 
      * Category: core,scheduling
@@ -4615,7 +4663,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SCP (camel-jsch)
-     * Copy files to/from remote hosts using the secure copy protocol (SCP).
+     * Copy files to remote hosts using the secure copy protocol (SCP).
      * 
      * Category: file
      * Since: 2.10
@@ -4641,7 +4689,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with ServiceNow via its REST API.
+     * Query and change records, attachments, import sets and service catalog
+     * items of a ServiceNow instance through its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -4707,8 +4756,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Simple JMS2 (camel-sjms2)
-     * Send and receive messages to/from a JMS Queue or Topic using plain JMS
-     * 2.x API.
+     * Send messages to and receive messages from a JMS queue or topic using the
+     * plain JMS 2.x API, without Spring JMS.
      * 
      * Category: messaging
      * Since: 2.19
@@ -4721,7 +4770,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Slack (camel-slack)
-     * Send and receive messages to/from Slack.
+     * Send messages to a Slack channel or user, and receive the new messages of
+     * a Slack conversation.
      * 
      * Category: social
      * Since: 2.16
@@ -4761,8 +4811,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SMPP (camel-smpp)
-     * Send and receive SMS messages using a SMSC (Short Message Service
-     * Center).
+     * Send and receive SMS messages through an SMSC (Short Message Service
+     * Center) with the SMPP protocol.
      * 
      * Category: mobile
      * Since: 2.2
@@ -4775,8 +4825,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SMPP (Secure) (camel-smpp)
-     * Send and receive SMS messages using a SMSC (Short Message Service
-     * Center).
+     * Send and receive SMS messages through an SMSC (Short Message Service
+     * Center) with the SMPP protocol.
      * 
      * Category: mobile
      * Since: 2.2
@@ -4829,7 +4879,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
+     * Index, search and delete documents in Apache Solr.
      * 
      * Category: search,monitoring
      * Since: 4.8
@@ -4909,7 +4959,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
-     * Spring AI Vector Store
+     * Store, delete and search documents in a vector database with Spring AI.
      * 
      * Category: ai
      * Since: 4.17
@@ -4922,7 +4972,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
+     * Launch Spring Batch jobs, with the message headers as the job parameters.
      * 
      * Category: workflow
      * Since: 2.10
@@ -4935,7 +4985,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring Event (camel-spring)
-     * Listen for Spring Application Events.
+     * Publish and receive the Spring ApplicationEvents of the Spring
+     * ApplicationContext.
      * 
      * Category: messaging
      * Since: 1.4
@@ -4987,7 +5038,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring Redis (camel-spring-redis)
-     * Send and receive messages from Redis.
+     * Send commands to Redis and receive the messages of Redis Pub/Sub
+     * channels, using Spring Data Redis.
      * 
      * Category: cache
      * Since: 2.11
@@ -5053,8 +5105,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * State Store (camel-state-store)
-     * Perform key-value operations against a pluggable KeyValueRepository
-     * backend.
+     * Store, get and delete key-value entries in a pluggable
+     * KeyValueRepository, such as an in-memory store or a shared cache.
      * 
      * Category: cache
      * Since: 4.23
@@ -5067,7 +5119,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * StAX (camel-stax)
-     * Process XML payloads by a SAX ContentHandler.
+     * Parse XML payloads with a StAX reader and send the parse events to a SAX
+     * ContentHandler.
      * 
      * Category: transformation
      * Since: 2.9
@@ -5080,8 +5133,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service that integrates various data sources into a
-     * central data warehouse through various integrations.
+     * Send batches of records to the Stitch Import API, which loads them into a
+     * table of the destination data warehouse.
      * 
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
@@ -5094,7 +5147,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Stream (camel-stream)
-     * Read from system-in and write to system-out and system-err streams.
+     * Read from System.in, a file or an HTTP URL, and write to System.out,
+     * System.err, a file or an output stream in a message header.
      * 
      * Category: file,core
      * Since: 1.3
@@ -5133,7 +5187,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Stub (camel-stub)
-     * Stub out any physical endpoints while in development or testing.
+     * Replace any endpoint with an in-memory queue while developing or testing,
+     * by adding stub: in front of its URI.
      * 
      * Category: core,testing
      * Since: 2.10
@@ -5146,7 +5201,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Tahu Edge Node / Device (camel-tahu)
-     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT
+     * servers using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -5159,7 +5215,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Tahu Host Application (camel-tahu)
-     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * Receive Sparkplug B messages and metrics from MQTT servers as a Host
+     * Application using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -5185,8 +5242,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * TensorFlow Serving (camel-tensorflow-serving)
-     * Provide access to TensorFlow Serving model servers to run inference with
-     * TensorFlow saved models remotely
+     * Run inference on the models of a TensorFlow Serving model server over
+     * gRPC, and get their status and metadata.
      * 
      * Category: ai
      * Since: 4.10
@@ -5344,7 +5401,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Velocity (camel-velocity)
-     * Transform messages using a Velocity template.
+     * Render a Velocity template with the data of the message and use the text
+     * it writes as the new message body.
      * 
      * Category: transformation
      * Since: 1.2
@@ -5383,8 +5441,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Vert.x MQTT (camel-vertx-mqtt)
-     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
-     * with the Vert.x MQTT client.
+     * Send and receive messages with an MQTT 3.1.1 or MQTT 5 broker, using the
+     * Vert.x MQTT client.
      * 
      * Category: messaging,iot
      * Since: 4.24
@@ -5397,8 +5455,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
-     * Expose WebSocket endpoints and connect to remote WebSocket servers using
-     * Vert.x
+     * Receive and send WebSocket messages with Vert.x, as a WebSocket server or
+     * as a client of a remote WebSocket server.
      * 
      * Category: http,networking
      * Since: 3.5
@@ -5425,7 +5483,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Weather (camel-weather)
-     * Poll the weather information from Open Weather Map.
+     * Query the current weather and weather forecasts from OpenWeatherMap.
      * 
      * Category: api
      * Since: 2.12
@@ -5464,8 +5522,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Webhook (camel-webhook)
-     * Expose webhook endpoints to receive push notifications for other Camel
-     * components.
+     * Receive the push notifications of a webhook provider over HTTP for a
+     * Camel component that supports webhooks.
      * 
      * Category: cloud
      * Since: 3.0
@@ -5517,7 +5575,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XChange (camel-xchange)
-     * Access market data and trade on Bitcoin and Altcoin exchanges.
+     * Query the market data, the currency metadata and the account data of
+     * cryptocurrency exchanges with XChange.
      * 
      * Category: blockchain
      * Since: 2.21
@@ -5530,7 +5589,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XJ (camel-xj)
-     * Transform JSON and XML message using a XSLT.
+     * Transform JSON to XML and XML to JSON with an XSLT stylesheet.
      * 
      * Category: transformation
      * Since: 3.0
@@ -5543,7 +5602,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
+     * Sign an XML document or plain text with an enveloped, enveloping or
+     * detached XML signature.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -5556,7 +5616,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
+     * Verify the XML signatures of an XML document and return the signed
+     * content.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -5569,7 +5630,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XMPP (camel-xmpp)
-     * Send and receive messages to/from an XMPP chat server.
+     * Send and receive XMPP (Jabber) messages, in private chats and in
+     * multi-user chat rooms.
      * 
      * Category: chat,messaging
      * Since: 1.0

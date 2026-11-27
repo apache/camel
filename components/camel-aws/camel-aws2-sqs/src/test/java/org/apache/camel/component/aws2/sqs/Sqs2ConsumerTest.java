@@ -20,12 +20,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import org.apache.camel.ContextEvents;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.clock.EventClock;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +48,7 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.doReturn;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.ALL;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.MESSAGE_GROUP_ID;
@@ -220,19 +223,28 @@ class Sqs2ConsumerTest extends CamelTestSupport {
         configuration.setWaitTimeSeconds(5);
         configuration.setVisibilityTimeout(2);
         configuration.setConcurrentConsumers(1);
-        try (var tested = createConsumerWithProcessor(1, exchange -> {
-            Thread.sleep(2000L);
-            throw new OutOfMemoryError();
-        })) {
-            //when
-            try {
-                tested.poll();
-            } catch (Error e) {
+        // a route, so the exchange has a unit of work that tells the extender when the exchange is done
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:visibility-error").routeId("visibility-error").process(exchange -> {
+                    // processing longer than the visibility timeout: the visibility is extended meanwhile
+                    await().atMost(10, TimeUnit.SECONDS)
+                            .until(() -> !sqsClientMock.getChangeMessageVisibilityBatchRequests().isEmpty());
+                    throw new OutOfMemoryError();
+                });
             }
-            //simulate some time pass after error
-            Thread.sleep(2000L);
-            // then
-            assertThat(sqsClientMock.getChangeMessageVisibilityBatchRequests().size()).isEqualTo(2);
+        });
+        try (var tested = createConsumerWithProcessor(1, context.getRoute("visibility-error").getProcessor())) {
+            // when: the exchange fails with the Error, which is no longer thrown on (CAMEL-27515)
+            tested.poll();
+            int extensions = sqsClientMock.getChangeMessageVisibilityBatchRequests().size();
+            // the route waited for an extension before it failed, so the test checks what happens after the failure
+            assertThat(extensions).isPositive();
+            // then: the visibility of the failed message is no longer extended (a run of the extender that started
+            // before the exchange completed may still send one more request; before, it went on every second)
+            await().during(2, TimeUnit.SECONDS).atMost(3, TimeUnit.SECONDS)
+                    .until(() -> sqsClientMock.getChangeMessageVisibilityBatchRequests().size() <= extensions + 1);
         }
     }
 

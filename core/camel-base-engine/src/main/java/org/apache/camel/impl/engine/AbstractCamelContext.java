@@ -1471,9 +1471,16 @@ public abstract class AbstractCamelContext extends BaseService
     public void startRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
         lock.lock();
         try {
+            RouteService routeService = routeServices.get(routeId);
+            if (routeService != null && routeService.getStatus().isStarted()) {
+                // starting a route that is already started is a no-op: its consumer is not started again, as a route
+                // policy may keep the consumer stopped while the route is started (such as the master route policy)
+                LOG.debug("Route: {} is not started as it is already started", routeId);
+                return;
+            }
+
             DefaultRouteError.reset(this, routeId);
 
-            RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
                 try {
                     startRouteService(routeService, false);
@@ -1495,6 +1502,14 @@ public abstract class AbstractCamelContext extends BaseService
     public void resumeRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
         lock.lock();
         try {
+            RouteService routeService = routeServices.get(routeId);
+            if (routeService != null && routeService.getStatus().isStarted()) {
+                // resuming a route that is already started is a no-op (as starting it): only a suspended route is
+                // resumed, and a stopped route is started
+                LOG.debug("Route: {} is not resumed as it is already started", routeId);
+                return;
+            }
+
             DefaultRouteError.reset(this, routeId);
 
             try {
@@ -1504,7 +1519,6 @@ public abstract class AbstractCamelContext extends BaseService
                     return;
                 }
 
-                RouteService routeService = routeServices.get(routeId);
                 if (routeService != null) {
                     resumeRouteService(routeService);
                     // must resume the route as well

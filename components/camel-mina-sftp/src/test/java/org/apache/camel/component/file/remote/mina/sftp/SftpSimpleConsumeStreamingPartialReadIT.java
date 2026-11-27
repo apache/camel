@@ -68,7 +68,7 @@ public class SftpSimpleConsumeStreamingPartialReadIT extends SftpServerTestSuppo
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
+                     + "?username=admin&password=admin&disconnect=true&streamDownload=true"
                      + "&move=done&moveFailed=failed&knownHostsFile=" + service.getKnownHostsFile())
                         .routeId("foo").autoStartup(false).process(new Processor() {
 

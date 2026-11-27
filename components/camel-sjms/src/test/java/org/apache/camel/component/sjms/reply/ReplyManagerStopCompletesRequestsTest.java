@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.reply;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -42,12 +43,13 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Every request registered with a reply manager completes exactly once, also when the reply manager stops while a
- * producer registers it or moves it to its JMSMessageID, when the stop drops the queued timeout tasks, and when the
- * executor rejects a timeout task. The reply manager is set up as SjmsProducer does it, without a broker: these paths
- * do not involve the listener container.
+ * producer registers it or moves it to its JMSMessageID, when the stop drops the queued timeout tasks, when the
+ * executor rejects a timeout task, and when a timeout task reaches the executor after the stop has shut it down. The
+ * reply manager is set up as SjmsProducer does it, without a broker: these paths do not involve the listener container.
  */
 class ReplyManagerStopCompletesRequestsTest {
 
@@ -106,6 +108,25 @@ class ReplyManagerStopCompletesRequestsTest {
             latch.await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private static void awaitIgnoringInterrupts(CountDownLatch latch) {
+        // as a blocking call that does not react to an interrupt (such as a socket read) would
+        boolean interrupted = false;
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
+        try {
+            while (latch.getCount() > 0 && System.nanoTime() < deadline) {
+                try {
+                    latch.await(100, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -247,5 +268,50 @@ class ReplyManagerStopCompletesRequestsTest {
         assertEquals(1, done("t2"));
         assertEquals(1, done("t3"));
         replyManager.doStop();
+    }
+
+    @Test
+    void timeoutHandedToTheExecutorAfterTheStopIsCompleted() throws Exception {
+        context.getExecutorServiceManager().setShutdownAwaitTermination(200);
+        // the default rejected policy (CallerRuns) with one thread and a queue of one
+        ThreadPoolProfile profile = new ThreadPoolProfile("callerRuns");
+        profile.setPoolSize(1);
+        profile.setMaxPoolSize(1);
+        profile.setMaxQueueSize(1);
+        profile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
+        ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "OnTimeoutCallerRuns", profile);
+        QueueReplyManager replyManager = newReplyManager("late", executor);
+
+        // four requests time out in the same check. The first timeout task holds the executor thread, the second is
+        // queued, the third is run by the timeout checker thread (CallerRuns) and its exchange continues routing there
+        // slowly, so the checker hands the fourth to the executor only after the stop has shut it down
+        AtomicBoolean firstOnExecutor = new AtomicBoolean();
+        CountDownLatch inChecker = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        Runnable slowRouting = () -> {
+            String thread = Thread.currentThread().getName();
+            if (thread.contains("JmsReplyManagerTimeoutChecker")) {
+                inChecker.countDown();
+                awaitIgnoringInterrupts(release);
+            } else if (thread.contains("OnTimeoutCallerRuns") && firstOnExecutor.compareAndSet(false, true)) {
+                awaitIgnoringInterrupts(release);
+            }
+        };
+        for (String id : List.of("t1", "t2", "t3", "t4")) {
+            register(replyManager, id, 100, slowRouting);
+        }
+        assertTrue(inChecker.await(10, TimeUnit.SECONDS));
+
+        // the stop waits for the checker and the executor, gives up, and completes the dropped queued task
+        replyManager.doStop();
+        assertTrue(executor.isShutdown());
+
+        // the routing in the checker thread ends, and the checker hands the last timeout task to the shut-down executor
+        release.countDown();
+        await().atMost(20, TimeUnit.SECONDS)
+                .until(() -> done("t1") + done("t2") + done("t3") + done("t4") == 4);
+        for (String id : List.of("t1", "t2", "t3", "t4")) {
+            assertEquals(1, done(id), id);
+        }
     }
 }

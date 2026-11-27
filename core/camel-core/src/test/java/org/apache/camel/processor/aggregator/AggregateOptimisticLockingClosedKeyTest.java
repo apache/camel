@@ -17,6 +17,7 @@
 package org.apache.camel.processor.aggregator;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -36,11 +37,13 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
+import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,6 +60,7 @@ class AggregateOptimisticLockingClosedKeyTest extends ContextTestSupport {
     private final Map<String, AtomicInteger> attempts = new ConcurrentHashMap<>();
     private volatile AggregateProcessor processor;
     private volatile Thread producerC;
+    private volatile Runnable onAggregation;
     private ExecutorService executorService;
 
     @Override
@@ -256,6 +260,273 @@ class AggregateOptimisticLockingClosedKeyTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
+    void testNewGroupAfterExchangeCompletedAloneIsRejected() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("B");
+        mock.setAssertPeriod(200);
+
+        MemoryAggregationRepository repository = new MemoryAggregationRepository(true) {
+            @Override
+            public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
+                if (firstCallOn("producer-D", "add")) {
+                    // D has read no group and passed the closed correlation key checks: B completes on its own (its
+                    // group is never stored) and closes the key before D adds its new group
+                    latch("dBeforeAdd").countDown();
+                    await(latch("bDone"));
+                }
+                return super.add(camelContext, key, oldExchange, newExchange);
+            }
+        };
+
+        AggregateProcessor ap = createProcessor(repository, true);
+        Exchange d = createExchange("D");
+        Thread producerD = new Thread(() -> process(ap, d), "producer-D");
+        producerD.start();
+        await(latch("dBeforeAdd"));
+        Exchange b = createExchange("B");
+        ap.process(b);
+        latch("bDone").countDown();
+        join(producerD);
+
+        assertNull(b.getException());
+        assertRejected(ap, d);
+        assertMockEndpointsSatisfied();
+        ap.stop();
+    }
+
+    @Test
+    void testNewGroupAfterStoredGroupWasCompletedIsRejected() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("A+B");
+        mock.setAssertPeriod(200);
+
+        MemoryAggregationRepository repository = new MemoryAggregationRepository(true) {
+            @Override
+            public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
+                if (firstCallOn("producer-D", "add")) {
+                    // D has read no group and passed the closed correlation key checks: the group [A] is stored and
+                    // completed by B before D adds its new group, so the key has no group again
+                    latch("dBeforeAdd").countDown();
+                    await(latch("bDone"));
+                }
+                return super.add(camelContext, key, oldExchange, newExchange);
+            }
+        };
+
+        AggregateProcessor ap = createProcessor(repository, false);
+        Exchange d = createExchange("D");
+        Thread producerD = new Thread(() -> process(ap, d), "producer-D");
+        producerD.start();
+        await(latch("dBeforeAdd"));
+        ap.process(createExchange("A"));
+        Exchange b = createExchange("B");
+        ap.process(b);
+        latch("bDone").countDown();
+        join(producerD);
+
+        assertNull(b.getException());
+        assertRejected(ap, d);
+        assertMockEndpointsSatisfied();
+        ap.stop();
+    }
+
+    @Test
+    void testNewGroupRemovedAgainIsConfirmedWithRecoverableRepository() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("B");
+        mock.setAssertPeriod(200);
+
+        RecoverableMemoryRepository repository = new RecoverableMemoryRepository() {
+            @Override
+            public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
+                if (firstCallOn("producer-D", "add")) {
+                    latch("dBeforeAdd").countDown();
+                    await(latch("bDone"));
+                }
+                return super.add(camelContext, key, oldExchange, newExchange);
+            }
+        };
+
+        AggregateProcessor ap = createProcessor(repository, true);
+        Exchange d = createExchange("D");
+        Thread producerD = new Thread(() -> process(ap, d), "producer-D");
+        producerD.start();
+        await(latch("dBeforeAdd"));
+        ap.process(createExchange("B"));
+        latch("bDone").countDown();
+        join(producerD);
+
+        assertRejected(ap, d);
+        // the group [D] went to the completed store when it was removed again, and was confirmed, so the recover task
+        // has nothing to send
+        assertEquals(1, repository.removed.get());
+        assertTrue(repository.scan(context).isEmpty(), "Not confirmed: " + repository.scan(context));
+        assertMockEndpointsSatisfied();
+        ap.stop();
+    }
+
+    @Test
+    void testExchangeThatWouldCompleteAloneAfterKeyClosedIsRejected() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("YB");
+        mock.setAssertPeriod(200);
+
+        onAggregation = () -> {
+            if (firstCallOn("producer-X", "aggregate")) {
+                // X has read no group and passed the closed correlation key checks, and completes on its own: Y
+                // completes on its own and closes the key before X does
+                latch("xRead").countDown();
+                await(latch("yDone"));
+            }
+        };
+
+        AggregateProcessor ap = createProcessor(new MemoryAggregationRepository(true), true);
+        Exchange x = createExchange("XB");
+        Thread producerX = new Thread(() -> process(ap, x), "producer-X");
+        producerX.start();
+        await(latch("xRead"));
+        Exchange y = createExchange("YB");
+        ap.process(y);
+        latch("yDone").countDown();
+        join(producerX);
+
+        assertNull(y.getException());
+        assertRejected(ap, x);
+        assertMockEndpointsSatisfied();
+        ap.stop();
+    }
+
+    @Test
+    void testExchangeThatWouldCompleteAloneJoinsNewGroup() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("D+B");
+        mock.setAssertPeriod(200);
+
+        MemoryAggregationRepository repository = new MemoryAggregationRepository(true) {
+            @Override
+            public Exchange get(CamelContext camelContext, String key) {
+                Exchange answer = super.get(camelContext, key);
+                if (firstCallOn("producer-B", "get")) {
+                    // B has read no group, and would complete on its own: D adds a new group before B completes
+                    latch("bRead").countDown();
+                    await(latch("dAdded"));
+                }
+                return answer;
+            }
+
+            @Override
+            public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
+                Exchange answer = super.add(camelContext, key, oldExchange, newExchange);
+                if (firstCallOn("producer-D", "add")) {
+                    latch("dAdded").countDown();
+                    await(latch("bDone"));
+                }
+                return answer;
+            }
+        };
+
+        AggregateProcessor ap = createProcessor(repository, true);
+        Exchange b = createExchange("B");
+        Thread producerB = new Thread(() -> {
+            process(ap, b);
+            latch("bDone").countDown();
+        }, "producer-B");
+        producerB.start();
+        await(latch("bRead"));
+        Exchange d = createExchange("D");
+        Thread producerD = new Thread(() -> process(ap, d), "producer-D");
+        producerD.start();
+        join(producerB);
+        join(producerD);
+
+        // B sees the group [D] when it closes the key, and completes [D, B] instead of [B] on its own
+        assertNull(b.getException());
+        assertNull(d.getException());
+        assertMockEndpointsSatisfied();
+        Exchange e = createExchange("E");
+        ap.process(e);
+        assertRejected(ap, e);
+        ap.stop();
+    }
+
+    /**
+     * A memory repository with optimistic locking that moves a removed exchange to a completed store, as a recoverable
+     * repository does, until it is confirmed.
+     */
+    private static class RecoverableMemoryRepository extends MemoryAggregationRepository
+            implements RecoverableAggregationRepository {
+
+        private final Map<String, Exchange> completed = new ConcurrentHashMap<>();
+        private final AtomicInteger removed = new AtomicInteger();
+
+        RecoverableMemoryRepository() {
+            super(true);
+        }
+
+        @Override
+        public void remove(CamelContext camelContext, String key, Exchange exchange) {
+            super.remove(camelContext, key, exchange);
+            completed.put(exchange.getExchangeId(), exchange);
+            removed.incrementAndGet();
+        }
+
+        @Override
+        public void confirm(CamelContext camelContext, String exchangeId) {
+            completed.remove(exchangeId);
+        }
+
+        @Override
+        public Set<String> scan(CamelContext camelContext) {
+            return Set.copyOf(completed.keySet());
+        }
+
+        @Override
+        public Exchange recover(CamelContext camelContext, String exchangeId) {
+            return completed.get(exchangeId);
+        }
+
+        @Override
+        public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
+        }
+
+        @Override
+        public void setRecoveryInterval(long interval) {
+        }
+
+        @Override
+        public long getRecoveryInterval() {
+            return 60000;
+        }
+
+        @Override
+        public void setUseRecovery(boolean useRecovery) {
+        }
+
+        @Override
+        public boolean isUseRecovery() {
+            return true;
+        }
+
+        @Override
+        public void setDeadLetterUri(String deadLetterUri) {
+        }
+
+        @Override
+        public String getDeadLetterUri() {
+            return null;
+        }
+
+        @Override
+        public void setMaximumRedeliveries(int maximumRedeliveries) {
+        }
+
+        @Override
+        public int getMaximumRedeliveries() {
+            return 0;
+        }
+    }
+
     private AggregateProcessor createProcessor(MemoryAggregationRepository repository, boolean completeOnB)
             throws Exception {
         AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
@@ -279,6 +550,15 @@ class AggregateOptimisticLockingClosedKeyTest extends ContextTestSupport {
                     AggregateOptimisticLockingClosedKeyTest.await(latch("bDone"));
                 }
                 return super.doProcess(exchange, key, callback, sync);
+            }
+
+            @Override
+            protected Exchange onAggregation(Exchange oldExchange, Exchange newExchange) {
+                Runnable hook = onAggregation;
+                if (hook != null) {
+                    hook.run();
+                }
+                return super.onAggregation(oldExchange, newExchange);
             }
         };
         processor = ap;

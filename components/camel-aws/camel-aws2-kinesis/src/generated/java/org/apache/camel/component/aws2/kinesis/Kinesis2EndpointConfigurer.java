@@ -66,6 +66,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "kclStopCheckpointOnFailure": target.getConfiguration().setKclStopCheckpointOnFailure(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxconcurrentshards":
+        case "maxConcurrentShards": target.getConfiguration().setMaxConcurrentShards(property(camelContext, int.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": target.getConfiguration().setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
         case "messagetimestamp":
@@ -178,6 +180,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "kclStopCheckpointOnFailure": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxconcurrentshards":
+        case "maxConcurrentShards": return int.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
         case "messagetimestamp":
@@ -286,6 +290,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "kclStopCheckpointOnFailure": return target.getConfiguration().isKclStopCheckpointOnFailure();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxconcurrentshards":
+        case "maxConcurrentShards": return target.getConfiguration().getMaxConcurrentShards();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return target.getConfiguration().getMaxResultsPerRequest();
         case "messagetimestamp":

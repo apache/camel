@@ -30,7 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -43,6 +42,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
@@ -68,6 +68,9 @@ import org.slf4j.LoggerFactory;
 public final class KafkaChangelog<V> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaChangelog.class);
+
+    // how long stop() waits for the background thread, on top of the poll duration
+    private static final long STOP_TIMEOUT_MARGIN_MS = 10000;
 
     private final String name;
     private final String topic;
@@ -149,14 +152,22 @@ public final class KafkaChangelog<V> {
      * @param source       the owner of the background thread
      */
     public void start(CamelContext camelContext, Object source) {
-        this.camelContext = camelContext;
-
         consumerConfig.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.FALSE.toString());
         consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer.getName());
         consumer = new KafkaConsumer<>(consumerConfig);
 
         producer = new KafkaProducer<>(producerProperties());
+
+        startWithClients(camelContext, source);
+    }
+
+    /**
+     * Reads the topic from the beginning, and starts the background thread unless the repository syncs on startup only,
+     * with the consumer and the producer already created. Package-private for tests.
+     */
+    void startWithClients(CamelContext camelContext, Object source) {
+        this.camelContext = camelContext;
 
         poller = new TopicPoller();
         ServiceHelper.startService(poller);
@@ -189,27 +200,49 @@ public final class KafkaChangelog<V> {
 
     /**
      * Stops the background thread, and closes the consumer and the producer.
+     * <p/>
+     * The consumer is not thread-safe, so the background thread closes it when it leaves poll(), and this waits for
+     * that, for a bounded time. Closing it here instead would fail while the background thread is in poll(), and after
+     * a restart of the repository, a background thread still running could apply records to its new cache.
      */
     public void stop() {
-        ServiceHelper.stopService(poller);
-        if (consumer != null) {
-            consumer.wakeup();
+        try {
+            ServiceHelper.stopService(poller);
+            if (consumer != null) {
+                consumer.wakeup();
+            }
+            if (executorService != null && camelContext != null) {
+                camelContext.getExecutorServiceManager().shutdownGraceful(executorService,
+                        pollDurationMs + STOP_TIMEOUT_MARGIN_MS);
+                executorService = null;
+            }
+            if (poller == null || poller.closeConsumerIfNotPolling()) {
+                closeQuietly(consumer, "consumer");
+            }
+        } finally {
+            closeQuietly(producer, "producer");
         }
-        if (executorService != null && camelContext != null) {
-            camelContext.getExecutorServiceManager().shutdownNow(executorService);
-            executorService = null;
+    }
+
+    private static void closeQuietly(AutoCloseable closeable, String name) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (Exception e) {
+                LOG.warn("Cannot close the {} due to: {}. This exception is ignored.", name, e.getMessage(), e);
+            }
         }
-        IOHelper.close(consumer, "consumer", LOG);
-        IOHelper.close(producer, "producer", LOG);
     }
 
     /**
      * Writes a record to the topic, and waits until it is written.
+     *
+     * @return the partition and the offset of the record
      */
-    public void send(String key, V value) {
+    public RecordMetadata send(String key, V value) {
         try {
             ObjectHelper.notNull(producer, "producer");
-            producer.send(new ProducerRecord<>(topic, key, value)).get(); // sync send
+            return producer.send(new ProducerRecord<>(topic, key, value)).get(); // sync send
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeCamelException(e);
@@ -223,6 +256,13 @@ public final class KafkaChangelog<V> {
      */
     void setProducer(Producer<String, V> producer) {
         this.producer = producer;
+    }
+
+    /**
+     * To use the given consumer, for testing.
+     */
+    void setConsumer(org.apache.kafka.clients.consumer.Consumer<String, V> consumer) {
+        this.consumer = consumer;
     }
 
     private void populateCache() {
@@ -251,6 +291,13 @@ public final class KafkaChangelog<V> {
     private class TopicPoller extends ServiceSupport implements Runnable {
 
         private final AtomicBoolean init = new AtomicBoolean();
+        // set by the background thread when it starts polling, or by stop() if it has not: whichever sets it closes the
+        // consumer
+        private final AtomicBoolean polling = new AtomicBoolean();
+
+        boolean closeConsumerIfNotPolling() {
+            return polling.compareAndSet(false, true);
+        }
 
         @Override
         public void run() {
@@ -261,12 +308,27 @@ public final class KafkaChangelog<V> {
                 LOG.debug("TopicPoller populated cache on startup complete");
                 return;
             }
+            if (!polling.compareAndSet(false, true)) {
+                // stopped before it started, and stop() closed the consumer
+                return;
+            }
+            try {
+                poll();
+            } finally {
+                closeQuietly(consumer, "consumer");
+            }
+        }
 
+        private void poll() {
             LOG.debug("TopicPoller running");
             while (isRunAllowed()) {
                 try {
                     ConsumerRecords<String, V> consumerRecords = consumer.poll(Duration.ofMillis(pollDurationMs));
                     for (ConsumerRecord<String, V> consumerRecord : consumerRecords) {
+                        if (!isRunAllowed()) {
+                            // stopping: do not apply the rest of the records, the repository may have a new cache
+                            break;
+                        }
                         recordHandler.accept(consumerRecord);
                     }
                 } catch (WakeupException e) {

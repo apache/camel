@@ -278,6 +278,17 @@ public abstract class McpServerResourceConformanceTestSupport extends CamelTestS
     }
 
     @Test
+    void testEncodedDotSegmentTemplateUriReturnsNotFoundWithoutCallingRoute() {
+        customerTemplateInvocations.set(0);
+        for (String uri : List.of("camel:///customers/%2e%2e", "camel:///customers/..%2F..%2Fetc%2Fpasswd")) {
+            assertThatThrownBy(() -> client().readResource(new McpSchema.ReadResourceRequest(uri)))
+                    .as(uri)
+                    .hasMessageContaining("Resource not found");
+        }
+        assertThat(customerTemplateInvocations).hasValue(0);
+    }
+
+    @Test
     void testResourceTemplateLifecycleSendsListChangedNotifications() throws Exception {
         AtomicInteger notifications = new AtomicInteger();
         McpSyncClient notificationClient = McpClient.sync(

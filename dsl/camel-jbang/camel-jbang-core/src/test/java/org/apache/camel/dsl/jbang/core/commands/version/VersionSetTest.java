@@ -111,6 +111,27 @@ class VersionSetTest extends BaseConfigTestSupport {
     }
 
     @Test
+    void shouldRefuseACamel3Version() throws Exception {
+        UserConfigHelper.createUserConfig("""
+                camel-version=4.9.0
+                """);
+
+        VersionSet command = command();
+        command.version = "3.22.0";
+        boolean[] checked = new boolean[1];
+        command.versionCheck = (version, repos) -> {
+            checked[0] = true;
+            return true;
+        };
+        // CAMEL-21693: the Camel CLI runs Camel 4 only
+        assertEquals(CliExitCode.USAGE, command.doCall());
+        assertTrue(printer.getStderr().contains("Camel version 3.22.0 is not supported"), printer.getOutput());
+        assertFalse(checked[0], "a Camel 3 version is refused before it is looked up in the Maven repositories");
+
+        CommandLineHelper.loadProperties(properties -> assertEquals("4.9.0", properties.get("camel-version")));
+    }
+
+    @Test
     void shouldSetAVersionThatCannotBeCheckedWithAWarning() throws Exception {
         UserConfigHelper.createUserConfig("""
                 repos=https://repo.example.org/maven

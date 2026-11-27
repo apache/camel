@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.function.Consumer;
 
 import com.ibm.watsonx.ai.chat.ChatService;
+import com.ibm.watsonx.ai.core.auth.Authenticator;
+import com.ibm.watsonx.ai.core.auth.ibmcloud.IBMCloudAuthenticator;
 import com.ibm.watsonx.ai.deployment.DeploymentService;
 import com.ibm.watsonx.ai.detection.DetectionService;
 import com.ibm.watsonx.ai.embedding.EmbeddingService;
@@ -32,7 +34,9 @@ import com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionService;
 import com.ibm.watsonx.ai.timeseries.TimeSeriesService;
 import com.ibm.watsonx.ai.tokenization.TokenizationService;
 import com.ibm.watsonx.ai.tool.ToolService;
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Factory for creating IBM watsonx.ai service instances with centralized configuration.
@@ -43,10 +47,44 @@ public final class WatsonxAiServiceFactory {
         // Utility class
     }
 
+    /**
+     * Creates the authenticator that every service of an endpoint shares, so that they share one access token: the
+     * {@code authenticator} option when it is set, else a Bearer token from the {@code oauthProfile}, else an IBM Cloud
+     * IAM token for the {@code apiKey}, obtained with the {@code verifySsl} and {@code timeout} options of the
+     * endpoint.
+     *
+     * @param  camelContext the context that resolves the OAuth profile, or {@code null} to use the API key
+     * @return              the authenticator, or {@code null} when no credentials are configured
+     */
+    public static Authenticator createAuthenticator(WatsonxAiConfiguration config, CamelContext camelContext) {
+        if (config.getAuthenticator() != null) {
+            return config.getAuthenticator();
+        }
+        if (ObjectHelper.isNotEmpty(config.getOauthProfile()) && camelContext != null) {
+            return new OAuthProfileAuthenticator(camelContext, config.getOauthProfile());
+        }
+        if (ObjectHelper.isEmpty(config.getApiKey())) {
+            return null;
+        }
+        IBMCloudAuthenticator.Builder builder = IBMCloudAuthenticator.builder().apiKey(config.getApiKey());
+        applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
+        return builder.build();
+    }
+
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static TextGenerationService createTextGenerationService(WatsonxAiConfiguration config) {
+        return createTextGenerationService(config, createAuthenticator(config, null));
+    }
+
+    public static TextGenerationService createTextGenerationService(
+            WatsonxAiConfiguration config, Authenticator authenticator) {
         TextGenerationService.Builder builder = TextGenerationService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         applyIfNotNull(config.getProjectId(), builder::projectId);
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
@@ -59,10 +97,18 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static ChatService createChatService(WatsonxAiConfiguration config) {
+        return createChatService(config, createAuthenticator(config, null));
+    }
+
+    public static ChatService createChatService(WatsonxAiConfiguration config, Authenticator authenticator) {
         ChatService.Builder builder = ChatService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         applyIfNotNull(config.getProjectId(), builder::projectId);
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
@@ -75,10 +121,18 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static EmbeddingService createEmbeddingService(WatsonxAiConfiguration config) {
+        return createEmbeddingService(config, createAuthenticator(config, null));
+    }
+
+    public static EmbeddingService createEmbeddingService(WatsonxAiConfiguration config, Authenticator authenticator) {
         EmbeddingService.Builder builder = EmbeddingService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         applyIfNotNull(config.getProjectId(), builder::projectId);
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
@@ -91,10 +145,18 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static RerankService createRerankService(WatsonxAiConfiguration config) {
+        return createRerankService(config, createAuthenticator(config, null));
+    }
+
+    public static RerankService createRerankService(WatsonxAiConfiguration config, Authenticator authenticator) {
         RerankService.Builder builder = RerankService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         applyIfNotNull(config.getProjectId(), builder::projectId);
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
@@ -107,10 +169,18 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static TokenizationService createTokenizationService(WatsonxAiConfiguration config) {
+        return createTokenizationService(config, createAuthenticator(config, null));
+    }
+
+    public static TokenizationService createTokenizationService(WatsonxAiConfiguration config, Authenticator authenticator) {
         TokenizationService.Builder builder = TokenizationService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         applyIfNotNull(config.getProjectId(), builder::projectId);
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
@@ -123,14 +193,23 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static DetectionService createDetectionService(WatsonxAiConfiguration config) {
+        return createDetectionService(config, createAuthenticator(config, null));
+    }
+
+    public static DetectionService createDetectionService(WatsonxAiConfiguration config, Authenticator authenticator) {
         DetectionService.Builder builder = DetectionService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         applyIfNotNull(config.getProjectId(), builder::projectId);
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         // DetectionService doesn't have modelId
+        applyIfNotNull(config.getGovernanceInstanceId(), builder::governanceInstanceId);
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
         applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
@@ -139,12 +218,21 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static TextExtractionService createTextExtractionService(WatsonxAiConfiguration config) {
+        return createTextExtractionService(config, createAuthenticator(config, null));
+    }
+
+    public static TextExtractionService createTextExtractionService(
+            WatsonxAiConfiguration config, Authenticator authenticator) {
         validateCosConfiguration(config);
 
         TextExtractionService.Builder builder = TextExtractionService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey())
+                .authenticator(authenticator)
                 .cosUrl(config.getCosUrl())
                 .documentReference(CosReference.of(
                         config.getDocumentConnectionId(),
@@ -164,12 +252,21 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static TextClassificationService createTextClassificationService(WatsonxAiConfiguration config) {
+        return createTextClassificationService(config, createAuthenticator(config, null));
+    }
+
+    public static TextClassificationService createTextClassificationService(
+            WatsonxAiConfiguration config, Authenticator authenticator) {
         validateCosConfigurationForClassification(config);
 
         TextClassificationService.Builder builder = TextClassificationService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey())
+                .authenticator(authenticator)
                 .cosUrl(config.getCosUrl())
                 .documentReference(CosReference.of(
                         config.getDocumentConnectionId(),
@@ -186,10 +283,18 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static TimeSeriesService createTimeSeriesService(WatsonxAiConfiguration config) {
+        return createTimeSeriesService(config, createAuthenticator(config, null));
+    }
+
+    public static TimeSeriesService createTimeSeriesService(WatsonxAiConfiguration config, Authenticator authenticator) {
         TimeSeriesService.Builder builder = TimeSeriesService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         applyIfNotNull(config.getProjectId(), builder::projectId);
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
@@ -215,10 +320,18 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static DeploymentService createDeploymentService(WatsonxAiConfiguration config) {
+        return createDeploymentService(config, createAuthenticator(config, null));
+    }
+
+    public static DeploymentService createDeploymentService(WatsonxAiConfiguration config, Authenticator authenticator) {
         DeploymentService.Builder builder = DeploymentService.builder()
                 .baseUrl(config.getBaseUrl())
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         // DeploymentService doesn't have projectId, spaceId, modelId
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
@@ -229,7 +342,15 @@ public final class WatsonxAiServiceFactory {
         return builder.build();
     }
 
+    /**
+     * Creates the service with the IBM Cloud IAM authenticator of the {@code apiKey} (or the {@code authenticator}
+     * option).
+     */
     public static ToolService createToolService(WatsonxAiConfiguration config) {
+        return createToolService(config, createAuthenticator(config, null));
+    }
+
+    public static ToolService createToolService(WatsonxAiConfiguration config, Authenticator authenticator) {
         String toolBaseUrl = config.getWxUrl();
         if (toolBaseUrl == null || toolBaseUrl.isEmpty()) {
             throw new IllegalArgumentException(
@@ -239,7 +360,7 @@ public final class WatsonxAiServiceFactory {
 
         ToolService.Builder builder = ToolService.builder()
                 .baseUrl(toolBaseUrl)
-                .apiKey(config.getApiKey());
+                .authenticator(authenticator);
 
         // ToolService doesn't have projectId, spaceId, modelId
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);

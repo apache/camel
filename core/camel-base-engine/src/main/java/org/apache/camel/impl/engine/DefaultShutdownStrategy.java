@@ -90,9 +90,15 @@ import org.slf4j.LoggerFactory;
  * and hence why a timeout value can be set. When the timeout triggers you can also specify whether the remainder
  * consumers should be shutdown now or ignore.
  * <p>
- * Will by default use a timeout of 45 seconds by which it will shutdown now the remaining consumers. This ensures that
- * when shutting down Camel it at some point eventually will shutdown. This behavior can of course be configured using
- * the {@link #setTimeout(long)} and {@link #setShutdownNowOnTimeout(boolean)} methods.
+ * Will by default use a timeout of 45 seconds by which it will shutdown now the remaining consumers. This behavior can
+ * of course be configured using the {@link #setTimeout(long)} and {@link #setShutdownNowOnTimeout(boolean)} methods.
+ * <p>
+ * The timeout is when the strategy stops waiting and switches to the forced shutdown: it does not bound the suspend or
+ * stop of a consumer. A consumer whose suspend or stop does not return (such as a client call that waits for a reply on
+ * a connection that stopped answering, and ignores the interrupt) makes the shutdown wait until it returns, as the
+ * forced shutdown, and a later stop or start of the route, need the same consumer. When the timeout elapses while such
+ * a call runs, a WARN names the consumer, its route, and where the call waits. A component is expected to bound the
+ * calls that its consumers make while they suspend or stop.
  * <p>
  * Routes will by default be shutdown in the reverse order in which they were started. You can customize this using the
  * {@link #setShutdownRoutesInReverseOrder(boolean)} method.
@@ -218,12 +224,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         // force or cut short the graceful shutdown of another. The fields are only set for the getters.
         final AtomicBoolean shutdownTimeoutOccurred = new AtomicBoolean();
         Future<?> future = null;
+        ShutdownTask task = null;
         boolean interrupted = false;
         timeoutOccurred.set(false);
         try {
-            future = getExecutorService().submit(new ShutdownTask(
+            task = new ShutdownTask(
                     context, routesOrdered, timeout, timeUnit, suspendOnly,
-                    abortAfterTimeout, shutdownTimeoutOccurred, isLogInflightExchangesOnTimeout()));
+                    abortAfterTimeout, shutdownTimeoutOccurred, isLogInflightExchangesOnTimeout());
+            future = getExecutorService().submit(task);
             currentShutdownTaskFuture.set(future);
             future.get(timeout, timeUnit);
         } catch (RejectedExecutionException e) {
@@ -257,6 +265,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                 // we attempt to force shutdown so lets log the current inflight exchanges which are affected
                 logInflightExchanges(context, routesOrdered, isLogInflightExchangesOnTimeout());
+                logConsumerInProgress(task);
 
                 return false;
             } else {
@@ -266,6 +275,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                     // we attempt to force shutdown so lets log the current inflight exchanges which are affected
                     logInflightExchanges(context, routesOrdered, isLogInflightExchangesOnTimeout());
+                    // before the forced shutdown, which waits for a consumer whose suspend or stop has not returned
+                    logConsumerInProgress(task);
 
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
@@ -281,6 +292,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                              + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                     logInflightExchanges(context, routesOrdered, isLogInflightExchangesOnTimeout());
+                    logConsumerInProgress(task);
                 }
             }
         } finally {
@@ -485,6 +497,44 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         LOG.trace("Suspend complete for: {}", consumer);
     }
 
+    /**
+     * Logs the consumer whose suspend or stop the shutdown task still runs when the timeout elapsed, with where the
+     * call waits: the forced shutdown, and a later stop or start of the route, wait for the same consumer until that
+     * call returns, so this names what a stop that hangs waits for.
+     */
+    private static void logConsumerInProgress(ShutdownTask task) {
+        ConsumerInProgress inProgress = task != null ? task.consumerInProgress : null;
+        if (inProgress == null) {
+            return;
+        }
+        String strategy = DefaultShutdownStrategy.class.getName();
+        StringBuilder where = new StringBuilder();
+        for (StackTraceElement element : inProgress.thread().getStackTrace()) {
+            String className = element.getClassName();
+            if (className.equals(strategy) || className.startsWith(strategy + "$")) {
+                // the frames below are the shutdown strategy calling the consumer
+                break;
+            }
+            where.append(System.lineSeparator()).append("\tat ").append(element);
+        }
+        if (task.consumerInProgress != inProgress) {
+            // the call returned meanwhile (and the stack is no longer the one of the call)
+            return;
+        }
+        // use basic endpoint uri to not log verbose details or potential sensitive data
+        String uri = URISupport.sanitizeUri(inProgress.consumer().getEndpoint().getEndpointBaseUri());
+        LOG.warn("The {} of the consumer of route: {} (consuming from: {}) has not returned within the timeout."
+                 + " Stopping or starting this route waits until it returns. The thread {} running it waits at:{}",
+                inProgress.suspend() ? "suspend" : "stop", inProgress.routeId(), uri, inProgress.thread().getName(),
+                where);
+    }
+
+    /**
+     * The suspend or stop of a consumer that a {@link ShutdownTask} runs.
+     */
+    private record ConsumerInProgress(String routeId, Consumer consumer, boolean suspend, Thread thread) {
+    }
+
     private ExecutorService getExecutorService() {
         executorLock.lock();
         try {
@@ -590,6 +640,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         private final TimeUnit timeUnit;
         private final AtomicBoolean timeoutOccurred;
         private final boolean logInflightExchangesOnTimeout;
+        // the suspend or stop of a consumer that this task runs, so the thread that waits for this task can name the
+        // consumer when the timeout elapses
+        private volatile ConsumerInProgress consumerInProgress;
 
         ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
                      boolean suspendOnly, boolean abortAfterTimeout, AtomicBoolean timeoutOccurred,
@@ -602,6 +655,24 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             this.timeUnit = timeUnit;
             this.timeoutOccurred = timeoutOccurred;
             this.logInflightExchangesOnTimeout = logInflightExchangesOnTimeout;
+        }
+
+        private void suspendConsumer(String routeId, Consumer consumer) {
+            consumerInProgress = new ConsumerInProgress(routeId, consumer, true, Thread.currentThread());
+            try {
+                suspendNow(routeId, consumer);
+            } finally {
+                consumerInProgress = null;
+            }
+        }
+
+        private void shutdownConsumer(String routeId, Consumer consumer) {
+            consumerInProgress = new ConsumerInProgress(routeId, consumer, false, Thread.currentThread());
+            try {
+                shutdownNow(routeId, consumer);
+            } finally {
+                consumerInProgress = null;
+            }
         }
 
         // Disable BusyWait as we're only waiting on seconds increment, so any other
@@ -656,7 +727,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 // log at info level when a route has been shutdown (otherwise log at debug level to not be too noisy)
                 if (suspend) {
                     // only suspend it and then later shutdown it
-                    suspendNow(order.getRoute().getId(), consumer);
+                    suspendConsumer(order.getRoute().getId(), consumer);
                     // add it to the deferred list so the route will be shutdown later
                     deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
                     // use basic endpoint uri to not log verbose details or potential sensitive data
@@ -665,7 +736,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     LOG.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(),
                             uri);
                 } else if (shutdown) {
-                    shutdownNow(order.getRoute().getId(), consumer);
+                    shutdownConsumer(order.getRoute().getId(), consumer);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
@@ -808,7 +879,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 }
                 Consumer consumer = deferred.getConsumer();
                 if (suspendOnly) {
-                    suspendNow(deferred.getRoute().getId(), consumer);
+                    suspendConsumer(deferred.getRoute().getId(), consumer);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = deferred.getRoute().getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
@@ -817,7 +888,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                                 deferred.getRoute().getId(), uri));
                     }
                 } else {
-                    shutdownNow(deferred.getRoute().getId(), consumer);
+                    shutdownConsumer(deferred.getRoute().getId(), consumer);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = deferred.getRoute().getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);

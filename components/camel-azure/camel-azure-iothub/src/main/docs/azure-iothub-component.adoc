@@ -2,7 +2,7 @@
 :doctitle: Azure IoT Hub
 :shortname: azure-iothub
 :artifactid: camel-azure-iothub
-:description: Send device telemetry and device-twin updates to Azure IoT Hub.
+:description: Send device-to-cloud telemetry messages and device twin reported properties to Azure IoT Hub.
 :since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
@@ -17,8 +17,10 @@
 The Azure IoT Hub component provides the capability to send device-to-cloud
 telemetry and to update device-twin reported properties on
 https://azure.microsoft.com/services/iot-hub/[Azure IoT Hub], using the
-Azure IoT device SDK. Device connections are pooled and reused by the
-resolved hub/device/module identity from the connection string.
+Azure IoT device SDK. Device connections are pooled and reused per
+connection string: a message only gets a pooled connection that was opened
+with the same connection string, including its key, so connection strings of
+the same device with different keys get their own connections.
 
 *Prerequisites*
 
@@ -62,6 +64,11 @@ how the body is interpreted:
   using a delta update (only changed properties are sent).
 * `BOTH` - sends the message body as telemetry and applies twin reported properties from the
   `CamelAzureIoTHubTwinProperties` header.
+
+`TWIN` and `BOTH` update the device twin, which the Azure IoT SDK supports only over `MQTT`, `MQTT_WS`, `AMQPS` and
+`AMQPS_WS`. With `protocol=HTTPS` only `TELEMETRY` works: a producer with `deliveryMode` `TWIN` or `BOTH` fails to
+start, and a message whose `CamelAzureIoTHubDeliveryMode` header asks for a twin update fails. An HTTPS endpoint and an
+MQTT or AMQPS endpoint of the same device each open their own device client.
 
 Any payload decoding (for example Protobuf or CloudEvent to `Map`) must be done by a
 preceding processor in the route; this component is payload-agnostic.

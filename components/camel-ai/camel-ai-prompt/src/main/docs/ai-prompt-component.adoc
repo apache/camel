@@ -2,7 +2,7 @@
 :doctitle: AI Prompt
 :shortname: ai-prompt
 :artifactid: camel-ai-prompt
-:description: Consumer endpoint that registers a Camel route as an MCP prompt.
+:description: Expose a Camel route as a prompt that MCP clients list and get through the Camel MCP server.
 :since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
@@ -60,6 +60,11 @@ from("ai-prompt:summarize_account"
     .setBody(simple("Summarize account ${header.accountId}, including its status and recent activity."));
 ----
 
+Arguments configured on the component apply to every prompt. The `argument.*` options of an endpoint are added to
+them: the prompt declares the arguments of the component first, then its own, and an option set on the endpoint
+replaces the same option of the component (for example `argument.locale.required=true` makes a `locale` argument of
+the component required for this prompt only).
+
 A String route body becomes one MCP `user` message. A List route body becomes several messages, allowing a
 multi-turn prompt. List elements may be Strings (converted to `user` messages) or Maps containing `role`
 (`user` or `assistant`) and `content`. Content may be a String or an MCP content block, such as an image or
@@ -101,3 +106,14 @@ ticket comments, emails or documents, that data can contain instructions aimed a
 (prompt injection). Camel does not filter or mark such content. Include only data from sources
 you trust, or clearly mark untrusted content in the prompt, for example by placing it in its own
 delimited block and telling the model to treat it as data.
+
+When the xref:others:mcp-server.adoc[MCP server] of Camel Main or Camel JBang serves a prompt to an
+authenticated MCP client, the route receives the caller as exchange properties, as an `ai-tool` route
+does: `CamelAiToolSecurityPrincipalName` (the caller name), `CamelAiToolSecurityPrincipalRoles` (the
+caller roles, when the token carries them), `CamelMcpSecurityPrincipal` (the raw principal) and, with
+OAuth, `CamelMcpOAuthSubject`, `CamelMcpOAuthScopes` and `CamelMcpOAuthClaims` of the validated token.
+A route that builds a prompt from data of the caller checks these properties first, and throws an
+exception to refuse; the client then receives a generic prompt error.
+Take the caller from these properties only, never from the arguments, which are headers set by the
+client. Without an authenticated caller, as over stdio, the properties are not set. The prompt has no
+`allowedRoles` or `authorizationPolicy` option.

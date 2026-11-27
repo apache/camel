@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class GooglePubsubCloudEventDataTypeTransformerTest {
@@ -45,6 +46,7 @@ class GooglePubsubCloudEventDataTypeTransformerTest {
     @Test
     void shouldMapToCloudEvent() {
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(GooglePubsubConstants.SUBSCRIPTION_NAME, "orders-sub");
         exchange.getMessage().setHeader(GooglePubsubConstants.ACK_ID, "ack1");
         exchange.getMessage().setHeader(GooglePubsubConstants.MESSAGE_ID, "msg1");
         exchange.getMessage().setBody("Test");
@@ -53,8 +55,33 @@ class GooglePubsubCloudEventDataTypeTransformerTest {
 
         assertEquals("org.apache.camel.event.google.pubsub.pull",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
-        assertEquals("google.pubsub.ack1", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+        assertEquals("google.pubsub.orders-sub", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
         assertEquals("msg1", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+    }
+
+    @Test
+    void theSourceIsTheSubscription() {
+        // CAMEL-27101: the source was built from the ack id, so every event had a source of its own
+        for (String id : List.of("1", "2")) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setHeader(GooglePubsubConstants.SUBSCRIPTION_NAME, "orders-sub");
+            exchange.getMessage().setHeader(GooglePubsubConstants.ACK_ID, "ack" + id);
+            exchange.getMessage().setHeader(GooglePubsubConstants.MESSAGE_ID, "msg" + id);
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            assertEquals("google.pubsub.orders-sub", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+            assertEquals("msg" + id, exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+        }
+    }
+
+    @Test
+    void theSourceIsNotTheAckId() {
+        // a message without the subscription name of the consumer gets no source
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(GooglePubsubConstants.ACK_ID, "ack1");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
     }
 
     @Test

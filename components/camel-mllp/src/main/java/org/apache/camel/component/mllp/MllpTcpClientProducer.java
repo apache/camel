@@ -24,7 +24,9 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -59,6 +61,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     Socket socket;
 
     ScheduledExecutorService idleTimeoutExecutor;
+    // the pending idle connection check, at most one per producer; guarded by lock
+    ScheduledFuture<?> idleTimeoutCheck;
     private String cachedLocalAddress;
     private String cachedRemoteAddress;
     private String cachedCombinedAddress;
@@ -124,8 +128,14 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
 
     @Override
     protected void doStop() throws Exception {
+        if (idleTimeoutCheck != null) {
+            idleTimeoutCheck.cancel(false);
+            idleTimeoutCheck = null;
+        }
         if (idleTimeoutExecutor != null) {
-            idleTimeoutExecutor.shutdown();
+            // the executor is created by doStart for this producer only: drop its pending checks, which would
+            // otherwise still run after the stop and reschedule themselves on the executor of the next start
+            idleTimeoutExecutor.shutdownNow();
             idleTimeoutExecutor = null;
         }
 
@@ -138,6 +148,14 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     public void process(Exchange exchange) throws MllpException {
         lock.lock();
         try {
+            if (!isRunAllowed()) {
+                // process() waited for the lock while the producer stopped: do not open a connection that nothing
+                // closes, and that no idle check guards after the next start
+                String endpointKey = getEndpoint().getEndpointKey();
+                exchange.setException(new RejectedExecutionException(
+                        "The MLLP producer for " + StringHelper.before(endpointKey, "?", endpointKey) + " is not started"));
+                return;
+            }
             log.trace("process({}) [{}] - entering", exchange.getExchangeId(), socket);
             getEndpoint().updateLastConnectionActivityTicks();
 
@@ -504,7 +522,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             if (getConfiguration().hasIdleTimeout()) {
                 log.debug("Scheduling initial idle producer connection check of {} in {} milliseconds", getConnectionAddress(),
                         getConfiguration().getIdleTimeout());
-                idleTimeoutExecutor.schedule(this, getConfiguration().getIdleTimeout(), TimeUnit.MILLISECONDS);
+                scheduleIdleTimeoutCheck(getConfiguration().getIdleTimeout());
             }
         } else {
             log.debug("checkConnection() - Connection {} is still valid - no new connection required", socket);
@@ -623,19 +641,32 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                                 log.debug("Scheduling idle producer connection check of {} in {} milliseconds",
                                         getConnectionAddress(), delay);
                             }
-                            idleTimeoutExecutor.schedule(this, delay, TimeUnit.MILLISECONDS);
+                            scheduleIdleTimeoutCheck(delay);
                         }
                     } else {
                         log.debug(
                                 "No activity detected since initial connection - scheduling idle producer connection check in {} milliseconds",
                                 getConfiguration().getIdleTimeout());
-                        idleTimeoutExecutor.schedule(this, getConfiguration().getIdleTimeout(), TimeUnit.MILLISECONDS);
+                        scheduleIdleTimeoutCheck(getConfiguration().getIdleTimeout());
                     }
                 }
             }
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * Schedules the idle connection check in place of the pending one, so a producer has at most one, also when it
+     * reconnects (a new connection schedules a check while the check of the previous connection is pending) and when a
+     * check that was already running when it was cancelled reschedules itself. Called with the lock held.
+     */
+    private void scheduleIdleTimeoutCheck(long delay) {
+        if (idleTimeoutCheck != null) {
+            // does not interrupt a check that is running (this one, or one that waits for the lock)
+            idleTimeoutCheck.cancel(false);
+        }
+        idleTimeoutCheck = idleTimeoutExecutor.schedule(this, delay, TimeUnit.MILLISECONDS);
     }
 
     static class IdleTimeoutThreadFactory implements ThreadFactory {

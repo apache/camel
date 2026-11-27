@@ -19,7 +19,6 @@ package org.apache.camel.component.scp;
 import java.net.URI;
 import java.util.Map;
 
-import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Logger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -34,8 +33,12 @@ import org.apache.camel.util.StringHelper;
 @Component("scp")
 public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
-    @Metadata
+    @Metadata(label = "advanced",
+              description = "Whether to log the INFO messages of JSch at INFO level. JSch logs much at INFO level, so by"
+                            + " default the component logs these messages at DEBUG level. The component passes the JSch log"
+                            + " messages, with the [JSCH] prefix, to its own logger.")
     private boolean verboseLogging;
+    private Logger jschLogger;
 
     public ScpComponent() {
     }
@@ -66,19 +69,25 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
         return verboseLogging;
     }
 
-    /**
-     * JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But
-     * setting this option to <tt>true</tt> turns on the verbose logging again.
-     */
     public void setVerboseLogging(boolean verboseLogging) {
         this.verboseLogging = verboseLogging;
+    }
+
+    /**
+     * Returns the logger set on the JSch instance of each session created by this component's endpoints, or null when
+     * {@link #initJsch()} has not created one (the sessions then log with the static JSch logger).
+     */
+    Logger getJschLogger() {
+        return jschLogger;
     }
 
     protected void initJsch() {
         // StrictHostKeyChecking is applied per session from ScpConfiguration in ScpOperations.createSession();
         // a global JSch.setConfig("StrictHostKeyChecking", ...) here would always be overridden by that per-session
         // value, so it is intentionally not set to avoid a misleading (and contradictory) global default.
-        JSch.setLogger(new Logger() {
+        // The logger is set on the JSch instance of each session (JSch.setInstanceLogger), not with the static
+        // JSch.setLogger, which would apply to every user of JSch in the JVM.
+        jschLogger = new Logger() {
             @Override
             public boolean isEnabled(int level) {
                 return level == FATAL || level == ERROR ? ScpComponent.this.log.isErrorEnabled()
@@ -103,7 +112,7 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
                     ScpComponent.this.log.debug("[JSCH] {}", message);
                 }
             }
-        });
+        };
     }
 
 }

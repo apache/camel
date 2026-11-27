@@ -127,8 +127,19 @@ class NettyProducerStrayExceptionTest extends CamelTestSupport {
 
     private void startProducerAndAwaitException(String options) throws Exception {
         Channel channel = startProducer(options);
+        // without a request the read timeout would close the unused channel before a slow greeting arrives; the pool
+        // adds a new one when the request borrows the channel (activateObject)
+        if (channel.pipeline().get("timeout") != null) {
+            channel.pipeline().remove("timeout");
+        }
         // see the exception before the producer's handler gets it, and count down once that handler is done with it
+        CountDownLatch probeAdded = new CountDownLatch(1);
         channel.pipeline().addBefore("handler", "exceptionProbe", new ChannelInboundHandlerAdapter() {
+            @Override
+            public void handlerAdded(ChannelHandlerContext ctx) {
+                probeAdded.countDown();
+            }
+
             @Override
             public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
                 ctx.fireExceptionCaught(cause);
@@ -137,8 +148,11 @@ class NettyProducerStrayExceptionTest extends CamelTestSupport {
                 }
             }
         });
+        // the event loop adds the handler to the pipeline after addBefore returned, and a handler that is not added yet
+        // is skipped by an exception: send the greeting only when the probe is in place
+        assertTrue(probeAdded.await(10, TimeUnit.SECONDS), "the exception probe should be added to the pipeline");
         sendGreeting.countDown();
-        assertTrue(exceptionSeen.await(5, TimeUnit.SECONDS), "the long greeting should fail in the decoder");
+        assertTrue(exceptionSeen.await(15, TimeUnit.SECONDS), "the long greeting should fail in the decoder");
         assertTrue(channel.isActive(), "the channel stays open in the pool");
     }
 

@@ -35,11 +35,12 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To read and write records to the CosmosDB database on Azure cloud platform.
+ * Store, read and query items in Azure Cosmos DB, and receive the changes of a container from its change feed.
  */
 @UriEndpoint(firstVersion = "3.10.0", scheme = "azure-cosmosdb", title = "Azure CosmosDB",
              syntax = "azure-cosmosdb:databaseName/containerName", category = {
-                     Category.CLOUD, Category.DATABASE })
+                     Category.CLOUD, Category.DATABASE },
+             headersClass = CosmosDbConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.util.Map<String, Object>>",
                                    description = "The items of one batch of the change feed: a List with a Map per item"
                                                  + " created or changed, with the system fields of Cosmos DB such as _etag and"

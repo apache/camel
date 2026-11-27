@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.eventhubs.client;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.eventhubs.CheckpointStore;
 import com.azure.messaging.eventhubs.EventHubClientBuilder;
@@ -27,6 +28,7 @@ import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
 import com.azure.messaging.eventhubs.EventProcessorClient;
 import com.azure.messaging.eventhubs.EventProcessorClientBuilder;
 import com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore;
+import com.azure.messaging.eventhubs.models.CloseContext;
 import com.azure.messaging.eventhubs.models.ErrorContext;
 import com.azure.messaging.eventhubs.models.EventContext;
 import com.azure.storage.blob.BlobContainerAsyncClient;
@@ -69,7 +71,7 @@ public final class EventHubsClientFactory {
         return eventHubClientBuilder
                 .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
                 .eventHubName(configuration.getEventHubName())
-                .credential(new DefaultAzureCredentialBuilder().build())
+                .credential(azureIdentityCredential(configuration))
                 .buildAsyncProducerClient();
     }
 
@@ -100,13 +102,23 @@ public final class EventHubsClientFactory {
         return eventHubClientBuilder
                 .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
                 .eventHubName(configuration.getEventHubName())
-                .credential(new DefaultAzureCredentialBuilder().build())
+                .credential(azureIdentityCredential(configuration))
                 .buildAsyncConsumerClient();
     }
 
     public static EventProcessorClient createEventProcessorClient(
             final EventHubsConfiguration configuration, final Consumer<EventContext> processEvent,
             final Consumer<ErrorContext> processError) {
+        return createEventProcessorClient(configuration, processEvent, processError, null);
+    }
+
+    /**
+     * Creates the event processor client, with a handler that is called when a partition is closed (lost to another
+     * consumer, or the client is stopped), if processPartitionClose is not null.
+     */
+    public static EventProcessorClient createEventProcessorClient(
+            final EventHubsConfiguration configuration, final Consumer<EventContext> processEvent,
+            final Consumer<ErrorContext> processError, final Consumer<CloseContext> processPartitionClose) {
         EventProcessorClientBuilder eventProcessorClientBuilder = new EventProcessorClientBuilder()
                 .initialPartitionEventPosition(configuration.getEventPosition())
                 .checkpointStore(createCheckpointStore(configuration))
@@ -115,6 +127,9 @@ public final class EventHubsClientFactory {
                 .transportType(configuration.getAmqpTransportType())
                 .processError(processError)
                 .processEvent(processEvent);
+        if (processPartitionClose != null) {
+            eventProcessorClientBuilder.processPartitionClose(processPartitionClose);
+        }
 
         CredentialType type = configuration.getCredentialType();
         if (type == null) {
@@ -136,8 +151,17 @@ public final class EventHubsClientFactory {
         return eventProcessorClientBuilder
                 .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
                 .eventHubName(configuration.getEventHubName())
-                .credential(new DefaultAzureCredentialBuilder().build())
+                .credential(azureIdentityCredential(configuration))
                 .buildEventProcessorClient();
+    }
+
+    /**
+     * The credential for AZURE_IDENTITY: the tokenCredential when it is set (such as a DefaultAzureCredential with a
+     * managed identity client id or a tenant id), otherwise a new DefaultAzureCredential.
+     */
+    static TokenCredential azureIdentityCredential(final EventHubsConfiguration configuration) {
+        TokenCredential credential = configuration.getTokenCredential();
+        return credential != null ? credential : new DefaultAzureCredentialBuilder().build();
     }
 
     // public for testing purposes

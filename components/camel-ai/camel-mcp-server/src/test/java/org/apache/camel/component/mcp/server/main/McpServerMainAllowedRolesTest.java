@@ -37,6 +37,7 @@ import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mcp.server.McpServerConstants;
 import org.apache.camel.main.Main;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
@@ -49,7 +50,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * The {@code allowedRoles} option of an {@code ai-tool} route over a real MCP call: the Camel Main HTTP server
  * authenticates the caller with a signed JWT, the MCP bridge puts the roles of the token on the tool exchange, and the
- * tool answers the caller who has the role and refuses the one who has not.
+ * tool answers the caller who has the role and refuses the one who has not. The refusal carries its mark in the
+ * {@code _meta} of the result.
  */
 class McpServerMainAllowedRolesTest {
 
@@ -120,6 +122,7 @@ class McpServerMainAllowedRolesTest {
 
             assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
             assertThat(result.content().toString()).contains("costs=42");
+            assertThat(result.meta()).isNull();
         } finally {
             client.closeGracefully();
         }
@@ -139,6 +142,9 @@ class McpServerMainAllowedRolesTest {
                     .contains("Access denied: not authorized to call tool 'order_costs'")
                     .doesNotContain("costs=42")
                     .doesNotContain("finance");
+            // the mark a client tells the refusal from a tool error by, without reading the text
+            assertThat(result.meta()).containsOnly(
+                    Map.entry(McpServerConstants.META_AUTHORIZATION, McpServerConstants.META_AUTHORIZATION_DENIED));
         } finally {
             client.closeGracefully();
         }

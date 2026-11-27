@@ -38,22 +38,31 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class LangChain4jAgentConfiguration implements Cloneable {
 
-    @UriParam(description = "The agent to use for the component")
+    @UriParam(description = "The agent that answers the messages, an"
+                            + " org.apache.camel.component.langchain4j.agent.api.Agent. It takes precedence over"
+                            + " agentConfiguration, and agentFactory takes precedence over it.")
     @Metadata(autowired = true)
     private Agent agent;
 
-    @UriParam(description = "The agent factory to use for creating agents if no Agent is provided")
+    @UriParam(description = "The factory whose createAgent method the producer calls for each message, to create the"
+                            + " agent that answers it. It takes precedence over agent and agentConfiguration.")
     @Metadata(autowired = true)
     private AgentFactory agentFactory;
 
-    @UriParam(description = "AgentConfiguration used by Camel to create the agent internally."
-                            + " When set, Camel creates an AgentWithMemory if a ChatMemoryProvider is configured,"
-                            + " otherwise an AgentWithoutMemory."
-                            + " If an agentFactory is also configured, the factory takes precedence.")
+    @UriParam(description = "The settings of LangChain4j (chat model, chat memory, tools, RAG, guardrails, and so on) from"
+                            + " which the producer creates the agent: an AgentWithMemory when a ChatMemoryProvider is set,"
+                            + " otherwise an AgentWithoutMemory. The agent and agentFactory options take precedence over"
+                            + " it.")
     @Metadata(autowired = true)
     private AgentConfiguration agentConfiguration;
 
-    @UriParam(label = "model", enums = LangChain4jModelFactory.Provider.NAMES)
+    @UriParam(label = "model", enums = LangChain4jModelFactory.Provider.NAMES,
+              description = "The LangChain4j provider of the chat model that drives the agent, to create the model from"
+                            + " the options here (modelName, baseUrl, apiKey, temperature, timeout, and provider-specific"
+                            + " model.* properties) instead of an AgentConfiguration bean. The LangChain4j module of the"
+                            + " provider (dev.langchain4j:langchain4j-ollama, ...) must be on the classpath; the Camel CLI"
+                            + " downloads it. Ignored when agent, agentFactory or agentConfiguration is set. For a"
+                            + " provider not listed, set customProvider instead.")
     private String provider;
     @UriParam(label = "model,advanced")
     private String customProvider;
@@ -70,74 +79,80 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     @UriParam(label = "model,advanced", prefix = "model.", multiValue = true)
     private Map<String, Object> modelProperties;
 
-    @UriParam(description = "Tags for discovering and calling Camel route tools")
+    @UriParam(description = "A comma-separated list of tags. The routes that start from an ai-tool endpoint with one of"
+                            + " these tags are offered to the model as tools. The CamelLangChain4jAgentExcludeTags header"
+                            + " removes tags from this list for one message.")
     private String tags;
 
-    @UriParam(description = "Pre-built MCP (Model Context Protocol) client instances for external tool integration."
-                            + " Reference beans from the registry, e.g., #myMcpClient1,#myMcpClient2",
+    @UriParam(description = "The MCP (Model Context Protocol) clients, of type dev.langchain4j.mcp.client.McpClient, whose"
+                            + " tools are offered to the model, as references to beans in the registry, for example"
+                            + " #myMcpClient1,#myMcpClient2. The producer does not close them.",
               label = "advanced")
     private List<McpClient> mcpClients;
 
     @UriParam
-    @Metadata(description = "JSON schema for structured output validation. "
-                            + "Only supported in inline agent creation mode: agentConfiguration must be set and neither agent nor agentFactory may be configured. "
-                            + "Mutually exclusive with outputClass.",
+    @Metadata(description = "The JSON schema that the answer of the model must follow, inline or as a resource (classpath:,"
+                            + " file:, ...). Camel sends it to the model as the response format, and the body is the answer"
+                            + " as JSON text. Only works when Camel creates the agent, from agentConfiguration or provider,"
+                            + " and not together with outputClass: otherwise the producer fails to start.",
               supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String jsonSchema;
 
     @UriParam
-    @Metadata(description = "Java class to use for structured output. "
-                            + "Camel derives the JSON schema from the class and instructs the model to produce matching JSON; the response body is left as a raw JSON string. "
-                            + "Only supported in inline agent creation mode: agentConfiguration must be set and neither agent nor agentFactory may be configured. "
-                            + "The class must be a POJO with public fields or getters; simple types, enums, and collections are not supported. "
-                            + "Mutually exclusive with jsonSchema.")
+    @Metadata(description = "The Java class, a POJO with public fields or getters, from which Camel derives the JSON"
+                            + " schema that the answer of the model must follow. The body is the answer as JSON text, not an"
+                            + " instance of the class. Only works when Camel creates the agent, from agentConfiguration or"
+                            + " provider, and not together with jsonSchema: otherwise the producer fails to start.")
     private Class<?> outputClass;
 
-    @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
-                            + " Supported properties: transportType (stdio, http or streamableHttp, default: stdio),"
-                            + " command (comma-separated, for stdio), url (for http/streamableHttp),"
-                            + " environment.<key>=<value> (for stdio), timeout (in seconds, default: 60),"
-                            + " logRequests, logResponses,"
-                            + " oauthProfile (OAuth profile for HTTP auth, requires camel-oauth).",
+    @UriParam(description = "The MCP servers whose tools are offered to the model, as mcpServer.myServer.myProperty=myValue,"
+                            + " where myServer is the name of the server; the producer creates a client per server when it"
+                            + " starts and closes it when it stops. The properties are transportType (stdio by default, or"
+                            + " http or streamableHttp, which both use the Streamable HTTP transport), command"
+                            + " (comma-separated, for stdio), environment.myKey=myValue (for stdio), url (for HTTP), timeout"
+                            + " (in seconds, 60 by default), logRequests, logResponses, and oauthProfile (the camel-oauth"
+                            + " profile that supplies a bearer token for HTTP).",
               prefix = "mcpServer.", multiValue = true, label = "advanced")
     private Map<String, Object> mcpServer;
 
     @UriParam
     @Metadata(label = "producer", defaultValue = "0",
-              description = "Maximum number of tool-calling round trips allowed per request."
-                            + " Each round trip is one LLM call plus execution of the tools requested in that call."
-                            + " Set to 0 to leave unset and use the LangChain4j default."
-                            + " Only supported in inline agent creation mode (agentConfiguration without agent or agentFactory)."
-                            + " URI value overrides the same option on the agentConfiguration bean.")
+              description = "The maximum number of tool-calling round trips per message, each one model call and the"
+                            + " tools that this call requests. A value above 0 replaces the value of the agentConfiguration;"
+                            + " with 0, that value applies, or the LangChain4j default when it is not set either. Only works"
+                            + " when Camel creates the agent, from agentConfiguration or provider.")
     private int maxToolCallingRoundTrips;
 
     @UriParam
     @Metadata(label = "producer",
-              description = "Whether LangChain4j should compensate when a tool execution fails."
-                            + " Only supported in inline agent creation mode (agentConfiguration without agent or agentFactory)."
-                            + " URI value overrides the same option on the agentConfiguration bean.")
+              description = "Whether LangChain4j runs the compensating actions when a tool fails: the methods annotated"
+                            + " with @CompensateFor for the tools that already ran. When set, it replaces the value of the"
+                            + " agentConfiguration. Only works when Camel creates the agent, from agentConfiguration or"
+                            + " provider.")
     private Boolean compensateOnToolErrors;
 
     @UriParam
     @Metadata(label = "producer",
-              description = "Whether multiple tools requested in a single LLM turn are executed concurrently."
-                            + " Camel route tools run on isolated exchange copies."
-                            + " Only supported in inline agent creation mode (agentConfiguration without agent or agentFactory)."
-                            + " URI value overrides the same option on the agentConfiguration bean.")
+              description = "Whether LangChain4j runs the tools that the model requests in one response concurrently, on"
+                            + " the executor of the agentConfiguration or else on a Camel thread pool; each route tool runs"
+                            + " on a copy of the exchange. When set, it replaces the value of the agentConfiguration. Only"
+                            + " works when Camel creates the agent, from agentConfiguration or provider.")
     private Boolean executeToolsConcurrently;
 
     @UriParam(defaultValue = "false")
     @Metadata(label = "producer",
-              description = "When true, route tools marked searchable and remote MCP tools are omitted from the initial "
-                            + "model request and exposed through one synthetic search tool. Directly visible route tools "
-                            + "and customTools stay in the request. Search is a visibility policy, not authorization. "
-                            + "Enabling it does not skip MCP tools/list. A dynamic tool provider registered outside Camel "
-                            + "is not searched. Only supported in inline agent creation mode.")
+              description = "Whether to leave the route tools with searchable=true and the MCP tools out of the first"
+                            + " request to the model, and give the model one search tool (tool_search_tool) to find them;"
+                            + " the other route tools and the customTools of the agentConfiguration are always sent. It"
+                            + " controls what the model sees, not what it may call, and does not search a tool provider"
+                            + " set outside Camel. Only works when Camel creates the agent, from agentConfiguration or"
+                            + " provider.")
     private boolean toolSearch;
 
     @UriParam(defaultValue = "5")
     @Metadata(label = "producer",
-              description = "Maximum number of tools returned by one tool search. Route and MCP tools are ranked together.")
+              description = "The maximum number of tools that one call of the search tool returns, at least 1. Route"
+                            + " tools and MCP tools are ranked together.")
     private int toolSearchMaxResults = AiToolSearch.DEFAULT_MAX_RESULTS;
 
     @UriParam(enums = "KEYWORD,VECTOR", defaultValue = "KEYWORD")
@@ -149,17 +164,13 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     @UriParam
     @Metadata(label = "producer", autowired = true,
-              description = "LangChain4j embedding model used when toolSearchStrategy=VECTOR. Required for vector search.")
+              description = "The LangChain4j embedding model that turns the tool descriptions and the search query into"
+                            + " vectors. Required when toolSearchStrategy is VECTOR, and not used otherwise.")
     private EmbeddingModel toolSearchEmbeddingModel;
 
     public LangChain4jAgentConfiguration() {
     }
 
-    /**
-     * Tags for discovering and calling Camel route tools
-     *
-     * @return the tags
-     */
     public String getTags() {
         return tags;
     }
@@ -172,13 +183,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         return provider;
     }
 
-    /**
-     * The LangChain4j provider of the chat model that drives the agent, to create the model from the options here
-     * (modelName, baseUrl, apiKey, temperature, timeout, and provider-specific model.* properties) instead of a
-     * AgentConfiguration bean. The LangChain4j module of the provider (dev.langchain4j:langchain4j-ollama, ...) must be
-     * on the classpath; Camel JBang downloads it. Ignored when a AgentConfiguration is configured. For a provider not
-     * listed, set customProvider instead.
-     */
     public void setProvider(String provider) {
         this.provider = provider;
     }
@@ -284,11 +288,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         }
     }
 
-    /**
-     * The agent providing the service
-     *
-     * @return the instance of the agent providing the service
-     */
     public Agent getAgent() {
         return agent;
     }
@@ -297,11 +296,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         this.agent = agent;
     }
 
-    /**
-     * An agent factory creating the agents
-     *
-     * @return the instance of the agent factory in use
-     */
     public AgentFactory getAgentFactory() {
         return agentFactory;
     }
@@ -310,9 +304,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         this.agentFactory = agentFactory;
     }
 
-    /**
-     * AgentConfiguration used by Camel to create the agent internally.
-     */
     public AgentConfiguration getAgentConfiguration() {
         return agentConfiguration;
     }
@@ -321,11 +312,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         this.agentConfiguration = agentConfiguration;
     }
 
-    /**
-     * Pre-built MCP client instances for external tool integration
-     *
-     * @return the list of MCP clients
-     */
     public List<McpClient> getMcpClients() {
         return mcpClients;
     }
@@ -357,11 +343,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         this.mcpServer = mcpServer;
     }
 
-    /**
-     * JSON schema for structured output validation
-     *
-     * @return the JSON schema string or resource reference
-     */
     public String getJsonSchema() {
         return jsonSchema;
     }
@@ -370,11 +351,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         this.jsonSchema = jsonSchema;
     }
 
-    /**
-     * Java class to use for structured output
-     *
-     * @return the output class
-     */
     public Class<?> getOutputClass() {
         return outputClass;
     }
@@ -383,9 +359,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         this.outputClass = outputClass;
     }
 
-    /**
-     * Maximum number of tool-calling round trips allowed per request.
-     */
     public int getMaxToolCallingRoundTrips() {
         return maxToolCallingRoundTrips;
     }
@@ -398,9 +371,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         this.maxToolCallingRoundTrips = maxToolCallingRoundTrips;
     }
 
-    /**
-     * Whether LangChain4j should compensate when a tool execution fails.
-     */
     public Boolean getCompensateOnToolErrors() {
         return compensateOnToolErrors;
     }
@@ -409,9 +379,6 @@ public class LangChain4jAgentConfiguration implements Cloneable {
         this.compensateOnToolErrors = compensateOnToolErrors;
     }
 
-    /**
-     * Whether multiple tools requested in a single LLM turn are executed concurrently.
-     */
     public Boolean getExecuteToolsConcurrently() {
         return executeToolsConcurrently;
     }

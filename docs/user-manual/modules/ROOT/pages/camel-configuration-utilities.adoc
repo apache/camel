@@ -477,8 +477,9 @@ System.out.println(Arrays.toString(groups));
 === Auto-Configuration (Zero-Config PQC)
 
 When running on a JDK that enables a hybrid ML-KEM group (`X25519MLKEM768`, `SecP256r1MLKEM768` or
-`SecP384r1MLKEM1024`), Camel *automatically* prefers it on all `SSLContextParameters` instances, without
-any configuration.
+`SecP384r1MLKEM1024`), Camel *automatically* prefers it in the `SSLContext` that it creates from
+`SSLContextParameters`, without any configuration. A few components do not use that `SSLContext`, see
+<<_components_with_their_own_tls_stack>>.
 
 The auto-configuration activates only when:
 
@@ -511,6 +512,41 @@ case for the default order of JDK 27, which starts with `X25519MLKEM768`, and fo
 A `DEBUG` message of `org.apache.camel.support.jsse.SSLContextParameters` says so, as it does on a JDK that
 enables no hybrid group at all. To verify which key exchange is preferred, read the named groups of a created
 `SSLEngine` or `SSLSocket` as shown above.
+
+=== Components with their own TLS stack
+
+The named groups, the signature schemes and the post-quantum preference are settings of the `SSLEngine` and the
+`SSLSocket`, which only the `SSLContext` created by `SSLContextParameters.createSSLContext()` applies. Most components
+use that `SSLContext`, and honour all the settings. A few hand the key and trust material to a TLS stack of their own
+instead, which applies only part of them:
+
+[cols="1,2,2",options="header"]
+|===
+| Component | Applied | Not applied
+
+| camel-platform-http-vertx, camel-vertx-http, camel-vertx-websocket, camel-vertx-mqtt, camel-apicurio-registry
+| The key and trust managers, the client authentication, the cipher suites, the protocols, and the named groups,
+including the post-quantum preference, as the key exchange groups of Vert.x
+| The signature schemes: Vert.x has no such setting, and a `WARN` says so when they are configured
+
+| camel-kafka, camel-kafka-share
+| The protocol, the provider, the cipher suites, the enabled protocols and the key and trust stores, as `ssl.*`
+properties of the Kafka client
+| The named groups and the signature schemes, as the Kafka client has no such properties: a `WARN` says so when they
+are configured. The post-quantum preference is not applied either, and the client uses the named group order of the
+JVM; as this is not a setting of the user, a `DEBUG` message of `org.apache.camel.component.kafka.KafkaClientConfiguration`
+says so
+
+| camel-thrift (producer)
+| The protocol, the cipher suites and the trust store
+| The named groups and the signature schemes, with a `WARN` when they are configured, and the post-quantum preference,
+with a `DEBUG` message. The consumer uses the `SSLContext` and applies all the settings
+|===
+
+To apply named groups or signature schemes to such a component anyway, set them for the whole JVM with the
+`jdk.tls.namedGroups`, `jdk.tls.client.SignatureSchemes` and `jdk.tls.server.SignatureSchemes` system properties of
+the JDK, which every TLS connection of the JVM uses. On a JDK that leads with a hybrid group by default, such as
+JDK 27, the post-quantum key exchange is preferred by these components as well, since that is the order of the JVM.
 
 === Explicit Configuration via application.properties
 

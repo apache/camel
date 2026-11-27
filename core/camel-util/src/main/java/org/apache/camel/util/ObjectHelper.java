@@ -1253,6 +1253,29 @@ public final class ObjectHelper {
     }
 
     /**
+     * The {@link VirtualMachineError} (such as an {@link OutOfMemoryError} or a {@link StackOverflowError}) in the
+     * caused-by chain of the given exception, or <code>null</code>. Suppressed exceptions are not looked at: an earlier
+     * failure that was handled is not the cause.
+     * <p>
+     * Camel does not recover from such an error on its own (no redelivery, dead letter channel or fallback): only an
+     * onException or a doCatch that names it, or a supertype of it, handles it.
+     *
+     * @param  exception the exception, can be <code>null</code>
+     * @return           the virtual machine error, or <code>null</code> if none
+     * @since            4.24
+     */
+    public static VirtualMachineError getVirtualMachineError(Throwable exception) {
+        Throwable t = exception;
+        for (int depth = 0; t != null && depth < 100; depth++) {
+            if (t instanceof VirtualMachineError vme) {
+                return vme;
+            }
+            t = t.getCause();
+        }
+        return null;
+    }
+
+    /**
      * Retrieves the given exception type from the exception.
      * <p>
      * Is used to get the caused exception that typically have been wrapped in some sort of Camel wrapper exception

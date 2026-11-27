@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.function.ThrowingRunnable;
 
 /**
  * Remote file operations based on some backing framework
@@ -95,6 +96,24 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      */
     default boolean isRecentlyUsed() {
         return false;
+    }
+
+    /**
+     * Runs a check of the connection, such as the noop of the producer health check, unless another thread runs an
+     * operation on the connection at this time, such as an upload of the producer. A health check must not wait for
+     * such an operation: an upload uses the connection for as long as the transfer takes, and on a server that does not
+     * answer, up to the timeout of the connection.
+     * <p>
+     * The default implementation always runs the check.
+     *
+     * @param  check     the check, which can call the operations
+     * @return           {@code true} if the check ran, {@code false} if another thread was using the connection
+     * @throws Exception thrown by the check
+     * @since            4.24
+     */
+    default boolean runIfIdle(ThrowingRunnable<Exception> check) throws Exception {
+        check.run();
+        return true;
     }
 
     /**

@@ -28,40 +28,60 @@ import org.apache.camel.spi.UriParams;
 public class WatsonxDataConfiguration implements Cloneable {
 
     // Authentication
-    @UriParam(label = "security", security = "secret", description = "IBM Cloud API key for authentication")
-    @Metadata(required = true)
+    @UriParam(label = "security", security = "secret",
+              description = "The IBM Cloud API key, exchanged at IBM Cloud IAM for an access token that is sent to"
+                            + " watsonx.data. Required unless oauthProfile is set; when both are set, oauthProfile is"
+                            + " used.")
     private String apiKey;
 
     @UriParam(label = "security",
-              description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
-                            + "When set, the token is acquired from the configured identity provider and used as apiKey. "
-                            + "Requires camel-oauth on the classpath.")
+              description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant."
+                            + " When set, the token of the configured identity provider is sent to watsonx.data as a Bearer"
+                            + " token instead of an IBM Cloud API key, and obtained again when it expires. Requires"
+                            + " camel-oauth on the classpath.")
     private String oauthProfile;
 
     // Connection
     @UriParam(label = "common",
-              description = "The watsonx.data service URL (e.g., https://region.lakehouse.cloud.ibm.com/lakehouse/api/v2)")
+              description = "The base URL of the watsonx.data REST API, to which the IBM SDK appends the resource paths,"
+                            + " for example https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v3. The endpoint does"
+                            + " not start without it.")
     @Metadata(required = true)
     private String serviceUrl;
 
     // Operation
-    @UriParam(label = "producer", description = "The operation to perform")
+    @UriParam(label = "producer",
+              description = "The operation to perform. The CamelIBMWatsonxDataOperation header overrides it; when neither"
+                            + " is set, the exchange fails.")
     private WatsonxDataOperations operation;
 
     // Catalog
-    @UriParam(label = "producer", description = "The catalog name for catalog, schema, and table operations")
+    @UriParam(label = "producer",
+              description = "The name of the catalog for getCatalog, deleteCatalog, getAllColumns and the schema and"
+                            + " table operations, except registerTable, which takes the catalog ID header instead. The"
+                            + " CamelIBMWatsonxDataCatalogName header overrides it.")
     private String catalogName;
 
     // Schema
-    @UriParam(label = "producer", description = "The schema name for schema and table operations")
+    @UriParam(label = "producer",
+              description = "The name of the schema for deleteSchema and the table operations, except registerTable;"
+                            + " getAllColumns returns only the columns of this schema. The"
+                            + " CamelIBMWatsonxDataSchemaName header overrides it. createSchema ignores this option and"
+                            + " takes the name of the new schema from the header only.")
     private String schemaName;
 
     // Engine
-    @UriParam(label = "producer", description = "The engine ID for engine operations and schema/table queries")
+    @UriParam(label = "producer",
+              description = "The ID of the engine that the schema and table operations, except registerTable, run on,"
+                            + " and of the engine that getPrestoEngine and getPrestissimoEngine return. The"
+                            + " CamelIBMWatsonxDataEngineId header overrides it.")
     private String engineId;
 
     // Auth Instance ID
-    @UriParam(label = "common", description = "The watsonx.data instance CRN for API authorization")
+    @UriParam(label = "common",
+              description = "The ID of the watsonx.data instance (on IBM Cloud, the CRN of the instance), sent in the"
+                            + " AuthInstanceId HTTP header of every request. The CamelIBMWatsonxDataAuthInstanceId"
+                            + " header overrides it; when neither is set, the request has no AuthInstanceId header.")
     private String authInstanceId;
 
     public WatsonxDataConfiguration copy() {

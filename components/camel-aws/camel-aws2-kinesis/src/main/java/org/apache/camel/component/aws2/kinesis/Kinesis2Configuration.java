@@ -54,6 +54,12 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
                             + " from 1 to 10000. Not used by the KCL consumer (useKclConsumers).",
               defaultValue = "1000")
     private int maxResultsPerRequest = 1000;
+    @UriParam(label = "consumer", defaultValue = "10",
+              description = "Maximum number of shards that the consumer reads at the same time in a poll, each on a thread of a"
+                            + " thread pool of the consumer, which also routes the records of the shard. With 1 (or less), or a"
+                            + " stream of one shard, the consumer reads the shards one after the other on its own thread. Not used with"
+                            + " shardId, or by the KCL consumer (useKclConsumers).")
+    private int maxConcurrentShards = 10;
     @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records",
               defaultValue = "TRIM_HORIZON")
     private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
@@ -66,10 +72,17 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
               description = "The message timestamp to start polling from. Required if iteratorType is set to AT_TIMESTAMP")
     private String messageTimestamp = "";
     @UriParam(label = "consumer", defaultValue = "ignore",
-              description = "Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail."
-                            + " In case of ignore a WARN message will be logged once and the consumer will not process new messages until restarted,"
-                            + "in case of silent there will be no logging and the consumer will not process new messages until restarted,"
-                            + "in case of fail a ReachedClosedStateException will be thrown")
+              description = "Define what the consumer does when a shard it reads is closed, after it read all the records of"
+                            + " the shard. A split or a merge of shards closes the parent shards, which stay listed for the"
+                            + " retention period of the stream. Possible values are ignore, silent and fail."
+                            + " With ignore a WARN message is logged once and the shard is skipped,"
+                            + " with silent the shard is skipped without logging,"
+                            + " with fail a ReachedClosedStatusException is reported once to the exception handler of the"
+                            + " consumer (logged as a WARN, or routed to the error handler of the route with"
+                            + " bridgeErrorHandler=true) and the shard is then skipped."
+                            + " Without shardId the consumer goes on with the other shards of the stream, which include the"
+                            + " child shards of the closed shard. With shardId the consumer reads only that shard, so it"
+                            + " has no more messages to read once the shard is closed.")
     private Kinesis2ShardClosedStrategyEnum shardClosed = Kinesis2ShardClosedStrategyEnum.ignore;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the Kinesis client")
@@ -163,6 +176,14 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
 
     public void setMaxResultsPerRequest(int maxResultsPerRequest) {
         this.maxResultsPerRequest = maxResultsPerRequest;
+    }
+
+    public int getMaxConcurrentShards() {
+        return maxConcurrentShards;
+    }
+
+    public void setMaxConcurrentShards(int maxConcurrentShards) {
+        this.maxConcurrentShards = maxConcurrentShards;
     }
 
     public String getStreamName() {

@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "dataformat",
     "title": "Data Format",
-    "description": "Use a Camel Data Format as a regular Camel Component.",
+    "description": "Marshal or unmarshal the message body with a Camel data format, such as JAXB, CSV or JSON.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "core,transformation",
@@ -32,8 +32,8 @@
     "producerOut": { "carriers": [ "unknown" ], "description": "The body the data format named in the path gives, as for the marshal and unmarshal EIPs" }
   },
   "properties": {
-    "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of data format" },
-    "operation": { "index": 1, "kind": "path", "displayName": "Operation", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "marshal", "unmarshal" ], "deprecated": false, "autowired": false, "secret": false, "description": "Operation to use either marshal or unmarshal" },
+    "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the data format, for example jaxb, csv or jackson. The endpoint gets its own instance of the data format, configured first from the global camel.dataformat properties of this data format and then from the other URI parameters of the endpoint. If no data format of this name can be created, the DataFormat bean of this name in the registry is used." },
+    "operation": { "index": 1, "kind": "path", "displayName": "Operation", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "marshal", "unmarshal" ], "deprecated": false, "autowired": false, "secret": false, "description": "Whether the producer marshals the message body into the data format (marshal) or unmarshals the message body from the data format (unmarshal), as the marshal and unmarshal EIPs do." },
     "lazyStartProducer": { "index": 2, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
   }
 }

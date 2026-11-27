@@ -2,7 +2,7 @@
 :doctitle: gRPC
 :shortname: grpc
 :artifactid: camel-grpc
-:description: Expose gRPC endpoints and access external gRPC endpoints.
+:description: Expose gRPC services and call remote gRPC services, with Protocol Buffers messages over HTTP/2.
 :since: 2.19
 :supportlevel: Stable
 :tabs-sync-option:
@@ -50,7 +50,7 @@ include::partial$component-endpoint-headers.adoc[]
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 
 * *SSL/TLS:* gRPC has SSL/TLS integration and promotes the use of SSL/TLS to authenticate the server, and to encrypt all the data exchanged between the client and the server. Optional mechanisms are available for clients to provide certificates for mutual authentication.
-* *Token-based authentication with Google:* gRPC provides a generic mechanism to attach metadata-based credentials to requests and responses. Additional support for acquiring access tokens while accessing Google APIs through gRPC is provided. In general, this mechanism must be used as well as SSL/TLS on the channel.
+* *Token-based authentication with Google:* gRPC provides a generic mechanism to attach metadata-based credentials to requests and responses. Additional support for acquiring access tokens while accessing Google APIs through gRPC is provided. In general, this mechanism must be used as well as SSL/TLS on the channel. This mechanism is supported only on the producer: a consumer with `authenticationType=GOOGLE` fails to start, as the consumer has no check of these tokens. To authenticate the clients of a consumer, use JWT or mutual TLS.
 
 To enable these features, the following component properties combinations must be configured:
 
@@ -58,20 +58,34 @@ To enable these features, the following component properties combinations must b
 |=======================================================================
 |Num.|Option |Parameter|Value|Required/Optional
 |1|*SSL/TLS*|negotiationType|TLS|Required
-|||keyCertChainResource||Required
-|||keyResource||Required
+|||keyCertChainResource||Required on a consumer. Optional on a producer: only for mutual TLS, together with keyResource
+|||keyResource||Required on a consumer. Optional on a producer: only for mutual TLS, together with keyCertChainResource
 |||keyPassword||Optional
-|||trustCertCollectionResource||Optional
-|2|*Token-based authentication with Google API*|authenticationType|GOOGLE|Required
+|||trustCertCollectionResource||Required on a consumer: the CA certificates whose client certificates the consumer accepts. Optional on a producer: when not set, a producer verifies the server with the default trust store of the JVM
+|2|*Token-based authentication with Google API* (producer only)|authenticationType|GOOGLE|Required
 |||negotiationType|TLS|Required
 |||serviceAccountResource||Required
 |3|*Custom JSON Web Token implementation authentication*|authenticationType|JWT|Required
-|||negotiationType|NONE or TLS|Optional. The TLS/SSL not checking for this type, but strongly recommended.
+|||negotiationType|PLAINTEXT or TLS|Optional, but TLS is strongly recommended: with PLAINTEXT the token is sent in clear text, and whoever reads it can make calls with it until it expires
 |||jwtAlgorithm|HMAC256(default) or (HMAC384,HMAC512)|Optional
 |||jwtSecret||Required
 |||jwtIssuer||Optional
 |||jwtSubject||Optional
+|||jwtTokenLifetime|1 hour (default)|Optional. On a producer: how long a token is valid (the exp claim). 0 sends a token without expiry
+|||jwtMaxTokenAge||Optional. On a consumer: the maximum age of a token by its iat claim. Not checked by default
 |=======================================================================
+
+==== JSON Web Token expiry
+
+With `authenticationType=JWT`, the producer sends a token with the `iat` (issued at) and `exp` (expires at) claims,
+which is valid for `jwtTokenLifetime` (1 hour by default). The producer creates a new token when less than a tenth of
+the lifetime, at most one minute, is left of the current one. With `jwtTokenLifetime=0` the producer sends a token
+without `iat` and `exp`, as before Camel 4.24, which is valid until `jwtSecret` changes.
+
+The consumer rejects a token whose `exp` claim has passed, and a token whose `iat` claim is in the future. A clock
+difference of up to one minute between the hosts is accepted. A token without `exp`, such as one from another client,
+is accepted until `jwtSecret` changes, unless `jwtMaxTokenAge` is set: then the consumer also rejects a token that is
+older than `jwtMaxTokenAge` by its `iat` claim, or that has no `iat` claim.
 
 === gRPC consumer reply
 
@@ -514,6 +528,48 @@ YAML::
       steps:
         - to:
             uri: direct:tls-enable
+----
+====
+
+gRPC service producer with TLS, where only the server is authenticated. The server certificate is verified with
+`trustCertCollectionResource`, or with the default trust store of the JVM when that option is not set. Add
+`keyCertChainResource` and `keyResource` only when the server requires a client certificate (mutual TLS).
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:grpc-tls")
+    .to("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&negotiationType=TLS&trustCertCollectionResource=file:src/test/resources/certs/ca.pem");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:grpc-tls"/>
+  <to uri="grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&amp;synchronous=true&amp;negotiationType=TLS&amp;trustCertCollectionResource=file:src/test/resources/certs/ca.pem"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:grpc-tls
+      steps:
+        - to:
+            uri: grpc://localhost:1101/org.apache.camel.component.grpc.PingPong
+            parameters:
+              method: pingSyncSync
+              synchronous: true
+              negotiationType: TLS
+              trustCertCollectionResource: "file:src/test/resources/certs/ca.pem"
 ----
 ====
 

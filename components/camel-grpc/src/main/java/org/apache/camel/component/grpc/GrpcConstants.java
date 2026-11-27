@@ -43,21 +43,22 @@ public interface GrpcConstants {
     /*
      * This headers will be set after gRPC consumer method is invoked
      */
-    @org.apache.camel.spi.Metadata(label = "consumer", description = "Method name handled by the consumer service",
+    @org.apache.camel.spi.Metadata(label = "consumer",
+                                   description = "The name of the method that the client called, as the Java method name in"
+                                                 + " lowerCamelCase, for example sendPing. The consumer sets it.",
                                    javaType = "String")
     String GRPC_METHOD_NAME_HEADER = "CamelGrpcMethodName";
     @org.apache.camel.spi.Metadata(label = "consumer",
-                                   description = "If provided, the given agent will prepend the gRPC library's user agent information",
+                                   description = "The user agent of the client that made the call, from the user-agent header"
+                                                 + " of the request. The consumer sets it.",
                                    javaType = "String")
     String GRPC_USER_AGENT_HEADER = "CamelGrpcUserAgent";
-    @org.apache.camel.spi.Metadata(label = "consumer", description = """
-            Received event type from the sent request.
-
-            Possible values:
-
-            * onNext
-            * onCompleted
-            * onError""",
+    @org.apache.camel.spi.Metadata(label = "consumer",
+                                   description = "The event of the stream: onNext for a message, onCompleted when the stream"
+                                                 + " completes, or onError when it fails. The consumer sets it for client and"
+                                                 + " bidirectional streaming calls, and the producer on the exchanges that it"
+                                                 + " sends to streamRepliesTo. The STREAMING producer and a producer with"
+                                                 + " toRouteControlledStreamObserver read it to select the event to send.",
                                    javaType = "String")
     String GRPC_EVENT_TYPE_HEADER = "CamelGrpcEventType";
 

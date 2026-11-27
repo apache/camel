@@ -533,12 +533,27 @@ public class LlmClient {
 
     // -- Simple generate (for explain) --
 
-    String generate(String systemPrompt, String userPrompt) {
+    /**
+     * The result of a {@link #generate} call: the full text of the response, and whether the response was truly
+     * streamed. When {@code streamed} is {@code true}, the text was printed token-by-token as it arrived (Ollama,
+     * Anthropic when stream is on) and the caller MUST NOT print it again. When {@code streamed} is {@code false}, the
+     * text was returned from the provider as a complete response and the caller is responsible for printing it.
+     */
+    record GenerateResponse(String text, boolean streamed) {
+    }
+
+    GenerateResponse generate(String systemPrompt, String userPrompt) {
         return switch (apiType) {
-            case ollama -> generateOllama(systemPrompt, userPrompt);
-            case openai, watsonx -> generateOpenAi(systemPrompt, userPrompt);
-            case anthropic -> generateAnthropic(systemPrompt, userPrompt);
-            case gemini -> generateGemini(systemPrompt, userPrompt);
+            case ollama -> {
+                String text = generateOllama(systemPrompt, userPrompt);
+                yield new GenerateResponse(text, stream);
+            }
+            case openai, watsonx -> new GenerateResponse(generateOpenAi(systemPrompt, userPrompt), false);
+            case anthropic -> {
+                String text = generateAnthropic(systemPrompt, userPrompt);
+                yield new GenerateResponse(text, stream);
+            }
+            case gemini -> new GenerateResponse(generateGemini(systemPrompt, userPrompt), false);
         };
     }
 
@@ -2348,6 +2363,16 @@ public class LlmClient {
                 }
                 continue;
             }
+            // For OpenAI-compatible endpoints, normalizeOpenAiModelsUrl() strips a trailing /v1 before
+            // appending /v1/models, preventing a double-prefix when the user supplies a URL ending in /v1.
+            // It also passes the API key so that servers requiring auth don't return 401 (treated as unreachable).
+            if (check.getValue() == ApiType.openai) {
+                if (tryHealthCheck(normalizeOpenAiModelsUrl(url), buildOpenAiAuthHeaders(resolveApiKey()))) {
+                    apiType = ApiType.openai;
+                    return true;
+                }
+                continue;
+            }
             if (tryHealthCheck(url + check.getKey())) {
                 apiType = check.getValue();
                 return true;
@@ -2637,8 +2662,26 @@ public class LlmClient {
             String base = normalizeGeminiBaseUrl(endpoint);
             return tryHealthCheck(base + "/models", buildGeminiHeaders(key));
         }
-        return tryHealthCheck(endpoint + "/api/tags", Map.of(), false)
-                || tryHealthCheck(endpoint + "/v1/models", Map.of(), false)
+        // normalizeOpenAiModelsUrl strips any trailing /v1, /v1/, or /v1/chat/completions suffix before
+        // appending /v1/models, preventing a double-prefix (/v1/v1/models) when the caller supplies a URL
+        // that already ends with /v1 or /v1/.
+        // The API key is forwarded only on the /v1/models probe (OpenAI-compatible) to avoid leaking credentials
+        // onto the Ollama /api/tags or root probes.
+        // The Bearer header is sent only when the api type is null (auto-detect) or explicitly openai; for
+        // anthropic or ollama the probe goes unauthenticated because those APIs use different auth schemes.
+        // The Ollama /api/tags probe uses the original endpoint (minus trailing slash): stripping /v1
+        // for the OpenAI probe must not widen the Ollama probe scope (e.g. --api-type=ollama
+        // --url http://host:11434/v1 must probe /v1/api/tags, not /api/tags, so it correctly fails
+        // rather than incorrectly detecting an Ollama server and then failing on /v1/api/generate later).
+        // For the same reason the /v1/models probe is skipped for --api-type=ollama: Ollama answers
+        // /v1/models itself (its OpenAI-compatible API), but the ollama api type calls <url>/api/generate.
+        String base = stripTrailingSlash(endpoint);
+        String openAiModelsUrl = normalizeOpenAiModelsUrl(endpoint);
+        Map<String, String> openAiHeaders = (apiType == null || apiType == ApiType.openai)
+                ? buildOpenAiAuthHeaders(resolveApiKey())
+                : Map.of();
+        return tryHealthCheck(base + "/api/tags", Map.of(), false)
+                || apiType != ApiType.ollama && tryHealthCheck(openAiModelsUrl, openAiHeaders, false)
                 || tryHealthCheck(endpoint, Map.of(), false);
     }
 

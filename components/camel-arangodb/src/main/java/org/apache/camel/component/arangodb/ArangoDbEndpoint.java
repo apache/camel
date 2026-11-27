@@ -29,15 +29,13 @@ import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
+ * Store, find, update and delete documents, vertices and edges in an ArangoDB database, and run AQL queries.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database",
              category = { Category.DATABASE }, producerOnly = true, headersClass = ArangoDbConstants.class)
@@ -112,14 +110,19 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " a query that returns nothing; and true for a delete of a vertex or edge"))
 public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath(description = "database name")
-    @Metadata(required = true)
-    private String database;
     @UriParam
     private ArangoDbConfiguration configuration;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom com.arangodb.ArangoDB client. When it is set, or set on the component, the host,"
+                            + " port, user, password and vertx options are not used, and the endpoint does not shut the client"
+                            + " down.")
     private ArangoDB arangoDB;
-    @UriParam(label = "advanced")
+    // whether doStart built the client, so the endpoint shuts down only a client it owns
+    private boolean ownsArangoDB;
+    @UriParam(label = "advanced",
+              description = "To use a custom io.vertx.core.Vertx instance for the HTTP connections of the ArangoDB client that"
+                            + " the endpoint creates. If not set, the ArangoDB driver creates its own Vert.x instance. Not used"
+                            + " when the arangoDB option sets a client.")
     private Vertx vertx;
 
     public ArangoDbEndpoint() {
@@ -132,6 +135,10 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
 
     @Override
     public String getServiceUrl() {
+        // with a client set or autowired, host and port are not used
+        if (ObjectHelper.isEmpty(configuration.getHost())) {
+            return null;
+        }
         return configuration.getHost() + ":" + configuration.getPort();
     }
 
@@ -166,9 +173,6 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
         return arangoDB;
     }
 
-    /**
-     * To use an existing ArangDB client.
-     */
     public void setArangoDB(ArangoDB arangoDB) {
         this.arangoDB = arangoDB;
     }
@@ -177,9 +181,6 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
         return vertx;
     }
 
-    /**
-     * To use an existing Vertx instance in the ArangoDB client.
-     */
     public void setVertx(Vertx vertx) {
         this.vertx = vertx;
     }
@@ -197,12 +198,16 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
         super.doStart();
 
         if (arangoDB == null) {
+            // fail at startup, rather than connecting to port 0 or failing in the driver without naming the options
+            if (ObjectHelper.isEmpty(configuration.getHost()) || configuration.getPort() <= 0) {
+                throw new IllegalArgumentException(
+                        "The host and port options must be set on the arangodb endpoint, or on the component configuration,"
+                                                   + " unless the arangoDB option sets a client. host: "
+                                                   + configuration.getHost() + ", port: " + configuration.getPort());
+            }
 
             final ArangoDB.Builder builder = new ArangoDB.Builder();
-
-            if (ObjectHelper.isNotEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                builder.host(configuration.getHost(), configuration.getPort());
-            }
+            builder.host(configuration.getHost(), configuration.getPort());
 
             if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
                 builder.user(configuration.getUser()).password(configuration.getPassword());
@@ -213,6 +218,7 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
             }
 
             arangoDB = builder.build();
+            ownsArangoDB = true;
         }
 
     }
@@ -220,8 +226,11 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        if (arangoDB != null) {
+        // a client that was set or autowired may be shared with other endpoints: leave it to its owner
+        if (arangoDB != null && ownsArangoDB) {
             arangoDB.shutdown();
+            arangoDB = null;
+            ownsArangoDB = false;
         }
     }
 }

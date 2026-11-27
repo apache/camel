@@ -137,6 +137,9 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         getEndpoint().setResponseOnExchange(response, exchange);
 
         exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
+        // the container the blob comes from, which names the CloudEvent source. It is not the BLOB_CONTAINER_NAME
+        // header, as that header overrides the container of a producer, which would then write to this container
+        exchange.getIn().setHeader(BlobConstants.CONSUMED_CONTAINER_NAME, getEndpoint().getConfiguration().getContainerName());
         return exchange;
     }
 

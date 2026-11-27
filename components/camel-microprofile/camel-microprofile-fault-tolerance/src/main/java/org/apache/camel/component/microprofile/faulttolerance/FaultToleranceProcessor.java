@@ -300,7 +300,8 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
                 exchangeWriteGuard.set(true);
                 // Do fallback if applicable. Note that a fallback handler is not configured on the TypedGuard builder
                 // and is instead invoked manually here since we need access to the message exchange on each FaultToleranceProcessor.process call
-                if (fallbackProcessor != null) {
+                // a VirtualMachineError fails the exchange: Camel does not recover from it with a fallback (CAMEL-27515)
+                if (fallbackProcessor != null && ObjectHelper.getVirtualMachineError(e) == null) {
                     // store guard exception so the fallback can see it via Exchange.EXCEPTION_CAUGHT
                     exchange.setException(e);
                     fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, null);

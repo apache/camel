@@ -19,29 +19,26 @@ package org.apache.camel.component.bean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.sanitizer.Violation;
-import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A bean method that throws an {@link Error} is handled as a bean that is a {@link org.apache.camel.Processor}: an
- * {@link Error} such as an {@link AssertionError} fails the exchange and the error handler gets it, while a
- * {@link VirtualMachineError} (such as an {@link OutOfMemoryError} or a {@link StackOverflowError}) is not given to
- * Camel's error handling (onException, doCatch, the dead letter channel, redelivery) but thrown on after the callback.
+ * {@link Error} such as an {@link AssertionError} fails the exchange and the error handler gets it. A
+ * {@link VirtualMachineError} (such as an {@link OutOfMemoryError} or a {@link StackOverflowError}) fails the exchange
+ * too (CAMEL-27515), but only an onException or a doCatch that names it or a supertype handles it, as a Java catch: the
+ * dead letter channel and redelivery do not.
  */
 public class BeanMethodThrowsErrorTest extends ContextTestSupport {
 
@@ -86,41 +83,34 @@ public class BeanMethodThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
-    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
-    public void stackOverflowErrorOfABeanMethodIsNotGivenToOnException() throws Exception {
-        getMockEndpoint("mock:handled").expectedMessageCount(0);
+    public void stackOverflowErrorOfABeanMethodIsHandledByOnExceptionOfThrowable() throws Exception {
+        getMockEndpoint("mock:handled").expectedMessageCount(1);
 
         Exchange out = template.send("direct:vm-handled", e -> e.getMessage().setBody("Hello"));
 
-        // as a bean that is a Processor: the error handler logs the Error and continues the exchange, without onException
+        // the route names a supertype of the Error, as a Java catch(Throwable): it handles it
         assertNull(out.getException());
         assertEquals(1, calls.get());
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
-    public void outOfMemoryErrorOfABeanMethodIsNotGivenToDoCatch() throws Exception {
-        // as a bean that is a Processor, the exchange stays inflight, so do not wait for it when the context stops
-        context.getShutdownStrategy().setTimeUnit(TimeUnit.MILLISECONDS);
-        context.getShutdownStrategy().setTimeout(100);
-        getMockEndpoint("mock:caught").expectedMessageCount(0);
+    public void outOfMemoryErrorOfABeanMethodIsCaughtByDoCatchOfThrowable() throws Exception {
+        getMockEndpoint("mock:caught").expectedMessageCount(1);
 
-        OutOfMemoryError thrown = assertThrows(OutOfMemoryError.class,
-                () -> template.send("direct:vm-try", e -> e.getMessage().setBody("Hello")));
+        Exchange out = template.send("direct:vm-try", e -> e.getMessage().setBody("Hello"));
 
-        assertSame(OOM, thrown);
+        assertNull(out.getException());
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     public void stackOverflowErrorOfABeanMethodIsNotRedeliveredNorGivenToTheDeadLetterChannel() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 
         Exchange out = template.send("direct:vm-dlc", e -> e.getMessage().setBody("Hello"));
 
-        assertNull(out.getException());
+        assertSame(SOE, assertIsInstanceOf(CamelExecutionException.class, out.getException()).getCause());
         assertEquals(1, calls.get(), "The exchange was redelivered");
         assertMockEndpointsSatisfied();
     }
@@ -139,16 +129,16 @@ public class BeanMethodThrowsErrorTest extends ContextTestSupport {
     }
 
     @Test
-    public void beanProcessorThrowsAVirtualMachineErrorOnAfterTheCallback() throws Exception {
+    public void beanProcessorFailsTheExchangeWithAVirtualMachineError() throws Exception {
         BeanProcessor processor = startedBeanProcessor(new ThrowingBean(OOM, calls));
         Exchange exchange = createExchangeWithBody("Hello");
         List<Boolean> done = new ArrayList<>();
 
-        OutOfMemoryError thrown = assertThrows(OutOfMemoryError.class, () -> processor.process(exchange, done::add));
+        boolean sync = processor.process(exchange, done::add);
 
-        assertSame(OOM, thrown);
+        assertTrue(sync);
         assertEquals(List.of(true), done);
-        assertNull(exchange.getException());
+        assertSame(OOM, assertIsInstanceOf(CamelExecutionException.class, exchange.getException()).getCause());
     }
 
     private BeanProcessor startedBeanProcessor(Object bean) {

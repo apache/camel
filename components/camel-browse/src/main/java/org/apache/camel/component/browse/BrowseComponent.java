@@ -27,7 +27,9 @@ import org.apache.camel.support.DefaultComponent;
 public class BrowseComponent extends DefaultComponent {
 
     @Metadata(label = "advanced",
-              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+              description = "The maximum number of messages that each endpoint keeps in memory for browsing, for the"
+                            + " endpoints that do not set their own browseLimit. When a new message goes over the limit, the"
+                            + " oldest message is removed from the list. Use 0 for no limit.")
     private int browseLimit;
 
     public BrowseComponent() {

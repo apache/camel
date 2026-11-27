@@ -32,6 +32,7 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import io.quarkiverse.mcp.server.ToolGuardrails;
 import org.apache.camel.dataformat.xsdjson.XsdJsonSamples;
+import org.apache.camel.dsl.jbang.core.common.ScratchContextHelper;
 import org.apache.camel.dsl.jbang.wsdl.WsdlModel;
 import org.apache.camel.dsl.jbang.wsdl.WsdlModel.Fault;
 import org.apache.camel.dsl.jbang.wsdl.WsdlModel.Operation;
@@ -225,7 +226,7 @@ public class WsdlTools {
                                   + " is not read, as the WSDL is given as content");
         };
         Map<Port, List<Sample>> answer = new LinkedHashMap<>();
-        try (DefaultCamelContext context = new DefaultCamelContext()) {
+        try (DefaultCamelContext context = ScratchContextHelper.withoutCliConnector(new DefaultCamelContext())) {
             context.start();
             XsdJsonSamples xsd;
             try {

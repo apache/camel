@@ -26,12 +26,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * Represents the component that manages {@link MustacheEndpoint}. URI pattern:
- * {@code mustache://template_name.mustache} Supports parameters:
- * <ul>
- * <li>encoding: default platform one</li>
- * <li>startDelimiter: default "{{"</li>
- * <li>endDelimiter: default "}}"</li></li>
+ * The Mustache component, which creates {@link MustacheEndpoint} instances.
  */
 @Component("mustache")
 public class MustacheComponent extends DefaultComponent {
@@ -42,7 +37,11 @@ public class MustacheComponent extends DefaultComponent {
     private boolean allowTemplateFromHeader;
     @Metadata
     private boolean allowContextMapAll;
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use a custom com.github.mustachejava.MustacheFactory, which compiles the templates of all"
+                            + " endpoints of the component and reads the partials that they include. If not set, the"
+                            + " component uses a com.github.mustachejava.DefaultMustacheFactory. The startDelimiter and"
+                            + " endDelimiter options are only applied with a DefaultMustacheFactory.")
     private MustacheFactory mustacheFactory;
 
     public MustacheComponent() {
@@ -72,9 +71,6 @@ public class MustacheComponent extends DefaultComponent {
         return mustacheFactory;
     }
 
-    /**
-     * To use a custom {@link MustacheFactory}
-     */
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }

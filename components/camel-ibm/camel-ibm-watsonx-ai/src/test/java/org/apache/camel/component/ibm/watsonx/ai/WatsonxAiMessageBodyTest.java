@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibm.watsonx.ai;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -33,8 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.watsonx.ai.chat.ChatService;
 import com.ibm.watsonx.ai.chat.model.SystemMessage;
 import com.ibm.watsonx.ai.chat.model.UserMessage;
@@ -52,6 +51,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -211,8 +212,8 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         assertEquals("Paris", result.getMessage().getBody());
         JsonNode messages = request("/ml/v1/text/chat").get("messages");
         assertEquals(2, messages.size());
-        assertEquals("system", messages.get(0).get("role").asText());
-        assertEquals("Answer in one word", messages.get(0).get("content").asText());
+        assertEquals("system", messages.get(0).get("role").asString());
+        assertEquals("Answer in one word", messages.get(0).get("content").asString());
         assertUserMessage("What is the capital of France?", messages.get(1));
     }
 
@@ -224,7 +225,7 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         assertEquals("Paris", result.getMessage().getBody());
         JsonNode messages = request("/ml/v1/text/chat").get("messages");
         assertEquals(2, messages.size());
-        assertEquals("system", messages.get(0).get("role").asText());
+        assertEquals("system", messages.get(0).get("role").asString());
         assertUserMessage("What is the capital of France?", messages.get(1));
     }
 
@@ -319,7 +320,7 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         assertNoException(result);
         JsonNode messages = request("/ml/v1/text/chat").get("messages");
         assertEquals(2, messages.size());
-        assertEquals("Answer in one word", messages.get(0).get("content").asText());
+        assertEquals("Answer in one word", messages.get(0).get("content").asString());
         assertUserMessage("What is the capital of France?", messages.get(1));
     }
 
@@ -400,6 +401,34 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void chatReadsAByteArrayOutputStreamBodyAsTheUserMessage() throws Exception {
+        // the body camel-tika parse produces, a payload like bytes
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.writeBytes("What is Apache Camel?".getBytes(StandardCharsets.UTF_8));
+
+        call(WatsonxAiOperations.chat, body);
+
+        assertUserMessage("What is Apache Camel?", request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    @Test
+    void chatDecodesAByteArrayOutputStreamBodyWithTheCharsetOfTheExchange() throws Exception {
+        // camel-tika parse sets the charset of the text it writes; toString() would decode with the platform default
+        String text = "Z\u00fcrich";
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.writeBytes(text.getBytes(StandardCharsets.ISO_8859_1));
+
+        Exchange result = template.send("direct:watsonx", exchange -> {
+            exchange.getIn().setHeader(WatsonxAiConstants.OPERATION, WatsonxAiOperations.chat);
+            exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+            exchange.getIn().setBody(body);
+        });
+
+        assertNoException(result);
+        assertUserMessage(text, request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    @Test
     void chatFailsWithoutABody() {
         Exchange result = send(WatsonxAiOperations.chat, null);
 
@@ -436,6 +465,60 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void embeddingFailsForAListWithAnotherElement() {
+        List<Object> body = new ArrayList<>();
+        body.add("Apache Camel");
+        body.add(42);
+
+        Exchange result = send(WatsonxAiOperations.embedding, body);
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
+        assertTrue(e.getMessage().contains("must be Strings"), e.getMessage());
+        assertTrue(e.getMessage().contains("index 1 is java.lang.Integer"), e.getMessage());
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/embeddings"), "no request is sent");
+    }
+
+    @Test
+    void embeddingFailsForANullElementInTheInputsHeader() {
+        List<Object> inputs = new ArrayList<>();
+        inputs.add("Apache Camel");
+        inputs.add(null);
+
+        Exchange result = template.send("direct:watsonx", exchange -> {
+            exchange.getIn().setHeader(WatsonxAiConstants.OPERATION, WatsonxAiOperations.embedding);
+            exchange.getIn().setHeader(WatsonxAiConstants.INPUTS, inputs);
+        });
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
+        assertTrue(e.getMessage().contains("header '" + WatsonxAiConstants.INPUTS + "'"), e.getMessage());
+        assertTrue(e.getMessage().contains("index 1 is null"), e.getMessage());
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/embeddings"), "no request is sent");
+    }
+
+    /** A value whose text is its toString() is read as text, as a single body is. */
+    @Test
+    void embeddingReadsAUuidInAListAsItsText() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        call(WatsonxAiOperations.embedding, List.of("Apache Camel", uuid));
+
+        assertInputs(request("/ml/v1/text/embeddings").get("inputs"), "Apache Camel", uuid.toString());
+    }
+
+    @Test
+    void rerankFailsForAListWithAMapElement() {
+        List<Object> body = new ArrayList<>();
+        body.add("Apache Camel is an integration framework");
+        body.add(Map.of("text", "Camel routes messages"));
+
+        Exchange result = rerank(body);
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
+        assertTrue(e.getMessage().contains("must be Strings"), e.getMessage());
+        assertTrue(e.getMessage().contains("index 1 is java.util."), e.getMessage());
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/rerank"), "no request is sent");
+    }
+
+    @Test
     void embeddingFailsWithoutABody() {
         Exchange result = send(WatsonxAiOperations.embedding, null);
 
@@ -449,9 +532,9 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
 
         assertNoException(result);
         JsonNode request = request("/ml/v1/text/rerank");
-        assertEquals("What is Apache Camel?", request.get("query").asText());
+        assertEquals("What is Apache Camel?", request.get("query").asString());
         assertEquals(1, request.get("inputs").size());
-        assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asText());
+        assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asString());
     }
 
     @Test
@@ -462,7 +545,7 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         assertNoException(result);
         JsonNode request = request("/ml/v1/text/rerank");
         assertEquals(1, request.get("inputs").size());
-        assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asText());
+        assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asString());
     }
 
     // a Map or a POJO body, which Camel reads only as its toString()
@@ -596,13 +679,13 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
     }
 
     private static void assertUserMessage(String expected, JsonNode message) {
-        assertEquals("user", message.get("role").asText(), message.toString());
-        assertEquals(expected, message.get("content").get(0).get("text").asText(), message.toString());
+        assertEquals("user", message.get("role").asString(), message.toString());
+        assertEquals(expected, message.get("content").get(0).get("text").asString(), message.toString());
     }
 
     private static void assertInputs(JsonNode inputs, String... expected) {
         List<String> actual = new ArrayList<>();
-        inputs.forEach(input -> actual.add(input.asText()));
+        inputs.forEach(input -> actual.add(input.asString()));
         assertEquals(List.of(expected), actual);
     }
 

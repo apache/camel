@@ -25,8 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +41,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAction;
 import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.resume.ResumeActionAware;
@@ -74,13 +80,20 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private KinesisConnection connection;
     private ResumeStrategy resumeStrategy;
 
-    // Written concurrently from poll()'s parallelStream over the shard list, so both must be thread-safe.
+    // Written concurrently by the shards that poll() reads at the same time, so both must be thread-safe.
     private final Map<String, String> currentShardIterators = new ConcurrentHashMap<>();
     private final Set<String> warnLogged = ConcurrentHashMap.newKeySet();
+    // The closed shards reported to the exception handler with shardClosed=fail: each one once while the consumer runs
+    // (cleared when it stops), as a closed shard stays listed for the retention period of the stream
+    private final Set<String> closedShardsReported = ConcurrentHashMap.newKeySet();
     // The sequence number of the last record routed from each shard: the position of a new shard iterator when the
     // cached one has expired. Like the cached iterators it is not cleared in doStop, and a route that is stopped and
     // started gets a new consumer.
     private final Map<String, String> lastSequenceNumbers = new ConcurrentHashMap<>();
+    // The shards of which no record was routed yet, and whose first response with records was not routed at all as
+    // the route was being stopped or suspended: the sequence number of the first record of that response, where the
+    // next shard iterator starts
+    private final Map<String, String> firstNotRoutedSequenceNumbers = new ConcurrentHashMap<>();
     // The time the consumer asked for the first LATEST iterator of each shard: where it continues a shard from which it
     // has not routed a record yet when that iterator has expired (a LATEST iterator again would skip the records stored
     // in between)
@@ -89,10 +102,17 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     // appeared after the first list as the child of a listed shard (resharding).
     private final Set<String> knownShardIds = ConcurrentHashMap.newKeySet();
     private final Set<String> childShardIds = ConcurrentHashMap.newKeySet();
+    // The failure of the last ListShards of the shard monitor, null once a ListShards succeeded. While the shards have
+    // not been listed, poll() reports it, so that a consumer that cannot list the shards (no permission, no such
+    // stream) is not seen healthy while it reads nothing.
+    private volatile Throwable shardListError;
 
     private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
     private ScheduledExecutorService shardMonitorExecutor;
+    // Reads the shards of a poll at the same time (maxConcurrentShards), and routes their records
+    private static final String SHARD_READER_EXECUTOR_NAME = "Kinesis_shard_reader";
+    private volatile ExecutorService shardReaderExecutor;
 
     public Kinesis2Consumer(Kinesis2Endpoint endpoint,
                             Processor processor) {
@@ -115,6 +135,19 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     protected int poll() throws Exception {
         var processedExchangeCount = new AtomicInteger(0);
 
+        List<Shard> shardList = getCurrentShardList();
+        if (shardList.isEmpty()) {
+            // the shard monitor has not listed the shards yet, so there is nothing to read
+            Throwable error = shardListError;
+            if (error != null) {
+                throw new IllegalStateException(
+                        "Cannot list the shards of stream " + getEndpoint().getConfiguration().getStreamName() + ": "
+                                                + error,
+                        error);
+            }
+            return 0;
+        }
+
         String shardId = getEndpoint().getConfiguration().getShardId();
         if (!shardId.isEmpty()) {
             // skip if the shard is closed
@@ -127,7 +160,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             // Use the cached shard list from ShardMonitor instead of calling DescribeStream
             // on every poll. ShardMonitor uses ListShards (paginated, 100 TPS limit) vs
             // DescribeStream (unpaginated, 10 TPS limit).
-            Shard shard = getCurrentShardList().stream()
+            Shard shard = shardList.stream()
                     .filter(s -> s.shardId().equalsIgnoreCase(shardId))
                     .findFirst()
                     .orElse(null);
@@ -141,15 +174,93 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
 
         } else {
-            getCurrentShardList()
-                    .parallelStream()
-                    .forEach(shard -> fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount));
+            readShards(shardList, processedExchangeCount);
         }
 
         // okay we have some response from aws so lets mark the consumer as ready
         forceConsumerAsReady();
 
         return processedExchangeCount.get();
+    }
+
+    /**
+     * Reads the shards of the list, up to maxConcurrentShards at the same time on the shard reader thread pool (with
+     * one shard, or without that pool, one after the other on the thread of the poll), and returns once all of them
+     * have been read. Each shard catches its own failure, so that the other shards are read and routed all the same,
+     * and the next poll does not start while a shard of this one is still being read: the poll then fails with the
+     * failure of the first shard that failed, and those of the other shards as suppressed exceptions.
+     */
+    private void readShards(List<Shard> shardList, AtomicInteger processedExchangeCount) throws InterruptedException {
+        Queue<RuntimeException> failures = new ConcurrentLinkedQueue<>();
+        ExecutorService executor = shardReaderExecutor;
+        if (executor == null || shardList.size() == 1) {
+            for (Shard shard : shardList) {
+                readShard(shard, processedExchangeCount, failures);
+            }
+        } else {
+            List<Future<?>> reads = new ArrayList<>(shardList.size());
+            try {
+                for (Shard shard : shardList) {
+                    reads.add(executor.submit(() -> readShard(shard, processedExchangeCount, failures)));
+                }
+            } catch (RejectedExecutionException e) {
+                // the consumer is being stopped
+                failures.add(e);
+            }
+            awaitShardReads(reads, failures);
+        }
+        RuntimeException failure = failures.poll();
+        if (failure != null) {
+            for (RuntimeException other : failures) {
+                if (other != failure) {
+                    failure.addSuppressed(other);
+                }
+            }
+            throw failure;
+        }
+    }
+
+    private void readShard(Shard shard, AtomicInteger processedExchangeCount, Queue<RuntimeException> failures) {
+        try {
+            fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
+        } catch (RuntimeException e) {
+            failures.add(e);
+        }
+    }
+
+    private static void awaitShardReads(List<Future<?>> reads, Queue<RuntimeException> failures)
+            throws InterruptedException {
+        Error error = null;
+        try {
+            for (Future<?> read : reads) {
+                try {
+                    read.get();
+                } catch (CancellationException e) {
+                    // not started before the consumer was stopped
+                } catch (ExecutionException e) {
+                    // readShard keeps the exceptions of a shard, so this is an Error
+                    if (e.getCause() instanceof Error err) {
+                        if (error == null) {
+                            error = err;
+                        } else {
+                            error.addSuppressed(err);
+                        }
+                    } else {
+                        failures.add(RuntimeCamelException.wrapRuntimeException(e.getCause()));
+                    }
+                }
+            }
+        } catch (InterruptedException e) {
+            // a forced stop interrupts the thread of the poll: interrupt the reads of the shards too, which run on
+            // threads of their own
+            for (Future<?> read : reads) {
+                read.cancel(true);
+            }
+            throw e;
+        }
+        if (error != null) {
+            throw error;
+        }
     }
 
     private void fetchAndPrepareRecordsForCamel(
@@ -192,20 +303,55 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             result = getRecords(shardIterator, kinesisConnection);
         }
 
+        List<Record> records = result.records();
+        Queue<Exchange> exchanges = createExchanges(shard, records);
+        int routed;
         try {
-            Queue<Exchange> exchanges = createExchanges(shard, result.records());
-            processedExchangeCount.addAndGet(processBatch(CastUtils.cast(exchanges)));
+            routed = processBatch(CastUtils.cast(exchanges));
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+        processedExchangeCount.addAndGet(routed);
+
+        if (routed < records.size()) {
+            // the route is being stopped or suspended, and processBatch did not route the rest of the records
+            batchCutShort(shard.shardId(), records, routed, exchanges);
+            return;
         }
 
         // remember the last record of the batch, to continue after it when the next shard iterator has expired
         // before it is used (an iterator is valid for 5 minutes)
-        List<Record> records = result.records();
         if (!records.isEmpty()) {
             lastSequenceNumbers.put(shard.shardId(), records.get(records.size() - 1).sequenceNumber());
+            firstNotRoutedSequenceNumbers.remove(shard.shardId());
         }
         updateShardIterator(shard, result.nextShardIterator());
+    }
+
+    /**
+     * Does not move past the records of the response that were not routed, so that the next poll of this consumer
+     * (after a resume) routes them: the next shard iterator of the response is not kept (a null one, of a closed shard,
+     * would mark the shard closed before its last records are routed), and the next poll requests a new iterator at the
+     * first record that was not routed.
+     */
+    private void batchCutShort(String shardId, List<Record> records, int routed, Queue<Exchange> notRouted) {
+        if (routed > 0) {
+            // AFTER_SEQUENCE_NUMBER of the last routed record
+            lastSequenceNumbers.put(shardId, records.get(routed - 1).sequenceNumber());
+            firstNotRoutedSequenceNumbers.remove(shardId);
+        } else if (!lastSequenceNumbers.containsKey(shardId)) {
+            // nothing routed from the shard yet: AT_SEQUENCE_NUMBER of the first record of the response, and not the
+            // configured iterator type again (it would skip these records with LATEST)
+            firstNotRoutedSequenceNumbers.put(shardId, records.get(0).sequenceNumber());
+        }
+        currentShardIterators.remove(shardId);
+        LOG.debug("Routed {} of the {} records of shard {} on stream {} before the consumer stopped or was suspended",
+                routed, records.size(), shardId, getEndpoint().getConfiguration().getStreamName());
+        // processBatch removes the exchanges it routes: those left are never routed, and nothing else gives them back
+        // to the exchange factory
+        for (Exchange exchange : notRouted) {
+            releaseExchange(exchange, true);
+        }
     }
 
     private GetRecordsResponse getRecords(String shardIterator, KinesisConnection kinesisConnection) {
@@ -245,10 +391,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         currentShardIterators.put(shard.shardId(), nextShardIterator == null ? CLOSED_SHARD_ITERATOR : nextShardIterator);
     }
 
+    /**
+     * Routes the exchanges one after the other, and stops when the route is being stopped or suspended (unless its
+     * shutdownRunningTask is CompleteAllTasks): the exchanges that are not routed stay in the queue.
+     */
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int processedExchanges = 0;
-        while (!exchanges.isEmpty()) {
+        while (!exchanges.isEmpty() && isBatchAllowed()) {
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
 
             // use default consumer callback
@@ -257,6 +407,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             processedExchanges++;
         }
         return processedExchanges;
+    }
+
+    /**
+     * Not ready before the shard monitor has listed the shards of the stream: until then a poll reads nothing.
+     */
+    @Override
+    public boolean isConsumerReady() {
+        return !getCurrentShardList().isEmpty() && super.isConsumerReady();
     }
 
     @Override
@@ -290,6 +448,11 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                 // shard again (TRIM_HORIZON, AT_TIMESTAMP, a sequence number) or skip the new ones (LATEST)
                 request.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
                         .startingSequenceNumber(lastSequenceNumber);
+            } else if (firstNotRoutedSequenceNumbers.containsKey(shardId)) {
+                // no record of this shard was routed, and the consumer stopped routing the first response with
+                // records when the route was suspended: start at the first record of that response
+                request.shardIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER)
+                        .startingSequenceNumber(firstNotRoutedSequenceNumbers.get(shardId));
             } else if (latestStartTimes.containsKey(shardId)) {
                 // the shard started at LATEST and the expired iterator returned no record: continue from the time of
                 // that start, so the records stored since then are routed (Kinesis compares this time of the consumer's
@@ -358,11 +521,16 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             case silent:
                 break;
             case fail:
-                LOG.info("The shard with id={} on stream {} reached CLOSE status",
-                        shardId, getEndpoint().getConfiguration().getStreamName());
-                throw new IllegalStateException(
-                        new ReachedClosedStatusException(
-                                getEndpoint().getConfiguration().getStreamName(), shardId));
+                // reported once and then skipped, like silent: a closed shard stays in the shard list for the
+                // retention period of the stream, and the consumer goes on with the other shards (the child shards of a
+                // split or a merge)
+                if (closedShardsReported.add(shardId)) {
+                    String streamName = getEndpoint().getConfiguration().getStreamName();
+                    getExceptionHandler().handleException(
+                            "The shard with id=" + shardId + " on stream " + streamName + " reached CLOSE status",
+                            new ReachedClosedStatusException(streamName, shardId));
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported shard closed strategy");
         }
@@ -422,6 +590,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, dataRecord.partitionKey());
         exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, dataRecord.sequenceNumber());
         exchange.getIn().setHeader(Kinesis2Constants.SHARD_ID, shard.shardId());
+        exchange.getIn().setHeader(Kinesis2Constants.STREAM_NAME, getEndpoint().getConfiguration().getStreamName());
         if (ObjectHelper.isNotEmpty(dataRecord.approximateArrivalTimestamp())) {
             long ts = dataRecord.approximateArrivalTimestamp().getEpochSecond() * 1000;
             exchange.getIn().setHeader(Kinesis2Constants.MESSAGE_TIMESTAMP, ts);
@@ -486,6 +655,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         this.shardMonitorExecutor.scheduleAtFixedRate(new ShardMonitor(),
                 0, getConfiguration().getShardMonitorInterval(), TimeUnit.MILLISECONDS);
 
+        int maxConcurrentShards = getConfiguration().getMaxConcurrentShards();
+        if (getConfiguration().getShardId().isEmpty() && maxConcurrentShards > 1) {
+            // a pool managed by Camel, and not the common fork-join pool of the JVM: Camel thread names, one size per
+            // endpoint, and shut down with the consumer
+            this.shardReaderExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newFixedThreadPool(this, SHARD_READER_EXECUTOR_NAME, maxConcurrentShards);
+        }
+
         if (ObjectHelper.isNotEmpty(resumeStrategy)) {
             resumeStrategy.loadCache();
         }
@@ -497,6 +674,21 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(this.shardMonitorExecutor);
             this.shardMonitorExecutor = null;
         }
+        ExecutorService executor = shardReaderExecutor;
+        if (executor != null) {
+            shardReaderExecutor = null;
+            // interrupts the shards of a poll that are still being read (a forced stop), and cancels those not started
+            // yet, so that the poll does not wait for them
+            List<Runnable> notStarted = getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            if (notStarted != null) {
+                for (Runnable read : notStarted) {
+                    if (read instanceof Future<?> future) {
+                        future.cancel(false);
+                    }
+                }
+            }
+        }
+        closedShardsReported.clear();
 
         super.doStop();
     }
@@ -513,18 +705,34 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         this.currentShardList = List.copyOf(latestShardList);
     }
 
-    private class ShardMonitor implements Runnable {
+    // package-private for tests, which run the monitor themselves
+    class ShardMonitor implements Runnable {
         @Override
         public void run() {
             try {
                 List<Shard> latestShardList = getShardList(connection);
+                shardListError = null;
                 if (ObjectHelper.isNotEmpty(latestShardList)) {
                     // before the list is published, so that poll() knows the child shards of the list it reads
                     trackChildShards(latestShardList);
                     setCurrentShardList(latestShardList);
                 }
-            } catch (Exception e) {
-                LOG.warn("Exception getting latest shard list", e);
+            } catch (VirtualMachineError e) {
+                // a JVM-level failure, not a failure of the monitor: the consumer stops consuming until the route is
+                // restarted, and its health check is DOWN with the error (CAMEL-27515). Thrown on, which ends the
+                // scheduled task: the consumer no longer polls (isRunAllowed() is false), so listing the shards again
+                // has no use, and a restart schedules a new monitor
+                LOG.error("Fatal error listing the shards of stream {}. The consumer stops consuming until the route is"
+                          + " restarted.",
+                        getEndpoint().getConfiguration().getStreamName(), e);
+                handleFatalError(e);
+                throw e;
+            } catch (Exception | Error e) {
+                // an Exception, or another Error (such as a NoClassDefFoundError), only fails this run: an Error thrown
+                // on would end the scheduled task without a log line, and the shards created by a later split or merge
+                // would never be listed
+                LOG.warn("Error getting latest shard list", e);
+                shardListError = e;
             }
         }
 

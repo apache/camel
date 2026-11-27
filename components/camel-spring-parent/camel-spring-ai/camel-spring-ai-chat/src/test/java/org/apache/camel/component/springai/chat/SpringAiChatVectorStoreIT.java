@@ -24,9 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.ai.ollama.OllamaEmbeddingModel;
-import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
 
@@ -44,17 +41,7 @@ public class SpringAiChatVectorStoreIT extends OllamaTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        // Create embedding model for vector store
-        OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(OLLAMA.baseUrl())
-                .build();
-
-        EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
-                .ollamaApi(ollamaApi)
-                .options(OllamaEmbeddingOptions.builder()
-                        .model("embeddinggemma:300m")
-                        .build())
-                .build();
+        EmbeddingModel embeddingModel = createEmbeddingModel();
 
         // Create and populate vector store
         vectorStore = SimpleVectorStore.builder(embeddingModel)

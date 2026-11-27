@@ -91,6 +91,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     private static final String GENERIC_READ_TIMEOUT_ERROR = "Resource read timed out";
     private static final String GENERIC_PROMPT_ERROR = "Prompt execution failed";
     private static final String GENERIC_PROMPT_TIMEOUT_ERROR = "Prompt execution timed out";
+    private static final Map<String, Object> AUTHORIZATION_DENIED_META
+            = Map.of(McpServerConstants.META_AUTHORIZATION, McpServerConstants.META_AUTHORIZATION_DENIED);
 
     private final McpServerConfiguration configuration;
     private final RegistryListener listener = new RegistryListener();
@@ -481,7 +483,17 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     private McpServerResourceTemplate createResourceTemplate(AiResourceTemplateSpec spec) {
-        McpResourceTemplateReadHandler handler = resourceUri -> read(spec, resourceUri);
+        McpResourceTemplateReadHandler handler = new McpResourceTemplateReadHandler() {
+            @Override
+            public McpResourceReadResult read(String resourceUri) {
+                return readTemplate(spec, resourceUri, null);
+            }
+
+            @Override
+            public McpResourceReadResult read(String resourceUri, McpToolCallContext context) {
+                return readTemplate(spec, resourceUri, context);
+            }
+        };
         return new McpServerResourceTemplate() {
             @Override
             public String uriTemplate() {
@@ -516,7 +528,17 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     private McpServerResource createResource(AiResourceSpec spec) {
-        McpResourceReadHandler handler = () -> read(spec);
+        McpResourceReadHandler handler = new McpResourceReadHandler() {
+            @Override
+            public McpResourceReadResult read() {
+                return readResource(spec, null);
+            }
+
+            @Override
+            public McpResourceReadResult read(McpToolCallContext context) {
+                return readResource(spec, context);
+            }
+        };
         return new McpServerResource() {
             @Override
             public String uri() {
@@ -550,8 +572,9 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         };
     }
 
-    private McpResourceReadResult read(AiResourceSpec spec) {
+    private McpResourceReadResult readResource(AiResourceSpec spec, McpToolCallContext context) {
         Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
+        stampCallerIdentity(exchange, context);
         return read(spec, exchange);
     }
 
@@ -596,7 +619,8 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         }
     }
 
-    private McpResourceReadResult read(AiResourceTemplateSpec spec, String resourceUri) {
+    private McpResourceReadResult readTemplate(
+            AiResourceTemplateSpec spec, String resourceUri, McpToolCallContext context) {
         Map<String, String> variables = spec.match(resourceUri).orElse(null);
         if (variables == null) {
             // Defensive guard: the protocol engine normally calls this handler only after a URI-template match.
@@ -609,6 +633,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         exchange.getMessage().setHeader(AiResource.RESOURCE_URI_HEADER, resourceUri);
         variables.forEach((name, value) -> exchange.getMessage().setHeader(
                 AiResource.TEMPLATE_VARIABLE_HEADER_PREFIX + name, value));
+        stampCallerIdentity(exchange, context);
         return read(spec.asResourceSpec(resourceUri), exchange);
     }
 
@@ -664,7 +689,17 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     private McpServerPrompt createPrompt(AiPromptSpec spec) {
-        McpPromptHandler handler = arguments -> executePrompt(spec, arguments);
+        McpPromptHandler handler = new McpPromptHandler() {
+            @Override
+            public McpPromptResult get(Map<String, String> arguments) {
+                return executePrompt(spec, arguments, null);
+            }
+
+            @Override
+            public McpPromptResult get(Map<String, String> arguments, McpToolCallContext context) {
+                return executePrompt(spec, arguments, context);
+            }
+        };
         return new McpServerPrompt() {
             @Override
             public String name() {
@@ -696,8 +731,9 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         };
     }
 
-    private McpPromptResult executePrompt(AiPromptSpec spec, Map<String, String> arguments) {
+    private McpPromptResult executePrompt(AiPromptSpec spec, Map<String, String> arguments, McpToolCallContext context) {
         Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
+        stampCallerIdentity(exchange, context);
 
         // 0 = queued/not started, 1 = running, 2 = exchange ownership completed.
         // The worker releases the exchange after route execution. The caller only
@@ -849,9 +885,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
 
     private McpToolCallResult execute(AiToolSpec spec, Map<String, Object> arguments, McpToolCallContext context) {
         Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
-        if (context != null) {
-            stampCallerIdentity(exchange, context);
-        }
+        stampCallerIdentity(exchange, context);
         boolean release = true;
         try {
             Future<AiToolResult> future = executor.submit(() -> AiToolExecutor.execute(spec, arguments, exchange));
@@ -881,8 +915,9 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return new McpToolCallResult(error.message(), true);
             } else if (result instanceof AiToolResult.AuthorizationDenied denied) {
                 // The denial message is already generic and caller-safe, so it is safe to return to the MCP client.
+                // The _meta entry lets the client tell the refusal from a tool error without reading the message.
                 LOG.warn("MCP tool '{}' call denied by the authorization check", spec.getName());
-                return new McpToolCallResult(denied.message(), true);
+                return new McpToolCallResult(denied.message(), true, null, AUTHORIZATION_DENIED_META);
             } else {
                 AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
                 // never leak raw route exception messages to remote MCP clients
@@ -897,11 +932,15 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     /**
-     * Stamps the MCP caller identity onto the tool exchange as exchange properties the model cannot set: the raw
-     * transport principal, and the runtime-neutral name and roles when the engine could derive them. A tool route's
-     * {@link org.apache.camel.spi.AuthorizationPolicy} authorizes on these.
+     * Stamps the MCP caller identity onto the tool, resource or prompt exchange as exchange properties the client and
+     * the model cannot set: the raw transport principal, and the runtime-neutral name and roles when the engine could
+     * derive them. A tool route's {@link org.apache.camel.spi.AuthorizationPolicy} authorizes on these, and a resource
+     * or prompt route can check them itself. A {@code null} context (an engine that passed none) stamps nothing.
      */
     private static void stampCallerIdentity(Exchange exchange, McpToolCallContext context) {
+        if (context == null) {
+            return;
+        }
         Object principal = context.securityPrincipal();
         if (principal != null) {
             exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_PROPERTY, principal);

@@ -2,7 +2,7 @@
 :doctitle: OPC UA Browser
 :shortname: milo-browse
 :artifactid: camel-milo
-:description: Connect to OPC UA servers using the binary protocol for browsing the node tree.
+:description: Browse the nodes of an OPC UA server and the references between them.
 :since: 3.15
 :supportlevel: Stable
 :tabs-sync-option:

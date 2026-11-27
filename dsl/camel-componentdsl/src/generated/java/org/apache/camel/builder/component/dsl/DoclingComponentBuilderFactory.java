@@ -135,13 +135,14 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
-        
         /**
-         * Language code for OCR processing.
+         * Language code for OCR processing. With the docling CLI, en is used
+         * when it is not set. With docling-serve, setting it turns OCR on
+         * (do_ocr=true) unless enableOCR or doOcr is false, and when it is not
+         * set the server uses its own default languages.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: en
          * Group: common
          * 
          * @param ocrLanguage the value to set
@@ -410,9 +411,9 @@ public interface DoclingComponentBuilderFactory {
         }
     
         /**
-         * Enable OCR processing in docling-serve API mode. When not set, the
-         * server uses its own defaults. Set enableOCR to false to explicitly
-         * disable OCR.
+         * Enable OCR processing in docling-serve API mode. When not set, OCR is
+         * turned on if ocrLanguage is set, and otherwise the server uses its
+         * own defaults. Set enableOCR to false to explicitly disable OCR.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 

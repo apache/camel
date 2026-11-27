@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.langchain4j.embeddings;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.Reader;
-import java.nio.ByteBuffer;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.component.ai.observability.GenAiModelResolver;
 import org.apache.camel.component.ai.observability.GenAiObservability;
@@ -44,6 +36,7 @@ import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
 import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.DefaultProducer;
 
 public class LangChain4jEmbeddingsProducer extends DefaultProducer {
@@ -138,9 +131,10 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
 
     /**
      * Converts a body, or an element of a List body, to the TextSegment to embed. A TextSegment is used as is, a type
-     * converter to TextSegment is used when there is one, and text, bytes, a stream, a Reader or a file is read as
-     * text. Any other value, such as a Map or a POJO, fails as an InvalidPayloadException instead of being embedded as
-     * its toString().
+     * converter to TextSegment is used when there is one, and any other value is embedded as the text Camel converts it
+     * to, such as text, bytes, a stream, a file, a char[] or a Netty ByteBuf. A value Camel reads only as its
+     * toString(), such as a Map or a POJO, fails as an InvalidPayloadException instead of being embedded as that
+     * toString() (CAMEL-26205, CAMEL-26553).
      *
      * @param index the index of the element in a List body, or -1 for the body itself
      */
@@ -149,34 +143,33 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
         if (value instanceof TextSegment segment) {
             return segment;
         }
+        if (value == null) {
+            // only an element of a List body can be null: the body itself is read with getMandatoryBody()
+            throw new InvalidPayloadException(
+                    exchange, TextSegment.class, exchange.getMessage(),
+                    "the element at index " + index + " of the List body is null");
+        }
         TypeConverter tc = exchange.getContext().getTypeConverter();
-        TextSegment segment = value != null ? tc.tryConvertTo(TextSegment.class, exchange, value) : null;
+        TextSegment segment = tc.tryConvertTo(TextSegment.class, exchange, value);
         if (segment != null) {
             return segment;
         }
-        if (!isReadableAsText(value)) {
+        String text = tc.mandatoryConvertTo(String.class, exchange, value);
+        if (BodyFacts.isOnlyToString(value, text)) {
             String what = index < 0
-                    ? "" : "the element at index " + index + " of the List body is " + typeOf(value) + "; ";
+                    ? "" : "the element at index " + index + " of the List body is " + value.getClass().getName() + "; ";
             throw new InvalidPayloadException(
                     exchange, TextSegment.class, exchange.getMessage(),
-                    what + "langchain4j-embeddings embeds text, bytes, a stream, a Reader, a file or a TextSegment;"
-                                                                        + " convert the body to text before the endpoint,"
-                                                                        + " such as with convertBodyTo(String) or a marshal"
-                                                                        + " to JSON");
+                    what + "langchain4j-embeddings embeds text, bytes, a stream, a file, a TextSegment or another value"
+                                                                        + " Camel converts to its text, such as a char[],"
+                                                                        + " but Camel reads this value only as its"
+                                                                        + " toString(); marshal it first, such as with"
+                                                                        + " marshal().json(), or, when its toString() is"
+                                                                        + " the text to embed, convert the body to text"
+                                                                        + " before the endpoint with"
+                                                                        + " convertBodyTo(String.class)");
         }
-        return TextSegment.from(tc.mandatoryConvertTo(String.class, exchange, value));
-    }
-
-    /** A value Camel converts to its text, rather than to the toString() of an object. */
-    private static boolean isReadableAsText(Object value) {
-        return value instanceof CharSequence || value instanceof byte[] || value instanceof ByteBuffer
-                || value instanceof InputStream || value instanceof Reader || value instanceof StreamCache
-                || value instanceof ByteArrayOutputStream
-                || value instanceof File || value instanceof Path || value instanceof WrappedFile;
-    }
-
-    private static String typeOf(Object value) {
-        return value == null ? "null" : value.getClass().getName();
+        return TextSegment.from(text);
     }
 
     /**

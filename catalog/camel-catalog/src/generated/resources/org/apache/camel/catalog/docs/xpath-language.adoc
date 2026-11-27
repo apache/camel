@@ -129,12 +129,17 @@ YAML::
 +
 [source,yaml]
 ----
-- filter:
-    xpath:
-      expression: "/c:order/w:wine = 'Rioja'"
-      namespaceMappings: "{{namespaces}}"
-    steps:
-      - to: "mock:rioja"
+- route:
+    from:
+      uri: "direct:start"
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/c:order/w:wine = 'Rioja'"
+                namespaceMappings: "{{namespaces}}"
+            steps:
+              - to: "mock:rioja"
 ----
 ====
 

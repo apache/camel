@@ -385,12 +385,14 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
             DefaultLogSupervisor flushPolicy = new DefaultLogSupervisor(
                     resumeStrategyConfiguration.getSupervisorInterval(),
                     executorService);
-            logWriter = new LogWriter(logFile, flushPolicy, maxRecordCount);
-
-            // keep them in the new log until loadCache() replays them, in case the system crashes again before
+            // keep them in the new log until loadCache() replays them, in case the system crashes again before. The
+            // new log replaces the previous one only once it holds them on disk, so a crash or a failure here does
+            // not lose them (where the log cannot be replaced atomically, it is rewritten in place and forced)
+            logWriter = new LogWriter(logFile, flushPolicy, maxRecordCount, entries);
+            final List<EntryInfo.CachedEntryInfo> entryInfos = logWriter.getInitialEntryInfos();
             final List<UnconfirmedEntry> carried = new ArrayList<>(entries.size());
-            for (LogEntry entry : entries) {
-                carried.add(new UnconfirmedEntry(entry, logWriter.append(entry)));
+            for (int i = 0; i < entries.size(); i++) {
+                carried.add(new UnconfirmedEntry(entries.get(i), entryInfos.get(i)));
             }
             unconfirmedEntries = carried;
         } catch (Exception e) {

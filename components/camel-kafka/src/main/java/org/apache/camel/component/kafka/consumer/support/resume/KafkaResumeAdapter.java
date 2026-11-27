@@ -18,6 +18,7 @@
 package org.apache.camel.component.kafka.consumer.support.resume;
 
 import java.nio.ByteBuffer;
+import java.util.Collection;
 
 import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.Deserializable;
@@ -51,6 +52,23 @@ public class KafkaResumeAdapter implements ResumeAdapter, Deserializable, Cachea
     @Override
     public void resume() {
         resumeCache.forEach(this::resume);
+    }
+
+    /**
+     * Resumes only the given partitions, such as the partitions assigned by a rebalance. With a cooperative assignor
+     * (or the consumer group protocol) a rebalance assigns only the added partitions, and the consumer keeps reading
+     * the partitions it already had from where it is.
+     *
+     * @param partitions the partitions to resume
+     */
+    public void resume(Collection<TopicPartition> partitions) {
+        resumeCache.forEach((topicPartition, value) -> {
+            if (partitions.contains(topicPartition)) {
+                resume(topicPartition, value);
+            }
+            // false keeps the entry in the cache
+            return false;
+        });
     }
 
     @Override

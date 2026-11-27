@@ -51,6 +51,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean notifyEvent;
     private boolean interruptable = true;
     private boolean interrupted;
+    private long awaitOrder;
     private boolean routeStop;
     private boolean rollbackOnly;
     private boolean rollbackOnlyLast;
@@ -304,6 +305,11 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         if (interruptable) {
             this.interrupted = interrupted;
         }
+    }
+
+    @Override
+    public long nextAwaitOrder() {
+        return ++awaitOrder;
     }
 
     @Override

@@ -17,13 +17,16 @@
 package org.apache.camel.component.google.calendar.transform;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import com.google.api.services.calendar.model.Event;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConstants;
+import org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -53,6 +56,7 @@ class GoogleCalendarStreamCloudEventDataTypeTransformerTest {
         Exchange exchange = new DefaultExchange(camelContext);
         Event event = new Event();
         event.setEventType("default");
+        exchange.getMessage().setHeader(GoogleCalendarStreamConstants.CALENDAR_ID, "primary");
         exchange.getMessage().setHeader(GoogleCalendarStreamConstants.EVENT_ID, "event1");
         exchange.getMessage().setBody(event);
 
@@ -60,8 +64,45 @@ class GoogleCalendarStreamCloudEventDataTypeTransformerTest {
 
         assertEquals("org.apache.camel.event.google.calendar.stream.consume",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
-        assertEquals("google.calendar.stream.event1", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+        assertEquals("google.calendar.stream.primary", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
         assertEquals("default", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+    }
+
+    @Test
+    void theSourceIsTheCalendarOfTheConsumer() {
+        // CAMEL-27101: the source was built from the event id, so every event had a source of its own
+        GoogleCalendarStreamEndpoint endpoint = camelContext.getEndpoint(
+                "google-calendar-stream://events?calendarId=team@example.com&clientId=id&clientSecret=secret",
+                GoogleCalendarStreamEndpoint.class);
+        for (String id : List.of("event1", "event2")) {
+            Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly, new Event().setId(id).setEventType("default"));
+            assertEquals("team@example.com", exchange.getMessage().getHeader(GoogleCalendarStreamConstants.CALENDAR_ID));
+            assertEquals(id, exchange.getMessage().getHeader(GoogleCalendarStreamConstants.EVENT_ID));
+
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            assertEquals("google.calendar.stream.team@example.com",
+                    exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+            assertEquals(exchange.getExchangeId(), exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_ID));
+        }
+
+        // the calendar of the consumer is primary by default
+        endpoint = camelContext.getEndpoint("google-calendar-stream://other?clientId=id&clientSecret=secret",
+                GoogleCalendarStreamEndpoint.class);
+        Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly, new Event().setId("event3"));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+        assertEquals("google.calendar.stream.primary", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+    }
+
+    @Test
+    void theSourceIsNotTheEventId() {
+        // a message without the calendar id of the consumer gets no source
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setHeader(GoogleCalendarStreamConstants.EVENT_ID, "event1");
+        exchange.getMessage().setBody(new Event());
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
     }
 
     @Test

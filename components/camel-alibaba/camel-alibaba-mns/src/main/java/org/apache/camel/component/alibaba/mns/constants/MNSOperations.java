@@ -19,6 +19,11 @@ package org.apache.camel.component.alibaba.mns.constants;
 public final class MNSOperations {
 
     public static final String SEND_MESSAGE = "sendMessage";
+    /**
+     * @deprecated receiveMessage is not an operation: the producer does not support it, and the consumer receives the
+     *             messages of the queue without reading the operation option. To be removed in a future release.
+     */
+    @Deprecated(since = "4.24.0")
     public static final String RECEIVE_MESSAGE = "receiveMessage";
     public static final String DELETE_MESSAGE = "deleteMessage";
     public static final String PUBLISH_MESSAGE = "publishMessage";

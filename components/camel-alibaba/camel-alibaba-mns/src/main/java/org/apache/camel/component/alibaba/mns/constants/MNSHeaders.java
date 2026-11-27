@@ -50,7 +50,7 @@ public final class MNSHeaders {
 
     @Metadata(label = "producer", description = "The operation that the producer performs. This header replaces the operation"
                                                 + " option, and an exchange property of the same name replaces both.",
-              javaType = "String")
+              javaType = "String", enums = "sendMessage,deleteMessage,publishMessage")
     public static final String OPERATION = "CamelAlibabaMnsOperation";
 
     @Metadata(label = "producer", description = "The name of the topic for publishMessage. This header replaces the topicName"

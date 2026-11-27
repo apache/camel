@@ -51,7 +51,9 @@ public interface AzureEventgridComponentBuilderFactory {
     interface AzureEventgridComponentBuilder extends ComponentBuilder<EventGridComponent> {
     
         /**
-         * The component configurations.
+         * The configuration that the endpoints of this component start from.
+         * Each endpoint gets a copy of it, and the options of the endpoint
+         * replace its values.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.eventgrid.EventGridConfiguration&lt;/code&gt; type.
@@ -92,8 +94,10 @@ public interface AzureEventgridComponentBuilderFactory {
         }
     
         /**
-         * The EventGrid publisher client. If provided, it will be used instead
-         * of creating a new one.
+         * To use a custom
+         * com.azure.messaging.eventgrid.EventGridPublisherClient for
+         * CloudEvents. When it is set or autowired, the topicEndpoint and the
+         * credential options are not used.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.eventgrid.EventGridPublisherClient&amp;lt;com.azure.core.models.CloudEvent&amp;gt;&lt;/code&gt; type.
@@ -131,8 +135,9 @@ public interface AzureEventgridComponentBuilderFactory {
         }
     
         /**
-         * The access key for the Event Grid topic. Required when using
-         * ACCESS_KEY credential type.
+         * The access key of the Event Grid topic, for credentialType
+         * ACCESS_KEY. The azureKeyCredential option replaces it, and it is not
+         * used when the tokenCredential option is set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -147,8 +152,10 @@ public interface AzureEventgridComponentBuilderFactory {
         }
     
         /**
-         * The Azure Key Credential for authentication. This is automatically
-         * created from the accessKey if not provided.
+         * The access key of the Event Grid topic as a
+         * com.azure.core.credential.AzureKeyCredential, for credentialType
+         * ACCESS_KEY. It replaces the accessKey option, and it is not used when
+         * the tokenCredential option is set.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.credential.AzureKeyCredential&lt;/code&gt;
@@ -166,7 +173,15 @@ public interface AzureEventgridComponentBuilderFactory {
     
         
         /**
-         * Determines the credential strategy to adopt.
+         * How the producer authenticates: ACCESS_KEY with the
+         * azureKeyCredential or accessKey option, TOKEN_CREDENTIAL with the
+         * tokenCredential option, or AZURE_IDENTITY with a
+         * DefaultAzureCredential of the Azure Identity library (the
+         * tokenCredential option when it is set, otherwise a new one). With
+         * tokenCredential set and this option left at ACCESS_KEY, Camel uses
+         * AZURE_IDENTITY for a DefaultAzureCredential and TOKEN_CREDENTIAL for
+         * any other credential. With only accessKey or azureKeyCredential set,
+         * Camel uses ACCESS_KEY.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.common.CredentialType&lt;/code&gt; type.
@@ -183,8 +198,11 @@ public interface AzureEventgridComponentBuilderFactory {
         }
     
         /**
-         * Provide custom authentication credentials using an implementation of
-         * TokenCredential.
+         * The com.azure.core.credential.TokenCredential that authenticates the
+         * producer with Microsoft Entra ID, such as a DefaultAzureCredential
+         * built with a managed identity client id or a tenant id; this instance
+         * is used as it is, also with credentialType AZURE_IDENTITY. When it is
+         * set, the accessKey and azureKeyCredential options are not used.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;

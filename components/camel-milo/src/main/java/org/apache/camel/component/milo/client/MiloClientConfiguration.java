@@ -51,70 +51,110 @@ public class MiloClientConfiguration implements Cloneable {
     @XmlTransient // to not be included in component docs
     private String endpointUri;
 
-    @UriParam
+    @UriParam(description = "The URI of the discovery endpoint that the client gets the endpoint descriptions of the server"
+                            + " from, instead of the endpoint URI. It takes precedence over discoveryEndpointSuffix.")
     private String discoveryEndpointUri;
 
-    @UriParam
+    @UriParam(description = "A suffix that the client appends to the endpoint URI to get the URI of the discovery endpoint,"
+                            + " for example /discovery. Not used when discoveryEndpointUri is set.")
     private String discoveryEndpointSuffix;
 
-    @UriParam
+    @UriParam(description = "An ID that is part of the key of the shared connections: endpoints with the same endpoint URI,"
+                            + " requestedPublishingInterval and clientId use the same connection to the server. Set a different"
+                            + " value to give an endpoint a connection of its own.")
     private String clientId;
 
-    @UriParam(label = "client", defaultValue = DEFAULT_APPLICATION_NAME)
+    @UriParam(label = "client", defaultValue = DEFAULT_APPLICATION_NAME,
+              description = "The application name of the client, which it sends to the server in its application"
+                            + " description.")
     private String applicationName = DEFAULT_APPLICATION_NAME;
 
-    @UriParam(label = "client", defaultValue = DEFAULT_APPLICATION_URI)
+    @UriParam(label = "client", defaultValue = DEFAULT_APPLICATION_URI,
+              description = "The application URI of the client, which it sends to the server in its application description."
+                            + " With a client certificate, it should match the application URI in that certificate.")
     private String applicationUri = DEFAULT_APPLICATION_URI;
 
-    @UriParam(label = "client", defaultValue = DEFAULT_PRODUCT_URI)
+    @UriParam(label = "client", defaultValue = DEFAULT_PRODUCT_URI,
+              description = "The product URI of the client, which it sends to the server in its application description.")
     private String productUri = DEFAULT_PRODUCT_URI;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The timeout in milliseconds of a request to the server. If not set, the default of Eclipse Milo"
+                            + " is used.")
     private Long requestTimeout;
 
     @UriParam(label = "client", defaultValue = "10000")
     private long reconnectTimeout = 10_000;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The requested lifetime in milliseconds of the security token of the secure channel, after which"
+                            + " the client renews it. If not set, the default of Eclipse Milo is used.")
     private Long channelLifetime;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The name of the session that the client creates on the server. If not set, Eclipse Milo"
+                            + " generates one.")
     private String sessionName;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The requested timeout in milliseconds of the session, after which the server closes a session"
+                            + " without activity. If not set, the default of Eclipse Milo is used.")
     private Long sessionTimeout;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The maximum number of publish requests that the client keeps pending at the server for its"
+                            + " subscription. If not set, the default of Eclipse Milo is used.")
     private Long maxPendingPublishRequests;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The maximum size in bytes of a response message that the client accepts from the server. If not"
+                            + " set, the default of Eclipse Milo is used.")
     private Long maxResponseMessageSize;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The URL of the key store with the certificate and the private key of the client, for example"
+                            + " file:/etc/opcua/client.p12. A security policy other than None needs it.")
     private String keyStoreUrl;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The type of the key store of keyStoreUrl, as a java.security.KeyStore type. The default is"
+                            + " PKCS12.")
     private String keyStoreType = KeyStoreLoader.DEFAULT_KEY_STORE_TYPE;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "The alias of the private key and its certificate in the key store. It can be omitted when the"
+                            + " key store holds a single entry.")
     private String keyAlias;
 
-    @UriParam(label = "client", security = "secret")
+    @UriParam(label = "client", security = "secret",
+              description = "The password of the key store of keyStoreUrl.")
     private String keyStorePassword;
 
-    @UriParam(label = "client", security = "secret")
+    @UriParam(label = "client", security = "secret",
+              description = "The password of the private key of keyAlias in the key store.")
     private String keyPassword;
 
-    @UriParam(label = "client", javaType = "java.lang.String")
+    @UriParam(label = "client", javaType = "java.lang.String",
+              description = "A comma-separated list of the security policies that the client may use, as URIs or as names of"
+                            + " org.eclipse.milo.opcua.stack.core.security.SecurityPolicy, for example Basic256Sha256. Of the"
+                            + " endpoints of the server with an allowed policy, the client uses the one with the highest"
+                            + " security level. If not set, every policy is allowed, None included.")
     private Set<String> allowedSecurityPolicies = new HashSet<>();
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "Whether to replace the host of the endpoint URL that the server reports with the host of the"
+                            + " endpoint URI. Use it when the server reports a host name that the client cannot reach.")
     private boolean overrideHost;
 
-    @UriParam(label = "client")
+    @UriParam(label = "client",
+              description = "Whether to replace the port of the endpoint URL that the server reports with the port of the"
+                            + " endpoint URI. Use it when the server reports a port that the client cannot reach.")
     private boolean overridePort;
 
-    @UriParam(label = "client", defaultValue = "1_000.0")
+    @UriParam(label = "client", defaultValue = "1_000.0",
+              description = "The publishing interval in milliseconds that the client requests for the subscription of its"
+                            + " connection, which carries the values of the monitored nodes. Endpoints with different values"
+                            + " use different connections.")
     private Double requestedPublishingInterval = DEFAULT_REQUESTED_PUBLISHING_INTERVAL;
 
     @UriParam(label = "security")
@@ -177,9 +217,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.endpointUri;
     }
 
-    /**
-     * An alternative discovery URI
-     */
     public void setDiscoveryEndpointUri(final String endpointDiscoveryUri) {
         this.discoveryEndpointUri = endpointDiscoveryUri;
     }
@@ -188,9 +225,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.discoveryEndpointUri;
     }
 
-    /**
-     * A suffix for endpoint URI when discovering
-     */
     public void setDiscoveryEndpointSuffix(final String endpointDiscoverySuffix) {
         this.discoveryEndpointSuffix = endpointDiscoverySuffix;
     }
@@ -199,9 +233,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.discoveryEndpointSuffix;
     }
 
-    /**
-     * A virtual client id to force the creation of a new connection instance
-     */
     public void setClientId(final String clientId) {
         this.clientId = clientId;
     }
@@ -210,9 +241,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.clientId;
     }
 
-    /**
-     * The application name
-     */
     public void setApplicationName(final String applicationName) {
         this.applicationName = applicationName;
     }
@@ -221,9 +249,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.applicationName;
     }
 
-    /**
-     * The application URI
-     */
     public void setApplicationUri(final String applicationUri) {
         this.applicationUri = applicationUri;
     }
@@ -232,9 +257,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.applicationUri;
     }
 
-    /**
-     * The product URI
-     */
     public void setProductUri(final String productUri) {
         this.productUri = productUri;
     }
@@ -243,9 +265,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.productUri;
     }
 
-    /**
-     * Request timeout in milliseconds
-     */
     public void setRequestTimeout(final Long requestTimeout) {
         this.requestTimeout = requestTimeout;
     }
@@ -270,9 +289,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.reconnectTimeout;
     }
 
-    /**
-     * Channel lifetime in milliseconds
-     */
     public void setChannelLifetime(final Long channelLifetime) {
         this.channelLifetime = channelLifetime;
     }
@@ -281,9 +297,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.channelLifetime;
     }
 
-    /**
-     * Session name
-     */
     public void setSessionName(final String sessionName) {
         this.sessionName = sessionName;
     }
@@ -292,9 +305,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.sessionName;
     }
 
-    /**
-     * Session timeout in milliseconds
-     */
     public void setSessionTimeout(final Long sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
@@ -303,9 +313,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.sessionTimeout;
     }
 
-    /**
-     * The maximum number of pending publish requests
-     */
     public void setMaxPendingPublishRequests(final Long maxPendingPublishRequests) {
         this.maxPendingPublishRequests = maxPendingPublishRequests;
     }
@@ -314,9 +321,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.maxPendingPublishRequests;
     }
 
-    /**
-     * The maximum number of bytes a response message may have
-     */
     public void setMaxResponseMessageSize(final Long maxResponseMessageSize) {
         this.maxResponseMessageSize = maxResponseMessageSize;
     }
@@ -325,9 +329,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.maxResponseMessageSize;
     }
 
-    /**
-     * The URL where the key should be loaded from
-     */
     public void setKeyStoreUrl(String keyStoreUrl) {
         this.keyStoreUrl = keyStoreUrl;
     }
@@ -336,9 +337,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.keyStoreUrl;
     }
 
-    /**
-     * The key store type
-     */
     public void setKeyStoreType(final String keyStoreType) {
         this.keyStoreType = keyStoreType;
     }
@@ -347,9 +345,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.keyStoreType;
     }
 
-    /**
-     * The name of the key in the keystore file
-     */
     public void setKeyAlias(final String keyAlias) {
         this.keyAlias = keyAlias;
     }
@@ -358,9 +353,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.keyAlias;
     }
 
-    /**
-     * The keystore password
-     */
     public void setKeyStorePassword(final String keyStorePassword) {
         this.keyStorePassword = keyStorePassword;
     }
@@ -369,9 +361,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.keyStorePassword;
     }
 
-    /**
-     * The key password
-     */
     public void setKeyPassword(final String keyPassword) {
         this.keyPassword = keyPassword;
     }
@@ -380,9 +369,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.keyPassword;
     }
 
-    /**
-     * A set of allowed security policy URIs. Default is to accept all and use the highest.
-     */
     public void setAllowedSecurityPolicies(final Set<String> allowedSecurityPolicies) {
         this.allowedSecurityPolicies = allowedSecurityPolicies;
     }
@@ -428,9 +414,6 @@ public class MiloClientConfiguration implements Cloneable {
         return this.allowedSecurityPolicies;
     }
 
-    /**
-     * Override the server reported endpoint host with the host from the endpoint URI.
-     */
     public void setOverrideHost(boolean overrideHost) {
         this.overrideHost = overrideHost;
     }
@@ -439,9 +422,6 @@ public class MiloClientConfiguration implements Cloneable {
         return overrideHost;
     }
 
-    /**
-     * Override the server reported endpoint port with the port from the endpoint URI.
-     */
     public void setOverridePort(boolean overridePort) {
         this.overridePort = overridePort;
     }
@@ -450,9 +430,6 @@ public class MiloClientConfiguration implements Cloneable {
         return overridePort;
     }
 
-    /**
-     * The requested publishing interval in milliseconds
-     */
     public void setRequestedPublishingInterval(Double requestedPublishingInterval) {
         this.requestedPublishingInterval = requestedPublishingInterval;
     }

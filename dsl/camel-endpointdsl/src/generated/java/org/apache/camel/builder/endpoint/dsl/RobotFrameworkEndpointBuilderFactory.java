@@ -134,8 +134,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Creates combined statistics based on tags. Use the format tags:title
-         * List.
+         * Creates combined statistics based on tags. Use the format tags:title.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -149,7 +149,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tests that have the given tags are considered critical. List.
+         * Tests that have the given tags are considered critical. Multiple
+         * values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -225,7 +226,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by tags. List.
+         * Selects the tests cases by tags. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -269,7 +271,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by tags. List.
+         * Selects the tests cases by tags. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -298,7 +301,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Sets multiple listeners for monitoring tests execution. Use the
-         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
+         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -354,8 +358,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets free metadata for the top level tests suites. comma separated
-         * list of string resulting as List.
+         * Sets free metadata for the top level tests suites. Multiple values
+         * can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -415,7 +419,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tests that have the given tags are not critical. List.
+         * Tests that have the given tags are not critical. Multiple values can
+         * be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -656,7 +661,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests suites by name. List.
+         * Selects the tests suites by name. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -699,7 +705,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Adds documentation to the specified tags. List.
+         * Adds documentation to the specified tags. Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -713,7 +720,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the tags(s) to all executed tests cases. List.
+         * Sets the tags(s) to all executed tests cases. Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -728,7 +736,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Excludes these tags from the Statistics by Tag and Test Details by
-         * Tag tables in outputs. List.
+         * Tag tables in outputs. Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -743,7 +751,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Includes only these tags in the Statistics by Tag and Test Details by
-         * Tag tables in outputs. List.
+         * Tag tables in outputs. Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -758,7 +766,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Adds external links to the Statistics by Tag table in outputs. Use
-         * the format pattern:link:title List.
+         * the format pattern:link:title. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -772,7 +781,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by name. List.
+         * Selects the tests cases by name. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -816,7 +826,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets variables using variables files. Use the format path:args List.
+         * Sets variables using variables files. Use the format path:args.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -830,7 +841,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets individual variables. Use the format name:value List.
+         * Sets individual variables. Use the format name:value. Multiple values
+         * can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1688,8 +1700,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Creates combined statistics based on tags. Use the format tags:title
-         * List.
+         * Creates combined statistics based on tags. Use the format tags:title.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1703,7 +1715,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tests that have the given tags are considered critical. List.
+         * Tests that have the given tags are considered critical. Multiple
+         * values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1779,7 +1792,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by tags. List.
+         * Selects the tests cases by tags. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1823,7 +1837,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by tags. List.
+         * Selects the tests cases by tags. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1852,7 +1867,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Sets multiple listeners for monitoring tests execution. Use the
-         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
+         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1908,8 +1924,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets free metadata for the top level tests suites. comma separated
-         * list of string resulting as List.
+         * Sets free metadata for the top level tests suites. Multiple values
+         * can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1969,7 +1985,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tests that have the given tags are not critical. List.
+         * Tests that have the given tags are not critical. Multiple values can
+         * be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2210,7 +2227,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests suites by name. List.
+         * Selects the tests suites by name. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2253,7 +2271,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Adds documentation to the specified tags. List.
+         * Adds documentation to the specified tags. Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2267,7 +2286,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the tags(s) to all executed tests cases. List.
+         * Sets the tags(s) to all executed tests cases. Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2282,7 +2302,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Excludes these tags from the Statistics by Tag and Test Details by
-         * Tag tables in outputs. List.
+         * Tag tables in outputs. Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2297,7 +2317,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Includes only these tags in the Statistics by Tag and Test Details by
-         * Tag tables in outputs. List.
+         * Tag tables in outputs. Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2312,7 +2332,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Adds external links to the Statistics by Tag table in outputs. Use
-         * the format pattern:link:title List.
+         * the format pattern:link:title. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2326,7 +2347,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by name. List.
+         * Selects the tests cases by name. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2370,7 +2392,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets variables using variables files. Use the format path:args List.
+         * Sets variables using variables files. Use the format path:args.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2384,7 +2407,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets individual variables. Use the format name:value List.
+         * Sets individual variables. Use the format name:value. Multiple values
+         * can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2604,8 +2628,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Creates combined statistics based on tags. Use the format tags:title
-         * List.
+         * Creates combined statistics based on tags. Use the format tags:title.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2619,7 +2643,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tests that have the given tags are considered critical. List.
+         * Tests that have the given tags are considered critical. Multiple
+         * values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2695,7 +2720,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by tags. List.
+         * Selects the tests cases by tags. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2739,7 +2765,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by tags. List.
+         * Selects the tests cases by tags. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2768,7 +2795,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Sets multiple listeners for monitoring tests execution. Use the
-         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
+         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2824,8 +2852,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets free metadata for the top level tests suites. comma separated
-         * list of string resulting as List.
+         * Sets free metadata for the top level tests suites. Multiple values
+         * can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2885,7 +2913,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tests that have the given tags are not critical. List.
+         * Tests that have the given tags are not critical. Multiple values can
+         * be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3126,7 +3155,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests suites by name. List.
+         * Selects the tests suites by name. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3169,7 +3199,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Adds documentation to the specified tags. List.
+         * Adds documentation to the specified tags. Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3183,7 +3214,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the tags(s) to all executed tests cases. List.
+         * Sets the tags(s) to all executed tests cases. Multiple values can be
+         * separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3198,7 +3230,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Excludes these tags from the Statistics by Tag and Test Details by
-         * Tag tables in outputs. List.
+         * Tag tables in outputs. Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3213,7 +3245,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Includes only these tags in the Statistics by Tag and Test Details by
-         * Tag tables in outputs. List.
+         * Tag tables in outputs. Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3228,7 +3260,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * Adds external links to the Statistics by Tag table in outputs. Use
-         * the format pattern:link:title List.
+         * the format pattern:link:title. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3242,7 +3275,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Selects the tests cases by name. List.
+         * Selects the tests cases by name. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3286,7 +3320,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets variables using variables files. Use the format path:args List.
+         * Sets variables using variables files. Use the format path:args.
+         * Multiple values can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3300,7 +3335,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets individual variables. Use the format name:value List.
+         * Sets individual variables. Use the format name:value. Multiple values
+         * can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

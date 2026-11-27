@@ -26,7 +26,9 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -68,6 +70,7 @@ import org.apache.camel.processor.PrototypeTaskFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.EventHelper;
@@ -195,8 +198,15 @@ public class ResilienceProcessor extends BaseProcessorSupport
         if (asynchronous && timeLimiter != null && scheduledExecutorService == null && timeoutScheduler == null) {
             // the timeouts get their own threads: when they were tasks of the pool that runs the calls, a timeout
             // could not fire while every thread of that pool was blocked in a call, which is what the timeout is for
-            timeoutScheduler = camelContext.getExecutorServiceManager().newDefaultScheduledThreadPool(this,
-                    "CircuitBreakerTimeout");
+            // the threads of the default thread pool profile, without its queue limit: the time limiter schedules the
+            // timeout after the call was submitted, so a rejected timeout failed an exchange whose call still ran. A
+            // timeout stays queued until it fires or is cancelled, and the time limiter cancels it (which removes it
+            // from the queue) only when the call succeeds: the queue holds the timeouts of the calls in flight and of
+            // the calls that failed within the timeout duration, and the one of a failed call holds its exception
+            ThreadPoolProfile profile = new ThreadPoolProfile("CircuitBreakerTimeout");
+            profile.setMaxQueueSize(-1);
+            timeoutScheduler = camelContext.getExecutorServiceManager().newScheduledThreadPool(this,
+                    "CircuitBreakerTimeout", profile);
         }
         if (asynchronous && timeLimiter != null && timeoutContinuation == null) {
             // a cached thread pool, as a fallback that blocks holds its thread: with a bounded pool the next fallbacks
@@ -630,15 +640,22 @@ public class ResilienceProcessor extends BaseProcessorSupport
             ExchangeWriteGuard exchangeWriteGuard = new ExchangeWriteGuard();
             task.exchangeWriteGuard = exchangeWriteGuard;
             fallbackTask.exchangeWriteGuard = exchangeWriteGuard;
-            final CircuitBreakerTask ftask = task; // annoying final java thingy!
+            final CircuitBreakerTask ctask = task; // annoying final java thingy!
+            // with a bulkhead, the call claims its start, so that a call that timed out before it started is not
+            // started later (without a bulkhead, the time limiter cancels the future of the call itself)
+            final CallStart callStart = timeLimiter != null && bulkhead != null ? new CallStart() : null;
+            final Supplier<Exchange> ftask = callStart != null ? callStart.claiming(ctask) : ctask;
             Callable<Exchange> callable;
 
             if (timeLimiter != null) {
-                Supplier<CompletionStage<Exchange>> stage = () -> CompletableFuture.supplyAsync(ftask, executorService);
+                Supplier<CompletionStage<Exchange>> stage = () -> ThreadPoolCall.start(ftask, executorService);
                 if (bulkhead != null) {
                     // the bulkhead goes inside the time limiter, so the permit is held until the task is done,
                     // and not released when the timeout fires while the task is still running
-                    stage = Bulkhead.decorateCompletionStage(bulkhead, stage);
+                    stage = Bulkhead.decorateCompletionStage(bulkhead, callStart.submitting(stage));
+                    // on timeout the time limiter cancels the future of the bulkhead, and not the one of the call:
+                    // pass the cancel on to a call that has not started yet
+                    stage = cancelOnCancel(exchange, stage, callStart);
                 }
                 final Supplier<CompletionStage<Exchange>> fstage = stage;
                 Supplier<CompletableFuture<Exchange>> futureSupplier = () -> fstage.get().toCompletableFuture();
@@ -694,12 +711,19 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
             // build the CompletionStage supplier for the main task
             Supplier<CompletionStage<Exchange>> supplier;
+            final CallStart callStart = timeLimiter != null ? new CallStart() : null;
             if (timeLimiter != null) {
                 // with timeout: submit work to executor so the supplier returns immediately
                 // and the TimeLimiter can schedule the timeout check
                 supplier = () -> {
-                    CompletableFuture<Exchange> future = new CompletableFuture<>();
-                    executorService.submit(() -> processTaskAsync(exchange, exchangeWriteGuard, future));
+                    CompletableFuture<Exchange> future = callStart.submitted(new CompletableFuture<>());
+                    executorService.submit(() -> {
+                        // a call that timed out before it started is not started: callStart.cancel() claimed it on the
+                        // timeout
+                        if (callStart.tryStart()) {
+                            processTaskAsync(exchange, exchangeWriteGuard, future);
+                        }
+                    });
                     return future;
                 };
             } else {
@@ -717,6 +741,11 @@ public class ResilienceProcessor extends BaseProcessorSupport
                 ScheduledExecutorService scheduler
                         = scheduledExecutorService != null ? scheduledExecutorService : timeoutScheduler;
                 supplier = TimeLimiter.decorateCompletionStage(timeLimiter, scheduler, supplier);
+                if (timeLimiter.getTimeLimiterConfig().shouldCancelRunningFuture()) {
+                    // the timeout completes the future, and nothing cancels the call: cancel a call that has not
+                    // started yet, as the time limiter does in synchronous mode
+                    supplier = cancelOnTimeout(exchange, supplier, callStart);
+                }
             }
             supplier = CircuitBreaker.decorateCompletionStage(circuitBreaker, supplier);
 
@@ -928,6 +957,97 @@ public class ResilienceProcessor extends BaseProcessorSupport
     }
 
     /**
+     * Asynchronous mode: cancels the call when the time limiter completes the future with a timeout.
+     */
+    private static Supplier<CompletionStage<Exchange>> cancelOnTimeout(
+            Exchange exchange, Supplier<CompletionStage<Exchange>> supplier, CallStart callStart) {
+        return () -> supplier.get().whenComplete((result, throwable) -> {
+            Throwable cause = throwable instanceof CompletionException ? throwable.getCause() : throwable;
+            if (cause instanceof TimeoutException) {
+                cancelCall(exchange, callStart);
+            }
+        });
+    }
+
+    /**
+     * Synchronous mode with a bulkhead: cancels the call when the time limiter cancels the future of the bulkhead (it
+     * does so on timeout, when timeoutCancelRunningFuture is true).
+     */
+    private static Supplier<CompletionStage<Exchange>> cancelOnCancel(
+            Exchange exchange, Supplier<CompletionStage<Exchange>> supplier, CallStart callStart) {
+        return () -> {
+            CompletableFuture<Exchange> future = supplier.get().toCompletableFuture();
+            future.whenComplete((result, throwable) -> {
+                if (future.isCancelled()) {
+                    cancelCall(exchange, callStart);
+                }
+            });
+            return future;
+        };
+    }
+
+    private static void cancelCall(Exchange exchange, CallStart callStart) {
+        if (callStart.cancel()) {
+            LOG.debug("Exchange: {} timed out before its call started: the call is not started", exchange.getExchangeId());
+        }
+    }
+
+    /**
+     * The start of one call on the thread pool, when the caller may give up on the call (on timeout) before a thread of
+     * the pool starts it. The thread that starts the call and the caller that cancels it both claim the call, and only
+     * one of them gets it: a call that has started is not cancelled (nor interrupted) and keeps its bulkhead permit
+     * until it is done, and a call that is cancelled is never started. Cancelling completes the future of the call at
+     * once, which releases its bulkhead permit.
+     */
+    private static final class CallStart {
+        private final AtomicBoolean claimed = new AtomicBoolean();
+        private volatile CompletableFuture<Exchange> future;
+
+        /**
+         * Records the future of the call, which {@link #cancel()} completes.
+         */
+        CompletableFuture<Exchange> submitted(CompletableFuture<Exchange> future) {
+            this.future = future;
+            return future;
+        }
+
+        Supplier<CompletionStage<Exchange>> submitting(Supplier<CompletionStage<Exchange>> stage) {
+            return () -> submitted(stage.get().toCompletableFuture());
+        }
+
+        /**
+         * The task of the call, which runs only if it claims the call first (else it returns null, to a future that is
+         * already cancelled).
+         */
+        Supplier<Exchange> claiming(Supplier<Exchange> task) {
+            return () -> tryStart() ? task.get() : null;
+        }
+
+        /**
+         * Claims the call for its start.
+         *
+         * @return true to start the call, false if it was cancelled
+         */
+        boolean tryStart() {
+            return claimed.compareAndSet(false, true);
+        }
+
+        /**
+         * Cancels the call if it has not started.
+         *
+         * @return true if the call was cancelled, false if it had started (or was not submitted)
+         */
+        boolean cancel() {
+            CompletableFuture<Exchange> f = future;
+            if (f != null && claimed.compareAndSet(false, true)) {
+                f.cancel(false);
+                return true;
+            }
+            return false;
+        }
+    }
+
+    /**
      * Makes the write-back of the task and the takeover by the caller (the fallback, or the timeout exception) mutually
      * exclusive, for one call. The task writes its result only if it claims the exchange before the caller. The caller
      * always writes: if it takes over while the write-back of the task is in progress, it waits until that is done, and
@@ -1010,6 +1130,54 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
     }
 
+    /**
+     * A call of the synchronous mode with a timeout, run on the thread pool, as {@code CompletableFuture.supplyAsync}
+     * does: a call that is cancelled before it starts is skipped. The time limiter cancels the call when it times out,
+     * and a call cancelled while it waits in the queue of a {@link ThreadPoolExecutor} is also removed from the queue,
+     * so the calls that timed out do not take the queue slots of the next calls until a thread is free to skip them.
+     */
+    private static final class ThreadPoolCall extends CompletableFuture<Exchange> implements Runnable {
+
+        private final Supplier<Exchange> task;
+        private final ThreadPoolExecutor threadPool;
+
+        private ThreadPoolCall(Supplier<Exchange> task, ThreadPoolExecutor threadPool) {
+            this.task = task;
+            this.threadPool = threadPool;
+        }
+
+        /**
+         * Submits the call; throws {@code RejectedExecutionException} when the thread pool rejects it (the thread pool
+         * that Camel creates rejects a call when all its threads are busy and its queue is full).
+         */
+        static ThreadPoolCall start(Supplier<Exchange> task, ExecutorService executorService) {
+            ThreadPoolCall call = new ThreadPoolCall(
+                    task, executorService instanceof ThreadPoolExecutor tpe ? tpe : null);
+            executorService.execute(call);
+            return call;
+        }
+
+        @Override
+        public void run() {
+            if (!isDone()) {
+                try {
+                    complete(task.get());
+                } catch (Throwable e) {
+                    completeExceptionally(e);
+                }
+            }
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            boolean cancelled = super.cancel(mayInterruptIfRunning);
+            if (cancelled && threadPool != null) {
+                threadPool.remove(this);
+            }
+            return cancelled;
+        }
+    }
+
     private final class CircuitBreakerFallbackTask implements PooledExchangeTask, Function<Throwable, Exchange> {
 
         private Exchange exchange;
@@ -1042,6 +1210,16 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
             String state = circuitBreaker.getState().name();
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
+
+            if (ObjectHelper.getVirtualMachineError(throwable) != null) {
+                // a VirtualMachineError fails the exchange: Camel does not recover from it with a fallback, nor ignore
+                // it (CAMEL-27515)
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
+                exchange.setException(throwable);
+                return exchange;
+            }
 
             // check again if we should ignore or not record the throw exception as a failure
             if (ignorePredicate != null && ignorePredicate.test(throwable)) {

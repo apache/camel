@@ -60,6 +60,9 @@ public final class ServiceBusConstants {
     @Metadata(label = "consumer", description = "Gets the partition key for sending a message to a partitioned entity.",
               javaType = "String")
     public static final String PARTITION_KEY = HEADER_PREFIX + "PartitionKey";
+    @Metadata(label = "consumer", description = "The name of the queue or topic the message was received from.",
+              javaType = "String")
+    public static final String TOPIC_OR_QUEUE_NAME = HEADER_PREFIX + "TopicOrQueueName";
     @Metadata(label = "consumer", description = "The representation of message as defined by AMQP protocol.",
               javaType = "com.azure.core.amqp.models.AmqpAnnotatedMessage")
     public static final String RAW_AMQP_MESSAGE = HEADER_PREFIX + "RawAmqpMessage";
@@ -82,7 +85,8 @@ public final class ServiceBusConstants {
     public static final String TO = HEADER_PREFIX + "To";
 
     // headers set by consumer and evaluated by producer
-    @Metadata(description = "(producer)Overrides the OffsetDateTime at which the message should appear in the Service Bus queue or topic. "
+    @Metadata(description = "(producer) Overrides the OffsetDateTime at which the message should appear in the Service Bus queue or topic. "
+                            + "Used only by the scheduleMessages operation. "
                             +
                             "(consumer) Gets the scheduled enqueue time of this message.",
               javaType = "java.time.OffsetDateTime")

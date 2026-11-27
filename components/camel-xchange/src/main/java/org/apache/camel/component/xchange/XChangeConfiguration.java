@@ -61,24 +61,49 @@ public class XChangeConfiguration {
         }
     }
 
-    @Metadata(description = "The target currency", javaType = "org.knowm.xchange.currency.Currency")
+    @Metadata(description = "The currency for the currencyMetaData method, as an XChange Currency or as text such as BTC. It"
+                            + " replaces the message body and the currency option. Text with a currency that XChange does not"
+                            + " know fails the exchange.",
+              javaType = "org.knowm.xchange.currency.Currency")
     public static final String HEADER_CURRENCY = "Currency";
-    @Metadata(description = "The target currency pair", javaType = "org.knowm.xchange.currency.CurrencyPair")
+    @Metadata(description = "The currency pair for the ticker and currencyPairMetaData methods, as an XChange CurrencyPair or"
+                            + " as text such as BTC/USDT. It replaces the message body and the currencyPair option. Text with a"
+                            + " currency that XChange does not know fails the exchange.",
+              javaType = "org.knowm.xchange.currency.CurrencyPair")
     public static final String HEADER_CURRENCY_PAIR = "CurrencyPair";
 
-    @UriPath(description = "The exchange to connect to")
+    @UriPath(description = "The name of the exchange in XChange, for example binance, for which the component loads the"
+                           + " class org.knowm.xchange.binance.BinanceExchange. The XChange module of the exchange must be on"
+                           + " the classpath, and camel-xchange includes only the one of Binance.")
     @Metadata(required = true)
     private String name;
-    @UriParam(description = "The service to call")
+    @UriParam(description = "The XChange service that the method belongs to. Creating the endpoint fails if the method"
+                            + " belongs to another service.")
     @Metadata(required = true)
     private XChangeService service;
-    @UriParam(description = "The method to execute")
+    @UriParam(description = "The method to call, and its result is the message body. The account service has balances,"
+                            + " fundingHistory and wallets, the marketdata service has ticker, and the metadata service has"
+                            + " currencies, currencyMetaData, currencyPairs and currencyPairMetaData.")
     @Metadata(required = true)
     private XChangeMethod method;
-    @UriParam(description = "The currency")
+    @UriParam(description = "The currency, such as BTC, for the currencyMetaData method when neither the Currency header nor"
+                            + " the message body gives one. A currency that XChange does not know fails the creation of the"
+                            + " endpoint.")
     private Currency currency;
-    @UriParam(description = "The currency pair")
+    @UriParam(description = "The currency pair, such as BTC/USDT, for the ticker and currencyPairMetaData methods when"
+                            + " neither the CurrencyPair header nor the message body gives one. A currency that XChange does"
+                            + " not know fails the creation of the endpoint.")
     private String currencyPair;
+    @UriParam(label = "security", security = "secret",
+              description = "The API key of the account at the exchange, for the account service. If not set, the exchange"
+                            + " module of XChange decides, for example the one of Binance reads it from the file"
+                            + " binance-secret.keys.")
+    private String apiKey;
+    @UriParam(label = "security", security = "secret",
+              description = "The secret key of the account at the exchange, for the account service. If not set, the"
+                            + " exchange module of XChange decides, for example the one of Binance reads it from the file"
+                            + " binance-secret.keys.")
+    private String secretKey;
 
     public String getName() {
         return name;
@@ -112,13 +137,25 @@ public class XChangeConfiguration {
         this.currency = currency;
     }
 
+    /**
+     * Sets the currency from its code, or null if XChange does not know the currency.
+     *
+     * @deprecated Camel does not call this method, the currency option is converted with
+     *             {@link XChangeConverters#toCurrency(String)}, which fails for an unknown currency.
+     */
+    @Deprecated(since = "4.24.0")
     public void setCurrency(String curr) {
         this.currency = Currency.getInstanceNoCreate(curr);
     }
 
+    /**
+     * The currency pair option as an XChange {@link CurrencyPair}, or null if the option is not set.
+     *
+     * @throws IllegalArgumentException if a currency of the pair is not known to XChange
+     */
     public CurrencyPair getAsCurrencyPair() {
         if (currencyPair != null) {
-            return new CurrencyPair(currencyPair);
+            return XChangeConverters.toCurrencyPair(currencyPair);
         }
         return null;
     }
@@ -131,4 +168,19 @@ public class XChangeConfiguration {
         this.currencyPair = currencyPair;
     }
 
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
 }

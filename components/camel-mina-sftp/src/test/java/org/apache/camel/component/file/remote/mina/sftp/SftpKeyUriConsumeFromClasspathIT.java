@@ -48,7 +48,7 @@ public class SftpKeyUriConsumeFromClasspathIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&knownHostsUri=sftp/known_hosts&privateKeyUri=sftp/id_rsa&privateKeyPassphrase=secret&delay=10000&disconnect=true")
+                     + "?username=admin&knownHostsUri=sftp/known_hosts&privateKeyUri=sftp/id_rsa&privateKeyPassphrase=secret&disconnect=true")
                         .routeId("foo").autoStartup(false)
                         .to("mock:result");
             }

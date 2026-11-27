@@ -257,6 +257,9 @@ YAML::
 ----
 ====
 
+The Saga EIP applies to the entire route, and the steps keep the order they are written in: in the XML and YAML DSL,
+the steps before the `saga`, its nested steps and the steps after it are all part of the saga, in that order.
+
 *That's it*. The buy action will not change for the rest of the examples. We'll just see different options that can be used to model the "New Order" and "Reserve Credit" actions in the following.
 
 [NOTE]
@@ -393,6 +396,8 @@ so it should take into account that it may be triggered multiple times and shoul
 If compensation cannot be done after all retries, a manual intervention process should be triggered.
 The in-memory Saga service logs a warning, marks the Saga as failed, and keeps the exception that caused the compensation
 on the exchange, with the compensation failure added to it as a suppressed exception.
+A compensation or completion asked for while the in-memory Saga service already compensates or completes the Saga
+(because of the timeout of a step, or another caller such as `saga:compensate`) waits for it and gets its outcome.
 
 [NOTE]
 ====

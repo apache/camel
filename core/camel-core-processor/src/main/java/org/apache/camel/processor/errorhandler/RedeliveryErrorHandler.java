@@ -431,11 +431,18 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             e.addSuppressed(original);
         }
         ExchangeHelper.setFailureHandled(exchange);
-        boolean handled = isDeadLetterChannel && deadLetterHandleNewException;
+        // but not a VirtualMachineError: Camel does not recover from it (CAMEL-27515)
+        boolean fatal = ObjectHelper.getVirtualMachineError(e) != null;
+        boolean handled = isDeadLetterChannel && deadLetterHandleNewException && !fatal;
         String target = isDeadLetterChannel && deadLetterUri != null ? URISupport.sanitizeUri(deadLetterUri) : "" + processor;
-        LOG.warn("Error during processing the onPrepareFailure processor on exchange: {}. The exchange is not delivered to: {}"
-                 + " and the new exception is {}. Caused by: {}",
-                exchange.getExchangeId(), target, handled ? "handled" : "not handled", e.getMessage(), e);
+        String message = "Error during processing the onPrepareFailure processor on exchange: {}. The exchange is not"
+                         + " delivered to: {} and the new exception is {}. Caused by: {}";
+        if (fatal) {
+            // logged at ERROR, as any VirtualMachineError that fails an exchange (CAMEL-27515)
+            LOG.error(message, exchange.getExchangeId(), target, "not handled", e.getMessage(), e);
+        } else {
+            LOG.warn(message, exchange.getExchangeId(), target, handled ? "handled" : "not handled", e.getMessage(), e);
+        }
         if (handled) {
             exchange.setException(null);
             exchange.getExchangeExtension().setErrorHandlerHandled(true);
@@ -658,7 +665,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             } else {
                 // the queued callback continued the exchange (which may already be done and released), so this
                 // exception is only logged, as before
-                LOG.warn(
+                logIgnoredAfterCallback(cause,
                         "Error processing exchangeId: {} in processor: {} due to {}. The exchange continued, so this exception is ignored.",
                         exchangeId, outputAsync, cause.getMessage(), cause);
             }
@@ -681,8 +688,20 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          * @see BridgeExceptionHandlerToErrorHandler
          */
         private void handlePreviousFailure() {
+            // classify the failure before the onExceptionOccurred processor can replace the exception (CAMEL-27515)
+            VirtualMachineError fatal = ObjectHelper.getVirtualMachineError(exchange.getException());
             handleException();
             onExceptionOccurred();
+            VirtualMachineError hookError = ObjectHelper.getVirtualMachineError(exchange.getException());
+            if (hookError != null && hookError != fatal) {
+                // a VirtualMachineError of the onExceptionOccurred processor itself: the route does not catch it, as for
+                // an Error thrown in a Java catch block (CAMEL-27515)
+                handleFatalFailure(exchange, hookError);
+                AsyncCallback cb = callback;
+                taskFactory.release(this);
+                reactiveExecutor.schedule(cb);
+                return;
+            }
 
             // For bridged errors, we need to invoke the failure processor (onException route)
             // similar to how RedeliveryTask handles exhausted redeliveries
@@ -693,8 +712,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             boolean useOriginalInBody = false;
 
             Exception e = exchange.getException();
-            if (e != null) {
-                ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, e);
+            if (e != null || fatal != null) {
+                ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, fatal != null ? fatal : e);
+                if (exceptionPolicy == null && fatal != null) {
+                    // a VirtualMachineError that no onException names: no dead letter channel (CAMEL-27515)
+                    handleFatalFailure(exchange, fatal);
+                    AsyncCallback cb = callback;
+                    taskFactory.release(this);
+                    reactiveExecutor.schedule(cb);
+                    return;
+                }
                 if (exceptionPolicy != null) {
                     Route rc = ExchangeHelper.getRoute(exchange);
                     if (rc != null) {
@@ -707,8 +734,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
             }
 
-            // Determine the target processor (failure processor or dead letter)
-            Processor target = failureProcessor != null ? failureProcessor : deadLetter;
+            // Determine the target processor (failure processor or dead letter). A VirtualMachineError that an onException
+            // names goes to its outputs only, never to the dead letter channel (CAMEL-27515)
+            Processor target = failureProcessor != null ? failureProcessor : fatal != null ? null : deadLetter;
             boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;
 
             // If we have a target processor, deliver to it
@@ -945,6 +973,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // we could not process the exchange so we let the failure processor handled it
             ExchangeHelper.setFailureHandled(exchange);
 
+            if (ObjectHelper.getVirtualMachineError(newException) != null) {
+                // a VirtualMachineError of the failure processor (such as the dead letter endpoint) is not handled,
+                // whatever the handled policy of the original failure: the exchange fails with it (CAMEL-27515)
+                exchange.getExchangeExtension().setErrorHandlerHandled(false);
+                exchange.setException(newException);
+                return;
+            }
+
             // honor if already set a handling
             boolean alreadySet = exchange.getExchangeExtension().isErrorHandlerHandledSet();
             if (alreadySet) {
@@ -975,7 +1011,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
                     // DLC is always handling the first thrown exception,
                     // but if its a new exception then use the configured option
-                    boolean handled = newException == null || deadLetterHandleNewException;
+                    // but not a VirtualMachineError of the dead letter route: Camel does not recover from it (CAMEL-27515)
+                    boolean handled = newException == null
+                            || deadLetterHandleNewException && ObjectHelper.getVirtualMachineError(newException) == null;
 
                     if (handled) {
                         LOG.trace("This exchange is handled so its marked as not failed: {}", exchange);
@@ -1101,6 +1139,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                             onExceptionProcessor, exchange);
                 }
                 onExceptionProcessor.process(exchange);
+            } catch (VirtualMachineError e) {
+                // not ignored, unlike an exception: the exchange fails with it (CAMEL-27515)
+                exchange.setException(e);
             } catch (Exception e) {
                 // we dont not want new exception to override existing, so log it as a WARN
                 LOG.warn("Error during processing OnExceptionOccurred. This exception is ignored.", e);
@@ -1229,6 +1270,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         private AsyncCallback callback;
         private int redeliveryCounter;
         private long redeliveryDelay;
+        // the VirtualMachineError of the current failure, and whether an onException names it (CAMEL-27515)
+        private VirtualMachineError fatal;
+        private boolean fatalCaught;
         // the number of the first delivery whose callback is still to come, or 0 when none. The callback and the
         // takeover of a first delivery that throws before it calls the callback compete for it (compareAndSet), so the
         // exchange is continued exactly once. A field, not an object per delivery, as the first delivery runs for every
@@ -1300,6 +1344,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             this.callback = null;
             this.redeliveryCounter = 0;
             this.redeliveryDelay = 0;
+            this.fatal = null;
+            this.fatalCaught = false;
         }
 
         /**
@@ -1335,6 +1381,22 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (exchange.getException() != null) {
                 handleException();
                 onExceptionOccurred();
+                VirtualMachineError hookError = ObjectHelper.getVirtualMachineError(exchange.getException());
+                if (hookError != null && hookError != fatal) {
+                    // a VirtualMachineError of the onExceptionOccurred processor itself: the route does not catch it, as
+                    // for an Error thrown in a Java catch block (CAMEL-27515)
+                    fatal = hookError;
+                    fatalCaught = false;
+                }
+                if (fatal != null && !fatalCaught) {
+                    // a VirtualMachineError that no onException names: no redelivery and no dead letter channel, also
+                    // when it happens on a redelivery (CAMEL-27515)
+                    handleFatalFailure(exchange, fatal);
+                    AsyncCallback cb = callback;
+                    taskFactory.release(this);
+                    reactiveExecutor.schedule(cb);
+                    return;
+                }
             }
 
             // compute if we are exhausted or cannot redeliver
@@ -1357,7 +1419,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
             // if we are exhausted or redelivery is not allowed, then deliver to failure processor (eg such as DLC)
             if (!redeliverAllowed || exhausted) {
-                Processor target = failureProcessor != null ? failureProcessor : deadLetter;
+                // a VirtualMachineError that an onException names goes to its outputs only, never to the dead letter
+                // channel (CAMEL-27515)
+                Processor target = failureProcessor != null ? failureProcessor : fatal != null ? null : deadLetter;
                 // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
                 // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
                 boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;
@@ -1414,8 +1478,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     // may already be released), so only log the exception: the exchange must not be continued again.
                     // This log does not read the exchange id: it is created on first use, and the exchange may be in use
                     // on another thread (or, pooled, by another exchange)
-                    LOG.warn("Error executing the first delivery by the processor {} due to {}. The exchange continued, so"
-                             + " this exception is ignored.",
+                    logIgnoredAfterCallback(e,
+                            "Error executing the first delivery by the processor {} due to {}. The exchange continued, so"
+                                               + " this exception is ignored.",
                             outputAsync, e.getMessage(), e);
                     return;
                 }
@@ -1451,8 +1516,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             } else {
                 // the queued callback continued the exchange (which may already be done and released), so this
                 // exception is only logged
-                LOG.warn("Error executing the first delivery of exchangeId: {} by the processor {} due to {}. The exchange"
-                         + " continued, so this exception is ignored.",
+                logIgnoredAfterCallback(cause,
+                        "Error executing the first delivery of exchangeId: {} by the processor {} due to {}. The exchange"
+                                               + " continued, so this exception is ignored.",
                         exchangeId, outputAsync, cause.getMessage(), cause);
             }
         }
@@ -1619,8 +1685,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             } else {
                 // the queued callback continued the exchange (which may already be done and released), so this
                 // exception is only logged, as before
-                LOG.warn("Error executing the redelivery of exchangeId: {} by its processor {} due to {}. The exchange"
-                         + " continued, so this exception is ignored.",
+                logIgnoredAfterCallback(cause,
+                        "Error executing the redelivery of exchangeId: {} by its processor {} due to {}. The exchange"
+                                               + " continued, so this exception is ignored.",
                         exchangeId, outputAsync, cause.getMessage(), cause);
             }
         }
@@ -1800,11 +1867,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // error handler defaults and do not keep what a previous exception policy set (CAMEL-24981)
             useErrorHandlerDefaults();
 
+            // classify the failure once, before the onExceptionOccurred processor can replace the exception
+            // (CAMEL-27515)
+            fatal = ObjectHelper.getVirtualMachineError(e);
             // find the error handler to use (if any)
             ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, e);
+            fatalCaught = fatal != null && exceptionPolicy != null;
             if (exceptionPolicy != null) {
-                currentRedeliveryPolicy
-                        = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), currentRedeliveryPolicy);
+                // a VirtualMachineError is only redelivered when the onException that names it says so, not by the
+                // redelivery of the error handler (CAMEL-27515)
+                RedeliveryPolicy parent = currentRedeliveryPolicy;
+                if (fatal != null) {
+                    parent = parent.copy();
+                    parent.setMaximumRedeliveries(0);
+                }
+                currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), parent);
                 handledPredicate = exceptionPolicy.getHandledPolicy();
                 continuedPredicate = exceptionPolicy.getContinuedPolicy();
                 retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
@@ -1871,6 +1948,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                             onExceptionProcessor, exchange);
                 }
                 onExceptionProcessor.process(exchange);
+            } catch (VirtualMachineError e) {
+                // not ignored, unlike an exception: the exchange fails with it (CAMEL-27515)
+                exchange.setException(e);
             } catch (Exception e) {
                 // we dont not want new exception to override existing, so log it as a WARN
                 LOG.warn("Error during processing OnExceptionOccurred. This exception is ignored.", e);
@@ -2098,6 +2178,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // we could not process the exchange so we let the failure processor handled it
             ExchangeHelper.setFailureHandled(exchange);
 
+            if (ObjectHelper.getVirtualMachineError(newException) != null) {
+                // a VirtualMachineError of the failure processor (such as the dead letter endpoint) is not handled,
+                // whatever the handled policy of the original failure: the exchange fails with it (CAMEL-27515)
+                exchange.getExchangeExtension().setErrorHandlerHandled(false);
+                exchange.setException(newException);
+                return;
+            }
+
             // honor if already set a handling
             boolean alreadySet = exchange.getExchangeExtension().isErrorHandlerHandledSet();
             if (alreadySet) {
@@ -2128,7 +2216,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
                     // DLC is always handling the first thrown exception,
                     // but if its a new exception then use the configured option
-                    boolean handled = newException == null || deadLetterHandleNewException;
+                    // but not a VirtualMachineError of the dead letter route: Camel does not recover from it (CAMEL-27515)
+                    boolean handled = newException == null
+                            || deadLetterHandleNewException && ObjectHelper.getVirtualMachineError(newException) == null;
 
                     // when using DLC then log new exception whether its being handled or not, as otherwise it may appear as
                     // the DLC swallow new exceptions by default (which is by design to ensure the DLC always complete,
@@ -2524,6 +2614,58 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(deadLetter, output, outputAsync, taskFactory);
+    }
+
+    /**
+     * Fails the exchange with a {@link VirtualMachineError} that no onException of the route names (CAMEL-27515). Camel
+     * does not recover from it on its own: there is no redelivery and no dead letter channel, and the caller gets the
+     * failure. It is logged once at ERROR, also when the exchange goes through the error handlers of several routes.
+     */
+    protected void handleFatalFailure(Exchange exchange, Throwable fatal) {
+        boolean logged = ExchangeHelper.isFailureHandled(exchange);
+        // the exception recorded before the onExceptionOccurred processor, which may have replaced it
+        Exception caught = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
+        if (caught == null || ObjectHelper.getVirtualMachineError(caught) != fatal) {
+            // such as a VirtualMachineError of the onExceptionOccurred processor itself
+            caught = exchange.getException();
+        }
+        if (ObjectHelper.getVirtualMachineError(caught) != fatal) {
+            // the onExceptionOccurred processor replaced the exception and removed the caught one: the exchange still
+            // fails with the error, and the other exception is added to it as suppressed
+            Exception other = caught;
+            exchange.setException(fatal);
+            caught = exchange.getException();
+            if (other != null) {
+                caught.addSuppressed(other);
+            }
+        }
+        // marks the failure as handled by an error handler (so the error handler of a calling route does not handle it
+        // again), which clears the exception: put it back, as the exchange is not handled
+        ExchangeHelper.setFailureHandled(exchange);
+        exchange.getExchangeExtension().setErrorHandlerHandled(false);
+        exchange.setException(caught);
+        exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+        Route rc = ExchangeHelper.getRoute(exchange);
+        if (rc != null) {
+            exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
+        }
+        if (!logged) {
+            LOG.error("Failed delivery for {}{} caught: {}. Camel does not recover from a VirtualMachineError (no redelivery"
+                      + " or dead letter channel), unless an onException or a doCatch of the route names it.",
+                    ExchangeHelper.logIds(exchange), failureOrigin(exchange), fatal, fatal);
+        }
+    }
+
+    /**
+     * Logs an exception that a processor threw after it called the callback, which already continued the exchange: it
+     * can only be logged. A {@link VirtualMachineError} at ERROR, as it must not go unnoticed (CAMEL-27515).
+     */
+    private static void logIgnoredAfterCallback(Throwable cause, String format, Object... args) {
+        if (ObjectHelper.getVirtualMachineError(cause) != null) {
+            LOG.error(format, args);
+        } else {
+            LOG.warn(format, args);
+        }
     }
 
     /**

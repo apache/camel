@@ -31,13 +31,7 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * Stub out any physical endpoints while in development or testing.
- *
- * For example to run a route without needing to actually connect to a specific SMTP or HTTP endpoint. Just add stub: in
- * front of any endpoint URI to stub out the endpoint. Internally the Stub component creates Seda endpoints. The main
- * difference between Stub and Seda is that Seda will validate the URI and parameters you give it, so putting seda: in
- * front of a typical URI with query arguments will usually fail. Stub won't though, as it basically ignores all query
- * parameters to let you quickly stub out one or more endpoints in your route temporarily.
+ * Replace any endpoint with an in-memory queue while developing or testing, by adding stub: in front of its URI.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "stub", title = "Stub", syntax = "stub:name",
              remote = false, internal = true, category = { Category.CORE, Category.TESTING }, lenientProperties = true)

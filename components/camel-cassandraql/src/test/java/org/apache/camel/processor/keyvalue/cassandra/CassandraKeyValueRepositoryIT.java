@@ -19,9 +19,16 @@ package org.apache.camel.processor.keyvalue.cassandra;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.integration.BaseCassandra;
@@ -284,6 +291,179 @@ public class CassandraKeyValueRepositoryIT extends BaseCassandra {
         assertNull(repository.putIfAbsent(key("key1"), "value1"));
         assertEquals("value1", repository.putIfAbsent(key("key1"), "value2"));
         assertEquals("value1", repository.get(key("key1")));
+    }
+
+    @Test
+    public void testPutThenReplaceIsNotLost() {
+        // a plain write could hide the lightweight transaction of the replace, which is then applied but without effect
+        for (int i = 0; i < 100; i++) {
+            String key = key("replace" + i);
+            repository.put(key, "value1", null);
+            assertTrue(repository.replace(key, "value1", "value2", null), key);
+            assertEquals("value2", repository.get(key), key);
+        }
+    }
+
+    @Test
+    public void testPutThenDeleteIsNotLost() {
+        for (int i = 0; i < 100; i++) {
+            String key = key("delete" + i);
+            repository.put(key, "value1", null);
+            assertTrue(repository.delete(key, "value1"), key);
+            assertNull(repository.get(key), key);
+        }
+    }
+
+    @Test
+    public void testDeleteThenPut() {
+        for (int i = 0; i < 100; i++) {
+            String key = key("deleteput" + i);
+            repository.put(key, "value1", null);
+            assertEquals("value1", repository.delete(key), key);
+            assertNull(repository.put(key, "value2", null), key);
+            assertEquals("value2", repository.get(key), key);
+        }
+    }
+
+    @Test
+    public void testPutWithTtlOverwritingExistingKeyExpiresTheEntry() {
+        repository.put(key("key1"), "value1", null);
+        assertEquals("value1", repository.put(key("key1"), "value2", Duration.ofSeconds(2)));
+        assertEquals("value2", repository.get(key("key1")));
+        assertTrue(repository.contains(key("key1")));
+
+        // the whole entry must expire, not only its value
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(repository.contains(key("key1"))));
+        assertNull(repository.get(key("key1")));
+    }
+
+    @Test
+    public void testReplaceWithTtlExpiresTheEntry() {
+        repository.put(key("key1"), "value1", null);
+        assertTrue(repository.replace(key("key1"), "value1", "value2", Duration.ofSeconds(2)));
+
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(repository.contains(key("key1"))));
+    }
+
+    @Test
+    public void testKeysAndSizeIgnoreExpiredEntries() {
+        CassandraKeyValueRepository isolated = createIsolatedRepository();
+        isolated.put(key("key1"), "value1", null);
+        isolated.put(key("key1"), "value2", Duration.ofSeconds(2));
+        isolated.put(key("key2"), "value3", null);
+
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Set.of(key("key2")), isolated.keys()));
+        assertEquals(1, isolated.size());
+    }
+
+    @Test
+    public void testPutIfAbsentAfterExpiration() {
+        repository.put(key("key1"), "value1", null);
+        repository.put(key("key1"), "value2", Duration.ofSeconds(2));
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(repository.contains(key("key1"))));
+
+        assertNull(repository.putIfAbsent(key("key1"), "value3", null));
+        assertEquals("value3", repository.get(key("key1")));
+    }
+
+    @Test
+    public void testConcurrentPutOnSameKeyReturnsEachPreviousValueOnce() throws Exception {
+        int threads = 8;
+        int puts = 20;
+        String key = key("contended");
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        try {
+            List<Future<List<Object>>> futures = new ArrayList<>();
+            for (int t = 0; t < threads; t++) {
+                int id = t;
+                futures.add(executor.submit(() -> {
+                    List<Object> previous = new ArrayList<>();
+                    for (int i = 0; i < puts; i++) {
+                        previous.add(repository.put(key, "t" + id + "-" + i, null));
+                    }
+                    return previous;
+                }));
+            }
+
+            List<Object> previousValues = new ArrayList<>();
+            for (Future<List<Object>> future : futures) {
+                previousValues.addAll(future.get(60, TimeUnit.SECONDS));
+            }
+
+            // every put replaces the value stored by another put, apart from the very first one: the values returned
+            // plus the final value are the values stored, each one exactly once
+            List<Object> all = new ArrayList<>(previousValues);
+            all.remove(null);
+            all.add(repository.get(key));
+            assertEquals(threads * puts, all.size());
+            assertEquals(threads * puts, Set.copyOf(all).size());
+            assertEquals(1, previousValues.stream().filter(Objects::isNull).count());
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testConcurrentDeleteOnSameKeyRemovesTheValueOnce() throws Exception {
+        int threads = 8;
+        for (int round = 0; round < 10; round++) {
+            String key = key("deleted" + round);
+            repository.put(key, "value1", null);
+
+            // a delete that finds the row removed by another one must not fail
+            List<Object> previousValues = runConcurrently(threads, () -> repository.delete(key));
+
+            assertEquals(1, previousValues.stream().filter(Objects::nonNull).count(), key);
+            assertNull(repository.get(key), key);
+        }
+    }
+
+    @Test
+    public void testConcurrentDeleteWithExpectedValueAndDeleteOnSameKey() throws Exception {
+        for (int round = 0; round < 10; round++) {
+            String key = key("deletedboth" + round);
+            repository.put(key, "value1", null);
+
+            List<Object> results = runConcurrently(6, new Callable<Object>() {
+                private final AtomicInteger counter = new AtomicInteger();
+
+                @Override
+                public Object call() {
+                    return counter.getAndIncrement() % 2 == 0 ? repository.delete(key) : repository.delete(key, "value1");
+                }
+            });
+
+            // the value is removed by a single call, which returns it or true
+            long removed = results.stream().filter(r -> "value1".equals(r) || Boolean.TRUE.equals(r)).count();
+            assertEquals(1, removed, key);
+            assertNull(repository.get(key), key);
+        }
+    }
+
+    private static List<Object> runConcurrently(int threads, Callable<Object> task) throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        try {
+            CountDownLatch start = new CountDownLatch(1);
+            List<Future<Object>> futures = new ArrayList<>();
+            for (int t = 0; t < threads; t++) {
+                futures.add(executor.submit(() -> {
+                    start.await();
+                    return task.call();
+                }));
+            }
+            start.countDown();
+            List<Object> results = new ArrayList<>();
+            for (Future<Object> future : futures) {
+                results.add(future.get(60, TimeUnit.SECONDS));
+            }
+            return results;
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Override

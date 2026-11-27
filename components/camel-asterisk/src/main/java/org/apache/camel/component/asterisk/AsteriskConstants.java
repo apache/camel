@@ -19,17 +19,23 @@ package org.apache.camel.component.asterisk;
 import org.apache.camel.spi.Metadata;
 
 public final class AsteriskConstants {
-    @Metadata(label = "consumer", description = "The name of the Asterisk event.", javaType = "java.lang.String",
-              important = true)
+    @Metadata(label = "consumer",
+              description = "The simple class name of the asterisk-java ManagerEvent in the body, for example NewChannelEvent or"
+                            + " HangupEvent. Set by the consumer for each event.",
+              javaType = "java.lang.String", important = true)
     public static final String EVENT_NAME = "CamelAsteriskEventName";
-    @Metadata(label = "producer", description = "The extension to query in case of an `ExtensionStateAction`.",
+    @Metadata(label = "producer",
+              description = "The extension whose state the producer queries with the EXTENSION_STATE action, for example"
+                            + " 100. The other actions do not use it.",
               javaType = "java.lang.String")
     public static final String EXTENSION = "CamelAsteriskExtension";
     @Metadata(label = "producer",
-              description = "The name of the context that contains the extension to query in case of an `ExtensionStateAction`.",
+              description = "The dialplan context that contains the extension of the CamelAsteriskExtension header, for the"
+                            + " EXTENSION_STATE action. The other actions do not use it.",
               javaType = "java.lang.String")
     public static final String CONTEXT = "CamelAsteriskContext";
-    @Metadata(label = "producer", description = "The Asterisk action to do.",
+    @Metadata(label = "producer",
+              description = "The AMI action that the producer sends for this message. Replaces the action option.",
               javaType = "org.apache.camel.component.asterisk.AsteriskAction")
     public static final String ACTION = "CamelAsteriskAction";
 

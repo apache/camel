@@ -58,7 +58,7 @@ public class SftpSimpleConsumeStreamingWithMultipleFilesIT extends SftpServerTes
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&knownHostsFile="
+                     + "?username=admin&password=admin&disconnect=true&streamDownload=true&knownHostsFile="
                      + service.getKnownHostsFile()).routeId("foo")
                         .autoStartup(false).to("mock:result");
             }

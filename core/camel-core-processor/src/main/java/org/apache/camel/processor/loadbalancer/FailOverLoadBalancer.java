@@ -126,7 +126,12 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         boolean answer = false;
 
         if (exchange.getException() != null) {
-            if (exceptions == null || exceptions.isEmpty()) {
+            VirtualMachineError fatal = ObjectHelper.getVirtualMachineError(exchange.getException());
+            if (fatal != null) {
+                // a VirtualMachineError only fails over when the failover names it or a supertype, as a Java catch:
+                // Camel does not recover from it on its own (CAMEL-27515)
+                answer = exceptions != null && exceptions.stream().anyMatch(type -> type.isInstance(fatal));
+            } else if (exceptions == null || exceptions.isEmpty()) {
                 // always failover if no exceptions defined
                 answer = true;
             } else {

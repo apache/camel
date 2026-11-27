@@ -26,7 +26,8 @@ import org.apache.camel.component.pdf.PdfConfiguration;
 /**
  * Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol (\r\n, \r
  * or \n) and then it will be written regardless it fits in the line or not. A tab is written as spaces, and other
- * control characters, which the fonts cannot show, are left out.
+ * control characters, which the fonts cannot show, are left out. Other characters that the font cannot show fail the
+ * writing.
  */
 public class LineTerminationWriterAbstractFactory implements TextProcessingAbstractFactory {
 

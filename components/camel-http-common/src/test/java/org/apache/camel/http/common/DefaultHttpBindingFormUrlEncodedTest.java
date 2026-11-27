@@ -16,6 +16,9 @@
  */
 package org.apache.camel.http.common;
 
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -28,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -81,6 +85,43 @@ class DefaultHttpBindingFormUrlEncodedTest {
     }
 
     @Test
+    void testFieldWithEmptyNameIsKeptButNotWrittenToResponse() throws Exception {
+        // a field such as =x has an empty name, which the WHATWG parser keeps, and so does the binding
+        Exchange exchange = new DefaultExchange(context);
+        Message message = readForm(exchange, "=x&a=1", null);
+        assertEquals("x", message.getHeader(""));
+        assertEquals("1", message.getHeader("a"));
+
+        message.setBody(null);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        binding.doWriteResponse(message, response, exchange);
+
+        verify(response).addHeader("a", "1");
+        verify(response, never()).addHeader(eq(""), anyString());
+    }
+
+    @Test
+    void testDeclaredNonUtf8Charset() throws Exception {
+        Message message = readForm(new DefaultExchange(context), "name=caf%E9", "ISO-8859-1");
+
+        assertEquals("café", message.getHeader("name"));
+    }
+
+    @Test
+    void testUnknownCharset() {
+        assertThrows(UnsupportedEncodingException.class,
+                () -> readForm(new DefaultExchange(context), "name=x", "x-no-such-charset"));
+    }
+
+    @Test
+    void testRepeatedFields() throws Exception {
+        Message message = readForm("a=1&a=2&flag&flag");
+
+        assertEquals(List.of("1", "2"), message.getHeader("a"));
+        assertEquals(List.of("", ""), message.getHeader("flag"));
+    }
+
+    @Test
     void testInvalidHeaderNameIsNotWrittenToResponse() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message message = exchange.getMessage();
@@ -95,12 +136,16 @@ class DefaultHttpBindingFormUrlEncodedTest {
     }
 
     private Message readForm(String body) throws Exception {
-        Exchange exchange = new DefaultExchange(context);
+        return readForm(new DefaultExchange(context), body, null);
+    }
+
+    private Message readForm(Exchange exchange, String body, String charset) throws Exception {
         Message message = exchange.getIn();
         message.setBody(body);
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getMethod()).thenReturn("POST");
         when(request.getContentType()).thenReturn("application/x-www-form-urlencoded");
+        when(request.getCharacterEncoding()).thenReturn(charset);
 
         binding.readFormUrlEncodedBody(request, message);
         return message;

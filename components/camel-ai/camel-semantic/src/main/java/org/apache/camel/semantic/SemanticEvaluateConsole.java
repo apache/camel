@@ -16,18 +16,25 @@
  */
 package org.apache.camel.semantic;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -58,17 +65,41 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
               javaType = "java.lang.Long")
     public static final String TIMEOUT = "timeout";
 
+    private final AtomicInteger active = new AtomicInteger();
     private ExecutorService executor;
     // A resolver-created console may be called without starting it; only an explicit stop rejects calls.
-    private boolean stopped;
+    private volatile boolean stopped;
+
+    private boolean tryAcquire() {
+        while (true) {
+            int count = active.get();
+            if (count >= 2) {
+                return false;
+            }
+            if (active.compareAndSet(count, count + 1)) {
+                return true;
+            }
+        }
+    }
+
+    private void release() {
+        active.decrementAndGet();
+    }
 
     private synchronized ExecutorService executor() throws Exception {
         if (stopped || isStopping()) {
             throw new IllegalStateException("Semantic evaluation console is stopping or stopped");
         }
         if (executor == null) {
-            executor = new ThreadPoolBuilder(getCamelContext()).poolSize(2).maxPoolSize(2).maxQueueSize(0)
-                    .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build(this, "SemanticEvaluation");
+            ThreadPoolProfile profile = new ThreadPoolProfile();
+            profile.setPoolSize(2);
+            profile.setMaxPoolSize(2);
+            profile.setMaxQueueSize(2);
+            profile.setAllowCoreThreadTimeOut(false);
+            profile.setKeepAliveTime(0L);
+            profile.setTimeUnit(TimeUnit.MILLISECONDS);
+            profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
+            executor = getCamelContext().getExecutorServiceManager().newThreadPool(this, "SemanticEvaluation", profile);
         }
         return executor;
     }
@@ -83,7 +114,14 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
     protected synchronized void doStop() throws Exception {
         stopped = true;
         if (executor != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            List<Runnable> dropped = getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            if (dropped != null) {
+                for (Runnable r : dropped) {
+                    if (r instanceof Future<?> f) {
+                        f.cancel(true);
+                    }
+                }
+            }
             executor = null;
         }
         super.doStop();
@@ -125,16 +163,72 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
         SemanticAuditService.Request request
                 = audit.request(options.containsKey(OPERATION) ? "direct_sample" : "definition_sample");
         String failure;
+        AtomicBoolean claimed = new AtomicBoolean();
+        boolean acquired = false;
+        ExecutorService exec = null;
         try {
             long timeout = optionLong(options, TIMEOUT, 50000);
             if (timeout < 1 || timeout > 50000) {
                 throw new IllegalArgumentException("Evaluation timeout must be between 1 and 50000 milliseconds");
             }
-            task = executor().submit(() -> evaluate(options, request));
-            return task.get(timeout, TimeUnit.MILLISECONDS);
+            long deadline = start + TimeUnit.MILLISECONDS.toNanos(timeout);
+            if (stopped || isStopping()) {
+                throw new IllegalStateException("Semantic evaluation console is stopping or stopped");
+            }
+            if (!tryAcquire()) {
+                throw new RejectedExecutionException("Busy: semantic evaluations are already running");
+            }
+            acquired = true;
+            exec = executor();
+            Callable<Map<String, Object>> callable = () -> {
+                if (!claimed.compareAndSet(false, true)) {
+                    throw new CancellationException("Evaluation cancelled");
+                }
+                try {
+                    if (System.nanoTime() > deadline) {
+                        throw new TimeoutException("Evaluation timed out; cancellation requested");
+                    }
+                    return evaluate(options, request);
+                } finally {
+                    release();
+                }
+            };
+            while (true) {
+                try {
+                    task = exec.submit(callable);
+                    break;
+                } catch (RejectedExecutionException e) {
+                    if (exec.isShutdown()) {
+                        throw new CancellationException("Evaluation cancelled");
+                    }
+                    if (System.nanoTime() >= deadline) {
+                        throw new TimeoutException("Evaluation timed out; cancellation requested");
+                    }
+                    TimeUnit.MICROSECONDS.sleep(100);
+                }
+            }
+            long remainingNanos = deadline - System.nanoTime();
+            if (remainingNanos <= 0) {
+                throw new TimeoutException();
+            }
+            return task.get(remainingNanos, TimeUnit.NANOSECONDS);
         } catch (TimeoutException e) {
             audit.requestOutcome(request, "timeout_cancellation_requested");
             failure = "Evaluation timed out; cancellation requested";
+        } catch (CancellationException e) {
+            audit.requestOutcome(request, "cancellation_requested");
+            failure = "Evaluation cancelled";
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            if (cause instanceof TimeoutException) {
+                audit.requestOutcome(request, "timeout_cancellation_requested");
+                failure = "Evaluation timed out; cancellation requested";
+            } else if (cause instanceof CancellationException) {
+                audit.requestOutcome(request, "cancellation_requested");
+                failure = "Evaluation cancelled";
+            } else {
+                failure = cause.getMessage() != null ? cause.getMessage() : cause.getClass().getSimpleName();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             audit.requestOutcome(request, "cancellation_requested");
@@ -146,6 +240,12 @@ public class SemanticEvaluateConsole extends AbstractDevConsole {
         } finally {
             if (task != null && !task.isDone()) {
                 task.cancel(true);
+            }
+            if (task instanceof Runnable r && exec instanceof ThreadPoolExecutor tpe) {
+                tpe.remove(r);
+            }
+            if (acquired && claimed.compareAndSet(false, true)) {
+                release();
             }
         }
         return JsonRecordSupport.toJsonObject(new Response(

@@ -37,6 +37,7 @@ import org.apache.camel.component.mcp.server.McpProtocolEra;
 import org.apache.camel.component.mcp.server.McpResourceReadHandler;
 import org.apache.camel.component.mcp.server.McpResourceReadResult;
 import org.apache.camel.component.mcp.server.McpResourceTemplateReadHandler;
+import org.apache.camel.component.mcp.server.McpServerConstants;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerPrompt;
 import org.apache.camel.component.mcp.server.McpServerResource;
@@ -136,6 +137,23 @@ class VertxMcpModernClientTest {
                 text -> assertThat(text.text()).isEqualTo("sunny in Rome"));
         assertThat(result.structuredContent()).isEqualTo(Map.of("sky", "sunny"));
         assertThat(engine.sessionCount()).isZero();
+    }
+
+    @Test
+    void aToolResultCarriesItsMeta() {
+        engine.toolAdded(tool("guarded", arguments -> new McpToolCallResult(
+                "Access denied", true, null,
+                Map.of(McpServerConstants.META_AUTHORIZATION, McpServerConstants.META_AUTHORIZATION_DENIED))));
+
+        McpSchema.CallToolResult result = client.tool("guarded").arguments(Map.of("city", "Rome")).call();
+
+        assertThat(result.isError()).isTrue();
+        assertThat(result.content()).singleElement().isInstanceOfSatisfying(McpSchema.TextContent.class,
+                text -> assertThat(text.text()).isEqualTo("Access denied"));
+        // next to the entry the server adds to every result of this protocol version
+        assertThat(result.meta())
+                .containsEntry(McpServerConstants.META_AUTHORIZATION, McpServerConstants.META_AUTHORIZATION_DENIED)
+                .containsKey(McpSchema.MetaKeys.SERVER_INFO);
     }
 
     @Test

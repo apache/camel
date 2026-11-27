@@ -51,12 +51,11 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     interface DebeziumSqlserverComponentBuilder extends ComponentBuilder<DebeziumSqlserverComponent> {
     
         /**
-         * Additional properties for debezium components in case they can't be
-         * set directly on the camel configurations (e.g: setting Kafka Connect
-         * properties needed by Debezium engine, for example setting
-         * KafkaOffsetBackingStore), the properties have to be prefixed with
-         * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. This is a multi-value option with prefix: additionalProperties.
+         * Properties for the Debezium engine and connector that have no option
+         * of their own, such as the Kafka brokers of the
+         * KafkaOffsetBackingStore or single message transformations, for
+         * example additionalProperties.bootstrap.servers=localhost:9092. This
+         * is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -117,8 +116,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         
         /**
-         * The Converter class that should be used to serialize and deserialize
-         * key data for offsets. The default is JSON converter.
+         * The converter class that Camel passes to Debezium as
+         * internal.key.converter. Debezium does not read this property: it
+         * always stores the keys of the offsets as JSON, so this option has no
+         * effect.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -135,8 +136,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         
         /**
-         * The Converter class that should be used to serialize and deserialize
-         * value data for offsets. The default is JSON converter.
+         * The converter class that Camel passes to Debezium as
+         * internal.value.converter. Debezium does not read this property: it
+         * always stores the values of the offsets as JSON, so this option has
+         * no effect.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -152,11 +155,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
     
         /**
-         * The name of the Java class of the commit policy. It defines when
-         * offsets commit has to be triggered based on the number of events
-         * processed and the time elapsed since the last commit. This class must
-         * implement the interface 'OffsetCommitPolicy'. The default is a
-         * periodic commit policy based upon time intervals.
+         * The Java class that decides when the offsets are committed. It must
+         * implement io.debezium.engine.spi.OffsetCommitPolicy. The default
+         * PeriodicCommitOffsetPolicy commits every offsetFlushIntervalMs, and
+         * AlwaysCommitOffsetPolicy commits after each batch of events.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -172,10 +174,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         
         /**
-         * Maximum number of milliseconds to wait for records to flush and
-         * partition offset data to be committed to offset storage before
-         * cancelling the process and restoring the offset data to be committed
-         * in a future attempt. The default is 5 seconds.
+         * How long to wait for the offsets to be written to the offset store
+         * before the commit is cancelled; the offsets are then committed in a
+         * later attempt. Camel passes it to Debezium as
+         * offset.flush.timeout.ms. The default is 5 seconds.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -192,7 +194,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         
         /**
-         * Interval at which to try committing offsets. The default is 1 minute.
+         * How often the default periodic commit policy commits the offsets. The
+         * events processed since the last commit are sent again after a crash.
+         * The default is 1 minute.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -209,8 +213,12 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         
         /**
-         * The name of the Java class that is responsible for persistence of
-         * connector offsets.
+         * The Java class of the Kafka Connect OffsetBackingStore that stores
+         * the offsets (the position of the connector in the database log), so
+         * that a restarted consumer continues where it stopped. The default
+         * FileOffsetBackingStore writes them to the offsetStorageFileName file,
+         * KafkaOffsetBackingStore to the offsetStorageTopic topic, and
+         * MemoryOffsetBackingStore keeps them in memory only.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -226,8 +234,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
     
         /**
-         * Path to file where offsets are to be stored. Required when
-         * offset.storage is set to the FileOffsetBackingStore.
+         * The file that the FileOffsetBackingStore writes the offsets to.
+         * Required with the default offsetStorage: creating the endpoint fails
+         * when it is not set, or when its folder does not exist or cannot be
+         * written.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -242,8 +252,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
     
         /**
-         * The number of partitions used when creating the offset storage topic.
-         * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
+         * The number of partitions of the offset topic, when the
+         * KafkaOffsetBackingStore creates it. Required when offsetStorage is
+         * the KafkaOffsetBackingStore.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -258,8 +269,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
     
         /**
-         * Replication factor used when creating the offset storage topic.
-         * Required when offset.storage is set to the KafkaOffsetBackingStore.
+         * The replication factor of the offset topic, when the
+         * KafkaOffsetBackingStore creates it. Required when offsetStorage is
+         * the KafkaOffsetBackingStore.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -274,8 +286,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
     
         /**
-         * The name of the Kafka topic where offsets are to be stored. Required
-         * when offset.storage is set to the KafkaOffsetBackingStore.
+         * The Kafka topic that the KafkaOffsetBackingStore writes the offsets
+         * to. Required with that offsetStorage, together with
+         * offsetStoragePartitions, offsetStorageReplicationFactor and the Kafka
+         * brokers as additionalProperties.bootstrap.servers.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -401,8 +415,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         /**
          * Optional list of custom converters that would be used instead of
-         * default ones. The converters are defined using '.type' config option
-         * and configured using options '.'.
+         * default ones. The converters are defined using
+         * '{converter.prefix}.type' config option and configured using options
+         * '{converter.prefix}.{option}'.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -661,7 +676,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         
         /**
          * The maximum number of retries on connection errors before failing (-1
-         * = no limit, 0 = disabled, 0 = num of retries).
+         * = no limit, 0 = disabled, &gt; 0 = num of retries).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1094,7 +1109,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * schema metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.TableMappingStorage of
+         * io.debezium.relational.TableSchema. Defaults to
          * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
          * storage.
          * 
@@ -1115,7 +1131,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         /**
          * The fully-qualified class name of the storage implementation for
          * table metadata. The class must implement
-         * io.debezium.relational.TableMappingStorage. Defaults to
+         * io.debezium.relational.TableMappingStorage of
+         * io.debezium.relational.Table. Defaults to
          * io.debezium.relational.ConcurrentMapTableMappingStorage for in-memory
          * storage.
          * 
@@ -1135,12 +1152,13 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':', where the table names could be defined as
-         * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-         * specific connector, and the key columns are a comma-separated list of
-         * columns representing the custom key. For any table without an
-         * explicit key configuration the table's primary key column(s) will be
-         * used as message key. Example:
+         * match the pattern '{fully-qualified table name}:{key columns}', where
+         * the table names could be defined as (DB_NAME.TABLE_NAME) or
+         * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector, and
+         * the key columns are a comma-separated list of columns representing
+         * the custom key. For any table without an explicit key configuration
+         * the table's primary key column(s) will be used as message key.
+         * Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1395,7 +1413,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         /**
          * Optional list of post processors. The processors are defined using
-         * '.type' config option and configured using options ''.
+         * '{post.processor.prefix}.type' config option and configured using
+         * options '{post.processor.prefix}.{option}'.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1640,7 +1659,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         /**
          * The maximum number of retries after encountering an error emitting a
-         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * window event (-1 = no limit, 0 = disabled, &gt; 0 = num of retries).
          * Defaults to 0.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.

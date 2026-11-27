@@ -20,17 +20,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 import java.util.concurrent.locks.Lock;
@@ -77,8 +77,22 @@ public class DisruptorReference {
 
     private final DisruptorWaitStrategy waitStrategy;
 
-    private final Queue<Exchange> temporaryExchangeBuffer;
+    // the exchanges taken from the ring buffer of a Disruptor without consumer when it is shut down, for the next
+    // Disruptor: not bounded, as the producers that waited on its full ring buffer publish on it before it is shut down
+    private final Queue<Exchange> temporaryExchangeBuffer = new LinkedBlockingQueue<>();
     private final Lock lock = new ReentrantLock();
+
+    // the producers that have read the current Disruptor and not yet published on its ring buffer (or failed to): a
+    // reconfiguration clears the reference, then waits for them before it drains and halts the Disruptor, so that no
+    // exchange is published on a ring buffer whose event handlers have been halted
+    private static final long MAX_PUBLISHES_IN_FLIGHT_PAUSE = TimeUnit.MILLISECONDS.toNanos(1);
+
+    private final AtomicInteger publishesInFlight = new AtomicInteger();
+
+    // the current Disruptor while it has consumers (the buffered exchanges are only published on such a Disruptor), and
+    // whether a thread publishes the buffered exchanges that did not fit its ring buffer when it was started
+    private volatile Disruptor<ExchangeEvent> consumingDisruptor;
+    private final AtomicBoolean publishingBufferedExchanges = new AtomicBoolean();
 
     //access guarded by this
     private ExecutorService executor;
@@ -102,7 +116,6 @@ public class DisruptorReference {
         this.size = size;
         this.producerType = producerType;
         this.waitStrategy = waitStrategy;
-        temporaryExchangeBuffer = new ArrayBlockingQueue<>(size);
         reconfigure();
     }
 
@@ -135,11 +148,62 @@ public class DisruptorReference {
     }
 
     public void tryPublish(final Exchange exchange) throws DisruptorNotStartedException, InsufficientCapacityException {
-        tryPublishExchangeOnRingBuffer(exchange, getCurrentDisruptor().getRingBuffer());
+        final RingBuffer<ExchangeEvent> ringBuffer = beginPublish().getRingBuffer();
+        try {
+            tryPublishExchangeOnRingBuffer(exchange, ringBuffer);
+        } finally {
+            publishesInFlight.decrementAndGet();
+        }
     }
 
     public void publish(final Exchange exchange) throws DisruptorNotStartedException {
-        publishExchangeOnRingBuffer(exchange, getCurrentDisruptor().getRingBuffer());
+        final RingBuffer<ExchangeEvent> ringBuffer = beginPublish().getRingBuffer();
+        try {
+            publishExchangeOnRingBuffer(exchange, ringBuffer);
+        } finally {
+            publishesInFlight.decrementAndGet();
+        }
+    }
+
+    /**
+     * The current Disruptor, waiting while the Disruptor is being reconfigured. The caller is counted in
+     * {@link #publishesInFlight}, and must decrement it once it has published on its ring buffer, or failed to.
+     */
+    private Disruptor<ExchangeEvent> beginPublish() throws DisruptorNotStartedException {
+        while (true) {
+            // count, then read the reference: a reconfiguration clears the reference, then waits until the count is 0, so
+            // either it waits for this producer, or this producer sees the cleared reference
+            publishesInFlight.incrementAndGet();
+            final Disruptor<ExchangeEvent> currentDisruptor = disruptor.getReference();
+            if (currentDisruptor != null) {
+                return currentDisruptor;
+            }
+            publishesInFlight.decrementAndGet();
+            // wait for the reconfiguration to end without being counted (or fail if the Disruptor is not started)
+            getCurrentDisruptor();
+        }
+    }
+
+    private void awaitPublishesInFlight() {
+        // a producer in flight usually ends within microseconds, but one that waits for a free slot waits for a consumer:
+        // the pause doubles up to 1 ms, so a long wait does not keep a core busy. parkNanos returns at once while the
+        // interrupt flag is set, so on an interrupted thread (such as a CamelContext stop that timed out) the loop would
+        // spin: the flag is cleared for the wait, and set again after it
+        boolean interrupted = Thread.interrupted();
+        try {
+            long pause = 1000L;
+            while (publishesInFlight.get() > 0) {
+                LockSupport.parkNanos(pause);
+                pause = Math.min(pause * 2, MAX_PUBLISHES_IN_FLIGHT_PAUSE);
+                if (Thread.interrupted()) {
+                    interrupted = true;
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private void publishExchangeOnRingBuffer(
@@ -164,6 +228,7 @@ public class DisruptorReference {
             shutdownDisruptor(true);
 
             start();
+            startPublishingBufferedExchanges();
         } finally {
             lock.unlock();
         }
@@ -171,8 +236,29 @@ public class DisruptorReference {
 
     private void start() throws Exception {
         LOGGER.debug("Starting disruptor {}", this);
-        Disruptor<ExchangeEvent> newDisruptor = createDisruptor();
+        Disruptor<ExchangeEvent> newDisruptor = null;
+        try {
+            newDisruptor = createDisruptor();
+            startDisruptor(newDisruptor);
+        } catch (Exception | Error e) {
+            // the reference was cleared and marked as being reconfigured, so producers wait for the new Disruptor: mark
+            // it as not started instead, so they fail (as when no Disruptor was started) instead of waiting forever
+            disruptor.set(null, false);
+            // and do not run the event processors of this Disruptor later on the executor (the next start would
+            // hand them over with its own), nor keep running the ones already handed over
+            delayedExecutor.clear();
+            if (newDisruptor != null) {
+                newDisruptor.halt();
+            }
+            handlers = new LifecycleAwareExchangeEventHandler[0];
+            LOGGER.warn("Failed to start disruptor {}, producers fail until it is started again"
+                        + " ({} exchanges buffered before this failure are kept until then): {}",
+                    uri, temporaryExchangeBuffer.size(), e.toString());
+            throw e;
+        }
+    }
 
+    private void startDisruptor(Disruptor<ExchangeEvent> newDisruptor) throws Exception {
         newDisruptor.start();
 
         if (executor != null) {
@@ -181,30 +267,104 @@ public class DisruptorReference {
         }
 
         //make sure all event handlers are correctly started before we continue
-        for (final LifecycleAwareExchangeEventHandler handler : handlers) {
-            boolean eventHandlerStarted = false;
-            while (!eventHandlerStarted) {
-                try {
-                    //The disruptor start command executed above should have triggered a start signal to all
-                    //event processors which, in their death, should notify our event handlers. They respond by
-                    //switching a latch and we want to await that latch here to make sure they are started.
-                    if (!handler.awaitStarted(10, TimeUnit.SECONDS)) {
-                        //we wait for a relatively long, but limited amount of time to prevent an application using
-                        //this component from hanging indefinitely
-                        //Please report a bug if you can reproduce this
-                        LOGGER.error("Disruptor/event handler failed to start properly, PLEASE REPORT");
-                    }
-                    eventHandlerStarted = true;
-                } catch (InterruptedException e) {
-                    LOGGER.info("Interrupted while waiting for the startup to complete");
-                    Thread.currentThread().interrupt();
-                }
-            }
+        //The disruptor start command executed above should have triggered a start signal to all
+        //event processors which, in their death, should notify our event handlers. They respond by
+        //switching a latch and we want to await that latch here to make sure they are started.
+        awaitEventHandlers(handlers, true);
+
+        // a Disruptor without consumer would only take the buffered exchanges back into the buffer when it is shut down,
+        // so they stay buffered, in order, for the first consumer
+        final boolean hasConsumers = getBlockingEventHandler() == null;
+        if (hasConsumers) {
+            // the buffered exchanges go first: as many as the ring buffer holds, before the producers can use it (this
+            // does not wait, as nothing else publishes on it yet). The rest is published by another thread once the
+            // reference is set (startPublishingBufferedExchanges), as publishing more than the ring buffer holds waits
+            // for its consumers, which may need a lock that is held here (this one, that of the endpoint, or that of
+            // the CamelContext that starts the route)
+            publishBufferedExchanges(newDisruptor.getRingBuffer());
         }
 
-        publishBufferedExchanges(newDisruptor);
-
+        consumingDisruptor = hasConsumers ? newDisruptor : null;
         disruptor.set(newDisruptor, false);
+    }
+
+    /**
+     * Starts a thread that publishes the buffered exchanges that did not fit the ring buffer of the Disruptor that was
+     * just started, if there are any and it has consumers (the buffer holds more exchanges than the ring buffer when
+     * producers waited on the full ring buffer of a Disruptor without consumer). It publishes them as a producer does,
+     * without holding a lock, so that a consumer that needs one of the locks held while the Disruptor is started does
+     * not wait for the thread that started it. Called after {@link #start()}, outside of it, so that a failure here
+     * does not affect a Disruptor that producers already use: when the thread cannot be started, the exchanges stay
+     * buffered for the next start (a {@link VirtualMachineError} is thrown again).
+     */
+    private void startPublishingBufferedExchanges() {
+        if (!hasBufferedExchangesToPublish() || !publishingBufferedExchanges.compareAndSet(false, true)) {
+            // nothing to do, or the thread that already does it publishes these too
+            return;
+        }
+        try {
+            CamelContext context = executorContext != null ? executorContext : component.getCamelContext();
+            Thread thread = context.getExecutorServiceManager()
+                    .newThread("DisruptorBacklog[" + uri + "]", this::publishRestOfBufferedExchanges);
+            thread.start();
+        } catch (Throwable e) {
+            // such as the OutOfMemoryError of a thread that cannot be created: no thread publishes them, so the next
+            // start must be able to start one
+            publishingBufferedExchanges.set(false);
+            LOGGER.warn("Cannot start the thread that publishes the {} buffered exchanges of disruptor {}, they are"
+                        + " published when it is started again: {}",
+                    temporaryExchangeBuffer.size(), uri, e.toString());
+            if (e instanceof VirtualMachineError vme) {
+                throw vme;
+            }
+        }
+    }
+
+    private boolean hasBufferedExchangesToPublish() {
+        final Disruptor<ExchangeEvent> currentDisruptor = disruptor.getReference();
+        return currentDisruptor != null && currentDisruptor == consumingDisruptor && !temporaryExchangeBuffer.isEmpty();
+    }
+
+    private void publishRestOfBufferedExchanges() {
+        do {
+            try {
+                while (publishNextBufferedExchange()) {
+                    // publish the next one
+                }
+            } finally {
+                publishingBufferedExchanges.set(false);
+            }
+            // a Disruptor started while this thread was ending did not start another one: go on with its exchanges
+        } while (hasBufferedExchangesToPublish() && publishingBufferedExchanges.compareAndSet(false, true));
+    }
+
+    /**
+     * Publishes the first buffered exchange on the current Disruptor, as a producer does. Returns false, leaving the
+     * exchanges buffered, when there is none, when the current Disruptor has no consumer (the first consumer gets them,
+     * in order) or when it is not started (the next start publishes them).
+     */
+    private boolean publishNextBufferedExchange() {
+        final Disruptor<ExchangeEvent> currentDisruptor;
+        try {
+            currentDisruptor = beginPublish();
+        } catch (DisruptorNotStartedException e) {
+            return false;
+        }
+        try {
+            if (currentDisruptor != consumingDisruptor || temporaryExchangeBuffer.isEmpty()) {
+                return false;
+            }
+            // only this thread and start() take exchanges from the buffer, and start() runs only after a reconfiguration
+            // has waited for this thread (counted in publishesInFlight): the first exchange is still there once a slot
+            // is free, and is published before the ones behind it
+            final RingBuffer<ExchangeEvent> ringBuffer = currentDisruptor.getRingBuffer();
+            final long sequence = ringBuffer.next();
+            ringBuffer.get(sequence).setExchange(temporaryExchangeBuffer.poll(), uniqueConsumerCount);
+            ringBuffer.publish(sequence);
+            return true;
+        } finally {
+            publishesInFlight.decrementAndGet();
+        }
     }
 
     private Disruptor<ExchangeEvent> createDisruptor() throws Exception {
@@ -253,17 +413,21 @@ public class DisruptorReference {
         newDisruptor.handleEventsWith(handlers);
     }
 
-    private void publishBufferedExchanges(Disruptor<ExchangeEvent> newDisruptor) {
-        //now empty out all buffered Exchange if we had any
-        final List<Exchange> exchanges = new ArrayList<>(temporaryExchangeBuffer.size());
-        while (!temporaryExchangeBuffer.isEmpty()) {
-            exchanges.add(temporaryExchangeBuffer.remove());
-        }
-        RingBuffer<ExchangeEvent> ringBuffer = newDisruptor.getRingBuffer();
-        //and offer them again to our new ringbuffer
-        for (final Exchange exchange : exchanges) {
+    private void publishBufferedExchanges(RingBuffer<ExchangeEvent> ringBuffer) {
+        Exchange exchange;
+        while (ringBuffer.remainingCapacity() > 0 && (exchange = temporaryExchangeBuffer.poll()) != null) {
             publishExchangeOnRingBuffer(exchange, ringBuffer);
         }
+    }
+
+    /**
+     * The event handler that keeps a Disruptor without consumer busy, or null if the Disruptor has consumers.
+     */
+    private BlockingExchangeEventHandler getBlockingEventHandler() {
+        if (handlers.length == 1 && handlers[0] instanceof BlockingExchangeEventHandler blockingExchangeEventHandler) {
+            return blockingExchangeEventHandler;
+        }
+        return null;
     }
 
     /**
@@ -334,43 +498,85 @@ public class DisruptorReference {
 
             if (currentDisruptor != null) {
                 //check if we had a blocking event handler to keep an empty disruptor 'busy'
-                if (handlers != null && handlers.length == 1
-                        && handlers[0] instanceof BlockingExchangeEventHandler blockingExchangeEventHandler) {
+                BlockingExchangeEventHandler blockingExchangeEventHandler = getBlockingEventHandler();
+                if (blockingExchangeEventHandler != null) {
                     // yes we did, unblock it so we can get rid of our backlog,
                     // The eventhandler will empty its pending exchanges in our temporary buffer
                     blockingExchangeEventHandler.unblock();
                 }
 
+                // the producers that read the reference before it was cleared publish on this ring buffer, also those
+                // that wait for a free slot on a full ring buffer (the event handlers keep running until the shutdown
+                // below, and a blocking event handler was unblocked above): wait for them, so the shutdown drains their
+                // exchanges, instead of halting the event handlers before they are published
+                awaitPublishesInFlight();
+
                 currentDisruptor.shutdown();
 
                 //they have already been given a trigger to halt when they are done by shutting down the disruptor
                 //we do however want to await their completion before they are scheduled to process events from the new
-                for (final LifecycleAwareExchangeEventHandler eventHandler : handlers) {
-                    boolean eventHandlerFinished = false;
-                    //the disruptor is now empty and all consumers are either done or busy processing their last exchange
-                    while (!eventHandlerFinished) {
-                        try {
-                            //The disruptor shutdown command executed above should have triggered a halt signal to all
-                            //event processors which, in their death, should notify our event handlers. They respond by
-                            //switching a latch and we want to await that latch here to make sure they are done.
-                            if (!eventHandler.awaitStopped(10, TimeUnit.SECONDS)) {
-                                //we wait for a relatively long, but limited amount of time to prevent an application using
-                                //this component from hanging indefinitely
-                                //Please report a bug if you can repruduce this
-                                LOGGER.error("Disruptor/event handler failed to shut down properly, PLEASE REPORT");
-                            }
-                            eventHandlerFinished = true;
-                        } catch (InterruptedException e) {
-                            LOGGER.info("Interrupted while waiting for the shutdown to complete");
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
+                //(the event processors, in their death, notify our event handlers, which switch a latch we await here)
+                awaitEventHandlers(handlers, false);
 
                 handlers = new LifecycleAwareExchangeEventHandler[0];
             }
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * Waits until each of the event handlers has started (or stopped), for at most 10 seconds each. The interrupt flag
+     * is kept for the caller, and an interrupt never makes this wait again in a loop (the wait clears the flag when it
+     * throws).
+     * <p/>
+     * An interrupt does not end the wait for the start: producers use the new Disruptor once the start returns, and the
+     * next shutdown of a Disruptor (LMAX) only waits for the event processors that run, so a Disruptor whose event
+     * processors have not run yet would be halted with the exchanges published on it. The wait goes on for the rest of
+     * the time limit, and the flag is set again at the end. An interrupt ends the wait for the stop:
+     * {@link Disruptor#shutdown()} returned only once the event processors had taken every exchange published on the
+     * ring buffer and had handled it, so an event handler that has not stopped yet is only shutting down, as after the
+     * time limit.
+     */
+    static void awaitEventHandlers(final LifecycleAwareExchangeEventHandler[] eventHandlers, final boolean start) {
+        boolean interrupted = false;
+        try {
+            for (final LifecycleAwareExchangeEventHandler eventHandler : eventHandlers) {
+                final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+                boolean waiting = true;
+                while (waiting) {
+                    try {
+                        final long remaining = deadline - System.nanoTime();
+                        final boolean done = start
+                                ? eventHandler.awaitStarted(remaining, TimeUnit.NANOSECONDS)
+                                : eventHandler.awaitStopped(remaining, TimeUnit.NANOSECONDS);
+                        if (!done) {
+                            //we wait for a relatively long, but limited amount of time to prevent an application using
+                            //this component from hanging indefinitely
+                            //Please report a bug if you can reproduce this
+                            LOGGER.error("Disruptor/event handler failed to {} properly, PLEASE REPORT",
+                                    start ? "start" : "shut down");
+                        }
+                        waiting = false;
+                    } catch (InterruptedException e) {
+                        if (!start) {
+                            LOGGER.warn("Interrupted while waiting for the shutdown of the event handlers of a disruptor"
+                                        + " to complete, not waiting for them any longer");
+                            interrupted = true;
+                            return;
+                        }
+                        if (!interrupted) {
+                            LOGGER.warn("Interrupted while waiting for the startup of the event handlers of a disruptor"
+                                        + " to complete, still waiting for them before the disruptor is used");
+                        }
+                        interrupted = true;
+                    }
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -432,6 +638,7 @@ public class DisruptorReference {
                     registeredEndpoints.set(endpoints.size());
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
+                startPublishingBufferedExchanges();
             }
             LOGGER.debug("Endpoint added: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
         } finally {
@@ -468,6 +675,7 @@ public class DisruptorReference {
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
+                startPublishingBufferedExchanges();
             }
         } finally {
             lock.unlock();
@@ -530,6 +738,7 @@ public class DisruptorReference {
                 // the producer no longer waits for this exchange (timeout), so don't process it
                 LOGGER.trace("Ignoring exchange {}", exchange);
             } else {
+                // not bounded, so this never drops the exchange
                 temporaryExchangeBuffer.offer(exchange);
             }
         }
@@ -566,6 +775,10 @@ public class DisruptorReference {
             while ((command = delayedCommands.poll()) != null) {
                 actualExecutor.execute(command);
             }
+        }
+
+        public void clear() {
+            delayedCommands.clear();
         }
     }
 }

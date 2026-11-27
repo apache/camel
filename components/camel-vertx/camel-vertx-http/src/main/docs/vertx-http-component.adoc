@@ -217,6 +217,10 @@ It is also possible to configure SSL options by providing a custom `WebClientOpt
 An `https://` address is always called with TLS. When no `sslContextParameters` is configured, the server certificate
 is checked with the default trust store of the JVM.
 
+Vert.x creates its own TLS engine from the `sslContextParameters`: the key and trust managers, the cipher suites, the
+protocols and the named groups (including the post-quantum preference of `SSLContextParameters`) are applied. Vert.x has
+no setting for the signature schemes, which are not applied, and a `WARN` is logged when they are configured.
+
 === Session Management
 
 Session management can be enabled via the `sessionManagement` URI option. When enabled, an in-memory cookie store is used to track cookies.

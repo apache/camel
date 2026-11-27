@@ -23,16 +23,17 @@ import org.apache.camel.spi.Metadata;
  */
 public final class MustacheConstants {
 
-    /**
-     * Header containing a Mustache template location
-     */
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint.", javaType = "String")
+    @Metadata(description = "The URI of a template resource that the producer renders in place of the resource of"
+                            + " resourceUri, in the same form as resourceUri. Only used when allowTemplateFromHeader is true."
+                            + " The producer removes the header and renders the template with the mustache endpoint for that"
+                            + " URI, which takes the options of the component, not those of this endpoint.",
+              javaType = "String")
     public static final String MUSTACHE_RESOURCE_URI = "CamelMustacheResourceUri";
 
-    /**
-     * Header containing the Mustache template code
-     */
-    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
+    @Metadata(description = "The text of a template that the producer renders in place of the resource of resourceUri."
+                            + " Only used when allowTemplateFromHeader is true. The producer removes the header and compiles"
+                            + " the text for each exchange, with the startDelimiter and endDelimiter of the endpoint.",
+              javaType = "String")
     public static final String MUSTACHE_TEMPLATE = "CamelMustacheTemplate";
 
     /**

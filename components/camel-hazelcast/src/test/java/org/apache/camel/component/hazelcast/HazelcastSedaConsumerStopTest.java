@@ -30,6 +30,7 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -149,6 +150,28 @@ class HazelcastSedaConsumerStopTest extends CamelTestSupport {
                         "A consumer thread is left: " + failingConsumerThreads(false)));
     }
 
+    @Test
+    void consumerStopsAfterVirtualMachineErrorUntilRestarted() throws Exception {
+        // the route fails an item with a VirtualMachineError that it does not catch (CAMEL-27515)
+        member.getQueue("fatal").offer("boom");
+        DefaultConsumer consumer = (DefaultConsumer) context.getRoute("fatal").getConsumer();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getFatalError() != null);
+
+        // the consumer no longer takes from the queue
+        member.getQueue("fatal").offer("after");
+        await().during(2, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, member.getQueue("fatal").size(),
+                        "The consumer took an item after the fatal error"));
+        assertEquals(0, getMockEndpoint("mock:fatal").getReceivedCounter());
+
+        // a restart brings it back
+        MockEndpoint mock = getMockEndpoint("mock:fatal");
+        mock.expectedBodiesReceived("after");
+        context.getRouteController().stopRoute("fatal");
+        context.getRouteController().startRoute("fatal");
+        mock.assertIsSatisfied();
+    }
+
     /**
      * The threads of the consumer of the failing route, only those waiting in the error delay if asked.
      */
@@ -174,6 +197,14 @@ class HazelcastSedaConsumerStopTest extends CamelTestSupport {
 
                 from("hazelcast-seda:failing?hazelcastInstance=#failingInstance&onErrorDelay=3000").routeId("failing")
                         .to("mock:failing");
+
+                from("hazelcast-seda:fatal?hazelcastInstance=#hazelcastInstance").routeId("fatal")
+                        .process(e -> {
+                            if ("boom".equals(e.getMessage().getBody(String.class))) {
+                                throw new StackOverflowError("simulated");
+                            }
+                        })
+                        .to("mock:fatal");
             }
         };
     }

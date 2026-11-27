@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.avro;
 
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
@@ -34,9 +35,10 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
 
 /**
- * Produce or consume Apache Avro RPC services.
+ * Call and expose Apache Avro RPC services over HTTP or Netty.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro RPC", syntax = "avro:transport:host:port/messageName",
              category = { Category.RPC }, headersClass = AvroConstants.class)
@@ -113,8 +115,16 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
             }
         }
 
+        if (config.getProtocol() == null && config.getProtocolLocation() != null) {
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(),
+                    config.getProtocolLocation())) {
+                config.setProtocol(Protocol.parse(is));
+            }
+        }
+
         if (config.getProtocol() == null) {
-            throw new IllegalArgumentException("Avro configuration does not contain protocol");
+            throw new IllegalArgumentException(
+                    "Avro configuration does not contain protocol: set protocol, protocolClassName or protocolLocation");
         }
 
         configureClassSecurity(config);

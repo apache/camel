@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonClassDescription("An OpenShift Route that exposes the Service of the application outside the cluster.")
 @JsonPropertyOrder({
         "annotations", "enabled", "host", "tlsCACertificate", "tlsCACertificateSecret", "tlsCertificate",
         "tlsCertificateSecret", "tlsDestinationCACertificate", "tlsDestinationCACertificateSecret",

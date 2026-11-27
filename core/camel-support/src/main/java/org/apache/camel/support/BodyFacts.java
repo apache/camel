@@ -16,19 +16,26 @@
  */
 package org.apache.camel.support;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Modifier;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
 
@@ -631,9 +638,46 @@ public final class BodyFacts {
         return BodyTypeRegistry.Kind.DATA;
     }
 
-    /** The payload in its serialized form: text, bytes, a stream or a file. */
+    /**
+     * Whether the text a type converter gave for a value is no more than the toString() of the value, which is what
+     * ToStringTypeConverter, the fallback that is never promoted, gives for an object no other converter reads as text,
+     * such as a Map or a POJO. Asking the type converter for its converter does not tell them apart, as the registry
+     * caches that fallback for the pair of types after the first conversion, so a step that reads a value as text
+     * compares the text instead, and fails rather than send the toString() of an object.
+     * <p>
+     * A payload (text, bytes, a stream, a file) or a single value (a number, a boolean, an enum) is text by itself,
+     * whatever its toString(), and so is an id, an address or a point in time (a UUID, URI, URL, java.time value or
+     * Date), whose toString() is its text and which no type converter reads otherwise. A value with a real converter to
+     * text whose text happens to equal its toString() counts as only a toString() too: a step that rejects it should
+     * name convertBodyTo(String.class) as the way to send that text.
+     *
+     * @param  value the value, not null
+     * @param  text  the text the type converter gave for the value
+     * @return       true when the text is no more than value.toString()
+     */
+    public static boolean isOnlyToString(Object value, String text) {
+        return kindOf(value) != BodyTypeRegistry.Kind.PAYLOAD && !isTextValue(value) && text.equals(value.toString());
+    }
+
+    /**
+     * Whether the value is one whose toString() is its text, rather than a dump of its fields: an id, an address or a
+     * point in time (a UUID, URI, URL, java.time value or Date). No type converter reads these as text otherwise.
+     *
+     * @param  value the value, may be null
+     * @return       true when the toString() of the value is its text
+     */
+    public static boolean isTextValue(Object value) {
+        return value instanceof UUID || value instanceof URI || value instanceof URL || value instanceof Temporal
+                || value instanceof TemporalAmount || value instanceof Date;
+    }
+
+    /**
+     * The payload in its serialized form: text, bytes, a stream or a file. A ByteArrayOutputStream, which camel-tika
+     * parse puts in the body, holds the bytes written to it, and converts to bytes, a stream or text as they do.
+     */
     private static boolean isPayload(Object body) {
-        return body instanceof String || body instanceof byte[] || body instanceof InputStream || body instanceof Reader
+        return body instanceof String || body instanceof byte[] || body instanceof ByteArrayOutputStream
+                || body instanceof InputStream || body instanceof Reader
                 || body instanceof StreamCache || body instanceof WrappedFile<?> || body instanceof File
                 || body instanceof Path;
     }

@@ -126,7 +126,7 @@ final class PahoMqtt5ClientCallback implements MqttCallback {
         PahoMqtt5Consumer[] current = consumers.toArray(new PahoMqtt5Consumer[0]);
         if (ownedClient && current.length == 1) {
             // the own client of a consumer: it is the only one that subscribed, so it gets every message, as before
-            current[0].onMessageArrived(topic, message);
+            current[0].onMessageArrived(client, topic, message);
             return;
         }
         // a shared client: a stopped consumer can leave its subscription on the client (cleanStart / cleanSession
@@ -134,7 +134,7 @@ final class PahoMqtt5ClientCallback implements MqttCallback {
         boolean delivered = false;
         for (PahoMqtt5Consumer consumer : current) {
             if (matches(consumer.getEndpoint().getTopic(), topic)) {
-                consumer.onMessageArrived(topic, message);
+                consumer.onMessageArrived(client, topic, message);
                 delivered = true;
             }
         }
@@ -142,8 +142,8 @@ final class PahoMqtt5ClientCallback implements MqttCallback {
             // with manual acks the client sends no PUBACK for a QoS 1 message until it is acknowledged, and the broker
             // sends no more than receiveMaximum unacknowledged messages, so a dropped message that stays unacknowledged
             // would stop every consumer of the client; the client completes the QoS 2 flow on its own
-            // (the own client of a consumer is not acknowledged: it is being stopped, and a session that the broker
-            // keeps sends the message again on the next connect)
+            // (the own client of a consumer is not acknowledged: it is being stopped, or replaced after a failed
+            // exchange, and a session that the broker keeps sends the message again on the next connect)
             boolean acknowledge = !ownedClient && manualAcks && message.getQos() == 1;
             String dropped = acknowledge ? "dropped and acknowledged" : "dropped";
             if (warnedTopics.size() < MAX_WARNED_TOPICS && warnedTopics.add(topic)) {

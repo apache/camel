@@ -16,8 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 
@@ -43,7 +45,14 @@ public abstract class ExportCommandBase extends ExportBaseCommand {
     protected Integer doExport() throws Exception {
         ExportRequest request = toRequest();
         ProjectExporter exporter = new ProjectExporter(exportContext());
-        Path baseDir = exporter.prepare(request);
+        Path baseDir;
+        try {
+            baseDir = exporter.prepare(request);
+        } catch (FileNotFoundException ex) {
+            // as ProjectExporter.export: the plain message on stderr, and exit 66
+            printer().printErr(ex.getMessage());
+            return CliExitCode.FILE_NOT_FOUND;
+        }
         applySystemProperties(request);
         // the options from application.properties, the profile and the system properties
         fromRequest(request);

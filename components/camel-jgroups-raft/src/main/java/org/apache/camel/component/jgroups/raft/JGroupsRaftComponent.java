@@ -45,16 +45,33 @@ public class JGroupsRaftComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftComponent.class);
 
     @UriParam
-    @Metadata(defaultValue = "null")
+    @Metadata(defaultValue = "null",
+              description = "To use a custom org.jgroups.raft.RaftHandle for all the endpoints of this component. When set,"
+                            + " the raftId, channelProperties and stateMachine options are not used. The component closes"
+                            + " its channel and its log when the component stops.")
     private RaftHandle raftHandle;
     @UriParam
-    @Metadata(defaultValue = "NopStateMachine")
+    @Metadata(defaultValue = "NopStateMachine",
+              description = "The org.jgroups.raft.StateMachine that applies the committed log entries, for the RaftHandle"
+                            + " that each endpoint creates. The default NopStateMachine ignores the entries and returns an"
+                            + " empty byte array. Not used when the raftHandle option is set.")
     private StateMachine stateMachine = new NopStateMachine();
     @UriParam
-    @Metadata(required = true)
+    @Metadata(required = true,
+              description = "The Raft ID of this member, which also names the JChannel. A member whose ID is not in the"
+                            + " members attribute of RAFT in the channel configuration is a Learner, which does not vote. If"
+                            + " not set, the raft_id of the channel configuration is used. Not used when the raftHandle"
+                            + " option is set.")
     private String raftId;
     @UriParam
-    @Metadata(defaultValue = "raft.xml")
+    @Metadata(defaultValue = "raft.xml",
+              description = "The JGroups XML configuration of the JChannel that each endpoint creates, as a file, a URL or a"
+                            + " classpath resource. If not set, the raft.xml in the camel-jgroups-raft JAR is used, and a WARN"
+                            + " is logged when an endpoint starts. That raft.xml is a sample for development and tests: it"
+                            + " uses UDP multicast without authentication or encryption, and lists A as the only RAFT member."
+                            + " In production, set your own configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT, and the"
+                            + " members of the cluster in the members attribute of RAFT. Not used when the raftHandle option"
+                            + " is set.")
     private String channelProperties;
 
     // the connected producers and consumers of each RaftHandle that the endpoints did not create (such as the
@@ -74,9 +91,6 @@ public class JGroupsRaftComponent extends DefaultComponent {
         return raftHandle;
     }
 
-    /**
-     * RaftHandle to use.
-     */
     public void setRaftHandle(RaftHandle raftHandle) {
         this.raftHandle = raftHandle;
     }
@@ -85,10 +99,6 @@ public class JGroupsRaftComponent extends DefaultComponent {
         return stateMachine;
     }
 
-    /**
-     *
-     * StateMachine to use.
-     */
     public void setStateMachine(StateMachine stateMachine) {
         this.stateMachine = stateMachine;
     }
@@ -97,10 +107,6 @@ public class JGroupsRaftComponent extends DefaultComponent {
         return raftId;
     }
 
-    /**
-     *
-     * Unique raftId to use.
-     */
     public void setRaftId(String raftId) {
         this.raftId = raftId;
     }
@@ -109,10 +115,6 @@ public class JGroupsRaftComponent extends DefaultComponent {
         return channelProperties;
     }
 
-    /**
-     * Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is
-     * provided).
-     */
     public void setChannelProperties(String channelProperties) {
         this.channelProperties = channelProperties;
     }

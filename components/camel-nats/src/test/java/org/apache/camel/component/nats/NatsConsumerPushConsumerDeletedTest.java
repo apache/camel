@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -63,6 +64,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -249,6 +251,47 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
         });
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(
                 () -> assertEquals(List.of(), server.listeners, "no keeper listens to the connection after the stop"));
+    }
+
+    @Test
+    void aDisconnectWaitsUntilTheConsumerListensToTheConnection() throws Exception {
+        // the consumer subscribes on its own executor and listens to the connection once the subscribe returned: hold
+        // that back, to force what a busy CI machine does (a disconnect while the consumer is still subscribing)
+        CountDownLatch subscribed = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        // the route of the test may still be subscribing: wait for it, so that the hook below applies to the route
+        // that replaces it
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !server.listeners.isEmpty());
+        server.beforeAddListener = () -> {
+            server.beforeAddListener = null;
+            subscribed.countDown();
+            try {
+                release.await(30, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        };
+        consumeWith("exceptionHandler=#handler");
+        assertTrue(subscribed.await(30, TimeUnit.SECONDS), "the consumer subscribed");
+
+        Thread disconnecting = new Thread(server::disconnect, "disconnecting");
+        disconnecting.start();
+        // the disconnect must wait for the listener, else it deletes the consumer that is being subscribed and the
+        // reconnect reaches nobody
+        assertTrue(server.disconnectWaiting.await(10, TimeUnit.SECONDS), "the disconnect started");
+        await().during(2, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS).until(server::isConnected);
+        assertTrue(disconnecting.isAlive(), "the disconnect waits while the consumer does not listen");
+
+        release.countDown();
+        disconnecting.join(30_000);
+        assertFalse(disconnecting.isAlive(), "the disconnect went on once the consumer listens");
+        server.publish("order-1");
+        server.reconnect();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("order-1");
+        mock.setResultWaitTime(20_000);
+        mock.assertIsSatisfied();
     }
 
     /**
@@ -540,6 +583,10 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
         int consumersCreated;
         // runs on the thread that subscribes, before the subscription is made
         volatile Runnable beforeSubscribe;
+        // counted down when a disconnect starts to wait until the consumer listens to the connection
+        final CountDownLatch disconnectWaiting = new CountDownLatch(1);
+        // runs on the thread that adds a connection listener, before the listener is added
+        volatile Runnable beforeAddListener;
         Connection connection;
 
         final class FakeConsumer {
@@ -588,12 +635,25 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
             notifyAll();
         }
 
-        synchronized void disconnect() {
+        void disconnect() {
+            disconnectWaiting.countDown();
+            // the consumer subscribes on its own executor and listens to the connection only once the subscribe
+            // returned, which can be after it delivered its first message: a disconnect before that deletes the
+            // consumer that is being subscribed, and the reconnect reaches no keeper, so nothing checks the consumer
+            await().atMost(30, TimeUnit.SECONDS).until(() -> !listeners.isEmpty());
+            doDisconnect();
+        }
+
+        private synchronized void doDisconnect() {
             connected = false;
             for (FakeConsumer c : consumers) {
                 c.deleted = true;
             }
             notifyAll();
+        }
+
+        synchronized boolean isConnected() {
+            return connected;
         }
 
         synchronized void awaitDisconnected() throws InterruptedException {
@@ -643,6 +703,10 @@ class NatsConsumerPushConsumerDeletedTest extends CamelTestSupport {
                 case "jetStream" -> js;
                 case "createDispatcher" -> dispatcher();
                 case "addConnectionListener" -> {
+                    Runnable addHook = beforeAddListener;
+                    if (addHook != null) {
+                        addHook.run();
+                    }
                     listenersAdded.incrementAndGet();
                     yield listeners.add((ConnectionListener) args[0]);
                 }

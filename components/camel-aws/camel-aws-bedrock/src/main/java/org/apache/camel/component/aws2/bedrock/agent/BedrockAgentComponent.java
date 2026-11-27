@@ -31,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("aws-bedrock-agent")
 public class BedrockAgentComponent extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of the component start from. Each endpoint uses a copy of"
+                            + " it, in which its own URI options replace the values.")
     private BedrockAgentConfiguration configuration = new BedrockAgentConfiguration();
 
     public BedrockAgentComponent() {
@@ -64,9 +65,6 @@ public class BedrockAgentComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(BedrockAgentConfiguration configuration) {
         this.configuration = configuration;
     }

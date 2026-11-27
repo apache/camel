@@ -18,6 +18,9 @@ package org.apache.camel.component.springrabbit;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -106,7 +109,8 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
                                                          + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
     private StatelessRetryOperationsInterceptor retry;
     @Metadata(label = "consumer", defaultValue = "5",
-              description = "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message")
+              description = "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message."
+                            + " The first try is not counted, so 5 means up to 6 tries.")
     private int maximumRetryAttempts = 5;
     @Metadata(label = "consumer", defaultValue = "1000",
               description = "Delay in msec a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
@@ -123,6 +127,9 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
                             + " For example to declare a queue with message ttl argument: queue.x-message-ttl=60000")
     private Map<String, Object> args;
 
+    private final Lock stopListenerContainerLock = new ReentrantLock();
+    private ExecutorService stopListenerContainerExecutorService;
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -135,6 +142,38 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         }
         if (messagePropertiesConverter == null) {
             messagePropertiesConverter = new DefaultMessagePropertiesConverter();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        stopListenerContainerLock.lock();
+        try {
+            if (stopListenerContainerExecutorService != null) {
+                // without waiting: the stop of a listener container that waits for the broker goes on in the background
+                getCamelContext().getExecutorServiceManager().shutdown(stopListenerContainerExecutorService);
+                stopListenerContainerExecutorService = null;
+            }
+        } finally {
+            stopListenerContainerLock.unlock();
+        }
+        super.doStop();
+    }
+
+    /**
+     * The thread pool that stops the listener containers of the consumers, so that they wait for a stop that waits for
+     * the broker with a bound: a cached thread pool, as such a stop can take long.
+     */
+    ExecutorService getStopListenerContainerExecutorService() {
+        stopListenerContainerLock.lock();
+        try {
+            if (stopListenerContainerExecutorService == null) {
+                stopListenerContainerExecutorService = getCamelContext().getExecutorServiceManager()
+                        .newCachedThreadPool(this, "SpringRabbitMQStopListenerContainer");
+            }
+            return stopListenerContainerExecutorService;
+        } finally {
+            stopListenerContainerLock.unlock();
         }
     }
 

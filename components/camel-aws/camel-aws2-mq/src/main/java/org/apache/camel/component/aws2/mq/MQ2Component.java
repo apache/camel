@@ -31,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("aws2-mq")
 public class MQ2Component extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of the component start from. Each endpoint uses a copy"
+                            + " of it, in which its own URI options replace the values.")
     private MQ2Configuration configuration = new MQ2Configuration();
 
     public MQ2Component() {
@@ -64,9 +65,6 @@ public class MQ2Component extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(MQ2Configuration configuration) {
         this.configuration = configuration;
     }

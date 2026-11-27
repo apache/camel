@@ -2,7 +2,7 @@
 :doctitle: Solr
 :shortname: solr
 :artifactid: camel-solr
-:description: Perform operations against Apache Lucene Solr.
+:description: Index, search and delete documents in Apache Solr.
 :since: 4.8
 :supportlevel: Stable
 :tabs-sync-option:
@@ -89,6 +89,28 @@ A field of a `Map` body or a `CamelSolrField.` header with a null value is left 
 After each operation the message body is the response of Solr as a Map (a `SimpleOrderedMap`) with the
 `responseHeader`, and for a search the documents under `response` as a `SolrDocumentList`. Convert it to a
 `QueryResponse` to read it with SolrJ.
+
+=== Connecting with HTTPS
+
+The client that Camel creates connects to Solr with plain HTTP unless the `enableSSL` option is enabled. Set
+`enableSSL=true` to connect with HTTPS, and configure the TLS of the client with the `sslContextParameters` option, or
+with the `certificatePath` option to trust the X.509 certificate of a certificate authority. Without either, the
+default trust store of the JVM is used.
+
+When the `certificatePath` or `sslContextParameters` option (of the endpoint or the component) is set, but `enableSSL`
+is not enabled, the endpoint fails at startup, as the options would not be used. The global SSL context parameters
+(`useGlobalSslContextParameters=true`) only log a WARN in that case.
+
+The `certificatePath` option loads the certificate from the classpath by default, or with the `classpath:`, `file:` or
+`https:` prefix. An `http:` URL is refused, as the certificate would be loaded over plain HTTP.
+
+These options do not apply to a client that is set with the `solrClient` option.
+
+[source,java]
+----
+from("direct:search")
+    .to("solr:solr.example.com:8983?enableSSL=true&certificatePath=file:/etc/solr/ca.crt&operation=SEARCH");
+----
 
 == Example
 

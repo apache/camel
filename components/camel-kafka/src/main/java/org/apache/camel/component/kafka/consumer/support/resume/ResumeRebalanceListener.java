@@ -80,7 +80,9 @@ public class ResumeRebalanceListener implements ConsumerRebalanceListener {
             partitions.forEach(p -> LOG.debug("onPartitionsAssigned: {} from {}", threadId, p.topic()));
         }
 
-        resumeAdapter.resume();
+        // only the partitions assigned by this rebalance: with a cooperative assignor (or the consumer group protocol)
+        // the consumer keeps the partitions it already had, and their position must not be moved
+        resumeAdapter.resume(partitions);
     }
 
 }

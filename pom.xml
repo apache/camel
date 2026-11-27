@@ -500,116 +500,116 @@
                     <artifactId>apache-rat-plugin</artifactId>
                     <configuration>
                         <excludeSubProjects>false</excludeSubProjects>
-                        <excludes>
-                            <exclude>**/generated/**</exclude>
-                            <exclude>**/generated.txt</exclude>
-                            <exclude>**/*.json</exclude>
-                            <exclude>**/README</exclude>
-                            <exclude>**/README.txt</exclude>
-                            <exclude>**/README.md</exclude>
-                            <exclude>**/ReadMe.md</exclude>
-                            <exclude>**/resources/**/*.xsd</exclude>
-                            <exclude>**/webapp/js/**/*</exclude>
-                            <exclude>**/test/resources/**/*</exclude>
-                            <exclude>**/test/data*/**/*</exclude>
-                            <exclude>.gitignore</exclude>
-                            <exclude>.git/**/*</exclude>
-                            <exclude>**/*.adoc</exclude>
-                            <exclude>**/*.adoc.template</exclude>
-                            <exclude>**/*.md</exclude>
-                            <exclude>**/*.sh</exclude>
-                            <exclude>**/*.bat</exclude>
-                            <exclude>**/*.tmpl</exclude>
-                            <exclude>**/java9-maven-settings</exclude>
-                            <exclude>**/*.pfx</exclude>
+                        <inputExcludes>
+                            <inputExclude>**/generated/**</inputExclude>
+                            <inputExclude>**/generated.txt</inputExclude>
+                            <inputExclude>**/*.json</inputExclude>
+                            <inputExclude>**/README</inputExclude>
+                            <inputExclude>**/README.txt</inputExclude>
+                            <inputExclude>**/README.md</inputExclude>
+                            <inputExclude>**/ReadMe.md</inputExclude>
+                            <inputExclude>**/resources/**/*.xsd</inputExclude>
+                            <inputExclude>**/webapp/js/**/*</inputExclude>
+                            <inputExclude>**/test/resources/**/*</inputExclude>
+                            <inputExclude>**/test/data*/**/*</inputExclude>
+                            <inputExclude>.gitignore</inputExclude>
+                            <inputExclude>.git/**/*</inputExclude>
+                            <inputExclude>**/*.adoc</inputExclude>
+                            <inputExclude>**/*.adoc.template</inputExclude>
+                            <inputExclude>**/*.md</inputExclude>
+                            <inputExclude>**/*.sh</inputExclude>
+                            <inputExclude>**/*.bat</inputExclude>
+                            <inputExclude>**/*.tmpl</inputExclude>
+                            <inputExclude>**/java9-maven-settings</inputExclude>
+                            <inputExclude>**/*.pfx</inputExclude>
                             <!-- tooling for component docs -->
-                            <exclude>**/component-header.mvel</exclude>
-                            <exclude>**/component-options.mvel</exclude>
-                            <exclude>**/endpoint-options.mvel</exclude>
-                            <exclude>**/dataformat-options.mvel</exclude>
-                            <exclude>**/annotation-options.mvel</exclude>
-                            <exclude>**/eip-options.mvel</exclude>
-                            <exclude>**/language-options.mvel</exclude>
-                            <exclude>**/main-options.mvel</exclude>
-                            <exclude>**/website-components-list.mvel</exclude>
-                            <exclude>**/website-languages-list.mvel</exclude>
-                            <exclude>**/website-others-list.mvel</exclude>
-                            <exclude>**/website-dataformats-list.mvel</exclude>
-                            <exclude>**/readme-examples.mvel</exclude>
-                            <exclude>**/camel-NOTICE.txt</exclude>
+                            <inputExclude>**/component-header.mvel</inputExclude>
+                            <inputExclude>**/component-options.mvel</inputExclude>
+                            <inputExclude>**/endpoint-options.mvel</inputExclude>
+                            <inputExclude>**/dataformat-options.mvel</inputExclude>
+                            <inputExclude>**/annotation-options.mvel</inputExclude>
+                            <inputExclude>**/eip-options.mvel</inputExclude>
+                            <inputExclude>**/language-options.mvel</inputExclude>
+                            <inputExclude>**/main-options.mvel</inputExclude>
+                            <inputExclude>**/website-components-list.mvel</inputExclude>
+                            <inputExclude>**/website-languages-list.mvel</inputExclude>
+                            <inputExclude>**/website-others-list.mvel</inputExclude>
+                            <inputExclude>**/website-dataformats-list.mvel</inputExclude>
+                            <inputExclude>**/readme-examples.mvel</inputExclude>
+                            <inputExclude>**/camel-NOTICE.txt</inputExclude>
                             <!-- cxf does not handle comments here -->
-                            <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
-                            <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
+                            <inputExclude>**/src/main/resources/META-INF/cxf/cxf.extension</inputExclude>
+                            <inputExclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</inputExclude>
                             <!-- ignore the api signatures files -->
-                            <exclude>**/src/signatures/*.txt</exclude>
+                            <inputExclude>**/src/signatures/*.txt</inputExclude>
                             <!-- camel-salesforce BSD license from salesforce developers -->
-                            <exclude>**/CometDReplayExtension.java</exclude>
-                            <exclude>**/LICENSE-SALESFORCE.txt</exclude>
-                            <exclude>**/LICENSE-ICU4J.txt</exclude>
-                            <exclude>**/sfdx-project/**</exclude>
+                            <inputExclude>**/CometDReplayExtension.java</inputExclude>
+                            <inputExclude>**/LICENSE-SALESFORCE.txt</inputExclude>
+                            <inputExclude>**/LICENSE-ICU4J.txt</inputExclude>
+                            <inputExclude>**/sfdx-project/**</inputExclude>
                             <!-- camel-as2 -->
-                            <exclude>**/mdnDescription.vm</exclude>
+                            <inputExclude>**/mdnDescription.vm</inputExclude>
                             <!-- camel-jbpm -->
-                            <exclude>**/src/main/resources/*.wid</exclude>
+                            <inputExclude>**/src/main/resources/*.wid</inputExclude>
                             <!-- camel website and user-manual -->
-                            <exclude>**/node/**</exclude>
-                            <exclude>**/node_modules/**</exclude>
-                            <exclude>**/user-manual/**</exclude>
-                            <exclude>**/docs/**/*</exclude>
-                            <exclude>**/build-state.yml</exclude>
+                            <inputExclude>**/node/**</inputExclude>
+                            <inputExclude>**/node_modules/**</inputExclude>
+                            <inputExclude>**/user-manual/**</inputExclude>
+                            <inputExclude>**/docs/**/*</inputExclude>
+                            <inputExclude>**/build-state.yml</inputExclude>
                             <!-- generated files -->
-                            <exclude>**/target/**/*</exclude>
-                            <exclude>**/eclipse-classes/**/*</exclude>
-                            <exclude>**/.*</exclude>
-                            <exclude>**/.settings/**/*</exclude>
-                            <exclude>**/*.iml</exclude>
-                            <exclude>**/.idea/**/*</exclude>
-                            <exclude>**/avro/**/*.avpr</exclude>
-                            <exclude>**/OSGI-INF/bundle.info</exclude>
-                            <exclude>**/test_rsa*</exclude>
-                            <exclude>**/data*/**/*.xml</exclude>
+                            <inputExclude>**/target/**/*</inputExclude>
+                            <inputExclude>**/eclipse-classes/**/*</inputExclude>
+                            <inputExclude>**/.*</inputExclude>
+                            <inputExclude>**/.settings/**/*</inputExclude>
+                            <inputExclude>**/*.iml</inputExclude>
+                            <inputExclude>**/.idea/**/*</inputExclude>
+                            <inputExclude>**/avro/**/*.avpr</inputExclude>
+                            <inputExclude>**/OSGI-INF/bundle.info</inputExclude>
+                            <inputExclude>**/test_rsa*</inputExclude>
+                            <inputExclude>**/data*/**/*.xml</inputExclude>
                             <exlucde>**/*.log</exlucde>
-                            <exclude>**/id_file</exclude>
-                            <exclude>**/dependency-reduced-pom.xml</exclude>
-                            <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
-                            <exclude>**/MerchandiseRestResource.apxc</exclude>
-                            <exclude>**/file-sig-api.txt</exclude>
-                            <exclude>**/Tasks__c.java</exclude>
-                            <exclude>**/*.proto</exclude>
-                            <exclude>**/*.pbtxt</exclude>
-                            <exclude>
+                            <inputExclude>**/id_file</inputExclude>
+                            <inputExclude>**/dependency-reduced-pom.xml</inputExclude>
+                            <inputExclude>**/Dropbox_API_Terms_and_Conditions.txt</inputExclude>
+                            <inputExclude>**/MerchandiseRestResource.apxc</inputExclude>
+                            <inputExclude>**/file-sig-api.txt</inputExclude>
+                            <inputExclude>**/Tasks__c.java</inputExclude>
+                            <inputExclude>**/*.proto</inputExclude>
+                            <inputExclude>**/*.pbtxt</inputExclude>
+                            <inputExclude>
                                 **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
-                            </exclude>
-                            <exclude>**/helm/etc/**/*</exclude>
-                            <exclude>**/META-INF/MANIFEST.MF</exclude>
-                            <exclude>**/openapi.yaml</exclude>
-                            <exclude>**/ignite/work/**/*</exclude>
-                            <exclude>**/MySecondFooConfigurer.java</exclude>
-                            <exclude>**/MySecondBarConfigurer.java</exclude>
-                            <exclude>**/stockquote-response.xml</exclude>
-                            <exclude>**/quarkus-pom.ftl</exclude>
-                            <exclude>**/quarkus-docker/*</exclude>
-                            <exclude>.github/**/*</exclude>
-                            <exclude>**/.camel-jbang-run/**/*</exclude>
-                            <exclude>**/.camel-jbang/**/*</exclude>
-                            <exclude>**/commands/edit/edit-help.txt</exclude>
-                            <exclude>**/examples/*</exclude>
-                            <exclude>**/examples/**/*</exclude>
-                            <exclude>**/src/main/resources/testdata/**/*</exclude>
+                            </inputExclude>
+                            <inputExclude>**/helm/etc/**/*</inputExclude>
+                            <inputExclude>**/META-INF/MANIFEST.MF</inputExclude>
+                            <inputExclude>**/openapi.yaml</inputExclude>
+                            <inputExclude>**/ignite/work/**/*</inputExclude>
+                            <inputExclude>**/MySecondFooConfigurer.java</inputExclude>
+                            <inputExclude>**/MySecondBarConfigurer.java</inputExclude>
+                            <inputExclude>**/stockquote-response.xml</inputExclude>
+                            <inputExclude>**/quarkus-pom.ftl</inputExclude>
+                            <inputExclude>**/quarkus-docker/*</inputExclude>
+                            <inputExclude>.github/**/*</inputExclude>
+                            <inputExclude>**/.camel-jbang-run/**/*</inputExclude>
+                            <inputExclude>**/.camel-jbang/**/*</inputExclude>
+                            <inputExclude>**/commands/edit/edit-help.txt</inputExclude>
+                            <inputExclude>**/examples/*</inputExclude>
+                            <inputExclude>**/examples/**/*</inputExclude>
+                            <inputExclude>**/src/main/resources/testdata/**/*</inputExclude>
                             <!-- vendored third-party TUI web assets -->
-                            <exclude>**/tui/web/vendor/*</exclude>
+                            <inputExclude>**/tui/web/vendor/*</inputExclude>
                             <!-- JReleaser templates -->
-                            <exclude>**/jreleaser/**/*.tpl</exclude>
+                            <inputExclude>**/jreleaser/**/*.tpl</inputExclude>
                             <!-- Claude Code / OMC worktrees -->
-                            <exclude>.claude/**/*</exclude>
-                            <exclude>.omc/**/*</exclude>
-                            <exclude>.bob/**/*</exclude>
+                            <inputExclude>.claude/**/*</inputExclude>
+                            <inputExclude>.omc/**/*</inputExclude>
+                            <inputExclude>.bob/**/*</inputExclude>
                             <!-- Maven Wrapper -->
-                            <exclude>.mvn/**/*</exclude>
-                            <exclude>**/maven-wrapper/*</exclude>
-                            <exclude>**/THIRD-PARTY-NOTICES.txt</exclude>
-                            <exclude>**/camel-shell-banner.txt</exclude>
-                        </excludes>
+                            <inputExclude>.mvn/**/*</inputExclude>
+                            <inputExclude>**/maven-wrapper/*</inputExclude>
+                            <inputExclude>**/THIRD-PARTY-NOTICES.txt</inputExclude>
+                            <inputExclude>**/camel-shell-banner.txt</inputExclude>
+                        </inputExcludes>
                     </configuration>
                 </plugin>
 
@@ -783,7 +783,6 @@
                                     <goal>jar</goal>
                                 </goals>
                                 <configuration>
-                                    <source>11</source>
                                     <doclint>none</doclint>
                                 </configuration>
                             </execution>
@@ -865,9 +864,8 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <source>8</source>
                             <additionalOptions>${javadoc.opts}</additionalOptions>
-                            <!-- disable Javadoc linting for buildung the release with Java 11 -->
+                            <!-- disable Javadoc linting when building the release -->
                             <doclint>none</doclint>
                         </configuration>
                     </plugin>

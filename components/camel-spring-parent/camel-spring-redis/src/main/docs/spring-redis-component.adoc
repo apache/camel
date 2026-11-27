@@ -2,7 +2,7 @@
 :doctitle: Spring Redis
 :shortname: spring-redis
 :artifactid: camel-spring-redis
-:description: Send and receive messages from Redis.
+:description: Send commands to Redis and receive the messages of Redis Pub/Sub channels, using Spring Data Redis.
 :since: 2.11
 :supportlevel: Stable
 :tabs-sync-option:
@@ -340,7 +340,8 @@ from high to low |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstant
 
 |`ZREMRANGEBYRANK` |Remove all members in a sorted set within the given indexes |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |void
 
-|`ZREMRANGEBYSCORE` |Remove all members in a sorted set within the given scores |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.START`/"CamelRedis.Start"Long), `RedisConstants.END`/"CamelRedis.End" (Long) |void
+|`ZREMRANGEBYSCORE` |Remove all members in a sorted set within the given scores |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.MIN`/"CamelRedis.Min" (Double), `RedisConstants.MAX`/"CamelRedis.Max"
+(Double). When `CamelRedis.Min` or `CamelRedis.Max` is not set, `CamelRedis.Start` or `CamelRedis.End` is used instead. |void
 
 |`ZUNIONSTORE` |Add multiple sorted sets and store the resulting-sorted set in a new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"CamelRedis.Keys" (Collection<String> or String),
 `RedisConstants.DESTINATION`/"CamelRedis.Destination" (String) |void
@@ -481,5 +482,3 @@ Maven users will need to add the following dependency to their pom.xml.
 -----------------------------------------------
 
 where `${camel-version`} must be replaced by the actual version of Camel.
-
-

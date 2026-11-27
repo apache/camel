@@ -71,11 +71,15 @@ components.
 
 Camel provides Post-Quantum Cryptography (PQC) protection at two complementary layers:
 
-* *Transport layer (TLS).* On JDK 25+, Camel automatically configures hybrid post-quantum key
-exchange (`X25519MLKEM768`) on all `SSLContextParameters` to protect connections against
-harvest-now-decrypt-later attacks. See
+* *Transport layer (TLS).* On a JDK that offers a hybrid post-quantum key exchange group such as
+`X25519MLKEM768`, the `SSLContext` that Camel creates from `SSLContextParameters` prefers it, to protect
+connections against harvest-now-decrypt-later attacks. This applies to the components that use that `SSLContext`;
+a few components hand the key and trust material to a TLS stack of their own, which applies only part of the
+settings. See
 xref:camel-configuration-utilities.adoc#_post_quantum_cryptography_pqc_tls_configuration[PQC TLS Configuration]
-for the full configuration guide.
+for the full configuration guide and
+xref:camel-configuration-utilities.adoc#_components_with_their_own_tls_stack[Components with their own TLS stack]
+for what each of those components honours.
 * *Message layer.* The xref:components::pqc-component.adoc[PQC component] and
 xref:components:dataformats:pqc-dataformat.adoc[PQC data format] encrypt and sign message
 payloads using post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA, and more), protecting data

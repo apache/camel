@@ -24,6 +24,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.spi.HttpResponseAware;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,15 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
         boolean up = builder.state().compareTo(State.UP) == 0;
         // if a route is configured to not to automatically start, then skip consumer checks
         boolean external = route.getRouteController() == null && !route.isAutoStartup();
+        if (up && !external && consumer instanceof DefaultConsumer defaultConsumer
+                && defaultConsumer.getFatalError() != null) {
+            // the consumer stopped after a VirtualMachineError, until the route is restarted (CAMEL-27515)
+            builder.detail(ENDPOINT_URI, sanitizedUri);
+            builder.message("The consumer stopped after a fatal error. Restart the route to start it again.");
+            builder.error(defaultConsumer.getFatalError());
+            builder.down();
+            return;
+        }
         if (up && !external && consumer instanceof HealthCheckAware healthCheckAware) {
             // health check is optional
             HealthCheck hc = healthCheckAware.getHealthCheck();

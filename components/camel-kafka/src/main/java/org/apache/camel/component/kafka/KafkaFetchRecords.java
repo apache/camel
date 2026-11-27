@@ -17,7 +17,9 @@
 package org.apache.camel.component.kafka;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -191,10 +193,6 @@ public class KafkaFetchRecords implements Runnable {
             }
 
             safeConsumerClose();
-        } catch (VirtualMachineError e) {
-            // left as before: an OutOfMemoryError or StackOverflowError is thrown on as is, as the JVM may not be able
-            // to log it or close the consumer
-            throw e;
         } catch (RuntimeException | Error e) {
             // what the poll loop does not handle, such as an Error that a deserializer throws in poll (the Kafka client
             // only wraps a RuntimeException of a deserializer in a RecordDeserializationException): this task runs in an
@@ -397,6 +395,12 @@ public class KafkaFetchRecords implements Runnable {
                 lock.lock();
                 try {
                     if (consumerListener != null) {
+                        // while the route is suspended the partitions are paused and the poll returns no records: the
+                        // listener of the pausable EIP must not run, as it would resume them. A resume of the route
+                        // that comes in the meantime is applied on the next iteration, after the listener
+                        if (state.get() == State.PAUSED) {
+                            continue;
+                        }
                         if (!consumerListener.afterConsume(consumer)) {
                             continue;
                         }
@@ -486,14 +490,23 @@ public class KafkaFetchRecords implements Runnable {
             case RESUME_REQUESTED:
                 LOG.info("Resuming the consumer as a response to a resume request");
                 if (consumer.committed(this.consumer.assignment()) != null) {
+                    List<TopicPartition> seeked = new ArrayList<>();
                     consumer.committed(this.consumer.assignment()).forEach((k, v) -> {
                         if (v != null) {
                             final TopicPartition tp = (TopicPartition) k;
                             LOG.info("Resuming from the offset {} for the topic {} with partition {}",
                                     ((OffsetAndMetadata) v).offset(), tp.topic(), tp.partition());
                             consumer.seek(tp, ((OffsetAndMetadata) v).offset());
+                            // an offset recorded after the committed one (its commit failed) must not be committed
+                            // any more: the records after the committed offset are read and committed again
+                            commitManager.discardRecordedOffset(tp);
+                            seeked.add(tp);
                         }
                     });
+                    // the records of these partitions that are held for an incomplete batch are read again from the
+                    // committed offset: keeping them would process them twice, and the commit of the batch that holds
+                    // them could move the committed offset back
+                    recordProcessorFacade.discardPendingRecords(seeked);
                 }
                 consumer.resume(consumer.assignment());
                 state.compareAndSet(State.RESUME_REQUESTED, State.RUNNING);

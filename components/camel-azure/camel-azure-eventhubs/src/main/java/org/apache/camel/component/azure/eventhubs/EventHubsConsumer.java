@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.azure.messaging.eventhubs.EventProcessorClient;
+import com.azure.messaging.eventhubs.models.CloseContext;
+import com.azure.messaging.eventhubs.models.CloseReason;
 import com.azure.messaging.eventhubs.models.ErrorContext;
 import com.azure.messaging.eventhubs.models.EventContext;
 import org.apache.camel.AsyncCallback;
@@ -54,6 +56,7 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
     private final Map<String, AtomicInteger> processedEventsByPartition = new ConcurrentHashMap<>();
     private final Map<String, ScheduledFuture<?>> scheduledTasksByPartition = new ConcurrentHashMap<>();
     private final Map<String, EventHubsCheckpointUpdaterTask> checkpointTasksByPartition = new ConcurrentHashMap<>();
+    private final Map<String, EventHubsPartitionCheckpoints> checkpointsByPartition = new ConcurrentHashMap<>();
     private ScheduledExecutorService scheduledExecutorService;
 
     public EventHubsConsumer(final EventHubsEndpoint endpoint, final Processor processor) {
@@ -70,7 +73,7 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
 
         // create the client
         processorClient = EventHubsClientFactory.createEventProcessorClient(getConfiguration(),
-                this::onEventListener, this::onErrorListener);
+                this::onEventListener, this::onErrorListener, this::onPartitionClose);
 
         // start the client but we will rely on the Azure Client Scheduler for thread management
         processorClient.start();
@@ -87,6 +90,8 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
         processedEventsByPartition.clear();
         scheduledTasksByPartition.clear();
         checkpointTasksByPartition.clear();
+        // the exchanges still in flight no longer move the checkpoint: their events are delivered again after a start
+        checkpointsByPartition.clear();
 
         // shutdown camel consumer
         super.doStop();
@@ -179,6 +184,7 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
         pendingExchanges.incrementAndGet();
 
         final Exchange exchange = createAzureEventHubExchange(eventContext);
+        processDelivered(eventContext);
 
         // add exchange callback
         exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
@@ -195,8 +201,8 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
             @Override
             public void onFailure(Exchange exchange) {
                 try {
-                    // we do nothing here
-                    processRollback(exchange);
+                    // the event is not delivered again, but it no longer holds back the checkpoint
+                    processRollback(exchange, eventContext);
                 } finally {
                     pendingExchanges.decrementAndGet();
                 }
@@ -205,6 +211,47 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
         // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);
+    }
+
+    private void onPartitionClose(final CloseContext closeContext) {
+        // when the processor client stops, the exchanges in flight still complete and checkpoint
+        if (closeContext.getCloseReason() != CloseReason.LOST_PARTITION_OWNERSHIP) {
+            return;
+        }
+        final String partitionId = closeContext.getPartitionContext().getPartitionId();
+        lock.lock();
+        try {
+            // the new owner resumes after the stored checkpoint: the exchanges in flight here must not move it any
+            // more, as their events are delivered again there
+            if (dropPartition(partitionId)) {
+                LOG.info("Partition {} was lost: the exchanges of its events still in flight are not checkpointed",
+                        partitionId);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Drops the checkpoint state of the partition, and cancels the timer of its window. Under the lock.
+     *
+     * @return whether the partition had a checkpoint state
+     */
+    private boolean dropPartition(String partitionId) {
+        final EventHubsPartitionCheckpoints checkpoints = checkpointsByPartition.remove(partitionId);
+        if (checkpoints != null) {
+            checkpoints.close();
+        }
+        final EventHubsCheckpointUpdaterTask checkpointTask = checkpointTasksByPartition.remove(partitionId);
+        if (checkpointTask != null) {
+            checkpointTask.cancel();
+        }
+        final ScheduledFuture<?> scheduledTask = scheduledTasksByPartition.remove(partitionId);
+        if (scheduledTask != null) {
+            scheduledTask.cancel(false);
+        }
+        processedEventsByPartition.remove(partitionId);
+        return checkpoints != null;
     }
 
     private void onErrorListener(final ErrorContext errorContext) {
@@ -218,6 +265,33 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
     }
 
     /**
+     * The event is delivered to the route: until its exchange is done, no checkpoint of its partition passes it.
+     *
+     * @param eventContext the event context of the event
+     */
+    void processDelivered(final EventContext eventContext) {
+        lock.lock();
+        try {
+            final String partitionId = eventContext.getPartitionContext().getPartitionId();
+            final EventHubsPartitionCheckpoints checkpoints = checkpointsByPartition.computeIfAbsent(partitionId,
+                    ignored -> new EventHubsPartitionCheckpoints(lock));
+            if (!checkpoints.delivered(eventContext)) {
+                // the partition was claimed again (closed without being reported as lost) and the SDK delivers it again
+                // from the stored checkpoint: the exchanges of the earlier deliveries no longer move the checkpoint
+                LOG.info("Partition {} is delivered again from sequence number {}: the exchanges of its earlier deliveries"
+                         + " still in flight are not checkpointed",
+                        partitionId, eventContext.getEventData().getSequenceNumber());
+                dropPartition(partitionId);
+                final EventHubsPartitionCheckpoints again = new EventHubsPartitionCheckpoints(lock);
+                again.delivered(eventContext);
+                checkpointsByPartition.put(partitionId, again);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
      * Strategy to commit the offset after message being processed successfully.
      *
      * @param exchange     the exchange
@@ -227,6 +301,13 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
         lock.lock();
         try {
             final String partitionId = eventContext.getPartitionContext().getPartitionId();
+            final EventHubsPartitionCheckpoints checkpoints = checkpointsByPartition.get(partitionId);
+            if (checkpoints == null || !checkpoints.completed(eventContext, true)) {
+                LOG.debug("event of partition {} was delivered before the consumer was stopped or lost the partition:"
+                          + " it does not move the checkpoint",
+                        partitionId);
+                return;
+            }
             final AtomicInteger processedEvents = processedEventsByPartition.computeIfAbsent(partitionId,
                     ignored -> new AtomicInteger());
             EventHubsCheckpointUpdaterTask checkpointTask = checkpointTasksByPartition.get(partitionId);
@@ -236,23 +317,16 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
             // timer can run in the millisecond of its scheduled time, or later, and the event must be counted in the
             // window whose timer has not taken the count yet
             if (checkpointTask == null || checkpointTask.isDone()) {
-                checkpointTask = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents, lock);
-                // delegate the checkpoint update to a dedicated Thread
-                long timeout = getConfiguration().getCheckpointBatchTimeout();
-                checkpointTask.setScheduledTime(System.currentTimeMillis() + timeout);
-                scheduledTask = scheduledExecutorService.schedule(checkpointTask, timeout, TimeUnit.MILLISECONDS);
-                checkpointTasksByPartition.put(partitionId, checkpointTask);
-                scheduledTasksByPartition.put(partitionId, scheduledTask);
-            } else {
-                // updates the eventContext to use for the offset to be the most accurate
-                checkpointTask.setEventContext(eventContext);
+                checkpointTask = startWindow(partitionId, checkpoints, processedEvents);
+                scheduledTask = scheduledTasksByPartition.get(partitionId);
             }
 
             try {
                 var cnt = processedEvents.incrementAndGet();
-                // >= and not ==: a failed timeout checkpoint adds its count back, so the count can pass the batch size
-                if (cnt >= getConfiguration().getCheckpointBatchSize()) {
-                    processedEvents.set(0);
+                // >= and not ==: a failed timeout checkpoint adds its count back, so the count can pass the batch size;
+                // and the checkpoint waits while every event completed since the last one is after an event in flight
+                if (cnt >= getConfiguration().getCheckpointBatchSize()
+                        && checkpoint(checkpoints, processedEvents, false)) {
                     exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
                     LOG.debug("eventhub consumer batch size of reached for partition {}", partitionId);
                     // a timer that has already started takes nothing (it waits for the lock)
@@ -264,12 +338,6 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
                     // scheduled time, else the events of the rest of that window are not checkpointed by the timeout
                     checkpointTasksByPartition.remove(partitionId);
                     scheduledTasksByPartition.remove(partitionId);
-                    eventContext.updateCheckpointAsync()
-                            .subscribe(unused -> LOG.debug("Processed one event..."),
-                                    error -> LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error),
-                                    () -> {
-                                        LOG.debug("Checkpoint updated.");
-                                    });
                 } else if (checkpointTask.isExpired()) {
                     exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_TIMEOUT);
                     LOG.debug("eventhub consumer batch timeout reached for partition {}", partitionId);
@@ -289,14 +357,83 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
     }
 
     /**
-     * Strategy when processing the exchange failed.
+     * Strategy when processing the exchange failed: the event is not delivered again, and is passed by the next
+     * checkpoint (it is not counted, nor checkpointed by itself).
      *
-     * @param exchange the exchange
+     * @param exchange     the exchange
+     * @param eventContext the event context of the event
      */
-    private void processRollback(Exchange exchange) {
+    void processRollback(final Exchange exchange, final EventContext eventContext) {
         final Exception cause = exchange.getException();
         if (cause != null) {
             getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
         }
+        lock.lock();
+        try {
+            final String partitionId = eventContext.getPartitionContext().getPartitionId();
+            final EventHubsPartitionCheckpoints checkpoints = checkpointsByPartition.get(partitionId);
+            if (checkpoints == null || !checkpoints.completed(eventContext, false)) {
+                return;
+            }
+            // events completed after this one waited for it: a window must checkpoint them
+            final AtomicInteger processedEvents = processedEventsByPartition.get(partitionId);
+            final EventHubsCheckpointUpdaterTask checkpointTask = checkpointTasksByPartition.get(partitionId);
+            if (processedEvents != null && processedEvents.get() > 0
+                    && (checkpointTask == null || checkpointTask.isDone())) {
+                startWindow(partitionId, checkpoints, processedEvents);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Starts a checkpoint window of the partition, whose timer checkpoints it after the batch timeout. Under the lock.
+     */
+    private EventHubsCheckpointUpdaterTask startWindow(
+            String partitionId, EventHubsPartitionCheckpoints checkpoints, AtomicInteger processedEvents) {
+        final EventHubsCheckpointUpdaterTask checkpointTask = new EventHubsCheckpointUpdaterTask(
+                lock, () -> checkpointByTimeout(checkpoints, processedEvents));
+        // delegate the checkpoint update to a dedicated Thread
+        final long timeout = getConfiguration().getCheckpointBatchTimeout();
+        checkpointTask.setScheduledTime(System.currentTimeMillis() + timeout);
+        final ScheduledFuture<?> scheduledTask
+                = scheduledExecutorService.schedule(checkpointTask, timeout, TimeUnit.MILLISECONDS);
+        checkpointTasksByPartition.put(partitionId, checkpointTask);
+        scheduledTasksByPartition.put(partitionId, scheduledTask);
+        return checkpointTask;
+    }
+
+    /**
+     * The timer of a window: checkpoints the partition if events were processed since the last checkpoint. Under the
+     * lock.
+     */
+    private void checkpointByTimeout(EventHubsPartitionCheckpoints checkpoints, AtomicInteger processedEvents) {
+        if (processedEvents.get() == 0) {
+            LOG.debug("skip checkpointing offset even if timeout is reached. No events processed");
+        } else if (checkpoint(checkpoints, processedEvents, true)) {
+            LOG.debug("checkpointing offset after reaching timeout");
+        } else {
+            LOG.debug("skip checkpointing offset after reaching timeout: the events processed since the last checkpoint"
+                      + " are after an event still in flight");
+        }
+    }
+
+    /**
+     * Checkpoints the partition up to the last event below which every delivered event has completed, if that is after
+     * the last checkpoint. The events completed after an event still in flight stay counted for the next checkpoint.
+     * Under the lock.
+     *
+     * @return false if there is nothing to checkpoint
+     */
+    private boolean checkpoint(
+            EventHubsPartitionCheckpoints checkpoints, AtomicInteger processedEvents, boolean byTimeout) {
+        if (!checkpoints.canCheckpoint()) {
+            return false;
+        }
+        final int ahead = checkpoints.succeededAhead();
+        final int covered = Math.max(0, processedEvents.getAndSet(ahead) - ahead);
+        // a failed checkpoint by timeout counts its events again for the next checkpoint
+        return checkpoints.checkpoint(byTimeout ? () -> processedEvents.addAndGet(covered) : null);
     }
 }

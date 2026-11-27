@@ -30,11 +30,18 @@ import org.apache.camel.util.ObjectHelper;
 @Component("arangodb")
 public class ArangoDbComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use a custom com.arangodb.ArangoDB client for all the endpoints of the component. When it is"
+                            + " set or autowired, the host, port, user, password and vertx options are not used, and the"
+                            + " endpoints do not shut the client down.")
     private ArangoDB arangoDB;
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use a custom io.vertx.core.Vertx instance for the HTTP connections of the ArangoDB clients that"
+                            + " the endpoints create. If not set, the ArangoDB driver creates its own Vert.x instance. Not used"
+                            + " when the arangoDB option sets a client.")
     private Vertx vertx;
-    @Metadata
+    @Metadata(description = "The shared configuration of the endpoints. Each endpoint starts from a copy of it, and the options"
+                            + " of the endpoint URI replace its values.")
     private ArangoDbConfiguration configuration = new ArangoDbConfiguration();
 
     public ArangoDbComponent() {
@@ -64,9 +71,6 @@ public class ArangoDbComponent extends DefaultComponent {
         return arangoDB;
     }
 
-    /**
-     * To use an existing ArangDB client.
-     */
     public void setArangoDB(ArangoDB arangoDB) {
         this.arangoDB = arangoDB;
     }
@@ -75,9 +79,6 @@ public class ArangoDbComponent extends DefaultComponent {
         return vertx;
     }
 
-    /**
-     * To use an existing Vertx in the ArangoDB client.
-     */
     public void setVertx(Vertx vertx) {
         this.vertx = vertx;
     }
@@ -86,9 +87,6 @@ public class ArangoDbComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(ArangoDbConfiguration configuration) {
         this.configuration = configuration;
     }

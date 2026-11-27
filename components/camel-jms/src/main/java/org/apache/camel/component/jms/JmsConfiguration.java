@@ -168,7 +168,7 @@ public class JmsConfiguration implements Cloneable {
     private int replyToConcurrentConsumers = 1;
     @UriParam(defaultValue = "-1", label = "advanced",
               description = "The number of messages per task. -1 is unlimited."
-                            + " If you use a range for concurrent consumers (eg min < max), then this option can be used to set"
+                            + " If you use a range for concurrent consumers (eg the minimum is lower than the maximum), then this option can be used to set"
                             + " a value to eg 100 to control how fast the consumers will shrink when less work is required.")
     private int maxMessagesPerTask = -1;
     @UriParam(label = "advanced",
@@ -526,9 +526,10 @@ public class JmsConfiguration implements Cloneable {
               description = "When using InOut exchange pattern use this JMS property instead of JMSCorrelationID" +
                             " JMS property to correlate reply message. Difference between this and 'correlationProperty'" +
                             " is that 'correlationProperty' tells which request property holds the correlation id value and" +
-                            " it does not affect the selector for the reply (JMSCorrelationID=&lt;correlation id&gt;), while" +
-                            " 'replyCorrelationProperty' tells which reply property will hold the correlation id value and" +
-                            " it does affect the selector for the reply (&lt;replyCorrelationProperty&gt;=&lt;correlation id&gt;)")
+                            " it does not affect the selector for the reply (the selector matches the JMSCorrelationID with" +
+                            " the correlation id), while 'replyCorrelationProperty' tells which reply property will hold the" +
+                            " correlation id value and it does affect the selector for the reply (the selector matches the" +
+                            " replyCorrelationProperty property with the correlation id)")
     private String replyCorrelationProperty;
     @UriParam(label = "producer,advanced",
               description = "This option is used to allow additional headers which may have values that are invalid according to JMS specification."

@@ -134,6 +134,7 @@ class SftpProducerStopDuringHungUploadIT extends CamelTestSupport {
         // the proxy stops reading after the first MB of the upload, the TCP buffers fill, and the write blocks
         try {
             await().atMost(20, TimeUnit.SECONDS).during(500, TimeUnit.MILLISECONDS)
+                    .dontCatchUncaughtExceptions()
                     .until(() -> proxy.isFrozen() && isWritingToSocket(uploader.get()));
         } catch (ConditionTimeoutException e) {
             fail("The upload should block writing to the socket, frozen: " + proxy.isFrozen() + ", the upload is at: "
@@ -209,10 +210,14 @@ class SftpProducerStopDuringHungUploadIT extends CamelTestSupport {
         assertNull(exchange.getException(), "The exchange should complete");
     }
 
+    // The await must not fail on an uncaught exception of another thread of the JVM (Awaitility does by default): the
+    // NIO2 threads of an embedded server that is shut down, such as the one of a previous test, throw "Executor has been
+    // shut down" when a read completes, which has nothing to do with the condition awaited here (CAMEL-27540).
     private Exchange assertStopWaitsForUploadThatThenCompletes(Future<?> stop, Future<Exchange> upload) throws Exception {
         // well after the 1 s after which the stop disconnects in a forced shutdown
         try {
             await().atMost(5, TimeUnit.SECONDS).during(3, TimeUnit.SECONDS)
+                    .dontCatchUncaughtExceptions()
                     .until(() -> !stop.isDone() && !upload.isDone());
         } catch (ConditionTimeoutException e) {
             fail("The stop should wait for the upload, the stop returned: " + stop.isDone() + ", the upload ended: "

@@ -57,6 +57,7 @@ public class GenericFile<T> implements WrappedFile<T> {
     private boolean absolute;
     private boolean directory;
     private String charset;
+    private CharsetErrorAction charsetErrorAction;
     private Map<String, Object> extendedAttributes;
 
     public GenericFile() {
@@ -92,6 +93,7 @@ public class GenericFile<T> implements WrappedFile<T> {
         result.setBody(source.getBody());
         result.setBinding(source.getBinding());
         result.setCharset(source.getCharset());
+        result.setCharsetErrorAction(source.getCharsetErrorAction());
 
         copyFromPopulateAdditional(source, result);
     }
@@ -345,6 +347,18 @@ public class GenericFile<T> implements WrappedFile<T> {
 
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    /**
+     * What to do with malformed input and unmappable characters when the content of the file is decoded with a charset.
+     * <tt>null</tt> means {@link CharsetErrorAction#REPORT}.
+     */
+    public CharsetErrorAction getCharsetErrorAction() {
+        return charsetErrorAction;
+    }
+
+    public void setCharsetErrorAction(CharsetErrorAction charsetErrorAction) {
+        this.charsetErrorAction = charsetErrorAction;
     }
 
     public Map<String, Object> getExtendedAttributes() {

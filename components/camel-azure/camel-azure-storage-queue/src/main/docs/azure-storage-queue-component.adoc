@@ -2,7 +2,7 @@
 :doctitle: Azure Storage Queue Service
 :shortname: azure-storage-queue
 :artifactid: camel-azure-storage-queue
-:description: Stores and retrieves messages to/from Azure Storage Queue.
+:description: Send messages to and receive messages from the queues of Azure Queue Storage.
 :since: 3.3
 :supportlevel: Stable
 :tabs-sync-option:
@@ -654,5 +654,3 @@ mvn verify -DaccountName=myacc -DaccessKey=mykey
 ----
 
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
-
-

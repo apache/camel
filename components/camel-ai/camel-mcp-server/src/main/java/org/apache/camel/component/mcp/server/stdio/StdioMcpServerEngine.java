@@ -27,9 +27,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
+import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
@@ -43,6 +45,7 @@ import org.apache.camel.component.mcp.server.McpResourceReadResult;
 import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerPrompt;
+import org.apache.camel.component.mcp.server.McpServerRefusedException;
 import org.apache.camel.component.mcp.server.McpServerResource;
 import org.apache.camel.component.mcp.server.McpServerResourceTemplate;
 import org.apache.camel.component.mcp.server.McpServerTool;
@@ -74,6 +77,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     private CamelContext camelContext;
     private McpServerInfo info;
     private McpJsonMapper jsonMapper;
+    private JsonSchemaValidator schemaValidator;
     private StdioServerTransportProvider transport;
     private McpSyncServer server;
     private InputStream inputStream;
@@ -114,19 +118,34 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
      */
     private McpJsonMapper jsonMapper() {
         if (jsonMapper == null) {
-            ClassLoader cl = camelContext != null ? camelContext.getApplicationContextClassLoader() : null;
-            if (cl == null) {
-                cl = StdioMcpServerEngine.class.getClassLoader();
-            }
-            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            try {
-                Thread.currentThread().setContextClassLoader(cl);
-                jsonMapper = McpJsonDefaults.getMapper();
-            } finally {
-                Thread.currentThread().setContextClassLoader(tccl);
-            }
+            jsonMapper = withApplicationClassLoader(McpJsonDefaults::getMapper);
         }
         return jsonMapper;
+    }
+
+    /**
+     * The JSON schema validator of the MCP SDK, the one its server checks the schema of a tool with, found as
+     * {@link #jsonMapper()}.
+     */
+    private JsonSchemaValidator schemaValidator() {
+        if (schemaValidator == null) {
+            schemaValidator = withApplicationClassLoader(McpJsonDefaults::getSchemaValidator);
+        }
+        return schemaValidator;
+    }
+
+    private <T> T withApplicationClassLoader(Supplier<T> supplier) {
+        ClassLoader cl = camelContext != null ? camelContext.getApplicationContextClassLoader() : null;
+        if (cl == null) {
+            cl = StdioMcpServerEngine.class.getClassLoader();
+        }
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(cl);
+            return supplier.get();
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+        }
     }
 
     /**
@@ -483,18 +502,37 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     }
 
     private McpServerFeatures.SyncToolSpecification buildToolSpecification(McpServerTool tool) {
-        McpSchema.Tool mcpTool = buildMcpTool(tool);
+        McpSchema.Tool mcpTool = buildValidMcpTool(tool);
         return McpServerFeatures.SyncToolSpecification.builder()
                 .tool(mcpTool)
                 .callHandler((exchange, request) -> {
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
                     McpToolCallResult result = tool.handler().call(arguments);
-                    return McpSchema.CallToolResult.builder()
+                    McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
                             .addTextContent(result.text())
-                            .isError(result.isError())
-                            .build();
+                            .isError(result.isError());
+                    if (result.meta() != null) {
+                        builder.meta(result.meta());
+                    }
+                    return builder.build();
                 })
                 .build();
+    }
+
+    /**
+     * Builds the tool, refusing it when its schema is not a valid JSON Schema document, as the MCP SDK server would
+     * when the tool is added to it: checked before the tool is queued or added, so it is refused alike before and after
+     * the server starts. The output schema is not served over stdio, so it is not checked.
+     */
+    private McpSchema.Tool buildValidMcpTool(McpServerTool tool) {
+        try {
+            McpSchema.Tool mcpTool = buildMcpTool(tool);
+            schemaValidator().assertConforms("Tool '" + tool.name() + "' inputSchema", mcpTool.inputSchema());
+            return mcpTool;
+        } catch (IllegalArgumentException e) {
+            throw new McpServerRefusedException(
+                    "MCP tool '" + tool.name() + "' has an invalid input schema: " + e.getMessage(), e);
+        }
     }
 
     private McpSchema.Tool buildMcpTool(McpServerTool tool) {

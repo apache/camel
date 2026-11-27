@@ -58,25 +58,27 @@ import static org.mockito.Mockito.when;
  * fail or take long, settlements fail.
  * <p>
  * The route is asynchronous, so processMessage returns at once and the lock of a routed message is kept only by the
- * lock renewer of the consumer (maxAutoLockRenewDuration), which renews every message whose lock expires before the run
- * after the next one of its period task (every 10 seconds, or a second later). A message the consumer holds in
- * processMessage without routing it keeps its lock through the renewal of the processor client while the call runs (see
- * FakeServiceBus [A]); the invariants count only the routed deliveries as held by the consumer. The seed picks the lock
- * duration of the queue, the max delivery count, maxConcurrentCalls (with the asynchronous route it bounds only the
- * concurrent processMessage calls), maxAutoLockRenewDuration (60 or 300 seconds), enableDeadLettering, the latency of
- * the renewals and the fault rates.
+ * lock renewer of the consumer (maxAutoLockRenewDuration), which renews every message whose lock expires within 20
+ * seconds, on a thread of its own every 5 seconds. The fake answers a renewal when it is called (its latency only moves
+ * the new expiry), so a renewal is never in flight across runs here: the rule of the renewer for a renewal in flight is
+ * tested in ServiceBusConsumerLockRenewerTest, not in this world. A message the consumer holds in processMessage
+ * without routing it keeps its lock through the renewal of the processor client while the call runs (see FakeServiceBus
+ * [A]); the invariants count only the routed deliveries as held by the consumer. The seed picks the lock duration of
+ * the queue, the max delivery count, maxConcurrentCalls (with the asynchronous route it bounds only the concurrent
+ * processMessage calls), maxAutoLockRenewDuration (60 or 300 seconds), enableDeadLettering, the latency of the renewals
+ * and the fault rates.
  * <p>
  * Properties: no lock is lost, and no message is delivered again, while the consumer holds the message, unless an
  * injected renewal of its lock failed less than one run of the lock renewer before the lock expired, the route was
  * stopped while it was processed (once a stop timed out the consumer stops renewing, and the exchange goes on), or
  * maxAutoLockRenewDuration passed. The consumer renews a lock again after a transient renewal error (CAMEL-26969), but
- * only at its next run (CAMEL-27066): the lock renewer runs every 10 seconds or a second later, so a transient renewal
- * error in the last 11 seconds of a lock (plus the latency of the renewal) can still lose it. An earlier failed renewal
- * is no excuse, so a renewer that gave up after one error would fail. {@code -Ddst.servicebus.strictRenew=true} does
- * not excuse a failed renewal at all, and still fails on some seeds until CAMEL-27066 is fixed. The message of a
- * completed exchange is completed, unless its settlement failed, found its lock lost under one of those excuses, or
- * came after the close() of a stop that timed out while the exchange was in flight (by design); a graceful stop keeps
- * the processor client open for the exchanges in flight (the V2 processor of the SDK closes its receiver on stop(), see
+ * only at its next run (CAMEL-27066): the lock renewer runs every 5 seconds, so a transient renewal error late in a
+ * lock (within RENEWER_RUN_MILLIS plus the latency of the renewal) can still lose it. An earlier failed renewal is no
+ * excuse, so a renewer that gave up after one error would fail. {@code -Ddst.servicebus.strictRenew=true} does not
+ * excuse a failed renewal at all, and still fails on some seeds until CAMEL-27066 is fixed. The message of a completed
+ * exchange is completed, unless its settlement failed, found its lock lost under one of those excuses, or came after
+ * the close() of a stop that timed out while the exchange was in flight (by design); a graceful stop keeps the
+ * processor client open for the exchanges in flight (the V2 processor of the SDK closes its receiver on stop(), see
  * FakeServiceBus; CAMEL-26970), so a settlement inside the graceful wait must find it open; a message is completed only
  * after its exchange completed, and abandoned or dead-lettered only after it failed (or was in flight when a stop timed
  * out, see below); once the faults cleared every message is completed or dead-lettered; the consumer settles each
@@ -123,7 +125,10 @@ final class ServiceBusWorld {
      * fixed.
      */
     static final boolean STRICT_RENEW = Boolean.getBoolean("dst.servicebus.strictRenew");
-    /** The longest time between two runs of the lock renewer of the consumer: every 10 seconds, or a second later. */
+    /**
+     * A bound on the time from a failed renewal to the next one: the lock renewer of the consumer runs every 5 seconds
+     * and waits for a renewal in flight up to 10 seconds; the bound is kept loose.
+     */
     static final long RENEWER_RUN_MILLIS = 11_000;
 
     private final Dst dst;
@@ -359,8 +364,8 @@ final class ServiceBusWorld {
 
     /**
      * An injected renewal failure excuses the loss of the lock only when the next run of the lock renewer comes too
-     * late to renew it: the renewer runs every 10 seconds or a second later (the period task scheduler ticks every
-     * second), and the renewal itself takes up to renewLatencyMaxMillis.
+     * late to renew it: the renewer runs again within RENEWER_RUN_MILLIS (on a thread of its own), and the renewal
+     * itself takes up to renewLatencyMaxMillis.
      */
     private void renewFault(String delivery, long lockedUntil) {
         if (lockedUntil < 0) {

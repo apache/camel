@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Perform operations on the PostgreSQL pgvector Vector Database.
+ * Store, delete and search vector embeddings in a PostgreSQL table with the pgvector extension.
  */
 @UriEndpoint(
              firstVersion = "4.19.0",
@@ -83,7 +83,9 @@ import org.apache.camel.support.DefaultEndpoint;
 public class PgVectorEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
-    @UriPath(description = "The collection (table) name")
+    @UriPath(description = "The name of the table that holds the records. It must be a plain SQL identifier of letters,"
+                           + " digits and underscores that does not start with a digit. CREATE_INDEX names the index"
+                           + " after the table, followed by _embedding_idx.")
     private final String collection;
 
     @UriParam

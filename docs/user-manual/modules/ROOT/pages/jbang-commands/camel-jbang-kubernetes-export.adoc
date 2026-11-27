@@ -88,7 +88,7 @@ camel kubernetes export [options]
 | `--service-account` | The service account used to run the application. |  | String
 | `--skip-plugins` | Skip plugins during export | false | boolean
 | `--spring-boot-version` | Spring Boot version | 4.2.0 | String
-| `--trait` | Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello". |  | String[]
+| `--trait` | Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello". camel kubernetes traits lists the traits and their options. |  | String[]
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `--volume` | Mount a volume into the integration container, for instance "--volume pvcname:/container/path". |  | String[]
 | `--yes,-y` | Automatically answer yes to confirmation prompts (e.g. when using --clean-dir) | false | boolean

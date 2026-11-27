@@ -28,7 +28,8 @@ import org.apache.camel.test.dst.DstTest;
  * message is acknowledged or dead lettered. A failing seed is replayed with {@code -Ddst.seed=<seed>};
  * {@code -Ddst.seeds=5000} runs more seeds.
  */
-@DstInstrument("org.apache.camel.component.google.pubsub")
+// the retry delay of the subscriber loops waits in BackgroundTask.run, which must be a virtual wait
+@DstInstrument(value = "org.apache.camel.component.google.pubsub", alsoRewrite = "org.apache.camel.support.task")
 class PubsubConsumerDstTest {
 
     @DstTest(seeds = 1000)
