@@ -4615,7 +4615,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SCP (camel-jsch)
-     * Copy files to/from remote hosts using the secure copy protocol (SCP).
+     * Copy files to remote hosts using the secure copy protocol (SCP).
      * 
      * Category: file
      * Since: 2.10
