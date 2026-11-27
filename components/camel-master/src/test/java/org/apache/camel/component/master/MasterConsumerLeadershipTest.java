@@ -393,6 +393,54 @@ public class MasterConsumerLeadershipTest {
 
     @Test
     @Timeout(60)
+    void testStartAttemptFromBeforeARestartFinishingWhileTheNewConsumerStartsKeepsTheRouteWorking() throws Exception {
+        useRouteWithThreads();
+        // the stop below waits this long for the start attempt that is still running, which outlasts it
+        context.getExecutorServiceManager().setShutdownAwaitTermination(100);
+        TestClusterView view = clusterService.getTestView();
+        CountDownLatch firstGate = new CountDownLatch(1);
+        CountDownLatch secondGate = new CountDownLatch(1);
+        probe.ignoreInterrupt.set(true);
+        probe.startGate.set(firstGate);
+        try {
+            view.setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() == 1);
+
+            // the same consumer is stopped and started again while the first attempt still starts the first
+            // delegated consumer, and the attempt of the new lifecycle is held inside the start of the second one,
+            // after its doStart has started the processor of the route
+            MasterConsumer consumer = (MasterConsumer) context.getRoute("master-route").getConsumer();
+            consumer.stop();
+            probe.startGate.set(secondGate);
+            consumer.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() == 2);
+
+            // the attempt from before the restart finishes first and stops its own consumer, which also stops the
+            // processor of the route, while no delegated consumer is published yet
+            firstGate.countDown();
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertEquals(1, probe.started.get());
+                assertEquals(1, probe.stopped.get(), "The consumer of the attempt from before the restart is still running");
+            });
+        } finally {
+            firstGate.countDown();
+            secondGate.countDown();
+        }
+
+        await().atMost(10, TimeUnit.SECONDS).until(() -> probe.started.get() == 2);
+        ProbeConsumer second = probe.consumers.get(1);
+        assertTrue(second.isStarted());
+
+        // the route behind the consumer that started last still routes its messages
+        assertRoutes(second, "after restart");
+
+        view.setLeader(false);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(2, probe.stopped.get()));
+        assertFalse(second.isStarted());
+    }
+
+    @Test
+    @Timeout(60)
     void testLeadershipLostAndTakenAgainWhileStartIsInProgressKeepsTheRouteWorking() throws Exception {
         useRouteWithThreads();
         TestClusterView view = clusterService.getTestView();

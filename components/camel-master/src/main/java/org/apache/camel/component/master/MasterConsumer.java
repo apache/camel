@@ -312,14 +312,17 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 LOG.info("Leadership lost or consumer stopped while the delegated consumer was starting. Stopping it: {}",
                         delegatedEndpoint);
                 ServiceHelper.stopService(consumer);
-                if (delegatedConsumer != null) {
-                    // stopping a consumer also stops its processor, the processor of the route, which the running
-                    // delegated consumer uses too, so it is started again. Until then, a message of the running
-                    // consumer that reaches a stopped processor fails (a SendProcessor that is not started fails
-                    // the exchange). This only happens when an attempt of an earlier lifecycle outlived the wait of
-                    // doStop (shutdownGraceful, bounded by the shutdown await termination of the executor service
-                    // manager) and the attempt of the restarted consumer started first. It is kept: the stale
-                    // consumer has to stop, and a DefaultConsumer always stops its processor
+                if (isRunAllowed()) {
+                    // stopping a consumer also stops the processor of the route, which a delegated consumer of this
+                    // lifecycle may use (running, or still starting), so start it again while this master consumer
+                    // runs. It is not enough to check for a published consumer: the attempt of the restarted
+                    // consumer may still be inside its start, after its doStart has started the processor. Until
+                    // then, a message of a running delegated consumer that reaches the stopped processor fails (a
+                    // SendProcessor that is not started fails the exchange). This window only opens when an attempt
+                    // of an earlier lifecycle outlived the wait of doStop (shutdownGraceful, bounded by the shutdown
+                    // await termination of the executor service manager). When the leadership was lost within this
+                    // lifecycle the route is started, so the processor runs as it does on a node that is not the
+                    // leader. When this master consumer is stopping, its own stop stops the processor
                     ServiceHelper.startService(processor);
                 }
                 attempt.set(null);
