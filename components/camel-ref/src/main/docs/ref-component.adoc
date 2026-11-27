@@ -2,7 +2,7 @@
 :doctitle: Ref
 :shortname: ref
 :artifactid: camel-ref
-:description: Route messages to an endpoint looked up dynamically by name in the Camel Registry.
+:description: Send messages to, or receive messages from, an endpoint that is looked up by name in the Camel registry.
 :since: 1.2
 :supportlevel: Stable
 :tabs-sync-option:

@@ -2,7 +2,7 @@
 :doctitle: IBM Watson Language
 :shortname: ibm-watson-language
 :artifactid: camel-ibm-watson-language
-:description: Perform natural language processing using IBM Watson Natural Language Understanding
+:description: Analyze text and web pages with IBM Watson Natural Language Understanding.
 :since: 4.16
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
@@ -349,5 +349,3 @@ Maven users will need to add the following dependency to their `pom.xml`.
 ---------------------------------------
 
 where `x.x.x` is the version number of Camel.
-
-

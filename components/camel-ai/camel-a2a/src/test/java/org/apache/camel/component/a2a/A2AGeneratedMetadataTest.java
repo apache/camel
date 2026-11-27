@@ -39,8 +39,8 @@ class A2AGeneratedMetadataTest {
         assertThat(validateAuth.path("insecureValue").asString()).isEqualTo("false");
         assertThat(validateAuth.path("defaultValue").asBoolean()).isTrue();
         assertThat(validateAuth.path("description").asString())
-                .contains("validate authentication")
-                .contains("Disable explicitly");
+                .contains("checks the credentials")
+                .contains("If false, the consumer accepts requests without credentials");
 
         JsonNode allowLocalWebhookUrls = properties.path("allowLocalWebhookUrls");
         assertThat(allowLocalWebhookUrls.path("security").asString()).isEqualTo("insecure:dev");
@@ -48,15 +48,15 @@ class A2AGeneratedMetadataTest {
         assertThat(allowLocalWebhookUrls.path("defaultValue").asBoolean()).isFalse();
         assertThat(allowLocalWebhookUrls.path("description").asString())
                 .contains("localhost")
-                .contains("SSRF protection");
+                .contains("loopback");
 
         JsonNode pushRetryBackoffMs = properties.path("pushRetryBackoffMs");
         assertThat(pushRetryBackoffMs.path("defaultValue").asLong()).isEqualTo(1000L);
-        assertThat(pushRetryBackoffMs.path("description").asString()).contains("exponential backoff");
+        assertThat(pushRetryBackoffMs.path("description").asString()).contains("doubled for each further retry");
 
         JsonNode oauthProfile = properties.path("oauthProfile");
         assertThat(oauthProfile.path("description").asString())
-                .contains("OAuth 2.0 Client Credentials")
+                .contains("OAuth 2.0 client credentials")
                 .contains("camel-oauth");
     }
 

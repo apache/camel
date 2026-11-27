@@ -17,11 +17,17 @@
 package org.apache.camel.component.arangodb;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class ArangoDbConfiguration implements Cloneable {
+
+    @UriPath(description = "The name of the ArangoDB database that the producer works on. The producer does not create the"
+                           + " database.")
+    @Metadata(required = true)
     private String database;
 
     @UriParam(label = "producer",

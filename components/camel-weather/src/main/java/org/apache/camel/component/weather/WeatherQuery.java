@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.weather;
 
+import java.util.regex.Pattern;
+
 import org.apache.camel.component.weather.geolocation.GeoLocation;
 
 import static org.apache.camel.component.weather.WeatherMode.JSON;
@@ -25,6 +27,10 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
  * Logic for determining the query based on the provided configuration.
  */
 public class WeatherQuery {
+
+    // the value of the APPID query parameter (the API key), also when a location header adds it as appid
+    private static final Pattern APPID_VALUE = Pattern.compile("([?&]APPID=)[^&]*", Pattern.CASE_INSENSITIVE);
+
     private final WeatherConfiguration weatherConfiguration;
 
     public WeatherQuery(WeatherConfiguration weatherConfiguration) {
@@ -76,7 +82,7 @@ public class WeatherQuery {
             answer += "&cnt=" + weatherConfiguration.getCnt();
         }
 
-        // append the desired measurement unit if not the default (which is metric)
+        // append the desired measurement unit, if set: without it OpenWeatherMap uses its standard units (Kelvin)
         if (weatherConfiguration.getUnits() != null) {
             answer += "&units=" + weatherConfiguration.getUnits().name().toLowerCase();
         }
@@ -91,6 +97,20 @@ public class WeatherQuery {
         }
 
         return answer;
+    }
+
+    /**
+     * Returns the query with the value of the APPID parameter masked, as shown in the CamelWeatherQuery header, the log
+     * and error messages. The appid is a secret option, so only the request itself has the real value.
+     *
+     * @param  query the query, such as returned by {@link #getQuery()}
+     * @return       the query with {@code APPID=xxxxxx}, or null if the query is null
+     */
+    public static String sanitize(String query) {
+        if (query == null) {
+            return null;
+        }
+        return APPID_VALUE.matcher(query).replaceAll("$1xxxxxx");
     }
 
     private String createContext(String lat, String lon) {
@@ -109,12 +129,8 @@ public class WeatherQuery {
             }
         } else if (weatherConfiguration.getIds() != null && !weatherConfiguration.getIds().isEmpty()) {
             if (weatherConfiguration.getIdsAsList().size() == 1) {
-                if (!isEmpty(weatherConfiguration.getPeriod())) {
-                    if (weatherConfiguration.getWeatherApi() == WeatherApi.Hourly) {
-                        answer = "forecast?";
-                    } else {
-                        answer = "forecast/daily?";
-                    }
+                if (isForecast()) {
+                    answer = forecastContext();
                 } else if (weatherConfiguration.getWeatherApi() == WeatherApi.Station) {
                     answer = "station?";
                 } else {
@@ -123,16 +139,26 @@ public class WeatherQuery {
             } else {
                 answer = "group?";
             }
-        } else if (isEmpty(weatherConfiguration.getPeriod())) {
-            answer = "weather?";
+        } else if (isForecast()) {
+            answer = forecastContext();
         } else {
-            if (weatherConfiguration.getWeatherApi() == WeatherApi.Hourly) {
-                answer = "forecast?";
-            } else {
-                answer = "forecast/daily?";
-            }
+            answer = "weather?";
         }
         return answer;
+    }
+
+    /**
+     * A forecast is queried with a period, or with weatherApi Hourly or Daily, which without a period get the forecast
+     * length that OpenWeatherMap uses by default.
+     */
+    private boolean isForecast() {
+        return !isEmpty(weatherConfiguration.getPeriod())
+                || weatherConfiguration.getWeatherApi() == WeatherApi.Hourly
+                || weatherConfiguration.getWeatherApi() == WeatherApi.Daily;
+    }
+
+    private String forecastContext() {
+        return weatherConfiguration.getWeatherApi() == WeatherApi.Hourly ? "forecast?" : "forecast/daily?";
     }
 
     private static String createLatLonQueryString(String lat, String lon) {

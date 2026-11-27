@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -30,12 +32,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
@@ -47,6 +51,7 @@ import org.apache.camel.util.ArtifactUtils;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,40 +98,99 @@ public class RestEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestEndpoint.class);
 
-    @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options")
+    @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options",
+             description = "The HTTP method of the REST service. The consumer answers requests with this method, and the"
+                           + " producer sends the request with it.")
     @Metadata(required = true)
     private String method;
-    @UriPath(label = "common")
+    @UriPath(label = "common",
+             description = "The base path of the REST service, such as users. Without uriTemplate, it is the whole path,"
+                           + " and it can hold {name} path parameters as in uriTemplate. A consumer can end it with * to"
+                           + " match all the paths that start with it.")
     @Metadata(required = true)
     private String path;
-    @UriPath(label = "common")
+    @UriPath(label = "common",
+             description = "The path below the base path, such as {id}, which can hold {name} path parameters. The"
+                           + " consumer sets each path parameter of a request as a header. The producer fills each {name}"
+                           + " with the header of that name, or else the exchange variable of that name.")
     private String uriTemplate;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The media types, separated by comma, that this endpoint takes in, such as application/json."
+                            + " For the consumer, the media types of the request body that the REST service accepts. The"
+                            + " producer sets it as the Accept header of the request when the message has no Accept"
+                            + " header.")
     private String consumes;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The media types, separated by comma, that this endpoint sends, such as application/json. For"
+                            + " the consumer, the media types of the response body that the REST service returns. The"
+                            + " producer sets it as the Content-Type header of the request when the message has no"
+                            + " Content-Type header.")
     private String produces;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The class name of the request body, with [] appended for an array. The consumer stores it in"
+                            + " the rest registry. With xml binding, the producer uses it as the JAXB context of the"
+                            + " request body.")
     private String inType;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The class name of the response body, with [] appended for an array. With a binding mode other"
+                            + " than off, the producer reads a JSON or XML response into this class, and without it the"
+                            + " producer does not read the response. The consumer stores it in the rest registry.")
     private String outType;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The id of the route of this REST service, which the consumer stores in the rest registry to"
+                            + " count the requests of the service. The Rest DSL sets it to the id of the route that it"
+                            + " creates. This option does not set the id of the route.")
     private String routeId;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "A description of this REST service, which the consumer stores in the rest registry. The Rest"
+                            + " DSL sets it from the description of the route, the verb or the rest.")
     private String description;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The location of the OpenAPI document (JSON or YAML) of the REST service to call: a file, an"
+                            + " http or https URL, or a classpath resource. When set, the producer needs camel-openapi-java,"
+                            + " and fails to start if the document has no operation for the method and path. If not set, the"
+                            + " apiDoc option of the component, or else the producerApiDoc of the rest configuration, is"
+                            + " used.")
     private String apiDoc;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The scheme, host and port of the REST service to call, with an optional base path, such as"
+                            + " http://myserver:8080/foo. The scheme is http when it is not given. If not set, the host"
+                            + " option of the component, or else the host and port of the rest configuration, is used. The"
+                            + " producer fails to start without a host.")
     private String host;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The query string of the request, such as foo=123&bar=456. A value {name} is filled with the"
+                            + " header or the exchange variable of that name, and a parameter with the value {name?} is"
+                            + " left out when neither is set. The endpoint also adds the parameters of its URI that it"
+                            + " does not know, except the options of the component that sends the HTTP request.")
     private String queryParameters;
-    @UriParam(label = "producer", enums = "auto,off,json,xml,json_xml")
+    @UriParam(label = "producer", enums = "auto,off,json,xml,json_xml",
+              description = "The binding mode of the producer, which replaces the bindingMode of the rest configuration"
+                            + " (off by default). With json, xml or json_xml, the producer writes a POJO body as JSON or"
+                            + " XML, and reads the response into outType. With auto, it chooses from the Content-Type header,"
+                            + " and sends or keeps a body that it cannot bind as it is.")
     private RestConfiguration.RestBindingMode bindingMode;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the Camel component that sends the HTTP request, such as http or vertx-http. If"
+                            + " not set, the producerComponent of the rest configuration is used. If that is not set either,"
+                            + " the producer takes the first component of the CamelContext that is a RestProducerFactory,"
+                            + " then the component of consumerComponentName, then a single RestProducerFactory in the"
+                            + " registry, then http, vertx-http, undertow or netty-http, whichever is on the classpath.")
     private String producerComponentName;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The name of the Camel component that runs the REST service, such as platform-http, servlet or"
+                            + " jetty. If not set, the component of the rest configuration is used. If that is not set"
+                            + " either, the consumer takes the first component of the CamelContext that is a"
+                            + " RestConsumerFactory, then platform-http, then a single RestConsumerFactory in the registry,"
+                            + " then servlet, jetty, undertow, netty-http or coap, whichever is on the classpath.")
     private String consumerComponentName;
 
     private Map<String, Object> parameters;
+    // the parameters of the endpoint uri that the endpoint does not know, which are added to the query parameters,
+    // except the options of the producer component (which may only be known when the producer is created)
+    private volatile Map<String, Object> uriQueryParameters;
+    // the queryParameters option as configured on the endpoint
+    private String configuredQueryParameters;
 
     public RestEndpoint(String endpointUri, RestComponent component) {
         super(endpointUri, component);
@@ -151,9 +215,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return method;
     }
 
-    /**
-     * HTTP method to use.
-     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -162,9 +223,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return path;
     }
 
-    /**
-     * The base path, can use &#42; as path suffix to support wildcard HTTP route matching.
-     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -173,9 +231,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return uriTemplate;
     }
 
-    /**
-     * The uri template
-     */
     public void setUriTemplate(String uriTemplate) {
         this.uriTemplate = uriTemplate;
     }
@@ -184,10 +239,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return consumes;
     }
 
-    /**
-     * Media type such as: 'text/xml', or 'application/json' this REST service accepts. By default we accept all kinds
-     * of types.
-     */
     public void setConsumes(String consumes) {
         this.consumes = MimeTypeHelper.sanitizeMimeType(consumes);
     }
@@ -196,9 +247,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return produces;
     }
 
-    /**
-     * Media type such as: 'text/xml', or 'application/json' this REST service returns.
-     */
     public void setProduces(String produces) {
         this.produces = MimeTypeHelper.sanitizeMimeType(produces);
     }
@@ -207,12 +255,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return producerComponentName;
     }
 
-    /**
-     * The Camel Rest component to use for the producer REST transport, such as http, undertow. If no component has been
-     * explicitly configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or
-     * if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is
-     * being used.
-     */
     public void setProducerComponentName(String producerComponentName) {
         this.producerComponentName = producerComponentName;
     }
@@ -221,12 +263,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return consumerComponentName;
     }
 
-    /**
-     * The Camel Rest component to use for the consumer REST transport, such as jetty, servlet, undertow. If no
-     * component has been explicitly configured, then Camel will lookup if there is a Camel component that integrates
-     * with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one
-     * is found, then that is being used.
-     */
     public void setConsumerComponentName(String consumerComponentName) {
         this.consumerComponentName = consumerComponentName;
     }
@@ -235,9 +271,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return inType;
     }
 
-    /**
-     * To declare the incoming POJO binding type as a FQN class name
-     */
     public void setInType(String inType) {
         this.inType = inType;
     }
@@ -246,9 +279,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return outType;
     }
 
-    /**
-     * To declare the outgoing POJO binding type as a FQN class name
-     */
     public void setOutType(String outType) {
         this.outType = outType;
     }
@@ -257,9 +287,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return routeId;
     }
 
-    /**
-     * Name of the route this REST services creates
-     */
     public void setRouteId(String routeId) {
         this.routeId = routeId;
     }
@@ -268,9 +295,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return description;
     }
 
-    /**
-     * Human description to document this REST service
-     */
     public void setDescription(String description) {
         this.description = description;
     }
@@ -290,9 +314,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return apiDoc;
     }
 
-    /**
-     * The openapi api doc resource to use. The resource is loaded from classpath by default and must be in JSON format.
-     */
     public void setApiDoc(String apiDoc) {
         this.apiDoc = apiDoc;
     }
@@ -301,9 +322,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return host;
     }
 
-    /**
-     * Host and port of HTTP service to use (override host in openapi schema)
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -312,11 +330,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return queryParameters;
     }
 
-    /**
-     * Query parameters for the HTTP service to call.
-     *
-     * The query parameters can contain multiple parameters separated by ampersand such such as foo=123&bar=456.
-     */
     public void setQueryParameters(String queryParameters) {
         this.queryParameters = queryParameters;
     }
@@ -325,11 +338,6 @@ public class RestEndpoint extends DefaultEndpoint {
         return bindingMode;
     }
 
-    /**
-     * Configures the binding mode for the producer. If set to anything other than 'off' the producer will try to
-     * convert the body of the incoming message from inType to the json or xml, and the response from json or xml to
-     * outType.
-     */
     public void setBindingMode(RestConfiguration.RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
     }
@@ -353,6 +361,10 @@ public class RestEndpoint extends DefaultEndpoint {
 
         LOG.debug("Using RestProducerFactory: {}", factoryResult.factory);
 
+        // the producer component is known now, so its options are not query parameters
+        // (when it was not configured, but auto-detected, they are still in the query parameters)
+        removeProducerOptionsFromQueryParameters(factoryResult.name);
+
         RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), null, factoryResult.name);
         Producer producer = createProducerInstance(factoryResult.factory, apiDocFactory, config);
 
@@ -362,6 +374,60 @@ public class RestEndpoint extends DefaultEndpoint {
         answer.setBindingMode(bindingMode);
 
         return answer;
+    }
+
+    /**
+     * Adds the parameters of the endpoint uri that the endpoint does not know to the query parameters, except the
+     * options of the given producer component.
+     *
+     * @param uriParameters         the parameters of the endpoint uri that the endpoint does not know
+     * @param producerComponentName the name of the producer component when it is configured, or null
+     */
+    void initUriQueryParameters(Map<String, Object> uriParameters, String producerComponentName)
+            throws URISyntaxException {
+        this.configuredQueryParameters = queryParameters;
+        this.uriQueryParameters = withoutProducerOptions(uriParameters, producerComponentName);
+        updateQueryParameters();
+    }
+
+    private void removeProducerOptionsFromQueryParameters(String producerComponentName) throws URISyntaxException {
+        Map<String, Object> current = uriQueryParameters;
+        if (current == null || current.isEmpty()) {
+            return;
+        }
+        Map<String, Object> answer = withoutProducerOptions(current, producerComponentName);
+        if (answer.size() != current.size()) {
+            uriQueryParameters = answer;
+            updateQueryParameters();
+        }
+    }
+
+    private Map<String, Object> withoutProducerOptions(Map<String, Object> uriParameters, String producerComponentName) {
+        Map<String, Object> answer = new LinkedHashMap<>(uriParameters);
+        EndpointUriFactory factory = getEndpointUriFactory(producerComponentName);
+        if (factory != null) {
+            answer.keySet().removeIf(factory.propertyNames()::contains);
+        }
+        return answer;
+    }
+
+    private void updateQueryParameters() throws URISyntaxException {
+        // the queryParameters option of the endpoint takes precedence
+        Map<String, Object> query = new LinkedHashMap<>(uriQueryParameters);
+        query.putAll(URISupport.parseQuery(configuredQueryParameters));
+        String answer = URISupport.createQueryString(query);
+        queryParameters = ObjectHelper.isNotEmpty(answer) ? answer : configuredQueryParameters;
+    }
+
+    private EndpointUriFactory getEndpointUriFactory(String name) {
+        if (name != null) {
+            UriFactoryResolver resolver
+                    = getCamelContext().getCamelContextExtension().getContextPlugin(UriFactoryResolver.class);
+            if (resolver != null) {
+                return resolver.resolveFactory(name, getCamelContext());
+            }
+        }
+        return null;
     }
 
     private void validateHost() {

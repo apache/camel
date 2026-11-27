@@ -287,7 +287,7 @@ public interface ArangoDbEndpointBuilderFactory {
         /**
          * To use a custom com.arangodb.ArangoDB client. When it is set, or set
          * on the component, the host, port, user, password and vertx options
-         * are not used. The endpoint shuts the client down when it shuts down.
+         * are not used, and the endpoint does not shut the client down.
          * 
          * The option is a: <code>com.arangodb.ArangoDB</code> type.
          * 
@@ -303,7 +303,7 @@ public interface ArangoDbEndpointBuilderFactory {
         /**
          * To use a custom com.arangodb.ArangoDB client. When it is set, or set
          * on the component, the host, port, user, password and vertx options
-         * are not used. The endpoint shuts the client down when it shuts down.
+         * are not used, and the endpoint does not shut the client down.
          * 
          * The option will be converted to a <code>com.arangodb.ArangoDB</code>
          * type.

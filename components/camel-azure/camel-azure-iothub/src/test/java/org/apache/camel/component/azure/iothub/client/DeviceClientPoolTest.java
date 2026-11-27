@@ -156,6 +156,71 @@ class DeviceClientPoolTest {
     }
 
     @Test
+    void testConnectionStringWithAnotherKeyDoesNotReusePooledClient() {
+        String good = "HostName=h;DeviceId=d;SharedAccessKey=good";
+        String other = "HostName=h;DeviceId=d;SharedAccessKey=other";
+        String noKey = "HostName=h;DeviceId=d";
+        DeviceClient client = mock(DeviceClient.class);
+        List<String> opened = new ArrayList<>();
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        // like IoT Hub, open a client only for the right key
+        pool.setDeviceClientFactory((cs, protocol) -> {
+            opened.add(cs);
+            if (!cs.equals(good)) {
+                throw new IllegalStateException("Unauthorized");
+            }
+            return client;
+        });
+
+        try (DeviceClientPool.Lease lease = pool.lease("d", good, IotHubClientProtocol.MQTT)) {
+            assertSame(client, lease.getClient());
+        }
+        // the client of the right key is pooled, but another key or no key must open its own client
+        assertThrows(RuntimeException.class, () -> pool.lease("d", other, IotHubClientProtocol.MQTT));
+        assertThrows(RuntimeException.class, () -> pool.lease("d", noKey, IotHubClientProtocol.MQTT));
+
+        assertEquals(List.of(good, other, noKey), opened);
+        assertEquals(1, pool.getActiveClientCount());
+    }
+
+    @Test
+    void testConnectionStringWithWrongKeyIsRejectedOnEmptyPool() {
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> {
+            throw new IllegalStateException("Unauthorized");
+        });
+
+        assertThrows(RuntimeException.class, () -> pool.lease("d", CS, IotHubClientProtocol.MQTT));
+        assertEquals(0, pool.getActiveClientCount());
+    }
+
+    @Test
+    void testTwoKeysOfSameDeviceGetOwnClients() throws Exception {
+        String primary = "HostName=h;DeviceId=d;SharedAccessKey=primary";
+        String secondary = "HostName=h;DeviceId=d;SharedAccessKey=secondary";
+        DeviceClient primaryClient = mock(DeviceClient.class);
+        DeviceClient secondaryClient = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> cs.equals(primary) ? primaryClient : secondaryClient);
+
+        try (DeviceClientPool.Lease first = pool.lease("d", primary, IotHubClientProtocol.MQTT);
+             DeviceClientPool.Lease second = pool.lease("d", secondary, IotHubClientProtocol.MQTT)) {
+            assertSame(primaryClient, first.getClient());
+            assertSame(secondaryClient, second.getClient());
+        }
+        try (DeviceClientPool.Lease again = pool.lease("d", primary, IotHubClientProtocol.MQTT)) {
+            assertSame(primaryClient, again.getClient());
+        }
+        assertEquals(2, pool.getActiveClientCount());
+
+        // removing the device closes the clients of all its connection strings
+        pool.remove("d");
+        assertEquals(0, pool.getActiveClientCount());
+        verify(primaryClient, times(1)).close();
+        verify(secondaryClient, times(1)).close();
+    }
+
+    @Test
     void testRemoveClosesClient() throws Exception {
         DeviceClient client = mock(DeviceClient.class);
         DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
@@ -166,6 +231,26 @@ class DeviceClientPoolTest {
 
         assertEquals(0, pool.getActiveClientCount());
         verify(client, times(1)).close();
+    }
+
+    @Test
+    void testHttpsClientIsKeptApartAndRemovedByDeviceId() throws Exception {
+        DeviceClient https = mock(DeviceClient.class);
+        DeviceClient mqtt = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> protocol == IotHubClientProtocol.HTTPS ? https : mqtt);
+
+        assertSame(https, pool.getOrCreate("d", CS, IotHubClientProtocol.HTTPS));
+        assertSame(mqtt, pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT));
+        assertSame(mqtt, pool.getOrCreate("d", CS, IotHubClientProtocol.AMQPS));
+        assertEquals(2, pool.getActiveClientCount());
+
+        pool.remove("d");
+        pool.remove("d");
+
+        assertEquals(0, pool.getActiveClientCount());
+        verify(https, times(1)).close();
+        verify(mqtt, times(1)).close();
     }
 
     @Test

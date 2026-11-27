@@ -26,73 +26,124 @@ public interface ConsulConstants {
     String CONSUL_SERVER_IP = "CamelConsulServerIp";
     String CONSUL_SERVER_PORT = "CamelConsulServerPort";
 
-    @Metadata(label = "producer", description = "The Producer action", javaType = "String")
+    @Metadata(label = "producer", description = "The action to run, overriding the action option.", javaType = "String")
     String CONSUL_ACTION = "CamelConsulAction";
-    @Metadata(description = "The Key on which the action should applied", javaType = "String")
+    @Metadata(description = "The consumer sets the key of the value (kv) or the event name (event). In a producer, the key (kv) or"
+                            + " event name (event) to act on, overriding the key option.",
+              javaType = "String")
     String CONSUL_KEY = "CamelConsulKey";
     // exchange property the key/value and event consumers set to the key they received, so that a producer can tell the
     // key header the consumer sets apart from a key chosen by the route
     String CONSUL_RECEIVED_KEY = "CamelConsulReceivedKey";
-    @Metadata(label = "consumer", description = "The event id", javaType = "String")
+    @Metadata(label = "consumer", description = "The id of the received event.", javaType = "String")
     String CONSUL_EVENT_ID = "CamelConsulEventId";
-    @Metadata(label = "consumer", description = "The event name", javaType = "String")
+    @Metadata(label = "consumer", description = "The name of the received event.", javaType = "String")
     String CONSUL_EVENT_NAME = "CamelConsulEventName";
-    @Metadata(label = "consumer", description = "The event LTime", javaType = "Long")
+    @Metadata(label = "consumer", description = "The Lamport time of the received event.", javaType = "Long")
     String CONSUL_EVENT_LTIME = "CamelConsulEventLTime";
-    @Metadata(label = "consumer", description = "The Node filter", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "The node name filter (a regular expression) of the received event, when it has one.",
+              javaType = "String")
     String CONSUL_NODE_FILTER = "CamelConsulNodeFilter";
-    @Metadata(label = "consumer", description = "The tag filter", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "The service tag filter (a regular expression) of the received event, when it has one.",
+              javaType = "String")
     String CONSUL_TAG_FILTER = "CamelConsulTagFilter";
-    @Metadata(label = "consumer", description = "The session filter", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "The service name filter (a regular expression) of the received event, when it has one.",
+              javaType = "String")
     String CONSUL_SERVICE_FILTER = "CamelConsulSessionFilter";
-    @Metadata(label = "consumer", description = "The data version", javaType = "Integer")
+    @Metadata(label = "consumer", description = "The version of the received event.", javaType = "Integer")
     String CONSUL_VERSION = "CamelConsulVersion";
-    @Metadata(description = "Flags associated with a value", javaType = "Long")
+    @Metadata(description = "The flags of the value. The kv consumer sets the flags of the value it received, and the PUT action"
+                            + " stores them with the value (default 0).",
+              javaType = "Long")
     String CONSUL_FLAGS = "CamelConsulFlags";
-    @Metadata(label = "producer", description = "The optional value index", javaType = "BigInteger")
+    @Metadata(label = "producer",
+              description = "The index from which a blocking catalog or health query waits for a change. These actions set it"
+                            + " to the index of the answer.",
+              javaType = "BigInteger")
     String CONSUL_INDEX = "CamelConsulIndex";
-    @Metadata(label = "producer", description = "The optional value wait", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The maximum wait time of a blocking catalog or health query, such as 10s or 5m.",
+              javaType = "String")
     String CONSUL_WAIT = "CamelConsulWait";
-    @Metadata(label = "consumer", description = "The internal index value that represents when the entry was created",
+    @Metadata(label = "consumer", description = "The index at which the key was created.",
               javaType = "Long")
     String CONSUL_CREATE_INDEX = "CamelConsulCreateIndex";
-    @Metadata(label = "consumer", description = "The number of times this key has successfully been acquired in a lock",
+    @Metadata(label = "consumer", description = "The number of times that a lock on the key was acquired.",
               javaType = "Long")
     String CONSUL_LOCK_INDEX = "CamelConsulLockIndex";
-    @Metadata(label = "consumer", description = "The last index that modified this key", javaType = "Long")
+    @Metadata(label = "consumer", description = "The index at which the key was last modified.", javaType = "Long")
     String CONSUL_MODIFY_INDEX = "CamelConsulModifyIndex";
-    @Metadata(description = "Options associated to the request")
+    @Metadata(description = "The options of the request, as an object of org.kiwiproject.consul.option: PutOptions for PUT,"
+                            + " QueryOptions for GET_VALUE, GET_VALUES and the event LIST, and EventOptions for FIRE.")
     String CONSUL_OPTIONS = "CamelConsulOptions";
-    @Metadata(description = "true if the response has a result", javaType = "Boolean")
+    @Metadata(description = "Whether the action had a result: false when nothing was found, else the outcome of PUT, LOCK and"
+                            + " UNLOCK, and true for the other actions. The consumers set it to true.",
+              javaType = "Boolean")
     String CONSUL_RESULT = "CamelConsulResult";
-    @Metadata(description = "The session id", javaType = "String")
+    @Metadata(description = "The id of the session. The kv consumer sets the session that holds the lock on the key. LOCK and"
+                            + " UNLOCK use it, and DESTROY, INFO and RENEW of session read it before the body.",
+              javaType = "String")
     String CONSUL_SESSION = "CamelConsulSession";
-    @Metadata(label = "producer", description = "To transform values retrieved from Consul i.e. on KV endpoint to string.",
+    @Metadata(label = "producer",
+              description = "Whether GET_VALUE and GET_VALUES return the values decoded to text, overriding the valueAsString"
+                            + " option.",
               javaType = "Boolean")
     String CONSUL_VALUE_AS_STRING = "CamelConsulValueAsString";
-    @Metadata(label = "producer", description = "The node", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The node name for the GET_NODE action of catalog and the NODE_CHECKS action of health.",
+              javaType = "String")
     String CONSUL_NODE = "CamelConsulNode";
-    @Metadata(label = "producer", description = "The service", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The service name for the GET_SERVICE action of catalog and the SERVICE_CHECKS and"
+                            + " SERVICE_INSTANCES actions of health.",
+              javaType = "String")
     String CONSUL_SERVICE = "CamelConsulService";
-    @Metadata(label = "producer", description = "The data center", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The datacenter to query, overriding the datacenter option. The session actions use only this"
+                            + " header.",
+              javaType = "String")
     String CONSUL_DATACENTER = "CamelConsulDatacenter";
-    @Metadata(label = "producer", description = "The near node to use for queries.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The node from which Consul sorts the results of the catalog and health queries by round trip"
+                            + " time, overriding the nearNode option.",
+              javaType = "String")
     String CONSUL_NEAR_NODE = "CamelConsulNearNode";
-    @Metadata(label = "producer", description = "The note meta-data to use for queries.", javaType = "List<String>")
+    @Metadata(label = "producer",
+              description = "The node metadata filters, each as key:value, of the catalog and health queries, overriding the"
+                            + " nodeMeta option.",
+              javaType = "List<String>")
     String CONSUL_NODE_META = "CamelConsulNodeMeta";
-    @Metadata(label = "producer", description = "The last contact", javaType = "Long")
+    @Metadata(label = "producer",
+              description = "The time in milliseconds since the server that answered a catalog or health query last had contact"
+                            + " with the leader.",
+              javaType = "Long")
     String CONSUL_LAST_CONTACT = "CamelConsulLastContact";
-    @Metadata(label = "producer", description = "Indicates whether it is the known leader", javaType = "Boolean")
+    @Metadata(label = "producer", description = "Whether the server that answered a catalog or health query knew the leader.",
+              javaType = "Boolean")
     String CONSUL_KNOWN_LEADER = "CamelConsulKnownLeader";
-    @Metadata(label = "producer", description = "The consistencyMode used for queries",
+    @Metadata(label = "producer",
+              description = "The consistency mode of the catalog and health queries, overriding the consistencyMode option.",
               javaType = "org.kiwiproject.consul.option.ConsistencyMode", defaultValue = "DEFAULT")
     String CONSUL_CONSISTENCY_MODE = "CamelConsulConsistencyMode";
-    @Metadata(label = "producer", description = "Only on healthy services", javaType = "Boolean", defaultValue = "false")
+    @Metadata(label = "producer",
+              description = "Whether the SERVICE_INSTANCES action returns only the instances that pass all their health"
+                            + " checks.",
+              javaType = "Boolean", defaultValue = "false")
     String CONSUL_HEALTHY_ONLY = "CamelConsulHealthyOnly";
-    @Metadata(label = "producer", description = "The state to query.", javaType = "org.kiwiproject.consul.model.State")
+    @Metadata(label = "producer",
+              description = "The state of the health checks that the CHECKS action of health returns. Required for that"
+                            + " action.",
+              javaType = "org.kiwiproject.consul.model.State")
     String CONSUL_HEALTHY_STATE = "CamelConsulHealthyState";
-    @Metadata(label = "producer", description = "The id of the prepared query", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The id of the prepared query for GET and EXECUTE. When not set, the body holds the id.",
+              javaType = "String")
     String CONSUL_PREPARED_QUERY_ID = "CamelConsulPreparedQueryID";
-    @Metadata(label = "producer", description = "The service id for agent deregistration", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The id of the service that the DEREGISTER action of agent removes. Required for that action.",
+              javaType = "String")
     String CONSUL_SERVICE_ID = "CamelConsulServiceId";
 }

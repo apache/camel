@@ -33,32 +33,42 @@ public class TelegramConfiguration {
     @Metadata(required = true)
     private String type;
 
-    @UriParam(description = "The authorization token for using the bot (ask the BotFather)", label = "security",
+    @UriParam(description = "The token of the bot, which BotFather gives when the bot is created. Every call to the Bot API"
+                            + " carries it in the request URL. If not set, the authorizationToken of the component is used.",
+              label = "security",
               security = "secret")
     @Metadata(required = true)
     private String authorizationToken;
 
-    @UriParam(description = "HTTP proxy host which could be used when sending out the message.", label = "proxy")
+    @UriParam(description = "The host name of the HTTP proxy for the calls of the consumer and the producer to the Bot API."
+                            + " The proxy is used only when proxyPort is set too, and not when the client option is set.",
+              label = "proxy")
     private String proxyHost;
 
-    @UriParam(description = "HTTP proxy port which could be used when sending out the message.", label = "proxy")
+    @UriParam(description = "The port of the HTTP proxy for the calls of the consumer and the producer to the Bot API. The"
+                            + " proxy is used only when proxyHost is set too, and not when the client option is set.",
+              label = "proxy")
     private Integer proxyPort;
 
-    @UriParam(description = "HTTP proxy type which could be used when sending out the message.", label = "proxy",
+    @UriParam(description = "The type of the proxy. The value is not used: the component always connects through an HTTP"
+                            + " proxy, so SOCKS4 and SOCKS5 have no effect.",
+              label = "proxy",
               defaultValue = "HTTP")
     private TelegramProxyType proxyType = TelegramProxyType.HTTP;
 
-    @UriParam(description = "The identifier of the chat that will receive the produced messages. Chat ids can be first obtained from incoming messages "
-                            + "(eg. when a telegram user starts a conversation with a bot, its client sends automatically a '/start' message containing the chat id). "
-                            + "It is an optional parameter, as the chat id can be set dynamically for each outgoing message (using body or headers).",
+    @UriParam(description = "The identifier of the chat, or the @username of a channel, to which the producer sends a message."
+                            + " It is used when neither the message in the body nor the CamelTelegramChatId header sets a chat"
+                            + " id. The consumer sets the CamelTelegramChatId header of every message it receives from a chat.",
               label = "producer")
     private String chatId;
 
-    @UriParam(description = "Timeout in seconds for long polling. Put 0 for short polling or a bigger number for long polling. Long polling produces shorter response time.",
+    @UriParam(description = "The time in seconds that Telegram holds a getUpdates request of the consumer open while no update"
+                            + " is available (long polling). With 0, Telegram answers at once (short polling).",
               optionalPrefix = "consumer.", defaultValue = "30", label = "consumer")
     private Integer timeout = 30;
 
-    @UriParam(description = "Limit on the number of updates that can be received in a single polling request.",
+    @UriParam(description = "The maximum number of updates that the consumer receives in one getUpdates request. Telegram"
+                            + " accepts values from 1 to 100.",
               optionalPrefix = "consumer.", defaultValue = "100", label = "consumer")
     private Integer limit = 100;
 
@@ -77,7 +87,8 @@ public class TelegramConfiguration {
     private boolean webhookSecretTokenEnabled = true;
 
     @UriParam(label = "advanced",
-              description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
+              description = "The base URI of the Telegram Bot API, for example of a local Bot API server or of a mock in"
+                            + " tests. If not set, the baseUri of the component is used.")
     private String baseUri;
 
     public TelegramConfiguration() {
@@ -167,9 +178,6 @@ public class TelegramConfiguration {
         return baseUri;
     }
 
-    /**
-     * Set an alternative base URI, e.g. when you want to test the component against a mock Telegram API.
-     */
     public void setBaseUri(String telegramBaseUri) {
         this.baseUri = telegramBaseUri;
     }
@@ -178,7 +186,8 @@ public class TelegramConfiguration {
     public String toString() {
         final StringBuilder sb = new StringBuilder("TelegramConfiguration{");
         sb.append("type='").append(type).append('\'');
-        sb.append(", authorizationToken='").append(authorizationToken).append('\'');
+        // the token is a secret, so it is masked
+        sb.append(", authorizationToken='").append(authorizationToken != null ? "xxxxxx" : null).append('\'');
         sb.append(", chatId='").append(chatId).append('\'');
         sb.append(", timeout=").append(timeout);
         sb.append(", limit=").append(limit);

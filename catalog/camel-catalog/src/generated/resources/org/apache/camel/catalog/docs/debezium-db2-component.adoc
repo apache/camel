@@ -2,7 +2,7 @@
 :doctitle: Debezium DB2 Connector
 :shortname: debezium-db2
 :artifactid: camel-debezium-db2
-:description: Capture changes from a DB2 database.
+:description: Capture the row changes of tables in an IBM Db2 database with the Debezium Db2 connector.
 :since: 3.17
 :supportlevel: Stable
 :tabs-sync-option:
@@ -227,4 +227,3 @@ This component is a thin wrapper around Debezium Engine as mentioned.
 Therefore, before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior.
 This is especially true in regard to https://debezium.io/documentation/reference/1.8/operations/embedded.html#_handling_failures[handling failures].
 ====
-

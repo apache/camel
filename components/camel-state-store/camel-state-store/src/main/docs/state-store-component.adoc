@@ -2,7 +2,7 @@
 :doctitle: State Store
 :shortname: state-store
 :artifactid: camel-state-store
-:description: Perform key-value operations against a pluggable KeyValueRepository backend.
+:description: Store, get and delete key-value entries in a pluggable KeyValueRepository, such as an in-memory store or a shared cache.
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:

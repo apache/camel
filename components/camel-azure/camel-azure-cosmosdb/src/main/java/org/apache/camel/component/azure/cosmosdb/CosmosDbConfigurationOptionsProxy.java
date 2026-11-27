@@ -117,6 +117,13 @@ public class CosmosDbConfigurationOptionsProxy {
     }
 
     public PartitionKey getItemPartitionKey(final Exchange exchange) {
+        // a PartitionKey is used as it is, such as for a partition key value that is a number or a boolean: converted to
+        // a String it would be the JSON of the partition key
+        final Object header = ObjectHelper.isEmpty(exchange)
+                ? null : exchange.getIn().getHeader(CosmosDbConstants.ITEM_PARTITION_KEY);
+        if (header instanceof PartitionKey partitionKey) {
+            return partitionKey;
+        }
         return new PartitionKey(
                 getOption(exchange, CosmosDbConstants.ITEM_PARTITION_KEY, configuration::getItemPartitionKey,
                         String.class));

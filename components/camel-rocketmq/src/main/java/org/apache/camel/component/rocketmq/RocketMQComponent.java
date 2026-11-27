@@ -26,55 +26,99 @@ import org.apache.camel.support.DefaultComponent;
 @Component("rocketmq")
 public class RocketMQComponent extends DefaultComponent {
 
-    @Metadata(label = "producer")
+    @Metadata(description = "The producer group of the producer. The producer fails to start if it is not set.",
+              label = "producer")
     private String producerGroup;
 
-    @Metadata(label = "consumer")
+    @Metadata(description = "The consumer group of the consumer. The consumers of a group share the messages of the topic,"
+                            + " and each message goes to one of them. The consumer fails to start if it is not set.",
+              label = "consumer")
     private String consumerGroup;
 
-    @Metadata(label = "consumer", defaultValue = "tag")
+    @Metadata(description = "How the consumer selects the messages of the topic that it receives: tag uses the subscribeTags"
+                            + " option, and sql uses the subscribeSql option.",
+              label = "consumer", defaultValue = "tag")
     private String messageSelectorType = "tag";
 
-    @Metadata(label = "consumer", defaultValue = "*")
+    @Metadata(description = "The tags of the messages that the consumer receives, when messageSelectorType is tag. Separate"
+                            + " several tags with ||, for example TagA||TagB. The default * receives all messages.",
+              label = "consumer", defaultValue = "*")
     private String subscribeTags = "*";
 
-    @Metadata(label = "consumer", defaultValue = "1 = 1")
+    @Metadata(description = "The SQL92 expression on the message properties that selects the messages that the consumer"
+                            + " receives, when messageSelectorType is sql. The broker must have enablePropertyFilter set to"
+                            + " true. The default 1 = 1 receives all messages.",
+              label = "consumer", defaultValue = "1 = 1")
     private String subscribeSql = "1 = 1";
 
-    @Metadata(label = "common")
+    @Metadata(description = "The tag of each message that the producer sends. The CamelRocketMQOverrideTag header replaces"
+                            + " it. If not set, the messages are sent with an empty tag.",
+              label = "common")
     private String sendTag = "";
 
-    @Metadata(label = "common", defaultValue = "localhost:9876")
+    @Metadata(description = "The address of the RocketMQ name server, as host:port. Separate several name servers with a"
+                            + " semicolon.",
+              label = "common", defaultValue = "localhost:9876")
     private String namesrvAddr = "localhost:9876";
 
-    @Metadata(label = "common")
+    @Metadata(description = "The namespace of the topics and groups, which the RocketMQ client sends with each request. Set"
+                            + " it for a RocketMQ instance that uses namespaces, such as a serverless instance. The consumer of"
+                            + " replyToTopic does not use it.",
+              label = "common")
     private String namespace;
 
-    @Metadata(label = "common", defaultValue = "false")
+    @Metadata(description = "Whether the producer and the consumer record message traces, which the RocketMQ client sends to"
+                            + " the trace topic RMQ_SYS_TRACE_TOPIC. The consumer of replyToTopic does not record traces.",
+              label = "common", defaultValue = "false")
     private boolean enableTrace = false;
 
-    @Metadata(label = "common", defaultValue = "LOCAL")
+    @Metadata(description = "The access channel of the RocketMQ client: LOCAL for an Apache RocketMQ cluster, or CLOUD for a"
+                            + " RocketMQ service of a cloud provider. With CLOUD the message traces go to a trace topic per"
+                            + " region, in the format of the cloud service.",
+              label = "common", defaultValue = "LOCAL")
     private String accessChannel = "LOCAL";
 
-    @Metadata(label = "producer")
+    @Metadata(description = "The topic on which the producer receives the reply of an InOut exchange. The reply must carry"
+                            + " the keys of the request, one of which the producer generates to match the reply. If not set, an"
+                            + " InOut exchange does not wait for a reply.",
+              label = "producer")
     private String replyToTopic;
 
-    @Metadata(label = "producer")
+    @Metadata(description = "The consumer group that receives the replies on replyToTopic, required with replyToTopic. Use a"
+                            + " group per producer: in a shared group a reply can reach another producer, which ignores it, and"
+                            + " the exchange times out.",
+              label = "producer")
     private String replyToConsumerGroup;
 
-    @Metadata(label = "advanced", defaultValue = "10000")
+    @Metadata(description = "How long, in milliseconds, the producer waits for the reply of an InOut exchange on replyToTopic"
+                            + " before it fails the exchange with an ExchangeTimedOutException. A value of 0 or less waits for"
+                            + " Integer.MAX_VALUE milliseconds (about 24 days).",
+              label = "advanced", defaultValue = "10000")
     private long requestTimeoutMillis = 10000L;
 
-    @Metadata(label = "advanced", defaultValue = "1000")
+    @Metadata(description = "How often, in milliseconds, the producer checks for InOut exchanges whose requestTimeoutMillis"
+                            + " has passed. A timeout can be detected up to this interval late.",
+              label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerIntervalMillis = 1000L;
 
-    @Metadata(label = "producer", defaultValue = "true")
+    @Metadata(description = "Whether the producer waits for the send result before the exchange continues. When true, a send"
+                            + " that fails, or whose status is not SEND_OK, fails the exchange. When false, an InOnly exchange"
+                            + " continues as soon as the message is handed to the RocketMQ client, and a failed send is only"
+                            + " logged. An InOut exchange always waits for the send result, and for the reply when replyToTopic"
+                            + " is set.",
+              label = "producer", defaultValue = "true")
     private boolean waitForSendResult = true;
 
-    @Metadata(label = "secret", security = "secret")
+    @Metadata(description = "The access key of the RocketMQ ACL credentials. The producer and the consumer sign their"
+                            + " requests only when both accessKey and secretKey are set. The consumer of replyToTopic does not"
+                            + " use it.",
+              label = "secret", security = "secret")
     private String accessKey;
 
-    @Metadata(label = "secret", security = "secret")
+    @Metadata(description = "The secret key of the RocketMQ ACL credentials. The producer and the consumer sign their"
+                            + " requests only when both accessKey and secretKey are set. The consumer of replyToTopic does not"
+                            + " use it.",
+              label = "secret", security = "secret")
     private String secretKey;
 
     @Override
@@ -106,9 +150,6 @@ public class RocketMQComponent extends DefaultComponent {
         return messageSelectorType;
     }
 
-    /**
-     * Message Selector Type, TAG or SQL [TAG] by default
-     */
     public void setMessageSelectorType(String messageSelectorType) {
         this.messageSelectorType = messageSelectorType;
     }
@@ -117,10 +158,6 @@ public class RocketMQComponent extends DefaultComponent {
         return subscribeSql;
     }
 
-    /**
-     * Subscribe SQL of consumer. See
-     * https://rocketmq.apache.org/docs/featureBehavior/07messagefilter/#attribute-based-sql-filtering for more details.
-     */
     public void setSubscribeSql(String subscribeSql) {
         this.subscribeSql = subscribeSql;
     }
@@ -129,9 +166,6 @@ public class RocketMQComponent extends DefaultComponent {
         return subscribeTags;
     }
 
-    /**
-     * Subscribe tags of consumer. Multiple tags could be split by "||", such as "TagA||TagB"
-     */
     public void setSubscribeTags(String subscribeTags) {
         this.subscribeTags = subscribeTags;
     }
@@ -140,9 +174,6 @@ public class RocketMQComponent extends DefaultComponent {
         return sendTag;
     }
 
-    /**
-     * Each message would be sent with this tag.
-     */
     public void setSendTag(String sendTag) {
         this.sendTag = sendTag;
     }
@@ -151,9 +182,6 @@ public class RocketMQComponent extends DefaultComponent {
         return namesrvAddr;
     }
 
-    /**
-     * Name server address of RocketMQ cluster.
-     */
     public void setNamesrvAddr(String namesrvAddr) {
         this.namesrvAddr = namesrvAddr;
     }
@@ -162,9 +190,6 @@ public class RocketMQComponent extends DefaultComponent {
         return namespace;
     }
 
-    /**
-     * Namespace of RocketMQ cluster. You need to specify this if you are using serverless version of RocketMQ.
-     */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
@@ -173,9 +198,6 @@ public class RocketMQComponent extends DefaultComponent {
         return enableTrace;
     }
 
-    /**
-     * Whether to enable trace.
-     */
     public void setEnableTrace(boolean enableTrace) {
         this.enableTrace = enableTrace;
     }
@@ -184,9 +206,6 @@ public class RocketMQComponent extends DefaultComponent {
         return accessChannel;
     }
 
-    /**
-     * Access channel of RocketMQ cluster. LOCAL or CLOUD, [LOCAL] by default
-     */
     public void setAccessChannel(String accessChannel) {
         this.accessChannel = accessChannel;
     }
@@ -195,9 +214,6 @@ public class RocketMQComponent extends DefaultComponent {
         return producerGroup;
     }
 
-    /**
-     * Producer group name.
-     */
     public void setProducerGroup(String producerGroup) {
         this.producerGroup = producerGroup;
     }
@@ -206,9 +222,6 @@ public class RocketMQComponent extends DefaultComponent {
         return consumerGroup;
     }
 
-    /**
-     * Consumer group name.
-     */
     public void setConsumerGroup(String consumerGroup) {
         this.consumerGroup = consumerGroup;
     }
@@ -217,9 +230,6 @@ public class RocketMQComponent extends DefaultComponent {
         return replyToTopic;
     }
 
-    /**
-     * Topic used for receiving response when using in-out pattern.
-     */
     public void setReplyToTopic(String replyToTopic) {
         this.replyToTopic = replyToTopic;
     }
@@ -228,9 +238,6 @@ public class RocketMQComponent extends DefaultComponent {
         return replyToConsumerGroup;
     }
 
-    /**
-     * Consumer group name used for receiving response.
-     */
     public void setReplyToConsumerGroup(String replyToConsumerGroup) {
         this.replyToConsumerGroup = replyToConsumerGroup;
     }
@@ -239,9 +246,6 @@ public class RocketMQComponent extends DefaultComponent {
         return requestTimeoutMillis;
     }
 
-    /**
-     * Timeout milliseconds of receiving response when using in-out pattern.
-     */
     public void setRequestTimeoutMillis(long requestTimeoutMillis) {
         this.requestTimeoutMillis = requestTimeoutMillis;
     }
@@ -250,9 +254,6 @@ public class RocketMQComponent extends DefaultComponent {
         return requestTimeoutCheckerIntervalMillis;
     }
 
-    /**
-     * Check interval milliseconds of request timeout.
-     */
     public void setRequestTimeoutCheckerIntervalMillis(long requestTimeoutCheckerIntervalMillis) {
         this.requestTimeoutCheckerIntervalMillis = requestTimeoutCheckerIntervalMillis;
     }
@@ -261,11 +262,6 @@ public class RocketMQComponent extends DefaultComponent {
         return waitForSendResult;
     }
 
-    /**
-     * Whether waiting for send result before routing to next endpoint. When true, a failed send fails the exchange.
-     * When false, an InOnly exchange continues as soon as the message is handed to the RocketMQ client, and a failed
-     * send is only logged. An InOut exchange always waits for its reply.
-     */
     public void setWaitForSendResult(boolean waitForSendResult) {
         this.waitForSendResult = waitForSendResult;
     }
@@ -274,9 +270,6 @@ public class RocketMQComponent extends DefaultComponent {
         return accessKey;
     }
 
-    /**
-     * Access key for RocketMQ ACL.
-     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -285,9 +278,6 @@ public class RocketMQComponent extends DefaultComponent {
         return secretKey;
     }
 
-    /**
-     * Secret key for RocketMQ ACL.
-     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }

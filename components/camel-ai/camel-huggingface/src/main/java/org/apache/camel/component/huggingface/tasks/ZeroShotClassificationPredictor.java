@@ -98,8 +98,9 @@ public class ZeroShotClassificationPredictor extends AbstractTaskPredictor {
     protected String getPythonScript() {
         String multiLabel = config.isMultiLabel() ? "True" : "False";
         String autoSelect = config.isAutoSelect() ? "True" : "False";
-        return loadPythonScript("zero_shot_classification.py", config.getModelId(), config.getRevision(),
-                config.getDevice(), multiLabel, autoSelect);
+        return loadPythonScript("zero_shot_classification.py", pythonString(config.getModelId()),
+                pythonString(config.getRevision()),
+                pythonString(config.getDevice()), multiLabel, autoSelect);
     }
 
     @Override

@@ -30,42 +30,86 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class QueueConfiguration implements Cloneable {
 
-    @UriPath
+    @UriPath(description = "The name of the Azure Storage account, which gives the address"
+                           + " https://accountName.queue.core.windows.net of its queue service. If the credentials option is"
+                           + " set, the account name of those credentials gives the address instead. Not used when"
+                           + " serviceClient is set.")
     private String accountName;
-    @UriPath
+    @UriPath(description = "The name of the queue. Required for the consumer and for each producer operation except"
+                           + " listQueues. The CamelAzureStorageQueueName header replaces this option for the producer.")
     private String queueName;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "To use a com.azure.storage.common.StorageSharedKeyCredential, which holds the account name and an"
+                            + " account key of the storage account, when credentialType is SHARED_KEY_CREDENTIAL or"
+                            + " SHARED_ACCOUNT_KEY. When it is set, the accountName and accessKey options are not used to"
+                            + " authenticate. Not used when serviceClient is set.")
     @Metadata(autowired = true)
     private StorageSharedKeyCredential credentials;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The account key of the storage account, which authenticates the client together with"
+                            + " accountName when credentialType is SHARED_ACCOUNT_KEY or SHARED_KEY_CREDENTIAL. Not used when"
+                            + " the credentials option or the serviceClient option is set.")
     private String accessKey;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "To use a custom com.azure.storage.queue.QueueServiceClient for the requests to the queue service."
+                            + " When this option is set or autowired, the client brings the address and the authentication,"
+                            + " and the accountName, credentialType, accessKey and credentials options are not used to"
+                            + " connect.")
     @Metadata(autowired = true)
     private QueueServiceClient serviceClient;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The operation that the producer performs. The CamelAzureStorageQueueOperation header replaces"
+                            + " this option. If neither is set, the producer performs sendMessage.")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer", defaultValue = "false",
+              description = "Whether sendMessage first creates the queue if it does not exist, with the metadata of the"
+                            + " CamelAzureStorageQueueMetadata header. The CamelAzureStorageQueueCreateQueue header replaces"
+                            + " this option.")
     private boolean createQueue;
     // queue properties
-    @UriParam(label = "queue")
+    @UriParam(label = "queue",
+              description = "How long the message that sendMessage sends stays in the queue, for example P2D or 12h, in whole"
+                            + " seconds. If not set, the queue service keeps it for 7 days, and PT-1S keeps it until it is"
+                            + " deleted. The CamelAzureStorageQueueTimeToLive header replaces this option.")
     private Duration timeToLive;
-    @UriParam(label = "queue")
+    @UriParam(label = "queue",
+              description = "How long a message stays invisible in the queue, for example PT30S or 30s, in whole seconds and"
+                            + " at most 7 days. sendMessage hides the message it sends for this long, or not at all if not"
+                            + " set, and updateMessage, which requires it, hides the message for this long from the update."
+                            + " receiveMessages and the consumer hide each message they receive for this long, or 30 seconds"
+                            + " if not set, and the consumer receives a message again after this time if its exchange failed."
+                            + " The CamelAzureStorageQueueVisibilityTimeout header replaces this option for the producer.")
     private Duration visibilityTimeout;
-    @UriParam(label = "queue", defaultValue = "1")
+    @UriParam(label = "queue", defaultValue = "1",
+              description = "The maximum number of messages to receive, from 1 to 32: in each poll of the consumer, and for"
+                            + " receiveMessages and peekMessages. The CamelAzureStorageQueueMaxMessages header replaces this"
+                            + " option for the producer.")
     private Integer maxMessages = 1;
-    @UriParam(label = "queue")
+    @UriParam(label = "queue",
+              description = "The time, for example PT10S or 10s, within which each request of the producer and the consumer to"
+                            + " the queue service must complete, or it fails with an exception. If not set, only the timeouts"
+                            + " of the HTTP client apply. The CamelAzureStorageQueueTimeout header replaces this option for the"
+                            + " producer.")
     private Duration timeout;
-    @UriParam(label = "queue")
+    @UriParam(label = "queue",
+              description = "The ID of the message that deleteMessage or updateMessage changes. The"
+                            + " CamelAzureStorageQueueMessageId header, which the consumer and sendMessage set, replaces this"
+                            + " option.")
     private String messageId;
-    @UriParam(label = "queue")
+    @UriParam(label = "queue",
+              description = "The pop receipt of the message that deleteMessage or updateMessage changes, which must be the"
+                            + " latest pop receipt of that message. The CamelAzureStorageQueuePopReceipt header, which the"
+                            + " consumer, sendMessage and updateMessage set to the pop receipt they get, replaces this option.")
     private String popReceipt;
     @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY",
-              defaultValue = "SHARED_ACCOUNT_KEY")
+              defaultValue = "SHARED_ACCOUNT_KEY",
+              description = "How the client authenticates when serviceClient is not set. SHARED_ACCOUNT_KEY and"
+                            + " SHARED_KEY_CREDENTIAL both use the credentials option if it is set, and otherwise accountName"
+                            + " and accessKey. AZURE_IDENTITY uses the DefaultAzureCredential of azure-identity, which takes"
+                            + " the identity from environment variables, a managed identity or a developer tool login. If not"
+                            + " set, SHARED_KEY_CREDENTIAL is used when credentials is set, and otherwise SHARED_ACCOUNT_KEY.")
     private CredentialType credentialType;
 
-    /**
-     * Azure account name to be used for authentication with azure queue services
-     */
     public String getAccountName() {
         return accountName;
     }
@@ -74,10 +118,6 @@ public class QueueConfiguration implements Cloneable {
         this.accountName = accountName;
     }
 
-    /**
-     * StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication
-     * information
-     */
     public StorageSharedKeyCredential getCredentials() {
         return credentials;
     }
@@ -86,15 +126,6 @@ public class QueueConfiguration implements Cloneable {
         this.credentials = credentials;
     }
 
-    /**
-     * Service client to a storage account to interact with the queue service. This client does not hold any state about
-     * a particular storage account but is instead a convenient way of sending off appropriate requests to the resource
-     * on the service.
-     *
-     * This client contains all the operations for interacting with a queue account in Azure Storage. Operations allowed
-     * by the client are creating, listing, and deleting queues, retrieving and updating properties of the account, and
-     * retrieving statistics of the account.
-     */
     public QueueServiceClient getServiceClient() {
         return serviceClient;
     }
@@ -103,9 +134,6 @@ public class QueueConfiguration implements Cloneable {
         this.serviceClient = serviceClient;
     }
 
-    /**
-     * The queue resource name
-     */
     public String getQueueName() {
         return queueName;
     }
@@ -114,9 +142,6 @@ public class QueueConfiguration implements Cloneable {
         this.queueName = queueName;
     }
 
-    /**
-     * Access key for the associated azure account name to be used for authentication with azure queue services
-     */
     public String getAccessKey() {
         return accessKey;
     }
@@ -125,14 +150,6 @@ public class QueueConfiguration implements Cloneable {
         this.accessKey = accessKey;
     }
 
-    /**
-     * How long the message will stay alive in the queue. If unset the value will default to 7 days, if -1 is passed the
-     * message will not expire. The time to live must be -1 or any positive number.
-     *
-     * The format should be in this form: `PnDTnHnMn.nS.`, e.g: "PT20.345S" -- parses as "20.345 seconds", P2D" --
-     * parses as "2 days" However, in case you are using EndpointDsl/ComponentDsl, you can do something like
-     * `Duration.ofSeconds()` since these Java APIs are typesafe.
-     */
     public Duration getTimeToLive() {
         return timeToLive;
     }
@@ -141,14 +158,6 @@ public class QueueConfiguration implements Cloneable {
         this.timeToLive = timeToLive;
     }
 
-    /**
-     * The timeout period for how long the message is invisible in the queue. The timeout must be between 1 seconds and
-     * 7 days.
-     *
-     * The format should be in this form: `PnDTnHnMn.nS.`, e.g: "PT20.345S" -- parses as "20.345 seconds", P2D" --
-     * parses as "2 days" However, in case you are using EndpointDsl/ComponentDsl, you can do something like
-     * `Duration.ofSeconds()` since these Java APIs are typesafe.
-     */
     public Duration getVisibilityTimeout() {
         return visibilityTimeout;
     }
@@ -157,9 +166,6 @@ public class QueueConfiguration implements Cloneable {
         this.visibilityTimeout = visibilityTimeout;
     }
 
-    /**
-     * Queue service operation hint to the producer
-     */
     public QueueOperationDefinition getOperation() {
         return operation;
     }
@@ -168,9 +174,6 @@ public class QueueConfiguration implements Cloneable {
         this.operation = operation;
     }
 
-    /**
-     * When is set to `true`, the queue will be automatically created when sending messages to the queue.
-     */
     public boolean isCreateQueue() {
         return createQueue;
     }
@@ -179,10 +182,6 @@ public class QueueConfiguration implements Cloneable {
         this.createQueue = createQueue;
     }
 
-    /**
-     * Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages
-     * will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages.
-     */
     public Integer getMaxMessages() {
         return maxMessages;
     }
@@ -191,10 +190,6 @@ public class QueueConfiguration implements Cloneable {
         this.maxMessages = maxMessages;
     }
 
-    /**
-     * An optional timeout applied to the operation. If a response is not returned before the timeout concludes a
-     * {@link RuntimeException} will be thrown.
-     */
     public Duration getTimeout() {
         return timeout;
     }
@@ -203,9 +198,6 @@ public class QueueConfiguration implements Cloneable {
         this.timeout = timeout;
     }
 
-    /**
-     * The ID of the message to be deleted or updated.
-     */
     public String getMessageId() {
         return messageId;
     }
@@ -214,9 +206,6 @@ public class QueueConfiguration implements Cloneable {
         this.messageId = messageId;
     }
 
-    /**
-     * Unique identifier that must match for the message to be deleted or updated.
-     */
     public String getPopReceipt() {
         return popReceipt;
     }
@@ -229,9 +218,6 @@ public class QueueConfiguration implements Cloneable {
         return credentialType;
     }
 
-    /**
-     * Determines the credential strategy to adopt
-     */
     public void setCredentialType(CredentialType credentialType) {
         this.credentialType = credentialType;
     }

@@ -125,11 +125,10 @@ and use that for authentication.
 `keyPairProvider` has been set, and if so, it will use that for
 certificate-based authentication.
 3.  If neither `certResource` nor `keyPairProvider` are set, it will use
-the `username` and `password` options for authentication. Even though the `username` 
-and `password` are provided in the endpoint configuration and headers set with 
-`CamelSshUsername` and
-`CamelSshPassword`, the endpoint 
-configuration is surpassed and credentials set in the headers are used.
+the `username` and `password` options for authentication.
+
+In all three cases, the client logs in as the user of the `username` option, unless the producer takes the user from
+a header (see below).
 
 The following route fragment shows an SSH polling consumer using a
 certificate from the classpath.
@@ -174,6 +173,75 @@ YAML::
 
 An example of using Public Key authentication is provided in
 `examples/camel-example-ssh-security`.
+
+==== User name and password from headers
+
+The producer can log in with a user name and password chosen by the route, from the `CamelSshUsername` and
+`CamelSshPassword` headers, when the `allowUsernameAndPasswordFromHeaders` option is enabled. Without this option
+(the default), these headers are ignored, and the producer logs in with the `username` and `password` options.
+
+With the option enabled:
+
+* The `CamelSshUsername` header replaces the `username` option for every kind of authentication. With `certResource`
+or `keyPairProvider` set, the configured key logs in as the user that the header names.
+* The `CamelSshPassword` header replaces the `password` option. It is used only for password authentication, so not
+when `certResource` or `keyPairProvider` is set.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:status")
+    .setHeader("CamelSshUsername", constant("scott"))
+    .setHeader("CamelSshPassword", constant("{{scott.password}}"))
+    .to("ssh://db.example.com?allowUsernameAndPasswordFromHeaders=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:status"/>
+  <setHeader name="CamelSshUsername">
+    <constant>scott</constant>
+  </setHeader>
+  <setHeader name="CamelSshPassword">
+    <constant>{{scott.password}}</constant>
+  </setHeader>
+  <to uri="ssh://db.example.com?allowUsernameAndPasswordFromHeaders=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:status
+      steps:
+        - setHeader:
+            name: CamelSshUsername
+            expression:
+              constant:
+                expression: scott
+        - setHeader:
+            name: CamelSshPassword
+            expression:
+              constant:
+                expression: "{{scott.password}}"
+        - to:
+            uri: ssh://db.example.com
+            parameters:
+              allowUsernameAndPasswordFromHeaders: true
+----
+====
+
+Enable `allowUsernameAndPasswordFromHeaders` only when the route sets these headers itself, and remove them from
+messages that come from elsewhere, for example with `removeHeaders("CamelSsh*")` after an HTTP or JMS consumer.
 
 === Server host key verification
 

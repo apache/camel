@@ -2,7 +2,7 @@
 :doctitle: AI Tool
 :shortname: ai-tool
 :artifactid: camel-ai-tool
-:description: Framework-agnostic consumer endpoint that registers a Camel route as an LLM tool in the shared AiToolRegistry.
+:description: Expose a Camel route as a tool that a model calls through a Camel AI producer, or that MCP clients call through the Camel MCP server.
 :since: 4.22
 :supportlevel: Preview
 :tabs-sync-option:

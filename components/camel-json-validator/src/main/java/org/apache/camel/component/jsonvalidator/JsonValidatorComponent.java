@@ -31,11 +31,20 @@ import tools.jackson.databind.ObjectMapper;
 @Component("json-validator")
 public class JsonValidatorComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    @Metadata(defaultValue = "true",
+              description = "The contentCache value that the component sets on each endpoint that it creates. The endpoint"
+                            + " loads the schema on the first message and keeps it, whatever this value is. The JMX"
+                            + " operation clearContentCache makes the endpoint load the schema again on the next message.")
     private boolean contentCache = true;
-    @Metadata(defaultValue = "true")
+    @Metadata(defaultValue = "true",
+              description = "Whether the endpoints use the Jackson 3 (tools.jackson) ObjectMapper of the registry to parse the"
+                            + " JSON to validate, when the registry holds exactly one. The objectMapper option takes"
+                            + " precedence. If no mapper is found, the endpoint creates one with the Jackson 2 defaults.")
     private boolean useDefaultObjectMapper = true;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The id of a Jackson 3 (tools.jackson) ObjectMapper in the registry that the endpoints use to parse"
+                            + " the JSON to validate. Takes precedence over useDefaultObjectMapper. Creating an endpoint fails"
+                            + " when the registry has no ObjectMapper with this id.")
     private String objectMapper;
 
     @Override
@@ -58,9 +67,6 @@ public class JsonValidatorComponent extends DefaultComponent {
         return contentCache;
     }
 
-    /**
-     * Sets whether to use resource content cache or not
-     */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
     }
@@ -69,9 +75,6 @@ public class JsonValidatorComponent extends DefaultComponent {
         return useDefaultObjectMapper;
     }
 
-    /**
-     * Whether to lookup and use the default Jackson 3 (tools.jackson) ObjectMapper from the registry.
-     */
     public void setUseDefaultObjectMapper(boolean useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
@@ -80,9 +83,6 @@ public class JsonValidatorComponent extends DefaultComponent {
         return objectMapper;
     }
 
-    /**
-     * Lookup and use the existing Jackson 3 (tools.jackson) ObjectMapper with the given id.
-     */
     public void setObjectMapper(String objectMapper) {
         this.objectMapper = objectMapper;
     }

@@ -310,6 +310,14 @@ public final class SmppUtils {
         return session == null || session.getSessionState().equals(SessionState.CLOSED);
     }
 
+    /**
+     * Whether a session was lost: closed, or unbound by the SMSC (jsmpp then closes it).
+     */
+    public static boolean isSessionLost(SMPPSession session) {
+        SessionState state = session.getSessionState();
+        return state == SessionState.CLOSED || state == SessionState.UNBOUND;
+    }
+
     public static ScheduledExecutorService createExecutor(BaseService service, Endpoint endpoint, String taskName) {
         if (endpoint.getCamelContext() != null && endpoint.getCamelContext().getExecutorServiceManager() != null) {
             ExecutorServiceManager manager = endpoint.getCamelContext().getExecutorServiceManager();

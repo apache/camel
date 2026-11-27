@@ -32,8 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Stitch is a cloud ETL service that integrates various data sources into a central data warehouse through various
- * integrations.
+ * Send batches of records to the Stitch Import API, which loads them into a table of the destination data warehouse.
  */
 @UriEndpoint(firstVersion = "3.8.0", scheme = "stitch", title = "Stitch",
              syntax = "stitch:tableName", producerOnly = true, category = {

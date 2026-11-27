@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -342,6 +344,187 @@ public class MasterConsumerLeadershipTest {
         assertFalse(view.isRunAllowed(), "The view is not released");
     }
 
+    @Test
+    @Timeout(60)
+    void testStartAttemptFromBeforeARestartDoesNotReplaceTheNewConsumer() throws Exception {
+        // the route has threads(), whose thread pool cannot be started again after a shutdown
+        useRouteWithThreads();
+        // the stop below waits this long for the start attempt that is still running, which outlasts it
+        context.getExecutorServiceManager().setShutdownAwaitTermination(100);
+        TestClusterView view = clusterService.getTestView();
+        CountDownLatch startGate = new CountDownLatch(1);
+        probe.ignoreInterrupt.set(true);
+        probe.startGate.set(startGate);
+        try {
+            view.setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() == 1);
+
+            // the same consumer is stopped and started again (as its JMX operations do) while the first attempt
+            // still starts the first delegated consumer, and the new lifecycle starts a second one
+            MasterConsumer consumer = (MasterConsumer) context.getRoute("master-route").getConsumer();
+            consumer.stop();
+            probe.startGate.set(null);
+            consumer.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.started.get() == 1);
+        } finally {
+            startGate.countDown();
+        }
+
+        // the attempt from before the restart stops its own consumer instead of publishing it over the second one
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertEquals(2, probe.started.get());
+            assertEquals(1, probe.stopped.get(), "The consumer of the attempt from before the restart is still running");
+        });
+        // it is only stopped: a shutdown would also shut down the processor of the route, which the second one uses
+        ProbeConsumer first = probe.consumers.get(0);
+        assertFalse(first.isShutdown(), "The consumer of the attempt from before the restart was shut down");
+        ProbeConsumer second = probe.consumers.get(1);
+        assertTrue(second.isStarted());
+        assertTrue(((ProbeEndpoint) second.getEndpoint()).isStarted(), "The endpoint of the running consumer was stopped");
+
+        // the route behind the running consumer still routes its messages
+        assertRoutes(second, "after restart");
+
+        // losing the leadership stops the running consumer, so none is left behind
+        view.setLeader(false);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(2, probe.stopped.get()));
+        assertFalse(second.isStarted());
+    }
+
+    @Test
+    @Timeout(60)
+    void testStartAttemptFromBeforeARestartFinishingWhileTheNewConsumerStartsKeepsTheRouteWorking() throws Exception {
+        useRouteWithThreads();
+        // the stop below waits this long for the start attempt that is still running, which outlasts it
+        context.getExecutorServiceManager().setShutdownAwaitTermination(100);
+        TestClusterView view = clusterService.getTestView();
+        CountDownLatch firstGate = new CountDownLatch(1);
+        CountDownLatch secondGate = new CountDownLatch(1);
+        probe.ignoreInterrupt.set(true);
+        probe.startGate.set(firstGate);
+        try {
+            view.setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() == 1);
+
+            // the same consumer is stopped and started again while the first attempt still starts the first
+            // delegated consumer, and the attempt of the new lifecycle is held inside the start of the second one,
+            // after its doStart has started the processor of the route
+            MasterConsumer consumer = (MasterConsumer) context.getRoute("master-route").getConsumer();
+            consumer.stop();
+            probe.startGate.set(secondGate);
+            consumer.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() == 2);
+
+            // the attempt from before the restart finishes first and stops its own consumer, which also stops the
+            // processor of the route, while no delegated consumer is published yet
+            firstGate.countDown();
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertEquals(1, probe.started.get());
+                assertEquals(1, probe.stopped.get(), "The consumer of the attempt from before the restart is still running");
+            });
+        } finally {
+            firstGate.countDown();
+            secondGate.countDown();
+        }
+
+        await().atMost(10, TimeUnit.SECONDS).until(() -> probe.started.get() == 2);
+        ProbeConsumer second = probe.consumers.get(1);
+        assertTrue(second.isStarted());
+
+        // the route behind the consumer that started last still routes its messages
+        assertRoutes(second, "after restart");
+
+        view.setLeader(false);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(2, probe.stopped.get()));
+        assertFalse(second.isStarted());
+    }
+
+    @Test
+    @Timeout(60)
+    void testLeadershipLostAndTakenAgainWhileStartIsInProgressKeepsTheRouteWorking() throws Exception {
+        useRouteWithThreads();
+        TestClusterView view = clusterService.getTestView();
+        CountDownLatch startGate = new CountDownLatch(1);
+        probe.startGate.set(startGate);
+        try {
+            view.setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() == 1);
+
+            // the leadership is lost and taken again while the first delegated consumer is still starting
+            view.setLeader(false);
+            view.setLeader(true);
+        } finally {
+            startGate.countDown();
+        }
+
+        // outlast the initial delay of a second start task, then exactly one delegated consumer must run
+        await().atMost(10, TimeUnit.SECONDS).until(() -> probe.started.get() >= 1);
+        await().during(2, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
+                .until(() -> probe.consumers.stream().filter(ProbeConsumer::isStarted).count() == 1);
+        ProbeConsumer running = probe.consumers.stream().filter(ProbeConsumer::isStarted).findFirst().orElseThrow();
+
+        // and the route behind it, with threads(), still routes its messages
+        assertRoutes(running, "after leadership flap");
+        // the attempt that was starting is published, so no second consumer is started
+        assertEquals(1, probe.created.get(), "A second delegated consumer was started");
+        assertEquals(0, probe.stopped.get());
+
+        view.setLeader(false);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, probe.stopped.get()));
+    }
+
+    @Test
+    @Timeout(60)
+    void testStopWaitsForAStartAttemptInFlight() throws Exception {
+        TestClusterView view = clusterService.getTestView();
+        CountDownLatch startGate = new CountDownLatch(1);
+        probe.ignoreInterrupt.set(true);
+        probe.startGate.set(startGate);
+        AtomicInteger stoppedWhenStopReturned = new AtomicInteger(-1);
+        CompletableFuture<Void> stop;
+        try {
+            view.setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() == 1);
+
+            MasterConsumer consumer = (MasterConsumer) context.getRoute("master-route").getConsumer();
+            stop = CompletableFuture.runAsync(() -> {
+                consumer.stop();
+                stoppedWhenStopReturned.set(probe.stopped.get());
+            });
+            // the stop waits for the attempt instead of returning while the delegated consumer is still starting
+            await().during(500, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(() -> !stop.isDone());
+        } finally {
+            startGate.countDown();
+        }
+
+        stop.get(10, TimeUnit.SECONDS);
+        assertEquals(1, probe.started.get());
+        assertEquals(1, stoppedWhenStopReturned.get(), "The delegated consumer was still running when the stop returned");
+    }
+
+    private void useRouteWithThreads() throws Exception {
+        context.getRouteController().stopRoute("master-route");
+        context.removeRoute("master-route");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("master:ns:probe:test").routeId("master-route").threads().to("mock:result");
+            }
+        });
+    }
+
+    private void assertRoutes(ProbeConsumer consumer, String body) throws Exception {
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedBodiesReceived(body);
+        Exchange exchange = consumer.createExchange(false);
+        exchange.getMessage().setBody(body);
+        CountDownLatch done = new CountDownLatch(1);
+        consumer.getAsyncProcessor().process(exchange, doneSync -> done.countDown());
+        assertTrue(done.await(10, TimeUnit.SECONDS), "The route did not complete the message");
+        assertNull(exchange.getException());
+        mock.assertIsSatisfied();
+    }
+
     // ************************************
     // Delegated endpoint under observation
     // ************************************
@@ -352,6 +535,9 @@ public class MasterConsumerLeadershipTest {
         private final AtomicInteger started = new AtomicInteger();
         private final AtomicInteger stopped = new AtomicInteger();
         private final AtomicBoolean failStart = new AtomicBoolean();
+        // the start gate is awaited like a connect that does not stop on an interrupt
+        private final AtomicBoolean ignoreInterrupt = new AtomicBoolean();
+        private final List<ProbeConsumer> consumers = new CopyOnWriteArrayList<>();
         private final AtomicReference<CountDownLatch> startGate = new AtomicReference<>();
         private final AtomicReference<CountDownLatch> suspendEntered = new AtomicReference<>();
         private final AtomicReference<CountDownLatch> suspendGate = new AtomicReference<>();
@@ -394,7 +580,9 @@ public class MasterConsumerLeadershipTest {
         @Override
         public Consumer createConsumer(Processor processor) {
             component.created.incrementAndGet();
-            return new ProbeConsumer(this, processor, component);
+            ProbeConsumer consumer = new ProbeConsumer(this, processor, component);
+            component.consumers.add(consumer);
+            return consumer;
         }
 
         @Override
@@ -417,13 +605,30 @@ public class MasterConsumerLeadershipTest {
             // counted before the failure flag is read, so a test can await an attempt that has made its decision
             component.startAttempts.incrementAndGet();
             CountDownLatch gate = component.startGate.get();
-            if (gate != null) {
+            if (gate != null && component.ignoreInterrupt.get()) {
+                awaitIgnoringInterrupts(gate);
+            } else if (gate != null) {
                 gate.await();
             }
             if (component.failStart.get()) {
                 throw new IllegalStateException("Simulated failure to start the delegated consumer");
             }
             component.started.incrementAndGet();
+        }
+
+        private static void awaitIgnoringInterrupts(CountDownLatch gate) {
+            boolean interrupted = false;
+            while (true) {
+                try {
+                    gate.await();
+                    break;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
         }
 
         @Override

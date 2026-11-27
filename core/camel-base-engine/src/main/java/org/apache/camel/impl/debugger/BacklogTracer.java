@@ -260,7 +260,10 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                     boolean added = provisionalHistoryQueue.offer(event);
                     boolean original
                             = head != null && event.getRouteId() != null && event.getRouteId().equals(head.getRouteId());
-                    if (event.isLast() && original) {
+                    // in append mode the earlier events of a downstream route may already have been merged when the
+                    // originating route finished, so its last event can arrive on an empty provisional queue (or behind
+                    // the events of another branch): always merge when a downstream route is finished
+                    if (event.isLast() && (original || appendMode)) {
                         if (appendMode) {
                             // downstream route finished: merge into existing complete history
                             completeHistoryQueue.addAll(provisionalHistoryQueue);

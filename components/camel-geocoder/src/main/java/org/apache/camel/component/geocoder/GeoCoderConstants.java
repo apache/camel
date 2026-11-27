@@ -20,27 +20,43 @@ import org.apache.camel.spi.Metadata;
 
 public final class GeoCoderConstants {
 
-    @Metadata(description = "The formatted address", javaType = "String")
+    @Metadata(description = "The address. The producer reads it as the address to look up, which replaces the address of"
+                            + " the endpoint, and sets it to the formatted address of the first result.",
+              javaType = "String")
     public static final String ADDRESS = "CamelGeoCoderAddress";
-    @Metadata(description = "The latitude and longitude of the location. Separated by comma.", javaType = "String")
+    @Metadata(description = "The latitude and longitude, separated by a comma. The producer reads it as the location to look"
+                            + " up, which replaces the latlng of the endpoint and takes precedence over an address, and sets it"
+                            + " to the location of the first result. For Nominatim, it sets a space after the comma.",
+              javaType = "String")
     public static final String LATLNG = "CamelGeoCoderLatlng";
-    @Metadata(description = "The latitude of the location.", javaType = "String")
+    @Metadata(description = "The latitude of the first result, with 8 decimals.", javaType = "String")
     public static final String LAT = "CamelGeoCoderLat";
-    @Metadata(description = "The longitude of the location.", javaType = "String")
+    @Metadata(description = "The longitude of the first result, with 8 decimals.", javaType = "String")
     public static final String LNG = "CamelGeoCoderLng";
-    @Metadata(description = "Status code from the geocoder library. If status is\n" +
-                            "`GeocoderStatus.OK` then additional headers is enriched",
+    @Metadata(description = "The status of the lookup: OK, or ZERO_RESULTS when no place is found. When Google rejects the"
+                            + " request, it is REQUEST_DENIED, OVER_QUERY_LIMIT, OVER_DAILY_LIMIT, INVALID_REQUEST or"
+                            + " UNKNOWN_ERROR, and for an error answer of Nominatim it is ERROR. The producer sets the other"
+                            + " headers only when the status is OK, except that for the address current it sets"
+                            + " CamelGeoCoderLatlng to the geolocated location also when the status is ZERO_RESULTS.",
               javaType = "org.apache.camel.component.geocoder.GeocoderStatus", required = true)
     public static final String STATUS = "CamelGeoCoderStatus";
-    @Metadata(description = "The region code.", javaType = "String")
+    @Metadata(description = "The code of the first-level administrative area, such as a state. With Google, the short name"
+                            + " of the administrative_area_level_1 address component, and with Nominatim the state_code of the"
+                            + " address in upper case.",
+              javaType = "String")
     public static final String REGION_CODE = "CamelGeoCoderRegionCode";
-    @Metadata(description = "The region name.", javaType = "String")
+    @Metadata(description = "The name of the first-level administrative area, such as a state. With Google, the long name"
+                            + " of the administrative_area_level_1 address component, and with Nominatim the state of the"
+                            + " address.",
+              javaType = "String")
     public static final String REGION_NAME = "CamelGeoCoderRegionName";
-    @Metadata(description = "The city long name.", javaType = "String")
+    @Metadata(description = "The name of the city. With Google, the long name of the locality address component, and with"
+                            + " Nominatim the city of the address.",
+              javaType = "String")
     public static final String CITY = "CamelGeoCoderCity";
-    @Metadata(description = "The country long name.", javaType = "String")
+    @Metadata(description = "The name of the country, such as France.", javaType = "String")
     public static final String COUNTRY_LONG = "CamelGeoCoderCountryLong";
-    @Metadata(description = "The country short name.", javaType = "String")
+    @Metadata(description = "The two-letter country code (ISO 3166-1 alpha-2) in upper case, such as FR.", javaType = "String")
     public static final String COUNTRY_SHORT = "CamelGeoCoderCountryShort";
     @Metadata(description = "The postal code.", javaType = "String")
     public static final String POSTAL_CODE = "CamelGeoCoderPostalCode";

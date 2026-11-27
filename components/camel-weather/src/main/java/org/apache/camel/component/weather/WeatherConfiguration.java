@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
 import static org.apache.camel.component.weather.WeatherMode.JSON;
@@ -44,8 +43,9 @@ public class WeatherConfiguration {
     private String appid;
     @UriParam(description = "The OpenWeatherMap API to call. Station queries weather stations instead of cities, for ids, "
                             + "for lat and lon with cnt, and for a bounding box. When period is set, Hourly gets the 3-hour "
-                            + "forecast and any other value, or none, the daily forecast; without period, Hourly and Daily get "
-                            + "the current weather.")
+                            + "forecast and any other value, or none, the daily forecast; without period, Hourly gets the 3-hour "
+                            + "forecast and Daily the daily forecast, with the length that OpenWeatherMap uses by default, and "
+                            + "any other value, or none, the current weather.")
     private WeatherApi weatherApi;
     @UriParam(description = "The city to get the weather for, by name and optionally a country code, for example London,uk. "
                             + "If empty or current, the latitude and longitude come from the geoLocationProvider. The lat and "
@@ -76,7 +76,8 @@ public class WeatherConfiguration {
     @UriParam(description = "The length of a forecast, sent as the cnt query parameter: the number of days of the daily "
                             + "forecast, or the number of 3-hour steps with weatherApi Hourly. Only the first number in the "
                             + "value is read, so 7 days is the same as 7, and a value with no number, or 0, is ignored. "
-                            + "If empty, the current weather is queried instead of a forecast.")
+                            + "If empty, the current weather is queried instead of a forecast, except with weatherApi Hourly "
+                            + "or Daily, which then get the forecast with the length that OpenWeatherMap uses by default.")
     private String period = "";
     @UriParam(description = "The format of the response from OpenWeatherMap: JSON, XML or HTML. XML and HTML are sent as the "
                             + "mode query parameter.",
@@ -109,20 +110,18 @@ public class WeatherConfiguration {
                             + "only when the location is looked up: location is empty or current, and none of lat and lon, zip "
                             + "or ids is set.",
               label = "security", security = "secret")
-    @Metadata(required = true)
     private String geolocationAccessKey;
     @UriParam(description = "The IP address that the default geoLocationProvider looks up with the ipstack API to find the "
                             + "latitude and longitude of the location. It is needed only when the location is looked up, as "
                             + "for geolocationAccessKey.",
               label = "security")
-    @Metadata(required = true)
     private String geolocationRequestHostIP;
     @UriParam(description = "To use a custom org.apache.hc.client5.http.impl.classic.CloseableHttpClient, for example one "
                             + "with an HTTP proxy, for the requests to OpenWeatherMap and to the default geoLocationProvider. "
-                            + "By default each endpoint creates its own client. The endpoint closes the client when it stops, "
-                            + "also a client that is set.",
+                            + "By default each endpoint creates its own client, closes it when it stops, and creates a new one "
+                            + "when it is started again. A client that is set is not closed by the endpoint.",
               label = "advanced")
-    private CloseableHttpClient httpClient = HttpClients.createDefault();
+    private CloseableHttpClient httpClient;
     @UriParam(description = "A custom org.apache.camel.component.weather.geolocation.GeoLocationProvider for the latitude "
                             + "and longitude of the location when location is empty or current, and none of lat and lon, zip "
                             + "or ids is set. The default looks up geolocationRequestHostIP with the ipstack API, and needs "

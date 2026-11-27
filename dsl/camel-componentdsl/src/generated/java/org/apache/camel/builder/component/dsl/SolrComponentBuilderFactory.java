@@ -239,8 +239,8 @@ public interface SolrComponentBuilderFactory {
         /**
          * The TLS configuration (key store, trust store, protocols, cipher
          * suites, named groups) of the clients that Camel creates, for all the
-         * endpoints. The sslContextParameters option of an endpoint replaces
-         * it.
+         * endpoints. It is used when the enableSSL option is enabled. The
+         * sslContextParameters option of an endpoint replaces it.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.

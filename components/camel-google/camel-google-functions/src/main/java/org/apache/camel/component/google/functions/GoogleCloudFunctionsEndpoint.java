@@ -31,10 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Manage and invoke Google Cloud Functions
- *
- * Google Functions Endpoint definition represents a function within the GCP and contains configuration to customize the
- * behavior of Producer.
+ * Manage and call functions in Google Cloud Functions.
  */
 @UriEndpoint(firstVersion = "3.9.0", scheme = "google-functions", title = "Google Cloud Functions",
              syntax = "google-functions:functionName", category = {

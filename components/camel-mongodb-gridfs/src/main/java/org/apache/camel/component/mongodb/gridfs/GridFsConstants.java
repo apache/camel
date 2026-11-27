@@ -37,10 +37,13 @@ public final class GridFsConstants {
               javaType = "String")
     public static final String FILE_NAME = Exchange.FILE_NAME;
     @Metadata(label = "producer",
-              description = "The content type to store in the metadata of the file that create uploads.",
+              description = "The content type to store in the metadata of the file that create uploads. It replaces the"
+                            + " contentType field of the CamelGridFsMetadata header.",
               javaType = "String")
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
-    @Metadata(label = "producer", description = "The file name produced.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The name of the file that create uploaded, from the CamelFileName header.",
+              javaType = "String")
     public static final String FILE_NAME_PRODUCED = Exchange.FILE_NAME_PRODUCED;
 
     public static final String GRIDFS_FILE_ATTRIBUTE_DONE = "done";
@@ -49,15 +52,29 @@ public final class GridFsConstants {
     public static final String GRIDFS_FILE_KEY_FILENAME = "filename";
     public static final String GRIDFS_FILE_KEY_UPLOAD_DATE = "uploadDate";
     public static final String PERSISTENT_TIMESTAMP_KEY = "timestamp";
-    @Metadata(description = "Any additional metadata stored along with the file in JSON format.", javaType = "String")
+    @Metadata(description = "(producer) The metadata to store with the file that create uploads, as a JSON document, and"
+                            + " the metadata of the file that findOne found. (consumer) The metadata of the file as a JSON"
+                            + " document.",
+              javaType = "String")
     public static final String GRIDFS_METADATA = "CamelGridFsMetadata";
-    @Metadata(label = "producer", description = "The operation to perform.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The operation that the producer performs when the operation option is not set: create,"
+                            + " remove, findOne, listAll or count.",
+              javaType = "String")
     public static final String GRIDFS_OPERATION = "CamelGridFsOperation";
-    @Metadata(label = "producer", description = "The number of bytes per chunk for the uploaded file.", javaType = "Integer")
+    @Metadata(label = "producer",
+              description = "The size in bytes of the chunks of the file that create uploads. If not set, or not greater"
+                            + " than 0, the chunk size of the bucket is used, which is 255 KiB by default.",
+              javaType = "Integer")
     public static final String GRIDFS_CHUNKSIZE = "CamelGridFsChunkSize";
-    @Metadata(label = "producer", description = "The ObjectId of the file produced", javaType = "org.bson.types.ObjectId")
+    @Metadata(label = "producer", description = "The ObjectId of the file that create uploaded.",
+              javaType = "org.bson.types.ObjectId")
     public static final String GRIDFS_FILE_ID_PRODUCED = "CamelGridFsFileId";
-    @Metadata(label = "producer", description = "The ObjectId of the file.", javaType = "org.bson.types.ObjectId")
+    @Metadata(label = "producer",
+              description = "The ObjectId of the file. create sets it to the id of the file it uploaded, and remove deletes"
+                            + " the file with this id. If it is not set, remove deletes the first file it finds with the name"
+                            + " in the CamelFileName header.",
+              javaType = "org.bson.types.ObjectId")
     public static final String GRIDFS_OBJECT_ID = "CamelGridFsObjectId";
 
     private GridFsConstants() {
