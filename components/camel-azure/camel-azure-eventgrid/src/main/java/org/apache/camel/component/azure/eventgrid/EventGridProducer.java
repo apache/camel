@@ -209,7 +209,10 @@ public class EventGridProducer extends DefaultProducer {
                 builder.credential(configuration.getTokenCredential());
                 break;
             case AZURE_IDENTITY:
-                builder.credential(new DefaultAzureCredentialBuilder().build());
+                // a DefaultAzureCredential set as tokenCredential (with a managed identity client id, a tenant id, ...)
+                // is used as is
+                builder.credential(configuration.getTokenCredential() != null
+                        ? configuration.getTokenCredential() : new DefaultAzureCredentialBuilder().build());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown credential type: " + configuration.getCredentialType());
