@@ -4107,6 +4107,22 @@ the initial state (`camel.health.initial-state`, DOWN by default) while the firs
 the change feed processor cannot start, with the failure of the last attempt; before, it was UP. To leave
 the check out, as before, set `camel.health.exclude-pattern=consumer:<routeId>`.
 
+=== camel-azure-cosmosdb - the CamelAzureCosmosDbRecourseId header is renamed to CamelAzureCosmosDbResourceId
+
+The header that the producer sets to the resource id of a database or container is renamed from
+`CamelAzureCosmosDbRecourseId` to `CamelAzureCosmosDbResourceId`. Code that uses the Java constant
+`CosmosDbConstants.RESOURCE_ID` is not affected. Routes that use the header name as text, for example in XML or YAML
+routes or in a Simple expression, must use the new name.
+
+The headers of the component are now in the catalog and the Endpoint DSL, with the method `azureCosmosDbResourceId()`
+for the renamed header. Other changes:
+
+* A `com.azure.cosmos.models.PartitionKey` in the `CamelAzureCosmosDbItemPartitionKey` header is used as it is, for
+  example for a partition key value that is a number. Before, it was converted to its JSON text, which then was used
+  as a String partition key value. Other header values are still converted to a String.
+* The `clientTelemetryEnabled` option is deprecated, as the azure-cosmos SDK ignores it.
+* In the Endpoint DSL, `indexingPolicy` is now an option of the producer builders only, as the consumer does not use it.
+
 === camel-vertx-websocket - a consumeAsClient consumer routes the messages in the order they are received
 
 A `vertx-websocket` consumer with `consumeAsClient=true` used to route the received messages in parallel, on the
