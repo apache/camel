@@ -177,7 +177,7 @@ or removes its row.
 | camel-flatpack | flatpack |  |
 | camel-flink | flink |  |
 | camel-flowable | flowable |  |
-| camel-fop | fop |  |
+| camel-fop | fop | yes |
 | camel-freemarker | freemarker |  |
 | camel-ftp | ftp, ftps, sftp |  |
 | camel-geocoder | geocoder | yes |

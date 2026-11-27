@@ -6293,8 +6293,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * FOP (camel-fop)
-     * Render messages into PDF and other output formats supported by Apache
-     * FOP.
+     * Render XSL-FO documents into PDF, PostScript, PNG and other output
+     * formats with Apache FOP.
      * 
      * Category: file,transformation
      * Since: 2.10
@@ -6303,8 +6303,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>fop:outputType</code>
      * 
      * Path parameter: outputType (required)
-     * The primary output format is PDF but other output formats are also
-     * supported.
+     * The output format to render to. The endpoint URI takes the lower-case
+     * name, such as pdf or png, or the MIME type, such as application/pdf. The
+     * CamelFop.Output.Format header overrides it for a single message.
      * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
      * svg, xml, mif, rtf, txt
      * 
@@ -6316,8 +6317,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * FOP (camel-fop)
-     * Render messages into PDF and other output formats supported by Apache
-     * FOP.
+     * Render XSL-FO documents into PDF, PostScript, PNG and other output
+     * formats with Apache FOP.
      * 
      * Category: file,transformation
      * Since: 2.10
@@ -6326,8 +6327,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>fop:outputType</code>
      * 
      * Path parameter: outputType (required)
-     * The primary output format is PDF but other output formats are also
-     * supported.
+     * The output format to render to. The endpoint URI takes the lower-case
+     * name, such as pdf or png, or the MIME type, such as application/pdf. The
+     * CamelFop.Output.Format header overrides it for a single message.
      * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
      * svg, xml, mif, rtf, txt
      * 
