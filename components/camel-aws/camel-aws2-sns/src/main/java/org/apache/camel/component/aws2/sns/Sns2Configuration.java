@@ -32,71 +32,134 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
 
     // Common properties
     private String topicName;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom software.amazon.awssdk.services.sns.SnsClient, which is autowired when the"
+                            + " registry has a single one. When this option is set, the credentials, region, proxy, endpoint"
+                            + " override and trustAllCertificates options are not used. The endpoint does not close a client"
+                            + " that is set or autowired.")
     @Metadata(autowired = true)
     private SnsClient amazonSNSClient;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The access key ID of the AWS credentials, used together with the secretKey option. The"
+                            + " endpoint requires it, unless amazonSNSClient is set or useDefaultCredentialsProvider,"
+                            + " useProfileCredentialsProvider or useSessionCredentials is true.")
     private String accessKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The secret access key of the AWS credentials, used together with the accessKey option. The"
+                            + " endpoint requires it, unless amazonSNSClient is set or useDefaultCredentialsProvider,"
+                            + " useProfileCredentialsProvider or useSessionCredentials is true.")
     private String secretKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The session token of temporary AWS credentials, for example of an assumed IAM role. It is used"
+                            + " only when useSessionCredentials is true, together with the accessKey and secretKey options."
+                            + " When it is not set, the accessKey and secretKey options are used without a session token.")
     private String sessionToken;
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "The protocol that the HTTP client of Amazon SNS uses to connect to the proxy. It is used only"
+                            + " when the proxyHost and proxyPort options are set.")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy",
+              description = "The host name of the proxy that the HTTP client of Amazon SNS connects through. The proxy is"
+                            + " used only when the proxyPort option is set too.")
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy",
+              description = "The port of the proxy that the HTTP client of Amazon SNS connects through. The proxy is used"
+                            + " only when the proxyHost option is set too.")
     private Integer proxyPort;
-    @UriParam
+    @UriParam(description = "The ARN of the Amazon SQS queue that the endpoint subscribes to the topic when it starts, if"
+                            + " subscribeSNStoSQS is true. The access policy of the queue must allow the topic to send"
+                            + " messages to it.")
     private String queueArn;
-    @UriParam
+    @UriParam(description = "Whether the endpoint subscribes the Amazon SQS queue of the queueArn option to the topic when it"
+                            + " starts. The queueArn option is required then.")
     private boolean subscribeSNStoSQS;
-    @UriParam
+    @UriParam(description = "The ID, alias or ARN of the AWS KMS key that encrypts the topic, for example alias/aws/sns for"
+                            + " the AWS managed key of Amazon SNS. It is used only when the endpoint creates the topic and"
+                            + " serverSideEncryptionEnabled is true, and it is required then.")
     private String kmsMasterKeyId;
-    @UriParam
+    @UriParam(description = "Whether the topic that the endpoint creates, see autoCreateTopic, is encrypted with the AWS KMS"
+                            + " key of the kmsMasterKeyId option. It does not change a topic that exists already.")
     private boolean serverSideEncryptionEnabled;
-    @UriParam
+    @UriParam(description = "Whether the endpoint creates the topic when it starts, if no topic with this name exists in the"
+                            + " region. A name that ends with .fifo creates a FIFO topic. If false and the topic does not"
+                            + " exist, the publish fails.")
     private boolean autoCreateTopic;
-    @UriParam
+    @UriParam(description = "Whether to send the requests to the URI of the uriEndpointOverride option instead of the"
+                            + " endpoint of the region. It has no effect when uriEndpointOverride is not set.")
     private boolean overrideEndpoint;
-    @UriParam
+    @UriParam(description = "The URI of the endpoint to use instead of the endpoint of the region, for example"
+                            + " http://localhost:4566 for a local emulator. It is used only when overrideEndpoint is true.")
     private String uriEndpointOverride;
 
     // Producer-only properties
-    @UriParam
+    @UriParam(description = "The subject of the message, which Amazon SNS uses as the Subject line of the email for email"
+                            + " subscriptions. The CamelAwsSnsSubject header replaces this option. The producer cuts a"
+                            + " subject longer than 100 characters, and does not use it when batchEnabled is true.")
     private String subject;
-    @UriParam
+    @UriParam(description = "The access policy of the topic, a JSON document that the endpoint sets on the topic when it"
+                            + " starts, also on a topic that exists already. It is loaded from the classpath by default; use"
+                            + " the prefix file: or http: to load it from another location.")
     @Metadata(supportFileReference = true)
     private String policy;
-    @UriParam
+    @UriParam(description = "Set to json to send a different message for each protocol: the body is then a JSON object with"
+                            + " a default key and a key per protocol, such as email or sqs. The CamelAwsSnsMessageStructure"
+                            + " header replaces this option. It is not used when batchEnabled is true.")
     private String messageStructure;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
+    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
+              description = "The AWS region of Amazon SNS, as a region ID such as eu-west-1, which is the value of"
+                            + " Region.EU_WEST_1.id(). If not set, the default region provider chain of the AWS SDK is used."
+                            + " When the topic is given as an ARN, its region replaces the region of the component, and this"
+                            + " option on the endpoint replaces both.")
     private String region;
-    @UriParam(label = "security", security = "insecure:ssl")
+    @UriParam(label = "security", security = "insecure:ssl",
+              description = "Whether the HTTP client of Amazon SNS trusts every TLS certificate without checking it. It"
+                            + " applies to any endpoint, not only to an overridden one, so use it only for testing, for"
+                            + " example against a local emulator.")
     private boolean trustAllCertificates;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether to load the credentials with the default credentials provider chain of the AWS SDK,"
+                            + " which looks in system properties, environment variables, the shared credentials and config"
+                            + " files, and the container or instance role. It takes precedence over the other credentials"
+                            + " options.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether to load the credentials from a profile of the AWS shared credentials and config files,"
+                            + " the one of the profileCredentialsName option. It is not used when useDefaultCredentialsProvider"
+                            + " is true, and it takes precedence over the session and static credentials.")
     private boolean useProfileCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether to use temporary credentials made of the accessKey, secretKey and sessionToken options,"
+                            + " for example those of an assumed IAM role. It is not used when useDefaultCredentialsProvider or"
+                            + " useProfileCredentialsProvider is true.")
     private boolean useSessionCredentials;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The name of the profile in the AWS shared credentials and config files, used when"
+                            + " useProfileCredentialsProvider is true. If not set, the AWS SDK uses its default profile, which"
+                            + " the AWS_PROFILE environment variable can change.")
     private String profileCredentialsName;
-    @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
+    @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue",
+              description = "How the producer sets the message group ID for a FIFO topic: useConstant puts all messages in"
+                            + " one group, useExchangeId uses the ID of the exchange, and usePropertyValue the exchange"
+                            + " property CamelAwsSnsMessageGroupId. Amazon SNS requires a message group ID for a FIFO topic,"
+                            + " so set this option for one. It is not used for a standard topic.")
     private MessageGroupIdStrategy messageGroupIdStrategy;
     @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId",
-              enums = "useExchangeId,useContentBasedDeduplication")
+              enums = "useExchangeId,useContentBasedDeduplication",
+              description = "How the producer sets the message deduplication ID for a FIFO topic: useExchangeId uses the ID"
+                            + " of the exchange, and useContentBasedDeduplication sets none, so that Amazon SNS deduplicates"
+                            + " by the content of the message, which the topic must enable. A FIFO topic that the endpoint"
+                            + " creates with useContentBasedDeduplication has content-based deduplication enabled.")
     private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
-    @UriParam
+    @UriParam(description = "Whether the producer publishes a batch of messages instead of one. The body must then be a List"
+                            + " of the PublishBatchRequestEntry of the AWS SDK, at most 10, and the producer replaces it with"
+                            + " the PublishBatchResponse. The subject, messageStructure and message group and deduplication"
+                            + " options and the headers are not used for a batch.")
     private boolean batchEnabled;
 
     public String getSubject() {
         return subject;
     }
 
-    /**
-     * The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
-     */
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -116,9 +179,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return accessKey;
     }
 
-    /**
-     * Amazon AWS Access Key
-     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -127,9 +187,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return secretKey;
     }
 
-    /**
-     * Amazon AWS Secret Key
-     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -138,9 +195,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return sessionToken;
     }
 
-    /**
-     * Amazon AWS Session Token used when the user needs to assume an IAM role
-     */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
     }
@@ -149,9 +203,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return amazonSNSClient;
     }
 
-    /**
-     * To use the AmazonSNS as the client
-     */
     public void setAmazonSNSClient(SnsClient amazonSNSClient) {
         this.amazonSNSClient = amazonSNSClient;
     }
@@ -171,10 +222,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return policy;
     }
 
-    /**
-     * The policy for this topic. Is loaded by default from classpath, but you can prefix with "classpath:", "file:", or
-     * "http:" to load the resource from different systems.
-     */
     public void setPolicy(String policy) {
         this.policy = policy;
     }
@@ -183,9 +230,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return messageStructure;
     }
 
-    /**
-     * The message structure to use such as json
-     */
     public void setMessageStructure(String messageStructure) {
         this.messageStructure = messageStructure;
     }
@@ -194,9 +238,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyProtocol;
     }
 
-    /**
-     * To define a proxy protocol when instantiating the SNS client
-     */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
@@ -205,9 +246,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyHost;
     }
 
-    /**
-     * To define a proxy host when instantiating the SNS client
-     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -216,9 +254,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyPort;
     }
 
-    /**
-     * To define a proxy port when instantiating the SNS client
-     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -227,10 +262,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return region;
     }
 
-    /**
-     * The region in which the SNS client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
-     */
     public void setRegion(String region) {
         this.region = region;
     }
@@ -239,9 +270,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return queueArn;
     }
 
-    /**
-     * The ARN endpoint to subscribe to
-     */
     public void setQueueArn(String queueArn) {
         this.queueArn = queueArn;
     }
@@ -250,9 +278,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return subscribeSNStoSQS;
     }
 
-    /**
-     * Define if the subscription between SNS Topic and SQS must be done or not
-     */
     public void setSubscribeSNStoSQS(boolean subscribeSNStoSQS) {
         this.subscribeSNStoSQS = subscribeSNStoSQS;
     }
@@ -261,9 +286,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return kmsMasterKeyId;
     }
 
-    /**
-     * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK.
-     */
     public void setKmsMasterKeyId(String kmsMasterKeyId) {
         this.kmsMasterKeyId = kmsMasterKeyId;
     }
@@ -272,9 +294,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return serverSideEncryptionEnabled;
     }
 
-    /**
-     * Define if Server Side Encryption is enabled or not on the topic
-     */
     public void setServerSideEncryptionEnabled(boolean serverSideEncryptionEnabled) {
         this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
     }
@@ -283,9 +302,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return autoCreateTopic;
     }
 
-    /**
-     * Setting the auto-creation of the topic
-     */
     public void setAutoCreateTopic(boolean autoCreateTopic) {
         this.autoCreateTopic = autoCreateTopic;
     }
@@ -294,9 +310,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return trustAllCertificates;
     }
 
-    /**
-     * If we want to trust all certificates in case of overriding the endpoint
-     */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
@@ -305,17 +318,10 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return useDefaultCredentialsProvider;
     }
 
-    /**
-     * Set whether the SNS client should expect to load credentials on an AWS infra instance or to expect static
-     * credentials to be passed in.
-     */
     public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    /**
-     * Set whether the SNS client should expect to load credentials through a profile credentials provider.
-     */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
     }
@@ -328,10 +334,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return useSessionCredentials;
     }
 
-    /**
-     * Set whether the SNS client should expect to use Session Credentials. This is useful in a situation in which the
-     * user needs to assume an IAM role for doing operations in SNS.
-     */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
     }
@@ -340,18 +342,10 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return profileCredentialsName;
     }
 
-    /**
-     * If using a profile credentials provider, this parameter will set the profile name
-     */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }
 
-    /**
-     * Only for FIFO Topic. Strategy for setting the messageGroupId on the message. It can be one of the following
-     * options: *useConstant*, *useExchangeId*, *usePropertyValue*. For the *usePropertyValue* option, the value of
-     * property "CamelAwsSnsMessageGroupId" will be used.
-     */
     public void setMessageGroupIdStrategy(String strategy) {
         if ("useConstant".equalsIgnoreCase(strategy)) {
             messageGroupIdStrategy = new ConstantMessageGroupIdStrategy();
@@ -376,11 +370,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return messageDeduplicationIdStrategy;
     }
 
-    /**
-     * Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. It can be one of the
-     * following options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication*
-     * option, no messageDeduplicationId will be set on the message.
-     */
     public void setMessageDeduplicationIdStrategy(String strategy) {
         if ("useExchangeId".equalsIgnoreCase(strategy)) {
             messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
@@ -399,10 +388,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return overrideEndpoint;
     }
 
-    /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the
-     * uriEndpointOverride option
-     */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
     }
@@ -411,9 +396,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return uriEndpointOverride;
     }
 
-    /**
-     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
-     */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
     }
@@ -422,9 +404,6 @@ public class Sns2Configuration implements Cloneable, AwsCommonConfiguration {
         return batchEnabled;
     }
 
-    /**
-     * Define if we are publishing a single message or a batch
-     */
     public void setBatchEnabled(boolean batchEnabled) {
         this.batchEnabled = batchEnabled;
     }

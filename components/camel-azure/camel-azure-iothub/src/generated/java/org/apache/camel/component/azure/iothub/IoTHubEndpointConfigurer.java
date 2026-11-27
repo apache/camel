@@ -26,6 +26,8 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionstring":
         case "connectionString": target.getConfiguration().setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentencoding":
+        case "contentEncoding": target.getConfiguration().setContentEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttype":
         case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "deliverymode":
@@ -44,6 +46,8 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionstring":
         case "connectionString": return java.lang.String.class;
+        case "contentencoding":
+        case "contentEncoding": return java.lang.String.class;
         case "contenttype":
         case "contentType": return java.lang.String.class;
         case "deliverymode":
@@ -63,6 +67,8 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "connectionstring":
         case "connectionString": return target.getConfiguration().getConnectionString();
+        case "contentencoding":
+        case "contentEncoding": return target.getConfiguration().getContentEncoding();
         case "contenttype":
         case "contentType": return target.getConfiguration().getContentType();
         case "deliverymode":

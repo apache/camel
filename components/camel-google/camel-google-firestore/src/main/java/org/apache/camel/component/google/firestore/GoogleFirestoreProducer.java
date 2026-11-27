@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
@@ -52,6 +53,8 @@ public class GoogleFirestoreProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleFirestoreProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
+    // the characters that FieldPath.fromDotSeparatedString rejects
+    private static final Pattern NOT_IN_DOT_SEPARATED_PATH = Pattern.compile("[~*/\\[\\]]");
 
     private final GoogleFirestoreEndpoint endpoint;
 
@@ -112,10 +115,10 @@ public class GoogleFirestoreProducer extends DefaultProducer {
 
         if (Boolean.TRUE.equals(merge)) {
             @SuppressWarnings("unchecked")
-            List<String> mergeFields = exchange.getIn().getHeader(GoogleFirestoreConstants.MERGE_FIELDS, List.class);
+            List<Object> mergeFields = exchange.getIn().getHeader(GoogleFirestoreConstants.MERGE_FIELDS, List.class);
             if (mergeFields != null && !mergeFields.isEmpty()) {
                 List<FieldPath> fieldPaths = mergeFields.stream()
-                        .map(FieldPath::of)
+                        .map(GoogleFirestoreProducer::toMergeFieldPath)
                         .toList();
                 future = docRef.set(data, SetOptions.mergeFieldPaths(fieldPaths));
             } else {
@@ -251,6 +254,28 @@ public class GoogleFirestoreProducer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(results);
+    }
+
+    /**
+     * A dotted name such as address.city is the nested field city of address, as for updateDocument. A name that is not
+     * a valid dot-separated path (one with ~ * / [ or ], which FieldPath.fromDotSeparatedString rejects, or with an
+     * empty segment as in a..b) is the name of one top-level field, as before 4.24. A FieldPath is used as it is (for a
+     * field whose name contains a dot).
+     */
+    private static FieldPath toMergeFieldPath(Object field) {
+        if (field instanceof FieldPath fieldPath) {
+            return fieldPath;
+        }
+        String name = field.toString();
+        if (isDotSeparatedPath(name)) {
+            return FieldPath.fromDotSeparatedString(name);
+        }
+        return FieldPath.of(name);
+    }
+
+    private static boolean isDotSeparatedPath(String name) {
+        return !name.isEmpty() && !name.startsWith(".") && !name.endsWith(".") && !name.contains("..")
+                && !NOT_IN_DOT_SEPARATED_PATH.matcher(name).find();
     }
 
     /**

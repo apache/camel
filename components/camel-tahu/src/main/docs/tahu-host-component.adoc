@@ -2,7 +2,7 @@
 :doctitle: Tahu Host Application
 :shortname: tahu-host
 :artifactid: camel-tahu
-:description: Sparkplug B Host Application support over MQTT using Eclipse Tahu
+:description: Receive Sparkplug B messages and metrics from MQTT servers as a Host Application using Eclipse Tahu.
 :since: 4.8
 :supportlevel: Stable
 :tabs-sync-option:

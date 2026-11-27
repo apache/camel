@@ -13,9 +13,10 @@
 *{component-header}*
 
 The XChange component uses the https://knowm.org/open-source/xchange/[XChange] Java library to provide access to 60+ Bitcoin and Altcoin exchanges.
-It comes with a consistent interface for trading and accessing market data. 
 
-Camel can get crypto currency market data, query historical data, place market orders and much more.
+Camel can get the ticker of a currency pair, the currencies and currency pairs of an exchange with their metadata, and
+the balances, wallets and funding history of an account. The component does not place orders and does not query
+historical market data.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -53,7 +54,11 @@ For most of the interesting stuff, however, you'd need an account with the excha
 These API access keys need to be guarded tightly, especially so when they also allow for the withdraw functionality. 
 In which case, anyone who can get hold of your API keys can easily transfer funds from your account to some other address i.e. steal your money.   
 
-Your API access keys can be stored in an exchange specific properties file in your SSH directory.
+The `apiKey` and `secretKey` options set the API access keys of an endpoint, for example from property placeholders
+or a vault: `xchange:binance?service=account&method=balances&apiKey={{binance.apiKey}}&secretKey={{binance.secretKey}}`.
+
+If they are not set, the XChange module of the exchange decides. Some modules read the keys from an exchange specific
+properties file in your SSH directory.
 For Binance, for example, this would be: `~/.ssh/binance-secret.keys`
 
 ----
@@ -85,7 +90,8 @@ header, else of the message body, else of the `currency` option.
 
 The header, the body and the option can be an XChange `CurrencyPair` or `Currency`, or text such as `BTC/USDT` and
 `BTC`. Text in the header or the body with a currency that XChange does not know fails the exchange: Camel does not
-register a new currency in XChange for text that comes with a message.
+register a new currency in XChange for text that comes with a message. A `currency` or `currencyPair` option with a
+currency that XChange does not know fails the creation of the endpoint.
 
 == Examples
 

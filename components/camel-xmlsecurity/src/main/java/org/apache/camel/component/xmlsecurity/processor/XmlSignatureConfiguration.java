@@ -19,11 +19,7 @@ package org.apache.camel.component.xmlsecurity.processor;
 import java.util.Map;
 
 import javax.xml.crypto.URIDereferencer;
-import javax.xml.crypto.XMLCryptoContext;
-import javax.xml.crypto.dsig.XMLSignContext;
-import javax.xml.crypto.dsig.XMLValidateContext;
 
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -31,22 +27,45 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public abstract class XmlSignatureConfiguration implements Cloneable {
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The base URI that relative URIs of the references are resolved against, set on the XMLSignContext of"
+                            + " the signer and the XMLValidateContext of the verifier (XMLCryptoContext.setBaseURI).")
     private String baseUri;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "Properties that are set on the XMLSignContext of the signer and the XMLValidateContext of the"
+                            + " verifier, see XMLCryptoContext.setProperty and the properties that the XML signature provider"
+                            + " supports. The verifier sets javax.xml.crypto.dsig.cacheReference and"
+                            + " org.jcp.xml.dsig.validateManifests to true itself; these properties are set after that, so a value"
+                            + " given here replaces the value that the verifier sets for the same property.")
     private Map<String, ?> cryptoContextProperties;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Whether the parser rejects a message body that contains a DOCTYPE declaration. If false, a DOCTYPE"
+                            + " declaration is allowed; external entities stay disabled either way.")
     private Boolean disallowDoctypeDecl = Boolean.TRUE;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer", defaultValue = "false",
+              description = "Whether to leave out the XML declaration of the output body. Has no effect when the output of the"
+                            + " verifier is text. The CamelXmlSignatureOmitXmlDeclaration header replaces this option.")
     private Boolean omitXmlDeclaration = Boolean.FALSE;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Whether to remove the CamelXmlSignature headers of this component from the message after signing or"
+                            + " verifying. The CamelCharsetName header is kept.")
     private Boolean clearHeaders = Boolean.TRUE;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The XML schema that the message body is validated against while it is parsed, loaded as a resource"
+                            + " from the classpath by default. The schema also declares which attributes are of type ID, so it is"
+                            + " required for a detached signature and when a reference URI points to an ID. The"
+                            + " CamelXmlSignatureSchemaResourceUri header replaces this option.")
     @Metadata(supportFileReference = true)
     private String schemaResourceUri;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The character encoding of the output body. If not set, UTF-8 is used. If set, the CamelCharsetName"
+                            + " header is also set to it; for the verifier, the default xmlSignature2Message does this.")
     private String outputXmlEncoding;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom javax.xml.crypto.URIDereferencer that resolves the URIs of the references, for"
+                            + " example to control which resources can be read. If not set, the dereferencer of the XML signature"
+                            + " provider is used; the Apache Santuario provider, which the component uses, resolves only"
+                            + " same-document URIs (fragments and XPointer) by default.")
     private URIDereferencer uriDereferencer;
 
     protected XmlSignatureConfiguration() {
@@ -56,15 +75,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
         return uriDereferencer;
     }
 
-    /**
-     * If you want to restrict the remote access via reference URIs, you can set an own dereferencer. Optional
-     * parameter. If not set the provider default dereferencer is used which can resolve URI fragments, HTTP, file and
-     * XPpointer URIs.
-     * <p>
-     * Attention: The implementation is provider dependent!
-     *
-     * @see XMLCryptoContext#setURIDereferencer(URIDereferencer)
-     */
     public void setUriDereferencer(URIDereferencer uriDereferencer) {
         this.uriDereferencer = uriDereferencer;
     }
@@ -73,12 +83,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
         return baseUri;
     }
 
-    /**
-     * You can set a base URI which is used in the URI dereferencing. Relative URIs are then concatenated with the base
-     * URI.
-     *
-     * @see XMLCryptoContext#setBaseURI(String)
-     */
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
     }
@@ -87,17 +91,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
         return cryptoContextProperties;
     }
 
-    /**
-     * Sets the crypto context properties. See {@link XMLCryptoContext#setProperty(String, Object)}. Possible properties
-     * are defined in {@link XMLSignContext} an {@link XMLValidateContext} (see Supported Properties).
-     * <p>
-     * The following properties are set by default to the value {@link Boolean#TRUE} for the XML validation. If you want
-     * to switch these features off you must set the property value to {@link Boolean#FALSE}.
-     * <ul>
-     * <li><code>"org.jcp.xml.dsig.validateManifests"</code></li>
-     * <li><code>"javax.xml.crypto.dsig.cacheReference"</code></li>
-     * </ul>
-     */
     public void setCryptoContextProperties(Map<String, ? extends Object> cryptoContextProperties) {
         this.cryptoContextProperties = cryptoContextProperties;
     }
@@ -106,12 +99,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
         return disallowDoctypeDecl;
     }
 
-    /**
-     * Disallows that the incoming XML document contains DTD DOCTYPE declaration. The default value is
-     * {@link Boolean#TRUE}.
-     *
-     * @param disallowDoctypeDecl if set to {@link Boolean#FALSE} then DOCTYPE declaration is allowed, otherwise not
-     */
     public void setDisallowDoctypeDecl(Boolean disallowDoctypeDecl) {
         this.disallowDoctypeDecl = disallowDoctypeDecl;
     }
@@ -120,26 +107,14 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
         return omitXmlDeclaration;
     }
 
-    /**
-     * Indicator whether the XML declaration in the outgoing message body should be omitted. Default value is
-     * <code>false</code>. Can be overwritten by the header {@link XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION}.
-     */
     public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
         this.omitXmlDeclaration = omitXmlDeclaration;
     }
 
-    /**
-     * Determines if the XML signature specific headers be cleared after signing and verification. Defaults to true.
-     *
-     * @return true if the Signature headers should be unset, false otherwise
-     */
     public Boolean getClearHeaders() {
         return clearHeaders;
     }
 
-    /**
-     * Determines if the XML signature specific headers be cleared after signing and verification. Defaults to true.
-     */
     public void setClearHeaders(Boolean clearHeaders) {
         this.clearHeaders = clearHeaders;
     }
@@ -148,12 +123,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
         return schemaResourceUri;
     }
 
-    /**
-     * Classpath to the XML Schema. Must be specified in the detached XML Signature case for determining the ID
-     * attributes, might be set in the enveloped and enveloping case. If set, then the XML document is validated with
-     * the specified XML schema. The schema resource URI can be overwritten by the header
-     * {@link XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI}.
-     */
     public void setSchemaResourceUri(String schemaResourceUri) {
         this.schemaResourceUri = schemaResourceUri;
     }
@@ -162,10 +131,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
         return outputXmlEncoding;
     }
 
-    /**
-     * The character encoding of the resulting signed XML document. If <code>null</code> then the encoding of the
-     * original XML document is used.
-     */
     public void setOutputXmlEncoding(String outputXmlEncoding) {
         this.outputXmlEncoding = outputXmlEncoding;
     }

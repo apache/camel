@@ -28,7 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("aws-cloudtrail")
 public class CloudtrailComponent extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of this component start from. Each endpoint gets a copy of"
+                            + " it, and the options of the endpoint replace its values.")
     private CloudtrailConfiguration configuration = new CloudtrailConfiguration();
 
     public CloudtrailComponent() {
@@ -60,9 +61,6 @@ public class CloudtrailComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(CloudtrailConfiguration configuration) {
         this.configuration = configuration;
     }

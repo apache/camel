@@ -45,8 +45,27 @@ public interface BonitaEndpointBuilderFactory {
         }
 
         /**
+         * The context path of the Bonita web application on the server, such as
+         * /bonita or the path that a reverse proxy maps to it. The producer
+         * calls the REST API, the login and the file uploads under it. A
+         * missing leading slash is added and a trailing slash removed, and / is
+         * the root of the server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: /bonita
+         * Group: producer
+         * 
+         * @param basePath the value to set
+         * @return the dsl builder
+         */
+        default BonitaEndpointBuilder basePath(String basePath) {
+            doSetProperty("basePath", basePath);
+            return this;
+        }
+        /**
          * The host name of the Bonita server. The producer calls the REST API
-         * under the /bonita context path of this host.
+         * under the context path of the basePath option on this host.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -76,12 +95,14 @@ public interface BonitaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the process to start a case of. The producer searches the
-         * processes of the Bonita REST API for this name and uses the first one
-         * found, and fails if none is found or the option is not set.
+         * The exact name of the process to start a case of. When the process is
+         * deployed in several versions, processVersion selects one. The
+         * producer fails when it starts if the option is not set, and fails the
+         * exchange if no process has this name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: producer
          * 
          * @param processName the value to set
@@ -92,12 +113,29 @@ public interface BonitaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password of the Bonita account. The producer logs in with it at
-         * the loginservice of Bonita before each request, and fails if it is
-         * not set.
+         * The version of the process to start a case of. If not set and the
+         * process is deployed in several versions, the producer uses the first
+         * one that Bonita returns and logs a WARN that names it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Group: producer
+         * 
+         * @param processVersion the value to set
+         * @return the dsl builder
+         */
+        default BonitaEndpointBuilder processVersion(String processVersion) {
+            doSetProperty("processVersion", processVersion);
+            return this;
+        }
+        /**
+         * The password of the Bonita account. The producer logs in with it at
+         * the loginservice of Bonita before each request, and fails when it
+         * starts if the option is not set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
          * Group: security
          * 
          * @param password the value to set
@@ -109,11 +147,12 @@ public interface BonitaEndpointBuilderFactory {
         }
         /**
          * The username of the Bonita account. The producer logs in with it at
-         * the loginservice of Bonita before each request, and fails if it is
-         * not set.
+         * the loginservice of Bonita before each request, and fails when it
+         * starts if the option is not set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: security
          * 
          * @param username the value to set

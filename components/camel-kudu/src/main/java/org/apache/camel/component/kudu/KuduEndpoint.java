@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interact with <a href="https://kudu.apache.org/">Apache Kudu</a>, a free and open source column-oriented data store
- * of the Apache Hadoop ecosystem.
+ * Insert, update, upsert, delete and scan rows of <a href="https://kudu.apache.org/">Apache Kudu</a> tables, and create
+ * tables.
  */
 @UriEndpoint(firstVersion = "3.0",
              scheme = "kudu",
@@ -69,18 +69,25 @@ public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     private KuduClient kuduClient;
     private boolean userManagedClient;
 
-    @UriPath(name = "host", displayName = "Host", label = "common", description = "Host of the server to connect to")
+    @UriPath(name = "host", displayName = "Host", label = "common",
+             description = "The host name or IP address of the Kudu master. The endpoint creates its Kudu client for this"
+                           + " host and port, unless the kuduClient component option is set.")
     @Metadata(required = true)
     private String host;
 
-    @UriPath(name = "port", displayName = "Port", label = "common", description = "Port of the server to connect to")
+    @UriPath(name = "port", displayName = "Port", label = "common",
+             description = "The RPC port of the Kudu master, which is 7051 in a default Kudu installation.")
     @Metadata(required = true)
     private String port;
 
-    @UriParam(description = "Operation to perform")
+    @UriParam(description = "The operation that the producer performs on the table. INSERT, UPDATE, UPSERT and DELETE write"
+                            + " the one row in the Map of the message body, CREATE_TABLE creates the table from the"
+                            + " CamelKuduSchema and CamelKuduTableOptions headers, and SCAN puts the rows of the table in the"
+                            + " message body. There is no default, and an exchange fails when the option is not set.")
     private KuduOperations operation;
 
-    @UriPath(name = "tableName", displayName = "Table Name", label = "common", description = "Table to connect to")
+    @UriPath(name = "tableName", displayName = "Table Name", label = "common",
+             description = "The name of the Kudu table that the operation reads, writes or creates.")
     private String tableName;
 
     public KuduEndpoint(String uri, KuduComponent component) {
@@ -141,9 +148,6 @@ public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         return host;
     }
 
-    /**
-     * Kudu master to connect to
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -163,9 +167,6 @@ public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         this.kuduClient = kuduClient;
     }
 
-    /**
-     * Port where kudu service is listening
-     */
     public void setPort(String port) {
         this.port = port;
     }
@@ -184,9 +185,6 @@ public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         return tableName;
     }
 
-    /**
-     * The name of the table where the rows are stored
-     */
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
@@ -195,9 +193,6 @@ public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         return operation;
     }
 
-    /**
-     * What kind of operation is to be performed in the table
-     */
     public void setOperation(KuduOperations operation) {
         this.operation = operation;
     }

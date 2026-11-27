@@ -31,7 +31,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ProcessorEndpoint;
 
 /**
- * Process XML payloads by a SAX ContentHandler.
+ * Parse XML payloads with a StAX reader and send the parse events to a SAX ContentHandler.
  */
 @UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION })
@@ -44,7 +44,10 @@ import org.apache.camel.support.ProcessorEndpoint;
                                                  + " per message, or the one bean of a #bean reference"))
 public class StAXEndpoint extends ProcessorEndpoint {
 
-    @UriPath
+    @UriPath(description = "The fully qualified class name of the org.xml.sax.ContentHandler that receives the parse events."
+                           + " The producer creates a new instance per message with the no-argument constructor and"
+                           + " sets it as the message body after the parse. Use the #beanName syntax to use one"
+                           + " ContentHandler bean from the registry for all messages instead.")
     @Metadata(required = true)
     private String contentHandlerClass;
 
@@ -61,9 +64,6 @@ public class StAXEndpoint extends ProcessorEndpoint {
         return contentHandlerClass;
     }
 
-    /**
-     * The FQN class name for the ContentHandler implementation to use.
-     */
     public void setContentHandlerClass(String contentHandlerClass) {
         this.contentHandlerClass = contentHandlerClass;
     }

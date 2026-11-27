@@ -99,8 +99,9 @@ public interface FileWatchEndpointBuilderFactory {
         }
         /**
          * The types of the events to receive, as a comma-separated list of
-         * CREATE, MODIFY and DELETE in upper case and without spaces. The
-         * events of the other types are dropped.
+         * CREATE, MODIFY and DELETE, in any case and with or without spaces
+         * around the values. An unknown value fails the start of the consumer.
+         * The events of the other types are dropped.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -118,7 +119,9 @@ public interface FileWatchEndpointBuilderFactory {
          * Whether to receive the events of the files and directories in all
          * subdirectories, including the subdirectories created later. If false,
          * only the events of the entries directly in the directory are
-         * received; the whole directory tree is still watched.
+         * received, and the files of the subdirectories are not hashed. The
+         * subdirectories are not watched either, except where the watch service
+         * always watches the whole directory tree, such as on macOS.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -136,7 +139,9 @@ public interface FileWatchEndpointBuilderFactory {
          * Whether to receive the events of the files and directories in all
          * subdirectories, including the subdirectories created later. If false,
          * only the events of the entries directly in the directory are
-         * received; the whole directory tree is still watched.
+         * received, and the files of the subdirectories are not hashed. The
+         * subdirectories are not watched either, except where the watch service
+         * always watches the whole directory tree, such as on macOS.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -399,7 +404,13 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of threads that read the events from the watch service of
          * the directory and put them in the queue. Increase it when the log
          * warns that an OVERFLOW occurred, which means that the file system
-         * dropped events.
+         * dropped events. All the threads read the same watch service, and each
+         * one registers the watched directories again when the consumer starts
+         * (and hashes their files again when useFileHashing is enabled), so on
+         * a large tree a higher value makes the start slower. More threads can
+         * only help when the events come from several directories at the same
+         * time, as the events of one directory are read by one thread at a
+         * time.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -417,7 +428,13 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of threads that read the events from the watch service of
          * the directory and put them in the queue. Increase it when the log
          * warns that an OVERFLOW occurred, which means that the file system
-         * dropped events.
+         * dropped events. All the threads read the same watch service, and each
+         * one registers the watched directories again when the consumer starts
+         * (and hashes their files again when useFileHashing is enabled), so on
+         * a large tree a higher value makes the start slower. More threads can
+         * only help when the events come from several directories at the same
+         * time, as the events of one directory are read by one thread at a
+         * time.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -672,6 +689,19 @@ public interface FileWatchEndpointBuilderFactory {
          */
         public String fileLastModified() {
             return "CamelFileLastModified";
+        }
+        /**
+         * The time the consumer received the event, in milliseconds since the
+         * epoch.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "CamelMessageTimestamp";
         }
     }
     static FileWatchEndpointBuilder endpointBuilder(String componentName, String path) {
