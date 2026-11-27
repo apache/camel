@@ -275,6 +275,11 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         if (channelProperties != null && !channelProperties.isEmpty()) {
             return new JChannel(channelProperties);
         }
+        LOG.warn("The JGroups endpoint {} has no channel and no channelProperties, so its channel uses the default udp.xml"
+                 + " in the JGroups JAR. That configuration is meant for development and tests: it uses UDP multicast"
+                 + " without authentication or encryption. In production, set channelProperties to your own JGroups"
+                 + " configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT.",
+                getEndpointUri());
         return new JChannel();
     }
 
@@ -355,7 +360,11 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Specifies configuration properties of the JChannel used by the endpoint.
+     * The JGroups configuration of the JChannel that the endpoint creates, as an XML file, a URL or a classpath
+     * resource. If not set, the channelProperties of the component is used. If neither is set and the component has no
+     * channel, the default udp.xml in the JGroups JAR is used, and a WARN is logged when the endpoint starts. That
+     * udp.xml is meant for development and tests: it uses UDP multicast without authentication or encryption. In
+     * production, set your own configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT.
      */
     public void setChannelProperties(String channelProperties) {
         this.channelProperties = channelProperties;

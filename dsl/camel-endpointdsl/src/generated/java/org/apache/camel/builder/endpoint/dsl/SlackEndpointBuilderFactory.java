@@ -953,7 +953,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: security
          * 
          * @param webhookUrl the value to set
          * @return the dsl builder

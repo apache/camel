@@ -84,7 +84,7 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
               description = "Whether to connect to the nodes of hostAddresses with HTTPS instead of HTTP. The default"
                             + " SSLContext of the JVM is used unless sslContextParameters or certificatePath is set.")
     private boolean enableSSL;
-    @Metadata(label = "security",
+    @Metadata(label = "security", supportFileReference = true,
               description = "The CA certificate, in X.509 format, that the client trusts for HTTPS instead of the default"
                             + " trust store of the JVM. It is loaded from the classpath by default, or with the prefix"
                             + " classpath:, file: or http:. It needs enableSSL, and sslContextParameters takes precedence.")
@@ -109,8 +109,7 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
     @Metadata(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY,
               description = "The delay in milliseconds of the read of the nodes that the Sniffer schedules after a failed"
-                            + " request. The component does not register the client listener that reports failures to the"
-                            + " Sniffer, so this option has no effect.")
+                            + " request, when enableSniffer is set.")
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
 
     public ElasticsearchComponent() {

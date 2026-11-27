@@ -20,16 +20,19 @@ import org.apache.camel.spi.Metadata;
 
 public interface CloudtrailConstants {
 
-    @Metadata(description = "The event ID of the cloud trail event consumed.",
+    @Metadata(description = "The ID of the CloudTrail event. The consumer routes each event ID only once.",
               javaType = "String")
     String EVENT_ID = "CamelAwsCloudTrailEventId";
-    @Metadata(description = "The event Name of the cloud trail event consumed.",
+    @Metadata(description = "The name of the event, which is the API action that was called, for example"
+                            + " PutBucketPolicy or ConsoleLogin.",
               javaType = "String")
     String EVENT_NAME = "CamelAwsCloudTrailEventName";
-    @Metadata(description = "The event Source of the cloud trail event consumed.",
+    @Metadata(description = "The event source, which is the AWS service that the request was made to, for"
+                            + " example s3.amazonaws.com.",
               javaType = "String")
     String EVENT_SOURCE = "CamelAwsCloudTrailEventSource";
-    @Metadata(description = "The associated username of the event of the cloud trail event consumed.",
+    @Metadata(description = "The user name or role name of the requester of the event. It is null when"
+                            + " CloudTrail records none for the event.",
               javaType = "String")
     String USERNAME = "CamelAwsCloudTrailEventUsername";
 }

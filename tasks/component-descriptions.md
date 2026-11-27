@@ -73,9 +73,9 @@ or removes its row.
 | camel-asterisk | asterisk | yes |
 | camel-atmosphere-websocket | atmosphere-websocket |  |
 | camel-atom | atom |  |
-| camel-avro-rpc | avro |  |
+| camel-avro-rpc | avro | yes |
 | camel-aws-bedrock | aws-bedrock, aws-bedrock-agent, aws-bedrock-agent-runtime | yes |
-| camel-aws-cloudtrail | aws-cloudtrail |  |
+| camel-aws-cloudtrail | aws-cloudtrail | yes |
 | camel-aws-config | aws-config |  |
 | camel-aws-parameter-store | aws-parameter-store |  |
 | camel-aws-secrets-manager | aws-secrets-manager |  |
@@ -111,10 +111,10 @@ or removes its row.
 | camel-azure-cosmosdb | azure-cosmosdb | yes |
 | camel-azure-eventgrid | azure-eventgrid |  |
 | camel-azure-eventhubs | azure-eventhubs |  |
-| camel-azure-files | azure-files |  |
+| camel-azure-files | azure-files | yes |
 | camel-azure-functions | azure-functions |  |
 | camel-azure-iothub | azure-iothub | yes |
-| camel-azure-key-vault | azure-key-vault |  |
+| camel-azure-key-vault | azure-key-vault | yes |
 | camel-azure-servicebus | azure-servicebus |  |
 | camel-azure-storage-blob | azure-storage-blob |  |
 | camel-azure-storage-datalake | azure-storage-datalake |  |
@@ -141,12 +141,12 @@ or removes its row.
 | camel-couchbase | couchbase |  |
 | camel-couchdb | couchdb |  |
 | camel-cron | cron | yes |
-| camel-crypto | crypto |  |
+| camel-crypto | crypto | yes |
 | camel-cxf-rest | cxfrs | yes |
 | camel-cxf-soap | cxf | yes |
 | camel-cyberark-vault | cyberark-vault | yes |
 | camel-dapr | dapr |  |
-| camel-dataformat | dataformat |  |
+| camel-dataformat | dataformat | yes |
 | camel-dataset | dataset, dataset-test |  |
 | camel-debezium-db2 | debezium-db2 | yes |
 | camel-debezium-mongodb | debezium-mongodb |  |
@@ -187,7 +187,7 @@ or removes its row.
 | camel-google-calendar | google-calendar, google-calendar-stream |  |
 | camel-google-drive | google-drive |  |
 | camel-google-firestore | google-firestore | yes |
-| camel-google-functions | google-functions |  |
+| camel-google-functions | google-functions | yes |
 | camel-google-mail | google-mail, google-mail-stream |  |
 | camel-google-pubsub | google-pubsub |  |
 | camel-google-secret-manager | google-secret-manager |  |
@@ -198,11 +198,11 @@ or removes its row.
 | camel-google-vertexai | google-vertexai |  |
 | camel-google-vision | google-vision |  |
 | camel-graphql | graphql |  |
-| camel-grpc | grpc |  |
+| camel-grpc | grpc | yes |
 | camel-hashicorp-vault | hashicorp-vault |  |
 | camel-hazelcast | hazelcast-instance, hazelcast-list, hazelcast-map, hazelcast-multimap, hazelcast-pncounter, hazelcast-queue, hazelcast-replicatedmap, hazelcast-ringbuffer, hazelcast-seda, hazelcast-set, hazelcast-topic |  |
 | camel-hibernate | hibernate | yes |
-| camel-hivemq | hivemq |  |
+| camel-hivemq | hivemq | yes |
 | camel-http | http, https |  |
 | camel-huaweicloud-dms | hwcloud-dms |  |
 | camel-huaweicloud-frs | hwcloud-frs |  |
@@ -210,7 +210,7 @@ or removes its row.
 | camel-huaweicloud-iam | hwcloud-iam |  |
 | camel-huaweicloud-imagerecognition | hwcloud-imagerecognition | yes |
 | camel-huaweicloud-obs | hwcloud-obs |  |
-| camel-huaweicloud-smn | hwcloud-smn |  |
+| camel-huaweicloud-smn | hwcloud-smn | yes |
 | camel-huggingface | huggingface | yes |
 | camel-ibm-cos | ibm-cos |  |
 | camel-ibm-secrets-manager | ibm-secrets-manager |  |
@@ -218,13 +218,13 @@ or removes its row.
 | camel-ibm-watson-language | ibm-watson-language | yes |
 | camel-ibm-watson-speech-to-text | ibm-watson-speech-to-text | yes |
 | camel-ibm-watson-text-to-speech | ibm-watson-text-to-speech |  |
-| camel-ibm-watsonx-ai | ibm-watsonx-ai |  |
+| camel-ibm-watsonx-ai | ibm-watsonx-ai | yes |
 | camel-ibm-watsonx-data | ibm-watsonx-data | yes |
 | camel-iggy | iggy | yes |
 | camel-ignite | ignite-cache, ignite-compute, ignite-events, ignite-idgen, ignite-messaging, ignite-queue, ignite-set |  |
 | camel-infinispan | infinispan |  |
 | camel-infinispan-embedded | infinispan-embedded | yes |
-| camel-influxdb | influxdb |  |
+| camel-influxdb | influxdb | yes |
 | camel-influxdb2 | influxdb2 | yes |
 | camel-jcache | jcache |  |
 | camel-jcr | jcr |  |
@@ -316,10 +316,10 @@ or removes its row.
 | camel-quartz | quartz |  |
 | camel-quickfix | quickfix |  |
 | camel-reactive-streams | reactive-streams |  |
-| camel-ref | ref |  |
+| camel-ref | ref | yes |
 | camel-rest | rest, rest-api | yes |
 | camel-rest-openapi | rest-openapi |  |
-| camel-rest-postman | rest-postman |  |
+| camel-rest-postman | rest-postman | yes |
 | camel-robotframework | robotframework |  |
 | camel-rocketmq | rocketmq | yes |
 | camel-rss | rss |  |
@@ -341,14 +341,14 @@ or removes its row.
 | camel-smpp | smpp, smpps |  |
 | camel-snmp | snmp |  |
 | camel-solr | solr | yes |
-| camel-spiffe | spiffe |  |
+| camel-spiffe | spiffe | yes |
 | camel-splunk-hec | splunk-hec |  |
 | camel-spring | spring-event | yes |
 | camel-spring-ai-chat | spring-ai-chat |  |
 | camel-spring-ai-embeddings | spring-ai-embeddings |  |
 | camel-spring-ai-image | spring-ai-image |  |
 | camel-spring-ai-vector-store | spring-ai-vector-store | yes |
-| camel-spring-batch | spring-batch |  |
+| camel-spring-batch | spring-batch | yes |
 | camel-spring-jdbc | spring-jdbc |  |
 | camel-spring-ldap | spring-ldap |  |
 | camel-spring-rabbitmq | spring-rabbitmq |  |
@@ -356,21 +356,21 @@ or removes its row.
 | camel-spring-ws | spring-ws | yes |
 | camel-sql | sql, sql-stored |  |
 | camel-ssh | ssh | yes |
-| camel-state-store | state-store |  |
+| camel-state-store | state-store | yes |
 | camel-stax | stax | yes |
-| camel-stitch | stitch |  |
+| camel-stitch | stitch | yes |
 | camel-stream | stream | yes |
 | camel-stringtemplate | string-template |  |
 | camel-stripe | stripe |  |
 | camel-stub | stub |  |
-| camel-tahu | tahu-edge, tahu-host |  |
+| camel-tahu | tahu-edge, tahu-host | yes |
 | camel-telegram | telegram | yes |
 | camel-tensorflow-serving | tensorflow-serving |  |
 | camel-test-citrus | citrus |  |
 | camel-thrift | thrift |  |
 | camel-thymeleaf | thymeleaf |  |
 | camel-tika | tika |  |
-| camel-timer | timer |  |
+| camel-timer | timer | yes |
 | camel-twilio | twilio |  |
 | camel-twitter | twitter-directmessage, twitter-search, twitter-timeline |  |
 | camel-typesafe-ai | typesafe-ai |  |

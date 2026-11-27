@@ -2,7 +2,7 @@
 :doctitle: Tahu Edge Node / Device
 :shortname: tahu-edge
 :artifactid: camel-tahu
-:description: Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+:description: Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT servers using Eclipse Tahu.
 :since: 4.8
 :supportlevel: Stable
 :tabs-sync-option:

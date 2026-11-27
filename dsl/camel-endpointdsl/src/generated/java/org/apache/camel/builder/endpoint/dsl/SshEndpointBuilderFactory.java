@@ -825,8 +825,9 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * The password for password authentication, which is used only when
-         * neither certResource nor keyPairProvider is set. The CamelSshPassword
-         * header replaces it for the producer.
+         * neither certResource nor keyPairProvider is set. With
+         * allowUsernameAndPasswordFromHeaders=true, the CamelSshPassword header
+         * replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -857,8 +858,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * The user name to log in with. The CamelSshUsername header replaces it
-         * for the producer.
+         * The user name to log in with. With
+         * allowUsernameAndPasswordFromHeaders=true, the CamelSshUsername header
+         * replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1400,6 +1402,48 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the producer may take the user name and the password from the
+         * CamelSshUsername and CamelSshPassword headers, in place of the
+         * username and password options. The CamelSshUsername header is then
+         * also used with public key authentication (certResource or
+         * keyPairProvider): the configured key logs in as the user that the
+         * header names. This is disabled by default, and the headers are then
+         * ignored. Enable it only when the route sets these headers itself.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUsernameAndPasswordFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder allowUsernameAndPasswordFromHeaders(boolean allowUsernameAndPasswordFromHeaders) {
+            doSetProperty("allowUsernameAndPasswordFromHeaders", allowUsernameAndPasswordFromHeaders);
+            return this;
+        }
+        /**
+         * Whether the producer may take the user name and the password from the
+         * CamelSshUsername and CamelSshPassword headers, in place of the
+         * username and password options. The CamelSshUsername header is then
+         * also used with public key authentication (certResource or
+         * keyPairProvider): the configured key logs in as the user that the
+         * header names. This is disabled by default, and the headers are then
+         * ignored. Enable it only when the route sets these headers itself.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUsernameAndPasswordFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default SshEndpointProducerBuilder allowUsernameAndPasswordFromHeaders(String allowUsernameAndPasswordFromHeaders) {
+            doSetProperty("allowUsernameAndPasswordFromHeaders", allowUsernameAndPasswordFromHeaders);
+            return this;
+        }
+        /**
          * The resource with the private key for public key authentication, in
          * OpenSSH or PEM format, for example classpath:id_ed25519 or
          * file:/home/camel/.ssh/id_ed25519. When set, it is used instead of
@@ -1599,8 +1643,9 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * The password for password authentication, which is used only when
-         * neither certResource nor keyPairProvider is set. The CamelSshPassword
-         * header replaces it for the producer.
+         * neither certResource nor keyPairProvider is set. With
+         * allowUsernameAndPasswordFromHeaders=true, the CamelSshPassword header
+         * replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1631,8 +1676,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * The user name to log in with. The CamelSshUsername header replaces it
-         * for the producer.
+         * The user name to log in with. With
+         * allowUsernameAndPasswordFromHeaders=true, the CamelSshUsername header
+         * replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2266,8 +2312,9 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * The password for password authentication, which is used only when
-         * neither certResource nor keyPairProvider is set. The CamelSshPassword
-         * header replaces it for the producer.
+         * neither certResource nor keyPairProvider is set. With
+         * allowUsernameAndPasswordFromHeaders=true, the CamelSshPassword header
+         * replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2298,8 +2345,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * The user name to log in with. The CamelSshUsername header replaces it
-         * for the producer.
+         * The user name to log in with. With
+         * allowUsernameAndPasswordFromHeaders=true, the CamelSshUsername header
+         * replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2725,11 +2773,14 @@ public interface SshEndpointBuilderFactory {
 
         /**
          * The user name that the producer logs in with, instead of the username
-         * option.
+         * option. Used only when allowUsernameAndPasswordFromHeaders=true;
+         * otherwise ignored. It applies to every kind of authentication: with
+         * certResource or keyPairProvider, the configured key logs in as this
+         * user.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code SshUsername}.
          */
@@ -2738,12 +2789,13 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * The password that the producer uses for password authentication,
-         * instead of the password option. It is not used when certResource or
-         * keyPairProvider is set.
+         * instead of the password option. Used only when
+         * allowUsernameAndPasswordFromHeaders=true; otherwise ignored. It is
+         * not used when certResource or keyPairProvider is set.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code SshPassword}.
          */

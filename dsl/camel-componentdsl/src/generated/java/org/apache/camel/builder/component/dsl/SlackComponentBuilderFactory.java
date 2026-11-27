@@ -174,7 +174,7 @@ public interface SlackComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: token
+         * Group: security
          * 
          * @param token the value to set
          * @return the dsl builder
@@ -192,7 +192,7 @@ public interface SlackComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: webhook
+         * Group: security
          * 
          * @param webhookUrl the value to set
          * @return the dsl builder

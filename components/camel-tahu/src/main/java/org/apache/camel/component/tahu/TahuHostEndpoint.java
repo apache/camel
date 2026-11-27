@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+ * Receive Sparkplug B messages and metrics from MQTT servers as a Host Application using Eclipse Tahu.
  */
 @UriEndpoint(firstVersion = "4.8.0",
              scheme = TahuConstants.HOST_APP_SCHEME,
@@ -44,7 +44,9 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " metrics are the CamelTahuMetric.<name> headers, each a Tahu Metric"))
 public class TahuHostEndpoint extends TahuDefaultEndpoint {
 
-    @UriPath(label = "consumer", description = "ID for the host application")
+    @UriPath(label = "consumer",
+             description = "The Sparkplug host ID of the Host Application. An Edge Node that has this ID in its"
+                           + " primaryHostId option waits for this Host Application to be online.")
     @Metadata(applicableFor = TahuConstants.HOST_APP_SCHEME, required = true)
     private final String hostId;
 

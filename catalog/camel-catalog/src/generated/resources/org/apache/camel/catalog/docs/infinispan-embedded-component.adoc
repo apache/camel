@@ -55,8 +55,8 @@ If no cache configuration is provided, embedded cacheContainer is created direct
 
 All the endpoints of the component share one cache manager, which the component creates when it starts. So the
 options that configure the cache manager are read on the component only: `configurationUri`, `cacheContainer`,
-`cacheContainerConfiguration` and `flags`. Set on an endpoint, these options are not used. Configure them on the
-component instead, for example in `application.properties`:
+`cacheContainerConfiguration` and `flags`. Set on an endpoint, these options are not used, and the endpoint logs a
+WARN that names them. Configure them on the component instead, for example in `application.properties`:
 
 [source,properties]
 ----
