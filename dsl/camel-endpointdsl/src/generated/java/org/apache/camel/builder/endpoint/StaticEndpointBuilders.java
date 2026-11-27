@@ -17441,10 +17441,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ssh:host:port</code>
      * 
      * Path parameter: host (required)
-     * Sets the hostname of the remote SSH server.
+     * The host name or IP address of the SSH server. When the .ssh/config file
+     * in the home directory of the user has an entry for this host, the client
+     * connects to the HostName of that entry.
      * 
      * Path parameter: port
-     * Sets the port number for the remote SSH server.
+     * The port of the SSH server.
      * Default value: 22
      * 
      * @param path host:port
@@ -17464,10 +17466,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ssh:host:port</code>
      * 
      * Path parameter: host (required)
-     * Sets the hostname of the remote SSH server.
+     * The host name or IP address of the SSH server. When the .ssh/config file
+     * in the home directory of the user has an entry for this host, the client
+     * connects to the HostName of that entry.
      * 
      * Path parameter: port
-     * Sets the port number for the remote SSH server.
+     * The port of the SSH server.
      * Default value: 22
      * 
      * @param componentName to use a custom component name for the endpoint

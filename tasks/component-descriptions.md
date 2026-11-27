@@ -355,7 +355,7 @@ or removes its row.
 | camel-spring-redis | spring-redis | yes |
 | camel-spring-ws | spring-ws | yes |
 | camel-sql | sql, sql-stored |  |
-| camel-ssh | ssh |  |
+| camel-ssh | ssh | yes |
 | camel-state-store | state-store |  |
 | camel-stax | stax | yes |
 | camel-stitch | stitch |  |
