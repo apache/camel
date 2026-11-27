@@ -11857,6 +11857,19 @@ Both are now deprecated with a note that says so. Remove `retentionPolicy` from 
 header: they are silently ignored. To control how long the data is kept, set the retention period on the bucket the
 endpoint writes to.
 
+=== camel-influxdb2 - a ping endpoint does not look up or create the organization and the bucket
+
+An `influxdb2` endpoint with `operation=PING` no longer looks up, or creates, the organization of the `org` option and
+the bucket of the `bucket` option when it starts. A ping uses neither, so such an endpoint now starts without them and
+does not call InfluxDB at startup. Before, it failed to start without an `org`, unless `autoCreateOrg` and
+`autoCreateBucket` were both false. Create the organization and the bucket with an `INSERT` endpoint, or in InfluxDB,
+if a route relied on a ping endpoint to create them.
+
+The `org` and `bucket` options are no longer marked as required. An `INSERT` endpoint still needs them when it creates
+a missing organization or bucket at startup, which it does by default. Leave them out of an `INSERT` endpoint only with
+`autoCreateOrg` and `autoCreateBucket` set to false, and name the organization and the bucket of each write with the
+`CamelInfluxDB2Org` and `CamelInfluxDB2Bucket` headers.
+
 === camel-language - the CamelLanguageScript header is used once and removed
 
 With `allowTemplateFromHeader=true`, a script from the `CamelLanguageScript` header is now used for that message only.
