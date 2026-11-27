@@ -130,7 +130,7 @@ or removes its row.
 | camel-cassandraql | cql | yes |
 | camel-cedar | cedar |  |
 | camel-chatscript | chatscript |  |
-| camel-chunk | chunk |  |
+| camel-chunk | chunk | yes |
 | camel-clickhouse | clickhouse |  |
 | camel-clickup | clickup |  |
 | camel-cm-sms | cm-sms |  |

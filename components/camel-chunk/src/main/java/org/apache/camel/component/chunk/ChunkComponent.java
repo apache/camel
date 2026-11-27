@@ -28,7 +28,9 @@ public class ChunkComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
-    @Metadata
+    @Metadata(description = "Whether the producer uses the template of the CamelChunkResourceUri header or the template text of"
+                            + " the CamelChunkTemplate header instead of the resourceUri. If false, the producer ignores both"
+                            + " headers. Enable it only when the route sets these headers, not a message sender.")
     private boolean allowTemplateFromHeader;
     @Metadata
     private boolean allowContextMapAll;
@@ -50,12 +52,6 @@ public class ChunkComponent extends DefaultComponent {
         return allowTemplateFromHeader;
     }
 
-    /**
-     * Whether to allow to use resource template from header or not (default false).
-     *
-     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
-     * security vulnerability if the header is coming from a malicious user, so use this with care.
-     */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }

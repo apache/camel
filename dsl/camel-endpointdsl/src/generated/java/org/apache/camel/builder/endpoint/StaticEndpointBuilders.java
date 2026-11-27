@@ -3698,7 +3698,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Chunk (camel-chunk)
-     * Transform messages using Chunk templating engine.
+     * Transform a message into text with a Chunk template.
      * 
      * Category: transformation
      * Since: 2.15
@@ -3723,7 +3723,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Chunk (camel-chunk)
-     * Transform messages using Chunk templating engine.
+     * Transform a message into text with a Chunk template.
      * 
      * Category: transformation
      * Since: 2.15
