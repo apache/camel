@@ -34,10 +34,9 @@ public class KeyVaultEndpointUriFactory extends org.apache.camel.support.compone
         props.add("tenantId");
         props.add("vaultName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
+        Set<String> secretProps = new HashSet<>(2);
         secretProps.add("clientId");
         secretProps.add("clientSecret");
-        secretProps.add("tenantId");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();

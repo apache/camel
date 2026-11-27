@@ -50,6 +50,16 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Connecting to the vault
+
+The producer connects with the `clientId`, `clientSecret` and `tenantId` options (credential type `CLIENT_SECRET`, the
+default), with the default Azure credential chain (credential type `AZURE_IDENTITY`), or with a `SecretClient` that you
+create yourself. When the registry holds exactly one `com.azure.security.keyvault.secrets.SecretClient`, it is used
+without the `secretClient` option, and no credentials are needed.
+
+These options can also be set on the component, for example `camel.component.azure-key-vault.client-id`, as the
+values that each endpoint starts from; an option set on the endpoint replaces the value of the component.
+
 === Using Azure Key Vault Property Function
 
 To use this function, you'll need to provide credentials to Azure Key Vault Service as environment variables:
@@ -802,7 +812,7 @@ This could be done in the following way. You should specify this property in you
 
 [source,bash]
 ----
-camel.component.azure-key-vault.early-resolve-properties=true=true
+camel.component.azure-key-vault.early-resolve-properties=true
 ----
 
 This will enable the feature, so you'll be able to resolve properties, in your application.properties file, like:

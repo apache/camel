@@ -48,7 +48,7 @@ public class KeyVaultConfiguration implements Cloneable {
                             + " Required for CLIENT_SECRET, the default, unless the secretClient option is set. Not used for"
                             + " AZURE_IDENTITY.")
     private String clientSecret;
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security",
               description = "The ID of the Microsoft Entra tenant (directory) of the application for the CLIENT_SECRET"
                             + " credential type. Required for CLIENT_SECRET, the default, unless the secretClient option is"
                             + " set. Not used for AZURE_IDENTITY.")
