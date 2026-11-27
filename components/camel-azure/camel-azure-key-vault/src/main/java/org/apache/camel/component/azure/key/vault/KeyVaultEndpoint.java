@@ -97,7 +97,16 @@ public class KeyVaultEndpoint extends DefaultEndpoint implements EndpointService
 
     @Override
     public void doInit() throws Exception {
+        // autowires a single SecretClient of the registry when the secretClient option is not set
         super.doInit();
+
+        if (CredentialType.CLIENT_SECRET == configuration.getCredentialType() && configuration.getSecretClient() == null
+                && (configuration.getClientId() == null || configuration.getClientSecret() == null
+                        || configuration.getTenantId() == null)) {
+            throw new IllegalArgumentException(
+                    "Azure Secret Client or client Id, client secret and tenant Id must be specified if credential type is set to clientSecret");
+        }
+
         secretClient = configuration.getSecretClient() != null
                 ? configuration.getSecretClient() : createSecretClient();
     }
