@@ -17094,11 +17094,13 @@ public class StaticEndpointBuilders {
      * The host name or IP address of the Redis server. The endpoint connects to
      * it with the JedisConnectionFactory that it creates when connectionFactory
      * is not set, and does not use it otherwise. If not set, localhost is used.
+     * Default value: localhost
      * 
      * Path parameter: port (required)
      * The port of the Redis server. The endpoint connects to it with the
      * JedisConnectionFactory that it creates when connectionFactory is not set,
      * and does not use it otherwise. If not set, 6379 is used.
+     * Default value: 6379
      * 
      * @param path host:port
      * @return the dsl builder
@@ -17121,11 +17123,13 @@ public class StaticEndpointBuilders {
      * The host name or IP address of the Redis server. The endpoint connects to
      * it with the JedisConnectionFactory that it creates when connectionFactory
      * is not set, and does not use it otherwise. If not set, localhost is used.
+     * Default value: localhost
      * 
      * Path parameter: port (required)
      * The port of the Redis server. The endpoint connects to it with the
      * JedisConnectionFactory that it creates when connectionFactory is not set,
      * and does not use it otherwise. If not set, 6379 is used.
+     * Default value: 6379
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
