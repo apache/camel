@@ -70,7 +70,7 @@ or removes its row.
 | camel-apicurio-registry | apicurio-registry |  |
 | camel-arangodb | arangodb |  |
 | camel-as2 | as2 |  |
-| camel-asterisk | asterisk |  |
+| camel-asterisk | asterisk | yes |
 | camel-atmosphere-websocket | atmosphere-websocket |  |
 | camel-atom | atom |  |
 | camel-avro-rpc | avro |  |

@@ -2,7 +2,7 @@
 :doctitle: Asterisk
 :shortname: asterisk
 :artifactid: camel-asterisk
-:description: Interact with Asterisk PBX Server (VoIP).
+:description: Receive events from an Asterisk PBX server and send actions to it over the Asterisk Manager Interface (AMI).
 :since: 2.18
 :supportlevel: Stable
 :tabs-sync-option:
