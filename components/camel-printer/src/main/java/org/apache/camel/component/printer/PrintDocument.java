@@ -35,9 +35,22 @@ class PrintDocument implements Doc {
     private Reader reader;
     private byte[] buffer;
 
+    private Object printData;
+
     PrintDocument(InputStream stream, DocFlavor docFlavor) {
         this.stream = stream;
         this.docFlavor = docFlavor;
+    }
+
+    /**
+     * A document whose print data is the given object rather than a stream, for the SERVICE_FORMATTED doc flavors whose
+     * print data is a java.awt.print.Pageable, a java.awt.print.Printable or a
+     * java.awt.image.renderable.RenderableImage.
+     */
+    static PrintDocument ofPrintData(Object printData, DocFlavor docFlavor) {
+        PrintDocument answer = new PrintDocument(null, docFlavor);
+        answer.printData = printData;
+        return answer;
     }
 
     @Override
@@ -52,6 +65,9 @@ class PrintDocument implements Doc {
 
     @Override
     public Object getPrintData() throws IOException {
+        if (printData != null) {
+            return printData;
+        }
         return getStreamForBytes();
     }
 
