@@ -18668,8 +18668,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
-     * Expose WebSocket endpoints and connect to remote WebSocket servers using
-     * Vert.x
+     * Receive and send WebSocket messages with Vert.x, as a WebSocket server or
+     * as a client of a remote WebSocket server.
      * 
      * Category: http,networking
      * Since: 3.5
@@ -18678,14 +18678,24 @@ public class StaticEndpointBuilders {
      * Syntax: <code>vertx-websocket:host:port/path</code>
      * 
      * Path parameter: host (required)
-     * WebSocket hostname, such as localhost or a remote host when in client
-     * mode.
+     * The host name or IP address. The server consumer binds its HTTP server to
+     * it, and the producer and a consumer with consumeAsClient=true connect to
+     * it. If the URI has no host, the defaultHost option of the component is
+     * used.
      * 
      * Path parameter: port (required)
-     * WebSocket port number to use.
+     * The port number. The server consumer binds its HTTP server to it, and
+     * with 0 to a free port that the operating system picks. The producer and a
+     * consumer with consumeAsClient=true connect to it, and with 0 to port 80,
+     * or to port 443 when the connection uses TLS. If the URI has no port, the
+     * defaultPort option of the component is used.
      * 
      * Path parameter: path
-     * WebSocket path to use.
+     * The path of the WebSocket. The server consumer accepts WebSocket
+     * connections on it: the path can hold parameters such as /chat/{user},
+     * whose values the consumer sets as headers, and can end with * to accept
+     * each path that starts with it. The producer and a consumer with
+     * consumeAsClient=true connect to it. If the URI has no path, / is used.
      * 
      * @param path host:port/path
      * @return the dsl builder
@@ -18695,8 +18705,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
-     * Expose WebSocket endpoints and connect to remote WebSocket servers using
-     * Vert.x
+     * Receive and send WebSocket messages with Vert.x, as a WebSocket server or
+     * as a client of a remote WebSocket server.
      * 
      * Category: http,networking
      * Since: 3.5
@@ -18705,14 +18715,24 @@ public class StaticEndpointBuilders {
      * Syntax: <code>vertx-websocket:host:port/path</code>
      * 
      * Path parameter: host (required)
-     * WebSocket hostname, such as localhost or a remote host when in client
-     * mode.
+     * The host name or IP address. The server consumer binds its HTTP server to
+     * it, and the producer and a consumer with consumeAsClient=true connect to
+     * it. If the URI has no host, the defaultHost option of the component is
+     * used.
      * 
      * Path parameter: port (required)
-     * WebSocket port number to use.
+     * The port number. The server consumer binds its HTTP server to it, and
+     * with 0 to a free port that the operating system picks. The producer and a
+     * consumer with consumeAsClient=true connect to it, and with 0 to port 80,
+     * or to port 443 when the connection uses TLS. If the URI has no port, the
+     * defaultPort option of the component is used.
      * 
      * Path parameter: path
-     * WebSocket path to use.
+     * The path of the WebSocket. The server consumer accepts WebSocket
+     * connections on it: the path can hold parameters such as /chat/{user},
+     * whose values the consumer sets as headers, and can end with * to accept
+     * each path that starts with it. The producer and a consumer with
+     * consumeAsClient=true connect to it. If the URI has no path, / is used.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

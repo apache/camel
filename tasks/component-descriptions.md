@@ -380,7 +380,7 @@ or removes its row.
 | camel-vertx | vertx |  |
 | camel-vertx-http | vertx-http |  |
 | camel-vertx-mqtt | vertx-mqtt | yes |
-| camel-vertx-websocket | vertx-websocket |  |
+| camel-vertx-websocket | vertx-websocket | yes |
 | camel-wasm | wasm |  |
 | camel-weather | weather | yes |
 | camel-weaviate | weaviate |  |

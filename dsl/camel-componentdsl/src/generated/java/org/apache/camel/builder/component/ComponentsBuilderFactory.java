@@ -5442,8 +5442,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
-     * Expose WebSocket endpoints and connect to remote WebSocket servers using
-     * Vert.x
+     * Receive and send WebSocket messages with Vert.x, as a WebSocket server or
+     * as a client of a remote WebSocket server.
      * 
      * Category: http,networking
      * Since: 3.5
