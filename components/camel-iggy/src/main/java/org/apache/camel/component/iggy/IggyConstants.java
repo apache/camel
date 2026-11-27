@@ -49,8 +49,8 @@ public final class IggyConstants {
     public static final String TOPIC_OVERRIDE = "CamelIggyTopicOverride";
     @Metadata(label = "producer",
               description = "The name of the stream to send to, instead of the streamName of the endpoint. The producer"
-                            + " creates the stream if it does not exist, when autoCreateStream is true and streamId is not"
-                            + " set.",
+                            + " creates the stream if it does not exist, when autoCreateStream is true; streamId is used only"
+                            + " for the stream of the endpoint.",
               javaType = "String")
     public static final String STREAM_OVERRIDE = "CamelIggyStreamOverride";
 

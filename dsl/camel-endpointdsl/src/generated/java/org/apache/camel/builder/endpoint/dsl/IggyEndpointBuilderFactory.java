@@ -310,22 +310,6 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password that the client logs in with to the Iggy server.
-         * Required, together with the username option: the client fails to
-         * connect without them.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * The port of the Iggy server. The default 8090 is the default port of
          * the TCP transport of the server, so set the HTTP port of the server
          * when clientTransport is HTTP.
@@ -360,9 +344,11 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ID of a stream that autoCreateStream looks up: if no stream has
-         * this ID, a stream named streamName is created. The producer and the
-         * consumer always address the stream by its name.
+         * The ID of a stream that autoCreateStream looks up for the stream of
+         * the endpoint: if no stream has this ID, a stream named streamName is
+         * created. The stream of a CamelIggyStreamOverride header is looked up
+         * and created by its name. The producer and the consumer always address
+         * the stream by its name.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -376,9 +362,11 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ID of a stream that autoCreateStream looks up: if no stream has
-         * this ID, a stream named streamName is created. The producer and the
-         * consumer always address the stream by its name.
+         * The ID of a stream that autoCreateStream looks up for the stream of
+         * the endpoint: if no stream has this ID, a stream named streamName is
+         * created. The stream of a CamelIggyStreamOverride header is looked up
+         * and created by its name. The producer and the consumer always address
+         * the stream by its name.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
@@ -460,6 +448,8 @@ public interface IggyEndpointBuilderFactory {
         /**
          * The number of threads of the thread pool of the consumer. The
          * consumer runs one polling task, so one thread polls the topic.
+         * Deprecation note: The consumer polls the topic with one task, so a
+         * value above 1 only adds idle threads.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -469,6 +459,7 @@ public interface IggyEndpointBuilderFactory {
          * @param consumersCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default IggyEndpointConsumerBuilder consumersCount(int consumersCount) {
             doSetProperty("consumersCount", consumersCount);
             return this;
@@ -476,6 +467,8 @@ public interface IggyEndpointBuilderFactory {
         /**
          * The number of threads of the thread pool of the consumer. The
          * consumer runs one polling task, so one thread polls the topic.
+         * Deprecation note: The consumer polls the topic with one task, so a
+         * value above 1 only adds idle threads.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -485,6 +478,7 @@ public interface IggyEndpointBuilderFactory {
          * @param consumersCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default IggyEndpointConsumerBuilder consumersCount(String consumersCount) {
             doSetProperty("consumersCount", consumersCount);
             return this;
@@ -631,6 +625,22 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointConsumerBuilder startingOffset(String startingOffset) {
             doSetProperty("startingOffset", startingOffset);
+            return this;
+        }
+        /**
+         * The password that the client logs in with to the Iggy server.
+         * Required, together with the username option: the client fails to
+         * connect without them.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1171,22 +1181,6 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password that the client logs in with to the Iggy server.
-         * Required, together with the username option: the client fails to
-         * connect without them.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * The port of the Iggy server. The default 8090 is the default port of
          * the TCP transport of the server, so set the HTTP port of the server
          * when clientTransport is HTTP.
@@ -1221,9 +1215,11 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ID of a stream that autoCreateStream looks up: if no stream has
-         * this ID, a stream named streamName is created. The producer and the
-         * consumer always address the stream by its name.
+         * The ID of a stream that autoCreateStream looks up for the stream of
+         * the endpoint: if no stream has this ID, a stream named streamName is
+         * created. The stream of a CamelIggyStreamOverride header is looked up
+         * and created by its name. The producer and the consumer always address
+         * the stream by its name.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -1237,9 +1233,11 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ID of a stream that autoCreateStream looks up: if no stream has
-         * this ID, a stream named streamName is created. The producer and the
-         * consumer always address the stream by its name.
+         * The ID of a stream that autoCreateStream looks up for the stream of
+         * the endpoint: if no stream has this ID, a stream named streamName is
+         * created. The stream of a CamelIggyStreamOverride header is looked up
+         * and created by its name. The producer and the consumer always address
+         * the stream by its name.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
@@ -1269,9 +1267,11 @@ public interface IggyEndpointBuilderFactory {
         }
         /**
          * How the producer chooses the partition of the messages it sends, as
-         * an org.apache.iggy.message.Partitioning: balanced() spreads them over
-         * the partitions, partitionId(Long) sends to one partition and
-         * messagesKey(String) to the partition of a key.
+         * an org.apache.iggy.message.Partitioning or as text: balanced() (the
+         * text balanced) spreads them over the partitions, partitionId(Long)
+         * (for example the text partitionId:2) sends to one partition and
+         * messagesKey(String) (for example the text messagesKey:order-1) to the
+         * partition of a key.
          * 
          * The option is a: <code>org.apache.iggy.message.Partitioning</code>
          * type.
@@ -1288,9 +1288,11 @@ public interface IggyEndpointBuilderFactory {
         }
         /**
          * How the producer chooses the partition of the messages it sends, as
-         * an org.apache.iggy.message.Partitioning: balanced() spreads them over
-         * the partitions, partitionId(Long) sends to one partition and
-         * messagesKey(String) to the partition of a key.
+         * an org.apache.iggy.message.Partitioning or as text: balanced() (the
+         * text balanced) spreads them over the partitions, partitionId(Long)
+         * (for example the text partitionId:2) sends to one partition and
+         * messagesKey(String) (for example the text messagesKey:order-1) to the
+         * partition of a key.
          * 
          * The option will be converted to a
          * <code>org.apache.iggy.message.Partitioning</code> type.
@@ -1303,6 +1305,22 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointProducerBuilder partitioning(String partitioning) {
             doSetProperty("partitioning", partitioning);
+            return this;
+        }
+        /**
+         * The password that the client logs in with to the Iggy server.
+         * Required, together with the username option: the client fails to
+         * connect without them.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1772,22 +1790,6 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The password that the client logs in with to the Iggy server.
-         * Required, together with the username option: the client fails to
-         * connect without them.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * The port of the Iggy server. The default 8090 is the default port of
          * the TCP transport of the server, so set the HTTP port of the server
          * when clientTransport is HTTP.
@@ -1822,9 +1824,11 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ID of a stream that autoCreateStream looks up: if no stream has
-         * this ID, a stream named streamName is created. The producer and the
-         * consumer always address the stream by its name.
+         * The ID of a stream that autoCreateStream looks up for the stream of
+         * the endpoint: if no stream has this ID, a stream named streamName is
+         * created. The stream of a CamelIggyStreamOverride header is looked up
+         * and created by its name. The producer and the consumer always address
+         * the stream by its name.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -1838,9 +1842,11 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ID of a stream that autoCreateStream looks up: if no stream has
-         * this ID, a stream named streamName is created. The producer and the
-         * consumer always address the stream by its name.
+         * The ID of a stream that autoCreateStream looks up for the stream of
+         * the endpoint: if no stream has this ID, a stream named streamName is
+         * created. The stream of a CamelIggyStreamOverride header is looked up
+         * and created by its name. The producer and the consumer always address
+         * the stream by its name.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
@@ -1866,6 +1872,22 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointBuilder streamName(String streamName) {
             doSetProperty("streamName", streamName);
+            return this;
+        }
+        /**
+         * The password that the client logs in with to the Iggy server.
+         * Required, together with the username option: the client fails to
+         * connect without them.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -2190,7 +2212,8 @@ public interface IggyEndpointBuilderFactory {
         /**
          * The name of the stream to send to, instead of the streamName of the
          * endpoint. The producer creates the stream if it does not exist, when
-         * autoCreateStream is true and streamId is not set.
+         * autoCreateStream is true; streamId is used only for the stream of the
+         * endpoint.
          * 
          * The option is a: {@code String} type.
          * 

@@ -230,23 +230,6 @@ public interface IggyComponentBuilderFactory {
             return this;
         }
     
-        /**
-         * The password that the client logs in with to the Iggy server.
-         * Required, together with the username option: the client fails to
-         * connect without them.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default IggyComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-    
         
         /**
          * The port of the Iggy server. The default 8090 is the default port of
@@ -267,9 +250,11 @@ public interface IggyComponentBuilderFactory {
         }
     
         /**
-         * The ID of a stream that autoCreateStream looks up: if no stream has
-         * this ID, a stream named streamName is created. The producer and the
-         * consumer always address the stream by its name.
+         * The ID of a stream that autoCreateStream looks up for the stream of
+         * the endpoint: if no stream has this ID, a stream named streamName is
+         * created. The stream of a CamelIggyStreamOverride header is looked up
+         * and created by its name. The producer and the consumer always address
+         * the stream by its name.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
@@ -367,6 +352,8 @@ public interface IggyComponentBuilderFactory {
         /**
          * The number of threads of the thread pool of the consumer. The
          * consumer runs one polling task, so one thread polls the topic.
+         * Deprecation note: The consumer polls the topic with one task, so a
+         * value above 1 only adds idle threads.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -376,6 +363,7 @@ public interface IggyComponentBuilderFactory {
          * @param consumersCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default IggyComponentBuilder consumersCount(int consumersCount) {
             doSetProperty("consumersCount", consumersCount);
             return this;
@@ -497,9 +485,11 @@ public interface IggyComponentBuilderFactory {
         
         /**
          * How the producer chooses the partition of the messages it sends, as
-         * an org.apache.iggy.message.Partitioning: balanced() spreads them over
-         * the partitions, partitionId(Long) sends to one partition and
-         * messagesKey(String) to the partition of a key.
+         * an org.apache.iggy.message.Partitioning or as text: balanced() (the
+         * text balanced) spreads them over the partitions, partitionId(Long)
+         * (for example the text partitionId:2) sends to one partition and
+         * messagesKey(String) (for example the text messagesKey:order-1) to the
+         * partition of a key.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.iggy.message.Partitioning&lt;/code&gt; type.
@@ -534,6 +524,23 @@ public interface IggyComponentBuilderFactory {
          */
         default IggyComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+    
+        /**
+         * The password that the client logs in with to the Iggy server.
+         * Required, together with the username option: the client fails to
+         * connect without them.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default IggyComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
             return this;
         }
     
@@ -654,7 +661,6 @@ public interface IggyComponentBuilderFactory {
             case "maxTopicSize": getOrCreateConfiguration((IggyComponent) component).setMaxTopicSize((java.lang.Long) value); return true;
             case "messageExpiry": getOrCreateConfiguration((IggyComponent) component).setMessageExpiry((java.lang.Long) value); return true;
             case "partitionsCount": getOrCreateConfiguration((IggyComponent) component).setPartitionsCount((java.lang.Long) value); return true;
-            case "password": getOrCreateConfiguration((IggyComponent) component).setPassword((java.lang.String) value); return true;
             case "port": getOrCreateConfiguration((IggyComponent) component).setPort((int) value); return true;
             case "streamId": getOrCreateConfiguration((IggyComponent) component).setStreamId((java.lang.Long) value); return true;
             case "streamName": getOrCreateConfiguration((IggyComponent) component).setStreamName((java.lang.String) value); return true;
@@ -670,6 +676,7 @@ public interface IggyComponentBuilderFactory {
             case "lazyStartProducer": ((IggyComponent) component).setLazyStartProducer((boolean) value); return true;
             case "partitioning": getOrCreateConfiguration((IggyComponent) component).setPartitioning((org.apache.iggy.message.Partitioning) value); return true;
             case "autowiredEnabled": ((IggyComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "password": getOrCreateConfiguration((IggyComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((IggyComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "tlsCertificatePath": getOrCreateConfiguration((IggyComponent) component).setTlsCertificatePath((java.lang.String) value); return true;
             case "tlsEnabled": getOrCreateConfiguration((IggyComponent) component).setTlsEnabled((boolean) value); return true;

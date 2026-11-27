@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -39,7 +40,7 @@ public class IggyConfiguration implements Cloneable {
               description = "The username that the client logs in with to the Iggy server. Required, together with the"
                             + " password option: the client fails to connect without them.")
     private String username;
-    @UriParam(security = "secret",
+    @UriParam(security = "secret", label = "security",
               description = "The password that the client logs in with to the Iggy server. Required, together with the"
                             + " username option: the client fails to connect without them.")
     private String password;
@@ -53,8 +54,10 @@ public class IggyConfiguration implements Cloneable {
                             + " and the consumer check it when they start, and the producer again for each message that has"
                             + " an override header.")
     private boolean autoCreateTopic = true;
-    @UriParam(description = "The ID of a stream that autoCreateStream looks up: if no stream has this ID, a stream named"
-                            + " streamName is created. The producer and the consumer always address the stream by its name.")
+    @UriParam(description = "The ID of a stream that autoCreateStream looks up for the stream of the endpoint: if no stream"
+                            + " has this ID, a stream named streamName is created. The stream of a CamelIggyStreamOverride"
+                            + " header is looked up and created by its name. The producer and the consumer always address"
+                            + " the stream by its name.")
     private Long streamId;
     @UriParam(description = "The name of the stream that holds the topic. Required. The CamelIggyStreamOverride header"
                             + " replaces it for the producer.",
@@ -78,8 +81,10 @@ public class IggyConfiguration implements Cloneable {
     private Map<String, String> iggyHeaderOptions = new HashMap<>();
     @UriParam(label = "producer", defaultValue = "balanced",
               description = "How the producer chooses the partition of the messages it sends, as an"
-                            + " org.apache.iggy.message.Partitioning: balanced() spreads them over the partitions,"
-                            + " partitionId(Long) sends to one partition and messagesKey(String) to the partition of a key.")
+                            + " org.apache.iggy.message.Partitioning or as text: balanced() (the text balanced) spreads them"
+                            + " over the partitions, partitionId(Long) (for example the text partitionId:2) sends to one"
+                            + " partition and messagesKey(String) (for example the text messagesKey:order-1) to the partition"
+                            + " of a key.")
     private Partitioning partitioning = Partitioning.balanced();
     @UriParam(label = "consumer",
               description = "The name of the consumer group that the consumer joins, and creates if it does not exist."
@@ -95,8 +100,10 @@ public class IggyConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "1",
               description = "The number of threads of the thread pool of the consumer. The consumer runs one polling task, so"
                             + " one thread polls the topic.")
+    @Metadata(deprecationNote = "The consumer polls the topic with one task, so a value above 1 only adds idle threads")
+    @Deprecated(since = "4.24.0")
     private int consumersCount = 1;
-    @UriParam(label = "common,consumer", defaultValue = "30000",
+    @UriParam(label = "consumer", defaultValue = "30000",
               description = "The time in milliseconds that the consumer waits for its polling thread to finish when it stops,"
                             + " before it interrupts the thread.")
     private int shutdownTimeout = 30000;
@@ -265,10 +272,18 @@ public class IggyConfiguration implements Cloneable {
         this.partitionId = partitionId;
     }
 
+    /**
+     * @deprecated the consumer polls the topic with one task, so a value above 1 only adds idle threads
+     */
+    @Deprecated(since = "4.24.0")
     public int getConsumersCount() {
         return consumersCount;
     }
 
+    /**
+     * @deprecated the consumer polls the topic with one task, so a value above 1 only adds idle threads
+     */
+    @Deprecated(since = "4.24.0")
     public void setConsumersCount(int consumersCount) {
         this.consumersCount = consumersCount;
     }
