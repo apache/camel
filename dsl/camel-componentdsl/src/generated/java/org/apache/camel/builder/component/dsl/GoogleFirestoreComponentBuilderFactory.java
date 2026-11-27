@@ -252,6 +252,7 @@ public interface GoogleFirestoreComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * The operation that the producer performs. If not set, the producer
          * performs setDocument. The CamelGoogleFirestoreOperation header
@@ -260,6 +261,7 @@ public interface GoogleFirestoreComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.google.firestore.GoogleFirestoreOperations&lt;/code&gt; type.
          * 
+         * Default: setDocument
          * Group: producer
          * 
          * @param operation the value to set

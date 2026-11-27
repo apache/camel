@@ -22,12 +22,10 @@ import java.util.UUID;
 
 import javax.xml.crypto.AlgorithmMethod;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureTransform;
@@ -37,42 +35,97 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
-    @UriParam
+    @UriParam(description = "An XPath, as a javax.xml.crypto.dsig.spec.XPathFilterParameterSpec created with"
+                            + " XmlSignatureHelper.getXpathFilter, that selects the element to which an enveloped signature is added"
+                            + " as the last child; the first element of the result is used. Setting it makes the signature"
+                            + " enveloped. Cannot be combined with parentLocalName or xpathsToIdAttributes: the signer then fails.")
     private XPathFilterParameterSpec parentXpath;
-    @UriParam
+    @UriParam(description = "XPaths, as javax.xml.crypto.dsig.spec.XPathFilterParameterSpec created with"
+                            + " XmlSignatureHelper.getXpathFilter, that select ID attributes; setting them makes the signatures"
+                            + " detached. For each element with a selected ID attribute, the signer creates a signature whose"
+                            + " reference URI is # followed by the attribute value, adds it as the last child of the parent of that"
+                            + " element, and signs deeper elements first. Requires schemaResourceUri and cannot be combined with"
+                            + " parentLocalName or parentXpath. The CamelXmlSignatureXpathsToIdAttributes header replaces this"
+                            + " option.")
     private List<XPathFilterParameterSpec> xpathsToIdAttributes = Collections.emptyList();
-    @UriParam
+    @UriParam(description = "The transforms of the reference to the signed content, which are applied to the content before its"
+                            + " digest is calculated. Create them with the methods of XmlSignatureHelper. The default is Canonical"
+                            + " XML 1.0 (http://www.w3.org/TR/2001/REC-xml-c14n-20010315), and for an enveloped signature the signer"
+                            + " puts the enveloped-signature transform first when the list does not contain it. The"
+                            + " CamelXmlSignatureTransformMethods header replaces this option.")
     private List<AlgorithmMethod> transformMethods = Collections.singletonList(XmlSignatureHelper
             .getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
-    @UriParam
+    @UriParam(description = "Provides the key that the signer signs with and the optional KeyInfo element that is added to the"
+                            + " signature. Required: the signer fails without it. DefaultKeyAccessor of the package"
+                            + " org.apache.camel.component.xmlsecurity.api reads the private key and the certificate chain of an"
+                            + " alias from a java.security.KeyStore.")
     private KeyAccessor keyAccessor;
-    @UriParam(defaultValue = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
+    @UriParam(defaultValue = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
+              description = "The canonicalization method of the SignedInfo element, which is canonicalized before the signature"
+                            + " value is calculated. Create it with XmlSignatureHelper.getCanonicalizationMethod(algorithm) or"
+                            + " getCanonicalizationMethod(algorithm, inclusiveNamespacePrefixes). The default is Canonical XML 1.0"
+                            + " (http://www.w3.org/TR/2001/REC-xml-c14n-20010315).")
     private AlgorithmMethod canonicalizationMethod = new XmlSignatureTransform(CanonicalizationMethod.INCLUSIVE);
-    @UriParam(defaultValue = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
+    @UriParam(defaultValue = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+              description = "The URI of the signature algorithm, which must fit the key of keyAccessor, for example"
+                            + " http://www.w3.org/2001/04/xmldsig-more#rsa-sha512 or"
+                            + " http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256. The default is RSA with SHA-256.")
     private String signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-    @UriParam
+    @UriParam(description = "The URI of the digest algorithm of the references, for example"
+                            + " http://www.w3.org/2001/04/xmlenc#sha512. If not set, the signer takes the digest algorithm that the"
+                            + " URI of signatureAlgorithm names (SHA-1, SHA-224, SHA-256, SHA-384, SHA-512 or RIPEMD-160), and fails"
+                            + " if it names none.")
     private String digestAlgorithm;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether to add a reference to the KeyInfo element to the SignedInfo element, so that the signature"
+                            + " value also protects the KeyInfo element against changes. Only used when keyAccessor returns a"
+                            + " KeyInfo with an Id; DefaultKeyAccessor does so when the keystore has a certificate chain for the"
+                            + " alias.")
     private Boolean addKeyInfoReference = Boolean.TRUE;
-    @UriParam(defaultValue = "ds")
+    @UriParam(defaultValue = "ds",
+              description = "The namespace prefix of the elements of the XML signature namespace"
+                            + " http://www.w3.org/2000/09/xmldsig#. If empty, the signature elements have no prefix.")
     private String prefixForXmlSignatureNamespace = "ds";
-    @UriParam
+    @UriParam(description = "The Id attribute of the Object element that holds the signed content of an enveloping signature,"
+                            + " which the reference to the content points to. If not set, an Id made of an underscore and a random"
+                            + " UUID is generated once and then used for all messages of the endpoint. Only used for an enveloping"
+                            + " signature.")
     private String contentObjectId;
-    @UriParam
+    @UriParam(description = "The Id attribute of the Signature element. If not set, a new Id made of an underscore and a random"
+                            + " UUID is generated for each signature; if empty, the Signature element has no Id attribute. The"
+                            + " XmlSignatureProperties of the properties option can replace it, and XAdESSignatureProperties"
+                            + " generates one when it is empty.")
     private String signatureId;
-    @UriParam
+    @UriParam(description = "The URI of the reference to the signed content of an enveloped signature. If not set, the URI is"
+                            + " empty, which signs the whole document. A URI that points to an ID, such as #id, also requires"
+                            + " schemaResourceUri, which declares the ID attributes. The CamelXmlSignatureContentReferenceUri header"
+                            + " replaces this option. Not used for an enveloping or detached signature.")
     private String contentReferenceUri;
-    @UriParam
+    @UriParam(description = "The Type attribute of the reference to the signed content, for example"
+                            + " http://www.w3.org/2000/09/xmldsig#Object. If not set, the reference has no Type attribute. The"
+                            + " CamelXmlSignatureContentReferenceType header replaces this option.")
     private String contentReferenceType;
-    @UriParam
+    @UriParam(description = "The local name of the element to which an enveloped signature is added as the last child; setting it"
+                            + " makes the signature enveloped. The first element of the document with this local name and the"
+                            + " namespace of parentNamespace is used. Cannot be combined with parentXpath or xpathsToIdAttributes:"
+                            + " the signer then fails.")
     private String parentLocalName;
-    @UriParam
+    @UriParam(description = "The namespace of the parentLocalName element. If not set, that element must have no namespace.")
     private String parentNamespace;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the message body is plain text instead of an XML document. The signer then puts the text,"
+                            + " decoded with plainTextEncoding, into the Object element of an enveloping signature; plain text"
+                            + " cannot get an enveloped or detached signature. The CamelXmlSignatureMessageIsPlainText header"
+                            + " replaces this option.")
     private Boolean plainText = Boolean.FALSE;
-    @UriParam(defaultValue = "UTF-8")
+    @UriParam(defaultValue = "UTF-8",
+              description = "The character encoding that the signer decodes a plain text message body with, see plainText. The"
+                            + " CamelXmlSignaturePlainTextEncoding header replaces this option.")
     private String plainTextEncoding = "UTF-8";
-    @UriParam
+    @UriParam(description = "A bean that implements org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties, which adds"
+                            + " further references and Object elements to each signature and can set the Id of the Signature"
+                            + " element. For XAdES-BES and XAdES-EPES signatures, use XAdESSignatureProperties or"
+                            + " DefaultXAdESSignatureProperties.")
     private XmlSignatureProperties properties;
 
     public XmlSignerConfiguration() {
@@ -90,12 +143,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return keyAccessor;
     }
 
-    /**
-     * For the signing process, a private key is necessary. You specify a key accessor bean which provides this private
-     * key. The key accessor bean must implement the KeyAccessor interface. The package
-     * org.apache.camel.component.xmlsecurity.api contains the default implementation class DefaultKeyAccessor which
-     * reads the private key from a Java keystore.
-     */
     public void setKeyAccessor(KeyAccessor keyAccessor) {
         this.keyAccessor = keyAccessor;
     }
@@ -104,12 +151,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return canonicalizationMethod;
     }
 
-    /**
-     * Canonicalization method used to canonicalize the SignedInfo element before the digest is calculated. You can use
-     * the helper methods XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
-     * getCanonicalizationMethod(String algorithm, List inclusiveNamespacePrefixes), which takes a list of the inclusive
-     * namespace prefixes, to create a canonicalization method.
-     */
     public void setCanonicalizationMethod(AlgorithmMethod canonicalizationMethod) {
         this.canonicalizationMethod = canonicalizationMethod;
     }
@@ -118,12 +159,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return transformMethods;
     }
 
-    /**
-     * Transforms which are executed on the message body before the digest is calculated. By default, C14n is added and
-     * in the case of enveloped signature (see option parentLocalName) also
-     * http://www.w3.org/2000/09/xmldsig#enveloped-signature is added at position 0 of the list. Use methods in
-     * XmlSignatureHelper to create the transform methods.
-     */
     public void setTransformMethods(List<AlgorithmMethod> transformMethods) {
         this.transformMethods = transformMethods;
     }
@@ -132,9 +167,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return signatureAlgorithm;
     }
 
-    /**
-     * Signature algorithm. Default value is "http://www.w3.org/2000/09/xmldsig#rsa-sha1".
-     */
     public void setSignatureAlgorithm(String signatureAlgorithm) {
         this.signatureAlgorithm = signatureAlgorithm;
     }
@@ -143,11 +175,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return digestAlgorithm;
     }
 
-    /**
-     * Digest algorithm URI. Optional parameter. This digest algorithm is used for calculating the digest of the input
-     * message. If this digest algorithm is not specified then the digest algorithm is calculated from the signature
-     * algorithm. Example: "http://www.w3.org/2001/04/xmlenc#sha256"
-     */
     public void setDigestAlgorithm(String digestAlgorithm) {
         this.digestAlgorithm = digestAlgorithm;
     }
@@ -156,13 +183,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return addKeyInfoReference;
     }
 
-    /**
-     * In order to protect the KeyInfo element from tampering you can add a reference to the signed info element so that
-     * it is protected via the signature value. The default value is <tt>true</tt>.
-     * <p>
-     * Only relevant when a KeyInfo is returned by {@link KeyAccessor}. and {@link KeyInfo#getId()} is not
-     * <code>null</code>.
-     */
     public void setAddKeyInfoReference(Boolean addKeyInfoReference) {
         this.addKeyInfoReference = addKeyInfoReference;
     }
@@ -171,15 +191,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return prefixForXmlSignatureNamespace;
     }
 
-    /**
-     * Namespace prefix for the XML signature namespace "http://www.w3.org/2000/09/xmldsig#". Default value is "ds".
-     *
-     * If <code>null</code> or an empty value is set then no prefix is used for the XML signature namespace.
-     * <p>
-     * See best practice http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml- without-namespaces
-     *
-     * @param prefixForXmlSignatureNamespace prefix
-     */
     public void setPrefixForXmlSignatureNamespace(String prefixForXmlSignatureNamespace) {
         this.prefixForXmlSignatureNamespace = prefixForXmlSignatureNamespace;
     }
@@ -188,23 +199,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return parentLocalName;
     }
 
-    /**
-     * Local name of the parent element to which the XML signature element will be added. Only relevant for enveloped
-     * XML signature. Alternatively you can also use {@link #setParentXpath(XPathFilterParameterSpec)}.
-     *
-     * <p>
-     * Default value is <code>null</code>. The value must be <code>null</code> for enveloping and detached XML
-     * signature.
-     * <p>
-     * This parameter or the parameter {@link #setParentXpath(XPathFilterParameterSpec)} for enveloped signature and the
-     * parameter {@link #setXpathsToIdAttributes(List)} for detached signature must not be set in the same
-     * configuration.
-     * <p>
-     * If the parameters <tt>parentXpath</tt> and <tt>parentLocalName</tt> are specified in the same configuration then
-     * an exception is thrown.
-     *
-     * @param parentLocalName local name
-     */
     public void setParentLocalName(String parentLocalName) {
         this.parentLocalName = parentLocalName;
     }
@@ -213,9 +207,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return parentNamespace;
     }
 
-    /**
-     * Namespace of the parent element to which the XML signature element will be added.
-     */
     public void setParentNamespace(String parentNamespace) {
         this.parentNamespace = parentNamespace;
     }
@@ -228,10 +219,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return contentObjectId;
     }
 
-    /**
-     * Sets the content object Id attribute value. By default a UUID is generated. If you set the <code>null</code>
-     * value, then a new UUID will be generated. Only used in the enveloping case.
-     */
     public void setContentObjectId(String contentObjectId) {
         this.contentObjectId = contentObjectId;
     }
@@ -240,11 +227,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return signatureId;
     }
 
-    /**
-     * Sets the signature Id. If this parameter is not set (null value) then a unique ID is generated for the signature
-     * ID (default). If this parameter is set to "" (empty string) then no Id attribute is created in the signature
-     * element.
-     */
     public void setSignatureId(String signatureId) {
         this.signatureId = signatureId;
     }
@@ -253,12 +235,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return contentReferenceUri;
     }
 
-    /**
-     * Reference URI for the content to be signed. Only used in the enveloped case. If the reference URI contains an ID
-     * attribute value, then the resource schema URI ( {@link #setSchemaResourceUri(String)}) must also be set because
-     * the schema validator will then find out which attributes are ID attributes. Will be ignored in the enveloping or
-     * detached case.
-     */
     public void setContentReferenceUri(String referenceUri) {
         this.contentReferenceUri = referenceUri;
     }
@@ -267,10 +243,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return contentReferenceType;
     }
 
-    /**
-     * Type of the content reference. The default value is <code>null</code>. This value can be overwritten by the
-     * header {@link XmlSignatureConstants#HEADER_CONTENT_REFERENCE_TYPE}.
-     */
     public void setContentReferenceType(String referenceType) {
         this.contentReferenceType = referenceType;
     }
@@ -279,11 +251,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return plainText;
     }
 
-    /**
-     * Indicator whether the message body contains plain text. The default value is <code>false</code>, indicating that
-     * the message body contains XML. The value can be overwritten by the header
-     * {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT}.
-     */
     public void setPlainText(Boolean plainText) {
         this.plainText = plainText;
     }
@@ -292,10 +259,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return plainTextEncoding;
     }
 
-    /**
-     * Encoding of the plain text. Only relevant if the message body is plain text (see parameter {@link #plainText}.
-     * Default value is "UTF-8".
-     */
     public void setPlainTextEncoding(String plainTextEncoding) {
         this.plainTextEncoding = plainTextEncoding;
     }
@@ -304,10 +267,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return properties;
     }
 
-    /**
-     * For adding additional References and Objects to the XML signature which contain additional properties, you can
-     * provide a bean which implements the XmlSignatureProperties interface.
-     */
     public void setProperties(XmlSignatureProperties properties) {
         this.properties = properties;
     }
@@ -316,18 +275,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return xpathsToIdAttributes;
     }
 
-    /**
-     * Define the elements which are signed in the detached case via XPATH expressions to ID attributes (attributes of
-     * type ID). For each element found via the XPATH expression a detached signature is created whose reference URI
-     * contains the corresponding attribute value (preceded by '#'). The signature becomes the last sibling of the
-     * signed element. Elements with deeper hierarchy level are signed first.
-     * <p>
-     * You can also set the XPATH list dynamically via the header
-     * {@link XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES}.
-     * <p>
-     * The parameter {@link #setParentLocalName(String)} or {@link #setParentXpath(XPathFilterParameterSpec)} for
-     * enveloped signature and this parameter for detached signature must not be set in the same configuration.
-     */
     public void setXpathsToIdAttributes(List<XPathFilterParameterSpec> xpathsToIdAttributes) {
         if (xpathsToIdAttributes == null) {
             this.xpathsToIdAttributes = Collections.emptyList();
@@ -340,20 +287,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         return parentXpath;
     }
 
-    /**
-     * Sets the XPath to find the parent node in the enveloped case. Either you specify the parent node via this method
-     * or the local name and namespace of the parent with the methods {@link #setParentLocalName(String)} and
-     * {@link #setParentNamespace(String)}.
-     * <p>
-     * Default value is <code>null</code>. The value must be <code>null</code> for enveloping and detached XML
-     * signature.
-     * <p>
-     * If the parameters <tt>parentXpath</tt> and <tt>parentLocalName</tt> are specified in the same configuration then
-     * an exception is thrown.
-     *
-     * @param parentXpath xpath to the parent node, if the xpath returns several values then the first Element node is
-     *                    used
-     */
     public void setParentXpath(XPathFilterParameterSpec parentXpath) {
         this.parentXpath = parentXpath;
     }

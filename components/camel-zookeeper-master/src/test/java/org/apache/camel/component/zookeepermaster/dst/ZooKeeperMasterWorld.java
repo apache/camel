@@ -88,9 +88,9 @@ import org.apache.curator.framework.CuratorFramework;
  * Left out of the default set, each a known bug (a system property adds each): a route stopped while the client is
  * disconnected leaves the znode of its group behind, CAMEL-27037 ({@code -Ddst.zookeeper.stopWhileSuspended=true}); a
  * route stopped while the group waits for the answer of a create, or makes one after the close interrupted its thread,
- * leaves the znode of that create behind, CAMEL-27037 ({@code -Ddst.zookeeper.stopDuringCreate=true}); and a route of
- * the policy started from outside when it is started already starts its consumer again without the onStart of the
- * policy, CAMEL-27044 ({@code -Ddst.zookeeper.startStartedRoute=true}).
+ * leaves the znode of that create behind, CAMEL-27037 ({@code -Ddst.zookeeper.stopDuringCreate=true}). A route of the
+ * policy started from outside when it is started already is in the default set: since CAMEL-27044 that start is a
+ * no-op, so it no longer starts the consumer of a node that is not the master.
  */
 @DstWorld(component = "zookeeper-master",
           fake = "FakeZooKeeper: a ZooKeeper ensemble (sessions, ephemeral sequential znodes, one-time watches) with the"
@@ -126,8 +126,6 @@ final class ZooKeeperMasterWorld {
     private final long maxStart;
     private final double startFailRate;
     private final long grace;
-    // CAMEL-27044: a started route of the policy started again starts its consumer without the onStart of the policy
-    private final boolean startStartedRoute = Boolean.getBoolean("dst.zookeeper.startStartedRoute");
     // CAMEL-27037: a group closed while the client is disconnected does not delete its znode
     private final boolean stopWhileSuspended = Boolean.getBoolean("dst.zookeeper.stopWhileSuspended");
     // CAMEL-27037: a create interrupted by the close of the group is applied, and its znode stays
@@ -360,11 +358,9 @@ final class ZooKeeperMasterWorld {
                 operator.schedule("remove route", t, () -> removeRoute(context, operator));
             } else if (policyMode) {
                 operator.schedule("start route from outside", t, () -> {
-                    // a route that is already started is started again only with -Ddst.zookeeper.startStartedRoute=true:
-                    // that starts its consumer again without the onStart of the policy (CAMEL-27044)
-                    if (startStartedRoute || context.getRouteController().getRouteStatus(ROUTE) != ServiceStatus.Started) {
-                        startRoute(context);
-                    }
+                    // also a route that is already started: that start is a no-op, so it does not start the consumer
+                    // that the policy keeps stopped on a node that is not the master (CAMEL-27044)
+                    startRoute(context);
                     opsLeft--;
                 });
             } else {

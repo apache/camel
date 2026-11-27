@@ -84,7 +84,8 @@ public class TextGenerationPredictor extends AbstractTaskPredictor {
     protected String getPythonScript() {
         String doSample = config.getTemperature() > 0 ? "True" : "False";
         float temperature = config.getTemperature() > 0 ? config.getTemperature() : 1.0f;
-        return loadPythonScript("text_generation.py", config.getModelId(), config.getRevision(), config.getDevice(),
+        return loadPythonScript("text_generation.py", pythonString(config.getModelId()), pythonString(config.getRevision()),
+                pythonString(config.getDevice()),
                 config.getMaxTokens(), doSample,
                 temperature);
     }

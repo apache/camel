@@ -2,7 +2,7 @@
 :doctitle: Azure Files
 :shortname: azure-files
 :artifactid: camel-azure-files
-:description: Send and receive files to Azure storage file share
+:description: Read files from and write files to a file share in Azure Files.
 :since: 3.22
 :supportlevel: Preview
 :tabs-sync-option:

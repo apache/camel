@@ -2,7 +2,7 @@
 :doctitle: ServiceNow
 :shortname: servicenow
 :artifactid: camel-servicenow
-:description: Interact with ServiceNow via its REST API.
+:description: Query and change records, attachments, import sets and service catalog items of a ServiceNow instance through its REST API.
 :since: 2.18
 :supportlevel: Stable
 :tabs-sync-option:

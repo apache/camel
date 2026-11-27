@@ -2,7 +2,7 @@
 :doctitle: XML Security Sign
 :shortname: xmlsecurity-sign
 :artifactid: camel-xmlsecurity
-:description: Sign XML payloads using the XML signature specification.
+:description: Sign an XML document or plain text with an enveloped, enveloping or detached XML signature.
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:

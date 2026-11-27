@@ -67,11 +67,12 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
+        // the listener is started first, so a listener that fails does not leave the scheduler of the consumer running
         if (endpoint.getConfiguration().isRealtimeUpdates()) {
             startRealtimeListener();
         }
+
+        super.doStart();
     }
 
     @Override
@@ -92,17 +93,32 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
         super.doStop();
     }
 
-    private void startRealtimeListener() {
+    private void startRealtimeListener() throws Exception {
         String collectionName = endpoint.getConfiguration().getCollectionName();
         CollectionReference collection = endpoint.getFirestoreClient().collection(collectionName);
 
         CountDownLatch latch = new CountDownLatch(1);
+        // an error that the listener receives while doStart waits for the first event fails the start; a later error
+        // goes to the exception handler of the consumer
+        ListenerStart start = new ListenerStart();
 
         listenerRegistration = collection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot snapshots, FirestoreException e) {
                 if (e != null) {
-                    LOG.error("Error listening to collection: {}", collectionName, e);
+                    synchronized (start) {
+                        if (start.waiting) {
+                            start.error = e;
+                            latch.countDown();
+                            return;
+                        }
+                    }
+                    // Firestore does not call the listener again after an error
+                    getExceptionHandler().handleException(
+                            "The realtime listener of collection " + collectionName
+                                                          + " failed and receives no more changes. Restart the route to"
+                                                          + " listen again.",
+                            e);
                     return;
                 }
 
@@ -120,13 +136,42 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
             }
         });
 
+        boolean firstEvent = false;
+        boolean interrupted = false;
         try {
-            latch.await(30, TimeUnit.SECONDS);
-            LOG.debug("Realtime listener started for collection: {}", collectionName);
+            firstEvent = latch.await(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            interrupted = true;
             LOG.warn("Interrupted while starting realtime listener");
         }
+
+        FirestoreException error;
+        synchronized (start) {
+            start.waiting = false;
+            error = start.error;
+        }
+        if (error != null) {
+            listenerRegistration.remove();
+            listenerRegistration = null;
+            throw error;
+        }
+        if (firstEvent) {
+            LOG.debug("Realtime listener started for collection: {}", collectionName);
+        } else if (!interrupted) {
+            LOG.warn("The realtime listener of collection {} received no snapshot within 30 seconds. It keeps waiting,"
+                     + " and the changes are consumed when they arrive.",
+                    collectionName);
+        }
+    }
+
+    /**
+     * Whether doStart still waits for the first event of the realtime listener, and the error the listener received
+     * meanwhile. Guarded by its own monitor, as the listener runs on a Firestore client thread.
+     */
+    private static final class ListenerStart {
+        private boolean waiting = true;
+        private FirestoreException error;
     }
 
     /**

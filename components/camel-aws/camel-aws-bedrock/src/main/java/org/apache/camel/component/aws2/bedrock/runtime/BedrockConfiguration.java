@@ -157,6 +157,14 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
                             + " applyGuardrail.",
               defaultValue = "false")
     private boolean guardrailTrace;
+    @UriParam(description = "How converseStream applies the guardrail of the guardrailIdentifier option to the streamed"
+                            + " response. With sync, Bedrock buffers the chunks and checks them with the guardrail before it"
+                            + " sends them. With async, Bedrock sends the chunks at once and checks them in the background, so"
+                            + " chunks that the guardrail would block can be sent before it blocks the rest, and masking of"
+                            + " sensitive information is not supported. Not used when the CamelAwsBedrockGuardrailConfig"
+                            + " header is set.",
+              defaultValue = "sync", enums = "sync,async")
+    private String guardrailStreamProcessingMode = "sync";
 
     public BedrockRuntimeClient getBedrockRuntimeClient() {
         return bedrockRuntimeClient;
@@ -349,6 +357,14 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
 
     public void setGuardrailTrace(boolean guardrailTrace) {
         this.guardrailTrace = guardrailTrace;
+    }
+
+    public String getGuardrailStreamProcessingMode() {
+        return guardrailStreamProcessingMode;
+    }
+
+    public void setGuardrailStreamProcessingMode(String guardrailStreamProcessingMode) {
+        this.guardrailStreamProcessingMode = guardrailStreamProcessingMode;
     }
 
     // *************************************************

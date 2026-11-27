@@ -40,6 +40,17 @@ http://avro.apache.org/docs/current/[Apache Avro documentation].
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
+== Trusted packages apply to the whole JVM
+
+Avro validates the classes it loads for a schema, and only loads classes from trusted packages. Camel adds the
+package of the `instanceClassName` option, the namespaces of the schema, and the packages of the
+`serializablePackages` option to these trusted packages.
+
+Avro has one class validator for the whole JVM. So a package trusted by one data format is trusted for all Avro class
+resolution in the JVM: for every Avro data format, every xref:components::avro-component.adoc[Avro RPC] endpoint and
+every Camel context in the same JVM. A trusted package stays trusted until the JVM is restarted; stopping the route
+does not remove it. Only add packages that hold your own Avro model classes.
+
 == Examples
 
 === Avro Data Format usage

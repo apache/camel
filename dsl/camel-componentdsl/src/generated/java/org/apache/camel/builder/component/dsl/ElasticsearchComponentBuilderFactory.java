@@ -238,9 +238,7 @@ public interface ElasticsearchComponentBuilderFactory {
         
         /**
          * The delay in milliseconds of the read of the nodes that the Sniffer
-         * schedules after a failed request. The component does not register the
-         * client listener that reports failures to the Sniffer, so this option
-         * has no effect.
+         * schedules after a failed request, when enableSniffer is set.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -297,6 +295,9 @@ public interface ElasticsearchComponentBuilderFactory {
          * instead of the default trust store of the JVM. It is loaded from the
          * classpath by default, or with the prefix classpath:, file: or http:.
          * It needs enableSSL, and sslContextParameters takes precedence.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

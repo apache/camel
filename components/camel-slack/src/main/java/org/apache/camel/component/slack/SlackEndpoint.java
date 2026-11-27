@@ -61,7 +61,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
                            + " of conversationType.")
     @Metadata(required = true)
     private String channel;
-    @UriParam(label = "producer",
+    @UriParam(label = "producer,security", secret = true,
               description = "The URL of a Slack incoming webhook, such as https://hooks.slack.com/services/..., that the"
                             + " producer posts the message to as JSON. It is used only when no token is set. The consumer"
                             + " does not use it.")
