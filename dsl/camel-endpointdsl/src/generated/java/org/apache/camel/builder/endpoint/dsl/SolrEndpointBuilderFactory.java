@@ -350,8 +350,9 @@ public interface SolrEndpointBuilderFactory {
         }
         /**
          * The X.509 certificate of the certificate authority that the client
-         * that Camel creates trusts for HTTPS. It is loaded from the classpath
-         * by default, or with the classpath:, file: or http: prefix. Not used
+         * that Camel creates trusts for HTTPS (the enableSSL option must be
+         * enabled). It is loaded from the classpath by default, or with the
+         * classpath:, file: or https: prefix; an http: URL is refused. Not used
          * when the sslContextParameters option is set.
          * 
          * This option can also be loaded from an existing file, by prefixing
@@ -370,7 +371,8 @@ public interface SolrEndpointBuilderFactory {
         }
         /**
          * Whether the client that Camel creates connects to Solr with HTTPS
-         * instead of HTTP.
+         * instead of HTTP. It must be enabled to use the certificatePath or
+         * sslContextParameters option, otherwise the endpoint fails at startup.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -386,7 +388,8 @@ public interface SolrEndpointBuilderFactory {
         }
         /**
          * Whether the client that Camel creates connects to Solr with HTTPS
-         * instead of HTTP.
+         * instead of HTTP. It must be enabled to use the certificatePath or
+         * sslContextParameters option, otherwise the endpoint fails at startup.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -418,10 +421,11 @@ public interface SolrEndpointBuilderFactory {
         }
         /**
          * The TLS configuration (key store, trust store, protocols, cipher
-         * suites, named groups) of the client that Camel creates. It takes
-         * precedence over the certificatePath option. If not set, the global
-         * SSL context parameters are used when the
-         * useGlobalSslContextParameters option of the component is enabled.
+         * suites, named groups) of the client that Camel creates, which is used
+         * when the enableSSL option is enabled. It takes precedence over the
+         * certificatePath option. If not set, the global SSL context parameters
+         * are used when the useGlobalSslContextParameters option of the
+         * component is enabled.
          * 
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
@@ -437,10 +441,11 @@ public interface SolrEndpointBuilderFactory {
         }
         /**
          * The TLS configuration (key store, trust store, protocols, cipher
-         * suites, named groups) of the client that Camel creates. It takes
-         * precedence over the certificatePath option. If not set, the global
-         * SSL context parameters are used when the
-         * useGlobalSslContextParameters option of the component is enabled.
+         * suites, named groups) of the client that Camel creates, which is used
+         * when the enableSSL option is enabled. It takes precedence over the
+         * certificatePath option. If not set, the global SSL context parameters
+         * are used when the useGlobalSslContextParameters option of the
+         * component is enabled.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.

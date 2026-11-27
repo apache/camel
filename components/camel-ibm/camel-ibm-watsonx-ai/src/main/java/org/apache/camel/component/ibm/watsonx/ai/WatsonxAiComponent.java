@@ -29,7 +29,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("ibm-watsonx-ai")
 public class WatsonxAiComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints share. Each endpoint starts from a copy of it, and"
+                            + " its URI options override the copied values.")
     private WatsonxAiConfiguration configuration = new WatsonxAiConfiguration();
 
     public WatsonxAiComponent() {
@@ -51,9 +52,6 @@ public class WatsonxAiComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * The component configuration
-     */
     public void setConfiguration(WatsonxAiConfiguration configuration) {
         this.configuration = configuration;
     }

@@ -58,6 +58,28 @@ and `getEvents()` the events of the list, such as `QueueParamsEvent` and `QueueM
 EXTENSION_STATE sets the `ManagerResponse` (an `ExtensionStateResponse`) as the message body.
 When Asterisk answers with an error, the response is a `ManagerError`.
 
+== TLS
+
+By default the consumer and the producer connect to the Asterisk Manager Interface (AMI) over plain TCP, so the
+username, the password, the actions and the events are sent in clear text. Set `ssl=true` to connect over TLS, and
+set `port` to the TLS port of the AMI, usually 5039 (the default port 5038 is the one of plain TCP):
+
+[source,java]
+----
+from("asterisk:myVoIP?hostname=hostname&port=5039&username=username&password=password&ssl=true")
+  .log("Received a message - ${body}");
+----
+
+The Asterisk server must accept AMI over TLS on that port: set `tlsenable=yes` and the `tlsbindaddr` address
+(`0.0.0.0:5039` for example) in the `[general]` section of `manager.conf`, together with the certificate of the server
+(`tlscertfile` and `tlsprivatekey`).
+
+asterisk-java opens the TLS socket with the default `SSLSocketFactory` of the JVM, so the certificate of the server
+is checked with the default trust store of the JVM. When the certificate is not signed by a certificate authority that
+the JVM trusts, add it to a trust store and point the JVM to it with the `javax.net.ssl.trustStore` and
+`javax.net.ssl.trustStorePassword` system properties. A custom `SSLContextParameters` is not supported, and the host
+name of the server is not checked against the certificate: asterisk-java offers neither.
+
 == Examples
 
 === Producer Example

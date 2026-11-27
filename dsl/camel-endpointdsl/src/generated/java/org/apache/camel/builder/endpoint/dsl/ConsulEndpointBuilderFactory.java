@@ -263,7 +263,9 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ACL token that the client sends with each request to Consul.
+         * The ACL token that the client sends with each request to Consul, in
+         * the X-Consul-Token header. Not used when a consulClient is set:
+         * configure the token on that client instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -621,7 +623,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul client (org.kiwiproject.consul.Consul) to use instead of
          * creating one. When set, the options that create the client (url,
-         * sslContextParameters, userName, password, the timeouts and
+         * sslContextParameters, aclToken, userName, password, the timeouts and
          * pingInstance) are not used.
          * 
          * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
@@ -638,7 +640,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul client (org.kiwiproject.consul.Consul) to use instead of
          * creating one. When set, the options that create the client (url,
-         * sslContextParameters, userName, password, the timeouts and
+         * sslContextParameters, aclToken, userName, password, the timeouts and
          * pingInstance) are not used.
          * 
          * The option will be converted to a
@@ -957,7 +959,9 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ACL token that the client sends with each request to Consul.
+         * The ACL token that the client sends with each request to Consul, in
+         * the X-Consul-Token header. Not used when a consulClient is set:
+         * configure the token on that client instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1133,7 +1137,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul client (org.kiwiproject.consul.Consul) to use instead of
          * creating one. When set, the options that create the client (url,
-         * sslContextParameters, userName, password, the timeouts and
+         * sslContextParameters, aclToken, userName, password, the timeouts and
          * pingInstance) are not used.
          * 
          * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
@@ -1150,7 +1154,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul client (org.kiwiproject.consul.Consul) to use instead of
          * creating one. When set, the options that create the client (url,
-         * sslContextParameters, userName, password, the timeouts and
+         * sslContextParameters, aclToken, userName, password, the timeouts and
          * pingInstance) are not used.
          * 
          * The option will be converted to a
@@ -1447,7 +1451,9 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ACL token that the client sends with each request to Consul.
+         * The ACL token that the client sends with each request to Consul, in
+         * the X-Consul-Token header. Not used when a consulClient is set:
+         * configure the token on that client instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1580,7 +1586,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul client (org.kiwiproject.consul.Consul) to use instead of
          * creating one. When set, the options that create the client (url,
-         * sslContextParameters, userName, password, the timeouts and
+         * sslContextParameters, aclToken, userName, password, the timeouts and
          * pingInstance) are not used.
          * 
          * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
@@ -1597,7 +1603,7 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul client (org.kiwiproject.consul.Consul) to use instead of
          * creating one. When set, the options that create the client (url,
-         * sslContextParameters, userName, password, the timeouts and
+         * sslContextParameters, aclToken, userName, password, the timeouts and
          * pingInstance) are not used.
          * 
          * The option will be converted to a

@@ -3,7 +3,7 @@
     "kind": "transformer",
     "name": "pgvector:embeddings",
     "title": "Pgvector (Embeddings)",
-    "description": "Prepares the message to become an object writable by PgVector component",
+    "description": "Turns the embedding of camel-langchain4j-embeddings into the message of a pgvector UPSERT: the vector of the CamelLangChain4jEmbeddingsVector header becomes the body, as a List of Float, and the CamelPgVectorRecordId, CamelPgVectorTextContent and CamelPgVectorMetadata headers are set",
     "deprecated": false,
     "javaType": "org.apache.camel.component.pgvector.transform.PgVectorEmbeddingsDataTypeTransformer",
     "groupId": "org.apache.camel",

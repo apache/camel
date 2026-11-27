@@ -66,7 +66,8 @@ public class GrpcConfiguration {
     @UriParam(label = "security", defaultValue = "NONE", enums = "NONE,GOOGLE,JWT",
               description = "The authentication of the calls, in addition to the transport security. GOOGLE makes the producer"
                             + " send the OAuth2 access tokens of the Google service account in serviceAccountResource, and requires"
-                            + " negotiationType TLS. JWT makes the producer send a JSON Web Token signed with jwtSecret, and the"
+                            + " negotiationType TLS. GOOGLE is supported only on the producer: a consumer with GOOGLE fails to"
+                            + " start. JWT makes the producer send a JSON Web Token signed with jwtSecret, and the"
                             + " consumer accept only calls with a valid token.")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
 

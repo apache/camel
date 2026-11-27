@@ -73,7 +73,7 @@ or removes its row.
 | camel-asterisk | asterisk | yes |
 | camel-atmosphere-websocket | atmosphere-websocket |  |
 | camel-atom | atom |  |
-| camel-avro-rpc | avro |  |
+| camel-avro-rpc | avro | yes |
 | camel-aws-bedrock | aws-bedrock, aws-bedrock-agent, aws-bedrock-agent-runtime | yes |
 | camel-aws-cloudtrail | aws-cloudtrail | yes |
 | camel-aws-config | aws-config |  |
@@ -111,10 +111,10 @@ or removes its row.
 | camel-azure-cosmosdb | azure-cosmosdb | yes |
 | camel-azure-eventgrid | azure-eventgrid |  |
 | camel-azure-eventhubs | azure-eventhubs |  |
-| camel-azure-files | azure-files |  |
+| camel-azure-files | azure-files | yes |
 | camel-azure-functions | azure-functions |  |
 | camel-azure-iothub | azure-iothub | yes |
-| camel-azure-key-vault | azure-key-vault |  |
+| camel-azure-key-vault | azure-key-vault | yes |
 | camel-azure-servicebus | azure-servicebus |  |
 | camel-azure-storage-blob | azure-storage-blob |  |
 | camel-azure-storage-datalake | azure-storage-datalake |  |
@@ -146,7 +146,7 @@ or removes its row.
 | camel-cxf-soap | cxf | yes |
 | camel-cyberark-vault | cyberark-vault | yes |
 | camel-dapr | dapr |  |
-| camel-dataformat | dataformat |  |
+| camel-dataformat | dataformat | yes |
 | camel-dataset | dataset, dataset-test |  |
 | camel-debezium-db2 | debezium-db2 | yes |
 | camel-debezium-mongodb | debezium-mongodb |  |
@@ -218,7 +218,7 @@ or removes its row.
 | camel-ibm-watson-language | ibm-watson-language | yes |
 | camel-ibm-watson-speech-to-text | ibm-watson-speech-to-text | yes |
 | camel-ibm-watson-text-to-speech | ibm-watson-text-to-speech |  |
-| camel-ibm-watsonx-ai | ibm-watsonx-ai |  |
+| camel-ibm-watsonx-ai | ibm-watsonx-ai | yes |
 | camel-ibm-watsonx-data | ibm-watsonx-data | yes |
 | camel-iggy | iggy | yes |
 | camel-ignite | ignite-cache, ignite-compute, ignite-events, ignite-idgen, ignite-messaging, ignite-queue, ignite-set |  |
@@ -341,14 +341,14 @@ or removes its row.
 | camel-smpp | smpp, smpps |  |
 | camel-snmp | snmp |  |
 | camel-solr | solr | yes |
-| camel-spiffe | spiffe |  |
+| camel-spiffe | spiffe | yes |
 | camel-splunk-hec | splunk-hec |  |
 | camel-spring | spring-event | yes |
 | camel-spring-ai-chat | spring-ai-chat |  |
 | camel-spring-ai-embeddings | spring-ai-embeddings |  |
 | camel-spring-ai-image | spring-ai-image |  |
 | camel-spring-ai-vector-store | spring-ai-vector-store | yes |
-| camel-spring-batch | spring-batch |  |
+| camel-spring-batch | spring-batch | yes |
 | camel-spring-jdbc | spring-jdbc |  |
 | camel-spring-ldap | spring-ldap |  |
 | camel-spring-rabbitmq | spring-rabbitmq |  |
@@ -358,19 +358,19 @@ or removes its row.
 | camel-ssh | ssh | yes |
 | camel-state-store | state-store | yes |
 | camel-stax | stax | yes |
-| camel-stitch | stitch |  |
+| camel-stitch | stitch | yes |
 | camel-stream | stream | yes |
 | camel-stringtemplate | string-template |  |
 | camel-stripe | stripe |  |
 | camel-stub | stub |  |
-| camel-tahu | tahu-edge, tahu-host |  |
+| camel-tahu | tahu-edge, tahu-host | yes |
 | camel-telegram | telegram | yes |
 | camel-tensorflow-serving | tensorflow-serving |  |
 | camel-test-citrus | citrus |  |
 | camel-thrift | thrift |  |
 | camel-thymeleaf | thymeleaf |  |
 | camel-tika | tika |  |
-| camel-timer | timer |  |
+| camel-timer | timer | yes |
 | camel-twilio | twilio |  |
 | camel-twitter | twitter-directmessage, twitter-search, twitter-timeline |  |
 | camel-typesafe-ai | typesafe-ai |  |

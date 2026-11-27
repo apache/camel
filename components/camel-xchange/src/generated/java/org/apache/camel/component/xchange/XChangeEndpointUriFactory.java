@@ -24,15 +24,20 @@ public class XChangeEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(6);
+        Set<String> props = new HashSet<>(8);
+        props.add("apiKey");
         props.add("currency");
         props.add("currencyPair");
         props.add("lazyStartProducer");
         props.add("method");
         props.add("name");
+        props.add("secretKey");
         props.add("service");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("apiKey");
+        secretProps.add("secretKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }

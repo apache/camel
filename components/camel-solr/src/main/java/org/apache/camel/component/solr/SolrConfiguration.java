@@ -80,19 +80,22 @@ public class SolrConfiguration {
                             + " documents to delete. The CamelSolrDeleteByQuery header replaces this option.")
     private boolean deleteByQuery;
     @UriParam(label = "security",
-              description = "Whether the client that Camel creates connects to Solr with HTTPS instead of HTTP.")
+              description = "Whether the client that Camel creates connects to Solr with HTTPS instead of HTTP. It must be"
+                            + " enabled to use the certificatePath or sslContextParameters option, otherwise the endpoint"
+                            + " fails at startup.")
     private boolean enableSSL;
     @UriParam(label = "security",
               description = "The X.509 certificate of the certificate authority that the client that Camel creates trusts for"
-                            + " HTTPS. It is loaded from the classpath by default, or with the classpath:, file: or http:"
-                            + " prefix. Not used when the sslContextParameters option is set.")
+                            + " HTTPS (the enableSSL option must be enabled). It is loaded from the classpath by default, or"
+                            + " with the classpath:, file: or https: prefix; an http: URL is refused. Not used when the"
+                            + " sslContextParameters option is set.")
     @Metadata(supportFileReference = true)
     private String certificatePath;
     @UriParam(label = "security",
               description = "The TLS configuration (key store, trust store, protocols, cipher suites, named groups) of the client"
-                            + " that Camel creates. It takes precedence over the certificatePath option. If not set, the global"
-                            + " SSL context parameters are used when the useGlobalSslContextParameters option of the component"
-                            + " is enabled.")
+                            + " that Camel creates, which is used when the enableSSL option is enabled. It takes precedence"
+                            + " over the certificatePath option. If not set, the global SSL context parameters are used when"
+                            + " the useGlobalSslContextParameters option of the component is enabled.")
     private SSLContextParameters sslContextParameters;
     @UriParam(description = "The time in milliseconds that the client that Camel creates waits for the response to a request. If"
                             + " not set, the requestTimeout option of the component is used.")

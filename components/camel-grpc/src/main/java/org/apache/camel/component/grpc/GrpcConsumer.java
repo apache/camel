@@ -117,6 +117,13 @@ public class GrpcConsumer extends DefaultConsumer {
                     "Consumer strategy AGGREGATION and routeControlledStreamObserver are not compatible. Set the consumer strategy to PROPAGATION or DELEGATION");
         }
 
+        if (configuration.getAuthenticationType() == GrpcAuthType.GOOGLE) {
+            // GOOGLE makes the client send the OAuth2 tokens of a service account; there is no server side check of them
+            throw new IllegalArgumentException(
+                    "authenticationType GOOGLE is supported only on the producer. Use authenticationType JWT, or mutual TLS"
+                                               + " (negotiationType TLS), to authenticate the clients of a consumer");
+        }
+
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");

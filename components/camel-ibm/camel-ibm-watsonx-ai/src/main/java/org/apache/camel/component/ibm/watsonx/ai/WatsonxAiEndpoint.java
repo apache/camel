@@ -49,7 +49,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
+ * Generate text, chat, embed, rerank and tokenize text, extract and classify documents, detect harmful content and
+ * forecast time series with the foundation models and deployments of IBM watsonx.ai.
  */
 @UriEndpoint(firstVersion = "4.18.0",
              scheme = "ibm-watsonx-ai",
@@ -179,7 +180,7 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " CamelIBMWatsonxAiMessages header"))
 public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath(description = "Logical name for the endpoint")
+    @UriPath(description = "A logical name of your choice for the endpoint. It is not sent to watsonx.ai.")
     @Metadata(required = true)
     private String label;
 

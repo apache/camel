@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.weather;
 
+import java.util.regex.Pattern;
+
 import org.apache.camel.component.weather.geolocation.GeoLocation;
 
 import static org.apache.camel.component.weather.WeatherMode.JSON;
@@ -25,6 +27,10 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
  * Logic for determining the query based on the provided configuration.
  */
 public class WeatherQuery {
+
+    // the value of the APPID query parameter (the API key), also when a location header adds it as appid
+    private static final Pattern APPID_VALUE = Pattern.compile("([?&]APPID=)[^&]*", Pattern.CASE_INSENSITIVE);
+
     private final WeatherConfiguration weatherConfiguration;
 
     public WeatherQuery(WeatherConfiguration weatherConfiguration) {
@@ -91,6 +97,20 @@ public class WeatherQuery {
         }
 
         return answer;
+    }
+
+    /**
+     * Returns the query with the value of the APPID parameter masked, as shown in the CamelWeatherQuery header, the log
+     * and error messages. The appid is a secret option, so only the request itself has the real value.
+     *
+     * @param  query the query, such as returned by {@link #getQuery()}
+     * @return       the query with {@code APPID=xxxxxx}, or null if the query is null
+     */
+    public static String sanitize(String query) {
+        if (query == null) {
+            return null;
+        }
+        return APPID_VALUE.matcher(query).replaceAll("$1xxxxxx");
     }
 
     private String createContext(String lat, String lon) {

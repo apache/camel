@@ -28,10 +28,12 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.aws2.bedrock.BedrockModels;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,6 +53,7 @@ import software.amazon.awssdk.services.bedrockruntime.model.ConversationRole;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamResponseHandler;
 import software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamProcessingMode;
 import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
@@ -66,6 +69,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
@@ -338,6 +342,8 @@ public class BedrockProducerRequestTest {
         assertEquals("my-guardrail", request.getValue().guardrailConfig().guardrailIdentifier());
         assertEquals("1", request.getValue().guardrailConfig().guardrailVersion());
         assertEquals(GuardrailTrace.ENABLED, request.getValue().guardrailConfig().trace());
+        // no processing mode, so Bedrock uses its default (sync)
+        assertNull(request.getValue().guardrailConfig().streamProcessingMode());
     }
 
     @Test
@@ -354,6 +360,67 @@ public class BedrockProducerRequestTest {
 
         assertNull(exchange.getException());
         assertEquals(GuardrailTrace.ENABLED, request.getValue().guardrailConfig().trace());
+    }
+
+    @Test
+    public void converseStreamGuardrailTraceKeepsTheSyncProcessingMode() {
+        ConverseStreamRequest request = converseStreamRequest("&guardrailTrace=true");
+
+        assertEquals(GuardrailTrace.ENABLED, request.guardrailConfig().trace());
+        assertEquals(GuardrailStreamProcessingMode.SYNC, request.guardrailConfig().streamProcessingMode());
+    }
+
+    @Test
+    public void converseStreamUsesTheSyncProcessingModeByDefault() {
+        ConverseStreamRequest request = converseStreamRequest("");
+
+        assertEquals(GuardrailTrace.DISABLED, request.guardrailConfig().trace());
+        assertEquals(GuardrailStreamProcessingMode.SYNC, request.guardrailConfig().streamProcessingMode());
+    }
+
+    @Test
+    public void converseStreamUsesTheAsyncProcessingModeWhenSet() {
+        ConverseStreamRequest request = converseStreamRequest("&guardrailStreamProcessingMode=async");
+
+        assertEquals(GuardrailTrace.DISABLED, request.guardrailConfig().trace());
+        assertEquals(GuardrailStreamProcessingMode.ASYNC, request.guardrailConfig().streamProcessingMode());
+    }
+
+    @Test
+    public void converseStreamUsesTheAsyncProcessingModeWithTheTrace() {
+        ConverseStreamRequest request = converseStreamRequest("&guardrailTrace=true&guardrailStreamProcessingMode=async");
+
+        assertEquals(GuardrailTrace.ENABLED, request.guardrailConfig().trace());
+        assertEquals(GuardrailStreamProcessingMode.ASYNC, request.guardrailConfig().streamProcessingMode());
+    }
+
+    @Test
+    public void unknownGuardrailStreamProcessingModeFailsAtStartup() throws Exception {
+        Producer producer = camelContext.getEndpoint(converseStreamUri("&guardrailStreamProcessingMode=asynchronous"))
+                .createProducer();
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> ServiceHelper.startService(producer));
+        assertEquals("Unknown guardrailStreamProcessingMode: asynchronous. Use sync or async.", e.getMessage());
+    }
+
+    private ConverseStreamRequest converseStreamRequest(String options) {
+        ArgumentCaptor<ConverseStreamRequest> request = ArgumentCaptor.forClass(ConverseStreamRequest.class);
+        when(asyncClient.converseStream(request.capture(), any(ConverseStreamResponseHandler.class)))
+                .thenReturn(CompletableFuture.completedFuture(null));
+
+        Exchange exchange = template.send(converseStreamUri(options),
+                ex -> ex.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, List.of(userMessage())));
+
+        assertNull(exchange.getException());
+        assertEquals("my-guardrail", request.getValue().guardrailConfig().guardrailIdentifier());
+        return request.getValue();
+    }
+
+    private static String converseStreamUri(String options) {
+        return "aws-bedrock://label?bedrockRuntimeAsyncClient=#bedrockAsyncClient"
+               + "&operation=converseStream&modelId=" + CLAUDE
+               + "&guardrailIdentifier=my-guardrail" + options
+               + "&region=us-east-1&accessKey=unused&secretKey=unused";
     }
 
     private static Message userMessage() {

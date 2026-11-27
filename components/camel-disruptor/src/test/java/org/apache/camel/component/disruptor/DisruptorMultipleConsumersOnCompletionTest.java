@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,15 +60,16 @@ public class DisruptorMultipleConsumersOnCompletionTest extends CamelTestSupport
         MockEndpoint slow = getMockEndpoint("mock:slow");
         slow.expectedBodiesReceived("fail-first");
 
+        NotifyBuilder failureDone = new NotifyBuilder(context).from("disruptor:fanout*").whenDone(1).create();
         template.sendBody("direct:start", "fail-first");
 
-        // the consumer that fails completes the exchange, while the other consumer is still routing it
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> !events.isEmpty());
-        assertEquals(List.of("failure:fail-first"), events);
+        // the consumer that fails does not complete the exchange, while the other consumer is still routing it
+        assertTrue(failureDone.matches(10, TimeUnit.SECONDS), "The consumer that fails should be done");
+        assertTrue(events.isEmpty(), "Events: " + events);
 
         release.countDown();
         MockEndpoint.assertIsSatisfied(context);
-        // the other consumer is done as well, which must not run the on completions a second time
+        // the exchange is completed once, with the failure, when the other consumer is done as well
         assertNoMoreEvents(List.of("failure:fail-first"));
     }
 
@@ -78,9 +78,11 @@ public class DisruptorMultipleConsumersOnCompletionTest extends CamelTestSupport
         MockEndpoint slow = getMockEndpoint("mock:slow");
         slow.expectedBodiesReceived("both-fail");
 
+        NotifyBuilder firstDone = new NotifyBuilder(context).from("disruptor:fanout*").whenDone(1).create();
         template.sendBody("direct:start", "both-fail");
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> !events.isEmpty());
+        assertTrue(firstDone.matches(10, TimeUnit.SECONDS), "The first consumer that fails should be done");
+        assertTrue(events.isEmpty(), "Events: " + events);
         release.countDown();
         MockEndpoint.assertIsSatisfied(context);
         assertNoMoreEvents(List.of("failure:both-fail"));

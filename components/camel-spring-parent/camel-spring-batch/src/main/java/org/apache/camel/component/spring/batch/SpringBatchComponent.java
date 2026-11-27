@@ -28,9 +28,15 @@ import org.springframework.batch.core.launch.JobLauncher;
 @Component("spring-batch")
 public class SpringBatchComponent extends DefaultComponent {
 
-    @Metadata(autowired = true)
+    @Metadata(autowired = true,
+              description = "The JobLauncher that runs the jobs of all endpoints, unless an endpoint sets its own. When not"
+                            + " set, the component uses the single JobLauncher of the registry, or else the bean named"
+                            + " jobLauncher.")
     private JobLauncher jobLauncher;
-    @Metadata(autowired = true)
+    @Metadata(autowired = true,
+              description = "The JobRegistry in which the endpoints look up the job by its name, unless an endpoint sets its"
+                            + " own. A job that is not in it, or every job when no JobRegistry is set, is looked up in the"
+                            + " Camel registry as a Job bean.")
     private JobRegistry jobRegistry;
 
     public SpringBatchComponent() {
@@ -57,9 +63,6 @@ public class SpringBatchComponent extends DefaultComponent {
         return jobLauncher;
     }
 
-    /**
-     * Explicitly specifies a JobLauncher to be used.
-     */
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
     }
@@ -68,9 +71,6 @@ public class SpringBatchComponent extends DefaultComponent {
         return jobRegistry;
     }
 
-    /**
-     * Explicitly specifies a JobRegistry to be used.
-     */
     public void setJobRegistry(JobRegistry jobRegistry) {
         this.jobRegistry = jobRegistry;
     }

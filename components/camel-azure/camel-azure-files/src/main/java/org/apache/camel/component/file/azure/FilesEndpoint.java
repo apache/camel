@@ -40,7 +40,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Send and receive files to Azure storage file share
+ * Read files from and write files to a file share in Azure Files.
  */
 @UriEndpoint(firstVersion = "3.22.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
              syntax = FilesComponent.SCHEME + ":account/share", category = {
@@ -78,7 +78,11 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> implements 
     protected FilesConfiguration configuration;
     @UriParam
     protected FilesToken token = new FilesToken();
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer resumes a download that failed, instead of downloading the whole file"
+                            + " again. It needs localWorkDirectory: the consumer keeps the partial .inprogress file of a failed"
+                            + " download there and fetches only the rest of the file in the next attempt. The route fails to"
+                            + " start if localWorkDirectory is not set.")
     protected boolean resumeDownload;
 
     public FilesEndpoint() {
@@ -161,11 +165,6 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> implements 
         return resumeDownload;
     }
 
-    /**
-     * Configures whether resume download is enabled. In addition the options <tt>localWorkDirectory</tt> must be
-     * configured so downloaded files are stored in a local directory, which is required to support resuming of
-     * downloads.
-     */
     public void setResumeDownload(boolean resumeDownload) {
         this.resumeDownload = resumeDownload;
     }
