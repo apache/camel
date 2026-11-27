@@ -1036,7 +1036,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Avro RPC (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
+     * Call and expose Apache Avro RPC services over HTTP or Netty.
      * 
      * Category: rpc
      * Since: 2.10
@@ -1045,17 +1045,24 @@ public class StaticEndpointBuilders {
      * Syntax: <code>avro:transport:host:port/messageName</code>
      * 
      * Path parameter: transport (required)
-     * Transport to use, can be either http or netty
+     * The transport: http or netty. With http, the consumer runs an Avro HTTP
+     * server on Jetty and the producer sends HTTP POST requests; with netty,
+     * both use the Avro Netty server and transceiver.
      * There are 2 enums and the value can be one of: http, netty
      * 
      * Path parameter: port (required)
-     * Port number to use
+     * The port number. The consumer listens on it, and the producer connects to
+     * it.
      * 
      * Path parameter: host (required)
-     * Hostname to use
+     * The host name or IP address. The consumer binds its server to it, and the
+     * producer connects to it.
      * 
      * Path parameter: messageName
-     * The name of the message to send.
+     * The name of the protocol message to call or serve. The producer calls it
+     * unless the CamelAvroMessageName header is set. A consumer with a message
+     * name serves only that message; a consumer without one serves every
+     * message that no other consumer on the same host and port serves.
      * 
      * @param path transport:host:port/messageName
      * @return the dsl builder
@@ -1065,7 +1072,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Avro RPC (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
+     * Call and expose Apache Avro RPC services over HTTP or Netty.
      * 
      * Category: rpc
      * Since: 2.10
@@ -1074,17 +1081,24 @@ public class StaticEndpointBuilders {
      * Syntax: <code>avro:transport:host:port/messageName</code>
      * 
      * Path parameter: transport (required)
-     * Transport to use, can be either http or netty
+     * The transport: http or netty. With http, the consumer runs an Avro HTTP
+     * server on Jetty and the producer sends HTTP POST requests; with netty,
+     * both use the Avro Netty server and transceiver.
      * There are 2 enums and the value can be one of: http, netty
      * 
      * Path parameter: port (required)
-     * Port number to use
+     * The port number. The consumer listens on it, and the producer connects to
+     * it.
      * 
      * Path parameter: host (required)
-     * Hostname to use
+     * The host name or IP address. The consumer binds its server to it, and the
+     * producer connects to it.
      * 
      * Path parameter: messageName
-     * The name of the message to send.
+     * The name of the protocol message to call or serve. The producer calls it
+     * unless the CamelAvroMessageName header is set. A consumer with a message
+     * name serves only that message; a consumer without one serves every
+     * message that no other consumer on the same host and port serves.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

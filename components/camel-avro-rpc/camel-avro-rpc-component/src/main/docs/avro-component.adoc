@@ -2,7 +2,7 @@
 :doctitle: Avro RPC
 :shortname: avro
 :artifactid: camel-avro-rpc
-:description: Produce or consume Apache Avro RPC services.
+:description: Call and expose Apache Avro RPC services over HTTP or Netty.
 :since: 2.10
 :supportlevel: Stable
 :tabs-sync-option:

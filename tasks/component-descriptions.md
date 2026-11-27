@@ -73,7 +73,7 @@ or removes its row.
 | camel-asterisk | asterisk | yes |
 | camel-atmosphere-websocket | atmosphere-websocket |  |
 | camel-atom | atom |  |
-| camel-avro-rpc | avro |  |
+| camel-avro-rpc | avro | yes |
 | camel-aws-bedrock | aws-bedrock, aws-bedrock-agent, aws-bedrock-agent-runtime | yes |
 | camel-aws-cloudtrail | aws-cloudtrail | yes |
 | camel-aws-config | aws-config |  |

@@ -331,7 +331,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Avro RPC (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
+     * Call and expose Apache Avro RPC services over HTTP or Netty.
      * 
      * Category: rpc
      * Since: 2.10
