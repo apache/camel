@@ -5725,7 +5725,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to Elasticsearch via Java Client API.
+     * Index, update, get, search and delete documents and indices in
+     * Elasticsearch with the Java API Client.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -5734,7 +5735,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>elasticsearch:clusterName</code>
      * 
      * Path parameter: clusterName (required)
-     * Name of the cluster
+     * The name of the Elasticsearch cluster. The producer uses it only in its
+     * log messages: the hostAddresses option or the client option of the
+     * component sets the nodes to connect to.
      * 
      * @param path clusterName
      * @return the dsl builder
@@ -5744,7 +5747,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to Elasticsearch via Java Client API.
+     * Index, update, get, search and delete documents and indices in
+     * Elasticsearch with the Java API Client.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -5753,7 +5757,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>elasticsearch:clusterName</code>
      * 
      * Path parameter: clusterName (required)
-     * Name of the cluster
+     * The name of the Elasticsearch cluster. The producer uses it only in its
+     * log messages: the hostAddresses option or the client option of the
+     * component sets the nodes to connect to.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
