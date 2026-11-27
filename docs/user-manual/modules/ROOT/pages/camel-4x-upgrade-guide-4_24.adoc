@@ -2026,6 +2026,10 @@ failed. The exchanges that compensate or complete a step carry the exchange prop
 with the id of their saga; a call for its own saga from such an exchange, or from the thread that calls the
 compensation or completion endpoint (also after `removeProperties("*")`), is answered at once, as before.
 
+When the in-memory saga service stops while a compensation or completion is still running (for example waiting for a
+retry), the caller that started it and the callers that wait for its outcome now fail with a
+`RejectedExecutionException`. Before, they waited for a retry that no longer runs.
+
 === camel-core - Loop EIP breakOnShutdown
 
 The Loop EIP with `breakOnShutdown` now only breaks out when the route (or Camel) is stopped, and no longer on suspend.
