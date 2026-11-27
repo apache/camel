@@ -4039,6 +4039,15 @@ events, such as `QueueParamsEvent`, `QueueMemberEvent` and `PeerEntryEvent`. Bef
 `ManagerResponse` saying that the list will follow, and the events were lost. A route that read that response from
 the body now finds it in `${body.response}`. `EXTENSION_STATE` still sets the `ManagerResponse` as the body.
 
+=== camel-asterisk - the producer logs in without events, and a port option
+
+The `asterisk` producer now logs in to the Asterisk Manager Interface with the event mask `off`, as it has no event
+listener: Asterisk no longer sends it the events of the PBX. The answers to its actions, such as the events of the
+`QUEUE_STATUS` list, are not affected. The consumer still logs in with the event mask `on`.
+
+The new `port` option (default 5038, the port that was used before) sets the AMI port. The `name` path is now set on
+the endpoint, and `username` and `password` are in the `security` group of the catalog and the docs.
+
 === camel-jbang - camel export no longer deletes the files of a directory that no export created
 
 `camel export --dir=<dir>` to a directory other than the current one used to delete the files of that directory first,
