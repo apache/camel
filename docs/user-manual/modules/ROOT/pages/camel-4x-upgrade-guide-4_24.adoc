@@ -862,6 +862,85 @@ expires; the endpoint fails to start when the profile gives no token. The identi
 that watsonx.data accepts. `apiKey` is no longer marked as required in the catalog, as `oauthProfile` can take its
 place; an endpoint with neither still fails to start.
 
+=== camel-ibm-watsonx-ai - the OAuth token of oauthProfile is sent as a Bearer token
+
+With `oauthProfile`, the endpoint used to obtain an access token once at startup and use it as `apiKey`, so the token
+was posted to IBM Cloud IAM as if it were an IBM Cloud API key, which IAM rejects. The token is now sent to watsonx.ai
+as a `Bearer` token, and asked from `camel-oauth` again for every request, so it is renewed when it expires. The
+identity provider must therefore issue tokens that watsonx.ai accepts. `apiKey` is no longer marked as required in the
+catalog, as `oauthProfile` or the new `authenticator` option can take its place; an endpoint without any of the three
+still fails to start. `baseUrl` is no longer marked as required either, as the utility tools (`runTool`, `listTools`)
+use the `wxUrl` instead; the other operations still fail to start without it. `processToolCalls`, which runs the tools
+locally, still needs neither credentials nor `baseUrl`, and no longer asks its `oauthProfile` for a token at startup.
+
+With `apiKey`, all the services of an endpoint now share one IBM Cloud IAM authenticator, which obtains its token with
+the `verifySsl` and `timeout` options of the endpoint: `verifySsl=false` now also applies to the IAM request that
+carries the API key, and a short `timeout` also limits it.
+
+=== camel-ibm-watsonx-ai - the tool calling loop sends the whole conversation
+
+When the model answers `chat` with tool calls, `chat` now sets the `CamelIBMWatsonxAiMessages` header to the messages it
+sent, such as the system message of `CamelIBMWatsonxAiSystemMessage` and the user question of the body.
+`processToolCalls` adds the tool calls and their results to this header, as before, so the next `chat` sends the whole
+conversation. Before, a route that gave the question in the body sent only the tool calls and their results on the
+second turn, without the system message and the question. A route that sends a new question in the body after such an
+answer must remove the `CamelIBMWatsonxAiMessages` header first, as the header takes precedence over the body.
+
+`chat` also removes the `CamelIBMWatsonxAiToolCalls` header when the answer has no tool calls, instead of leaving the
+tool calls of an earlier answer, and an operation removes a header it gives no value, such as the
+`CamelIBMWatsonxAiAssistantMessage` header after `processToolCalls`, instead of setting it to `null`.
+
+=== camel-ibm-watsonx-ai - forecast and deploymentForecast send the parameters of a TimeSeriesRequest body
+
+`forecast` and `deploymentForecast` used to send only the schema and the data of a `TimeSeriesRequest` body, so its
+prediction length and, for `deploymentForecast`, its future data were dropped and the model forecast its default
+length. The body is now sent with its parameters. `forecast` fails when the `CamelIBMWatsonxAiForecastFutureData`
+header is set, as watsonx.ai takes future data for deployments only.
+
+=== camel-ibm-watsonx-ai - headers that did nothing
+
+The `CamelIBMWatsonxAiToolChoice`, `CamelIBMWatsonxAiFoundationModelFilter` and
+`CamelIBMWatsonxAiFoundationModelTechPreview` headers were documented but never read. `chat` now sends the tool choice
+of the header or of the new `toolChoice` option (`auto`, `required`, `none`, or the name of the tool to call), and
+`listModels` the filter and tech preview flag of the headers. A route that set these headers without effect now gets
+what they ask for.
+
+The `CamelIBMWatsonxAiDetected` header of `detect` is no longer `true` for a Granite Guardian answer of `No`, which
+watsonx.ai returns as a detection when the threshold is low; `CamelIBMWatsonxAiDetectionCount` still counts it.
+`deploymentInfo` looks up a deployment in the project when no space is set, instead of failing. The catalog gives the
+`CamelIBMWatsonxAiTokens` header its actual type, a `List` of `String` tokens.
+
+=== camel-ibm-watsonx-ai - IBM watsonx.ai Java SDK 0.50.0
+
+The component uses the IBM watsonx.ai Java SDK 0.50.0 (was 0.40.0). The SDK no longer depends on Jackson: it reads and
+writes JSON through a binding module, and the component now depends on `com.ibm.watsonx:watsonx-ai-jackson3`, the
+binding for Jackson 3, with the Jackson 3 version that Camel manages. The SDK fails when it finds no binding, or more
+than one, so do not add `com.ibm.watsonx:watsonx-ai-jackson2` next to the component. The component no longer brings
+Jackson 2 (`com.fasterxml.jackson.core:jackson-databind`), which the SDK 0.40.0 depended on: an application that uses
+Jackson 2 must declare it itself. The SDK's `WatsonxJacksonModule` is now the Jackson 3 module of the binding: an
+application that registers it on its own Jackson 2 `ObjectMapper` must move that mapper to Jackson 3, or exclude
+`watsonx-ai-jackson3` from the component and add `watsonx-ai-jackson2` instead.
+
+The SDK sends the API version `2026-10-28` with every request instead of `2026-08-19`. Some classes of the SDK that
+operations give in the body changed, such as `TextClassificationResponse.ClassificationResult`, which no longer has
+`numberPagesProcessed()`: a route that reads such objects in Java should check the migration notes of the SDK
+(`docs/content/migration/0.40.0-to-0.50.0.md` in its repository).
+
+=== camel-ibm-watsonx-ai - chat options, deploymentChat parameters and streaming
+
+`deploymentChat` now sends the chat options of the endpoint and headers (such as `temperature`, `maxCompletionTokens`
+and `topP`) and the tools of the `CamelIBMWatsonxAiTools` header, which it ignored before; a prompt template deployment
+may fix some of them. `chat` and `chatStreaming` read the `CamelIBMWatsonxAiModelId` header as the model of the request,
+in the place of the `modelId` option, so remove this header (which `forecast` sets on its response) before a chat that
+must use the model of its endpoint.
+
+`chatStreaming` now sends the tools of the `CamelIBMWatsonxAiTools` header and gives the same headers as `chat`, such as
+`CamelIBMWatsonxAiToolCalls`. `chatStreaming` and `textGenerationStreaming` fail on the first error that the stream
+reports, with the exception of the watsonx.ai SDK rather than a `RuntimeException` or an `ExecutionException` wrapping
+it, and log the error at DEBUG instead of ERROR. They wait for the end of the stream at most the `timeout` of the
+endpoint (60 seconds by default) and 30 seconds more, and stop the stream when it takes longer, where they used to wait
+without limit.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
