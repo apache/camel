@@ -10569,6 +10569,15 @@ Commons Codec 1.23.0 changed how a `quoted-printable` part is decoded. The line 
 the part are now kept in the decoded payload, as RFC 2045 says. Before, every CR and LF was dropped. A soft line break
 written as `=CR` without the LF is now rejected with a `DecoderException`. Messages that Camel encodes are not affected.
 
+=== camel-event - backpressurePolicy=Fail reports a full queue to the exception handler of the consumer
+
+With `async=true` and `backpressurePolicy=Fail`, an event that did not fit in the full queue was thrown as an
+`IllegalStateException` to Camel, which logged it at WARN level and ignored it. The consumer now drops the event and
+passes the `IllegalStateException` to its exception handler. By default it is still logged at WARN level. With
+`bridgeErrorHandler=true` the error handler of the route handles it, and a custom `exceptionHandler` gets it. Code that
+calls `ManagementStrategy.notify()` itself no longer gets the exception. The events fired while a full queue is
+reported, such as those of the exchange that `bridgeErrorHandler` routes, are dropped without a report of their own.
+
 === camel-file-watch - CamelFileLastModified is the last modified time of the file
 
 The `CamelFileLastModified` header is now the last modified time of the file, as its documentation says.

@@ -98,6 +98,9 @@ The following event types are available (corresponding to `org.apache.camel.spi.
 - `ExchangeSending`
 - `ExchangeSent`
 
+The deprecated `ExchangeAsyncProcessingStarted` type is only received when it is named in the event types. A wildcard
+such as `Exchange*` or `*` does not turn it on.
+
 === Step Events
 - `StepStarted`
 - `StepCompleted`
@@ -638,7 +641,11 @@ the `backpressurePolicy` option controls the behavior:
 
 * `Block` (default) — blocks the event notifier thread until space is available.
 * `Drop` — silently discards the event.
-* `Fail` — throws an exception.
+* `Fail` — discards the event and passes an `IllegalStateException` to the exception handler of the consumer. By
+default it is logged at WARN level; with `bridgeErrorHandler=true` the error handler of the route handles it. Camel
+ignores an exception that an event notifier throws, so the event that does not fit is never processed and the code
+that fired it does not fail. The events fired while a full queue is reported, such as the events of the exchange that
+`bridgeErrorHandler=true` routes to the error handler, are dropped without a report of their own when they do not fit.
 
 [tabs]
 ====
@@ -650,7 +657,7 @@ Java::
 from("event:ExchangeCompleted?async=true&asyncQueueSize=100&backpressurePolicy=Drop")
     .log("Exchange completed: ${header.CamelEventExchangeId}");
 
-// Async with Fail policy (fail fast if queue is full)
+// Async with Fail policy (a full queue is reported to the exception handler of the consumer)
 from("event:Exchange*?async=true&asyncQueueSize=500&backpressurePolicy=Fail")
     .log("Exchange event: ${header.CamelEventType}");
 ----

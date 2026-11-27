@@ -104,7 +104,9 @@ public class CamelEventEndpoint extends DefaultEndpoint {
 
     @UriParam(description = "The backpressure policy when the async event queue is full."
                             + " Supported values: Block (block the event notifier thread until space is available),"
-                            + " Drop (silently discard the event), Fail (throw an exception).",
+                            + " Drop (silently discard the event), Fail (discard the event and pass an"
+                            + " IllegalStateException to the exception handler of the consumer, which logs it at WARN"
+                            + " level by default, or hands it to the error handler of the route with bridgeErrorHandler=true).",
               defaultValue = "Block")
     private BackpressurePolicy backpressurePolicy = BackpressurePolicy.Block;
 
@@ -120,6 +122,8 @@ public class CamelEventEndpoint extends DefaultEndpoint {
     private long batchTimeout = 1000;
 
     private Set<CamelEvent.Type> eventTypes;
+    // the types named in events, rather than matched by a wildcard
+    private Set<CamelEvent.Type> namedEventTypes = Collections.emptySet();
     private Set<String> includeValues;
     private Set<String> excludeValues;
     private Class<?> customEventClazz;
@@ -155,17 +159,21 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         // Parse event types (with wildcard support)
         if (events != null && !events.isEmpty()) {
             Set<CamelEvent.Type> types = new LinkedHashSet<>();
+            Set<CamelEvent.Type> named = new LinkedHashSet<>();
             for (String token : events.split(",")) {
                 String name = token.trim();
                 if (!name.isEmpty()) {
                     if (name.contains("*")) {
                         types.addAll(resolveWildcard(name));
                     } else {
-                        types.add(resolveEventType(name));
+                        CamelEvent.Type type = resolveEventType(name);
+                        types.add(type);
+                        named.add(type);
                     }
                 }
             }
             eventTypes = Collections.unmodifiableSet(types);
+            namedEventTypes = Collections.unmodifiableSet(named);
         } else {
             eventTypes = Collections.emptySet();
         }
@@ -319,7 +327,9 @@ public class CamelEventEndpoint extends DefaultEndpoint {
 
     /**
      * The backpressure policy when the async event queue is full. Supported values: Block (block the event notifier
-     * thread until space is available), Drop (silently discard the event), Fail (throw an exception).
+     * thread until space is available), Drop (silently discard the event), Fail (discard the event and pass an
+     * IllegalStateException to the exception handler of the consumer, which logs it at WARN level by default, or hands
+     * it to the error handler of the route with bridgeErrorHandler=true).
      */
     public void setBackpressurePolicy(BackpressurePolicy backpressurePolicy) {
         this.backpressurePolicy = backpressurePolicy;
@@ -352,6 +362,13 @@ public class CamelEventEndpoint extends DefaultEndpoint {
 
     public Set<CamelEvent.Type> getEventTypes() {
         return eventTypes;
+    }
+
+    /**
+     * The event types named in the events option, without the ones only matched by a wildcard.
+     */
+    Set<CamelEvent.Type> getNamedEventTypes() {
+        return namedEventTypes;
     }
 
     public Set<String> getIncludeValues() {

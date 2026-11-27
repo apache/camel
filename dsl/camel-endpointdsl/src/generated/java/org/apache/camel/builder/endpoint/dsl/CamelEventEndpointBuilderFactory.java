@@ -150,8 +150,10 @@ public interface CamelEventEndpointBuilderFactory {
         /**
          * The backpressure policy when the async event queue is full. Supported
          * values: Block (block the event notifier thread until space is
-         * available), Drop (silently discard the event), Fail (throw an
-         * exception).
+         * available), Drop (silently discard the event), Fail (discard the
+         * event and pass an IllegalStateException to the exception handler of
+         * the consumer, which logs it at WARN level by default, or hands it to
+         * the error handler of the route with bridgeErrorHandler=true).
          * 
          * The option is a:
          * <code>org.apache.camel.component.camelevent.BackpressurePolicy</code>
@@ -170,8 +172,10 @@ public interface CamelEventEndpointBuilderFactory {
         /**
          * The backpressure policy when the async event queue is full. Supported
          * values: Block (block the event notifier thread until space is
-         * available), Drop (silently discard the event), Fail (throw an
-         * exception).
+         * available), Drop (silently discard the event), Fail (discard the
+         * event and pass an IllegalStateException to the exception handler of
+         * the consumer, which logs it at WARN level by default, or hands it to
+         * the error handler of the route with bridgeErrorHandler=true).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.camelevent.BackpressurePolicy</code>
