@@ -152,7 +152,10 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
         } else if (graph instanceof Iterator<?> iterator) {
             iterator.forEachRemaining(records::add);
         } else if (graph instanceof Stream<?> stream) {
-            stream.forEach(records::add);
+            // a Stream can hold a resource, such as the lines of a file
+            try (stream) {
+                stream.forEach(records::add);
+            }
         } else if (graph != null) {
             records.add(graph);
         }

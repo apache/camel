@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.parquet.avro;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelExecutionException;
@@ -78,6 +79,21 @@ class ParquetAvroMarshalBodyTypesTest extends CamelTestSupport {
                 () -> template.requestBody("direct:noUnmarshalType", List.of(AIRPORT)));
         IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
         assertTrue(cause.getMessage().contains(Pojo.class.getName()), cause.getMessage());
+    }
+
+    @Test
+    void streamIsClosed() {
+        AtomicBoolean closed = new AtomicBoolean();
+        roundTrip(Stream.of(AIRPORT, PENGUIN).onClose(() -> closed.set(true)));
+        assertTrue(closed.get());
+    }
+
+    @Test
+    void nullBodyWithoutUnmarshalTypeFails() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:noUnmarshalType", (Object) null));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("no records"), cause.getMessage());
     }
 
     private List<?> roundTrip(Object body) {
