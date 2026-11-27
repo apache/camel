@@ -18,7 +18,6 @@ package org.apache.camel.component.ibm.watsonx.ai;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
@@ -29,11 +28,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.watsonx.ai.core.auth.Authenticator;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A JDK HttpServer that plays watsonx.ai for the unit tests: it records every request and answers with the responses
@@ -69,11 +68,7 @@ final class FakeWatsonxServer implements AutoCloseable {
         }
 
         JsonNode json() {
-            try {
-                return MAPPER.readTree(body);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+            return MAPPER.readTree(body);
         }
     }
 

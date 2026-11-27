@@ -19,8 +19,6 @@ package org.apache.camel.component.ibm.watsonx.ai.integration;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.watsonx.ai.chat.exception.ModerationException;
 import com.ibm.watsonx.ai.chat.model.Tool;
 import com.ibm.watsonx.ai.chat.model.ToolCall;
@@ -33,6 +31,8 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -82,7 +82,7 @@ public class WatsonxAiChatOptionsIT extends WatsonxAiTestSupport {
 
         assertNull(result.getException());
         JsonNode answer = MAPPER.readTree(result.getMessage().getBody(String.class));
-        assertTrue(answer.get("capital").asText().contains("Paris"), answer.toString());
+        assertTrue(answer.get("capital").asString().contains("Paris"), answer.toString());
         assertTrue(answer.has("country"), answer.toString());
     }
 
@@ -93,7 +93,7 @@ public class WatsonxAiChatOptionsIT extends WatsonxAiTestSupport {
 
         assertNull(result.getException());
         JsonNode answer = MAPPER.readTree(result.getMessage().getBody(String.class));
-        assertTrue(answer.get("capital").asText().contains("Rome"), answer.toString());
+        assertTrue(answer.get("capital").asString().contains("Rome"), answer.toString());
     }
 
     @Test

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.ibm.watsonx.ai.chat.ExecutableTool;
 import com.ibm.watsonx.ai.chat.ToolRegistry;
 import com.ibm.watsonx.ai.chat.model.Tool;
@@ -32,6 +31,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -131,21 +131,21 @@ class WatsonxAiToolCallingTest extends CamelTestSupport {
 
         JsonNode first = requests.get(0).json().get("messages");
         assertEquals(2, first.size());
-        assertEquals("system", first.get(0).get("role").asText());
-        assertEquals("user", first.get(1).get("role").asText());
+        assertEquals("system", first.get(0).get("role").asString());
+        assertEquals("user", first.get(1).get("role").asString());
 
         JsonNode second = requests.get(1).json().get("messages");
         assertEquals(4, second.size(), second::toString);
-        assertEquals("system", second.get(0).get("role").asText());
-        assertEquals("You are a helpful assistant.", second.get(0).get("content").asText());
-        assertEquals("user", second.get(1).get("role").asText());
-        assertEquals("What is the capital of France?", second.get(1).get("content").get(0).get("text").asText());
-        assertEquals("assistant", second.get(2).get("role").asText());
-        assertEquals("call-1", second.get(2).get("tool_calls").get(0).get("id").asText());
-        assertEquals("tool", second.get(3).get("role").asText());
-        assertEquals("call-1", second.get(3).get("tool_call_id").asText());
-        assertEquals("Paris", second.get(3).get("content").asText());
+        assertEquals("system", second.get(0).get("role").asString());
+        assertEquals("You are a helpful assistant.", second.get(0).get("content").asString());
+        assertEquals("user", second.get(1).get("role").asString());
+        assertEquals("What is the capital of France?", second.get(1).get("content").get(0).get("text").asString());
+        assertEquals("assistant", second.get(2).get("role").asString());
+        assertEquals("call-1", second.get(2).get("tool_calls").get(0).get("id").asString());
+        assertEquals("tool", second.get(3).get("role").asString());
+        assertEquals("call-1", second.get(3).get("tool_call_id").asString());
+        assertEquals("Paris", second.get(3).get("content").asString());
         // the tools are sent on every turn
-        assertEquals("capital", requests.get(1).json().get("tools").get(0).get("function").get("name").asText());
+        assertEquals("capital", requests.get(1).json().get("tools").get(0).get("function").get("name").asString());
     }
 }

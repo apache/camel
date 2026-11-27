@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -30,6 +29,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -106,18 +106,18 @@ class WatsonxAiRequestMappingTest extends CamelTestSupport {
 
     @Test
     void toolChoiceOptionValues() {
-        assertEquals("required", chatRequest("toolChoice=required", Map.of()).get("tool_choice_option").asText());
-        assertEquals("none", chatRequest("toolChoice=none", Map.of()).get("tool_choice_option").asText());
+        assertEquals("required", chatRequest("toolChoice=required", Map.of()).get("tool_choice_option").asString());
+        assertEquals("none", chatRequest("toolChoice=none", Map.of()).get("tool_choice_option").asString());
         assertEquals("auto", chatRequest("", Map.of(WatsonxAiConstants.TOOL_CHOICE, "AUTO"))
-                .get("tool_choice_option").asText());
+                .get("tool_choice_option").asString());
     }
 
     @Test
     void toolChoiceNamesTheToolToCall() {
         JsonNode request = chatRequest("toolChoice=auto", Map.of(WatsonxAiConstants.TOOL_CHOICE, "get_weather"));
         assertFalse(request.has("tool_choice_option"));
-        assertEquals("function", request.get("tool_choice").get("type").asText());
-        assertEquals("get_weather", request.get("tool_choice").get("function").get("name").asText());
+        assertEquals("function", request.get("tool_choice").get("type").asString());
+        assertEquals("get_weather", request.get("tool_choice").get("function").get("name").asString());
     }
 
     @Test
@@ -183,8 +183,8 @@ class WatsonxAiRequestMappingTest extends CamelTestSupport {
 
         FakeWatsonxServer.Request request = server.lastRequest(DETECTION + "/context");
         JsonNode json = request.json();
-        assertEquals("The capital of France is Paris.", json.get("input").asText());
-        assertEquals("docs", json.get("context_type").asText());
+        assertEquals("The capital of France is Paris.", json.get("input").asString());
+        assertEquals("docs", json.get("context_type").asString());
         assertEquals(2, json.get("context").size());
         assertEquals(0.6, json.get("detectors").get("context_relevance").get("threshold").asDouble(), 0.001);
         assertTrue(json.get("detectors").has("faithfulness"));
@@ -203,8 +203,8 @@ class WatsonxAiRequestMappingTest extends CamelTestSupport {
                 Map.of(WatsonxAiConstants.DETECTION_PROMPT, "What is the capital of France?"));
 
         JsonNode json = server.lastRequest(DETECTION + "/generated").json();
-        assertEquals("What is the capital of France?", json.get("prompt").asText());
-        assertEquals("The capital of France is Paris.", json.get("generated_text").asText());
+        assertEquals("What is the capital of France?", json.get("prompt").asString());
+        assertEquals("The capital of France is Paris.", json.get("generated_text").asString());
         assertTrue(json.get("detectors").has("answer_relevance"));
         assertEquals(1, result.getMessage().getHeader(WatsonxAiConstants.DETECTION_COUNT));
     }

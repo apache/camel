@@ -912,10 +912,11 @@ watsonx.ai returns as a detection when the threshold is low; `CamelIBMWatsonxAiD
 === camel-ibm-watsonx-ai - IBM watsonx.ai Java SDK 0.50.0
 
 The component uses the IBM watsonx.ai Java SDK 0.50.0 (was 0.40.0). The SDK no longer depends on Jackson: it reads and
-writes JSON through a binding module, and the component now depends on `com.ibm.watsonx:watsonx-ai-jackson2`, the
-binding for Jackson 2. The SDK fails when it finds no binding, or more than one, so do not add
-`com.ibm.watsonx:watsonx-ai-jackson3` next to the component. An application that relied on Jackson coming with the SDK
-still gets it, through the binding.
+writes JSON through a binding module, and the component now depends on `com.ibm.watsonx:watsonx-ai-jackson3`, the
+binding for Jackson 3, with the Jackson 3 version that Camel manages. The SDK fails when it finds no binding, or more
+than one, so do not add `com.ibm.watsonx:watsonx-ai-jackson2` next to the component. The component no longer brings
+Jackson 2 (`com.fasterxml.jackson.core:jackson-databind`), which the SDK 0.40.0 depended on: an application that uses
+Jackson 2 must declare it itself.
 
 The SDK sends the API version `2026-10-28` with every request instead of `2026-08-19`. Some classes of the SDK that
 operations give in the body changed, such as `TextClassificationResponse.ClassificationResult`, which no longer has

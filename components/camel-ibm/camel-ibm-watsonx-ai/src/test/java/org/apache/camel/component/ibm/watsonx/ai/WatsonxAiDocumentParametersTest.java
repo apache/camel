@@ -19,7 +19,6 @@ package org.apache.camel.component.ibm.watsonx.ai;
 import java.io.IOException;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -27,6 +26,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -97,19 +97,19 @@ class WatsonxAiDocumentParametersTest extends CamelTestSupport {
 
         JsonNode request = server.lastRequest(EXTRACTIONS).json();
         JsonNode parameters = request.get("parameters");
-        assertEquals("plain_text", parameters.get("requested_outputs").get(0).asText());
-        assertEquals("assembly", parameters.get("requested_outputs").get(1).asText());
-        assertEquals("high_quality", parameters.get("mode").asText());
-        assertEquals("forced", parameters.get("ocr_mode").asText());
-        assertEquals("en", parameters.get("languages").get(0).asText());
-        assertEquals("fr", parameters.get("languages").get(1).asText());
+        assertEquals("plain_text", parameters.get("requested_outputs").get(0).asString());
+        assertEquals("assembly", parameters.get("requested_outputs").get(1).asString());
+        assertEquals("high_quality", parameters.get("mode").asString());
+        assertEquals("forced", parameters.get("ocr_mode").asString());
+        assertEquals("en", parameters.get("languages").get(0).asString());
+        assertEquals("fr", parameters.get("languages").get(1).asString());
         assertTrue(parameters.get("auto_rotation_correction").asBoolean());
-        assertEquals("enabled_text", parameters.get("create_embedded_images").asText());
+        assertEquals("enabled_text", parameters.get("create_embedded_images").asString());
         assertEquals(150, parameters.get("output_dpi").asInt());
         assertTrue(parameters.get("output_tokens").asBoolean());
-        assertEquals("invoice", parameters.get("kvp_mode").asText());
-        assertEquals("invoice-out/", request.get("results_reference").get("location").get("file_name").asText());
-        assertEquals("folder/invoice.pdf", request.get("document_reference").get("location").get("file_name").asText());
+        assertEquals("invoice", parameters.get("kvp_mode").asString());
+        assertEquals("invoice-out/", request.get("results_reference").get("location").get("file_name").asString());
+        assertEquals("folder/invoice.pdf", request.get("document_reference").get("location").get("file_name").asString());
     }
 
     @Test
@@ -118,7 +118,7 @@ class WatsonxAiDocumentParametersTest extends CamelTestSupport {
 
         JsonNode parameters = server.lastRequest(EXTRACTIONS).json().get("parameters");
         assertEquals(1, parameters.get("requested_outputs").size());
-        assertEquals("md", parameters.get("requested_outputs").get(0).asText());
+        assertEquals("md", parameters.get("requested_outputs").get(0).asString());
         assertFalse(parameters.has("mode"));
     }
 
@@ -127,7 +127,7 @@ class WatsonxAiDocumentParametersTest extends CamelTestSupport {
         // the SDK refuses them when it does not wait for the result: an asynchronous start ignores them
         send("textExtraction", "removeUploadedFile=true&removeOutputFile=true&ocrMode=disabled", Map.of());
 
-        assertEquals("disabled", server.lastRequest(EXTRACTIONS).json().get("parameters").get("ocr_mode").asText());
+        assertEquals("disabled", server.lastRequest(EXTRACTIONS).json().get("parameters").get("ocr_mode").asString());
     }
 
     @Test
@@ -137,9 +137,9 @@ class WatsonxAiDocumentParametersTest extends CamelTestSupport {
                 Map.of());
 
         JsonNode parameters = server.lastRequest(CLASSIFICATIONS).json().get("parameters");
-        assertEquals("binary", parameters.get("classification_mode").asText());
-        assertEquals("enabled", parameters.get("ocr_mode").asText());
-        assertEquals("de", parameters.get("languages").get(0).asText());
+        assertEquals("binary", parameters.get("classification_mode").asString());
+        assertEquals("enabled", parameters.get("ocr_mode").asString());
+        assertEquals("de", parameters.get("languages").get(0).asString());
         assertFalse(parameters.get("auto_rotation_correction").asBoolean());
     }
 }

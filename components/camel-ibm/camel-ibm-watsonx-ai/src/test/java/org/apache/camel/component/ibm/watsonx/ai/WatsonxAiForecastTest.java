@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.ibm.watsonx.ai.timeseries.ForecastData;
 import com.ibm.watsonx.ai.timeseries.InputSchema;
 import com.ibm.watsonx.ai.timeseries.TimeSeriesParameters;
@@ -32,6 +31,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -109,8 +109,8 @@ class WatsonxAiForecastTest extends CamelTestSupport {
         assertInstanceOf(List.class, result.getMessage().getBody());
         JsonNode request = server.lastRequest(FORECAST).json();
         assertEquals(12, request.get("parameters").get("prediction_length").asInt());
-        assertEquals("ibm/granite-ttm-512-96-r2", request.get("model_id").asText());
-        assertEquals("date", request.get("schema").get("timestamp_column").asText());
+        assertEquals("ibm/granite-ttm-512-96-r2", request.get("model_id").asString());
+        assertEquals("date", request.get("schema").get("timestamp_column").asString());
     }
 
     @Test
@@ -160,10 +160,10 @@ class WatsonxAiForecastTest extends CamelTestSupport {
 
         assertNull(result.getException());
         JsonNode request = server.lastRequest(FORECAST).json();
-        assertEquals("date", request.get("schema").get("timestamp_column").asText());
-        assertEquals("series_id", request.get("schema").get("id_columns").get(0).asText());
-        assertEquals("1h", request.get("schema").get("freq").asText());
-        assertEquals("value", request.get("schema").get("target_columns").get(0).asText());
+        assertEquals("date", request.get("schema").get("timestamp_column").asString());
+        assertEquals("series_id", request.get("schema").get("id_columns").get(0).asString());
+        assertEquals("1h", request.get("schema").get("freq").asString());
+        assertEquals("value", request.get("schema").get("target_columns").get(0).asString());
         assertEquals(2, request.get("data").get("value").size());
     }
 

@@ -48,11 +48,11 @@
             <artifactId>watsonx-ai</artifactId>
             <version>${ibm-watsonx-ai-sdk-version}</version>
         </dependency>
-        <!-- the JSON binding of the SDK, which ships none since 0.50.0: Jackson 2, as managed by Camel.
-             There must be exactly one binding on the classpath (not also watsonx-ai-jackson3) -->
+        <!-- the JSON binding of the SDK, which ships none since 0.50.0: Jackson 3, with the version Camel manages
+             (jackson3-version). There must be exactly one binding on the classpath (not also watsonx-ai-jackson2) -->
         <dependency>
             <groupId>com.ibm.watsonx</groupId>
-            <artifactId>watsonx-ai-jackson2</artifactId>
+            <artifactId>watsonx-ai-jackson3</artifactId>
             <version>${ibm-watsonx-ai-sdk-version}</version>
         </dependency>
 

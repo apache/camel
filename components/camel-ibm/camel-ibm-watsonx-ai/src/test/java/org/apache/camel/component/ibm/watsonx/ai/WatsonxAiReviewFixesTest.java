@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.ibm.watsonx.ai.timeseries.ForecastData;
 import com.ibm.watsonx.ai.timeseries.InputSchema;
 import com.ibm.watsonx.ai.timeseries.TimeSeriesParameters;
@@ -35,6 +34,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -169,8 +169,8 @@ class WatsonxAiReviewFixesTest extends CamelTestSupport {
         send("chat", "", "Write two paragraphs.", Map.of(WatsonxAiConstants.STOP, "\n\n, END"));
 
         JsonNode stop = server.lastRequest(CHAT).json().get("stop");
-        assertEquals("\n\n", stop.get(0).asText());
-        assertEquals(" END", stop.get(1).asText());
+        assertEquals("\n\n", stop.get(0).asString());
+        assertEquals(" END", stop.get(1).asString());
     }
 
     @Test

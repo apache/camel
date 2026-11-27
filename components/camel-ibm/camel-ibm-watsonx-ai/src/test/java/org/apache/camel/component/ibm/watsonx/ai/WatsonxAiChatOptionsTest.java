@@ -24,7 +24,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.ibm.watsonx.ai.chat.model.AssistantMessage;
 import com.ibm.watsonx.ai.chat.model.Tool;
 import com.ibm.watsonx.ai.chat.model.ToolCall;
@@ -36,6 +35,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -119,9 +119,9 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
 
     @Test
     void responseFormatJson() {
-        assertEquals("json_object", chat("responseFormat=json", Map.of()).get("response_format").get("type").asText());
+        assertEquals("json_object", chat("responseFormat=json", Map.of()).get("response_format").get("type").asString());
         assertEquals("text", chat("responseFormat=json", Map.of(WatsonxAiConstants.RESPONSE_FORMAT, "text"))
-                .get("response_format").get("type").asText());
+                .get("response_format").get("type").asString());
         assertFalse(chat("", Map.of()).has("response_format"));
     }
 
@@ -129,16 +129,16 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
     void jsonSchemaOptionAndHeader() {
         JsonNode format = chat("jsonSchema=RAW({\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}}})",
                 Map.of()).get("response_format");
-        assertEquals("json_schema", format.get("type").asText());
-        assertEquals("string", format.get("json_schema").get("schema").get("properties").get("city").get("type").asText());
+        assertEquals("json_schema", format.get("type").asString());
+        assertEquals("string", format.get("json_schema").get("schema").get("properties").get("city").get("type").asString());
         assertTrue(format.get("json_schema").get("strict").asBoolean());
 
         format = chat("jsonSchemaStrict=false", Map.of(WatsonxAiConstants.JSON_SCHEMA,
                 Map.of("type", "object", "properties", Map.of("country", Map.of("type", "string")))))
                 .get("response_format");
-        assertEquals("json_schema", format.get("type").asText());
+        assertEquals("json_schema", format.get("type").asString());
         assertFalse(format.get("json_schema").get("strict").asBoolean());
-        assertEquals("object", format.get("json_schema").get("schema").get("type").asText());
+        assertEquals("object", format.get("json_schema").get("schema").get("type").asString());
     }
 
     @Test
@@ -147,13 +147,13 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
                                 + "&seed=42&stop=END,STOP&numberOfChoices=2",
                 Map.of());
         // the SDK keeps the choices in a set, in no particular order
-        assertEquals(Set.of("Paris", "Rome"), Set.of(request.get("guided_choice").get(0).asText(),
-                request.get("guided_choice").get(1).asText()));
-        assertEquals("[A-Z][a-z]+", request.get("guided_regex").asText());
-        assertEquals("root ::= \"yes\"", request.get("guided_grammar").asText());
+        assertEquals(Set.of("Paris", "Rome"), Set.of(request.get("guided_choice").get(0).asString(),
+                request.get("guided_choice").get(1).asString()));
+        assertEquals("[A-Z][a-z]+", request.get("guided_regex").asString());
+        assertEquals("root ::= \"yes\"", request.get("guided_grammar").asString());
         assertEquals(42, request.get("seed").asInt());
-        assertEquals("END", request.get("stop").get(0).asText());
-        assertEquals("STOP", request.get("stop").get(1).asText());
+        assertEquals("END", request.get("stop").get(0).asString());
+        assertEquals("STOP", request.get("stop").get(1).asString());
         assertEquals(2, request.get("n").asInt());
     }
 
@@ -165,9 +165,9 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
                 WatsonxAiConstants.GUIDED_CHOICE, "yes,no",
                 WatsonxAiConstants.MODEL_ID, "meta-llama/llama-3-3-70b-instruct"));
         assertEquals(7, request.get("seed").asInt());
-        assertEquals("\n\n", request.get("stop").get(0).asText());
+        assertEquals("\n\n", request.get("stop").get(0).asString());
         assertEquals(2, request.get("guided_choice").size());
-        assertEquals("meta-llama/llama-3-3-70b-instruct", request.get("model_id").asText());
+        assertEquals("meta-llama/llama-3-3-70b-instruct", request.get("model_id").asString());
     }
 
     @Test
@@ -180,7 +180,7 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
 
         JsonNode request = server.lastRequest(CHAT).json();
         assertTrue(request.get("include_reasoning").asBoolean());
-        assertEquals("high", request.get("reasoning_effort").asText());
+        assertEquals("high", request.get("reasoning_effort").asString());
         assertTrue(request.get("chat_template_kwargs").get("thinking").asBoolean());
         assertEquals("Paris", result.getMessage().getBody());
         assertEquals("France's capital is Paris.", result.getMessage().getHeader(WatsonxAiConstants.REASONING_CONTENT));
@@ -189,7 +189,7 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
     @Test
     void reasoningEffortHeader() {
         JsonNode request = chat("", Map.of(WatsonxAiConstants.REASONING_EFFORT, "low"));
-        assertEquals("low", request.get("reasoning_effort").asText());
+        assertEquals("low", request.get("reasoning_effort").asString());
         assertFalse(chat("", Map.of()).has("reasoning_effort"));
     }
 
@@ -260,8 +260,8 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
         assertEquals(0.2, request.get("temperature").asDouble(), 0.001);
         assertEquals(50, request.get("max_completion_tokens").asInt());
         assertEquals(1, request.get("seed").asInt());
-        assertEquals("required", request.get("tool_choice_option").asText());
-        assertEquals("capital", request.get("tools").get(0).get("function").get("name").asText());
+        assertEquals("required", request.get("tool_choice_option").asString());
+        assertEquals("capital", request.get("tools").get(0).get("function").get("name").asString());
         // the deployment gives the model
         assertFalse(request.has("model_id"));
     }
@@ -285,7 +285,7 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
                 WatsonxAiConstants.STREAM_CONSUMER, (Consumer<String>) chunks::add));
 
         JsonNode request = server.lastRequest(CHAT_STREAM).json();
-        assertEquals("capital", request.get("tools").get(0).get("function").get("name").asText());
+        assertEquals("capital", request.get("tools").get(0).get("function").get("name").asString());
         assertTrue(result.getMessage().getHeader(WatsonxAiConstants.HAS_TOOL_CALLS, Boolean.class));
         List<?> toolCalls = result.getMessage().getHeader(WatsonxAiConstants.TOOL_CALLS, List.class);
         ToolCall toolCall = (ToolCall) toolCalls.get(0);
