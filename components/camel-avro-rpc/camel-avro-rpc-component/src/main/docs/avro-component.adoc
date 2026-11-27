@@ -145,6 +145,17 @@ got only one parameter, *since 2.12* you can use `singleParameter` URI
 option to receive it directly in the "in" message body without array
 wrapping.
 
+=== Trusted packages apply to the whole JVM
+
+Avro validates the classes it loads for a schema, and only loads classes from trusted packages. Camel adds the
+packages of the `protocol` or `protocolClassName` option, and the packages of the `serializablePackages` option, to
+these trusted packages.
+
+Avro has one class validator for the whole JVM. So a package trusted by one endpoint is trusted for all Avro class
+resolution in the JVM: for every Avro RPC endpoint, every xref:dataformats:avro-dataformat.adoc[Avro data format] and
+every Camel context in the same JVM. A trusted package stays trusted until the JVM is restarted; stopping the endpoint
+or the route does not remove it. Only add packages that hold your own Avro model classes.
+
 == Examples
 
 An example of using camel avro producers via http:
