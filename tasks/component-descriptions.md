@@ -236,7 +236,7 @@ or removes its row.
 | camel-jms | jms |  |
 | camel-jmx | jmx |  |
 | camel-jolt | jolt |  |
-| camel-jooq | jooq |  |
+| camel-jooq | jooq | yes |
 | camel-jpa | jpa |  |
 | camel-jsch | scp |  |
 | camel-jslt | jslt |  |

@@ -3006,7 +3006,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JOOQ (camel-jooq)
-     * Store and retrieve Java objects from an SQL database using JOOQ.
+     * Store and consume jOOQ records in an SQL database, and run jOOQ or plain
+     * SQL queries.
      * 
      * Category: database
      * Since: 3.0
