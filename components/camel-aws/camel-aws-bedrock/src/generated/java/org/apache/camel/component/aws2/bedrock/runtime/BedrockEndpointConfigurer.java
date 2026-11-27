@@ -32,6 +32,8 @@ public class BedrockEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "bedrockRuntimeClient": target.getConfiguration().setBedrockRuntimeClient(property(camelContext, software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient.class, value)); return true;
         case "guardrailidentifier":
         case "guardrailIdentifier": target.getConfiguration().setGuardrailIdentifier(property(camelContext, java.lang.String.class, value)); return true;
+        case "guardrailstreamprocessingmode":
+        case "guardrailStreamProcessingMode": target.getConfiguration().setGuardrailStreamProcessingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailtrace":
         case "guardrailTrace": target.getConfiguration().setGuardrailTrace(property(camelContext, boolean.class, value)); return true;
         case "guardrailversion":
@@ -92,6 +94,8 @@ public class BedrockEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "bedrockRuntimeClient": return software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient.class;
         case "guardrailidentifier":
         case "guardrailIdentifier": return java.lang.String.class;
+        case "guardrailstreamprocessingmode":
+        case "guardrailStreamProcessingMode": return java.lang.String.class;
         case "guardrailtrace":
         case "guardrailTrace": return boolean.class;
         case "guardrailversion":
@@ -148,6 +152,8 @@ public class BedrockEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "bedrockRuntimeClient": return target.getConfiguration().getBedrockRuntimeClient();
         case "guardrailidentifier":
         case "guardrailIdentifier": return target.getConfiguration().getGuardrailIdentifier();
+        case "guardrailstreamprocessingmode":
+        case "guardrailStreamProcessingMode": return target.getConfiguration().getGuardrailStreamProcessingMode();
         case "guardrailtrace":
         case "guardrailTrace": return target.getConfiguration().isGuardrailTrace();
         case "guardrailversion":
