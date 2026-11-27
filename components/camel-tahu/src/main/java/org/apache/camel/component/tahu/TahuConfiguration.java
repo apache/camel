@@ -38,15 +38,23 @@ public class TahuConfiguration implements Cloneable {
     private static final Pattern SERVER_DEF_PATTERN = Pattern
             .compile("([^:]+):(?:(?!tcp|ssl)([^:]+):)?((?:tcp|ssl):(?://)?[\\p{Alnum}.-]+(?::\\d+)?),?");
 
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The MQTT servers, as a comma-separated list of definitions with the syntax"
+                            + " name:[clientId:](tcp|ssl)://host[:port], for example Mqtt:tcp://localhost:1883. The clientId of a"
+                            + " definition replaces the clientId option for that server. A tahu-edge Device endpoint does not"
+                            + " use it, as its Edge Node endpoint connects to the servers.")
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME }, required = true)
     private String servers;
 
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The MQTT client ID for each server whose definition in the servers option has no client ID. If"
+                            + " neither is set, a random client ID that starts with Camel is generated for the server.")
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME }, required = true)
     private String clientId;
 
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Whether to fail when an MQTT client ID is longer than 23 characters, the limit of MQTT 3.1.1. A"
+                            + " generated client ID is always shorter.")
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
     private boolean checkClientIdLength = false;
 
@@ -58,7 +66,9 @@ public class TahuConfiguration implements Cloneable {
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
     private String password;
 
-    @UriParam(label = "common", defaultValue = "5000")
+    @UriParam(label = "common", defaultValue = "5000",
+              description = "The time in milliseconds after a birth or rebirth during which the Edge Node ignores further"
+                            + " rebirth requests. Only an Edge Node endpoint of tahu-edge uses it, tahu-host does not.")
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
     private long rebirthDebounceDelay = 5000L;
 
@@ -74,12 +84,6 @@ public class TahuConfiguration implements Cloneable {
         return servers;
     }
 
-    /**
-     * MQTT server definitions, given with the following syntax in a comma-separated list:
-     * MqttServerName:(MqttClientId:)(tcp/ssl)://hostname(:port),...
-     *
-     * @param servers The comma-separated list of server definitions
-     */
     public void setServers(String servers) {
         this.servers = servers;
     }
@@ -126,13 +130,6 @@ public class TahuConfiguration implements Cloneable {
         return clientId;
     }
 
-    /**
-     * MQTT client ID to use for all server definitions, rather than specifying the same one for each. Note that if
-     * neither the 'clientId' parameter nor an 'MqttClientId' are defined for an MQTT Server, a random MQTT Client ID
-     * will be generated automatically, prefaced with 'Camel'
-     *
-     * @param clientId The MQTT Client ID to use for all server connections
-     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -141,11 +138,6 @@ public class TahuConfiguration implements Cloneable {
         return checkClientIdLength;
     }
 
-    /**
-     * MQTT client ID length check enabled
-     *
-     * @param checkClientIdLength
-     */
     public void setCheckClientIdLength(boolean checkClientIdLength) {
         this.checkClientIdLength = checkClientIdLength;
     }
@@ -180,11 +172,6 @@ public class TahuConfiguration implements Cloneable {
         return rebirthDebounceDelay;
     }
 
-    /**
-     * Delay before recurring node rebirth messages will be sent
-     *
-     * @param rebirthDebounceDelay
-     */
     public void setRebirthDebounceDelay(long rebirthDebounceDelay) {
         this.rebirthDebounceDelay = rebirthDebounceDelay;
     }

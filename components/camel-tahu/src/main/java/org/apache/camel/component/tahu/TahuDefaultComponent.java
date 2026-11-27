@@ -33,7 +33,9 @@ public abstract class TahuDefaultComponent extends DefaultComponent implements S
 
     protected final ConcurrentMap<String, TahuDefaultEndpoint> endpoints = new ConcurrentHashMap<>();
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The shared configuration of the endpoints. Each endpoint gets a copy of it, which the options"
+                            + " of the endpoint then change.")
     TahuConfiguration configuration;
 
     @Metadata(label = "security", defaultValue = "false")
@@ -98,9 +100,6 @@ public abstract class TahuDefaultComponent extends DefaultComponent implements S
         return configuration;
     }
 
-    /**
-     * To use a shared Tahu configuration
-     */
     public void setConfiguration(TahuConfiguration configuration) {
         this.configuration = configuration;
     }

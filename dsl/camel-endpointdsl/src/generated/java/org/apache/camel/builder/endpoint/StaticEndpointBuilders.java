@@ -17942,7 +17942,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Tahu Edge Node / Device (camel-tahu)
-     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT
+     * servers using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -17951,13 +17952,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tahu-edge:groupId/edgeNode</code>
      * 
      * Path parameter: groupId (required)
-     * ID of the group
+     * The Sparkplug group ID of the Edge Node.
      * 
      * Path parameter: edgeNode (required)
-     * ID of the edge node
+     * The Sparkplug Edge Node ID. With the groupId, it identifies the Edge
+     * Node.
      * 
      * Path parameter: deviceId
-     * ID of this edge node device. Applies to the device endpoint only.
+     * The Sparkplug device ID of a Device of the Edge Node. With it, the
+     * endpoint is a Device endpoint; without it, an Edge Node endpoint.
      * 
      * @param path groupId/edgeNode
      * @return the dsl builder
@@ -17967,7 +17970,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Tahu Edge Node / Device (camel-tahu)
-     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT
+     * servers using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -17976,13 +17980,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tahu-edge:groupId/edgeNode</code>
      * 
      * Path parameter: groupId (required)
-     * ID of the group
+     * The Sparkplug group ID of the Edge Node.
      * 
      * Path parameter: edgeNode (required)
-     * ID of the edge node
+     * The Sparkplug Edge Node ID. With the groupId, it identifies the Edge
+     * Node.
      * 
      * Path parameter: deviceId
-     * ID of this edge node device. Applies to the device endpoint only.
+     * The Sparkplug device ID of a Device of the Edge Node. With it, the
+     * endpoint is a Device endpoint; without it, an Edge Node endpoint.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17994,7 +18000,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Tahu Host Application (camel-tahu)
-     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * Receive Sparkplug B messages and metrics from MQTT servers as a Host
+     * Application using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -18003,7 +18010,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tahu-host:hostId</code>
      * 
      * Path parameter: hostId (required)
-     * ID for the host application
+     * The Sparkplug host ID of the Host Application. An Edge Node that has this
+     * ID in its primaryHostId option waits for this Host Application to be
+     * online.
      * 
      * @param path hostId
      * @return the dsl builder
@@ -18013,7 +18022,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Tahu Host Application (camel-tahu)
-     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * Receive Sparkplug B messages and metrics from MQTT servers as a Host
+     * Application using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -18022,7 +18032,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tahu-host:hostId</code>
      * 
      * Path parameter: hostId (required)
-     * ID for the host application
+     * The Sparkplug host ID of the Host Application. An Edge Node that has this
+     * ID in its primaryHostId option waits for this Host Application to be
+     * online.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
