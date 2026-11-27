@@ -936,7 +936,7 @@ public interface ComponentsBuilderFactory {
      * Azure Key Vault (camel-azure-key-vault)
      * Create, get, update, delete and purge secrets in Azure Key Vault.
      * 
-     * Category: cloud,cloud
+     * Category: cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
      * 
