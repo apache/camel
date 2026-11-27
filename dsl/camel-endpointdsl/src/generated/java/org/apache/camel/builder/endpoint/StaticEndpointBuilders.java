@@ -9041,8 +9041,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
-     * Interact with IBM watsonx.ai foundation models for text generation, chat,
-     * embeddings, and more.
+     * Generate text, chat, embed, rerank and tokenize text, extract and
+     * classify documents, detect harmful content and forecast time series with
+     * the foundation models and deployments of IBM watsonx.ai.
      * 
      * Category: ai,cloud
      * Since: 4.18
@@ -9051,7 +9052,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watsonx-ai:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name for the endpoint
+     * A logical name of your choice for the endpoint. It is not sent to
+     * watsonx.ai.
      * 
      * @param path label
      * @return the dsl builder
@@ -9061,8 +9063,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
-     * Interact with IBM watsonx.ai foundation models for text generation, chat,
-     * embeddings, and more.
+     * Generate text, chat, embed, rerank and tokenize text, extract and
+     * classify documents, detect harmful content and forecast time series with
+     * the foundation models and deployments of IBM watsonx.ai.
      * 
      * Category: ai,cloud
      * Since: 4.18
@@ -9071,7 +9074,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watsonx-ai:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name for the endpoint
+     * A logical name of your choice for the endpoint. It is not sent to
+     * watsonx.ai.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
