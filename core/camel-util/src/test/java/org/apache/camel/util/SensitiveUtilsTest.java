@@ -77,9 +77,12 @@ class SensitiveUtilsTest {
         assertThat(SensitiveUtils.isSensitiveHeader("Ocp-Apim-Subscription-Key")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-Functions-Key")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-Ms-Encryption-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Ms-Copy-Source-Authorization")).isTrue();
         // Google
         assertThat(SensitiveUtils.isSensitiveHeader("X-Goog-Api-Key")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-Goog-Encryption-Key")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Serverless-Authorization")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("X-Forwarded-Authorization")).isTrue();
         // HashiCorp
         assertThat(SensitiveUtils.isSensitiveHeader("X-Vault-Token")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-Consul-Token")).isTrue();
@@ -93,6 +96,7 @@ class SensitiveUtilsTest {
         assertThat(SensitiveUtils.isSensitiveHeader("DD-APPLICATION-KEY")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-Sentry-Auth")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-Registry-Auth")).isTrue();
+        assertThat(SensitiveUtils.isSensitiveHeader("Proxy-Authorization")).isTrue();
         // case does not matter
         assertThat(SensitiveUtils.isSensitiveHeader("x-amz-security-token")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-AMZ-SECURITY-TOKEN")).isTrue();
@@ -100,13 +104,13 @@ class SensitiveUtilsTest {
         // credential headers that the rule misses are listed explicitly
         assertThat(SensitiveUtils.isSensitiveHeader("Cookie")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("Set-Cookie")).isTrue();
-        assertThat(SensitiveUtils.isSensitiveHeader("Proxy-Authorization")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-Goog-Iap-Jwt-Assertion")).isTrue();
         assertThat(SensitiveUtils.isSensitiveHeader("X-Honeycomb-Team")).isTrue();
 
         // a well-known header that ends in such a word but carries no secret
         assertThat(SensitiveUtils.isSensitiveHeader("Idempotency-Key")).isFalse();
         assertThat(SensitiveUtils.isSensitiveHeader("Access-Control-Allow-Credentials")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("Sec-WebSocket-Key")).isFalse();
 
         // ordinary headers
         assertThat(SensitiveUtils.isSensitiveHeader("Content-Type")).isFalse();

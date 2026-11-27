@@ -1652,7 +1652,7 @@ body are masked as before, only when `logMask=true`.
 
 Which headers count as credential headers is decided by `SensitiveUtils.isSensitiveHeader` in camel-util: a header is
 masked when its name matches a sensitive key (such as `Authorization`), when its name ends in `token`, `key`,
-`secret`, `password`, `auth`, `credential` or `credentials` — which covers vendor headers such as
+`secret`, `password`, `auth`, `authorization`, `credential` or `credentials` — which covers vendor headers such as
 `X-Amz-Security-Token`, `Ocp-Apim-Subscription-Key` and `X-Vault-Token` — or when it is a well-known credential
 header such as `Cookie`, `Set-Cookie` or `Proxy-Authorization`. A well-known header whose name ends in such a word
 but that carries no secret, such as `Idempotency-Key`, is not masked.
@@ -12647,4 +12647,3 @@ The Kamelet catalog 4.24 adds these Kamelets:
   untrusted input or AI agents. A vector (`knn`) search works too.
 * `pgp-encrypt-action` and `pgp-decrypt-action` (Preview) encrypt and sign a message body with OpenPGP, and decrypt it
   and check its signature, with key rings given as `file:`, `classpath:` or `base64:` resources.
-

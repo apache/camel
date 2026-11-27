@@ -314,7 +314,6 @@ public final class SensitiveUtils {
     // in lower case without dashes
     private static final Set<String> SENSITIVE_HEADERS = Set.of(
             "cookie",
-            "proxyauthorization",
             "setcookie",
             "xgoogiapjwtassertion",
             "xhoneycombteam");
@@ -323,11 +322,12 @@ public final class SensitiveUtils {
     // in lower case without dashes
     private static final Set<String> NOT_SENSITIVE_HEADERS = Set.of(
             "accesscontrolallowcredentials",
-            "idempotencykey");
+            "idempotencykey",
+            "secwebsocketkey");
 
     // the words that mark a credential when they end the name of an HTTP header, in lower case
     private static final String[] SENSITIVE_HEADER_SUFFIXES = {
-            "token", "key", "secret", "password", "auth", "credential", "credentials" };
+            "token", "key", "secret", "password", "auth", "authorization", "credential", "credentials" };
 
     private SensitiveUtils() {
     }
@@ -375,9 +375,10 @@ public final class SensitiveUtils {
      * HTTP headers do not follow the naming of configuration options: most credential headers carry a vendor prefix
      * (such as {@code X-Amz-Security-Token}), so they do not match a sensitive key as a whole. A header is therefore
      * also sensitive when its name, in lower case without dashes, ends in {@code token}, {@code key}, {@code secret},
-     * {@code password}, {@code auth}, {@code credential} or {@code credentials}, or when it is a well-known credential
-     * header that the rule misses (such as {@code Cookie} and {@code Set-Cookie}). A few well-known headers end in such
-     * a word but carry no secret (such as {@code Idempotency-Key}) and are not sensitive.
+     * {@code password}, {@code auth}, {@code authorization}, {@code credential} or {@code credentials}, or when it is a
+     * well-known credential header that the rule misses (such as {@code Cookie} and {@code Set-Cookie}). A few
+     * well-known headers end in such a word but carry no secret (such as {@code Idempotency-Key}) and are not
+     * sensitive.
      *
      * @param  name the name of the HTTP header
      * @return      true if the header carries a credential, false otherwise
