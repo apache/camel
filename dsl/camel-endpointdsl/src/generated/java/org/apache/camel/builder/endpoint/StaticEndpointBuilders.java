@@ -4939,7 +4939,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
-     * Capture changes from a DB2 database.
+     * Capture the row changes of tables in an IBM Db2 database with the
+     * Debezium Db2 connector.
      * 
      * Category: database
      * Since: 3.17
@@ -4948,8 +4949,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-db2:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param path name
      * @return the dsl builder
@@ -4959,7 +4961,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
-     * Capture changes from a DB2 database.
+     * Capture the row changes of tables in an IBM Db2 database with the
+     * Debezium Db2 connector.
      * 
      * Category: database
      * Since: 3.17
@@ -4968,8 +4971,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-db2:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4990,8 +4994,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-mongodb:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param path name
      * @return the dsl builder
@@ -5010,8 +5015,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-mongodb:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5032,8 +5038,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-mysql:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param path name
      * @return the dsl builder
@@ -5052,8 +5059,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-mysql:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5074,8 +5082,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-oracle:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param path name
      * @return the dsl builder
@@ -5094,8 +5103,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-oracle:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5116,8 +5126,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-postgres:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param path name
      * @return the dsl builder
@@ -5136,8 +5147,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-postgres:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5158,8 +5170,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-sqlserver:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param path name
      * @return the dsl builder
@@ -5178,8 +5191,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>debezium-sqlserver:name</code>
      * 
      * Path parameter: name (required)
-     * Unique name for the connector. Attempting to register again with the same
-     * name will fail.
+     * The name of the connector, which is also the name of the Debezium engine.
+     * The offsets are stored by this name: a connector with a new name starts
+     * from the beginning again, as set by its snapshot mode.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

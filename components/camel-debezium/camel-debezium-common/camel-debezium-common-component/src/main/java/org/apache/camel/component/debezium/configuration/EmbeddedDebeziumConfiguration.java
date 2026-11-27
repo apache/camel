@@ -50,66 +50,77 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
 
     private Class<?> connectorClass;
     // name
-    @UriPath(label = LABEL_NAME, description = "Unique name for the connector. "
-                                               + "Attempting to register again with the same name will fail.")
+    @UriPath(label = LABEL_NAME, description = "The name of the connector, which is also the name of the Debezium engine."
+                                               + " The offsets are stored by this name: a connector with a new name starts"
+                                               + " from the beginning again, as set by its snapshot mode.")
     @Metadata(required = true)
     private String name;
     // offset.storage
     @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.storage.FileOffsetBackingStore",
-              description = "The name of the Java class that is responsible for persistence of connector offsets.")
+              description = "The Java class of the Kafka Connect OffsetBackingStore that stores the offsets (the position"
+                            + " of the connector in the database log), so that a restarted consumer continues where it"
+                            + " stopped. The default FileOffsetBackingStore writes them to the offsetStorageFileName file,"
+                            + " KafkaOffsetBackingStore to the offsetStorageTopic topic, and MemoryOffsetBackingStore keeps"
+                            + " them in memory only.")
     private String offsetStorage = DebeziumConstants.DEFAULT_OFFSET_STORAGE;
     // offset.storage.file.filename
-    @UriParam(label = LABEL_NAME, description = "Path to file where offsets are to be stored. "
-                                                + "Required when offset.storage is set to the FileOffsetBackingStore.")
+    @UriParam(label = LABEL_NAME, description = "The file that the FileOffsetBackingStore writes the offsets to. Required"
+                                                + " with the default offsetStorage: creating the endpoint fails when it is"
+                                                + " not set, or when its folder does not exist or cannot be written.")
     private String offsetStorageFileName;
     // offset.storage.topic
-    @UriParam(label = LABEL_NAME, description = "The name of the Kafka topic where offsets are "
-                                                + "to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore.")
+    @UriParam(label = LABEL_NAME, description = "The Kafka topic that the KafkaOffsetBackingStore writes the offsets to."
+                                                + " Required with that offsetStorage, together with offsetStoragePartitions,"
+                                                + " offsetStorageReplicationFactor and the Kafka brokers as"
+                                                + " additionalProperties.bootstrap.servers.")
     private String offsetStorageTopic;
     // offset.storage.partitions
-    @UriParam(label = LABEL_NAME, description = "The number of partitions used when creating the "
-                                                + "offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'.")
+    @UriParam(label = LABEL_NAME, description = "The number of partitions of the offset topic, when the"
+                                                + " KafkaOffsetBackingStore creates it. Required when offsetStorage is the"
+                                                + " KafkaOffsetBackingStore.")
     private int offsetStoragePartitions;
     // offset.storage.replication.factor
-    @UriParam(label = LABEL_NAME, description = "Replication factor used when creating the offset "
-                                                + "storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore")
+    @UriParam(label = LABEL_NAME, description = "The replication factor of the offset topic, when the"
+                                                + " KafkaOffsetBackingStore creates it. Required when offsetStorage is the"
+                                                + " KafkaOffsetBackingStore.")
     private int offsetStorageReplicationFactor;
     // offset.commit.policy
     @UriParam(label = LABEL_NAME,
-              description = "The name of the Java class of the commit policy. It defines when offsets "
-                            + "commit has to be triggered based on the number of events processed and the "
-                            + "time elapsed since the last commit. This class must implement the interface "
-                            + "'OffsetCommitPolicy'. The default is a periodic commit policy based upon "
-                            + "time intervals.")
+              description = "The Java class that decides when the offsets are committed. It must implement"
+                            + " io.debezium.engine.spi.OffsetCommitPolicy. The default PeriodicCommitOffsetPolicy commits"
+                            + " every offsetFlushIntervalMs, and AlwaysCommitOffsetPolicy commits after each batch of"
+                            + " events.")
     private String offsetCommitPolicy = OffsetCommitPolicy.PeriodicCommitOffsetPolicy.class.getName();
     // offset.flush.interval.ms
-    @UriParam(label = LABEL_NAME, defaultValue = "60000", description = "Interval at which to try committing "
-                                                                        + "offsets. The default is 1 minute.",
+    @UriParam(label = LABEL_NAME, defaultValue = "60000",
+              description = "How often the default periodic commit policy commits the offsets. The events processed since"
+                            + " the last commit are sent again after a crash. The default is 1 minute.",
               javaType = "java.time.Duration")
     private long offsetFlushIntervalMs = 60000;
     // offset.commit.timeout.ms
-    @UriParam(label = LABEL_NAME, defaultValue = "5000", description = "Maximum number of milliseconds "
-                                                                       + "to wait for records to flush and partition offset data to be committed to offset storage "
-                                                                       + "before cancelling the process and restoring the offset data to be committed in a future "
-                                                                       + "attempt. The default is 5 seconds.",
+    @UriParam(label = LABEL_NAME, defaultValue = "5000",
+              description = "How long to wait for the offsets to be written to the offset store before the commit is"
+                            + " cancelled; the offsets are then committed in a later attempt. Camel passes it to Debezium as"
+                            + " offset.flush.timeout.ms. The default is 5 seconds.",
               javaType = "java.time.Duration")
     private long offsetCommitTimeoutMs = 5000;
     // internal.key.converter
     @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.json.JsonConverter",
-              description = "The Converter class that should be used to serialize and deserialize key data "
-                            + "for offsets. The default is JSON converter.")
+              description = "The converter class that Camel passes to Debezium as internal.key.converter. Debezium does"
+                            + " not read this property: it always stores the keys of the offsets as JSON, so this option has"
+                            + " no effect.")
     private String internalKeyConverter = JsonConverter.class.getName();
     // internal.value.converter
     @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.json.JsonConverter",
-              description = "The Converter class that should be used to serialize and deserialize value "
-                            + "data for offsets. The default is JSON converter.")
+              description = "The converter class that Camel passes to Debezium as internal.value.converter. Debezium does"
+                            + " not read this property: it always stores the values of the offsets as JSON, so this option"
+                            + " has no effect.")
     private String internalValueConverter = JsonConverter.class.getName();
     // Additional properties
     @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true,
-              description = "Additional properties for debezium components in case they can't be set directly "
-                            + "on the camel configurations (e.g: setting Kafka Connect properties needed by Debezium engine, "
-                            + "for example setting KafkaOffsetBackingStore), the properties have to be prefixed with "
-                            + "`additionalProperties.`. E.g: `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`")
+              description = "Properties for the Debezium engine and connector that have no option of their own, such as"
+                            + " the Kafka brokers of the KafkaOffsetBackingStore or single message transformations, for"
+                            + " example additionalProperties.bootstrap.servers=localhost:9092.")
     private Map<String, Object> additionalProperties = new HashMap<>();
 
     protected EmbeddedDebeziumConfiguration() {
@@ -356,9 +367,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.connectorClass = connectorClass;
     }
 
-    /**
-     * Unique name for the connector. Attempting to register again with the same name will fail.
-     */
     public String getName() {
         return name;
     }
@@ -367,9 +375,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.name = name;
     }
 
-    /**
-     * The name of the Java class that is responsible for persistence of connector offsets.
-     */
     public String getOffsetStorage() {
         return offsetStorage;
     }
@@ -378,9 +383,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.offsetStorage = offsetStorage;
     }
 
-    /**
-     * Path to file where offsets are to be stored. Required when offset.storage is set to the FileOffsetBackingStore
-     */
     public String getOffsetStorageFileName() {
         return offsetStorageFileName;
     }
@@ -389,10 +391,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.offsetStorageFileName = offsetStorageFileName;
     }
 
-    /**
-     * The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the
-     * KafkaOffsetBackingStore.
-     */
     public String getOffsetStorageTopic() {
         return offsetStorageTopic;
     }
@@ -401,10 +399,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.offsetStorageTopic = offsetStorageTopic;
     }
 
-    /**
-     * Replication factor used when creating the offset storage topic. Required when offset.storage is set to the
-     * KafkaOffsetBackingStore
-     */
     public int getOffsetStorageReplicationFactor() {
         return offsetStorageReplicationFactor;
     }
@@ -413,11 +407,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.offsetStorageReplicationFactor = offsetStorageReplicationFactor;
     }
 
-    /**
-     * The name of the Java class of the commit policy. It defines when offsets commit has to be triggered based on the
-     * number of events processed and the time elapsed since the last commit. This class must implement the interface
-     * 'OffsetCommitPolicy'. The default is a periodic commit policy based upon time intervals.
-     */
     public String getOffsetCommitPolicy() {
         return offsetCommitPolicy;
     }
@@ -426,9 +415,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.offsetCommitPolicy = offsetCommitPolicy;
     }
 
-    /**
-     * Interval at which to try committing offsets. The default is 1 minute.
-     */
     public long getOffsetFlushIntervalMs() {
         return offsetFlushIntervalMs;
     }
@@ -437,11 +423,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.offsetFlushIntervalMs = offsetFlushIntervalMs;
     }
 
-    /**
-     * Maximum number of milliseconds to wait for records to flush and partition offset data to be committed to offset
-     * storage before cancelling the process and restoring the offset data to be committed in a future attempt. The
-     * default is 5 seconds.
-     */
     public long getOffsetCommitTimeoutMs() {
         return offsetCommitTimeoutMs;
     }
@@ -450,10 +431,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.offsetCommitTimeoutMs = offsetCommitTimeoutMs;
     }
 
-    /**
-     * The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the
-     * 'KafkaOffsetBackingStore'.
-     */
     public int getOffsetStoragePartitions() {
         return offsetStoragePartitions;
     }
@@ -462,10 +439,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.offsetStoragePartitions = offsetStoragePartitions;
     }
 
-    /**
-     * The Converter class that should be used to serialize and deserialize key data for offsets. The default is JSON
-     * converter.
-     */
     public String getInternalKeyConverter() {
         return internalKeyConverter;
     }
@@ -474,10 +447,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.internalKeyConverter = internalKeyConverter;
     }
 
-    /**
-     * The Converter class that should be used to serialize and deserialize value data for offsets. The default is JSON
-     * converter.
-     */
     public String getInternalValueConverter() {
         return internalValueConverter;
     }
@@ -486,12 +455,6 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
         this.internalValueConverter = internalValueConverter;
     }
 
-    /**
-     * Sets additional properties for debezium components in case they can't be set directly on the camel configurations
-     * (e.g: setting Kafka Connect properties needed by Debezium engine, for example, setting KafkaOffsetBackingStore),
-     * the properties have to be prefixed with `additionalProperties.`. E.g.:
-     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
-     */
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;
     }

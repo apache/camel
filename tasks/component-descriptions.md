@@ -148,7 +148,7 @@ or removes its row.
 | camel-dapr | dapr |  |
 | camel-dataformat | dataformat |  |
 | camel-dataset | dataset, dataset-test |  |
-| camel-debezium-db2 | debezium-db2 |  |
+| camel-debezium-db2 | debezium-db2 | yes |
 | camel-debezium-mongodb | debezium-mongodb |  |
 | camel-debezium-mysql | debezium-mysql |  |
 | camel-debezium-oracle | debezium-oracle |  |
