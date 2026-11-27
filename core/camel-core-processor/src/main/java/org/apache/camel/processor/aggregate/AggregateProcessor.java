@@ -782,6 +782,10 @@ public class AggregateProcessor extends BaseProcessorSupport
      * closing or closed, or that completion sees this group and does not complete on its own. If the key is closing or
      * closed, the new group is removed again and the exchange is tried again or rejected. If the group can no longer be
      * removed, it was changed or completed by another thread, with this exchange in it, so the add stands.
+     * <p>
+     * This only guarantees at most one aggregate per closed key, not progress: an exchange that completes on its own
+     * and an exchange that adds a new group can both back off in the same round (each sees the other), and their next
+     * attempts sort it out by timing.
      */
     private void checkClosedCorrelationKeyAfterNewGroup(String key, Exchange group, Exchange exchange)
             throws ClosedCorrelationKeyException {
@@ -808,6 +812,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             try {
                 aggregationRepository.remove(exchange.getContext(), key, current);
             } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+                // usually another thread changed or completed the group, with this exchange in it. A repository whose
+                // remove cannot match a group it read again fails here too, and then this check does not protect the key
+                LOG.debug("The new group with correlation key: {} was added while the key was closed or being closed,"
+                          + " and cannot be removed again (the repository reports it as changed): the add stands",
+                        key);
                 return;
             }
             if (recoverable) {
