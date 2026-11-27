@@ -40,9 +40,13 @@ import org.apache.camel.support.DefaultComponent;
 @Component("consul")
 public class ConsulComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The shared configuration of the endpoints that this component creates. Each endpoint gets a"
+                            + " copy, and the endpoint options override it.")
     private ConsulConfiguration configuration = new ConsulConfiguration();
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "Whether to use the global SSL context parameters of the CamelContext for the endpoints that"
+                            + " have no sslContextParameters.")
     private boolean useGlobalSslContextParameters;
 
     public ConsulComponent() {
@@ -61,9 +65,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
         return this.useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
@@ -73,9 +74,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
         return configuration;
     }
 
-    /**
-     * Consul configuration
-     */
     public void setConfiguration(ConsulConfiguration configuration) {
         this.configuration = configuration;
     }

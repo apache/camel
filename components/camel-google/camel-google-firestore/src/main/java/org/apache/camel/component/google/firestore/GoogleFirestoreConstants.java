@@ -118,8 +118,9 @@ public final class GoogleFirestoreConstants {
 
     @Metadata(label = "producer",
               description = "The names of the fields that setDocument merges when CamelGoogleFirestoreMerge is"
-                            + " true. The other fields of the body are ignored. If not set, all fields"
-                            + " of the body are merged.",
+                            + " true. A dotted name such as address.city is the nested field city of address; a"
+                            + " com.google.cloud.firestore.FieldPath element is used as it is. The other fields of the"
+                            + " body are ignored. If not set, all fields of the body are merged.",
               javaType = "java.util.List<String>")
     public static final String MERGE_FIELDS = "CamelGoogleFirestoreMergeFields";
 

@@ -33,42 +33,82 @@ import org.kiwiproject.consul.option.ConsistencyMode;
 
 @UriParams
 public abstract class ConsulClientConfiguration implements Cloneable {
-    @UriParam
+    @UriParam(description = "The URL of the Consul agent that the client connects to, such as http://localhost:8500 (the"
+                            + " default of the Consul client when not set). Use an https URL to connect with"
+                            + " sslContextParameters.")
     private String url;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The datacenter to query instead of the datacenter of the agent. Used by the catalog and health"
+                            + " queries, the agent DEREGISTER action and the coordinates NODES action; the"
+                            + " CamelConsulDatacenter header overrides it.")
     private String datacenter;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The name of a node (or _agent for the node of the agent) from which Consul sorts the results of"
+                            + " the catalog and health queries by estimated round trip time. The CamelConsulNearNode header"
+                            + " overrides it.")
     private String nearNode;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Comma separated node metadata filters, each as key:value, so that the catalog and health"
+                            + " queries return only the nodes with that metadata. The CamelConsulNodeMeta header overrides"
+                            + " it.")
     private String nodeMeta;
-    @UriParam(label = "advanced", defaultValue = "DEFAULT", enums = "DEFAULT,STALE,CONSISTENT")
+    @UriParam(label = "advanced", defaultValue = "DEFAULT", enums = "DEFAULT,STALE,CONSISTENT",
+              description = "The consistency mode of the catalog and health queries: DEFAULT (the leader answers), STALE"
+                            + " (any server answers, possibly with outdated data) or CONSISTENT (the leader first checks"
+                            + " with a quorum that it is still the leader). The CamelConsulConsistencyMode header overrides"
+                            + " it.")
     private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
-    @UriParam(javaType = "java.lang.String")
+    @UriParam(javaType = "java.lang.String",
+              description = "Comma separated tags. The consul endpoints do not use this option, so setting it has no"
+                            + " effect.")
     private String tags;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The SSL configuration of the HTTPS connection to the Consul agent. When not set, the global"
+                            + " SSL context parameters are used if the component enables useGlobalSslContextParameters.")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The ACL token that the client sends with each request to Consul.")
     private String aclToken;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The user name for HTTP basic authentication to the Consul agent. Used only together with"
+                            + " password.")
     private String userName;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password for HTTP basic authentication to the Consul agent. Used only together with"
+                            + " userName.")
     private String password;
 
-    @UriParam
+    @UriParam(description = "The connect timeout of the HTTP client. When not set, the default of the OkHttp client"
+                            + " applies.")
     private Duration connectTimeout;
-    @UriParam
+    @UriParam(description = "The read timeout of the HTTP client. When not set, the default of the OkHttp client applies;"
+                            + " the Consul client extends it for the blocking queries of the consumers.")
     private Duration readTimeout;
-    @UriParam
+    @UriParam(description = "The write timeout of the HTTP client. When not set, the default of the OkHttp client"
+                            + " applies.")
     private Duration writeTimeout;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether the Consul client pings the agent when it is created, so that creating it fails when"
+                            + " the agent cannot be reached. The client is created when the consumer starts or when the"
+                            + " producer handles its first message.")
     private boolean pingInstance = true;
 
-    @UriParam(label = "consumer,watch", defaultValue = "10")
+    @UriParam(label = "consumer,watch", defaultValue = "10",
+              description = "The wait time in seconds of the blocking query with which the kv and event consumers watch:"
+                            + " Consul answers when the data changes or when the time is up, and the consumer then queries"
+                            + " again. The event consumer also waits this long before each query, and both wait this long"
+                            + " (at least one second) before they query again after an error.")
     private Integer blockSeconds = 10;
-    @UriParam(label = "consumer,watch", defaultValue = "0")
+    @UriParam(label = "consumer,watch", defaultValue = "0",
+              description = "The Consul index from which the first blocking query of the kv or event consumer waits for a"
+                            + " change. With 0 the first query answers at once, so the consumer receives the current value"
+                            + " of the key, or the events that Consul still keeps.")
     private BigInteger firstIndex = BigInteger.valueOf(0L);
-    @UriParam(label = "consumer,watch", defaultValue = "false")
+    @UriParam(label = "consumer,watch", defaultValue = "false",
+              description = "Whether the kv consumer watches all the keys under the key (as a prefix) instead of only the"
+                            + " key. When one of them changes, the consumer receives a message for each key under the"
+                            + " prefix.")
     private boolean recursive;
 
     protected ConsulClientConfiguration() {
@@ -78,9 +118,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return url;
     }
 
-    /**
-     * The Consul agent URL
-     */
     public void setUrl(String url) {
         this.url = url;
     }
@@ -89,9 +126,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return datacenter;
     }
 
-    /**
-     * The data center
-     */
     public void setDatacenter(String datacenter) {
         this.datacenter = datacenter;
     }
@@ -100,9 +134,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return nearNode;
     }
 
-    /**
-     * The near node to use for queries.
-     */
     public void setNearNode(String nearNode) {
         this.nearNode = nearNode;
     }
@@ -119,9 +150,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         }
     }
 
-    /**
-     * The comma separated node meta-data to use for queries.
-     */
     public void setNodeMeta(String nodeMeta) {
         this.nodeMeta = nodeMeta;
     }
@@ -130,9 +158,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return consistencyMode;
     }
 
-    /**
-     * The consistencyMode used for queries, default ConsistencyMode.DEFAULT
-     */
     public void setConsistencyMode(ConsistencyMode consistencyMode) {
         this.consistencyMode = consistencyMode;
     }
@@ -149,9 +174,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         }
     }
 
-    /**
-     * Set tags. You can separate multiple tags by comma.
-     */
     public void setTags(String tags) {
         this.tags = tags;
     }
@@ -160,9 +182,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return sslContextParameters;
     }
 
-    /**
-     * SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance.
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -171,9 +190,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return aclToken;
     }
 
-    /**
-     * Sets the ACL token to be used with Consul
-     */
     public void setAclToken(String aclToken) {
         this.aclToken = aclToken;
     }
@@ -182,9 +198,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return userName;
     }
 
-    /**
-     * Sets the username to be used for basic authentication
-     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -193,9 +206,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return password;
     }
 
-    /**
-     * Sets the password to be used for basic authentication
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -208,9 +218,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return connectTimeout;
     }
 
-    /**
-     * Connect timeout
-     */
     public void setConnectTimeout(Duration connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
@@ -219,9 +226,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return readTimeout;
     }
 
-    /**
-     * Read timeout
-     */
     public void setReadTimeout(Duration readTimeout) {
         this.readTimeout = readTimeout;
     }
@@ -230,9 +234,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return writeTimeout;
     }
 
-    /**
-     * Write timeout
-     */
     public void setWriteTimeout(Duration writeTimeout) {
         this.writeTimeout = writeTimeout;
     }
@@ -241,9 +242,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return pingInstance;
     }
 
-    /**
-     * Configure if the AgentClient should attempt a ping before returning the Consul instance
-     */
     public void setPingInstance(boolean pingInstance) {
         this.pingInstance = pingInstance;
     }
@@ -252,9 +250,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return blockSeconds;
     }
 
-    /**
-     * The second to wait for a watch event, default 10 seconds
-     */
     public void setBlockSeconds(Integer blockSeconds) {
         this.blockSeconds = blockSeconds;
     }
@@ -263,9 +258,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return firstIndex;
     }
 
-    /**
-     * The first index for watch for, default 0
-     */
     public void setFirstIndex(BigInteger firstIndex) {
         this.firstIndex = firstIndex;
     }
@@ -274,9 +266,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return recursive;
     }
 
-    /**
-     * Recursively watch, default false
-     */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
     }

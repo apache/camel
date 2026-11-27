@@ -27,29 +27,48 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleCloudSpeechToTextConfiguration implements Cloneable, GoogleCommonConfiguration {
 
-    @UriPath(label = "common", description = "The operation name")
+    @UriPath(label = "common",
+             description = "The operation to perform. The only operation is recognize, which sends the audio in one synchronous"
+                           + " call, so it suits short audio (the service accepts up to one minute). The"
+                           + " CamelGoogleCloudSpeechToTextOperation header overrides it, and with pojoRequest=true it is ignored.")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(label = "common", description = "Service account key to authenticate an application as a service account")
+    @UriParam(label = "common",
+              description = "The service account key file (JSON) used to create the SpeechClient. It is loaded as a resource with"
+                            + " the classpath:, file:, http: or https: prefix, and a value without a prefix is read from the"
+                            + " classpath. When not set, the Application Default Credentials are used, for example from the"
+                            + " GOOGLE_APPLICATION_CREDENTIALS environment variable. Not used when the client option is set.")
     private String serviceAccountKey;
 
     @UriParam(defaultValue = "LINEAR16", label = "producer",
-              description = "The encoding of the audio data. Supported values: LINEAR16, FLAC, MULAW, AMR, AMR_WB, OGG_OPUS, SPEEX_WITH_HEADER_BYTE, WEBM_OPUS, MP3")
+              description = "The encoding of the audio in the message body, as a name of the RecognitionConfig.AudioEncoding"
+                            + " enum: ENCODING_UNSPECIFIED, LINEAR16, FLAC, MULAW, AMR, AMR_WB, OGG_OPUS,"
+                            + " SPEEX_WITH_HEADER_BYTE, MP3 or WEBM_OPUS. Use ENCODING_UNSPECIFIED to let the service read the"
+                            + " encoding from the header of a FLAC or WAV file. Google documents MP3 as available only in the"
+                            + " v1p1beta1 API, while this component calls the v1 API.")
     private String encoding = "LINEAR16";
 
     @UriParam(label = "producer",
-              description = "The sample rate in Hertz of the audio data. Valid values range from 8000 to 48000")
+              description = "The sample rate in Hertz of the audio in the message body, from 8000 to 48000. When not set, no"
+                            + " rate is sent, which works for FLAC and WAV files that carry it in their header. The service"
+                            + " requires it for the other encodings.")
     private Integer sampleRateHertz;
 
     @UriParam(defaultValue = "en-US", label = "producer",
-              description = "The language of the audio data as a BCP-47 language tag (e.g., en-US, fr-FR)")
+              description = "The language of the speech in the audio, as a BCP-47 language tag such as en-US or fr-FR.")
     private String languageCode = "en-US";
 
-    @UriParam(defaultValue = "false", description = "Specifies if the request is a pojo request")
+    @UriParam(defaultValue = "false",
+              description = "Whether the message body is a RecognizeRequest of the Google Cloud SDK, which is sent as it is."
+                            + " The request then carries the audio and its RecognitionConfig, so the operation, encoding,"
+                            + " sampleRateHertz and languageCode options and the operation header are not used.")
     private boolean pojoRequest;
 
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The SpeechClient to use for the calls. When not set, a single SpeechClient in the registry is"
+                            + " used, otherwise the endpoint creates one with the serviceAccountKey or the Application"
+                            + " Default Credentials and closes it when it stops. A client that is set or autowired is not closed by the endpoint.")
     @Metadata(autowired = true)
     private SpeechClient client;
 
@@ -57,11 +76,6 @@ public class GoogleCloudSpeechToTextConfiguration implements Cloneable, GoogleCo
         return operation;
     }
 
-    /**
-     * Set the operation name
-     *
-     * @param operation
-     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -71,11 +85,6 @@ public class GoogleCloudSpeechToTextConfiguration implements Cloneable, GoogleCo
         return serviceAccountKey;
     }
 
-    /**
-     * Service account key
-     *
-     * @param serviceAccountKey
-     */
     public void setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
     }
@@ -84,11 +93,6 @@ public class GoogleCloudSpeechToTextConfiguration implements Cloneable, GoogleCo
         return encoding;
     }
 
-    /**
-     * The encoding of the audio data.
-     *
-     * @param encoding
-     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -97,11 +101,6 @@ public class GoogleCloudSpeechToTextConfiguration implements Cloneable, GoogleCo
         return sampleRateHertz;
     }
 
-    /**
-     * The sample rate in Hertz of the audio data.
-     *
-     * @param sampleRateHertz
-     */
     public void setSampleRateHertz(Integer sampleRateHertz) {
         this.sampleRateHertz = sampleRateHertz;
     }
@@ -110,11 +109,6 @@ public class GoogleCloudSpeechToTextConfiguration implements Cloneable, GoogleCo
         return languageCode;
     }
 
-    /**
-     * The language of the audio data as a BCP-47 language tag.
-     *
-     * @param languageCode
-     */
     public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
@@ -123,11 +117,6 @@ public class GoogleCloudSpeechToTextConfiguration implements Cloneable, GoogleCo
         return client;
     }
 
-    /**
-     * The client to use during service invocation.
-     *
-     * @param client
-     */
     public void setClient(SpeechClient client) {
         this.client = client;
     }
@@ -136,11 +125,6 @@ public class GoogleCloudSpeechToTextConfiguration implements Cloneable, GoogleCo
         return pojoRequest;
     }
 
-    /**
-     * Configure the input type. If true the message will be POJO type.
-     *
-     * @param pojoRequest
-     */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }

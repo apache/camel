@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.milo.MiloConstants.SCHEME_BROWSE;
 
 /**
- * Connect to OPC UA servers using the binary protocol for browsing the node tree.
+ * Browse the nodes of an OPC UA server and the references between them.
  */
 @UriEndpoint(firstVersion = "3.15.0", scheme = SCHEME_BROWSE, syntax = "milo-browse:endpointUri", title = "OPC UA Browser",
              category = { Category.IOT }, producerOnly = true, headersClass = MiloConstants.class)
@@ -61,65 +61,58 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
 
     private final MiloClientConnectionManager connectionManager;
 
-    /**
-     * The OPC UA server endpoint
-     */
-    @UriPath
+    @UriPath(description = "The endpoint URL of the OPC UA server, for example opc.tcp://localhost:4840/path. It can hold a"
+                           + " user name and password in its user info part. The username and password options take"
+                           + " precedence over them.")
     @Metadata(required = true)
     private final String endpointUri;
 
-    /**
-     * The node definition (see Node ID)
-     */
-    @UriParam(defaultValue = "ns=0;id=84", defaultValueNote = "Root folder as per OPC-UA spec")
+    @UriParam(description = "The node ID of the node to browse from, for example ns=2;s=folder. The CamelMiloNodeIds header"
+                            + " replaces this option. The default is the Root folder, i=84.",
+              defaultValue = "ns=0;id=84", defaultValueNote = "Root folder as per OPC-UA spec")
     private String node = NodeIds.RootFolder.toParseableString();
 
-    /**
-     * The direction to browse (forward, inverse, ...)
-     */
-    @UriParam(defaultValue = "Forward",
+    @UriParam(description = "The direction of the references to follow: Forward, Inverse or Both.",
+              defaultValue = "Forward",
               enums = "Forward,Inverse,Both",
               defaultValueNote = "The direction to browse; see org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection")
     private BrowseDirection direction = BrowseDirection.Forward;
 
-    /**
-     * Whether to include sub-types for browsing; only applicable for non-recursive browsing
-     */
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether to follow the references of all subtypes of the References reference type. If false, only"
+                            + " references of the abstract References type itself are returned, which are usually none. A"
+                            + " recursive browse always includes the subtypes.")
     private boolean includeSubTypes = true;
 
-    /**
-     * The mask indicating the node classes of interest in browsing
-     */
-    @UriParam(defaultValue = "Variable,Object,DataType",
+    @UriParam(description = "A comma-separated list of the node classes of the nodes to return, as names of"
+                            + " org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass: Object, Variable, Method,"
+                            + " ObjectType, VariableType, ReferenceType, DataType and View.",
+              defaultValue = "Variable,Object,DataType",
               defaultValueNote = "Comma-separated node class list; see org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass")
     private String nodeClasses = NodeClass.Variable + "," + NodeClass.Object + "," + NodeClass.DataType;
 
     private int nodeClassMask = NodeClass.Variable.getValue() | NodeClass.Object.getValue() | NodeClass.DataType.getValue();
 
-    /**
-     * Whether to browse recursively into sub-types, ignores includeSubTypes setting as it's implied to be set to true
-     */
-    @UriParam(defaultValue = "false",
+    @UriParam(description = "Whether to browse the nodes that are found again, down to the level of the depth option. A"
+                            + " recursive browse always includes the subtypes of the reference type, whatever"
+                            + " includeSubTypes says.",
+              defaultValue = "false",
               defaultValueNote = "Whether to recursively browse sub-types: true|false")
     private boolean recursive;
 
-    /**
-     * When browsing recursively into sub-types, what's the maximum search depth for diving into the tree
-     */
-    @UriParam(defaultValue = "3", defaultValueNote = "Maximum depth for browsing recursively (only if recursive = true)")
+    @UriParam(description = "The number of levels that a recursive browse goes down, where the nodes to browse from are"
+                            + " level 1. Only used when recursive is true.",
+              defaultValue = "3", defaultValueNote = "Maximum depth for browsing recursively (only if recursive = true)")
     private int depth = 3;
 
-    /**
-     * Filter out node ids to limit browsing
-     */
-    @UriParam(defaultValue = "None", defaultValueNote = "Regular filter expression matching node ids")
+    @UriParam(description = "A regular expression that the node ID of a found node, in its parseable form such as ns=2;s=item,"
+                            + " must match to be in the result and to be browsed further. If not set, all nodes are kept.",
+              defaultValue = "None", defaultValueNote = "Regular filter expression matching node ids")
     private String filter;
 
-    /**
-     * The maximum number node ids requested per server call
-     */
-    @UriParam(defaultValue = "10",
+    @UriParam(description = "The maximum number of nodes that one Browse request asks for, when a recursive browse goes down"
+                            + " to the next level.",
+              defaultValue = "10",
               defaultValueNote = "Maximum number of node ids requested per browse call (applies to browsing sub-types only; only if recursive = true)")
     private int maxNodeIdsPerRequest = 10;
 

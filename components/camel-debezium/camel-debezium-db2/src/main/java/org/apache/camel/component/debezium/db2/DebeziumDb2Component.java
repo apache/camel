@@ -27,7 +27,8 @@ import org.apache.camel.spi.annotations.Component;
 @Component("debezium-db2")
 public final class DebeziumDb2Component extends DebeziumComponent<Db2ConnectorEmbeddedDebeziumConfiguration> {
 
-    @Metadata
+    @Metadata(description = "A shared configuration with the default connector options of all the endpoints of this"
+                            + " component. Each endpoint uses a copy, which its own options override.")
     private Db2ConnectorEmbeddedDebeziumConfiguration configuration = new Db2ConnectorEmbeddedDebeziumConfiguration();
 
     public DebeziumDb2Component() {
@@ -37,9 +38,6 @@ public final class DebeziumDb2Component extends DebeziumComponent<Db2ConnectorEm
         super(context);
     }
 
-    /**
-     * Allow pre-configured Configurations to be set.
-     */
     @Override
     public Db2ConnectorEmbeddedDebeziumConfiguration getConfiguration() {
         return configuration;
