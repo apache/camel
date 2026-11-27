@@ -11792,7 +11792,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Printer (camel-printer)
-     * Send print jobs to printers.
+     * Send documents as print jobs to local or network printers by using the
+     * Java Print Service API.
      * 
      * Category: document
      * Since: 2.1
@@ -11801,13 +11802,22 @@ public class StaticEndpointBuilders {
      * Syntax: <code>lpr:hostname:port/printername</code>
      * 
      * Path parameter: hostname (required)
-     * Hostname of the printer
+     * The host name of the printer. With localhost, the producer looks up a
+     * printer of this machine by printername alone, or uses the default printer
+     * of this machine when printername is default. With another host, it looks
+     * up the printer by hostname/printername.
      * 
      * Path parameter: port
-     * Port number of the printer
+     * The port of the printer. The producer does not use it, as it looks up the
+     * printer by name. It is only part of the service location of the endpoint.
      * 
      * Path parameter: printername
-     * Name of the printer
+     * The name of the printer, for example default or sales/salesprinter, as
+     * the print services of this machine (javax.print.PrintServiceLookup) know
+     * it, so a remote printer must be installed on this machine. A print
+     * service matches when its name ends with the looked-up name or the other
+     * way round, ignoring case and treating / and \ alike. The producer fails
+     * to start when no print service matches.
      * 
      * @param path hostname:port/printername
      * @return the dsl builder
@@ -11817,7 +11827,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Printer (camel-printer)
-     * Send print jobs to printers.
+     * Send documents as print jobs to local or network printers by using the
+     * Java Print Service API.
      * 
      * Category: document
      * Since: 2.1
@@ -11826,13 +11837,22 @@ public class StaticEndpointBuilders {
      * Syntax: <code>lpr:hostname:port/printername</code>
      * 
      * Path parameter: hostname (required)
-     * Hostname of the printer
+     * The host name of the printer. With localhost, the producer looks up a
+     * printer of this machine by printername alone, or uses the default printer
+     * of this machine when printername is default. With another host, it looks
+     * up the printer by hostname/printername.
      * 
      * Path parameter: port
-     * Port number of the printer
+     * The port of the printer. The producer does not use it, as it looks up the
+     * printer by name. It is only part of the service location of the endpoint.
      * 
      * Path parameter: printername
-     * Name of the printer
+     * The name of the printer, for example default or sales/salesprinter, as
+     * the print services of this machine (javax.print.PrintServiceLookup) know
+     * it, so a remote printer must be installed on this machine. A print
+     * service matches when its name ends with the looked-up name or the other
+     * way round, ignoring case and treating / and \ alike. The producer fails
+     * to start when no print service matches.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
