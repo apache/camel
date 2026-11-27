@@ -24,7 +24,7 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * Messaging with AMQP protocol using Apache Qpid Client.
+ * Send and receive messages over AMQP 1.0 with the Apache Qpid JMS client.
  *
  * This class extends JmsEndpoint because it uses Apache Qpid JMS-compatible client for performing the AMQP
  * connectivity.

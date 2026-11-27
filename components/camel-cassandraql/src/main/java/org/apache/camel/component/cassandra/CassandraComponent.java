@@ -88,7 +88,9 @@ public class CassandraComponent extends DefaultComponent {
         Object strategy = parameters.get("resultSetConversionStrategy");
         if (strategy != null) {
             String text = CamelContextHelper.parseText(getCamelContext(), strategy.toString());
-            if (text.equalsIgnoreCase("ALL") || text.equalsIgnoreCase("ONE") || text.startsWith("LIMIT_")) {
+            // the names are matched ignoring case, as ResultSetConversionStrategies.fromName does
+            if (text.equalsIgnoreCase("ALL") || text.equalsIgnoreCase("ONE")
+                    || text.regionMatches(true, 0, "LIMIT_", 0, "LIMIT_".length())) {
                 ResultSetConversionStrategy rs = ResultSetConversionStrategies.fromName(text);
                 endpoint.setResultSetConversionStrategy(rs);
                 parameters.remove("resultSetConversionStrategy");

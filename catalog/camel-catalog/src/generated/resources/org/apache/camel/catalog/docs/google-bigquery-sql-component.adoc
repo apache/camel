@@ -2,7 +2,7 @@
 :doctitle: Google BigQuery Standard SQL
 :shortname: google-bigquery-sql
 :artifactid: camel-google-bigquery
-:description: Access Google Cloud BigQuery service using SQL queries.
+:description: Run SQL queries and statements in Google BigQuery.
 :since: 2.23
 :supportlevel: Stable
 :tabs-sync-option:
@@ -277,5 +277,3 @@ BigQuery returns for them, as a `String`: convert them where you need a number o
 |null
 |
 |===
-
-

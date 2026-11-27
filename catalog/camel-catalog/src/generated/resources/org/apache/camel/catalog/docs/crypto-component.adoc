@@ -2,7 +2,7 @@
 :doctitle: Crypto (JCE)
 :shortname: crypto
 :artifactid: camel-crypto
-:description: Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+:description: Sign message bodies and verify their signatures with java.security.Signature of the Java Cryptography Architecture.
 :since: 2.3
 :supportlevel: Stable
 :tabs-sync-option:

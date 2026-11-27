@@ -19,6 +19,8 @@ package org.apache.camel.component.bonita.api;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
@@ -30,14 +32,20 @@ import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.apache.camel.component.bonita.api.util.BonitaAPIUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static jakarta.ws.rs.client.Entity.entity;
 
 public class BonitaAPI {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BonitaAPI.class);
+
     private BonitaAPIConfig bonitaApiConfig;
     private WebTarget webTarget;
     private final BonitaAPIUtil bonitaApiUtil;
+    // the process names already warned about having several versions, so that the WARN is not logged for every exchange
+    private final Set<String> warnedSeveralVersions = ConcurrentHashMap.newKeySet();
 
     /**
      * @deprecated the file inputs are uploaded with a JAX-RS client of their own, which is never closed. Use
@@ -63,20 +71,48 @@ public class BonitaAPI {
         return webTarget;
     }
 
+    /**
+     * The process with exactly this name, in any version: see {@link #getProcessDefinition(String, String)}.
+     */
     public ProcessDefinitionResponse getProcessDefinition(String processName) {
+        return getProcessDefinition(processName, null);
+    }
+
+    /**
+     * The process with exactly this name and, when processVersion is not empty, this version. The name and the version
+     * are filters ({@code f=name=...}, {@code f=version=...}) of the Bonita REST API, not a search term, so another
+     * process whose name only contains the given name is not used. When several versions match, the first one that
+     * Bonita returns is used, and a WARN is logged the first time for each process name (later at DEBUG).
+     */
+    public ProcessDefinitionResponse getProcessDefinition(String processName, String processVersion) {
         if (ObjectHelper.isEmpty(processName)) {
             throw new IllegalArgumentException("processName is empty.");
         }
-        WebTarget resource = getBaseResource().path("process").queryParam("s", processName);
+        WebTarget resource = getBaseResource().path("process").queryParam("f", "name=" + processName);
+        if (ObjectHelper.isNotEmpty(processVersion)) {
+            resource = resource.queryParam("f", "version=" + processVersion);
+        }
         List<ProcessDefinitionResponse> listProcess = resource.request().accept(MediaType.APPLICATION_JSON)
                 .get(new GenericType<List<ProcessDefinitionResponse>>() {
                 });
-        if (!listProcess.isEmpty()) {
-            return listProcess.get(0);
-        } else {
+        if (listProcess.isEmpty()) {
             throw new RuntimeCamelException(
-                    "The process with name " + processName + " has not been retrieved");
+                    "The process with name " + processName
+                                            + (ObjectHelper.isNotEmpty(processVersion) ? " and version " + processVersion : "")
+                                            + " has not been retrieved");
         }
+        ProcessDefinitionResponse first = listProcess.get(0);
+        if (listProcess.size() > 1) {
+            if (warnedSeveralVersions.add(processName)) {
+                LOG.warn("{} versions of the process {} are deployed, using version {}. Set processVersion to choose one."
+                         + " This is logged once for this process, later lookups log it at DEBUG.",
+                        listProcess.size(), processName, first.getVersion());
+            } else {
+                LOG.debug("{} versions of the process {} are deployed, using version {}", listProcess.size(), processName,
+                        first.getVersion());
+            }
+        }
+        return first;
     }
 
     public CaseCreationResponse startCase(

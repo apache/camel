@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
+import java.util.Map;
+
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
@@ -65,6 +67,32 @@ public class KeyVaultConfigurationTest extends CamelTestSupport {
         assertEquals("test", endpoint.getConfiguration().getClientId());
         assertEquals("sec", endpoint.getConfiguration().getClientSecret());
         assertEquals("tenant", endpoint.getConfiguration().getTenantId());
+    }
+
+    @Test
+    public void serviceUrlIsTheVaultUrl() throws Exception {
+        KeyVaultComponent component = context.getComponent("azure-key-vault", KeyVaultComponent.class);
+        KeyVaultEndpoint endpoint = (KeyVaultEndpoint) component
+                .createEndpoint("azure-key-vault://MyVault?clientId=test&clientSecret=sec&tenantId=my-tenant-id");
+
+        assertEquals("https://MyVault.vault.azure.net", endpoint.getServiceUrl());
+        assertEquals("keyvault", endpoint.getServiceProtocol());
+        assertEquals(Map.of("vault", "MyVault"), endpoint.getServiceMetadata());
+        assertFalse(endpoint.getServiceUrl().contains("my-tenant-id"));
+        assertFalse(endpoint.getServiceMetadata().containsValue("my-tenant-id"));
+    }
+
+    @Test
+    public void serviceUrlFromSecretClient() throws Exception {
+        SecretClient sc = new SecretClientBuilder().credential(new DefaultAzureCredentialBuilder().build())
+                .vaultUrl("https://other.vault.azure.net").buildClient();
+        context.getRegistry().bind("secretClient", sc);
+
+        KeyVaultComponent component = context.getComponent("azure-key-vault", KeyVaultComponent.class);
+        KeyVaultEndpoint endpoint = (KeyVaultEndpoint) component
+                .createEndpoint("azure-key-vault://MyVault?secretClient=#secretClient");
+
+        assertEquals("https://other.vault.azure.net", endpoint.getServiceUrl());
     }
 
     @Test

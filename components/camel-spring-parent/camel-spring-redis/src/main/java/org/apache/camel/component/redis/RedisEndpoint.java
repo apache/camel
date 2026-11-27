@@ -32,7 +32,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 /**
  * Send commands to Redis and receive the messages of Redis Pub/Sub channels, using Spring Data Redis.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port",
+@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redis:host:port",
              category = { Category.CACHE }, headersClass = RedisConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.UNKNOWN,
                                    description = "The message as the serializer reads it: with the default JDK serializer the"

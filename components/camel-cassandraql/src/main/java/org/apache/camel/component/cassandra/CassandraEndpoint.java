@@ -39,6 +39,7 @@ import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -109,6 +110,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
                             + " message. If false, the CQL is sent as a simple statement each time.")
     private boolean prepareStatements = true;
     @UriParam(description = "Not used: the component does not pass this value to the driver.")
+    @Metadata(deprecationNote = "The session builder of the Cassandra Java Driver 4.x has no cluster name setting")
+    @Deprecated
     private String clusterName;
     @UriParam(label = "security", security = "secret",
               description = "The user name for plain text authentication with the Cassandra nodes. Used only together with"
@@ -124,6 +127,11 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
                             + " options for creating a session, such as keyspace, datacenter, username and password, are not"
                             + " used.")
     private CqlSession session;
+    @UriParam(label = "advanced",
+              description = "The consistency level of the prepared statements: the cql option and a CQL String in the"
+                            + " CamelCqlQuery header, when prepareStatements is true. It is not used for a simple statement"
+                            + " (prepareStatements=false) or a SimpleStatement in the header. If not set, the driver uses"
+                            + " the consistency level of its configuration.")
     private DefaultConsistencyLevel consistencyLevel;
     @UriParam(label = "advanced",
               description = "The class of the load balancing policy of the driver (its basic.load-balancing-policy.class"
@@ -131,11 +139,12 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
                             + " the policies of the driver; if not set, the driver uses DefaultLoadBalancingPolicy. Used only"
                             + " for the session that the endpoint creates from the hosts.")
     private String loadBalancingPolicyClass;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", defaultValue = "ALL",
               description = "How the rows of the result become the message body: ALL for a List of all the"
                             + " com.datastax.oss.driver.api.core.cql.Row objects (the default), ONE for the first Row or"
-                            + " null, LIMIT_n, such as LIMIT_10, for a List of at most n rows. A custom"
-                            + " org.apache.camel.component.cassandra.ResultSetConversionStrategy can be set instead.")
+                            + " null, LIMIT_n, such as LIMIT_10, for a List of at most n rows. The names are matched"
+                            + " ignoring case. A custom org.apache.camel.component.cassandra.ResultSetConversionStrategy can"
+                            + " be set instead.")
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
     @UriParam(label = "advanced",
               description = "The extra codecs of the driver (from its ExtraTypeCodecs class) to register, separated by"
@@ -143,8 +152,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
                             + " INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY, FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY,"
                             + " TIMESTAMP_UTC, TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC, ZONED_TIMESTAMP_SYSTEM,"
                             + " ZONED_TIMESTAMP_UTC, ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM or"
-                            + " LOCAL_TIMESTAMP_UTC. An unknown name is ignored. Used only for the session that the endpoint"
-                            + " creates from the hosts.")
+                            + " LOCAL_TIMESTAMP_UTC. An unknown name fails the start of the endpoint. Used only for the session"
+                            + " that the endpoint creates from the hosts.")
     private String extraTypeCodecs;
 
     public CassandraEndpoint(String endpointUri, Component component) {
@@ -270,10 +279,16 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
 
             for (String codec : c) {
                 codec = codec.trim();
-                CassandraExtraCodecs ec = getCamelContext().getTypeConverter().tryConvertTo(CassandraExtraCodecs.class, codec);
-                if (ec != null) {
-                    sessionBuilder.addTypeCodecs(ec.codec());
+                if (codec.isEmpty()) {
+                    continue;
                 }
+                CassandraExtraCodecs ec = getCamelContext().getTypeConverter().tryConvertTo(CassandraExtraCodecs.class, codec);
+                if (ec == null) {
+                    throw new IllegalArgumentException(
+                            "Unknown extra type codec " + codec + " in the extraTypeCodecs option. Possible values are: "
+                                                       + Arrays.toString(CassandraExtraCodecs.values()));
+                }
+                sessionBuilder.addTypeCodecs(ec.codec());
             }
         }
 
@@ -373,10 +388,12 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         this.session = session;
     }
 
+    @Deprecated
     public String getClusterName() {
         return clusterName;
     }
 
+    @Deprecated
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
     }

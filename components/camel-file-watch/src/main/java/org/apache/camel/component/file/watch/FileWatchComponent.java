@@ -48,7 +48,11 @@ public class FileWatchComponent extends DefaultComponent {
     @Metadata(label = "advanced",
               description = "The number of threads that read the events from the watch service of the directory and put them in"
                             + " the queue. Increase it when the log warns that an OVERFLOW occurred, which means that the file"
-                            + " system dropped events.",
+                            + " system dropped events. All the threads read the same watch service, and each one registers the"
+                            + " watched directories again when the consumer starts (and hashes their files again when"
+                            + " useFileHashing is enabled), so on a large tree a higher value makes the start slower. More"
+                            + " threads can only help when the events come from several directories at the same time, as the"
+                            + " events of one directory are read by one thread at a time.",
               defaultValue = "1")
     private int pollThreads = 1;
 

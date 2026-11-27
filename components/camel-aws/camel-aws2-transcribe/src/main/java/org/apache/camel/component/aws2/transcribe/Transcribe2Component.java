@@ -28,10 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("aws2-transcribe")
 public class Transcribe2Component extends DefaultComponent {
 
-    /**
-     * Component configuration
-     */
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of the component start from. Each endpoint uses a copy of"
+                            + " it, in which its own URI options replace the values.")
     private Transcribe2Configuration configuration = new Transcribe2Configuration();
 
     public Transcribe2Component() {

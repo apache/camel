@@ -2,7 +2,7 @@
 :doctitle: Azure Key Vault
 :shortname: azure-key-vault
 :artifactid: camel-azure-key-vault
-:description: Manage secrets and keys in Azure Key Vault Service
+:description: Create, get, update, delete and purge secrets in Azure Key Vault.
 :since: 3.17
 :supportlevel: Stable
 :tabs-sync-option:

@@ -2,7 +2,7 @@
 :doctitle: Slack
 :shortname: slack
 :artifactid: camel-slack
-:description: Send and receive messages to/from Slack.
+:description: Send messages to a Slack channel or user, and receive the new messages of a Slack conversation.
 :since: 2.16
 :supportlevel: Stable
 :tabs-sync-option:

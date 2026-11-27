@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * To broadcast messages and connect cloud services through notifications on Huawei Cloud
+ * Publish messages to topics of Huawei Cloud Simple Message Notification (SMN).
  */
 @UriEndpoint(firstVersion = "3.8.0", scheme = "hwcloud-smn", title = "Huawei Simple Message Notification (SMN)",
              syntax = "hwcloud-smn:smnService",
@@ -56,62 +56,88 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " property"))
 public class SimpleNotificationEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Name of SMN service to invoke", displayName = "Service name", label = "producer")
+    @UriPath(description = "The SMN service that the producer calls. Only publishMessageService is supported.",
+             displayName = "Service name", label = "producer")
     @Metadata(required = true)
     private String smnService;
 
-    @UriParam(description = "Name of operation to perform", displayName = "Operation name", label = "producer")
+    @UriParam(description = "The operation that the producer performs: publishAsTextMessage or publishAsTemplatedMessage. The"
+                            + " CamelHwCloudSmnOperation exchange property replaces this option.",
+              displayName = "Operation name", label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
+    @UriParam(description = "The AK/SK pair as an org.apache.camel.component.huaweicloud.common.models.ServiceKeys. Its"
+                            + " accessKey and its secretKey are each used when the option of the same name is not set.",
+              displayName = "Service Configuration",
               security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret")
+    @UriParam(description = "The access key ID (AK) of the Huawei Cloud credentials. If not set, the accessKey of the"
+                            + " serviceKeys option is used.",
+              displayName = "API access key (AK)", security = "secret")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret")
+    @UriParam(description = "The secret access key (SK) of the Huawei Cloud credentials. If not set, the secretKey of the"
+                            + " serviceKeys option is used.",
+              displayName = "API secret key (SK)", security = "secret")
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "Cloud project ID", displayName = "Project ID")
+    @UriParam(description = "The ID of the Huawei Cloud project of the topic. The producer uses it in the URN of the topic"
+                            + " and in the credentials of the requests.",
+              displayName = "Project ID")
     @Metadata(required = true)
     private String projectId;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
+    @UriParam(description = "The host name or IP address of the proxy server. The producer uses a proxy only when this option"
+                            + " is set.",
+              displayName = "Proxy server host")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
+    @UriParam(description = "The port of the proxy server. It is used only when the proxyHost option is set.",
+              displayName = "Proxy server port")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret")
+    @UriParam(description = "The user name to authenticate with the proxy server. It is used only when the proxyHost option"
+                            + " is set.",
+              displayName = "Proxy user", security = "secret")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret")
+    @UriParam(description = "The password to authenticate with the proxy server. It is used only when the proxyHost and"
+                            + " proxyUser options are set.",
+              displayName = "Proxy password", security = "secret")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "SMN service region. This is lower precedence than endpoint based configuration",
+    @UriParam(description = "The region ID of SMN, for example cn-north-4. The producer uses it in the URN of the topic, and to"
+                            + " find the endpoint of SMN when the endpoint option is not set.",
               displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "Fully qualified smn service url. Carries higher precedence than region parameter based client initialization",
+    @UriParam(description = "The endpoint URL of SMN, for example https://smn.cn-north-4.myhuaweicloud.com. When set, the client"
+                            + " uses it instead of the endpoint of the region option. The region option is still needed for"
+                            + " the URN of the topic.",
               displayName = "Service endpoint")
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(description = "TTL for published message", displayName = "Message TTL", defaultValue = "3600")
+    @UriParam(description = "The time to live of the published message in seconds, after which SMN no longer delivers it. SMN"
+                            + " accepts at most 86400 (one day). The CamelHwCloudSmnMessageTtl exchange property replaces"
+                            + " this option.",
+              displayName = "Message TTL", defaultValue = "3600")
     @Metadata(required = false)
     private int messageTtl = 3600;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", defaultValue = "false",
+    @UriParam(description = "Whether to skip the verification of the TLS certificate of the server. This makes the connection"
+                            + " insecure: use it only for testing.",
+              displayName = "SSL Verification Ignored", defaultValue = "false",
               label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;

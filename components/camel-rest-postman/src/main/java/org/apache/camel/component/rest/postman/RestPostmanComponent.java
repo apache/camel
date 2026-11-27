@@ -55,15 +55,19 @@ import org.apache.camel.util.PropertiesHelper;
 public class RestPostmanComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(description = "The Postman Collection to use, when it is not given on the endpoint. Either a resource"
-                            + " URI of a Collection v2.1 JSON document (classpath:, file: or http:), or the uid of a"
-                            + " collection to fetch from the Postman cloud.",
+                            + " URI of a Collection v2.1 JSON document (classpath:, file: or http:), where a name"
+                            + " without a scheme is loaded from the classpath, or the uid of a collection to fetch from"
+                            + " the Postman cloud.",
               label = "common")
     private String collectionSource;
 
     @Metadata(label = "advanced")
     private RestPostmanConfiguration configuration = new RestPostmanConfiguration();
 
-    @Metadata(description = "To use a custom strategy for how to service the requests of the collection.",
+    @Metadata(description = "A custom strategy for how the consumer services the requests of the collection: which"
+                            + " route each request is dispatched to, the mock responses and the collection document."
+                            + " The default strategy dispatches each request to the direct endpoint named after the"
+                            + " request id, such as direct:getUserById.",
               label = "consumer,advanced")
     private RestPostmanProcessorStrategy restPostmanProcessorStrategy;
 
