@@ -16547,11 +16547,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-event:name</code>
      * 
      * Path parameter: name
-     * The name of the endpoint. The producer publishes a body that is not an
-     * ApplicationEvent as a CamelEvent, which only the consumers of endpoints
-     * with the same name receive. Every other ApplicationEvent of the
-     * ApplicationContext, also one that a producer publishes, goes to the
-     * consumers of all spring-event endpoints, whatever their name.
+     * The name of the endpoint. When the body is not a Spring ApplicationEvent,
+     * the producer wraps it in a CamelEvent and publishes that. Only the
+     * consumers of endpoints with the same name receive a CamelEvent. Any other
+     * ApplicationEvent goes to the consumers of all spring-event endpoints,
+     * whatever their name. This includes an ApplicationEvent that a producer
+     * publishes.
      * 
      * @param path name
      * @return the dsl builder
@@ -16571,11 +16572,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-event:name</code>
      * 
      * Path parameter: name
-     * The name of the endpoint. The producer publishes a body that is not an
-     * ApplicationEvent as a CamelEvent, which only the consumers of endpoints
-     * with the same name receive. Every other ApplicationEvent of the
-     * ApplicationContext, also one that a producer publishes, goes to the
-     * consumers of all spring-event endpoints, whatever their name.
+     * The name of the endpoint. When the body is not a Spring ApplicationEvent,
+     * the producer wraps it in a CamelEvent and publishes that. Only the
+     * consumers of endpoints with the same name receive a CamelEvent. Any other
+     * ApplicationEvent goes to the consumers of all spring-event endpoints,
+     * whatever their name. This includes an ApplicationEvent that a producer
+     * publishes.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

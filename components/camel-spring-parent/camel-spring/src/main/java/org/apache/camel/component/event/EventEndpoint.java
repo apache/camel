@@ -61,10 +61,10 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;
 
-    @UriPath(description = "The name of the endpoint. The producer publishes a body that is not an ApplicationEvent as a"
-                           + " CamelEvent, which only the consumers of endpoints with the same name receive. Every other"
-                           + " ApplicationEvent of the ApplicationContext, also one that a producer publishes, goes to the"
-                           + " consumers of all spring-event endpoints, whatever their name.")
+    @UriPath(description = "The name of the endpoint. When the body is not a Spring ApplicationEvent, the producer wraps it"
+                           + " in a CamelEvent and publishes that. Only the consumers of endpoints with the same name"
+                           + " receive a CamelEvent. Any other ApplicationEvent goes to the consumers of all spring-event"
+                           + " endpoints, whatever their name. This includes an ApplicationEvent that a producer publishes.")
     private String name;
 
     public EventEndpoint(String endpointUri, EventComponent component, String name) {
