@@ -344,7 +344,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Bedrock (camel-aws-bedrock)
-     * Invoke Model of AWS Bedrock service.
+     * Invoke Amazon Bedrock foundation models with the InvokeModel and Converse
+     * APIs, and check content with Bedrock guardrails.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -357,7 +358,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
-     * Operate on AWS Bedrock through its Agent.
+     * Start and list the ingestion jobs that sync a data source into an Amazon
+     * Bedrock knowledge base, and poll the status of one.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -370,7 +372,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
-     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * Query Amazon Bedrock knowledge bases, and invoke Amazon Bedrock agents,
+     * inline agents and flows.
      * 
      * Category: ai,cloud
      * Since: 4.5
