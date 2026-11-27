@@ -320,6 +320,16 @@ camel-jms, and `SpringRabbitMQStopListenerContainer` for camel-spring-rabbitmq. 
 `camelContext.getExecutorServiceManager().setShutdownAwaitTermination(...)`; it is also the time that Camel waits for
 each thread pool to terminate when the CamelContext stops.
 
+=== camel-master - stopping a master consumer waits for the start of its delegated consumer
+
+Stopping a `master` consumer while the start of its delegated consumer is still running (for example a client connect
+that does not stop on an interrupt) now waits for that start, at most the `shutdownAwaitTermination` of the
+`ExecutorServiceManager` (10 seconds by default), and as long again after interrupting it. Previously the stop returned
+at once, and the delegated consumer could finish starting after the route had stopped. A delegated consumer that
+finishes starting after the master consumer was stopped, or lost the leadership, is now stopped, also when the master
+consumer was started again meanwhile; previously it replaced the delegated consumer of the new start, which kept
+running without being stopped again.
+
 === camel-core - a to with an expression in its endpoint uri logs a WARN
 
 A `to` resolves its endpoint once, when the route starts, so `to("jms:queue:${header.queue}")` sends every message to
@@ -485,6 +495,12 @@ not resume a consumer that the inflight policy has suspended; the inflight polic
 exchanges is low enough again.
 
 A custom `RoutePolicySupport` can take part by overriding `isConsumerKeptSuspended(Route)`.
+
+=== camel-browse - the filter only chooses the messages kept for browsing
+
+The `filter` option of a browse endpoint now only chooses the messages that the endpoint keeps for browsing. A route
+that consumes from the endpoint gets every message. Before, a message that the filter skipped was not passed to the
+consuming route either. To drop messages in the consuming route, use the Filter EIP in that route.
 
 === camel-seda - a discarded request-reply message fails at once
 
@@ -861,6 +877,85 @@ watsonx.data as a `Bearer` token, and asked from `camel-oauth` again for every r
 expires; the endpoint fails to start when the profile gives no token. The identity provider must therefore issue tokens
 that watsonx.data accepts. `apiKey` is no longer marked as required in the catalog, as `oauthProfile` can take its
 place; an endpoint with neither still fails to start.
+
+=== camel-ibm-watsonx-ai - the OAuth token of oauthProfile is sent as a Bearer token
+
+With `oauthProfile`, the endpoint used to obtain an access token once at startup and use it as `apiKey`, so the token
+was posted to IBM Cloud IAM as if it were an IBM Cloud API key, which IAM rejects. The token is now sent to watsonx.ai
+as a `Bearer` token, and asked from `camel-oauth` again for every request, so it is renewed when it expires. The
+identity provider must therefore issue tokens that watsonx.ai accepts. `apiKey` is no longer marked as required in the
+catalog, as `oauthProfile` or the new `authenticator` option can take its place; an endpoint without any of the three
+still fails to start. `baseUrl` is no longer marked as required either, as the utility tools (`runTool`, `listTools`)
+use the `wxUrl` instead; the other operations still fail to start without it. `processToolCalls`, which runs the tools
+locally, still needs neither credentials nor `baseUrl`, and no longer asks its `oauthProfile` for a token at startup.
+
+With `apiKey`, all the services of an endpoint now share one IBM Cloud IAM authenticator, which obtains its token with
+the `verifySsl` and `timeout` options of the endpoint: `verifySsl=false` now also applies to the IAM request that
+carries the API key, and a short `timeout` also limits it.
+
+=== camel-ibm-watsonx-ai - the tool calling loop sends the whole conversation
+
+When the model answers `chat` with tool calls, `chat` now sets the `CamelIBMWatsonxAiMessages` header to the messages it
+sent, such as the system message of `CamelIBMWatsonxAiSystemMessage` and the user question of the body.
+`processToolCalls` adds the tool calls and their results to this header, as before, so the next `chat` sends the whole
+conversation. Before, a route that gave the question in the body sent only the tool calls and their results on the
+second turn, without the system message and the question. A route that sends a new question in the body after such an
+answer must remove the `CamelIBMWatsonxAiMessages` header first, as the header takes precedence over the body.
+
+`chat` also removes the `CamelIBMWatsonxAiToolCalls` header when the answer has no tool calls, instead of leaving the
+tool calls of an earlier answer, and an operation removes a header it gives no value, such as the
+`CamelIBMWatsonxAiAssistantMessage` header after `processToolCalls`, instead of setting it to `null`.
+
+=== camel-ibm-watsonx-ai - forecast and deploymentForecast send the parameters of a TimeSeriesRequest body
+
+`forecast` and `deploymentForecast` used to send only the schema and the data of a `TimeSeriesRequest` body, so its
+prediction length and, for `deploymentForecast`, its future data were dropped and the model forecast its default
+length. The body is now sent with its parameters. `forecast` fails when the `CamelIBMWatsonxAiForecastFutureData`
+header is set, as watsonx.ai takes future data for deployments only.
+
+=== camel-ibm-watsonx-ai - headers that did nothing
+
+The `CamelIBMWatsonxAiToolChoice`, `CamelIBMWatsonxAiFoundationModelFilter` and
+`CamelIBMWatsonxAiFoundationModelTechPreview` headers were documented but never read. `chat` now sends the tool choice
+of the header or of the new `toolChoice` option (`auto`, `required`, `none`, or the name of the tool to call), and
+`listModels` the filter and tech preview flag of the headers. A route that set these headers without effect now gets
+what they ask for.
+
+The `CamelIBMWatsonxAiDetected` header of `detect` is no longer `true` for a Granite Guardian answer of `No`, which
+watsonx.ai returns as a detection when the threshold is low; `CamelIBMWatsonxAiDetectionCount` still counts it.
+`deploymentInfo` looks up a deployment in the project when no space is set, instead of failing. The catalog gives the
+`CamelIBMWatsonxAiTokens` header its actual type, a `List` of `String` tokens.
+
+=== camel-ibm-watsonx-ai - IBM watsonx.ai Java SDK 0.50.0
+
+The component uses the IBM watsonx.ai Java SDK 0.50.0 (was 0.40.0). The SDK no longer depends on Jackson: it reads and
+writes JSON through a binding module, and the component now depends on `com.ibm.watsonx:watsonx-ai-jackson3`, the
+binding for Jackson 3, with the Jackson 3 version that Camel manages. The SDK fails when it finds no binding, or more
+than one, so do not add `com.ibm.watsonx:watsonx-ai-jackson2` next to the component. The component no longer brings
+Jackson 2 (`com.fasterxml.jackson.core:jackson-databind`), which the SDK 0.40.0 depended on: an application that uses
+Jackson 2 must declare it itself. The SDK's `WatsonxJacksonModule` is now the Jackson 3 module of the binding: an
+application that registers it on its own Jackson 2 `ObjectMapper` must move that mapper to Jackson 3, or exclude
+`watsonx-ai-jackson3` from the component and add `watsonx-ai-jackson2` instead.
+
+The SDK sends the API version `2026-10-28` with every request instead of `2026-08-19`. Some classes of the SDK that
+operations give in the body changed, such as `TextClassificationResponse.ClassificationResult`, which no longer has
+`numberPagesProcessed()`: a route that reads such objects in Java should check the migration notes of the SDK
+(`docs/content/migration/0.40.0-to-0.50.0.md` in its repository).
+
+=== camel-ibm-watsonx-ai - chat options, deploymentChat parameters and streaming
+
+`deploymentChat` now sends the chat options of the endpoint and headers (such as `temperature`, `maxCompletionTokens`
+and `topP`) and the tools of the `CamelIBMWatsonxAiTools` header, which it ignored before; a prompt template deployment
+may fix some of them. `chat` and `chatStreaming` read the `CamelIBMWatsonxAiModelId` header as the model of the request,
+in the place of the `modelId` option, so remove this header (which `forecast` sets on its response) before a chat that
+must use the model of its endpoint.
+
+`chatStreaming` now sends the tools of the `CamelIBMWatsonxAiTools` header and gives the same headers as `chat`, such as
+`CamelIBMWatsonxAiToolCalls`. `chatStreaming` and `textGenerationStreaming` fail on the first error that the stream
+reports, with the exception of the watsonx.ai SDK rather than a `RuntimeException` or an `ExecutionException` wrapping
+it, and log the error at DEBUG instead of ERROR. They wait for the end of the stream at most the `timeout` of the
+endpoint (60 seconds by default) and 30 seconds more, and stop the stream when it takes longer, where they used to wait
+without limit.
 
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
@@ -1676,6 +1771,13 @@ header that carries a credential, such as `Authorization`, `Proxy-Authorization`
 values were logged in clear text, even with `logMask=true`, as the masking formatter only masks `key=value`, XML and
 JSON shapes. The other headers and the
 body are masked as before, only when `logMask=true`.
+
+Which headers count as credential headers is decided by `SensitiveUtils.isSensitiveHeader` in camel-util: a header is
+masked when its name matches a sensitive key (such as `Authorization`), when its name ends in `token`, `key`,
+`secret`, `password`, `auth`, `authorization`, `credential` or `credentials` — which covers vendor headers such as
+`X-Amz-Security-Token`, `Ocp-Apim-Subscription-Key` and `X-Vault-Token` — or when it is a well-known credential
+header such as `Cookie`, `Set-Cookie` or `Proxy-Authorization`. A well-known header whose name ends in such a word
+but that carries no secret, such as `Idempotency-Key`, is not masked.
 
 === camel-platform-http-main, camel-netty-http, camel-undertow - the Authorization header is removed after the login is checked
 
@@ -5823,7 +5925,9 @@ nothing more (the client completes the QoS 2 flow on its own, so QoS 2 messages 
 QoS 1 message on a session that the broker keeps after the disconnect (`cleanStart=false` and `sessionExpiryInterval`
 greater than 0), the consumer connects again after a failed exchange (after one second, doubled for each failed
 exchange in a row up to `maxReconnectDelay`, and back to one second after any exchange that succeeds; logged at WARN),
-and the broker sends the message again. In all other
+and the broker sends the message again. For that the consumer closes its client and connects a new one with the same
+client id, so `getClient()` of the consumer returns another instance afterwards, and an exchange still in the route on
+the closed client is not acknowledged (the broker sends its message again, so that message is routed twice). In all other
 cases (a clean session, which is the default, a QoS 2 message, or `cleanStart=false` without `sessionExpiryInterval`,
 where the session ends with the connection) the broker never sends the message again, so the failed message is
 acknowledged and the failure is left to the Camel error handler. A consumer that uses a client set with the `client`
@@ -12198,6 +12302,12 @@ names is not a valid HTTP header name (an RFC 9110 token, for example a name wit
 response now leaves out that header and logs it at DEBUG level, instead of failing the whole response with a 500 after
 the route has already run. Headers with a valid name are written as before. A route that needs such a value in the
 response must set it in a header with a valid name.
+
+=== camel-ldif - a body that is not a URL fails with InvalidPayloadException
+
+With `allowUrlBody=true`, a body that does not start with `version: 1` and is not a valid absolute URL, such as a text
+with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
+did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
 === Kamelets - removed Kamelets
 

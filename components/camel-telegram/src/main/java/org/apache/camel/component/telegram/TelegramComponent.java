@@ -28,14 +28,18 @@ import org.apache.camel.support.HealthCheckComponent;
 public class TelegramComponent extends HealthCheckComponent {
     public static final String BOT_API_DEFAULT_URL = "https://api.telegram.org";
 
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "The token of the bot, used by every endpoint that does not set its own authorizationToken.")
     private String authorizationToken;
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use a custom java.net.http.HttpClient for every endpoint that does not set its own client."
+                            + " The endpoints then do not use the proxy options.")
     private HttpClient client;
 
     @Metadata(label = "advanced", defaultValue = BOT_API_DEFAULT_URL,
-              description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
+              description = "The base URI of the Telegram Bot API, for example of a local Bot API server or of a mock in"
+                            + " tests. It is used by every endpoint that does not set its own baseUri.")
     private String baseUri = BOT_API_DEFAULT_URL;
 
     public TelegramComponent() {
@@ -74,9 +78,6 @@ public class TelegramComponent extends HealthCheckComponent {
         return authorizationToken;
     }
 
-    /**
-     * The default Telegram authorization token to be used when the information is not provided in the endpoints.
-     */
     public void setAuthorizationToken(String authorizationToken) {
         this.authorizationToken = authorizationToken;
     }
@@ -85,9 +86,6 @@ public class TelegramComponent extends HealthCheckComponent {
         return client;
     }
 
-    /**
-     * To use a custom {@link java.net.http.HttpClient}
-     */
     public void setClient(HttpClient client) {
         this.client = client;
     }
@@ -96,9 +94,6 @@ public class TelegramComponent extends HealthCheckComponent {
         return baseUri;
     }
 
-    /**
-     * Set an alternative base URI, e.g. when you want to test the component against a mock Telegram API.
-     */
     public void setBaseUri(String telegramBaseUri) {
         this.baseUri = telegramBaseUri;
     }

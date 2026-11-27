@@ -35,7 +35,9 @@ import org.apache.camel.util.URISupport;
 @Component("webhook")
 public class WebhookComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The default webhook options of the endpoints that the component creates. Each endpoint starts"
+                            + " with a copy of it, which the options of the endpoint then change.")
     private WebhookConfiguration configuration = new WebhookConfiguration();
 
     public WebhookComponent() {
@@ -85,9 +87,6 @@ public class WebhookComponent extends DefaultComponent {
         return this.configuration;
     }
 
-    /**
-     * Set the default configuration for the webhook meta-component.
-     */
     public void setConfiguration(WebhookConfiguration configuration) {
         this.configuration = configuration;
     }

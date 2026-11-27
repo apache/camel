@@ -31,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("azure-cosmosdb")
 public class CosmosDbComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration of the component. Each endpoint that the component creates starts from a"
+                            + " copy of it, to which the options of the endpoint are applied.")
     private CosmosDbConfiguration configuration = new CosmosDbConfiguration();
 
     public CosmosDbComponent() {
@@ -66,9 +67,6 @@ public class CosmosDbComponent extends DefaultComponent {
         return endpoint;
     }
 
-    /**
-     * The component configurations
-     */
     public CosmosDbConfiguration getConfiguration() {
         return configuration;
     }

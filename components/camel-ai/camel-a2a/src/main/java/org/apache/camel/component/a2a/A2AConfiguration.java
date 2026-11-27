@@ -32,168 +32,231 @@ public class A2AConfiguration {
     private static final long MAX_PUSH_RETRY_BACKOFF_MS = 3600000L;
 
     @UriParam(label = "producer", defaultValue = "MESSAGE_SEND")
-    @Metadata(description = "The A2A operation to perform", defaultValue = "MESSAGE_SEND")
+    @Metadata(description = "The operation that the producer performs. The CamelA2AOperation header replaces it for a"
+                            + " message.",
+              defaultValue = "MESSAGE_SEND")
     private A2AOperations operation = A2AOperations.MESSAGE_SEND;
 
     @UriParam(enums = "HTTP+JSON,JSONRPC")
-    @Metadata(description = "The protocol binding to use for communication. Legacy aliases rest and jsonrpc are also accepted.",
+    @Metadata(description = "The A2A protocol binding. HTTP+JSON is the REST binding, with a path per operation such as"
+                            + " /message:send, and JSONRPC posts JSON-RPC 2.0 requests to the base path. The consumer"
+                            + " serves only this binding, and the producer calls the URL that the agent card gives for"
+                            + " this binding. The aliases rest and jsonrpc are also accepted, in any case.",
               defaultValue = "HTTP+JSON")
     private String protocolBinding = A2AConstants.PROTOCOL_REST;
 
     @UriParam
-    @Metadata(description = "The host to connect to for producers")
+    @Metadata(description = "The host of the remote agent that the producer calls, in place of the URL of the agent card"
+                            + " and of agentCardSource, for example for tests. Without an http:// or https:// prefix,"
+                            + " https is used. The port and basePath options are added to it. The consumer does not use"
+                            + " it.")
     private String host;
 
     @UriParam
-    @Metadata(description = "The port to connect to for producers")
+    @Metadata(description = "The port of the remote agent that the producer calls. Only used with the host option. The"
+                            + " consumer does not use it.")
     private Integer port;
 
     @UriParam
-    @Metadata(description = "The base path for HTTP requests", defaultValue = "")
+    @Metadata(description = "The path prefix of the HTTP routes of the consumer, also of the path of its agent card, for"
+                            + " example /agents/weather. The producer adds it to the URL of the remote agent only when"
+                            + " the host option is set. A missing leading slash is added and a trailing slash removed.",
+              defaultValue = "")
     private String basePath = "";
 
     @UriParam
-    @Metadata(description = "The agent name (overrides agent card)")
+    @Metadata(description = "The name of the agent, which replaces the name of the agent card from agentCardSource and"
+                            + " agentCard. If no card gives a name, a plain name in agentCardSource is used, and the"
+                            + " endpoint fails to start without a name.")
     private String name;
 
     @UriParam
-    @Metadata(description = "The agent description (overrides agent card)")
+    @Metadata(description = "The description of the agent, which replaces the description of the agent card from"
+                            + " agentCardSource and agentCard. If the card declares no skills, it is also the description"
+                            + " of the default skill of the card.")
     private String description;
 
     @UriParam
-    @Metadata(description = "The agent version (overrides agent card)")
+    @Metadata(description = "The version of the agent, which replaces the version of the agent card from agentCardSource"
+                            + " and agentCard. If no card gives a version, 1.0 is used.")
     private String version;
 
     @UriParam
-    @Metadata(description = "Agent card bean reference or inline configuration")
+    @Metadata(description = "An agent card, usually a reference to an org.apache.camel.component.a2a.model.AgentCard bean"
+                            + " in the registry. The fields that it sets replace those of the card from agentCardSource,"
+                            + " and the name, description and version options replace its fields in turn.")
     private AgentCard agentCard;
 
     @UriParam(label = "security")
-    @Metadata(description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
-                            + "When set, the token is acquired from the configured identity provider and used for authentication. "
-                            + "Requires camel-oauth on the classpath. The profile properties are resolved from "
-                            + "camel.oauth.profile-name.client-id, camel.oauth.profile-name.client-secret, "
-                            + "and camel.oauth.profile-name.token-endpoint.")
+    @Metadata(description = "The name of a camel-oauth profile, for the security schemes of type oauth2, openIdConnect"
+                            + " and http in the agent card. The producer gets an access token with the OAuth 2.0 client"
+                            + " credentials grant, from the client-id, client-secret and token-endpoint properties of"
+                            + " the profile under camel.oauth, and sends it as a bearer token. The consumer validates the"
+                            + " bearer token of each request with this profile when validateAuth is true. Requires"
+                            + " camel-oauth, or for the consumer another OAuthTokenValidationFactory.")
     private String oauthProfile;
 
     @UriParam(label = "security", security = "secret")
-    @Metadata(description = "API key for authentication", security = "secret")
+    @Metadata(description = "The API key, for the security schemes of type apiKey in the agent card. The producer sends"
+                            + " it in the header, query parameter or cookie that the scheme names, with the Bearer"
+                            + " prefix in the Authorization header. The consumer compares the key of each request with"
+                            + " it when validateAuth is true.",
+              security = "secret")
     private String apiKey;
 
     @UriParam(label = "security", defaultValue = "Authorization")
-    @Metadata(description = "HTTP header name for API key authentication (e.g., X-API-Key, Authorization)",
+    @Metadata(description = "The name of the header, query parameter or cookie that holds the API key, for a security"
+                            + " scheme of type apiKey in the agent card that gives no name.",
               defaultValue = "Authorization")
     private String apiKeyHeader = "Authorization";
 
     @UriParam(label = "security", security = "secret")
-    @Metadata(description = "Bearer token for authentication", security = "secret")
+    @Metadata(description = "The bearer token, for the security schemes of type http in the agent card. The producer"
+                            + " sends it in the Authorization header when oauthProfile is not set or gives no token. The"
+                            + " consumer compares the bearer token of each request with it, also for the oauth2 and"
+                            + " openIdConnect schemes, when validateAuth is true and oauthProfile is not set.",
+              security = "secret")
     private String bearerToken;
 
     @UriParam(defaultValue = "true", security = "insecure:dev", insecureValue = "false")
-    @Metadata(description = "Whether to validate authentication on incoming consumer operation requests. "
-                            + "Disable explicitly only for unauthenticated A2A operation serving.",
+    @Metadata(description = "Whether the consumer checks the credentials of each request, except the request for the"
+                            + " agent card, against the security requirements of its agent card, with the apiKey,"
+                            + " bearerToken or oauthProfile option. If true, the card must declare securitySchemes, or"
+                            + " every request is rejected. If false, the consumer accepts requests without credentials."
+                            + " The producer does not use it.",
               defaultValue = "true")
     private boolean validateAuth = true;
 
     @UriParam(label = "advanced", defaultValue = "3600000")
-    @Metadata(description = "Time-to-live in milliseconds for completed tasks before cleanup", defaultValue = "3600000")
+    @Metadata(description = "The time in milliseconds that the in-memory task store of the consumer keeps a task after"
+                            + " it reached a final state: completed, failed, canceled or rejected. Not used when the"
+                            + " registry holds an A2ATaskStore, which the endpoint then uses as its task store.",
+              defaultValue = "3600000")
     private long completedTaskTtl = 3600000L;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Whether to return immediately without waiting for task completion", defaultValue = "false")
+    @Metadata(description = "Whether the consumer answers SendMessage at once with a task in state"
+                            + " TASK_STATE_SUBMITTED and runs the route in the background, so that the client polls the"
+                            + " task with GetTask. The returnImmediately and blocking fields of the configuration of the"
+                            + " request take precedence. With protocolBinding HTTP+JSON, a SendStreamingMessage request"
+                            + " for which it is true is rejected. The producer does not use it.",
+              defaultValue = "false")
     private boolean returnImmediately = false;
 
     @UriParam
-    @Metadata(description = "Maximum number of history messages to include in the context")
+    @Metadata(description = "Not used: the endpoint only checks when it starts that the value is not negative. The"
+                            + " producer takes the history length of TASK_GET and TASK_SUBSCRIBE from the"
+                            + " CamelA2AHistoryLength header, and that of TASK_LIST from the CamelA2AListHistoryLength"
+                            + " header.")
     private Integer historyLength;
 
     @UriParam(label = "advanced", defaultValue = "300000")
-    @Metadata(description = "Timeout in milliseconds for asynchronous task operations", defaultValue = "300000")
+    @Metadata(description = "The timeout in milliseconds of the route that the consumer runs in the background, for"
+                            + " SendMessage with returnImmediately and for SendStreamingMessage: the consumer then cancels"
+                            + " it and marks the task as failed. Use 0 for no timeout on the consumer. The producer uses it"
+                            + " as the timeout of the response to its MESSAGE_STREAM and TASK_SUBSCRIBE requests, where it"
+                            + " must be greater than 0, and a fixed timeout of 60 seconds for the other operations.",
+              defaultValue = "300000")
     private long asyncTimeout = 300000L;
 
     @UriParam(label = "advanced", defaultValue = "6291456")
-    @Metadata(description = "Maximum payload size in bytes (default 6MB)", defaultValue = "6291456")
+    @Metadata(description = "The maximum size in bytes of a request body that the consumer reads, and of a response body"
+                            + " or a single server-sent event that the producer reads. The consumer rejects a larger"
+                            + " request, and the producer fails the exchange. The agent card has its own limit of 1 MB.",
+              defaultValue = "6291456")
     private long maxPayloadSize = 6291456L;
 
     @UriParam(label = "advanced", defaultValue = "false")
-    @Metadata(description = "Whether the HTTP client should follow redirects. Disabled by default to prevent "
-                            + "credential leakage on cross-origin redirects. Enable only when the remote agent is "
-                            + "known to issue redirects (e.g., behind a load balancer).",
+    @Metadata(description = "Whether the producer follows HTTP redirects of the remote agent. Disabled by default, as a"
+                            + " redirect to another host would also receive the credentials of the producer. The download"
+                            + " of the agent card and the push notifications of the consumer never follow redirects.",
               defaultValue = "false")
     private boolean followRedirects;
 
     @UriParam(label = "producer,advanced", defaultValue = "30000")
-    @Metadata(description = "Connect timeout in milliseconds for the HTTP client used by the producer",
+    @Metadata(description = "The connect timeout in milliseconds of the HTTP connections of the endpoint: the requests of"
+                            + " the producer, the push notifications that the consumer sends, and the download of the"
+                            + " agent card from an HTTP URL when the endpoint starts. It is also the timeout of the whole"
+                            + " download of the agent card.",
               defaultValue = "30000")
     private long connectTimeout = 30000L;
 
     @UriParam(label = "advanced", defaultValue = "3")
-    @Metadata(description = "Maximum number of retry attempts for push notification webhook delivery", defaultValue = "3")
+    @Metadata(description = "The number of times that the consumer retries a push notification after a network error or"
+                            + " a webhook response with a status other than 2xx and 4xx. A 4xx status is not retried,"
+                            + " and 410 Gone also removes the push notification config. Between 0 and 30, where 0 sends"
+                            + " each notification once.",
+              defaultValue = "3")
     private int pushRetryAttempts = 3;
 
     @UriParam(label = "advanced", defaultValue = "1000")
-    @Metadata(description = "Initial backoff in milliseconds for push notification retry. "
-                            + "Retries use exponential backoff with this delay multiplied by 2 to the attempt number.",
+    @Metadata(description = "The delay in milliseconds before the first retry of a push notification, doubled for each"
+                            + " further retry and capped at one hour. At most 3600000, and greater than 0 when"
+                            + " pushRetryAttempts is greater than 0.",
               defaultValue = "1000")
     private long pushRetryBackoffMs = 1000L;
 
     @UriParam(label = "consumer,advanced", defaultValue = "0")
-    @Metadata(description = "Maximum number of tasks the agent can process concurrently. "
-                            + "When the limit is reached, new requests are rejected with ServerBusyError (HTTP 429). "
-                            + "Set to 0 (default) for unlimited concurrency.",
+    @Metadata(description = "The maximum number of SendMessage and SendStreamingMessage requests that the consumer"
+                            + " processes at the same time. A request beyond the limit is rejected with a ServerBusyError,"
+                            + " which is HTTP status 429 with protocolBinding HTTP+JSON, unless it can wait in the queue"
+                            + " of taskQueueSize. Use 0 for no limit.",
               defaultValue = "0")
     private int maxConcurrentTasks;
 
     @UriParam(label = "consumer,advanced", defaultValue = "0")
-    @Metadata(description = "Maximum number of tasks that can wait in the pending queue when all concurrent slots are occupied. "
-                            + "Only applies to async requests (returnImmediately=true). Queued tasks receive SUBMITTED status "
-                            + "and are processed as capacity becomes available. Set to 0 (default) for no queueing — "
-                            + "requests are rejected immediately when at capacity.",
+    @Metadata(description = "The number of SendMessage requests with returnImmediately that can wait in a queue, as tasks"
+                            + " in state TASK_STATE_SUBMITTED, while maxConcurrentTasks requests are in progress. Only"
+                            + " used when maxConcurrentTasks is greater than 0. Use 0 for no queue, so that these"
+                            + " requests are rejected at once.",
               defaultValue = "0")
     private int taskQueueSize;
 
     @UriParam(label = "consumer,advanced")
-    @Metadata(description = "The Camel HTTP component to use for serving incoming A2A requests (consumer side). "
-                            + "Must implement RestConsumerFactory (e.g., platform-http, jetty, netty-http, undertow, servlet). "
-                            + "When not set, the component is auto-discovered from the classpath or falls back to "
-                            + "the global camel.rest.component setting.")
+    @Metadata(description = "The name of the Camel component that serves the HTTP routes of the consumer, which must"
+                            + " implement RestConsumerFactory, for example platform-http, undertow or jetty. If not set,"
+                            + " the consumer uses the component of the REST configuration (camel.rest.component), else"
+                            + " platform-http, else the only RestConsumerFactory among the components or in the"
+                            + " registry.")
     private String httpServerComponent;
 
     @UriParam(label = "consumer,security", defaultValue = "false", security = "insecure:dev", insecureValue = "true")
-    @Metadata(description = "Whether to allow webhook URLs pointing to localhost/loopback addresses. "
-                            + "When false (default), push notification webhook URLs targeting 127.0.0.0/8, ::1, or "
-                            + "localhost are rejected as SSRF protection. Enable for local development only.",
+    @Metadata(description = "Whether the consumer accepts push notification webhook URLs whose host resolves to a"
+                            + " loopback address, such as localhost or 127.0.0.1, also with http. By default these URLs"
+                            + " are rejected, like the URLs to private, link-local and other non-public addresses, which"
+                            + " this option does not allow. For local development only.",
               defaultValue = "false")
     private boolean allowLocalWebhookUrls;
 
     @UriParam(label = "consumer,advanced", defaultValue = "15000")
-    @Metadata(description = "Interval in milliseconds for SSE keep-alive heartbeat comments. "
-                            + "Sent as ':' comment lines to prevent proxies from closing idle connections. "
-                            + "Independent from asyncTimeout which controls task processing timeout.",
+    @Metadata(description = "The interval in milliseconds at which the consumer writes a heartbeat comment line (:) to a"
+                            + " server-sent event stream that has no event to send, so that proxies do not close the idle"
+                            + " connection. Used for SendStreamingMessage and SubscribeToTask.",
               defaultValue = "15000")
     private long sseHeartbeatInterval = 15000L;
 
     @UriParam(label = "consumer,advanced", defaultValue = "1000")
-    @Metadata(description = "Maximum number of SSE events that can be buffered per streaming connection. "
-                            + "When the queue is full, new events are dropped with a warning log. "
-                            + "Prevents unbounded memory growth from slow clients.",
+    @Metadata(description = "The number of server-sent events that the consumer buffers per stream for a slow client, at"
+                            + " least 2. When the buffer is full, the consumer drops a new event and logs a warning, but"
+                            + " for the final events of the stream it drops older events instead.",
               defaultValue = "1000")
     private int sseQueueCapacity = 1000;
 
     @UriParam(label = "producer,advanced", defaultValue = "300000")
-    @Metadata(description = "Read timeout in milliseconds for the producer's SSE streaming connection. "
-                            + "If no SSE event arrives within this period, the stream is closed with an error. "
-                            + "Prevents indefinite blocking when a remote agent stops sending events.",
+    @Metadata(description = "The time in milliseconds that the producer waits for the next line of a server-sent event"
+                            + " stream, for MESSAGE_STREAM and TASK_SUBSCRIBE, before it closes the stream with an error."
+                            + " The heartbeat comments of the remote agent count as lines. Use 0 for no timeout.",
               defaultValue = "300000")
     private long streamingReadTimeout = 300000L;
 
     @UriParam(defaultValue = "PAYLOAD")
-    @Metadata(description = "The data format for the exchange body, following the CXF DataFormat convention. "
-                            + "PAYLOAD (default) extracts text content from message parts as a String — backward compatible, "
-                            + "simple for chatbot routes. "
-                            + "POJO sets the body to the full Java model object (Message on consumer, Task or Message on producer) "
-                            + "preserving all parts, metadata, and file content. "
-                            + "RAW passes the raw JSON string without deserialization — useful for forwarding, logging, or compliance.")
+    @Metadata(description = "The form of the message body. PAYLOAD: the text of the message parts, one per line, where a"
+                            + " Task of the producer gives the parts of the last message of its history. POJO:"
+                            + " the model object, which is the Message of the request on the consumer and the Task or the"
+                            + " Message of the response on the producer. RAW: JSON text, which is the Message of the"
+                            + " request on the consumer and the response as received on the producer (an InputStream of"
+                            + " the events for MESSAGE_STREAM and TASK_SUBSCRIBE), where the producer sets no A2A header"
+                            + " but CamelA2AMethod. The reply of the consumer does not depend on it.")
     private A2ADataFormat dataFormat = A2ADataFormat.PAYLOAD;
 
     public A2AOperations getOperation() {

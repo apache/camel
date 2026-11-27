@@ -48,21 +48,43 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     private final Map<VertxWebsocketHostKey, Lock> hostLocks = new ConcurrentHashMap<>();
     private boolean managedVertx;
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use an existing Vert.x instance instead of creating a new one. If not set, the component uses"
+                            + " the Vertx bean of the registry when there is exactly one, and otherwise creates its own"
+                            + " instance, which it closes when it stops.")
     private Vertx vertx;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The VertxOptions of the Vert.x instance that the component creates. Not used when the component"
+                            + " uses an existing Vert.x instance, from the vertx option or a Vertx bean of the registry.")
     private VertxOptions vertxOptions;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The Vert.x Router that the HTTP servers of the server consumers use, unless the router option of"
+                            + " the endpoint is set. The one router serves the HTTP servers of all hosts and ports. If not set,"
+                            + " the Router bean of the registry is used when there is exactly one, and otherwise each HTTP"
+                            + " server gets a new router.")
     private Router router;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether to use the global SSL context parameters of the CamelContext for each endpoint that the"
+                            + " component creates and that has no sslContextParameters. See the sslContextParameters endpoint"
+                            + " option.")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "advanced", defaultValue = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST)
+    @Metadata(label = "advanced", defaultValue = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST,
+              description = "The host of an endpoint whose URI has no host, such as vertx-websocket:/chat. The default 0.0.0.0"
+                            + " makes the server consumer bind to all network interfaces.")
     private String defaultHost = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST;
-    @Metadata(label = "advanced", defaultValue = "" + VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT)
+    @Metadata(label = "advanced", defaultValue = "" + VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT,
+              description = "The port of an endpoint whose URI has no port. With the default 0, the server consumer binds to a"
+                            + " free port that the operating system picks, and the producer and a consumer with"
+                            + " consumeAsClient=true connect to port 80, or to port 443 with TLS.")
     private int defaultPort = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
-    @Metadata(label = "advanced", defaultValue = "true")
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether the producer and a consumer with consumeAsClient=true add an Origin header to the"
+                            + " WebSocket handshake request, as the default for the endpoints of this component. See the"
+                            + " allowOriginHeader endpoint option.")
     private boolean allowOriginHeader = true;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The value of the Origin header of the WebSocket handshake request, as the default for the"
+                            + " endpoints of this component. See the originHeaderUrl endpoint option.")
     private String originHeaderUrl;
     @Metadata(label = "consumer",
               description = "Whether the consumers route each message synchronously, as the default for the endpoints of this"
@@ -270,9 +292,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return vertx;
     }
 
-    /**
-     * To use an existing vertx instead of creating a new instance
-     */
     public void setVertx(Vertx vertx) {
         this.vertx = vertx;
     }
@@ -281,9 +300,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return vertxOptions;
     }
 
-    /**
-     * To provide a custom set of vertx options for configuring vertx
-     */
     public void setVertxOptions(VertxOptions vertxOptions) {
         this.vertxOptions = vertxOptions;
     }
@@ -292,9 +308,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return router;
     }
 
-    /**
-     * To provide a custom vertx router to use on the WebSocket server
-     */
     public void setRouter(Router router) {
         this.router = router;
     }
@@ -304,9 +317,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return this.useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
@@ -320,9 +330,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return allowOriginHeader;
     }
 
-    /**
-     * Whether the WebSocket client should add the Origin header to the WebSocket handshake request.
-     */
     public void setAllowOriginHeader(boolean allowOriginHeader) {
         this.allowOriginHeader = allowOriginHeader;
     }
@@ -331,10 +338,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return originHeaderUrl;
     }
 
-    /**
-     * The value of the Origin header that the WebSocket client should use on the WebSocket handshake request. When not
-     * specified, the WebSocket client will automatically determine the value for the Origin from the request URL.
-     */
     public void setOriginHeaderUrl(String originHeaderUrl) {
         this.originHeaderUrl = originHeaderUrl;
     }
@@ -344,9 +347,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return new VertxWebsocketHost(getCamelContext(), hostConfiguration, hostKey);
     }
 
-    /**
-     * Default value for host name that the WebSocket should bind to
-     */
     public void setDefaultHost(String defaultHost) {
         this.defaultHost = defaultHost;
     }
@@ -355,9 +355,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return this.defaultHost;
     }
 
-    /**
-     * Default value for the port that the WebSocket should bind to
-     */
     public void setDefaultPort(int defaultPort) {
         this.defaultPort = defaultPort;
     }

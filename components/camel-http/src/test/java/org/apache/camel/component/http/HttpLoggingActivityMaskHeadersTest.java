@@ -91,6 +91,9 @@ public class HttpLoggingActivityMaskHeadersTest extends BaseHttpTest {
                     e.getIn().setHeader("Proxy-Authorization", "Basic proxy-secret");
                     e.getIn().setHeader("Cookie", "SESSIONID=request-session-secret");
                     e.getIn().setHeader("X-Api-Key", "api-key-secret");
+                    e.getIn().setHeader("X-Amz-Security-Token", "amz-security-token-secret");
+                    e.getIn().setHeader("Ocp-Apim-Subscription-Key", "ocp-subscription-secret");
+                    e.getIn().setHeader("Idempotency-Key", "idem-12345");
                     e.getIn().setHeader("X-Trace", "trace-123");
                 });
 
@@ -108,15 +111,20 @@ public class HttpLoggingActivityMaskHeadersTest extends BaseHttpTest {
         assertTrue(lines.contains("Proxy-Authorization: xxxxx"), log);
         assertTrue(lines.contains("Cookie: xxxxx"), log);
         assertTrue(lines.contains("X-Api-Key: xxxxx"), log);
+        assertTrue(lines.contains("X-Amz-Security-Token: xxxxx"), log);
+        assertTrue(lines.contains("Ocp-Apim-Subscription-Key: xxxxx"), log);
         assertTrue(lines.contains("Set-Cookie: xxxxx"), log);
         assertFalse(log.contains("secret-token"), log);
         assertFalse(log.contains("proxy-secret"), log);
         assertFalse(log.contains("request-session-secret"), log);
         assertFalse(log.contains("api-key-secret"), log);
+        assertFalse(log.contains("amz-security-token-secret"), log);
+        assertFalse(log.contains("ocp-subscription-secret"), log);
         assertFalse(log.contains("response-session-secret"), log);
 
         // other headers are logged as is
         assertTrue(lines.contains("X-Trace: trace-123"), log);
+        assertTrue(lines.contains("Idempotency-Key: idem-12345"), log);
     }
 
     @Test

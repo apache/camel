@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 import tools.jackson.core.json.JsonFactory;
 
 /**
- * Transform JSON and XML message using a XSLT.
+ * Transform JSON to XML and XML to JSON with an XSLT stylesheet.
  */
 @ManagedResource(description = "Managed XJEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true,
@@ -68,7 +68,12 @@ public class XJEndpoint extends XsltSaxonEndpoint {
     private final JsonFactory jsonFactory = JsonFactory.builderWithJackson2Defaults().build();
 
     @UriParam
-    @Metadata(required = true, description = "Transform direction. Either XML2JSON or JSON2XML")
+    @Metadata(required = true,
+              description = "The direction of the transformation. JSON2XML parses the JSON body into XML elements named"
+                            + " object, with the JSON key in the xj:name attribute and the JSON type in the xj:type"
+                            + " attribute, and returns the XML that the stylesheet writes. XML2JSON reads an XML body and"
+                            + " writes the output of the stylesheet as JSON, using the xj:name and xj:type attributes as"
+                            + " hints; output=DOM is not supported in this direction.")
     private TransformDirection transformDirection;
 
     public XJEndpoint(String endpointUri, Component component) {
@@ -85,9 +90,6 @@ public class XJEndpoint extends XsltSaxonEndpoint {
         return transformDirection;
     }
 
-    /**
-     * Sets the transform direction.
-     */
     public void setTransformDirection(TransformDirection transformDirection) {
         this.transformDirection = transformDirection;
     }

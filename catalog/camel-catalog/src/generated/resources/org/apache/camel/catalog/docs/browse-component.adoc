@@ -90,3 +90,12 @@ public void inspectReceivedOrders() {
     }
 }
 ----
+
+NOTE: The endpoint keeps the exchanges themselves, not copies. The route goes on with the same exchange after the
+`browse:` endpoint, and so does a route that consumes from it, so a later step that changes the message also changes
+what is browsed. To browse a message as it was when it reached the endpoint, send a copy of the exchange, for example
+with `.wireTap("browse:orderReceived")`. The copy has its own headers, but a body object that can be changed is still
+shared.
+
+The `filter` option only chooses which exchanges are kept for browsing. A route that consumes from the same endpoint
+gets every exchange, also the ones the filter does not keep.

@@ -31,43 +31,78 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
     public static final String DEFAULT_MOD = "664";
-    @UriParam(label = "security", defaultValue = "true")
+    @UriParam(label = "security", defaultValue = "true",
+              description = "Whether to use the known hosts file of the user, the .ssh/known_hosts file in the home directory"
+                            + " (the user.home system property, or the HOME environment variable), when knownHostsFile is not"
+                            + " set. If that file cannot be read, the producer fails to connect. If false and knownHostsFile is"
+                            + " not set, no host is known, and strictHostKeyChecking decides whether the producer connects.")
     private boolean useUserKnownHostsFile = true;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The known hosts file that JSch checks the key of the remote host against when the producer"
+                            + " connects, in the OpenSSH known_hosts format. A path on the file system, or with the classpath:"
+                            + " prefix a resource on the classpath. An @cert-authority entry lets the producer accept an"
+                            + " OpenSSH host certificate signed by that CA. What happens with a host that is not in the file,"
+                            + " or whose key changed, depends on strictHostKeyChecking.")
     @Metadata(supportFileReference = true)
     private String knownHostsFile;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The private key file for public key authentication. A path on the file system, or with the"
+                            + " classpath: prefix a resource on the classpath. The key must be in a format that JSch reads,"
+                            + " such as OpenSSH, PEM or PuTTY. Takes precedence over privateKeyBytes. Use"
+                            + " privateKeyFilePassphrase for an encrypted key.")
     private String privateKeyFile;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The private key as a byte array, for public key authentication. Only used when privateKeyFile is"
+                            + " not set. Use privateKeyFilePassphrase for an encrypted key.")
     private byte[] privateKeyBytes;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The passphrase of an encrypted private key of privateKeyFile or privateKeyBytes. Not needed for a"
+                            + " key that is not encrypted.")
     private String privateKeyFilePassphrase;
     @UriParam(label = "security", security = "secret",
-              description = "Set the OpenSSH certificate file path for certificate-based authentication.")
+              description = "The OpenSSH user certificate file for certificate-based authentication, for example"
+                            + " id_ed25519-cert.pub. A path on the file system, or with the classpath: prefix a resource on the"
+                            + " classpath. Only used together with privateKeyFile or privateKeyBytes, the private key of the"
+                            + " certificate. Takes precedence over certUri and certBytes.")
     private String certFile;
     @UriParam(label = "security", security = "secret",
-              description = "Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.")
+              description = "The OpenSSH user certificate for certificate-based authentication, loaded the same way as"
+                            + " certFile: a path on the file system, or with the classpath: prefix a resource on the classpath."
+                            + " Only used together with privateKeyFile or privateKeyBytes, and when certFile is not set. Takes"
+                            + " precedence over certBytes.")
     @Metadata(supportFileReference = true)
     private String certUri;
     @UriParam(label = "security", security = "secret",
-              description = "Set the OpenSSH certificate as a byte array for certificate-based authentication.")
+              description = "The OpenSSH user certificate as a byte array, for certificate-based authentication. Only used"
+                            + " together with privateKeyFile or privateKeyBytes, and when neither certFile nor certUri is set.")
     private byte[] certBytes;
     @UriParam(label = "security",
-              description = "Set a comma separated list of CA signature algorithms accepted for host certificate verification."
-                            + " If not specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).")
+              description = "A comma-separated list of the signature algorithms that are accepted for the CA signature of an"
+                            + " OpenSSH host certificate, for example ssh-ed25519,rsa-sha2-512. The CA keys are the"
+                            + " @cert-authority entries of the known hosts file. If not set, the JSch default list is used,"
+                            + " which does not accept the SHA-1 based ssh-rsa.")
     private String caSignatureAlgorithms;
     @UriParam(label = "security", enums = "no,yes", defaultValue = "no", security = "insecure:ssl",
               description = "Sets whether to use strict host key checking. Setting this to 'no' (the default) disables"
                             + " host key verification and makes the connection vulnerable to man-in-the-middle attacks."
                             + " Use 'yes' in production environments.")
     private String strictHostKeyChecking = "no";
-    @UriParam(defaultValue = DEFAULT_MOD)
+    @UriParam(defaultValue = DEFAULT_MOD,
+              description = "The permissions of the file that the producer writes, as three octal digits, for example 644."
+                            + " Any other value is replaced by 664. The producer sends it in the scp protocol line of the file,"
+                            + " and the remote scp uses it when it creates the file. The directories that the producer creates"
+                            + " for a file name with a path get 775.")
     private String chmod = DEFAULT_MOD;
-    // comma separated list of ciphers.
-    // null means default jsch list will be used
-    @UriParam(label = "security,advanced")
+    @UriParam(label = "security,advanced",
+              description = "A comma-separated list of the ciphers for the SSH connection, in order of preference, for example"
+                            + " aes128-ctr,aes256-ctr. The cipher names are those of JSch. If not set, the JSch default list is"
+                            + " used.")
     private String ciphers;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "A comma-separated list of the SSH authentication methods to try, in order of preference, for"
+                            + " example publickey,password. JSch supports gssapi-with-mic, publickey, keyboard-interactive and"
+                            + " password. If not set, the JSch default gssapi-with-mic,publickey,keyboard-interactive,password"
+                            + " is used.")
     private String preferredAuthentications;
 
     public ScpConfiguration() {
@@ -87,10 +122,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return knownHostsFile;
     }
 
-    /**
-     * Sets the known_hosts file, so that the jsch endpoint can do host key verification. You can prefix with classpath:
-     * to load the file from classpath instead of file system.
-     */
     public void setKnownHostsFile(String knownHostsFile) {
         this.knownHostsFile = knownHostsFile;
     }
@@ -99,10 +130,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return useUserKnownHostsFile;
     }
 
-    /**
-     * If knownHostFile has not been explicit configured, then use the host file from System.getProperty("user.home") +
-     * "/.ssh/known_hosts"
-     */
     public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
         this.useUserKnownHostsFile = useUserKnownHostsFile;
     }
@@ -111,10 +138,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return privateKeyFile;
     }
 
-    /**
-     * Set the private key file to that the endpoint can do private key verification. You can prefix with classpath: to
-     * load the file from classpath instead of file system.
-     */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
     }
@@ -123,10 +146,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return privateKeyBytes;
     }
 
-    /**
-     * Set the private key bytes to that the endpoint can do private key verification. This must be used only if
-     * privateKeyFile wasn't set. Otherwise the file will have the priority.
-     */
     public void setPrivateKeyBytes(byte[] privateKeyBytes) {
         this.privateKeyBytes = privateKeyBytes;
     }
@@ -135,9 +154,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return privateKeyFilePassphrase;
     }
 
-    /**
-     * Set the private key file passphrase to that the endpoint can do private key verification.
-     */
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyFilePassphrase = privateKeyFilePassphrase;
     }
@@ -146,9 +162,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return certFile;
     }
 
-    /**
-     * Set the OpenSSH certificate file path for certificate-based authentication.
-     */
     public void setCertFile(String certFile) {
         this.certFile = certFile;
     }
@@ -157,9 +170,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return certUri;
     }
 
-    /**
-     * Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.
-     */
     public void setCertUri(String certUri) {
         this.certUri = certUri;
     }
@@ -168,9 +178,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return certBytes;
     }
 
-    /**
-     * Set the OpenSSH certificate as a byte array for certificate-based authentication.
-     */
     public void setCertBytes(byte[] certBytes) {
         this.certBytes = certBytes;
     }
@@ -179,10 +186,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return caSignatureAlgorithms;
     }
 
-    /**
-     * Set a comma separated list of CA signature algorithms accepted for host certificate verification. If not
-     * specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).
-     */
     public void setCaSignatureAlgorithms(String caSignatureAlgorithms) {
         this.caSignatureAlgorithms = caSignatureAlgorithms;
     }
@@ -198,9 +201,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         this.strictHostKeyChecking = strictHostKeyChecking;
     }
 
-    /**
-     * Allows you to set chmod on the stored file. For example chmod=664.
-     */
     public void setChmod(String chmod) {
         if (chmod.length() == 3) {
             for (byte c : chmod.getBytes()) {
@@ -220,12 +220,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return chmod;
     }
 
-    /**
-     * Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined
-     * by JCraft JSCH. Some examples include:
-     * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list
-     * from JSCH will be used.
-     */
     public void setCiphers(String ciphers) {
         this.ciphers = ciphers;
     }
@@ -234,12 +228,6 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         return ciphers;
     }
 
-    /**
-     * Set a comma separated list of authentications that will be used in order of preference. Possible authentication
-     * methods are defined by JCraft JSCH. Some examples include:
-     * gssapi-with-mic,publickey,keyboard-interactive,password If not specified the JSCH and/or system defaults will be
-     * used.
-     */
     public void setPreferredAuthentications(final String preferredAuthentications) {
         this.preferredAuthentications = preferredAuthentications;
     }

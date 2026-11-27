@@ -34,7 +34,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Component("azure-storage-queue")
 public class QueueComponent extends HealthCheckComponent {
-    @Metadata
+    @Metadata(description = "The configuration that each endpoint of the component starts from, as a copy. The options of"
+                            + " the endpoint replace its values.")
     private QueueConfiguration configuration = new QueueConfiguration();
 
     public QueueComponent() {
@@ -83,9 +84,6 @@ public class QueueComponent extends HealthCheckComponent {
         return endpoint;
     }
 
-    /**
-     * The component configurations
-     */
     public QueueConfiguration getConfiguration() {
         return configuration;
     }

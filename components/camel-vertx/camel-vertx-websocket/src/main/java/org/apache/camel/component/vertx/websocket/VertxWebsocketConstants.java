@@ -27,19 +27,29 @@ public final class VertxWebsocketConstants {
     public static final int DEFAULT_VERTX_CLIENT_WSS_PORT = 443;
     public static final String ORIGIN_HTTP_HEADER_NAME = "Origin";
 
-    @Metadata(description = "Sends the message to the client with the given connection key. You can\n" +
-                            "use a comma separated list of keys to send a message to multiple clients. " +
-                            "Note that this option only applies when producing messages to endpoints hosted by the vertx-websocket consumer and not to an externally hosted WebSocket.",
+    @Metadata(description = "The key of a peer connected to the server consumer. The server consumer sets it to the key of the"
+                            + " peer that the exchange comes from, a key that it creates when the peer connects. The producer"
+                            + " sends the message to the peer with this key, or to each peer of a comma-separated list of keys,"
+                            + " among the peers that are connected on its path to a server consumer of this component with the"
+                            + " same host name and port.",
               javaType = "String")
     public static final String CONNECTION_KEY = "CamelVertxWebsocket.connectionKey";
-    @Metadata(label = "producer", description = "Sends the message to all clients which are currently connected. You can\n" +
-                                                "use the `sendToAll` option on the endpoint instead of using this header. " +
-                                                "Note that this option only applies when producing messages to endpoints hosted by the vertx-websocket consumer and not to an externally hosted WebSocket.",
+    @Metadata(label = "producer",
+              description = "Whether the producer sends the message to all the peers that are connected on its path to a"
+                            + " server consumer of this component with the same host name and port. Replaces the sendToAll"
+                            + " option of the endpoint for this message.",
               javaType = "boolean")
     public static final String SEND_TO_ALL = "CamelVertxWebsocket.sendToAll";
-    @Metadata(label = "consumer", description = "The remote address.", javaType = "io.vertx.core.net.SocketAddress")
+    @Metadata(label = "consumer",
+              description = "The address of the peer that the exchange comes from, as a Vert.x SocketAddress with its host and"
+                            + " port. Set by the server consumer.",
+              javaType = "io.vertx.core.net.SocketAddress")
     public static final String REMOTE_ADDRESS = "CamelVertxWebsocket.remoteAddress";
-    @Metadata(label = "consumer", description = "The WebSocket event that triggered the message exchange.",
+    @Metadata(label = "consumer",
+              description = "The event that the exchange comes from: MESSAGE for a received message, and OPEN or CLOSE for a"
+                            + " peer that connects or disconnects when fireWebSocketConnectionEvents is true. Set by the server"
+                            + " consumer. An exchange with the event ERROR goes to the exception handler of the consumer"
+                            + " instead of the route.",
               javaType = "org.apache.camel.component.vertx.websocket.VertxWebsocketEvent")
     public static final String EVENT = "CamelVertxWebsocket.event";
 

@@ -18,7 +18,9 @@ package org.apache.camel.component.ibm.watsonx.ai.integration;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.ibm.watsonx.ai.timeseries.ForecastData;
 import com.ibm.watsonx.ai.timeseries.InputSchema;
@@ -49,7 +51,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WatsonxAiForecastIT extends WatsonxAiTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatsonxAiForecastIT.class);
-    private static final String FORECAST_MODEL = "ibm/granite-ttm-1536-96-r2";
+    // The granite-ttm models are past their withdrawal date in the model catalogue but still answer in some regions:
+    // -Dcamel.ibm.watsonx.ai.forecastModelId selects another time series model
+    private static final String FORECAST_MODEL
+            = System.getProperty("camel.ibm.watsonx.ai.forecastModelId", "ibm/granite-ttm-1536-96-r2");
 
     @EndpointInject
     private ProducerTemplate template;
@@ -73,7 +78,7 @@ public class WatsonxAiForecastIT extends WatsonxAiTestSupport {
                 .addIdColumn("series_id")
                 .build();
 
-        // The model ibm/granite-ttm-1536-96-r2 requires at least 1536 time points
+        // The default model ibm/granite-ttm-1536-96-r2 requires at least 1536 time points
         // Generate sufficient data points for the model
         final int dataPoints = 1536;
         ForecastData data = ForecastData.create();
@@ -111,6 +116,37 @@ public class WatsonxAiForecastIT extends WatsonxAiTestSupport {
         String modelId = exchange.getIn().getHeader(WatsonxAiConstants.MODEL_ID, String.class);
         assertNotNull(modelId, "Model ID header should be set");
         LOG.info("Model used: {}", modelId);
+    }
+
+    @Test
+    public void testForecastWithPredictionLengthAndMaps() throws Exception {
+        mockResult.expectedMessageCount(1);
+
+        // the schema and the data as Maps, as a YAML or XML route gives them
+        final int dataPoints = 1536;
+        List<Object> dates = new ArrayList<>();
+        List<Object> values = new ArrayList<>();
+        LocalDateTime startDate = LocalDateTime.of(2024, 1, 1, 0, 0, 0);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        for (int i = 0; i < dataPoints; i++) {
+            dates.add(startDate.plusHours(i).format(formatter));
+            values.add(100 + 20 * Math.sin(2 * Math.PI * i / 24));
+        }
+
+        template.send("direct:forecast", exchange -> {
+            exchange.getIn().setHeader(WatsonxAiConstants.FORECAST_INPUT_SCHEMA,
+                    Map.of("timestamp_column", "date", "freq", "1h", "target_columns", "value"));
+            exchange.getIn().setHeader(WatsonxAiConstants.FORECAST_DATA, Map.of("date", dates, "value", values));
+            exchange.getIn().setHeader(WatsonxAiConstants.FORECAST_PREDICTION_LENGTH, 24);
+        });
+
+        mockResult.assertIsSatisfied();
+        Exchange exchange = mockResult.getExchanges().get(0);
+        assertNull(exchange.getException());
+        Integer outputDataPoints = exchange.getIn().getHeader(WatsonxAiConstants.FORECAST_OUTPUT_DATA_POINTS, Integer.class);
+        LOG.info("Forecast of {} points with prediction length 24: {}", outputDataPoints, exchange.getIn().getBody());
+        // the model forecasts 96 steps by default
+        assertEquals(24, outputDataPoints, "The prediction length should reach the model");
     }
 
     @Override

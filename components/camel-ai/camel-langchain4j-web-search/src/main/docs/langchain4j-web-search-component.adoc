@@ -2,7 +2,7 @@
 :doctitle: LangChain4j Web Search
 :shortname: langchain4j-web-search
 :artifactid: camel-langchain4j-web-search
-:description: LangChain4j Web Search Engine
+:description: Search the web with a LangChain4j web search engine, such as Tavily or Google Custom Search.
 :since: 4.8
 :supportlevel: Stable
 :tabs-sync-option:

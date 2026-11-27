@@ -2,7 +2,7 @@
 :doctitle: Class
 :shortname: class
 :artifactid: camel-bean
-:description: Invoke methods of Java beans specified by class name.
+:description: Invoke a method of a Java bean given by its fully qualified class name.
 :since: 2.4
 :supportlevel: Stable
 :tabs-sync-option:

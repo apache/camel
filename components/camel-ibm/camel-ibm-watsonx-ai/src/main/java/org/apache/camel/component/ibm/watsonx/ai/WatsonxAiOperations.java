@@ -43,6 +43,7 @@ public enum WatsonxAiOperations {
     textExtractionFetch,
     textExtractionUpload,
     textExtractionUploadAndFetch,
+    textExtractionAndFetch,
     textExtractionUploadFile,
     textExtractionReadFile,
     textExtractionDeleteFile,
@@ -53,12 +54,15 @@ public enum WatsonxAiOperations {
     textClassificationFetch,
     textClassificationUpload,
     textClassificationUploadAndFetch,
+    textClassificationAndFetch,
     textClassificationUploadFile,
     textClassificationDeleteFile,
     textClassificationDeleteRequest,
 
     // Detection - PII/HAP (DetectionService)
     detect,
+    detectContext,
+    detectGenerated,
 
     // Time Series (TimeSeriesService)
     forecast,

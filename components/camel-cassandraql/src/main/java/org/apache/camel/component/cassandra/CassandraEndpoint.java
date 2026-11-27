@@ -50,8 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API). Based on Cassandra Java Driver provided by
- * DataStax.
+ * Query and update an Apache Cassandra database with CQL statements.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace",
              category = { Category.DATABASE, Category.BIGDATA }, headersClass = CassandraConstants.class)
@@ -82,34 +81,70 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
     // whether the endpoint created the session from its hosts (and so closes it when it stops)
     private boolean createdSession;
 
-    @UriPath(description = "beanRef is defined using bean:id")
+    @UriPath(description = "The name of a com.datastax.oss.driver.api.core.CqlSession in the registry, written as bean:name"
+                           + " in the URI. The endpoint uses the keyspace of this session, not the keyspace in the URI, and"
+                           + " does not close the session. The session option replaces it.")
     private String beanRef;
-    @UriPath
+    @UriPath(description = "The host names or IP addresses of the Cassandra nodes that the driver contacts first, separated"
+                           + " by commas. When neither the session option nor a bean is set, the endpoint creates a session"
+                           + " from them and closes it when it stops.")
     private String hosts;
-    @UriPath
+    @UriPath(description = "The port of the CQL native protocol, the same for all the nodes in the hosts. If not set, 9042 is"
+                           + " used.")
     private Integer port;
-    @UriPath
+    @UriPath(description = "The keyspace of the session that the endpoint creates from the hosts, so that the CQL can name"
+                           + " tables without their keyspace. It is not used with the session option or a bean.")
     private String keyspace;
-    @UriParam(defaultValue = "datacenter1")
+    @UriParam(defaultValue = "datacenter1",
+              description = "The name of the local datacenter, whose nodes the default load balancing policy of the driver"
+                            + " sends the requests to. Used only for the session that the endpoint creates from the hosts.")
     private String datacenter = "datacenter1";
-    @UriParam
+    @UriParam(description = "The CQL statement that the consumer executes at each poll, and that the producer executes when"
+                            + " the CamelCqlQuery header is not set. The producer binds the values of the ? or :name markers"
+                            + " from the message body.")
     private String cql;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether to execute the CQL as a prepared statement. The cql option is prepared once when the"
+                            + " consumer or producer starts, and a CQL from the CamelCqlQuery header is prepared for each"
+                            + " message. If false, the CQL is sent as a simple statement each time.")
     private boolean prepareStatements = true;
-    @UriParam
+    @UriParam(description = "Not used: the component does not pass this value to the driver.")
     private String clusterName;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The user name for plain text authentication with the Cassandra nodes. Used only together with"
+                            + " the password option, and only for the session that the endpoint creates from the hosts.")
     private String username;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password for plain text authentication with the Cassandra nodes. Used only together with"
+                            + " the username option, and only for the session that the endpoint creates from the hosts.")
     private String password;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom com.datastax.oss.driver.api.core.CqlSession. When set, the endpoint does not"
+                            + " create a session from the hosts or look up a bean, and does not close this session. The"
+                            + " options for creating a session, such as keyspace, datacenter, username and password, are not"
+                            + " used.")
     private CqlSession session;
     private DefaultConsistencyLevel consistencyLevel;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The class of the load balancing policy of the driver (its basic.load-balancing-policy.class"
+                            + " setting). A class name without a package, such as DcInferringLoadBalancingPolicy, is one of"
+                            + " the policies of the driver; if not set, the driver uses DefaultLoadBalancingPolicy. Used only"
+                            + " for the session that the endpoint creates from the hosts.")
     private String loadBalancingPolicyClass;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "How the rows of the result become the message body: ALL for a List of all the"
+                            + " com.datastax.oss.driver.api.core.cql.Row objects (the default), ONE for the first Row or"
+                            + " null, LIMIT_n, such as LIMIT_10, for a List of at most n rows. A custom"
+                            + " org.apache.camel.component.cassandra.ResultSetConversionStrategy can be set instead.")
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The extra codecs of the driver (from its ExtraTypeCodecs class) to register, separated by"
+                            + " commas: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY, SHORT_LIST_TO_ARRAY,"
+                            + " INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY, FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY,"
+                            + " TIMESTAMP_UTC, TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC, ZONED_TIMESTAMP_SYSTEM,"
+                            + " ZONED_TIMESTAMP_UTC, ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM or"
+                            + " LOCAL_TIMESTAMP_UTC. An unknown name is ignored. Used only for the session that the endpoint"
+                            + " creates from the hosts.")
     private String extraTypeCodecs;
 
     public CassandraEndpoint(String endpointUri, Component component) {
@@ -272,10 +307,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return beanRef;
     }
 
-    /**
-     * Instead of using a hostname:port, refer to an existing configured Session or Cluster from the Camel registry to
-     * be used.
-     */
     public void setBean(String beanRef) {
         this.beanRef = beanRef;
     }
@@ -294,9 +325,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return hosts;
     }
 
-    /**
-     * Hostname(s) Cassandra server(s). Multiple hosts can be separated by comma.
-     */
     public void setHosts(String hosts) {
         this.hosts = hosts;
     }
@@ -305,9 +333,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return port;
     }
 
-    /**
-     * Port number of Cassandra server(s)
-     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -316,9 +341,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return keyspace;
     }
 
-    /**
-     * Keyspace to use
-     */
     public void setKeyspace(String keyspace) {
         this.keyspace = keyspace;
     }
@@ -327,9 +349,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return datacenter;
     }
 
-    /**
-     * Datacenter to use
-     */
     public void setDatacenter(String datacenter) {
         this.datacenter = datacenter;
     }
@@ -338,9 +357,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return cql;
     }
 
-    /**
-     * CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
-     */
     public void setCql(String cql) {
         this.cql = cql;
     }
@@ -353,9 +369,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         }
     }
 
-    /**
-     * To use the Session instance (you would normally not use this option)
-     */
     public void setSession(CqlSession session) {
         this.session = session;
     }
@@ -364,9 +377,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return clusterName;
     }
 
-    /**
-     * Cluster name
-     */
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
     }
@@ -375,9 +385,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return username;
     }
 
-    /**
-     * Username for session authentication
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -386,9 +393,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return password;
     }
 
-    /**
-     * Password for session authentication
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -408,10 +412,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return resultSetConversionStrategy;
     }
 
-    /**
-     * To use a custom class that implements logic for converting ResultSet into message body ALL, ONE, LIMIT_10,
-     * LIMIT_100...
-     */
     public void setResultSetConversionStrategy(ResultSetConversionStrategy resultSetConversionStrategy) {
         this.resultSetConversionStrategy = resultSetConversionStrategy;
     }
@@ -420,16 +420,10 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         return prepareStatements;
     }
 
-    /**
-     * Whether to use PreparedStatements or regular Statements
-     */
     public void setPrepareStatements(boolean prepareStatements) {
         this.prepareStatements = prepareStatements;
     }
 
-    /**
-     * To use a specific LoadBalancingPolicyClass
-     */
     public String getLoadBalancingPolicyClass() {
         return loadBalancingPolicyClass;
     }
@@ -438,13 +432,6 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
         this.loadBalancingPolicyClass = loadBalancingPolicyClass;
     }
 
-    /**
-     * To use a specific comma separated list of Extra Type codecs. Possible values are: BLOB_TO_ARRAY,
-     * BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY, SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
-     * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC, TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
-     * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC, ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
-     * LOCAL_TIMESTAMP_UTC
-     */
     public String getExtraTypeCodecs() {
         return extraTypeCodecs;
     }

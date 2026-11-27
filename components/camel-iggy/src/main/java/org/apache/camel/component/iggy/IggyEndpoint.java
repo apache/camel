@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Send and receive message to Apache Iggy streaming platform.
+ * Send messages to and receive messages from topics of the Apache Iggy message streaming platform.
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "iggy", title = "Iggy", syntax = "iggy:topicName",
              category = { Category.MESSAGING }, headersClass = IggyConstants.class)
@@ -73,9 +73,10 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriParam
     private IggyConfiguration configuration;
     @UriParam(label = "advanced",
-              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+              description = "To use a custom HeaderFilterStrategy to filter the user headers of a consumed Iggy message"
+                            + " before the consumer sets them as Camel headers. The producer does not send Camel headers.")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriPath(description = "Name of the topic")
+    @UriPath(description = "The name of the topic. The CamelIggyTopicOverride header replaces it for the producer.")
     @Metadata(required = true)
     private String topicName;
 
@@ -224,9 +225,6 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return headerFilterStrategy;
     }
 
-    /**
-     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
-     */
     @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;

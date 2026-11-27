@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.mq.MqClient;
 
 /**
- * Manage AWS MQ instances.
+ * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-mq", title = "AWS MQ", syntax = "aws2-mq:label", producerOnly = true,
              category = { Category.CLOUD, Category.MANAGEMENT }, headersClass = MQ2Constants.class)

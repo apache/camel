@@ -30,70 +30,106 @@ import org.apache.iggy.topic.CompressionAlgorithm;
 @UriParams
 public class IggyConfiguration implements Cloneable {
 
-    @UriParam(defaultValue = "localhost", description = "Iggy server hostname or IP address")
+    @UriParam(defaultValue = "localhost", description = "The hostname or IP address of the Iggy server.")
     private String host = "localhost";
-    @UriParam(defaultValue = "8090", description = "Iggy server port number")
+    @UriParam(defaultValue = "8090",
+              description = "The port of the Iggy server. The default 8090 is the default port of the TCP transport of the"
+                            + " server, so set the HTTP port of the server when clientTransport is HTTP.")
     private int port = 8090;
-    @UriParam(security = "secret", label = "security", description = "Iggy username")
+    @UriParam(security = "secret", label = "security",
+              description = "The username that the client logs in with to the Iggy server. Required, together with the"
+                            + " password option: the client fails to connect without them.")
     private String username;
-    @UriParam(security = "secret", label = "security", description = "Iggy password")
+    @UriParam(security = "secret", label = "security",
+              description = "The password that the client logs in with to the Iggy server. Required, together with the"
+                            + " username option: the client fails to connect without them.")
     private String password;
     @UriParam(defaultValue = "true",
-              description = "Whether to automatically create stream if it does not exist")
+              description = "Whether to create the stream if it does not exist. The producer and the consumer check it when"
+                            + " they start, and the producer again for each message that has an override header.")
     private boolean autoCreateStream = true;
     @UriParam(defaultValue = "true",
-              description = "Whether to automatically create topic if it does not exist")
+              description = "Whether to create the topic if it does not exist, with the partitionsCount,"
+                            + " compressionAlgorithm, messageExpiry, maxTopicSize and iggyHeaderOptions options. The producer"
+                            + " and the consumer check it when they start, and the producer again for each message that has"
+                            + " an override header.")
     private boolean autoCreateTopic = true;
-    @UriParam(description = "Stream identifier")
+    @UriParam(description = "The ID of a stream that autoCreateStream looks up for the stream of the endpoint: if no stream"
+                            + " has this ID, a stream named streamName is created. The stream of a CamelIggyStreamOverride"
+                            + " header is looked up and created by its name. The producer and the consumer always address"
+                            + " the stream by its name.")
     private Long streamId;
-    @UriParam(description = "Stream name", endpointIdentity = true)
+    @UriParam(description = "The name of the stream that holds the topic. Required. The CamelIggyStreamOverride header"
+                            + " replaces it for the producer.",
+              endpointIdentity = true)
     private String streamName;
-    @UriParam(defaultValue = "1", description = "Number of partitions for the topic")
+    @UriParam(defaultValue = "1", description = "The number of partitions of a topic that autoCreateTopic creates.")
     private Long partitionsCount = 1L;
     @UriParam(defaultValue = "None", enums = "None,Gzip",
-              description = "Compression algorithm for message payload")
+              description = "The compression algorithm of a topic that autoCreateTopic creates.")
     private CompressionAlgorithm compressionAlgorithm = CompressionAlgorithm.None;
-    @UriParam(defaultValue = "0", description = "Message expiry time in seconds (0 means no expiry)")
+    @UriParam(defaultValue = "0",
+              description = "The time in seconds after which the server deletes the messages of a topic that autoCreateTopic"
+                            + " creates. With 0 no expiry is set on the topic.")
     private Long messageExpiry = 0L;
-    @UriParam(defaultValue = "0", description = "Maximum topic size in bytes (0 means unlimited)")
+    @UriParam(defaultValue = "0",
+              description = "The maximum size in bytes of a topic that autoCreateTopic creates. With 0 no maximum size is"
+                            + " set on the topic.")
     private Long maxTopicSize = 0L;
-    @UriParam(description = "Options provided when creating a topic")
+    @UriParam(description = "Additional options of a topic that autoCreateTopic creates, as key-value pairs that are sent to"
+                            + " the server as strings, for example durability.")
     private Map<String, String> iggyHeaderOptions = new HashMap<>();
     @UriParam(label = "producer", defaultValue = "balanced",
-              description = "Partitioning strategy for message distribution: balanced, a partition ID such as partitionId:2,"
-                            + " or a messages key such as messagesKey:order-1 as text, or an"
-                            + " org.apache.iggy.message.Partitioning")
+              description = "How the producer chooses the partition of the messages it sends, as an"
+                            + " org.apache.iggy.message.Partitioning or as text: balanced() (the text balanced) spreads them"
+                            + " over the partitions, partitionId(Long) (for example the text partitionId:2) sends to one"
+                            + " partition and messagesKey(String) (for example the text messagesKey:order-1) to the partition"
+                            + " of a key.")
     private Partitioning partitioning = Partitioning.balanced();
-    @UriParam(label = "consumer", description = "The name of the consumer group")
+    @UriParam(label = "consumer",
+              description = "The name of the consumer group that the consumer joins, and creates if it does not exist."
+                            + " Required for the consumer.")
     private String consumerGroupName;
-    @UriParam(label = "consumer", description = "The consumer poll batch size", defaultValue = "10")
+    @UriParam(label = "consumer", defaultValue = "10",
+              description = "The maximum number of messages that the consumer polls in one request.")
     private Long pollBatchSize = 10L;
-    @UriParam(label = "consumer", description = "The consumer partition id")
+    @UriParam(label = "consumer",
+              description = "The ID of the partition that the consumer polls. If not set, the server chooses the partition"
+                            + " for the member of the consumer group.")
     private Long partitionId;
-    @UriParam(label = "consumer", defaultValue = "1", description = "Camel Iggy consumers count")
+    @UriParam(label = "consumer", defaultValue = "1",
+              description = "The number of threads of the thread pool of the consumer. The consumer runs one polling task, so"
+                            + " one thread polls the topic.")
     @Metadata(deprecationNote = "The consumer polls the topic with one task, so a value above 1 only adds idle threads")
     @Deprecated(since = "4.24.0")
     private int consumersCount = 1;
-    @UriParam(label = "consumer", defaultValue = "30000", description = "Camel Iggy shutdown timeout")
+    @UriParam(label = "consumer", defaultValue = "30000",
+              description = "The time in milliseconds that the consumer waits for its polling thread to finish when it stops,"
+                            + " before it interrupts the thread.")
     private int shutdownTimeout = 30000;
-    @UriParam(label = "consumer", defaultValue = "next", description = "Polling strategy", enums = "next,first,last")
+    @UriParam(label = "consumer", defaultValue = "next", enums = "next,first,last",
+              description = "Where the consumer polls from when autoCommit is true: next polls the messages after the offset"
+                            + " stored for the consumer group, first the first messages of the partition, and last the last"
+                            + " messages of the partition.")
     private String pollingStrategy = "next";
-    @UriParam(defaultValue = "TCP", description = "Polling strategy", enums = "TCP,HTTP")
+    @UriParam(defaultValue = "TCP", enums = "TCP,HTTP",
+              description = "The transport that the client uses to connect to the Iggy server.")
     private String clientTransport = "TCP"; // There may be QUIC in the future
     @UriParam(label = "consumer", defaultValue = "true",
-              description = "Controls message acknowledgment behavior. " +
-                            "When true, messages are automatically marked as processed after consumption. " +
-                            "When false, enables manual offset management and allows setting a custom starting offset position")
+              description = "Whether the server stores the offset of the consumer group when it returns the polled messages,"
+                            + " before the route processes them. If false, the consumer polls from startingOffset and keeps"
+                            + " the offset in memory only, so it starts again from startingOffset after a restart.")
     private boolean autoCommit = true;
     @UriParam(label = "consumer", defaultValue = "0",
-              description = "Defines the initial message offset position when autoCommit is disabled. " +
-                            "Use 0 to start from the beginning of the stream, or specify a custom offset to resume from a particular point")
+              description = "The offset of the first message that the consumer polls when autoCommit is false. 0 is the first"
+                            + " message of the partition.")
     private Long startingOffset = 0L;
     @UriParam(label = "security", defaultValue = "false",
-              description = "Whether to enable TLS for the connection to the Iggy server")
+              description = "Whether the client connects to the Iggy server over TLS.")
     private boolean tlsEnabled;
     @UriParam(label = "security",
-              description = "Path to the TLS certificate file for the connection to the Iggy server")
+              description = "The path to a certificate file in PEM format that the client trusts for the TLS connection to"
+                            + " the Iggy server. If not set, the client uses the default trust store of the JVM.")
     private String tlsCertificatePath;
     @UriParam(label = "security",
               description = "SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance."
@@ -112,9 +148,6 @@ public class IggyConfiguration implements Cloneable {
         return host;
     }
 
-    /**
-     * The hostname of the Iggy server.
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -123,9 +156,6 @@ public class IggyConfiguration implements Cloneable {
         return port;
     }
 
-    /**
-     * The port of the Iggy server.
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -299,9 +329,6 @@ public class IggyConfiguration implements Cloneable {
         return tlsEnabled;
     }
 
-    /**
-     * Whether to enable TLS for the connection to the Iggy server.
-     */
     public void setTlsEnabled(boolean tlsEnabled) {
         this.tlsEnabled = tlsEnabled;
     }
@@ -310,9 +337,6 @@ public class IggyConfiguration implements Cloneable {
         return tlsCertificatePath;
     }
 
-    /**
-     * Path to the TLS certificate file for the connection to the Iggy server.
-     */
     public void setTlsCertificatePath(String tlsCertificatePath) {
         this.tlsCertificatePath = tlsCertificatePath;
     }

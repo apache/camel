@@ -30,7 +30,8 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("google-firestore")
 public class GoogleFirestoreComponent extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that each endpoint of this component starts from. The options of the"
+                            + " endpoint URI override its values.")
     private GoogleFirestoreConfiguration configuration = new GoogleFirestoreConfiguration();
 
     public GoogleFirestoreComponent() {
@@ -60,9 +61,6 @@ public class GoogleFirestoreComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * The component configuration
-     */
     public void setConfiguration(GoogleFirestoreConfiguration configuration) {
         this.configuration = configuration;
     }
