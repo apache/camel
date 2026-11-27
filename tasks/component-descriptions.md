@@ -379,7 +379,7 @@ or removes its row.
 | camel-velocity | velocity |  |
 | camel-vertx | vertx |  |
 | camel-vertx-http | vertx-http |  |
-| camel-vertx-mqtt | vertx-mqtt |  |
+| camel-vertx-mqtt | vertx-mqtt | yes |
 | camel-vertx-websocket | vertx-websocket |  |
 | camel-wasm | wasm |  |
 | camel-weather | weather |  |
