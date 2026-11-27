@@ -257,7 +257,7 @@ or removes its row.
 | camel-langchain4j-embeddings | langchain4j-embeddings |  |
 | camel-langchain4j-embeddingstore | langchain4j-embeddingstore |  |
 | camel-langchain4j-ingest | langchain4j-ingest |  |
-| camel-langchain4j-web-search | langchain4j-web-search |  |
+| camel-langchain4j-web-search | langchain4j-web-search | yes |
 | camel-language | language |  |
 | camel-ldap | ldap |  |
 | camel-ldif | ldif | yes |

@@ -11564,7 +11564,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
-     * LangChain4j Web Search Engine
+     * Search the web with a LangChain4j web search engine, such as Tavily or
+     * Google Custom Search.
      * 
      * Category: ai
      * Since: 4.8
@@ -11573,7 +11574,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>langchain4j-web-search:searchId</code>
      * 
      * Path parameter: searchId (required)
-     * The id
+     * A name that identifies the endpoint. The producer does not use it.
      * 
      * @param path searchId
      * @return the dsl builder
@@ -11583,7 +11584,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
-     * LangChain4j Web Search Engine
+     * Search the web with a LangChain4j web search engine, such as Tavily or
+     * Google Custom Search.
      * 
      * Category: ai
      * Since: 4.8
@@ -11592,7 +11594,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>langchain4j-web-search:searchId</code>
      * 
      * Path parameter: searchId (required)
-     * The id
+     * A name that identifies the endpoint. The producer does not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
