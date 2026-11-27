@@ -64,8 +64,9 @@ public class MilvusConnectParamTest extends CamelTestSupport {
 
     @Test
     public void serverPemPath() {
-        ConnectParam param = connectParam("milvus:test?host=milvus.example.com&secure=true&serverPemPath=/certs/server.pem");
+        ConnectParam param = connectParam("milvus:test?host=milvus.example.com&serverPemPath=/certs/server.pem");
 
+        // the file options connect with TLS also when secure is not set
         assertThat(param.isSecure()).isTrue();
         assertThat(param.getServerPemPath()).isEqualTo("/certs/server.pem");
         // the SDK overrides the authority with the server name, so the host is the default
@@ -83,10 +84,11 @@ public class MilvusConnectParamTest extends CamelTestSupport {
 
     @Test
     public void mutualTls() {
-        ConnectParam param = connectParam("milvus:test?host=10.0.0.1&secure=true&caPemPath=/certs/ca.pem"
+        ConnectParam param = connectParam("milvus:test?host=10.0.0.1&caPemPath=/certs/ca.pem"
                                           + "&clientPemPath=/certs/client.pem&clientKeyPath=/certs/client.key"
                                           + "&serverName=milvus.example.com");
 
+        // the file options connect with TLS also when secure is not set
         assertThat(param.isSecure()).isTrue();
         assertThat(param.getCaPemPath()).isEqualTo("/certs/ca.pem");
         assertThat(param.getClientPemPath()).isEqualTo("/certs/client.pem");
