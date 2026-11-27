@@ -105,7 +105,10 @@ class RebalancingClusterServiceLoopTest {
                     "A pass ran on the executor of the previous start after the stop");
         }
 
-        // one chain: at most one pass per period (fewer on a busy machine), and a few more for the window edges
+        // one chain: the next pass is scheduled a period after the previous one ends, so at most elapsed / period + 1
+        // passes start in the window (fewer on a busy machine). The 3 also allows for the pass counter and the clock
+        // not being read at the same instant, at the start and at each check. A second chain would add one pass per
+        // period, about 10 in the 2 seconds, which is well above it
         int before = service.passes.get();
         long start = System.nanoTime();
         await().during(2, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS).until(() -> service.passes.get() - before

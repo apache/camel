@@ -54,10 +54,6 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
     protected CamelContext camelContext;
     protected final long periodMillis;
 
-    // whether the previous pass failed, and with a VirtualMachineError (only used by the passes, one at a time)
-    private boolean previousPassFailed;
-    private boolean previousPassFatal;
-
     public RebalancingCamelClusterService(CamelPreemptiveClusterService delegate, long periodMillis) {
         this.delegate = ObjectHelper.notNull(delegate, "delegate");
         this.periodMillis = periodMillis;
@@ -84,10 +80,10 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
         if (serializedExecutor == null) {
             ScheduledExecutorService executor = getCamelContext().getExecutorServiceManager()
                     .newSingleThreadScheduledExecutor(this, "RebalancingClusterService");
-            previousPassFailed = false;
-            previousPassFatal = false;
             serializedExecutor = executor;
-            executor.execute(() -> reconcileAndReschedule(executor));
+            // each start has its own chain of passes, with its own failure state
+            PassState state = new PassState();
+            executor.execute(() -> reconcileAndReschedule(executor, state));
         }
     }
 
@@ -129,28 +125,29 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
      * Runs a rebalancing pass, and schedules the next one on the same executor while it is the executor of this
      * service, also when the pass fails.
      */
-    private void reconcileAndReschedule(ScheduledExecutorService executor) {
+    private void reconcileAndReschedule(ScheduledExecutorService executor, PassState state) {
         try {
             reconcile();
-            previousPassFailed = false;
-            previousPassFatal = false;
+            state.previousPassFailed = false;
+            state.previousPassFatal = false;
         } catch (Throwable e) {
             // a VirtualMachineError (such as an OutOfMemoryError) is logged at ERROR, another failure at WARN, each with
             // the stack trace and only the first time in a row: a failure that repeats every period is logged at DEBUG
             boolean fatal = ObjectHelper.getVirtualMachineError(e) != null;
-            if (fatal && !previousPassFatal) {
+            if (fatal && !state.previousPassFatal) {
                 LOG.error("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
-            } else if (!fatal && !previousPassFailed) {
+            } else if (!fatal && !state.previousPassFailed) {
                 LOG.warn("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
             } else {
                 LOG.debug("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
             }
-            previousPassFailed = true;
-            previousPassFatal = fatal;
+            state.previousPassFailed = true;
+            state.previousPassFatal = fatal;
         } finally {
             if (executor == serializedExecutor) {
                 try {
-                    executor.schedule(() -> reconcileAndReschedule(executor), periodMillis, TimeUnit.MILLISECONDS);
+                    executor.schedule(() -> reconcileAndReschedule(executor, state), periodMillis,
+                            TimeUnit.MILLISECONDS);
                 } catch (RejectedExecutionException e) {
                     LOG.debug("Cannot schedule the next rebalancing pass as the service is stopping");
                 }
@@ -379,5 +376,16 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
     @Override
     public String getId() {
         return delegate.getId();
+    }
+
+    /**
+     * Whether the previous pass of a chain failed, and with a VirtualMachineError. A chain is the passes of one start:
+     * they run one at a time on its executor, which orders them, so the fields need no synchronization. A pass of the
+     * previous start that is still running after the stop has its own state, and does not change the state of the new
+     * chain.
+     */
+    private static final class PassState {
+        private boolean previousPassFailed;
+        private boolean previousPassFatal;
     }
 }
