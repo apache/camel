@@ -8292,7 +8292,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
-     * To identify objects, scenes, and concepts in images on Huawei Cloud
+     * Recognize celebrities and tag the objects, scenes and concepts in images
+     * with Huawei Cloud Image Recognition.
      * 
      * Category: cloud,messaging
      * Since: 3.12
@@ -8301,8 +8302,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-imagerecognition:operation</code>
      * 
      * Path parameter: operation (required)
-     * Name of Image Recognition operation to perform, including
-     * celebrityRecognition and tagRecognition
+     * The operation that the producer performs: celebrityRecognition to
+     * recognize the celebrities in the image, or tagRecognition to return tags
+     * for the objects, scenes and concepts in the image.
      * 
      * @param path operation
      * @return the dsl builder
@@ -8312,7 +8314,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
-     * To identify objects, scenes, and concepts in images on Huawei Cloud
+     * Recognize celebrities and tag the objects, scenes and concepts in images
+     * with Huawei Cloud Image Recognition.
      * 
      * Category: cloud,messaging
      * Since: 3.12
@@ -8321,8 +8324,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-imagerecognition:operation</code>
      * 
      * Path parameter: operation (required)
-     * Name of Image Recognition operation to perform, including
-     * celebrityRecognition and tagRecognition
+     * The operation that the producer performs: celebrityRecognition to
+     * recognize the celebrities in the image, or tagRecognition to return tags
+     * for the objects, scenes and concepts in the image.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

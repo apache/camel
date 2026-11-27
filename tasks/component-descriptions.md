@@ -208,7 +208,7 @@ or removes its row.
 | camel-huaweicloud-frs | hwcloud-frs |  |
 | camel-huaweicloud-functiongraph | hwcloud-functiongraph |  |
 | camel-huaweicloud-iam | hwcloud-iam |  |
-| camel-huaweicloud-imagerecognition | hwcloud-imagerecognition |  |
+| camel-huaweicloud-imagerecognition | hwcloud-imagerecognition | yes |
 | camel-huaweicloud-obs | hwcloud-obs |  |
 | camel-huaweicloud-smn | hwcloud-smn |  |
 | camel-huggingface | huggingface |  |
