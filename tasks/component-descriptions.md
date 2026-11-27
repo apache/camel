@@ -385,7 +385,7 @@ or removes its row.
 | camel-weather | weather | yes |
 | camel-weaviate | weaviate |  |
 | camel-web3j | web3j |  |
-| camel-webhook | webhook |  |
+| camel-webhook | webhook | yes |
 | camel-whatsapp | whatsapp |  |
 | camel-wordpress | wordpress |  |
 | camel-workday | workday |  |

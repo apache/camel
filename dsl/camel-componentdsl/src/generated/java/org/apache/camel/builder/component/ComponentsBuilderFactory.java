@@ -5487,8 +5487,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Webhook (camel-webhook)
-     * Expose webhook endpoints to receive push notifications for other Camel
-     * components.
+     * Receive the push notifications of a webhook provider over HTTP for a
+     * Camel component that supports webhooks.
      * 
      * Category: cloud
      * Since: 3.0

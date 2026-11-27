@@ -43,23 +43,44 @@ public class WebhookConfiguration implements Cloneable {
      * Note: all properties start with the 'webhook' prefix to avoid collision with the delegate endpoint.
      */
 
-    @UriPath
+    @UriPath(description = "The URI of the delegate endpoint, of a component that supports webhooks, for example"
+                           + " telegram:bots, clickup:workspaceId or whatsapp:phoneNumberId. The query parameters of the"
+                           + " webhook endpoint that are not webhook options are passed on to the delegate endpoint.")
     @Metadata(required = true)
     private String endpointUri;
 
-    @UriParam
+    @UriParam(description = "The name of the REST component that exposes the HTTP endpoint of the webhook, such as"
+                            + " platform-http or netty-http. It names a bean in the registry or a component, which must be"
+                            + " a RestConsumerFactory. If not set, a component of the CamelContext that is a"
+                            + " RestConsumerFactory is used, otherwise the only RestConsumerFactory bean in the registry,"
+                            + " otherwise the only one of coap, netty-http, jetty, servlet and undertow on the classpath.")
     private String webhookComponentName;
 
-    @UriParam
+    @UriParam(description = "The URL at which the webhook provider reaches this service, for example"
+                            + " https://camel.example.com, without a trailing slash. The delegate component registers this"
+                            + " URL followed by the path of the webhook (the context path of the REST configuration,"
+                            + " webhookBasePath and webhookPath) at the provider. If not set, the URL is made from the"
+                            + " scheme, host and port of the REST configuration. When that has no host, its hostNameResolver"
+                            + " picks one, which is 0.0.0.0 by default and which the provider cannot reach.")
     private String webhookExternalUrl;
 
-    @UriParam
+    @UriParam(description = "A path put in front of webhookPath in the path of the webhook, for example a random value"
+                            + " that is hard to guess, so that only the provider knows the URL. A leading slash is added"
+                            + " when missing. If not set, the path of the webhook is webhookPath alone.")
     private String webhookBasePath;
 
-    @UriParam
+    @UriParam(description = "The path of the webhook, after webhookBasePath. A leading slash is added when missing. If not"
+                            + " set, the path is the SHA-256 hash of the delegate endpoint URI in URL-safe Base64, which"
+                            + " stays the same across restarts. The WhatsApp component replaces it with its own webhookPath"
+                            + " option.")
     private String webhookPath;
 
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether the delegate component registers the URL of the webhook at the provider when the"
+                            + " endpoint starts, and unregisters it when the endpoint stops, for example with the setWebhook"
+                            + " and deleteWebhook calls of the Telegram Bot API. Set it to false when the webhook is"
+                            + " registered in another way, for example with a WebhookRoutePolicyFactory, which requires"
+                            + " false. The WhatsApp component does not register the webhook.")
     private boolean webhookAutoRegister = true;
 
     public WebhookConfiguration() {
@@ -197,16 +218,10 @@ public class WebhookConfiguration implements Cloneable {
         return endpointUri;
     }
 
-    /**
-     * The delegate uri. Must belong to a component that supports webhooks.
-     */
     public void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
     }
 
-    /**
-     * The Camel Rest component to use for the REST transport, such as netty-http.
-     */
     public void setWebhookComponentName(String webhookComponentName) {
         this.webhookComponentName = webhookComponentName;
     }
@@ -215,9 +230,6 @@ public class WebhookConfiguration implements Cloneable {
         return webhookExternalUrl;
     }
 
-    /**
-     * The URL of the current service as seen by the webhook provider
-     */
     public void setWebhookExternalUrl(String webhookExternalUrl) {
         this.webhookExternalUrl = webhookExternalUrl;
     }
@@ -226,10 +238,6 @@ public class WebhookConfiguration implements Cloneable {
         return webhookBasePath;
     }
 
-    /**
-     * The first (base) path element where the webhook will be exposed. It's a good practice to set it to a random
-     * string, so that it cannot be guessed by unauthorized parties.
-     */
     public void setWebhookBasePath(String webhookBasePath) {
         this.webhookBasePath = webhookBasePath;
     }
@@ -238,9 +246,6 @@ public class WebhookConfiguration implements Cloneable {
         return webhookPath;
     }
 
-    /**
-     * The path where the webhook endpoint will be exposed (relative to basePath, if any)
-     */
     public void setWebhookPath(String webhookPath) {
         this.webhookPath = webhookPath;
     }
@@ -249,9 +254,6 @@ public class WebhookConfiguration implements Cloneable {
         return webhookAutoRegister;
     }
 
-    /**
-     * Automatically register the webhook at startup and unregister it on shutdown.
-     */
     public void setWebhookAutoRegister(boolean webhookAutoRegister) {
         this.webhookAutoRegister = webhookAutoRegister;
     }

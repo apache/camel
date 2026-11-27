@@ -18677,8 +18677,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Webhook (camel-webhook)
-     * Expose webhook endpoints to receive push notifications for other Camel
-     * components.
+     * Receive the push notifications of a webhook provider over HTTP for a
+     * Camel component that supports webhooks.
      * 
      * Category: cloud
      * Since: 3.0
@@ -18687,7 +18687,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>webhook:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The delegate uri. Must belong to a component that supports webhooks.
+     * The URI of the delegate endpoint, of a component that supports webhooks,
+     * for example telegram:bots, clickup:workspaceId or whatsapp:phoneNumberId.
+     * The query parameters of the webhook endpoint that are not webhook options
+     * are passed on to the delegate endpoint.
      * 
      * @param path endpointUri
      * @return the dsl builder
@@ -18697,8 +18700,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Webhook (camel-webhook)
-     * Expose webhook endpoints to receive push notifications for other Camel
-     * components.
+     * Receive the push notifications of a webhook provider over HTTP for a
+     * Camel component that supports webhooks.
      * 
      * Category: cloud
      * Since: 3.0
@@ -18707,7 +18710,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>webhook:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The delegate uri. Must belong to a component that supports webhooks.
+     * The URI of the delegate endpoint, of a component that supports webhooks,
+     * for example telegram:bots, clickup:workspaceId or whatsapp:phoneNumberId.
+     * The query parameters of the webhook endpoint that are not webhook options
+     * are passed on to the delegate endpoint.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
