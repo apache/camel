@@ -46,7 +46,8 @@ public interface SshEndpointBuilderFactory {
         /**
          * The time in milliseconds that the component waits for each step of
          * setting up the session: the connection, the authentication and the
-         * opening of the channel. It does not limit how long the command runs.
+         * opening of the channel, unless channelOpenTimeout is set. It does not
+         * limit how long the command runs.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -63,7 +64,8 @@ public interface SshEndpointBuilderFactory {
         /**
          * The time in milliseconds that the component waits for each step of
          * setting up the session: the connection, the authentication and the
-         * opening of the channel. It does not limit how long the command runs.
+         * opening of the channel, unless channelOpenTimeout is set. It does not
+         * limit how long the command runs.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1370,7 +1372,8 @@ public interface SshEndpointBuilderFactory {
         /**
          * The time in milliseconds that the component waits for each step of
          * setting up the session: the connection, the authentication and the
-         * opening of the channel. It does not limit how long the command runs.
+         * opening of the channel, unless channelOpenTimeout is set. It does not
+         * limit how long the command runs.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1387,7 +1390,8 @@ public interface SshEndpointBuilderFactory {
         /**
          * The time in milliseconds that the component waits for each step of
          * setting up the session: the connection, the authentication and the
-         * opening of the channel. It does not limit how long the command runs.
+         * opening of the channel, unless channelOpenTimeout is set. It does not
+         * limit how long the command runs.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2039,7 +2043,8 @@ public interface SshEndpointBuilderFactory {
         /**
          * The time in milliseconds that the component waits for each step of
          * setting up the session: the connection, the authentication and the
-         * opening of the channel. It does not limit how long the command runs.
+         * opening of the channel, unless channelOpenTimeout is set. It does not
+         * limit how long the command runs.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2056,7 +2061,8 @@ public interface SshEndpointBuilderFactory {
         /**
          * The time in milliseconds that the component waits for each step of
          * setting up the session: the connection, the authentication and the
-         * opening of the channel. It does not limit how long the command runs.
+         * opening of the channel, unless channelOpenTimeout is set. It does not
+         * limit how long the command runs.
          * 
          * The option will be converted to a <code>long</code> type.
          * 

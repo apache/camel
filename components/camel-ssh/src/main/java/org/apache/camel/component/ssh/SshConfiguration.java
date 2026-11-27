@@ -70,8 +70,8 @@ public class SshConfiguration implements Cloneable {
     private String certResourcePassword;
     @UriParam(defaultValue = "30000",
               description = "The time in milliseconds that the component waits for each step of setting up the session:"
-                            + " the connection, the authentication and the opening of the channel. It does not limit how long"
-                            + " the command runs.")
+                            + " the connection, the authentication and the opening of the channel, unless channelOpenTimeout"
+                            + " is set. It does not limit how long the command runs.")
     private long timeout = 30000;
     @UriParam(label = "security", security = "insecure:ssl",
               description = "The resource of a file in the OpenSSH known_hosts format, such as file:/etc/camel/known_hosts,"

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.List;
@@ -25,12 +26,17 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.common.NamedResource;
+import org.apache.sshd.common.channel.Channel;
+import org.apache.sshd.common.channel.ChannelFactory;
+import org.apache.sshd.common.kex.AbstractDH;
 import org.apache.sshd.common.kex.BuiltinDHFactories;
 import org.apache.sshd.common.kex.DHFactory;
 import org.apache.sshd.common.kex.KeyExchangeFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.common.session.Session;
 import org.apache.sshd.core.CoreModuleProperties;
 import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.channel.ChannelSessionFactory;
 import org.apache.sshd.server.forward.DirectTcpipFactory;
 import org.junit.jupiter.api.Test;
 
@@ -46,8 +52,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SshConfigurationErrorsTest extends SshComponentTestSupport {
 
     @Test
-    public void testChannelThatDoesNotOpenFailsWithItsTimeout() throws Exception {
-        // a server that accepts the session but refuses every channel
+    public void testRefusedChannelSaysSo() throws Exception {
+        // a server that accepts the session but refuses the session channel
         SshServer refusing = SshServer.setUpDefaultServer();
         refusing.setPort(0);
         refusing.setKeyPairProvider(new FileKeyPairProvider(Paths.get(getHostKey())));
@@ -56,15 +62,52 @@ public class SshConfigurationErrorsTest extends SshComponentTestSupport {
         refusing.setChannelFactories(List.of(DirectTcpipFactory.INSTANCE));
         refusing.start();
         try {
-            String uri = "ssh://smx:smx@localhost:" + refusing.getPort() + "?timeout=30000&channelOpenTimeout=4321";
+            String uri = "ssh://smx:smx@localhost:" + refusing.getPort() + "?timeout=30000";
             CamelExecutionException e
                     = assertThrows(CamelExecutionException.class, () -> template.requestBody(uri, "test"));
 
-            Throwable cause = causeStartingWith(e, "Failed to open the exec channel");
-            // channelOpenTimeout, not timeout, limits the wait for the channel
-            assertTrue(cause.getMessage().endsWith("within timeout 4321ms"), cause.getMessage());
+            Throwable cause = causeStartingWith(e, "The server refused to open the exec channel to localhost:");
+            assertTrue(cause.getCause() != null, "the reason from the server is the cause");
         } finally {
             refusing.stop(true);
+        }
+    }
+
+    @Test
+    public void testChannelThatDoesNotOpenInTimeFailsWithChannelOpenTimeout() throws Exception {
+        // a server that takes 3 seconds to open the session channel
+        SshServer slow = SshServer.setUpDefaultServer();
+        slow.setPort(0);
+        slow.setKeyPairProvider(new FileKeyPairProvider(Paths.get(getHostKey())));
+        slow.setPasswordAuthenticator((username, password, session) -> true);
+        slow.setCommandFactory(new TestEchoCommandFactory());
+        slow.setChannelFactories(List.of(new ChannelFactory() {
+            @Override
+            public String getName() {
+                return ChannelSessionFactory.INSTANCE.getName();
+            }
+
+            @Override
+            public Channel createChannel(Session session) throws IOException {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                return ChannelSessionFactory.INSTANCE.createChannel(session);
+            }
+        }));
+        slow.start();
+        try {
+            // channelOpenTimeout, not timeout, limits the wait for the channel
+            String uri = "ssh://smx:smx@localhost:" + slow.getPort() + "?timeout=30000&channelOpenTimeout=500";
+            CamelExecutionException e
+                    = assertThrows(CamelExecutionException.class, () -> template.requestBody(uri, "test"));
+
+            Throwable cause = causeStartingWith(e, "Failed to open the exec channel to localhost:");
+            assertTrue(cause.getMessage().endsWith(" within timeout 500ms"), cause.getMessage());
+        } finally {
+            slow.stop(true);
         }
     }
 
@@ -82,6 +125,14 @@ public class SshConfigurationErrorsTest extends SshComponentTestSupport {
         CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template.requestBody(uri, "test"));
 
         causeStartingWith(e, "No key pair found in certResource file:src/test/resources/no-such-key.pem");
+    }
+
+    @Test
+    public void testKeySourceDoesNotPrintAnInlineKey() {
+        assertEquals("certResource file:/keys/id_rsa", SshHelper.describeKeySource("file:/keys/id_rsa"));
+        assertEquals("certResource (base64)", SshHelper.describeKeySource("base64:LS0tLS1CRUdJTiBQUklWQVRF"));
+        assertEquals("certResource (mem)", SshHelper.describeKeySource("mem:-----BEGIN PRIVATE KEY-----"));
+        assertEquals("keyPairProvider", SshHelper.describeKeySource(null));
     }
 
     @Test
@@ -176,7 +227,7 @@ public class SshConfigurationErrorsTest extends SshComponentTestSupport {
         }
 
         @Override
-        public org.apache.sshd.common.kex.AbstractDH create(Object... params) throws Exception {
+        public AbstractDH create(Object... params) throws Exception {
             return delegate.create(params);
         }
 

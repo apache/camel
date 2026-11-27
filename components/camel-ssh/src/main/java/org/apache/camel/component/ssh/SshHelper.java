@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.StringHelper;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
@@ -141,7 +142,7 @@ public final class SshHelper {
                 }
                 if (pair == null) {
                     // addPublicKeyIdentity would fail with a NullPointerException "No key-pair to add"
-                    String source = certResource != null ? "certResource " + certResource : "keyPairProvider";
+                    String source = describeKeySource(certResource);
                     throw new RuntimeCamelException(
                             configuration.getKeyType() != null
                                     ? "No key pair of type " + configuration.getKeyType() + " found in " + source
@@ -203,10 +204,16 @@ public final class SshHelper {
                     ? configuration.getChannelOpenTimeout() : configuration.getTimeout();
             openFuture.await(channelOpenTimeout);
             if (!openFuture.isOpened()) {
+                String channelTo = "the " + endpoint.getChannelType() + " channel to " + configuration.getHost() + ":"
+                                   + configuration.getPort();
+                Throwable refused = openFuture.getException();
+                if (refused != null) {
+                    // the server answered, and refused to open the channel
+                    throw new RuntimeCamelException(
+                            "The server refused to open " + channelTo + ": " + refused.getMessage(), refused);
+                }
                 throw new RuntimeCamelException(
-                        "Failed to open the " + endpoint.getChannelType() + " channel to " + configuration.getHost() + ":"
-                                                + configuration.getPort() + " within timeout " + channelOpenTimeout + "ms",
-                        openFuture.getException());
+                        "Failed to open " + channelTo + " within timeout " + channelOpenTimeout + "ms");
             }
             SshResult result = null;
             if (Channel.CHANNEL_EXEC.equals(endpoint.getChannelType())) {
@@ -238,6 +245,20 @@ public final class SshHelper {
             }
         }
 
+    }
+
+    /**
+     * Where the key pair comes from, for an error message. A base64: or mem: resource holds the key itself, so only its
+     * scheme is named.
+     */
+    static String describeKeySource(String certResource) {
+        if (certResource == null) {
+            return "keyPairProvider";
+        }
+        if (certResource.startsWith("base64:") || certResource.startsWith("mem:")) {
+            return "certResource (" + StringHelper.before(certResource, ":") + ")";
+        }
+        return "certResource " + certResource;
     }
 
     private static String getPrompt(ClientChannel channel, ByteArrayOutputStream output, SshEndpoint endpoint)
