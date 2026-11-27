@@ -396,9 +396,12 @@ Both output types (hybrid signature and hybrid KEM) share the same 8-byte header
 |Hybrid KEM
 |Classical KEM algorithm
 |PQC KEM algorithm
-|===
 
-NOTE: The PQC DataFormat retains the v1 wire format for now; v2 migration for the data format is tracked in CAMEL-27548.
+|`0x03`
+|KEM data encryption (PQCDataFormat)
+|KEM algorithm
+|Symmetric algorithm
+|===
 
 === Backward Compatibility
 
