@@ -58,7 +58,7 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
     private String apiKey;
     @Metadata(label = "security")
     private boolean enableSSL;
-    @Metadata(label = "security")
+    @Metadata(label = "security", supportFileReference = true)
     private String certificatePath;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;

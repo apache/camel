@@ -30,6 +30,7 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.IOHelper;
 
 public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<Hit<TDocument>>, Closeable {
 
@@ -42,6 +43,7 @@ public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<H
     private String scrollId;
     private boolean closed;
     private int requestCount;
+    private Closeable resource;
 
     public ElasticsearchScrollRequestIterator(SearchRequest.Builder searchRequestBuilder, ElasticsearchClient esClient,
                                               int scrollKeepAliveMs, Exchange exchange, Class<TDocument> documentClass) {
@@ -121,6 +123,13 @@ public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<H
         return scrollResponse;
     }
 
+    /**
+     * Closes the given resource, the client that this iterator uses, once the iterator is closed.
+     */
+    void closeOnClose(Closeable resource) {
+        this.resource = resource;
+    }
+
     @Override
     public void close() {
         if (!closed) {
@@ -137,6 +146,10 @@ public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<H
                 exchange.setProperty(ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT, requestCount);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
+            } finally {
+                // the client is closed also when the clear-scroll request failed
+                IOHelper.close(resource);
+                resource = null;
             }
         }
     }
