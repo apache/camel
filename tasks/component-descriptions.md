@@ -238,7 +238,7 @@ or removes its row.
 | camel-jolt | jolt |  |
 | camel-jooq | jooq | yes |
 | camel-jpa | jpa |  |
-| camel-jsch | scp |  |
+| camel-jsch | scp | yes |
 | camel-jslt | jslt |  |
 | camel-json-validator | json-validator |  |
 | camel-jsonata | jsonata | yes |
