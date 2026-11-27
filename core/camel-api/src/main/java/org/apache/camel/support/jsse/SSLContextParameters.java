@@ -358,23 +358,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         // thread has reset it - leaving the post-quantum preference applied or not depending on timing.
         lock.lock();
         boolean autoConfiguredPqc = false;
-        if (this.getNamedGroups() == null && this.getNamedGroupsFilter() == null) {
-            autoConfiguredPqc = applyPqcNamedGroupDefaults(context);
-        }
-
-        this.configureSSLContext(context);
-
-        // Decorate the context.
-        context = new SSLContextDecorator(
-                new SSLContextSpiDecorator(
-                        context,
-                        this.getSSLEngineConfigurers(context),
-                        this.getSSLSocketFactoryConfigurers(context),
-                        this.getSSLServerSocketFactoryConfigurers(context)));
-
-        // Reset auto-configured PQC named groups so they don't persist on this instance
-        if (autoConfiguredPqc) {
-            this.setNamedGroups(null);
         try {
             // Auto-configure PQC named groups when available and no user configuration is present
             if (this.getNamedGroups() == null && this.getNamedGroupsFilter() == null) {
