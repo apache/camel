@@ -12605,6 +12605,14 @@ With `mimeType` `PAGEABLE`, `PRINTABLE` or `RENDERABLE_IMAGE`, the producer now 
 `java.awt.print.Pageable`, `java.awt.print.Printable` or `java.awt.image.renderable.RenderableImage`, as these doc
 flavors need, instead of a stream. With `sendToPrinter=false`, the body is still written to a file as bytes.
 
+=== camel-rest-postman - the served collection masks more credentials
+
+The collection served on `apiContextPath` now also masks, with `+***+`, the values of credential headers (such as
+`Authorization`, `x-api-key` and `Cookie`), of variables of the default type whose name marks a credential (such as
+`apiKey` or `password`), of the cookies of example responses, of credential body fields, and of the userinfo password
+and credential query parameters (such as `api_key` or `access_token`) in URLs. Before, only `auth` blocks were removed
+and only variables of type `secret` were masked. A value that is only a Postman variable reference, such as
+`+{{apiKey}}+`, is still served as it is. The collection that the routes use is not changed.
 === camel-weather - the CamelWeatherQuery header has the appid masked
 
 The `CamelWeatherQuery` header that the consumer and the producer set has the value of the `APPID` query parameter
