@@ -183,7 +183,7 @@ or removes its row.
 | camel-geocoder | geocoder | yes |
 | camel-git | git | yes |
 | camel-github2 | github2 |  |
-| camel-google-bigquery | google-bigquery, google-bigquery-sql |  |
+| camel-google-bigquery | google-bigquery, google-bigquery-sql | yes |
 | camel-google-calendar | google-calendar, google-calendar-stream |  |
 | camel-google-drive | google-drive |  |
 | camel-google-firestore | google-firestore | yes |

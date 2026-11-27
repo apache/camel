@@ -6764,7 +6764,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google BigQuery (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics.
+     * Insert rows into Google BigQuery tables.
      * 
      * Category: cloud,bigdata
      * Since: 2.20
@@ -6773,13 +6773,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
      * 
      * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * The ID of the Google Cloud project of the dataset. The endpoint sets it
+     * as the project of the BigQuery client that it creates.
      * 
      * Path parameter: datasetId (required)
-     * BigQuery Dataset Id
+     * The ID of the BigQuery dataset that holds the table.
      * 
      * Path parameter: tableId
-     * BigQuery table id
+     * The ID of the table to insert the rows into. The
+     * CamelGoogleBigQueryTableId header replaces it. If neither is set, the
+     * exchange fails.
      * 
      * @param path projectId:datasetId:tableId
      * @return the dsl builder
@@ -6789,7 +6792,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google BigQuery (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics.
+     * Insert rows into Google BigQuery tables.
      * 
      * Category: cloud,bigdata
      * Since: 2.20
@@ -6798,13 +6801,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
      * 
      * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * The ID of the Google Cloud project of the dataset. The endpoint sets it
+     * as the project of the BigQuery client that it creates.
      * 
      * Path parameter: datasetId (required)
-     * BigQuery Dataset Id
+     * The ID of the BigQuery dataset that holds the table.
      * 
      * Path parameter: tableId
-     * BigQuery table id
+     * The ID of the table to insert the rows into. The
+     * CamelGoogleBigQueryTableId header replaces it. If neither is set, the
+     * exchange fails.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6816,7 +6822,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Access Google Cloud BigQuery service using SQL queries.
+     * Run SQL queries and statements in Google BigQuery.
      * 
      * Category: cloud,messaging
      * Since: 2.23
@@ -6825,10 +6831,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
      * 
      * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * The ID of the Google Cloud project that runs the query jobs. The endpoint
+     * also sets it as the project of the BigQuery client that it creates.
      * 
      * Path parameter: queryString (required)
-     * BigQuery standard SQL query
+     * The GoogleSQL (standard SQL) query or statement to run, or a resource
+     * with the query, such as classpath:query.sql, loaded when the producer
+     * starts. A named query parameter takes its value from the entry of that
+     * name of a Map body, else from the header of that name, and a ${name}
+     * placeholder is replaced by the text of the header or exchange property of
+     * that name.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
      * 
@@ -6840,7 +6852,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Access Google Cloud BigQuery service using SQL queries.
+     * Run SQL queries and statements in Google BigQuery.
      * 
      * Category: cloud,messaging
      * Since: 2.23
@@ -6849,10 +6861,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
      * 
      * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * The ID of the Google Cloud project that runs the query jobs. The endpoint
+     * also sets it as the project of the BigQuery client that it creates.
      * 
      * Path parameter: queryString (required)
-     * BigQuery standard SQL query
+     * The GoogleSQL (standard SQL) query or statement to run, or a resource
+     * with the query, such as classpath:query.sql, loaded when the producer
+     * starts. A named query parameter takes its value from the entry of that
+     * name of a Map body, else from the header of that name, and a ${name}
+     * placeholder is replaced by the text of the header or exchange property of
+     * that name.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
      * 

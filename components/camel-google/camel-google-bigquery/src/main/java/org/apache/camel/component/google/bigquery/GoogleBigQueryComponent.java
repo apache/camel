@@ -27,16 +27,18 @@ import org.apache.camel.support.DefaultComponent;
 @Component("google-bigquery")
 public class GoogleBigQueryComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The ID of a Google Cloud project. Not used: an endpoint takes the project ID from its URI.")
     private String projectId;
 
-    @Metadata
+    @Metadata(description = "The ID of a BigQuery dataset. Not used: an endpoint takes the dataset ID from its URI.")
     private String datasetId;
 
     @Metadata
     private GoogleBigQueryConfiguration configuration;
 
-    @Metadata(autowired = true)
+    @Metadata(description = "The org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory that provides the"
+                            + " BigQuery client for the endpoints that do not set their own connectionFactory.",
+              autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
 
     public GoogleBigQueryComponent() {
@@ -75,9 +77,6 @@ public class GoogleBigQueryComponent extends DefaultComponent {
         return projectId;
     }
 
-    /**
-     * Google Cloud Project Id
-     */
     public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
@@ -86,9 +85,6 @@ public class GoogleBigQueryComponent extends DefaultComponent {
         return datasetId;
     }
 
-    /**
-     * BigQuery Dataset Id
-     */
     public void setDatasetId(String datasetId) {
         this.datasetId = datasetId;
     }
@@ -97,9 +93,6 @@ public class GoogleBigQueryComponent extends DefaultComponent {
         return connectionFactory;
     }
 
-    /**
-     * ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used
-     */
     public void setConnectionFactory(GoogleBigQueryConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
