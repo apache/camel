@@ -7678,6 +7678,25 @@ cannot read (with the default `skipFailedMessage=false` and `handleFailedMessage
 is removed, as it does without an `idempotentRepository`. Before, it failed only the first poll and was then skipped,
 together with the mails retrieved before it. Set `skipFailedMessage` or `handleFailedMessage` to skip such a mail.
 
+=== camel-mail - marking the mail of an exchange that completes after the poll
+
+The mail consumer now marks the mail of an exchange that completes after the poll (with `pollEnrich` or a
+`ConsumerTemplate`) against the folder in which the mail was retrieved, or finds it again first. Users can see these
+changes:
+
+* With `disconnect=true`, `pollEnrich` and a `ConsumerTemplate` now mark the mail as `SEEN` (or delete it with
+`delete=true`). Before, the mark failed with a `NullPointerException`, as the poll had already disconnected. The
+consumer now connects and logs in again to mark the mail, and disconnects again: one extra connect and login per
+completed exchange.
+* When the mark of a mail fails (for example the mail was expunged meanwhile, or the connection dropped), its key is now
+settled in the `idempotentRepository` as on a successful mark. With the default `idempotentRepositoryRemoveOnCommit=true`
+the key is removed, so a later poll routes the mail again instead of skipping it as a duplicate. With
+`idempotentRepositoryRemoveOnCommit=false` the key is confirmed, and the mail stays skipped.
+* An exchange that completes after the consumer was stopped no longer marks its mail. Before, it opened the folder
+again, which logged in again with the credentials of the closed connection and left that connection open. Its key is
+settled in the same way, so with the default `idempotentRepositoryRemoveOnCommit=true` the mail is routed again once
+the consumer is started again.
+
 === camel-huaweicloud-smn - a Map, a List or a POJO is published as JSON, and the CamelHwCloudSmnMessageId property
 
 The `hwcloud-smn` producer now publishes a `Map`, a `List` or a POJO in the message body as JSON. Before, it published

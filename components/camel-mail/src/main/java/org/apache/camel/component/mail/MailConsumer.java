@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.mail.FetchProfile;
@@ -76,9 +75,13 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     // the poll connects, opens the folder, closes it and disconnects (folder and store are set or nulled) while holding
     // folderLock, and an exchange that completes on another thread than the poll (pollEnrich, ConsumerTemplate) marks
     // its mail while holding it, so a mail is checked and marked against one open of the folder. It is never held while
-    // a mail is routed: the completion of a mail routed by the poll thread takes it too. doStop closes the folder and
-    // the store while holding it
-    private final Lock folderLock = new ReentrantLock();
+    // a mail is routed: the completion of a mail routed by the poll thread takes it too, and passes the errors of the
+    // mark to the exception handler (which routes them with bridgeErrorHandler=true) after it released it. doStop
+    // closes the folder and the store while holding it
+    private final ReentrantLock folderLock = new ReentrantLock();
+    // the errors of marking a mail found while holding folderLock, passed to the exception handler by commit after it
+    // released the lock. Guarded by folderLock
+    private final List<CommitError> commitErrors = new ArrayList<>();
     // set by doStop and cleared by doStart, while holding folderLock: a poll that was already running when the consumer
     // stopped does not connect again, and does not ask the server for the message count or the UIDVALIDITY
     private boolean closed;
@@ -408,42 +411,70 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      * not be opened): the consumer then connects again to mark the mail, which is found again by its UID (IMAP) or its
      * key (POP3) as after any other new open of the folder, and disconnects again with disconnect=true. When the
      * consumer is stopped, the mail is not marked and its idempotent key is settled as on commit: nothing opens the
-     * folder or connects after a stop.
+     * folder or connects after a stop. An error of the mark is passed to the exception handler after the lock is
+     * released: with bridgeErrorHandler=true the handler routes it, and the next poll and doStop must not wait for
+     * that.
      */
     void commit(Message mail, Long uid, long uidValidity, int batchOpen, Exchange exchange) {
+        List<CommitError> errors;
         folderLock.lock();
         try {
-            if (!isRunAllowed()) {
-                // doStop closed the folder and the store (or closes them once this returns): opening the folder or
-                // connecting here would log in again and leave that connection open
-                LOG.warn("The consumer of {} is stopped: the mail of an exchange that completed after the consumer stopped"
-                         + " is not marked as {}.",
-                        getEndpoint().getConfiguration().getMailStoreLogInformation(),
-                        getEndpoint().getConfiguration().isDelete() ? "DELETED" : "SEEN");
-                commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
-                return;
-            }
-            boolean connected = false;
-            if (folder == null) {
-                if (!connectToCommit(mail, exchange)) {
-                    return;
-                }
-                connected = true;
-            }
-            try {
-                Message current = mailToCommit(mail, uid, uidValidity, batchOpen, exchange);
-                if (current != null) {
-                    processCommit(current, exchange);
-                }
-            } finally {
-                if (connected && getEndpoint().getConfiguration().isDisconnect()) {
-                    closeFolder();
-                    disconnect();
-                }
-            }
+            commitLocked(mail, uid, uidValidity, batchOpen, exchange);
         } finally {
+            errors = new ArrayList<>(commitErrors);
+            commitErrors.clear();
             folderLock.unlock();
         }
+        for (CommitError error : errors) {
+            getExceptionHandler().handleException(error.message(), error.exchange(), error.cause());
+        }
+    }
+
+    private void commitLocked(Message mail, Long uid, long uidValidity, int batchOpen, Exchange exchange) {
+        if (!isRunAllowed()) {
+            // doStop closed the folder and the store (or closes them once this returns): opening the folder or
+            // connecting here would log in again and leave that connection open
+            LOG.warn("The consumer of {} is stopped: the mail of an exchange that completed after the consumer stopped"
+                     + " is not marked as {}.",
+                    getEndpoint().getConfiguration().getMailStoreLogInformation(),
+                    getEndpoint().getConfiguration().isDelete() ? "DELETED" : "SEEN");
+            commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
+            return;
+        }
+        boolean connected = false;
+        if (folder == null) {
+            if (!connectToCommit(mail, exchange)) {
+                return;
+            }
+            connected = true;
+        }
+        try {
+            Message current = mailToCommit(mail, uid, uidValidity, batchOpen, exchange);
+            if (current != null) {
+                processCommit(current, exchange);
+            }
+        } finally {
+            if (connected && getEndpoint().getConfiguration().isDisconnect()) {
+                closeFolder();
+                disconnect();
+            }
+        }
+    }
+
+    /**
+     * Reports an error of marking a mail. While holding the folder lock (in {@link #commit}), the error is recorded and
+     * commit passes it to the exception handler once it released the lock.
+     */
+    private void handleCommitException(Message mail, Exchange exchange, Throwable cause) {
+        String message = "Error occurred during committing mail message: " + mail;
+        if (folderLock.isHeldByCurrentThread()) {
+            commitErrors.add(new CommitError(message, exchange, cause));
+        } else {
+            getExceptionHandler().handleException(message, exchange, cause);
+        }
+    }
+
+    private record CommitError(String message, Exchange exchange, Throwable cause) {
     }
 
     /**
@@ -457,7 +488,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             ensureIsConnected();
             return true;
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
+            handleCommitException(mail, exchange, e);
             commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
             // the store may be connected without the folder: the next poll connects again
             disconnect();
@@ -505,7 +536,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         } catch (MessagingException | IllegalStateException e) {
             // IllegalStateException: the poll thread opened or closed the folder (closeFolder=true) at the same time
             // (IMAPFolder checkClosed / checkOpened)
-            getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
+            handleCommitException(mail, exchange, e);
             // the mail is not marked: settle its key as on commit, so it is not skipped as a duplicate for good
             commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
             return null;
@@ -889,12 +920,11 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         } catch (MessageRemovedException e) {
             MessagingException wrapped = new MessagingException(
                     "Message already removed/expunged on server (message state could not be updated)", e);
-            getExceptionHandler().handleException(
-                    "Error occurred during committing mail message: " + mail, exchange, wrapped);
+            handleCommitException(mail, exchange, wrapped);
         } catch (MessagingException | IllegalStateException e) {
             // IllegalStateException: the folder or the store is not open any more (IMAPFolder checkOpened, IMAPStore
             // not connected)
-            getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
+            handleCommitException(mail, exchange, e);
         }
 
         // need to confirm or remove on commit at last; also when the mail could not be marked, so it is not skipped as
