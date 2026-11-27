@@ -789,7 +789,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Transcribe (camel-aws2-transcribe)
-     * Automatically convert speech to text using AWS Transcribe service
+     * Transcribe speech in audio and video files in S3 to text with Amazon
+     * Transcribe, and manage its custom vocabularies, vocabulary filters and
+     * language models.
      * 
      * Category: cloud,messaging
      * Since: 4.15

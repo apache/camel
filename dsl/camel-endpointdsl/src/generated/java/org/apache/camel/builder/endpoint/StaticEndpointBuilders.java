@@ -2592,7 +2592,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Transcribe (camel-aws2-transcribe)
-     * Automatically convert speech to text using AWS Transcribe service
+     * Transcribe speech in audio and video files in S3 to text with Amazon
+     * Transcribe, and manage its custom vocabularies, vocabulary filters and
+     * language models.
      * 
      * Category: cloud,messaging
      * Since: 4.15
@@ -2601,7 +2603,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-transcribe:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of the endpoint, which you choose freely. The producer
+     * does not use it: the job, vocabulary, filter or model to act on is given
+     * in headers.
      * 
      * @param path label
      * @return the dsl builder
@@ -2611,7 +2615,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Transcribe (camel-aws2-transcribe)
-     * Automatically convert speech to text using AWS Transcribe service
+     * Transcribe speech in audio and video files in S3 to text with Amazon
+     * Transcribe, and manage its custom vocabularies, vocabulary filters and
+     * language models.
      * 
      * Category: cloud,messaging
      * Since: 4.15
@@ -2620,7 +2626,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-transcribe:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of the endpoint, which you choose freely. The producer
+     * does not use it: the job, vocabulary, filter or model to act on is given
+     * in headers.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
