@@ -108,7 +108,7 @@ or removes its row.
 | camel-aws2-timestream | aws2-timestream |  |
 | camel-aws2-transcribe | aws2-transcribe |  |
 | camel-aws2-translate | aws2-translate |  |
-| camel-azure-cosmosdb | azure-cosmosdb |  |
+| camel-azure-cosmosdb | azure-cosmosdb | yes |
 | camel-azure-eventgrid | azure-eventgrid |  |
 | camel-azure-eventhubs | azure-eventhubs |  |
 | camel-azure-files | azure-files |  |
