@@ -74,9 +74,14 @@ public class AiPromptComponent extends DefaultComponent {
 
         // Extract argument.NAME.* URI options before endpoint property binding.
         // These options configure the prompt's declared arguments, not endpoint properties.
+        // They are added to the arguments of the component (the copy above): the component arguments come first,
+        // and an option of the endpoint replaces the same option of the component.
         Map<String, Object> promptArguments = PropertiesHelper.extractProperties(parameters, "argument.");
         if (!promptArguments.isEmpty()) {
             Map<String, String> orderedArguments = new LinkedHashMap<>();
+            if (config.getArguments() != null) {
+                orderedArguments.putAll(config.getArguments());
+            }
             promptArguments.forEach((key, value) -> orderedArguments.put(key, String.valueOf(value)));
             config.setArguments(orderedArguments);
         }

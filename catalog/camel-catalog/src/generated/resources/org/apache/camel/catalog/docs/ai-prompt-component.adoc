@@ -60,6 +60,11 @@ from("ai-prompt:summarize_account"
     .setBody(simple("Summarize account ${header.accountId}, including its status and recent activity."));
 ----
 
+Arguments configured on the component apply to every prompt. The `argument.*` options of an endpoint are added to
+them: the prompt declares the arguments of the component first, then its own, and an option set on the endpoint
+replaces the same option of the component (for example `argument.locale.required=true` makes a `locale` argument of
+the component required for this prompt only).
+
 A String route body becomes one MCP `user` message. A List route body becomes several messages, allowing a
 multi-turn prompt. List elements may be Strings (converted to `user` messages) or Maps containing `role`
 (`user` or `assistant`) and `content`. Content may be a String or an MCP content block, such as an image or
