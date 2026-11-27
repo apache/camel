@@ -267,7 +267,7 @@ or removes its row.
 | camel-mail | imap, imaps, pop3, pop3s, smtp, smtps |  |
 | camel-mapstruct | mapstruct |  |
 | camel-master | master |  |
-| camel-metrics | metrics |  |
+| camel-metrics | metrics | yes |
 | camel-micrometer | micrometer |  |
 | camel-milo | milo-browse, milo-client, milo-server |  |
 | camel-milvus | milvus |  |

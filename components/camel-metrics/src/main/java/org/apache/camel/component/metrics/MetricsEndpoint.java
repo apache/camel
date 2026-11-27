@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Collect various metrics directly from Camel routes using the DropWizard metrics library.
+ * Update counters, gauges, histograms, meters and timers of a Dropwizard Metrics registry from Camel routes.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName",
              remote = false, internal = true, producerOnly = true, category = { Category.MONITORING },
@@ -46,23 +46,36 @@ public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;
 
-    @UriPath(description = "Type of metrics")
+    @UriPath(description = "The type of the metric. If the URI gives only a name, as in metrics:myName, the type is meter.")
     @Metadata(required = true)
     protected final MetricsType metricsType;
-    @UriPath(description = "Name of metrics")
+    @UriPath(description = "The name of the metric in the MetricRegistry. A CamelMetricsName header that is not empty"
+                           + " replaces this option.")
     @Metadata(required = true)
     protected final String metricsName;
-    @UriParam(description = "Action when using timer type")
+    @UriParam(description = "For the timer type: start starts a timer and stores it on the exchange, and stop stops the timer"
+                            + " that start stored on the same exchange and records the elapsed time. If no action is set,"
+                            + " the producer logs a warning and does nothing. The CamelMetricsTimerAction header replaces"
+                            + " this option.")
     private MetricsTimerAction action;
-    @UriParam(description = "Mark when using meter type")
+    @UriParam(description = "For the meter type: the number of events to mark on the meter. If not set, the meter marks one"
+                            + " event. The CamelMetricsMeterMark header replaces this option.")
     private Long mark;
-    @UriParam(description = "Value value when using histogram type")
+    @UriParam(description = "For the histogram type: the value to add to the histogram. If not set, the producer logs a"
+                            + " warning and does not update the histogram. The CamelMetricsHistogramValue header replaces"
+                            + " this option.")
     private Long value;
-    @UriParam(description = "Increment value when using counter type")
+    @UriParam(description = "For the counter type: the amount to add to the counter. It wins over decrement, and if neither is"
+                            + " set the counter is incremented by one. The CamelMetricsCounterIncrement header replaces this"
+                            + " option.")
     private Long increment;
-    @UriParam(description = "Decrement value when using counter type")
+    @UriParam(description = "For the counter type: the amount to subtract from the counter, used only when no increment is set"
+                            + " by the option or the CamelMetricsCounterIncrement header. The CamelMetricsCounterDecrement"
+                            + " header replaces this option.")
     private Long decrement;
-    @UriParam(description = "Subject value when using gauge type")
+    @UriParam(description = "For the gauge type: the object that the gauge returns as its value, for example a bean reference."
+                            + " The producer registers the gauge with it when the producer starts, and the"
+                            + " CamelMetricsGaugeSubject header replaces the value of the gauge.")
     private Object subject;
 
     public MetricsEndpoint(String uri, Component component, MetricRegistry registry, MetricsType metricsType,

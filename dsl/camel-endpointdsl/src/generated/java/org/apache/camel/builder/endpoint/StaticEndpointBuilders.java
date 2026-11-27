@@ -12030,8 +12030,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Metrics (camel-metrics)
-     * Collect various metrics directly from Camel routes using the DropWizard
-     * metrics library.
+     * Update counters, gauges, histograms, meters and timers of a Dropwizard
+     * Metrics registry from Camel routes.
      * 
      * Category: monitoring
      * Since: 2.14
@@ -12040,12 +12040,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>metrics:metricsType:metricsName</code>
      * 
      * Path parameter: metricsType (required)
-     * Type of metrics
+     * The type of the metric. If the URI gives only a name, as in
+     * metrics:myName, the type is meter.
      * There are 5 enums and the value can be one of: gauge, counter, histogram,
      * meter, timer
      * 
      * Path parameter: metricsName (required)
-     * Name of metrics
+     * The name of the metric in the MetricRegistry. A CamelMetricsName header
+     * that is not empty replaces this option.
      * 
      * @param path metricsType:metricsName
      * @return the dsl builder
@@ -12055,8 +12057,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Metrics (camel-metrics)
-     * Collect various metrics directly from Camel routes using the DropWizard
-     * metrics library.
+     * Update counters, gauges, histograms, meters and timers of a Dropwizard
+     * Metrics registry from Camel routes.
      * 
      * Category: monitoring
      * Since: 2.14
@@ -12065,12 +12067,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>metrics:metricsType:metricsName</code>
      * 
      * Path parameter: metricsType (required)
-     * Type of metrics
+     * The type of the metric. If the URI gives only a name, as in
+     * metrics:myName, the type is meter.
      * There are 5 enums and the value can be one of: gauge, counter, histogram,
      * meter, timer
      * 
      * Path parameter: metricsName (required)
-     * Name of metrics
+     * The name of the metric in the MetricRegistry. A CamelMetricsName header
+     * that is not empty replaces this option.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
