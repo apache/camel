@@ -358,7 +358,7 @@ or removes its row.
 | camel-ssh | ssh | yes |
 | camel-state-store | state-store | yes |
 | camel-stax | stax | yes |
-| camel-stitch | stitch |  |
+| camel-stitch | stitch | yes |
 | camel-stream | stream | yes |
 | camel-stringtemplate | string-template |  |
 | camel-stripe | stripe |  |

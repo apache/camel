@@ -17694,8 +17694,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service that integrates various data sources into a
-     * central data warehouse through various integrations.
+     * Send batches of records to the Stitch Import API, which loads them into a
+     * table of the destination data warehouse.
      * 
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
@@ -17704,10 +17704,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stitch:tableName</code>
      * 
      * Path parameter: tableName
-     * The name of the destination table the data is being pushed to. Table
-     * names must be unique in each destination schema, or loading issues will
-     * occur. Note: The number of characters in the table name should be within
-     * the destination's allowed limits or data will rejected.
+     * The name of the destination table that the records are loaded into. The
+     * CamelStitchTableName header overrides it, and it overrides the table_name
+     * of a StitchRequestBody or Map body. Table names must be unique in each
+     * destination schema, and Stitch rejects the data when the name is longer
+     * than the destination allows.
      * 
      * @param path tableName
      * @return the dsl builder
@@ -17717,8 +17718,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service that integrates various data sources into a
-     * central data warehouse through various integrations.
+     * Send batches of records to the Stitch Import API, which loads them into a
+     * table of the destination data warehouse.
      * 
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
@@ -17727,10 +17728,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stitch:tableName</code>
      * 
      * Path parameter: tableName
-     * The name of the destination table the data is being pushed to. Table
-     * names must be unique in each destination schema, or loading issues will
-     * occur. Note: The number of characters in the table name should be within
-     * the destination's allowed limits or data will rejected.
+     * The name of the destination table that the records are loaded into. The
+     * CamelStitchTableName header overrides it, and it overrides the table_name
+     * of a StitchRequestBody or Map body. Table names must be unique in each
+     * destination schema, and Stitch rejects the data when the name is longer
+     * than the destination allows.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
