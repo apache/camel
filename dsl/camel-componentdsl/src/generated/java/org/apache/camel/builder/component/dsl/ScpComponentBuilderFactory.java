@@ -77,26 +77,6 @@ public interface ScpComponentBuilderFactory {
     
         
         /**
-         * Whether to log the INFO messages of JSch at INFO level. JSch logs
-         * much at INFO level, so by default the component logs these messages
-         * at DEBUG level. The component passes the JSch log messages, with the
-         * [JSCH] prefix, to its own logger.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param verboseLogging the value to set
-         * @return the dsl builder
-         */
-        default ScpComponentBuilder verboseLogging(boolean verboseLogging) {
-            doSetProperty("verboseLogging", verboseLogging);
-            return this;
-        }
-    
-        
-        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -114,6 +94,26 @@ public interface ScpComponentBuilderFactory {
          */
         default ScpComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to log the INFO messages of JSch at INFO level. JSch logs
+         * much at INFO level, so by default the component logs these messages
+         * at DEBUG level. The component passes the JSch log messages, with the
+         * [JSCH] prefix, to its own logger.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param verboseLogging the value to set
+         * @return the dsl builder
+         */
+        default ScpComponentBuilder verboseLogging(boolean verboseLogging) {
+            doSetProperty("verboseLogging", verboseLogging);
             return this;
         }
     
@@ -170,8 +170,8 @@ public interface ScpComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((ScpComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "verboseLogging": ((ScpComponent) component).setVerboseLogging((boolean) value); return true;
             case "autowiredEnabled": ((ScpComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "verboseLogging": ((ScpComponent) component).setVerboseLogging((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((ScpComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((ScpComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;

@@ -45,25 +45,6 @@ public interface ScpEndpointBuilderFactory {
         }
 
         /**
-         * The permissions of the file that the producer writes, as three octal
-         * digits, for example 644. Any other value is replaced by 664. The
-         * producer sends it in the scp protocol line of the file, and the
-         * remote scp uses it when it creates the file. The directories that the
-         * producer creates for a file name with a path get 775.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: 664
-         * Group: producer
-         * 
-         * @param chmod the value to set
-         * @return the dsl builder
-         */
-        default ScpEndpointBuilder chmod(String chmod) {
-            doSetProperty("chmod", chmod);
-            return this;
-        }
-        /**
          * Whether or not to disconnect from remote FTP server right after use.
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
@@ -113,6 +94,25 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder checksumFileAlgorithm(String checksumFileAlgorithm) {
             doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
+            return this;
+        }
+        /**
+         * The permissions of the file that the producer writes, as three octal
+         * digits, for example 644. Any other value is replaced by 664. The
+         * producer sends it in the scp protocol line of the file, and the
+         * remote scp uses it when it creates the file. The directories that the
+         * producer creates for a file name with a path get 775.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: 664
+         * Group: producer
+         * 
+         * @param chmod the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder chmod(String chmod) {
+            doSetProperty("chmod", chmod);
             return this;
         }
         /**
@@ -340,7 +340,8 @@ public interface ScpEndpointBuilderFactory {
          * loaded the same way as certFile: a path on the file system, or with
          * the classpath: prefix a resource on the classpath. Only used together
          * with privateKeyFile or privateKeyBytes, and when certFile is not set.
-         * Takes precedence over certBytes.
+         * Takes precedence over certBytes. Deprecation note: Use certFile,
+         * which loads the certificate in the same way and takes precedence.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -352,6 +353,7 @@ public interface ScpEndpointBuilderFactory {
          * @param certUri the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default ScpEndpointBuilder certUri(String certUri) {
             doSetProperty("certUri", certUri);
             return this;
@@ -512,9 +514,9 @@ public interface ScpEndpointBuilderFactory {
          * Whether to use the known hosts file of the user, the .ssh/known_hosts
          * file in the home directory (the user.home system property, or the
          * HOME environment variable), when knownHostsFile is not set. If that
-         * file cannot be read, the producer fails to connect. If false and
-         * knownHostsFile is not set, no host is known, and
-         * strictHostKeyChecking decides whether the producer connects.
+         * file does not exist, or if false and knownHostsFile is not set, no
+         * host is known, and strictHostKeyChecking decides whether the producer
+         * connects.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -532,9 +534,9 @@ public interface ScpEndpointBuilderFactory {
          * Whether to use the known hosts file of the user, the .ssh/known_hosts
          * file in the home directory (the user.home system property, or the
          * HOME environment variable), when knownHostsFile is not set. If that
-         * file cannot be read, the producer fails to connect. If false and
-         * knownHostsFile is not set, no host is known, and
-         * strictHostKeyChecking decides whether the producer connects.
+         * file does not exist, or if false and knownHostsFile is not set, no
+         * host is known, and strictHostKeyChecking decides whether the producer
+         * connects.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

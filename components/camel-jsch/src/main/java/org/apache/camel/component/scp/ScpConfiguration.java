@@ -22,22 +22,25 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SCP configuration
  */
 @UriParams
 public class ScpConfiguration extends RemoteFileConfiguration {
+    private static final Logger LOG = LoggerFactory.getLogger(ScpConfiguration.class);
 
     public static final int DEFAULT_SFTP_PORT = 22;
     public static final String DEFAULT_MOD = "664";
     @UriParam(label = "security", defaultValue = "true",
               description = "Whether to use the known hosts file of the user, the .ssh/known_hosts file in the home directory"
                             + " (the user.home system property, or the HOME environment variable), when knownHostsFile is not"
-                            + " set. If that file cannot be read, the producer fails to connect. If false and knownHostsFile is"
-                            + " not set, no host is known, and strictHostKeyChecking decides whether the producer connects.")
+                            + " set. If that file does not exist, or if false and knownHostsFile is not set, no host is known,"
+                            + " and strictHostKeyChecking decides whether the producer connects.")
     private boolean useUserKnownHostsFile = true;
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security",
               description = "The known hosts file that JSch checks the key of the remote host against when the producer"
                             + " connects, in the OpenSSH known_hosts format. A path on the file system, or with the classpath:"
                             + " prefix a resource on the classpath. An @cert-authority entry lets the producer accept an"
@@ -59,20 +62,22 @@ public class ScpConfiguration extends RemoteFileConfiguration {
               description = "The passphrase of an encrypted private key of privateKeyFile or privateKeyBytes. Not needed for a"
                             + " key that is not encrypted.")
     private String privateKeyFilePassphrase;
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security",
               description = "The OpenSSH user certificate file for certificate-based authentication, for example"
                             + " id_ed25519-cert.pub. A path on the file system, or with the classpath: prefix a resource on the"
                             + " classpath. Only used together with privateKeyFile or privateKeyBytes, the private key of the"
                             + " certificate. Takes precedence over certUri and certBytes.")
     private String certFile;
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security",
               description = "The OpenSSH user certificate for certificate-based authentication, loaded the same way as"
                             + " certFile: a path on the file system, or with the classpath: prefix a resource on the classpath."
                             + " Only used together with privateKeyFile or privateKeyBytes, and when certFile is not set. Takes"
                             + " precedence over certBytes.")
-    @Metadata(supportFileReference = true)
+    @Metadata(supportFileReference = true,
+              deprecationNote = "Use certFile, which loads the certificate in the same way and takes precedence.")
+    @Deprecated
     private String certUri;
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security",
               description = "The OpenSSH user certificate as a byte array, for certificate-based authentication. Only used"
                             + " together with privateKeyFile or privateKeyBytes, and when neither certFile nor certUri is set.")
     private byte[] certBytes;
@@ -87,7 +92,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
                             + " host key verification and makes the connection vulnerable to man-in-the-middle attacks."
                             + " Use 'yes' in production environments.")
     private String strictHostKeyChecking = "no";
-    @UriParam(defaultValue = DEFAULT_MOD,
+    @UriParam(label = "producer", defaultValue = DEFAULT_MOD,
               description = "The permissions of the file that the producer writes, as three octal digits, for example 644."
                             + " Any other value is replaced by 664. The producer sends it in the scp protocol line of the file,"
                             + " and the remote scp uses it when it creates the file. The directories that the producer creates"
@@ -98,7 +103,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
                             + " aes128-ctr,aes256-ctr. The cipher names are those of JSch. If not set, the JSch default list is"
                             + " used.")
     private String ciphers;
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security",
               description = "A comma-separated list of the SSH authentication methods to try, in order of preference, for"
                             + " example publickey,password. JSch supports gssapi-with-mic, publickey, keyboard-interactive and"
                             + " password. If not set, the JSch default gssapi-with-mic,publickey,keyboard-interactive,password"
@@ -166,10 +171,18 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         this.certFile = certFile;
     }
 
+    /**
+     * @deprecated Use certFile, which loads the certificate in the same way and takes precedence.
+     */
+    @Deprecated
     public String getCertUri() {
         return certUri;
     }
 
+    /**
+     * @deprecated Use certFile, which loads the certificate in the same way and takes precedence.
+     */
+    @Deprecated
     public void setCertUri(String certUri) {
         this.certUri = certUri;
     }
@@ -202,17 +215,15 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     public void setChmod(String chmod) {
-        if (chmod.length() == 3) {
-            for (byte c : chmod.getBytes()) {
-                if (c < '0' || c > '7') {
-                    chmod = DEFAULT_MOD;
-                    break;
-                }
-            }
-        } else {
+        boolean valid = chmod.length() == 3;
+        for (int i = 0; valid && i < chmod.length(); i++) {
+            char c = chmod.charAt(i);
+            valid = c >= '0' && c <= '7';
+        }
+        if (!valid) {
+            LOG.warn("The chmod value {} is not three octal digits, such as 644: the files get {}", chmod, DEFAULT_MOD);
             chmod = DEFAULT_MOD;
         }
-        // May be interesting to log the fallback to DEFAULT_MOD for invalid configuration
         this.chmod = chmod;
     }
 
