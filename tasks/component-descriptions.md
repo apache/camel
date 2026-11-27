@@ -198,7 +198,7 @@ or removes its row.
 | camel-google-vertexai | google-vertexai |  |
 | camel-google-vision | google-vision |  |
 | camel-graphql | graphql |  |
-| camel-grpc | grpc |  |
+| camel-grpc | grpc | yes |
 | camel-hashicorp-vault | hashicorp-vault |  |
 | camel-hazelcast | hazelcast-instance, hazelcast-list, hazelcast-map, hazelcast-multimap, hazelcast-pncounter, hazelcast-queue, hazelcast-replicatedmap, hazelcast-ringbuffer, hazelcast-seda, hazelcast-set, hazelcast-topic |  |
 | camel-hibernate | hibernate | yes |

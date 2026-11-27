@@ -7682,7 +7682,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * gRPC (camel-grpc)
-     * Expose gRPC endpoints and access external gRPC endpoints.
+     * Expose gRPC services and call remote gRPC services, with Protocol Buffers
+     * messages over HTTP/2.
      * 
      * Category: rpc
      * Since: 2.19
@@ -7691,15 +7692,21 @@ public class StaticEndpointBuilders {
      * Syntax: <code>grpc:host:port/service</code>
      * 
      * Path parameter: host (required)
-     * The gRPC server host name. This is localhost or 0.0.0.0 when being a
-     * consumer or remote server host name when using producer.
+     * The host name or IP address. For the consumer, the address that the gRPC
+     * server binds to, such as localhost or 0.0.0.0. For the producer, the host
+     * of the remote gRPC server.
      * 
      * Path parameter: port (required)
-     * The gRPC local or remote server port
+     * The port. For the consumer, the port that the gRPC server listens on,
+     * where 0 lets the operating system choose a free port. For the producer,
+     * the port of the remote gRPC server.
      * 
      * Path parameter: service (required)
-     * Fully qualified service name from the protocol buffer descriptor file
-     * (package dot service definition name)
+     * The fully qualified name of the gRPC service: the Java package of the
+     * classes generated from the .proto file, a dot, and the service name, for
+     * example org.apache.camel.component.grpc.PingPong. The component loads the
+     * generated class of the service (PingPongGrpc in the example) by this
+     * name.
      * 
      * @param path host:port/service
      * @return the dsl builder
@@ -7709,7 +7716,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * gRPC (camel-grpc)
-     * Expose gRPC endpoints and access external gRPC endpoints.
+     * Expose gRPC services and call remote gRPC services, with Protocol Buffers
+     * messages over HTTP/2.
      * 
      * Category: rpc
      * Since: 2.19
@@ -7718,15 +7726,21 @@ public class StaticEndpointBuilders {
      * Syntax: <code>grpc:host:port/service</code>
      * 
      * Path parameter: host (required)
-     * The gRPC server host name. This is localhost or 0.0.0.0 when being a
-     * consumer or remote server host name when using producer.
+     * The host name or IP address. For the consumer, the address that the gRPC
+     * server binds to, such as localhost or 0.0.0.0. For the producer, the host
+     * of the remote gRPC server.
      * 
      * Path parameter: port (required)
-     * The gRPC local or remote server port
+     * The port. For the consumer, the port that the gRPC server listens on,
+     * where 0 lets the operating system choose a free port. For the producer,
+     * the port of the remote gRPC server.
      * 
      * Path parameter: service (required)
-     * Fully qualified service name from the protocol buffer descriptor file
-     * (package dot service definition name)
+     * The fully qualified name of the gRPC service: the Java package of the
+     * classes generated from the .proto file, a dot, and the service name, for
+     * example org.apache.camel.component.grpc.PingPong. The component loads the
+     * generated class of the service (PingPongGrpc in the example) by this
+     * name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

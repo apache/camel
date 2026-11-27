@@ -1817,7 +1817,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * gRPC (camel-grpc)
-     * Expose gRPC endpoints and access external gRPC endpoints.
+     * Expose gRPC services and call remote gRPC services, with Protocol Buffers
+     * messages over HTTP/2.
      * 
      * Category: rpc
      * Since: 2.19
