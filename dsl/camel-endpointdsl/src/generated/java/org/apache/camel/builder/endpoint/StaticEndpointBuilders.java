@@ -16182,7 +16182,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Slack (camel-slack)
-     * Send and receive messages to/from Slack.
+     * Send messages to a Slack channel or user, and receive the new messages of
+     * a Slack conversation.
      * 
      * Category: social
      * Since: 2.16
@@ -16191,8 +16192,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>slack:channel</code>
      * 
      * Path parameter: channel (required)
-     * The channel name (syntax #name) or slack user (syntax userName) to send a
-     * message directly to an user.
+     * For the producer, where the message goes: a channel name such as
+     * #general, a channel ID, or a user ID for a direct message, as
+     * chat.postMessage of Slack accepts. For the consumer, the name of the
+     * conversation without #, such as general, which it looks up among the
+     * conversations of conversationType.
      * 
      * @param path channel
      * @return the dsl builder
@@ -16202,7 +16206,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Slack (camel-slack)
-     * Send and receive messages to/from Slack.
+     * Send messages to a Slack channel or user, and receive the new messages of
+     * a Slack conversation.
      * 
      * Category: social
      * Since: 2.16
@@ -16211,8 +16216,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>slack:channel</code>
      * 
      * Path parameter: channel (required)
-     * The channel name (syntax #name) or slack user (syntax userName) to send a
-     * message directly to an user.
+     * For the producer, where the message goes: a channel name such as
+     * #general, a channel ID, or a user ID for a direct message, as
+     * chat.postMessage of Slack accepts. For the consumer, the name of the
+     * conversation without #, such as general, which it looks up among the
+     * conversations of conversationType.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -4750,7 +4750,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Slack (camel-slack)
-     * Send and receive messages to/from Slack.
+     * Send messages to a Slack channel or user, and receive the new messages of
+     * a Slack conversation.
      * 
      * Category: social
      * Since: 2.16

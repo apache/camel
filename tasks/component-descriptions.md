@@ -335,7 +335,7 @@ or removes its row.
 | camel-shell | shell |  |
 | camel-sjms | sjms |  |
 | camel-sjms2 | sjms2 | yes |
-| camel-slack | slack |  |
+| camel-slack | slack | yes |
 | camel-smb | smb |  |
 | camel-smooks | smooks |  |
 | camel-smpp | smpp, smpps |  |
