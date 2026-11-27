@@ -6815,7 +6815,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Firestore (camel-google-firestore)
-     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * Store, retrieve and query documents in Google Cloud Firestore
+     * collections.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -6824,7 +6825,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-firestore:collectionName</code>
      * 
      * Path parameter: collectionName (required)
-     * The collection name to use
+     * The name of the collection. The consumer reads the documents of this
+     * collection, and the CamelGoogleFirestoreCollectionName header replaces it
+     * for the producer.
      * 
      * @param path collectionName
      * @return the dsl builder
@@ -6834,7 +6837,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Firestore (camel-google-firestore)
-     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * Store, retrieve and query documents in Google Cloud Firestore
+     * collections.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -6843,7 +6847,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-firestore:collectionName</code>
      * 
      * Path parameter: collectionName (required)
-     * The collection name to use
+     * The name of the collection. The consumer reads the documents of this
+     * collection, and the CamelGoogleFirestoreCollectionName header replaces it
+     * for the producer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

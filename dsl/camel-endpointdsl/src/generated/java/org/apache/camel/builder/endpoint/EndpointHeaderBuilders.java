@@ -1638,7 +1638,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Google Firestore (camel-google-firestore)
-     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * Store, retrieve and query documents in Google Cloud Firestore
+     * collections.
      * 
      * Category: cloud,database
      * Since: 4.19
