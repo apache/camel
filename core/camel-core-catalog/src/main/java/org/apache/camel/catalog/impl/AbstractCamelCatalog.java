@@ -1848,6 +1848,9 @@ public abstract class AbstractCamelCatalog {
             return;
         }
         String type = row.getType();
+        if (type == null) {
+            return;
+        }
         switch (type) {
             case "boolean" -> {
                 if (!ObjectHelper.isBoolean(value)) {

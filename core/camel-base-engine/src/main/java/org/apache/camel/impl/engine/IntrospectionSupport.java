@@ -665,22 +665,23 @@ final class IntrospectionSupport {
         }
     }
 
-    private static Object createIndexedContainer(Object target, String key, boolean ignoreCase) {
-        try {
-            Method getter = IntrospectionSupport.getPropertyGetter(target.getClass(), key, ignoreCase);
-            if (getter != null) {
-                Class<?> returnType = getter.getReturnType();
-                if (Map.class.isAssignableFrom(returnType)) {
-                    return new LinkedHashMap<>();
-                } else if (Collection.class.isAssignableFrom(returnType)) {
-                    return new ArrayList<>();
-                } else if (returnType.isArray()) {
-                    return Array.newInstance(returnType.getComponentType(), 0);
-                }
+    private static Object createIndexedContainer(Object target, String key, boolean ignoreCase)
+            throws NoSuchMethodException {
+        Method getter = IntrospectionSupport.getPropertyGetter(target.getClass(), key, ignoreCase);
+        if (getter != null) {
+            // getter exists — only create a container if the return type supports it;
+            // return null for unsupported types so the caller can throw IllegalArgumentException
+            Class<?> returnType = getter.getReturnType();
+            if (Map.class.isAssignableFrom(returnType)) {
+                return new LinkedHashMap<>();
+            } else if (Collection.class.isAssignableFrom(returnType)) {
+                return new ArrayList<>();
+            } else if (returnType.isArray()) {
+                return Array.newInstance(returnType.getComponentType(), 0);
             }
-        } catch (NoSuchMethodException e) {
-            // ignore — fall back to map
+            return null;
         }
+        // no getter — fall back to map
         return new LinkedHashMap<>();
     }
 

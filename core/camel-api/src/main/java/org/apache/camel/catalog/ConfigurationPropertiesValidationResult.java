@@ -117,8 +117,8 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
         collectSimpleTypeErrors(invalidInteger, "integer", options);
         collectSimpleTypeErrors(invalidNumber, "number", options);
         collectSimpleTypeErrors(invalidDuration, "duration", options);
-        collectSimpleTypeErrors(invalidMap, "map key/value", options);
-        collectSimpleTypeErrors(invalidArray, "array index/value", options);
+        collectMapErrors(options);
+        collectArrayErrors(options);
 
         // build a table with the error summary nicely formatted
         // lets use 24 as min length
@@ -224,6 +224,32 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
                     options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must start with #");
                 } else {
                     options.put(entry.getKey(), "Invalid reference value: " + entry.getValue());
+                }
+            }
+        }
+    }
+
+    private void collectMapErrors(Map<String, String> options) {
+        if (invalidMap != null) {
+            for (Map.Entry<String, String> entry : invalidMap.entrySet()) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty map key/value pair");
+                } else {
+                    options.put(entry.getKey(), "Invalid map key/value: " + entry.getValue());
+                }
+            }
+        }
+    }
+
+    private void collectArrayErrors(Map<String, String> options) {
+        if (invalidArray != null) {
+            for (Map.Entry<String, String> entry : invalidArray.entrySet()) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty array index/value pair");
+                } else {
+                    options.put(entry.getKey(), "Invalid array index/value: " + entry.getValue());
                 }
             }
         }

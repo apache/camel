@@ -189,6 +189,7 @@ public final class StringQuoteHelper {
         boolean doubleQuoted = false;
         boolean separating = false;
         int depth = 0;
+        // where quoted text starts and ends in the current value, so trim does not remove spaces inside quotes
         int quoteStart = -1;
         int quoteEnd = -1;
 
@@ -206,9 +207,11 @@ public final class StringQuoteHelper {
                 if (keepQuotes) {
                     sb.append(ch);
                 }
-                int[] qr = updateQuoteRange(singleQuoted, quoteStart, quoteEnd, sb.length());
-                quoteStart = qr[0];
-                quoteEnd = qr[1];
+                if (singleQuoted && quoteStart == -1) {
+                    quoteStart = sb.length();
+                } else if (!singleQuoted) {
+                    quoteEnd = sb.length();
+                }
                 continue;
             } else if (!singleQuoted && ch == '"') {
                 if (handleQuoteChar(answer, sb, ch, '"', doubleQuoted, prev, last, keepQuotes)) {
@@ -218,9 +221,11 @@ public final class StringQuoteHelper {
                 if (keepQuotes) {
                     sb.append(ch);
                 }
-                int[] qr = updateQuoteRange(doubleQuoted, quoteStart, quoteEnd, sb.length());
-                quoteStart = qr[0];
-                quoteEnd = qr[1];
+                if (doubleQuoted && quoteStart == -1) {
+                    quoteStart = sb.length();
+                } else if (!doubleQuoted) {
+                    quoteEnd = sb.length();
+                }
                 continue;
             } else if (!isQuoting && ch == separator && depth == 0) {
                 separating = true;
@@ -308,15 +313,6 @@ public final class StringQuoteHelper {
             return true;
         }
         return false;
-    }
-
-    private static int[] updateQuoteRange(boolean nowQuoted, int quoteStart, int quoteEnd, int sbLength) {
-        if (nowQuoted && quoteStart == -1) {
-            return new int[] { sbLength, quoteEnd };
-        } else if (!nowQuoted) {
-            return new int[] { quoteStart, sbLength };
-        }
-        return new int[] { quoteStart, quoteEnd };
     }
 
 }
