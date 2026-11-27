@@ -68,8 +68,10 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
  * persistence of the client, the quiesce of a disconnect, the bound of 10 messages of the queue of the callback thread,
  * the reconnect delay that Paho keeps for all clients of the JVM (each client has its own here), the order of
  * connectComplete and the messages resent at the connect (separate tasks here), the threads that Paho calls
- * connectComplete and disconnected on (tasks of the callback executor here), and a SUBACK that refuses a subscription
- * (the fake broker grants the QoS asked for, and the token reports it in getReasonCodes).
+ * connectComplete and disconnected on (tasks of the callback executor here), a callback thread per client (the clients
+ * share one callback executor here, so a new client delivers once a message of a closed client left the route; each
+ * client has its own callback state), and a SUBACK that refuses a subscription (the fake broker grants the QoS asked
+ * for, and the token reports it in getReasonCodes).
  * <p>
  * Timing (the one-stack rule of the harness): every call of the client takes a round trip and writes take effect at its
  * start; deliveries are tasks of the callback thread, one at a time, in order.

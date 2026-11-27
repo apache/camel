@@ -2,7 +2,7 @@
 :doctitle: Webhook
 :shortname: webhook
 :artifactid: camel-webhook
-:description: Expose webhook endpoints to receive push notifications for other Camel components.
+:description: Receive the push notifications of a webhook provider over HTTP for a Camel component that supports webhooks.
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:

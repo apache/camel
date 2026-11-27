@@ -2,7 +2,7 @@
 :doctitle: JMX
 :shortname: jmx
 :artifactid: camel-jmx
-:description: Receive JMX notifications.
+:description: Receive the notifications of an MBean on a local or remote MBean server, or of a JMX monitor that observes an MBean attribute.
 :since: 2.6
 :supportlevel: Stable
 :tabs-sync-option:

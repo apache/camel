@@ -28,32 +28,43 @@ public class HuggingFaceConfiguration implements Cloneable {
 
     @UriPath(name = "task")
     @Metadata(required = true,
-              description = "The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)."
-                            + " CUSTOM, or any other name, runs the predictor bean given by predictorBean.")
+              description = "The task to run, such as text-classification or chat. The name is case insensitive, and a dash"
+                            + " equals an underscore. CUSTOM, or any other name, needs the predictorBean option, whose bean"
+                            + " then runs the task.")
     private HuggingFaceTask task;
 
     @UriParam
-    @Metadata(required = true, description = "Hugging Face model ID (e.g., distilbert-base-uncased-finetuned-sst-2-english)")
+    @Metadata(required = true,
+              description = "The ID of the model on the Hugging Face Hub, for example"
+                            + " distilbert-base-uncased-finetuned-sst-2-english or Qwen/Qwen2.5-3B-Instruct. The model must"
+                            + " support the task.")
     private String modelId;
 
     @UriParam
-    @Metadata(description = "Model revision or branch (default: main)")
+    @Metadata(description = "The revision of the model on the Hugging Face Hub: a branch name, a tag name or a commit ID.")
     private String revision = "main";
 
     @UriParam
-    @Metadata(description = "Device for inference (cpu, gpu, auto)")
+    @Metadata(description = "The device to run the model on, such as auto, cpu, cuda or mps. Most tasks give it to the"
+                            + " Transformers pipeline as device_map, where auto spreads the model over the available devices."
+                            + " sentence-embeddings uses cuda for auto when it is available, else cpu, and text-to-image moves"
+                            + " the pipeline to this device.")
     private String device = "auto";
 
     @UriParam
-    @Metadata(description = "Max tokens for generation tasks")
+    @Metadata(description = "The maximum number of new tokens that the model generates, as max_new_tokens, for the"
+                            + " text-generation, summarization and chat tasks.")
     private int maxTokens = 512;
 
     @UriParam
-    @Metadata(description = "Temperature for sampling (0.0-1.0)")
+    @Metadata(description = "The sampling temperature for the text-generation, summarization and chat tasks. A higher value"
+                            + " gives more random text. A value of 0 or less turns sampling off, so the model picks the most"
+                            + " likely token each time.")
     private float temperature = 1.0f;
 
     @UriParam(label = "security", security = "secret")
-    @Metadata(description = "HF API token for private models")
+    @Metadata(description = "The Hugging Face user access token, needed to download gated or private models. When the"
+                            + " oauthProfile option is set, the token that it obtains replaces this option.")
     private String authToken;
 
     @UriParam(label = "security")
@@ -63,22 +74,29 @@ public class HuggingFaceConfiguration implements Cloneable {
     private String oauthProfile;
 
     @UriParam
-    @Metadata(description = "Min tokens for summarization tasks")
+    @Metadata(description = "The minimum length, in tokens, of the summary that the summarization task generates.")
     private int minLength = 30;
 
     @UriParam
-    @Metadata(description = "Allow multi-label classifications for zero-shot tasks")
+    @Metadata(description = "Whether the zero-shot-classification task scores each candidate label on its own, so that"
+                            + " several labels can be true. If false, the scores of all the labels add up to 1.")
     private boolean multiLabel = false;
 
     @UriParam
-    @Metadata(description = "Model loading timeout in seconds, if negative then use default (240 seconds)")
+    @Metadata(description = "The time in seconds that DJL waits for the Python process to start and load the model. With 0"
+                            + " or a negative value, DJL uses the MODEL_LOADING_TIMEOUT environment variable, or else 240"
+                            + " seconds.")
     private int modelLoadingTimeout = -1;
 
     @UriParam
-    @Metadata(description = "Predict timeout in seconds, if negative then use default (120 seconds)")
+    @Metadata(description = "The time in seconds that DJL waits for the Python process to answer one request. With 0 or a"
+                            + " negative value, DJL uses the PREDICT_TIMEOUT environment variable, or else 120 seconds.")
     private int predictTimeout = -1;
 
-    @UriParam(defaultValue = "CamelChatMemoryId", description = "Header name for conversation memory ID (for multi-user chats)")
+    @UriParam(defaultValue = "CamelChatMemoryId",
+              description = "The name of the header that holds the memory ID for the chat task. Each memory ID has its own"
+                            + " chat history, so that several users can chat at the same time. A message without this"
+                            + " header uses the memory ID default.")
     private String memoryIdHeader = "CamelChatMemoryId";
 
     @UriParam(defaultValue = "1000",
@@ -94,26 +112,35 @@ public class HuggingFaceConfiguration implements Cloneable {
                             + " values are rejected, as they would keep no reply")
     private int maxHistoryMessages = 50;
 
-    @UriParam(defaultValue = "user", description = "Role for user messages in chat history (e.g., 'user' or 'human')")
+    @UriParam(defaultValue = "user",
+              description = "The role of the message that the chat task adds to the chat history from the message body. Set"
+                            + " it to the role that the chat template of the model expects, for example human.")
     private String userRole = "user";
 
     @UriParam
-    @Metadata(description = "Initial system prompt for chat tasks (e.g., 'You are a helpful assistant named Alan.')")
+    @Metadata(description = "The system message that the chat task puts first in a new chat history, for example You are a"
+                            + " helpful assistant named Alan.")
     private String systemPrompt;
 
     @UriParam(defaultValue = "true",
-              description = "If true, auto-select the best label (highest score) for zero-shot classification")
+              description = "Whether the zero-shot-classification task returns only the label with the highest score, as a"
+                            + " String. If false, it returns a DJL Classifications with all the labels and their scores.")
     private boolean autoSelect = true;
 
     @UriParam
-    @Metadata(description = "Bean name of a custom TaskPredictor implementation (for tasks not covered by built-in predictors)")
+    @Metadata(description = "The name of a bean of type org.apache.camel.component.huggingface.tasks.TaskPredictor that"
+                            + " runs the task instead of a built-in predictor. It is required for a task that is not built in."
+                            + " The producer fails to start if the registry has no such bean.")
     private String predictorBean;
 
-    @UriParam(defaultValue = "5", description = "Top-k parameter for classification tasks")
+    @UriParam(defaultValue = "5",
+              description = "The number of labels with the highest scores that the text-classification task returns.")
     private int topK = 5;
 
     @UriParam(defaultValue = "true",
-              description = "Whether to pool the predictor (keep the Python process alive) or create a new one for each request")
+              description = "Whether all requests share one Python process, which loads the model once and runs one request"
+                            + " at a time. If false, each request starts a new Python process, which loads the model again,"
+                            + " and stops it afterwards.")
     private boolean pooling = true;
 
     public boolean isPooling() {

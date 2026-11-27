@@ -96,8 +96,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AI Tool (camel-ai-tool)
-     * Framework-agnostic consumer endpoint that registers a Camel route as an
-     * LLM tool in the shared AiToolRegistry.
+     * Expose a Camel route as a tool that a model calls through a Camel AI
+     * producer, or that MCP clients call through the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.22
@@ -480,7 +480,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances.
+     * Launch, start, stop, reboot, terminate, describe, monitor and tag
+     * instances in AWS Elastic Compute Cloud (EC2).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -534,7 +535,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances.
+     * Manage users, groups, roles, managed policies, access keys and instance
+     * profiles in AWS Identity and Access Management (IAM).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -599,7 +601,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances.
+     * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -929,7 +931,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
-     * Stores and retrieves messages to/from Azure Storage Queue.
+     * Send messages to and receive messages from the queues of Azure Queue
+     * Storage.
      * 
      * Category: cloud,messaging
      * Since: 3.3
@@ -1010,7 +1013,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Chunk (camel-chunk)
-     * Transform messages using Chunk templating engine.
+     * Transform a message into text with a Chunk template.
      * 
      * Category: transformation
      * Since: 2.15
@@ -1281,7 +1284,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
+     * Query DNS records and resolve host names to IP addresses, using the
+     * dnsjava library.
      * 
      * Category: networking
      * Since: 2.7
@@ -1497,8 +1501,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * FOP (camel-fop)
-     * Render messages into PDF and other output formats supported by Apache
-     * FOP.
+     * Render XSL-FO documents into PDF, PostScript, PNG and other output
+     * formats with Apache FOP.
      * 
      * Category: file,transformation
      * Since: 2.10
@@ -1551,8 +1555,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Geocoder (camel-geocoder)
-     * Find geocodes (latitude and longitude) for a given address or the other
-     * way round.
+     * Look up the latitude and longitude of an address, or the address of a
+     * latitude and longitude, with Google or a Nominatim server.
      * 
      * Category: api,search
      * Since: 2.12
@@ -1565,7 +1569,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Git (camel-git)
-     * Perform operations on git repositories.
+     * Run git operations, such as clone, commit, push and pull, on a local
+     * repository with JGit, and receive its commits, branches and tags.
      * 
      * Category: file
      * Since: 2.16
@@ -1986,8 +1991,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Hugging Face (camel-huggingface)
-     * Integration with Hugging Face's Model Hub by using the Deep Java Library
-     * (DJL) Python bridge
+     * Run Hugging Face models for tasks such as text classification,
+     * summarization, chat and speech recognition, in a Python process of Deep
+     * Java Library (DJL).
      * 
      * Category: ai
      * Since: 4.19
@@ -2109,8 +2115,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * IBM watsonx.data (camel-ibm-watsonx-data)
-     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
-     * engine management.
+     * Manage the catalogs, schemas, tables, engines and storage registrations
+     * of an IBM watsonx.data lakehouse.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -2361,7 +2367,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
+     * Create, update and query issues in Atlassian Jira, and poll Jira for new
+     * issues, new comments and changed fields.
      * 
      * Category: document
      * Since: 3.0
@@ -2387,7 +2394,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * JMX (camel-jmx)
-     * Receive JMX notifications.
+     * Receive the notifications of an MBean on a local or remote MBean server,
+     * or of a JMX monitor that observes an MBean attribute.
      * 
      * Category: monitoring
      * Since: 2.6

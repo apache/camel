@@ -21,10 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.ibm.watsonx.ai.foundationmodel.FoundationModel;
+import com.ibm.watsonx.ai.foundationmodel.FoundationModelParameters;
 import com.ibm.watsonx.ai.foundationmodel.FoundationModelResponse;
 import com.ibm.watsonx.ai.foundationmodel.FoundationModelService;
 import com.ibm.watsonx.ai.foundationmodel.FoundationModelTask;
+import com.ibm.watsonx.ai.foundationmodel.filter.Filter;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations;
@@ -59,9 +62,26 @@ public class FoundationModelHandler extends AbstractWatsonxAiHandler {
     }
 
     private WatsonxAiOperationResponse processListModels(Exchange exchange) {
+        Message in = exchange.getIn();
+        FoundationModelParameters.Builder parameters = FoundationModelParameters.builder();
+        Object filter = in.getHeader(WatsonxAiConstants.FOUNDATION_MODEL_FILTER);
+        if (filter instanceof Filter f) {
+            parameters.filter(f);
+        } else if (filter != null) {
+            String expression = in.getHeader(WatsonxAiConstants.FOUNDATION_MODEL_FILTER, String.class).trim();
+            if (!expression.isEmpty()) {
+                // the filters parameter of watsonx.ai, as the SDK writes it from its expressions
+                parameters.filter(Filter.of(() -> expression));
+            }
+        }
+        Boolean techPreview = in.getHeader(WatsonxAiConstants.FOUNDATION_MODEL_TECH_PREVIEW, Boolean.class);
+        if (techPreview != null) {
+            parameters.techPreview(techPreview);
+        }
+
         // Call the service
         FoundationModelService service = endpoint.getFoundationModelService();
-        FoundationModelResponse<FoundationModel> response = service.getModels();
+        FoundationModelResponse<FoundationModel> response = service.getModels(parameters.build());
 
         List<FoundationModel> models = response.resources();
 

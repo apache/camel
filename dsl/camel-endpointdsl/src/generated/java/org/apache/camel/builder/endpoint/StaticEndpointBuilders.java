@@ -284,8 +284,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AI Tool (camel-ai-tool)
-     * Framework-agnostic consumer endpoint that registers a Camel route as an
-     * LLM tool in the shared AiToolRegistry.
+     * Expose a Camel route as a tool that a model calls through a Camel AI
+     * producer, or that MCP clients call through the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.22
@@ -294,7 +294,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ai-tool:toolName</code>
      * 
      * Path parameter: toolName (required)
-     * The tool name. This is the name the LLM sees and uses to invoke the tool.
+     * The name of the tool, which the model sees and uses to call it, and which
+     * MCP clients see in tools/list. It must not contain a slash. A route whose
+     * tool name is already registered under one of its tags, or in the pool of
+     * tools without tags, fails to start.
      * 
      * @param path toolName
      * @return the dsl builder
@@ -304,8 +307,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AI Tool (camel-ai-tool)
-     * Framework-agnostic consumer endpoint that registers a Camel route as an
-     * LLM tool in the shared AiToolRegistry.
+     * Expose a Camel route as a tool that a model calls through a Camel AI
+     * producer, or that MCP clients call through the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.22
@@ -314,7 +317,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ai-tool:toolName</code>
      * 
      * Path parameter: toolName (required)
-     * The tool name. This is the name the LLM sees and uses to invoke the tool.
+     * The name of the tool, which the model sees and uses to call it, and which
+     * MCP clients see in tools/list. It must not contain a slash. A route whose
+     * tool name is already registered under one of its tags, or in the pool of
+     * tools without tags, fails to start.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -1614,7 +1620,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances.
+     * Launch, start, stop, reboot, terminate, describe, monitor and tag
+     * instances in AWS Elastic Compute Cloud (EC2).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1623,7 +1630,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-ec2:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name for the endpoint, of your choice. The component does not
+     * use it.
      * 
      * @param path label
      * @return the dsl builder
@@ -1633,7 +1641,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances.
+     * Launch, start, stop, reboot, terminate, describe, monitor and tag
+     * instances in AWS Elastic Compute Cloud (EC2).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1642,7 +1651,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-ec2:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name for the endpoint, of your choice. The component does not
+     * use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -1780,7 +1790,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances.
+     * Manage users, groups, roles, managed policies, access keys and instance
+     * profiles in AWS Identity and Access Management (IAM).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1789,7 +1800,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-iam:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to IAM.
      * 
      * @param path label
      * @return the dsl builder
@@ -1799,7 +1811,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances.
+     * Manage users, groups, roles, managed policies, access keys and instance
+     * profiles in AWS Identity and Access Management (IAM).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1808,7 +1821,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-iam:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to IAM.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -1980,7 +1994,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances.
+     * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1989,7 +2003,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-mq:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to Amazon MQ.
      * 
      * @param path label
      * @return the dsl builder
@@ -1999,7 +2014,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances.
+     * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -2008,7 +2023,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-mq:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to Amazon MQ.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -3114,7 +3130,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
-     * Stores and retrieves messages to/from Azure Storage Queue.
+     * Send messages to and receive messages from the queues of Azure Queue
+     * Storage.
      * 
      * Category: cloud,messaging
      * Since: 3.3
@@ -3123,11 +3140,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-storage-queue:accountName/queueName</code>
      * 
      * Path parameter: accountName
-     * Azure account name to be used for authentication with azure queue
-     * services
+     * The name of the Azure Storage account, which gives the address
+     * https://accountName.queue.core.windows.net of its queue service. If the
+     * credentials option is set, the account name of those credentials gives
+     * the address instead. Not used when serviceClient is set.
      * 
      * Path parameter: queueName
-     * The queue resource name
+     * The name of the queue. Required for the consumer and for each producer
+     * operation except listQueues. The CamelAzureStorageQueueName header
+     * replaces this option for the producer.
      * 
      * @param path accountName/queueName
      * @return the dsl builder
@@ -3137,7 +3158,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
-     * Stores and retrieves messages to/from Azure Storage Queue.
+     * Send messages to and receive messages from the queues of Azure Queue
+     * Storage.
      * 
      * Category: cloud,messaging
      * Since: 3.3
@@ -3146,11 +3168,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-storage-queue:accountName/queueName</code>
      * 
      * Path parameter: accountName
-     * Azure account name to be used for authentication with azure queue
-     * services
+     * The name of the Azure Storage account, which gives the address
+     * https://accountName.queue.core.windows.net of its queue service. If the
+     * credentials option is set, the account name of those credentials gives
+     * the address instead. Not used when serviceClient is set.
      * 
      * Path parameter: queueName
-     * The queue resource name
+     * The name of the queue. Required for the consumer and for each producer
+     * operation except listQueues. The CamelAzureStorageQueueName header
+     * replaces this option for the producer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -3162,7 +3188,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Bean (camel-bean)
-     * Invoke methods of Java beans stored in Camel registry.
+     * Invoke a method of a Java bean, looked up by name in the Camel registry
+     * or created from a class name.
      * 
      * Category: core,script
      * Since: 1.0
@@ -3171,7 +3198,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>bean:beanName</code>
      * 
      * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
+     * The name of the bean to invoke. The bean component looks it up in the
+     * Camel registry and, when no bean has that name, takes it as a class name
+     * and creates an instance. The class component takes it as the fully
+     * qualified class name.
      * 
      * @param path beanName
      * @return the dsl builder
@@ -3181,7 +3211,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Bean (camel-bean)
-     * Invoke methods of Java beans stored in Camel registry.
+     * Invoke a method of a Java bean, looked up by name in the Camel registry
+     * or created from a class name.
      * 
      * Category: core,script
      * Since: 1.0
@@ -3190,7 +3221,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>bean:beanName</code>
      * 
      * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
+     * The name of the bean to invoke. The bean component looks it up in the
+     * Camel registry and, when no bean has that name, takes it as a class name
+     * and creates an instance. The class component takes it as the fully
+     * qualified class name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -3678,7 +3712,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Chunk (camel-chunk)
-     * Transform messages using Chunk templating engine.
+     * Transform a message into text with a Chunk template.
      * 
      * Category: transformation
      * Since: 2.15
@@ -3703,7 +3737,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Chunk (camel-chunk)
-     * Transform messages using Chunk templating engine.
+     * Transform a message into text with a Chunk template.
      * 
      * Category: transformation
      * Since: 2.15
@@ -3784,7 +3818,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Class (camel-bean)
-     * Invoke methods of Java beans specified by class name.
+     * Invoke a method of a Java bean given by its fully qualified class name.
      * 
      * Category: core,script
      * Since: 2.4
@@ -3793,7 +3827,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>class:beanName</code>
      * 
      * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
+     * The name of the bean to invoke. The bean component looks it up in the
+     * Camel registry and, when no bean has that name, takes it as a class name
+     * and creates an instance. The class component takes it as the fully
+     * qualified class name.
      * 
      * @param path beanName
      * @return the dsl builder
@@ -3803,7 +3840,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Class (camel-bean)
-     * Invoke methods of Java beans specified by class name.
+     * Invoke a method of a Java bean given by its fully qualified class name.
      * 
      * Category: core,script
      * Since: 2.4
@@ -3812,7 +3849,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>class:beanName</code>
      * 
      * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
+     * The name of the bean to invoke. The bean component looks it up in the
+     * Camel registry and, when no bean has that name, takes it as a class name
+     * and creates an instance. The class component takes it as the fully
+     * qualified class name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5393,7 +5433,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
+     * Query DNS records and resolve host names to IP addresses, using the
+     * dnsjava library.
      * 
      * Category: networking
      * Since: 2.7
@@ -5402,7 +5443,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup. The wikipedia type is deprecated, as the
+     * The operation to run: ip resolves the host name in the CamelDnsDomain
+     * header to an IP address with the resolver of the JVM; lookup runs a
+     * dnsjava lookup of the CamelDnsName header and returns the records of the
+     * answer; dig sends one query for the CamelDnsName header to a DNS server
+     * and returns the whole response. The wikipedia type is deprecated, as the
      * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
@@ -5414,7 +5459,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
+     * Query DNS records and resolve host names to IP addresses, using the
+     * dnsjava library.
      * 
      * Category: networking
      * Since: 2.7
@@ -5423,7 +5469,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup. The wikipedia type is deprecated, as the
+     * The operation to run: ip resolves the host name in the CamelDnsDomain
+     * header to an IP address with the resolver of the JVM; lookup runs a
+     * dnsjava lookup of the CamelDnsName header and returns the records of the
+     * answer; dig sends one query for the CamelDnsName header to a DNS server
+     * and returns the whole response. The wikipedia type is deprecated, as the
      * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
@@ -6261,8 +6311,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * FOP (camel-fop)
-     * Render messages into PDF and other output formats supported by Apache
-     * FOP.
+     * Render XSL-FO documents into PDF, PostScript, PNG and other output
+     * formats with Apache FOP.
      * 
      * Category: file,transformation
      * Since: 2.10
@@ -6271,8 +6321,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>fop:outputType</code>
      * 
      * Path parameter: outputType (required)
-     * The primary output format is PDF but other output formats are also
-     * supported.
+     * The output format to render to. The endpoint URI takes the lower-case
+     * name, such as pdf or png, or the MIME type, such as application/pdf. The
+     * CamelFop.Output.Format header overrides it for a single message.
      * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
      * svg, xml, mif, rtf, txt
      * 
@@ -6284,8 +6335,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * FOP (camel-fop)
-     * Render messages into PDF and other output formats supported by Apache
-     * FOP.
+     * Render XSL-FO documents into PDF, PostScript, PNG and other output
+     * formats with Apache FOP.
      * 
      * Category: file,transformation
      * Since: 2.10
@@ -6294,8 +6345,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>fop:outputType</code>
      * 
      * Path parameter: outputType (required)
-     * The primary output format is PDF but other output formats are also
-     * supported.
+     * The output format to render to. The endpoint URI takes the lower-case
+     * name, such as pdf or png, or the MIME type, such as application/pdf. The
+     * CamelFop.Output.Format header overrides it for a single message.
      * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
      * svg, xml, mif, rtf, txt
      * 
@@ -6467,8 +6519,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Geocoder (camel-geocoder)
-     * Find geocodes (latitude and longitude) for a given address or the other
-     * way round.
+     * Look up the latitude and longitude of an address, or the address of a
+     * latitude and longitude, with Google or a Nominatim server.
      * 
      * Category: api,search
      * Since: 2.12
@@ -6477,10 +6529,17 @@ public class StaticEndpointBuilders {
      * Syntax: <code>geocoder:address:latlng</code>
      * 
      * Path parameter: address
-     * The geo address which should be prefixed with address:
+     * The address to look up the latitude and longitude of, such as Paris,
+     * France, written after address: in the URI. With Google, the address
+     * current looks up the location of the IP address that the request comes
+     * from. The CamelGeoCoderAddress header replaces this option.
      * 
      * Path parameter: latlng
-     * The geo latitude and longitude which should be prefixed with latlng:
+     * The latitude and longitude to look up the address of, written after
+     * latlng: in the URI as two decimal numbers separated by a comma, such as
+     * 48.8566,2.3522. The CamelGeoCoderLatlng header replaces this option. A
+     * latitude and longitude, from this option or the header, takes precedence
+     * over an address.
      * 
      * @param path address:latlng
      * @return the dsl builder
@@ -6490,8 +6549,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Geocoder (camel-geocoder)
-     * Find geocodes (latitude and longitude) for a given address or the other
-     * way round.
+     * Look up the latitude and longitude of an address, or the address of a
+     * latitude and longitude, with Google or a Nominatim server.
      * 
      * Category: api,search
      * Since: 2.12
@@ -6500,10 +6559,17 @@ public class StaticEndpointBuilders {
      * Syntax: <code>geocoder:address:latlng</code>
      * 
      * Path parameter: address
-     * The geo address which should be prefixed with address:
+     * The address to look up the latitude and longitude of, such as Paris,
+     * France, written after address: in the URI. With Google, the address
+     * current looks up the location of the IP address that the request comes
+     * from. The CamelGeoCoderAddress header replaces this option.
      * 
      * Path parameter: latlng
-     * The geo latitude and longitude which should be prefixed with latlng:
+     * The latitude and longitude to look up the address of, written after
+     * latlng: in the URI as two decimal numbers separated by a comma, such as
+     * 48.8566,2.3522. The CamelGeoCoderLatlng header replaces this option. A
+     * latitude and longitude, from this option or the header, takes precedence
+     * over an address.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6515,7 +6581,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Git (camel-git)
-     * Perform operations on git repositories.
+     * Run git operations, such as clone, commit, push and pull, on a local
+     * repository with JGit, and receive its commits, branches and tags.
      * 
      * Category: file
      * Since: 2.16
@@ -6524,7 +6591,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>git:localPath</code>
      * 
      * Path parameter: localPath (required)
-     * Local repository path
+     * The path of the working tree of the local repository, the directory that
+     * holds the .git directory. The clone operation creates the repository
+     * there and fails if the directory exists, and init creates it there.
      * 
      * @param path localPath
      * @return the dsl builder
@@ -6534,7 +6603,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Git (camel-git)
-     * Perform operations on git repositories.
+     * Run git operations, such as clone, commit, push and pull, on a local
+     * repository with JGit, and receive its commits, branches and tags.
      * 
      * Category: file
      * Since: 2.16
@@ -6543,7 +6613,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>git:localPath</code>
      * 
      * Path parameter: localPath (required)
-     * Local repository path
+     * The path of the working tree of the local repository, the directory that
+     * holds the .git directory. The clone operation creates the repository
+     * there and fails if the directory exists, and init creates it there.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8166,8 +8238,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hugging Face (camel-huggingface)
-     * Integration with Hugging Face's Model Hub by using the Deep Java Library
-     * (DJL) Python bridge
+     * Run Hugging Face models for tasks such as text classification,
+     * summarization, chat and speech recognition, in a Python process of Deep
+     * Java Library (DJL).
      * 
      * Category: ai
      * Since: 4.19
@@ -8176,8 +8249,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>huggingface:task</code>
      * 
      * Path parameter: task (required)
-     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION). CUSTOM, or
-     * any other name, runs the predictor bean given by predictorBean.
+     * The task to run, such as text-classification or chat. The name is case
+     * insensitive, and a dash equals an underscore. CUSTOM, or any other name,
+     * needs the predictorBean option, whose bean then runs the task.
      * There are 11 enums and the value can be one of: TEXT_CLASSIFICATION,
      * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
      * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
@@ -8191,8 +8265,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hugging Face (camel-huggingface)
-     * Integration with Hugging Face's Model Hub by using the Deep Java Library
-     * (DJL) Python bridge
+     * Run Hugging Face models for tasks such as text classification,
+     * summarization, chat and speech recognition, in a Python process of Deep
+     * Java Library (DJL).
      * 
      * Category: ai
      * Since: 4.19
@@ -8201,8 +8276,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>huggingface:task</code>
      * 
      * Path parameter: task (required)
-     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION). CUSTOM, or
-     * any other name, runs the predictor bean given by predictorBean.
+     * The task to run, such as text-classification or chat. The name is case
+     * insensitive, and a dash equals an underscore. CUSTOM, or any other name,
+     * needs the predictorBean option, whose bean then runs the task.
      * There are 11 enums and the value can be one of: TEXT_CLASSIFICATION,
      * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
      * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
@@ -8810,8 +8886,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM watsonx.data (camel-ibm-watsonx-data)
-     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
-     * engine management.
+     * Manage the catalogs, schemas, tables, engines and storage registrations
+     * of an IBM watsonx.data lakehouse.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -8820,7 +8896,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watsonx-data:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name for the endpoint
+     * A logical name of your choice for the endpoint. It is not sent to
+     * watsonx.data.
      * 
      * @param path label
      * @return the dsl builder
@@ -8830,8 +8907,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM watsonx.data (camel-ibm-watsonx-data)
-     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
-     * engine management.
+     * Manage the catalogs, schemas, tables, engines and storage registrations
+     * of an IBM watsonx.data lakehouse.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -8840,7 +8917,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watsonx-data:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name for the endpoint
+     * A logical name of your choice for the endpoint. It is not sent to
+     * watsonx.data.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9678,7 +9756,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
+     * Create, update and query issues in Atlassian Jira, and poll Jira for new
+     * issues, new comments and changed fields.
      * 
      * Category: document
      * Since: 3.0
@@ -9687,9 +9766,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jira:type</code>
      * 
      * Path parameter: type (required)
-     * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-     * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-     * Watchers. See this class javadoc description for more information.
+     * The operation of the endpoint, case-insensitive. The consumer types are
+     * newIssues, newComments and watchUpdates. The producer types are addIssue,
+     * addComment, addIssueLink, addWorkLog, attach, deleteIssue, fetchComments,
+     * fetchIssue, transitionIssue, updateIssue and watchers.
      * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
      * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
      * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
@@ -9703,7 +9783,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
+     * Create, update and query issues in Atlassian Jira, and poll Jira for new
+     * issues, new comments and changed fields.
      * 
      * Category: document
      * Since: 3.0
@@ -9712,9 +9793,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jira:type</code>
      * 
      * Path parameter: type (required)
-     * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-     * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-     * Watchers. See this class javadoc description for more information.
+     * The operation of the endpoint, case-insensitive. The consumer types are
+     * newIssues, newComments and watchUpdates. The producer types are addIssue,
+     * addComment, addIssueLink, addWorkLog, attach, deleteIssue, fetchComments,
+     * fetchIssue, transitionIssue, updateIssue and watchers.
      * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
      * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
      * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
@@ -9782,7 +9864,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JMX (camel-jmx)
-     * Receive JMX notifications.
+     * Receive the notifications of an MBean on a local or remote MBean server,
+     * or of a JMX monitor that observes an MBean attribute.
      * 
      * Category: monitoring
      * Since: 2.6
@@ -9791,8 +9874,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jmx:serverURL</code>
      * 
      * Path parameter: serverURL
-     * Server url comes from the remaining endpoint. Use platform to connect to
-     * local JVM.
+     * The MBean server to connect to: platform for the platform MBean server of
+     * the JVM that runs Camel, or the JMX service URL of a remote MBean server,
+     * for example service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi. The
+     * monitorType option works only with platform.
      * 
      * @param path serverURL
      * @return the dsl builder
@@ -9802,7 +9887,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JMX (camel-jmx)
-     * Receive JMX notifications.
+     * Receive the notifications of an MBean on a local or remote MBean server,
+     * or of a JMX monitor that observes an MBean attribute.
      * 
      * Category: monitoring
      * Since: 2.6
@@ -9811,8 +9897,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jmx:serverURL</code>
      * 
      * Path parameter: serverURL
-     * Server url comes from the remaining endpoint. Use platform to connect to
-     * local JVM.
+     * The MBean server to connect to: platform for the platform MBean server of
+     * the JVM that runs Camel, or the JMX service URL of a remote MBean server,
+     * for example service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi. The
+     * monitorType option works only with platform.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -10020,7 +10108,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JSON Schema Validator (camel-json-validator)
-     * Validate JSON payloads using NetworkNT JSON Schema.
+     * Validate the JSON in the message body or in a header against a JSON
+     * Schema, with the NetworkNT JSON Schema Validator.
      * 
      * Category: validation
      * Since: 2.20
@@ -10045,7 +10134,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JSON Schema Validator (camel-json-validator)
-     * Validate JSON payloads using NetworkNT JSON Schema.
+     * Validate the JSON in the message body or in a header against a JSON
+     * Schema, with the NetworkNT JSON Schema Validator.
      * 
      * Category: validation
      * Since: 2.20
@@ -11882,8 +11972,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Log Data (camel-log)
-     * Prints data from the routed message (such as body and headers) to the
-     * logger.
+     * Log the exchanges that pass through a route, or their throughput, with an
+     * SLF4J logger.
      * 
      * Category: core,monitoring
      * Since: 1.1
@@ -11892,7 +11982,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>log:loggerName</code>
      * 
      * Path parameter: loggerName (required)
-     * Name of the logging category to use
+     * The name of the SLF4J logger, also called the logging category. It is not
+     * used when an org.slf4j.Logger is given, by the logger URI parameter or as
+     * the only Logger bean in the registry, or when sourceLocationLoggerName
+     * resolves a name.
      * 
      * @param path loggerName
      * @return the dsl builder
@@ -11902,8 +11995,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Log Data (camel-log)
-     * Prints data from the routed message (such as body and headers) to the
-     * logger.
+     * Log the exchanges that pass through a route, or their throughput, with an
+     * SLF4J logger.
      * 
      * Category: core,monitoring
      * Since: 1.1
@@ -11912,7 +12005,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>log:loggerName</code>
      * 
      * Path parameter: loggerName (required)
-     * Name of the logging category to use
+     * The name of the SLF4J logger, also called the logging category. It is not
+     * used when an org.slf4j.Logger is given, by the logger URI parameter or as
+     * the only Logger bean in the registry, or when sourceLocationLoggerName
+     * resolves a name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13400,8 +13496,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Once (camel-once)
-     * Trigger a single message only once at startup (useful for development and
-     * testing purposes).
+     * Send a single message to the route once, after the route starts, which is
+     * useful for development and testing.
      * 
      * Category: core,scheduling
      * Since: 4.17
@@ -13410,7 +13506,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>once:name</code>
      * 
      * Path parameter: name (required)
-     * The logical name
+     * A name of your choice for the endpoint. The consumer also uses it in the
+     * name of the thread that sends the message.
      * 
      * @param path name
      * @return the dsl builder
@@ -13420,8 +13517,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Once (camel-once)
-     * Trigger a single message only once at startup (useful for development and
-     * testing purposes).
+     * Send a single message to the route once, after the route starts, which is
+     * useful for development and testing.
      * 
      * Category: core,scheduling
      * Since: 4.17
@@ -13430,7 +13527,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>once:name</code>
      * 
      * Path parameter: name (required)
-     * The logical name
+     * A name of your choice for the endpoint. The consumer also uses it in the
+     * name of the thread that sends the message.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15059,16 +15157,22 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rest:method:path:uriTemplate</code>
      * 
      * Path parameter: method (required)
-     * HTTP method to use.
+     * The HTTP method of the REST service. The consumer answers requests with
+     * this method, and the producer sends the request with it.
      * There are 9 enums and the value can be one of: get, post, put, delete,
      * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
-     * The base path, can use &#42; as path suffix to support wildcard HTTP
-     * route matching.
+     * The base path of the REST service, such as users. Without uriTemplate, it
+     * is the whole path, and it can hold {name} path parameters as in
+     * uriTemplate. A consumer can end it with * to match all the paths that
+     * start with it.
      * 
      * Path parameter: uriTemplate
-     * The uri template
+     * The path below the base path, such as {id}, which can hold {name} path
+     * parameters. The consumer sets each path parameter of a request as a
+     * header. The producer fills each {name} with the header of that name, or
+     * else the exchange variable of that name.
      * 
      * @param path method:path:uriTemplate
      * @return the dsl builder
@@ -15087,16 +15191,22 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rest:method:path:uriTemplate</code>
      * 
      * Path parameter: method (required)
-     * HTTP method to use.
+     * The HTTP method of the REST service. The consumer answers requests with
+     * this method, and the producer sends the request with it.
      * There are 9 enums and the value can be one of: get, post, put, delete,
      * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
-     * The base path, can use &#42; as path suffix to support wildcard HTTP
-     * route matching.
+     * The base path of the REST service, such as users. Without uriTemplate, it
+     * is the whole path, and it can hold {name} path parameters as in
+     * uriTemplate. A consumer can end it with * to match all the paths that
+     * start with it.
      * 
      * Path parameter: uriTemplate
-     * The uri template
+     * The path below the base path, such as {id}, which can hold {name} path
+     * parameters. The consumer sets each path parameter of a request as a
+     * header. The producer fills each {name} with the header of that name, or
+     * else the exchange variable of that name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15108,8 +15218,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST API (camel-rest)
-     * Expose OpenAPI Specification of the REST services defined using Camel
-     * REST DSL.
+     * Expose the OpenAPI document of the REST services that are defined with
+     * the Rest DSL.
      * 
      * Category: core,rest
      * Since: 2.16
@@ -15118,7 +15228,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rest-api:path</code>
      * 
      * Path parameter: path (required)
-     * The base path
+     * The path that serves the API document, such as api-doc. The Rest DSL sets
+     * it from the apiContextPath of the rest configuration. The document is
+     * JSON, or YAML when the path ends with .yaml or the Accept header asks for
+     * YAML.
      * 
      * @param path path
      * @return the dsl builder
@@ -15128,8 +15241,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST API (camel-rest)
-     * Expose OpenAPI Specification of the REST services defined using Camel
-     * REST DSL.
+     * Expose the OpenAPI document of the REST services that are defined with
+     * the Rest DSL.
      * 
      * Category: core,rest
      * Since: 2.16
@@ -15138,7 +15251,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rest-api:path</code>
      * 
      * Path parameter: path (required)
-     * The base path
+     * The path that serves the API document, such as api-doc. The Rest DSL sets
+     * it from the apiContextPath of the rest configuration. The document is
+     * JSON, or YAML when the path ends with .yaml or the Accept header asks for
+     * YAML.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -18653,8 +18769,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Webhook (camel-webhook)
-     * Expose webhook endpoints to receive push notifications for other Camel
-     * components.
+     * Receive the push notifications of a webhook provider over HTTP for a
+     * Camel component that supports webhooks.
      * 
      * Category: cloud
      * Since: 3.0
@@ -18663,7 +18779,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>webhook:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The delegate uri. Must belong to a component that supports webhooks.
+     * The URI of the delegate endpoint, of a component that supports webhooks,
+     * for example telegram:bots, clickup:workspaceId or whatsapp:phoneNumberId.
+     * The query parameters of the webhook endpoint that are not webhook options
+     * are passed on to the delegate endpoint.
      * 
      * @param path endpointUri
      * @return the dsl builder
@@ -18673,8 +18792,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Webhook (camel-webhook)
-     * Expose webhook endpoints to receive push notifications for other Camel
-     * components.
+     * Receive the push notifications of a webhook provider over HTTP for a
+     * Camel component that supports webhooks.
      * 
      * Category: cloud
      * Since: 3.0
@@ -18683,7 +18802,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>webhook:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The delegate uri. Must belong to a component that supports webhooks.
+     * The URI of the delegate endpoint, of a component that supports webhooks,
+     * for example telegram:bots, clickup:workspaceId or whatsapp:phoneNumberId.
+     * The query parameters of the webhook endpoint that are not webhook options
+     * are passed on to the delegate endpoint.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -29,7 +29,8 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "ai")
 public class HuggingFaceComponent extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of this component start from. Each endpoint uses a copy,"
+                            + " in which its own options replace the values.")
     private HuggingFaceConfiguration configuration = new HuggingFaceConfiguration();
 
     @Override
@@ -59,9 +60,6 @@ public class HuggingFaceComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * The configuration.
-     */
     public void setConfiguration(HuggingFaceConfiguration configuration) {
         this.configuration = configuration;
     }

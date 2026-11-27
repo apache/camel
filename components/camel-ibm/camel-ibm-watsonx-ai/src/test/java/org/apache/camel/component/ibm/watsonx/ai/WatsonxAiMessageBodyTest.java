@@ -34,8 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.watsonx.ai.chat.ChatService;
 import com.ibm.watsonx.ai.chat.model.SystemMessage;
 import com.ibm.watsonx.ai.chat.model.UserMessage;
@@ -53,6 +51,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -212,8 +212,8 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         assertEquals("Paris", result.getMessage().getBody());
         JsonNode messages = request("/ml/v1/text/chat").get("messages");
         assertEquals(2, messages.size());
-        assertEquals("system", messages.get(0).get("role").asText());
-        assertEquals("Answer in one word", messages.get(0).get("content").asText());
+        assertEquals("system", messages.get(0).get("role").asString());
+        assertEquals("Answer in one word", messages.get(0).get("content").asString());
         assertUserMessage("What is the capital of France?", messages.get(1));
     }
 
@@ -225,7 +225,7 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         assertEquals("Paris", result.getMessage().getBody());
         JsonNode messages = request("/ml/v1/text/chat").get("messages");
         assertEquals(2, messages.size());
-        assertEquals("system", messages.get(0).get("role").asText());
+        assertEquals("system", messages.get(0).get("role").asString());
         assertUserMessage("What is the capital of France?", messages.get(1));
     }
 
@@ -320,7 +320,7 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         assertNoException(result);
         JsonNode messages = request("/ml/v1/text/chat").get("messages");
         assertEquals(2, messages.size());
-        assertEquals("Answer in one word", messages.get(0).get("content").asText());
+        assertEquals("Answer in one word", messages.get(0).get("content").asString());
         assertUserMessage("What is the capital of France?", messages.get(1));
     }
 
@@ -532,9 +532,9 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
 
         assertNoException(result);
         JsonNode request = request("/ml/v1/text/rerank");
-        assertEquals("What is Apache Camel?", request.get("query").asText());
+        assertEquals("What is Apache Camel?", request.get("query").asString());
         assertEquals(1, request.get("inputs").size());
-        assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asText());
+        assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asString());
     }
 
     @Test
@@ -545,7 +545,7 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
         assertNoException(result);
         JsonNode request = request("/ml/v1/text/rerank");
         assertEquals(1, request.get("inputs").size());
-        assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asText());
+        assertEquals("Apache Camel is an integration framework", request.get("inputs").get(0).get("text").asString());
     }
 
     // a Map or a POJO body, which Camel reads only as its toString()
@@ -679,13 +679,13 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
     }
 
     private static void assertUserMessage(String expected, JsonNode message) {
-        assertEquals("user", message.get("role").asText(), message.toString());
-        assertEquals(expected, message.get("content").get(0).get("text").asText(), message.toString());
+        assertEquals("user", message.get("role").asString(), message.toString());
+        assertEquals(expected, message.get("content").get(0).get("text").asString(), message.toString());
     }
 
     private static void assertInputs(JsonNode inputs, String... expected) {
         List<String> actual = new ArrayList<>();
-        inputs.forEach(input -> actual.add(input.asText()));
+        inputs.forEach(input -> actual.add(input.asString()));
         assertEquals(List.of(expected), actual);
     }
 
