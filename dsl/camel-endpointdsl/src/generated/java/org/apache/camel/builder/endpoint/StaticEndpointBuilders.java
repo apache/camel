@@ -1348,7 +1348,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Security Hub (camel-aws-security-hub)
-     * Manage and interact with AWS Security Hub for security findings.
+     * Import, query and update security findings in AWS Security Hub.
      * 
      * Category: cloud,security
      * Since: 4.18
@@ -1357,7 +1357,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws-security-hub:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to Security Hub.
      * 
      * @param path label
      * @return the dsl builder
@@ -1367,7 +1368,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Security Hub (camel-aws-security-hub)
-     * Manage and interact with AWS Security Hub for security findings.
+     * Import, query and update security findings in AWS Security Hub.
      * 
      * Category: cloud,security
      * Since: 4.18
@@ -1376,7 +1377,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws-security-hub:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to Security Hub.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
