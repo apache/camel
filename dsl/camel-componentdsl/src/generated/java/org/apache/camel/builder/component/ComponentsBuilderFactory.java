@@ -1363,8 +1363,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Cron (camel-cron)
-     * A generic interface for triggering events at times specified through the
-     * Unix cron syntax.
+     * Trigger events at the times of a cron expression, using a cron
+     * implementation such as camel-quartz or camel-spring.
      * 
      * Category: scheduling
      * Since: 3.1

@@ -26,11 +26,16 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class CamelCronConfiguration {
 
-    @UriPath
+    @UriPath(description = "The name of the trigger, which the cron implementation uses to identify its job. With camel-quartz"
+                           + " it is the name of the Quartz trigger, which must be unique, and a value of the form group/name"
+                           + " also sets the trigger group.")
     @Metadata(required = true)
     private String name;
 
-    @UriParam
+    @UriParam(description = "The cron expression of when to trigger, with five to seven parts separated by spaces: seconds"
+                            + " (optional), minutes, hours, day of month, month, day of week, and year (optional). A"
+                            + " five-part expression has no seconds and follows the Unix cron syntax. A + in the value is"
+                            + " read as a space.")
     @Metadata(required = true)
     private String schedule;
 
@@ -38,9 +43,6 @@ public class CamelCronConfiguration {
         return name;
     }
 
-    /**
-     * The name of the cron trigger
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -49,9 +51,6 @@ public class CamelCronConfiguration {
         return schedule;
     }
 
-    /**
-     * A cron expression that will be used to generate events
-     */
     public void setSchedule(String schedule) {
         this.schedule = schedule;
     }

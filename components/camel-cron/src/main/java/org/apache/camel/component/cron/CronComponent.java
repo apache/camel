@@ -34,7 +34,10 @@ import org.apache.camel.util.ObjectHelper;
 @Component("cron")
 public class CronComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The name of the CamelCronService bean in the registry to use, when more than one is bound. If"
+                            + " not set, the only CamelCronService in the registry is used. If the registry has none, the one"
+                            + " that a module on the classpath provides is used, such as camel-quartz or camel-spring.")
     private String cronService;
 
     private CamelCronService service;
@@ -109,9 +112,6 @@ public class CronComponent extends DefaultComponent {
         return cronService;
     }
 
-    /**
-     * The id of the CamelCronService to use when multiple implementations are provided
-     */
     public void setCronService(String cronService) {
         this.cronService = cronService;
     }
