@@ -235,17 +235,31 @@ public class SmppConsumer extends DefaultConsumer {
     /**
      * Sets the session that the start bound, unless the SMSC dropped it already: its loss asked for no reconnect, as it
      * was not in use yet, so the start fails as for a failed bind.
+     * <p/>
+     * A reconnect attempt can have set its own session while the start was binding, in the generation of the start: a
+     * stop and a start that run between the reconnect request and the generation that the attempt reads give this. The
+     * start keeps its session and closes the one of the attempt, which no stop would close otherwise; when the start
+     * sets its session first, the attempt keeps it too.
      */
     private void setNewSession(SMPPSession newSession) throws IOException {
+        boolean lost;
+        SMPPSession replaced = null;
         synchronized (sessionLock) {
-            if (!isSessionLost(newSession)) {
+            lost = isSessionLost(newSession);
+            if (!lost) {
+                replaced = session;
                 session = newSession;
-                return;
             }
         }
-        newSession.removeSessionStateListener(this.internalSessionStateListener);
-        newSession.unbindAndClose();
-        throw new IOException("Lost the connection to " + getEndpoint().getConnectionString() + " right after the bind");
+        SMPPSession toClose = lost ? newSession : replaced;
+        if (toClose != null) {
+            toClose.removeSessionStateListener(this.internalSessionStateListener);
+            toClose.unbindAndClose();
+        }
+        if (lost) {
+            throw new IOException(
+                    "Lost the connection to " + getEndpoint().getConnectionString() + " right after the bind");
+        }
     }
 
     private boolean doReconnect(int startGeneration) {

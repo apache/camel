@@ -313,6 +313,52 @@ class SmppReconnectRaceTest extends CamelTestSupport {
         }
     }
 
+    /**
+     * The reverse order: a start has bound session 2, and a reconnect attempt sets its session 3 before the start sets
+     * session 2, in the same generation. The hook runs on the start thread: it drops session 1, whose reconnect attempt
+     * finds the field empty and sets session 3. The start keeps session 2 and closes session 3, which would otherwise
+     * stay bound as a second receiver that no stop closes.
+     */
+    @Test
+    void consumerStartClosesTheSessionThatAReconnectAttemptSetMeanwhile() throws Exception {
+        SmppEndpoint endpoint = context.getEndpoint(uri(""), SmppEndpoint.class);
+        AtomicReference<Runnable> afterBind = new AtomicReference<>();
+        SmppConsumer consumer = new SmppConsumer(endpoint, endpoint.getConfiguration(), this::receive) {
+            @Override
+            SMPPSession createSMPPSession() {
+                return new HookedSession(afterBind);
+            }
+        };
+        List<SMPPSession> sessions = new CopyOnWriteArrayList<>();
+        endpoint.getConfiguration().setSessionStateListener((newState, oldState, source) -> {
+            if (newState.isBound() && !sessions.contains(source)) {
+                sessions.add((SMPPSession) source);
+            }
+        });
+        try {
+            consumer.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> serverSessions.size() == 1);
+
+            // runs on the start thread, once connectAndBind of session 2 returned
+            afterBind.set(() -> {
+                serverSessions.get(0).close();
+                await().atMost(10, TimeUnit.SECONDS).until(() -> sessions.size() == 3);
+                await().atMost(10, TimeUnit.SECONDS).until(() -> threadsIn("tryCreateSession") == 0);
+            });
+            consumer.doStart();
+
+            assertEquals(3, sessions.size());
+            assertFalse(sessions.get(2).getSessionState().isBound(), "the session of the reconnect attempt is closed");
+            assertDelivered(serverSessions.get(1));
+        } finally {
+            consumer.stop();
+        }
+        // the stop closed the session in use, which is session 2: no session is left bound
+        for (SMPPSession session : sessions) {
+            assertFalse(session.getSessionState().isBound(), "no session is left bound after the stop");
+        }
+    }
+
     /** A session that runs a hook once, after a successful connectAndBind. */
     private static final class HookedSession extends SMPPSession {
         private final AtomicReference<Runnable> afterBind;
