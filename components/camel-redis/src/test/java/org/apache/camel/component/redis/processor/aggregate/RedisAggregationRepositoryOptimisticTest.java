@@ -233,9 +233,12 @@ public class RedisAggregationRepositoryOptimisticTest extends CamelTestSupport {
         await().atMost(10, TimeUnit.SECONDS).until(() -> hash("timeout-completed").isEmpty());
     }
 
+    /**
+     * Two aggregators with their own repository on the same hashes, as two Camel instances on the same Redis: 20 keys
+     * sent from 4 threads, so that the two repositories update the same groups at the same time.
+     */
     @Test
     void testTwoRepositoriesSharingTheHashes() throws Exception {
-        // two aggregators with their own repository on the same hashes, as two Camel instances on the same Redis
         RedisAggregationRepository first = repository("shared", true);
         RedisAggregationRepository second = repository("shared", true);
         context.addRoutes(new RouteBuilder() {

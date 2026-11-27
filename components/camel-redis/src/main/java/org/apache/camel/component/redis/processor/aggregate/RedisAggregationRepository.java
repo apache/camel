@@ -720,6 +720,7 @@ public class RedisAggregationRepository extends ServiceSupport
     private Object decode(byte[] bytes) {
         ByteBuf buf = Unpooled.wrappedBuffer(bytes);
         try {
+            // State is a parameter of the Decoder.decode(ByteBuf, State) codec contract of Redisson
             return mapCodec.getMapValueDecoder().decode(buf, new State());
         } catch (IOException e) {
             throw new RuntimeCamelException("Cannot decode the value read from Redis", e);
