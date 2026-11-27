@@ -2,7 +2,7 @@
 :doctitle: REST Postman
 :shortname: rest-postman
 :artifactid: camel-rest-postman
-:description: To call and expose REST services using a Postman Collection as contract.
+:description: Call the REST APIs described by a Postman Collection, or serve its requests as a contract-first REST service.
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:

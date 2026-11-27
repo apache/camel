@@ -319,7 +319,7 @@ or removes its row.
 | camel-ref | ref | yes |
 | camel-rest | rest, rest-api | yes |
 | camel-rest-openapi | rest-openapi |  |
-| camel-rest-postman | rest-postman |  |
+| camel-rest-postman | rest-postman | yes |
 | camel-robotframework | robotframework |  |
 | camel-rocketmq | rocketmq | yes |
 | camel-rss | rss |  |

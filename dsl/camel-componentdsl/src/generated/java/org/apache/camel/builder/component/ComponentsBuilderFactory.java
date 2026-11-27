@@ -4538,7 +4538,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * REST Postman (camel-rest-postman)
-     * To call and expose REST services using a Postman Collection as contract.
+     * Call the REST APIs described by a Postman Collection, or serve its
+     * requests as a contract-first REST service.
      * 
      * Category: rest,api
      * Since: 4.23

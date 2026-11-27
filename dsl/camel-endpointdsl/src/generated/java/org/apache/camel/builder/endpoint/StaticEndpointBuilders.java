@@ -15531,7 +15531,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST Postman (camel-rest-postman)
-     * To call and expose REST services using a Postman Collection as contract.
+     * Call the REST APIs described by a Postman Collection, or serve its
+     * requests as a contract-first REST service.
      * 
      * Category: rest,api
      * Since: 4.23
@@ -15541,17 +15542,19 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: collectionSource
      * The Postman Collection to use. Either a resource URI of a Collection v2.1
-     * JSON document (classpath:, file: or http:), or the uid of a collection to
-     * fetch from the Postman cloud, which requires postmanApiKey. Default value
-     * notice: By default loads the postman-collection.json file
+     * JSON document (classpath:, file: or http:), where a name without a scheme
+     * is loaded from the classpath, or the uid of a collection to fetch from
+     * the Postman cloud, which requires postmanApiKey. Default value notice: By
+     * default loads the postman-collection.json file
      * Default value: postman-collection.json
      * 
      * Path parameter: requestId
-     * The request to invoke, identified by its id in the collection or by its
-     * slugified name, for example getUserById. Use a folder id to run every
-     * request in that folder, and leave it out to run the whole collection.
-     * Append a slash to force a folder match when a request and a folder share
-     * a name.
+     * The request to invoke: its id in the collection, its slugified name such
+     * as getUserById, or its folder qualified slug such as users/getUserById. A
+     * folder slug selects every request in that folder, and leaving it out
+     * selects the whole collection. Append a slash to force a folder match when
+     * a request and a folder share a name. A consumer serves only the selected
+     * requests.
      * 
      * @param path collectionSource#requestId
      * @return the dsl builder
@@ -15561,7 +15564,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST Postman (camel-rest-postman)
-     * To call and expose REST services using a Postman Collection as contract.
+     * Call the REST APIs described by a Postman Collection, or serve its
+     * requests as a contract-first REST service.
      * 
      * Category: rest,api
      * Since: 4.23
@@ -15571,17 +15575,19 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: collectionSource
      * The Postman Collection to use. Either a resource URI of a Collection v2.1
-     * JSON document (classpath:, file: or http:), or the uid of a collection to
-     * fetch from the Postman cloud, which requires postmanApiKey. Default value
-     * notice: By default loads the postman-collection.json file
+     * JSON document (classpath:, file: or http:), where a name without a scheme
+     * is loaded from the classpath, or the uid of a collection to fetch from
+     * the Postman cloud, which requires postmanApiKey. Default value notice: By
+     * default loads the postman-collection.json file
      * Default value: postman-collection.json
      * 
      * Path parameter: requestId
-     * The request to invoke, identified by its id in the collection or by its
-     * slugified name, for example getUserById. Use a folder id to run every
-     * request in that folder, and leave it out to run the whole collection.
-     * Append a slash to force a folder match when a request and a folder share
-     * a name.
+     * The request to invoke: its id in the collection, its slugified name such
+     * as getUserById, or its folder qualified slug such as users/getUserById. A
+     * folder slug selects every request in that folder, and leaving it out
+     * selects the whole collection. Append a slash to force a folder match when
+     * a request and a folder share a name. A consumer serves only the selected
+     * requests.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
