@@ -22,6 +22,6 @@ import org.apache.camel.test.infra.common.services.TestService;
 /**
  * Test infra service for Minio
  */
-@Deprecated(since = "4.23")
+@Deprecated(since = "4.18.6")
 public interface MinioService extends TestService, MinioInfraService, ContainerTestService {
 }

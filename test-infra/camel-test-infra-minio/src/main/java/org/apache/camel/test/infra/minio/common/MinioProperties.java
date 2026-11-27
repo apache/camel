@@ -17,7 +17,7 @@
 
 package org.apache.camel.test.infra.minio.common;
 
-@Deprecated(since = "4.23")
+@Deprecated(since = "4.18.6")
 public final class MinioProperties {
     public static final String MINIO_CONTAINER = "minio.container";
     public static final String ACCESS_KEY = "minio.access.key";

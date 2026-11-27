@@ -21,7 +21,7 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 /**
  * Test infra service for Minio
  */
-@Deprecated(since = "4.23")
+@Deprecated(since = "4.18.6")
 public interface MinioInfraService extends InfrastructureService {
 
     String secretKey();
