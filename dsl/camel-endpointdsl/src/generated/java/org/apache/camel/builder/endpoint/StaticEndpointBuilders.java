@@ -8746,7 +8746,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Iggy (camel-iggy)
-     * Send and receive message to Apache Iggy streaming platform.
+     * Send messages to and receive messages from topics of the Apache Iggy
+     * message streaming platform.
      * 
      * Category: messaging
      * Since: 4.17
@@ -8755,7 +8756,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>iggy:topicName</code>
      * 
      * Path parameter: topicName (required)
-     * Name of the topic
+     * The name of the topic. The CamelIggyTopicOverride header replaces it for
+     * the producer.
      * 
      * @param path topicName
      * @return the dsl builder
@@ -8765,7 +8767,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Iggy (camel-iggy)
-     * Send and receive message to Apache Iggy streaming platform.
+     * Send messages to and receive messages from topics of the Apache Iggy
+     * message streaming platform.
      * 
      * Category: messaging
      * Since: 4.17
@@ -8774,7 +8777,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>iggy:topicName</code>
      * 
      * Path parameter: topicName (required)
-     * Name of the topic
+     * The name of the topic. The CamelIggyTopicOverride header replaces it for
+     * the producer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

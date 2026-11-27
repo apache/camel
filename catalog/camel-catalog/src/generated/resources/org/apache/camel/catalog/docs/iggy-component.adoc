@@ -2,7 +2,7 @@
 :doctitle: Iggy
 :shortname: iggy
 :artifactid: camel-iggy
-:description: Send and receive message to Apache Iggy streaming platform.
+:description: Send messages to and receive messages from topics of the Apache Iggy message streaming platform.
 :since: 4.17
 :supportlevel: Preview
 :tabs-sync-option:
