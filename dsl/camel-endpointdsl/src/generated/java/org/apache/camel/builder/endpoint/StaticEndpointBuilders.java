@@ -9290,7 +9290,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * InfluxDB2 (camel-influxdb2)
-     * Interact with InfluxDB v2, a time series database.
+     * Write time series data to InfluxDB 2.x.
      * 
      * Category: database
      * Since: 3.20
@@ -9299,8 +9299,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>influxdb2:connectionBean</code>
      * 
      * Path parameter: connectionBean (required)
-     * Connection to the Influx database, of class
-     * com.influxdb.client.InfluxDBClient.class.
+     * The name of the com.influxdb.client.InfluxDBClient bean to look up in the
+     * registry. It is not looked up when the component has a client, set with
+     * its influxDBClient option or autowired.
      * 
      * @param path connectionBean
      * @return the dsl builder
@@ -9310,7 +9311,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * InfluxDB2 (camel-influxdb2)
-     * Interact with InfluxDB v2, a time series database.
+     * Write time series data to InfluxDB 2.x.
      * 
      * Category: database
      * Since: 3.20
@@ -9319,8 +9320,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>influxdb2:connectionBean</code>
      * 
      * Path parameter: connectionBean (required)
-     * Connection to the Influx database, of class
-     * com.influxdb.client.InfluxDBClient.class.
+     * The name of the com.influxdb.client.InfluxDBClient bean to look up in the
+     * registry. It is not looked up when the component has a client, set with
+     * its influxDBClient option or autowired.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -2858,7 +2858,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * InfluxDB2 (camel-influxdb2)
-     * Interact with InfluxDB v2, a time series database.
+     * Write time series data to InfluxDB 2.x.
      * 
      * Category: database
      * Since: 3.20

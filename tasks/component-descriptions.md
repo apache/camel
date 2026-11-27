@@ -225,7 +225,7 @@ or removes its row.
 | camel-infinispan | infinispan |  |
 | camel-infinispan-embedded | infinispan-embedded |  |
 | camel-influxdb | influxdb |  |
-| camel-influxdb2 | influxdb2 |  |
+| camel-influxdb2 | influxdb2 | yes |
 | camel-jcache | jcache |  |
 | camel-jcr | jcr |  |
 | camel-jdbc | jdbc |  |
