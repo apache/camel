@@ -321,7 +321,7 @@ or removes its row.
 | camel-rest-openapi | rest-openapi |  |
 | camel-rest-postman | rest-postman |  |
 | camel-robotframework | robotframework |  |
-| camel-rocketmq | rocketmq |  |
+| camel-rocketmq | rocketmq | yes |
 | camel-rss | rss |  |
 | camel-saga | saga | yes |
 | camel-salesforce | salesforce |  |

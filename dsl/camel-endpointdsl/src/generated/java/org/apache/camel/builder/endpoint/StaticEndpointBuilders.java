@@ -15510,7 +15510,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * RocketMQ (camel-rocketmq)
-     * Send and receive messages from RocketMQ cluster.
+     * Send messages to and receive messages from Apache RocketMQ topics.
      * 
      * Category: messaging
      * Since: 3.20
@@ -15519,7 +15519,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rocketmq:topicName</code>
      * 
      * Path parameter: topicName (required)
-     * Topic name of this endpoint.
+     * The name of the topic. The consumer subscribes to this topic, and the
+     * producer sends to it unless the CamelRocketMQOverrideTopicName header
+     * names another topic.
      * 
      * @param path topicName
      * @return the dsl builder
@@ -15529,7 +15531,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * RocketMQ (camel-rocketmq)
-     * Send and receive messages from RocketMQ cluster.
+     * Send messages to and receive messages from Apache RocketMQ topics.
      * 
      * Category: messaging
      * Since: 3.20
@@ -15538,7 +15540,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rocketmq:topicName</code>
      * 
      * Path parameter: topicName (required)
-     * Topic name of this endpoint.
+     * The name of the topic. The consumer subscribes to this topic, and the
+     * producer sends to it unless the CamelRocketMQOverrideTopicName header
+     * names another topic.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

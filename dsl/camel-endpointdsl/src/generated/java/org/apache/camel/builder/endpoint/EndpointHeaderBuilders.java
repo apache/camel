@@ -3671,7 +3671,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * RocketMQ (camel-rocketmq)
-     * Send and receive messages from RocketMQ cluster.
+     * Send messages to and receive messages from Apache RocketMQ topics.
      * 
      * Category: messaging
      * Since: 3.20
