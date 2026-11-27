@@ -3569,7 +3569,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Printer (camel-printer)
-     * Send print jobs to printers.
+     * Send documents as print jobs to local or network printers by using the
+     * Java Print Service API.
      * 
      * Category: document
      * Since: 2.1

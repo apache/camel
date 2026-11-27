@@ -309,7 +309,7 @@ or removes its row.
 | camel-platform-http | platform-http |  |
 | camel-plc4x | plc4x |  |
 | camel-pqc | pqc |  |
-| camel-printer | lpr |  |
+| camel-printer | lpr | yes |
 | camel-pubnub | pubnub |  |
 | camel-pulsar | pulsar |  |
 | camel-qdrant | qdrant |  |
