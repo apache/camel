@@ -43,6 +43,8 @@ public class IoTHubProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         final IoTHubConfiguration config = getConfiguration();
+        // a route that can never send: fail at startup, the CamelAzureIoTHubDeliveryMode header is checked per exchange
+        checkProtocolSupportsDeliveryMode(config.getProtocol(), config.getDeliveryMode());
 
         IoTHubComponent component = (IoTHubComponent) getEndpoint().getComponent();
         pool = component.getOrCreateClientPool();
@@ -63,12 +65,7 @@ public class IoTHubProducer extends DefaultProducer {
         IoTHubDeliveryMode mode = exchange.getIn().getHeader(IoTHubConstants.DELIVERY_MODE,
                 config.getDeliveryMode(), IoTHubDeliveryMode.class);
         IotHubClientProtocol protocol = config.getProtocol();
-        if (protocol == IotHubClientProtocol.HTTPS && mode != IoTHubDeliveryMode.TELEMETRY) {
-            // the Azure IoT SDK fails twin operations over HTTPS: say so before opening a device client
-            throw new IllegalArgumentException(
-                    "The delivery mode " + mode + " updates the device twin, which the Azure IoT SDK supports only over"
-                                               + " MQTT, MQTT_WS, AMQPS and AMQPS_WS, not over HTTPS");
-        }
+        checkProtocolSupportsDeliveryMode(protocol, mode);
 
         if (ObjectHelper.isEmpty(deviceId)) {
             throw new IllegalArgumentException(
@@ -83,6 +80,15 @@ public class IoTHubProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
         DeliveryContext context = buildContext(exchange, mode, body);
         operations.send(deviceId, connectionString, protocol, mode, context);
+    }
+
+    private static void checkProtocolSupportsDeliveryMode(IotHubClientProtocol protocol, IoTHubDeliveryMode mode) {
+        if (protocol == IotHubClientProtocol.HTTPS && mode != IoTHubDeliveryMode.TELEMETRY) {
+            // the Azure IoT SDK fails twin operations over HTTPS: say so before opening a device client
+            throw new IllegalArgumentException(
+                    "The delivery mode " + mode + " updates the device twin, which the Azure IoT SDK supports only over"
+                                               + " MQTT, MQTT_WS, AMQPS and AMQPS_WS, not over HTTPS");
+        }
     }
 
     /**

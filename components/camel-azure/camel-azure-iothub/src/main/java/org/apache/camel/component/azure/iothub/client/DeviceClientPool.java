@@ -52,8 +52,17 @@ import org.slf4j.LoggerFactory;
  * callback, and disconnected clients are retired automatically; any in-use client is closed only when the final lease
  * is released. Callers may also remove a client from the pool explicitly during cleanup.
  * </p>
+ *
+ * <p>
+ * A client over HTTPS is kept apart from the client over MQTT or AMQPS of the same device, as it cannot do twin
+ * operations. MQTT and AMQPS endpoints of a device share one client, as IoT Hub allows only one MQTT or AMQP connection
+ * per device.
+ * </p>
  */
 public class DeviceClientPool {
+
+    // the suffix of the pool key of a client over HTTPS; ':' separates the parts of the identity
+    private static final String HTTPS_KEY_SUFFIX = "|HTTPS";
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceClientPool.class);
 
@@ -193,7 +202,7 @@ public class DeviceClientPool {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
+        String poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         PooledClient existing = pool.get(poolKey);
         if (existing != null) {
@@ -272,7 +281,7 @@ public class DeviceClientPool {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
+        String poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         for (;;) {
             // read the clock on every attempt: getOrCreate below can block for a whole open of the client
@@ -342,7 +351,9 @@ public class DeviceClientPool {
     }
 
     void remove(String deviceId, String connectionString) {
-        removePoolEntry(resolvePoolKey(deviceId, connectionString));
+        String poolKey = resolvePoolKey(deviceId, connectionString);
+        removePoolEntry(poolKey);
+        removePoolEntry(poolKey + HTTPS_KEY_SUFFIX);
     }
 
     void remove(String deviceId) {
@@ -390,11 +401,19 @@ public class DeviceClientPool {
         if (poolKey == null) {
             return false;
         }
+        if (poolKey.endsWith(HTTPS_KEY_SUFFIX)) {
+            poolKey = poolKey.substring(0, poolKey.length() - HTTPS_KEY_SUFFIX.length());
+        }
         if (poolKey.equals(deviceId)) {
             return true;
         }
         String[] parts = poolKey.split(":");
         return parts.length >= 2 && parts[1].equals(deviceId);
+    }
+
+    private static String resolvePoolKey(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        String poolKey = resolvePoolKey(deviceId, connectionString);
+        return protocol == IotHubClientProtocol.HTTPS ? poolKey + HTTPS_KEY_SUFFIX : poolKey;
     }
 
     private static String resolvePoolKey(String deviceId, String connectionString) {
@@ -478,7 +497,7 @@ public class DeviceClientPool {
                     if (context == null) {
                         return;
                     }
-                    evictDisconnectedClient(deviceId, connectionString, client, context);
+                    evictDisconnectedClient(deviceId, connectionString, protocol, client, context);
                 }, null);
             } catch (Exception e) {
                 closeQuietly(deviceId, client, "subscription setup");
@@ -497,7 +516,7 @@ public class DeviceClientPool {
     }
 
     private void evictDisconnectedClient(
-            String deviceId, String connectionString, DeviceClient client,
+            String deviceId, String connectionString, IotHubClientProtocol protocol, DeviceClient client,
             ConnectionStatusChangeContext context) {
         if (context == null || shuttingDown.get()) {
             return;
@@ -509,7 +528,7 @@ public class DeviceClientPool {
             return;
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
+        String poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         AtomicReference<PooledClient> removed = new AtomicReference<>();
         pool.computeIfPresent(poolKey, (key, pooled) -> {

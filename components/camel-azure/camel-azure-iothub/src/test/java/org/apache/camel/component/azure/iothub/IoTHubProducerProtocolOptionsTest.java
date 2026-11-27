@@ -17,13 +17,16 @@
 package org.apache.camel.component.azure.iothub;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import com.microsoft.azure.sdk.iot.device.Message;
 import com.microsoft.azure.sdk.iot.device.twin.DesiredPropertiesCallback;
+import com.microsoft.azure.sdk.iot.device.twin.Twin;
+import com.microsoft.azure.sdk.iot.device.twin.TwinCollection;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultExchange;
@@ -44,6 +47,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * The protocol, contentEncoding and sendTimeout options of the producer, with a mocked DeviceClient that throws on the
@@ -55,37 +59,54 @@ class IoTHubProducerProtocolOptionsTest extends CamelTestSupport {
     private static final String TWIN_OVER_HTTPS
             = "Twin operations are only supported over MQTT, MQTT_WS, AMQPS, and AMQPS_WS";
 
-    private final AtomicInteger created = new AtomicInteger();
+    // the device clients the pool created, a new mock for each
+    private final List<DeviceClient> created = new CopyOnWriteArrayList<>();
     private DeviceClient client;
 
     @BeforeEach
     void mockDeviceClient() throws Exception {
-        client = mock(DeviceClient.class);
         IoTHubComponent component = context.getComponent("azure-iothub", IoTHubComponent.class);
         component.getOrCreateClientPool().setDeviceClientFactory((cs, protocol) -> {
-            created.incrementAndGet();
+            DeviceClient mock = mock(DeviceClient.class);
             if (protocol == IotHubClientProtocol.HTTPS) {
-                doThrow(new UnsupportedOperationException(TWIN_OVER_HTTPS)).when(client)
+                doThrow(new UnsupportedOperationException(TWIN_OVER_HTTPS)).when(mock)
                         .subscribeToDesiredProperties(any(DesiredPropertiesCallback.class), any());
-                doThrow(new UnsupportedOperationException(TWIN_OVER_HTTPS)).when(client)
+                doThrow(new UnsupportedOperationException(TWIN_OVER_HTTPS)).when(mock)
                         .subscribeToDesiredProperties(any(DesiredPropertiesCallback.class), any(), anyInt());
+                doThrow(new UnsupportedOperationException(TWIN_OVER_HTTPS)).when(mock).getTwin(anyInt());
+            } else {
+                Twin twin = mock(Twin.class);
+                when(twin.getReportedProperties()).thenReturn(new TwinCollection());
+                when(mock.getTwin(anyInt())).thenReturn(twin);
             }
-            return client;
+            created.add(mock);
+            client = mock;
+            return mock;
         });
     }
 
     private Exchange send(String options, Object body) throws Exception {
-        Producer producer = context.getEndpoint(
-                "azure-iothub:myDevice?connectionString=" + CONNECTION_STRING + options).createProducer();
+        return send(options, body, null);
+    }
+
+    private Exchange send(String options, Object body, IoTHubDeliveryMode modeHeader) throws Exception {
+        Producer producer = createProducer(options);
         producer.start();
         try {
             Exchange exchange = new DefaultExchange(context);
             exchange.getIn().setBody(body);
+            if (modeHeader != null) {
+                exchange.getIn().setHeader(IoTHubConstants.DELIVERY_MODE, modeHeader);
+            }
             producer.process(exchange);
             return exchange;
         } finally {
             producer.stop();
         }
+    }
+
+    private Producer createProducer(String options) throws Exception {
+        return context.getEndpoint("azure-iothub:myDevice?connectionString=" + CONNECTION_STRING + options).createProducer();
     }
 
     private Message sentMessage() throws Exception {
@@ -103,19 +124,50 @@ class IoTHubProducerProtocolOptionsTest extends CamelTestSupport {
     }
 
     @Test
-    void twinOverHttpsFailsNamingTheProtocols() {
+    void aTwinEndpointOverHttpsFailsToStart() throws Exception {
+        for (String mode : List.of("TWIN", "BOTH")) {
+            Producer producer = createProducer("&protocol=HTTPS&deliveryMode=" + mode);
+
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, producer::start);
+
+            assertTrue(e.getMessage().contains("not over HTTPS"), e.getMessage());
+        }
+        assertEquals(0, created.size(), "no device client should be opened");
+    }
+
+    @Test
+    void aTwinDeliveryModeHeaderOverHttpsFailsNamingTheProtocols() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> send("&protocol=HTTPS&deliveryMode=TWIN", Map.of("firmware", "1.0")));
+                () -> send("&protocol=HTTPS", Map.of("firmware", "1.0"), IoTHubDeliveryMode.TWIN));
 
         assertTrue(e.getMessage().contains("not over HTTPS"), e.getMessage());
-        assertEquals(0, created.get(), "no device client should be opened");
+        assertEquals(0, created.size(), "no device client should be opened");
+    }
+
+    @Test
+    void anHttpsClientIsNotReusedForATwinUpdateOverMqtt() throws Exception {
+        send("&protocol=HTTPS", "{\"temperature\":21}".getBytes(StandardCharsets.UTF_8));
+        // failed with the UnsupportedOperationException of the SDK: the MQTT endpoint got the pooled HTTPS client
+        send("&deliveryMode=TWIN", Map.of("firmware", "1.0"));
+
+        assertEquals(2, created.size(), "the MQTT endpoint reused the device client of the HTTPS endpoint");
+        verify(created.get(1)).updateReportedProperties(any(TwinCollection.class), anyInt());
+    }
+
+    @Test
+    void mqttAndAmqpsShareOneClient() throws Exception {
+        // IoT Hub allows one MQTT or AMQP connection per device: a second client would disconnect the first
+        send("", "{}".getBytes(StandardCharsets.UTF_8));
+        send("&protocol=AMQPS", "{}".getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(1, created.size());
     }
 
     @Test
     void sendTimeoutLimitsTheSubscriptionToDesiredProperties() throws Exception {
         send("&sendTimeout=3s", "{}".getBytes(StandardCharsets.UTF_8));
 
-        // the subscription used the default timeout of the Azure IoT SDK
+        // failed on main: the subscription used the SDK default timeout
         verify(client).subscribeToDesiredProperties(any(DesiredPropertiesCallback.class), isNull(), eq(3000));
         verify(client, never()).subscribeToDesiredProperties(any(DesiredPropertiesCallback.class), any());
     }
