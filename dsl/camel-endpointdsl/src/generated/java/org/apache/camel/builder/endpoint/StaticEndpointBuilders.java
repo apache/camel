@@ -9708,7 +9708,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
+     * Create, update and query issues in Atlassian Jira, and poll Jira for new
+     * issues, new comments and changed fields.
      * 
      * Category: document
      * Since: 3.0
@@ -9717,9 +9718,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jira:type</code>
      * 
      * Path parameter: type (required)
-     * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-     * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-     * Watchers. See this class javadoc description for more information.
+     * The operation of the endpoint, case-insensitive. The consumer types are
+     * newIssues, newComments and watchUpdates. The producer types are addIssue,
+     * addComment, addIssueLink, addWorkLog, attach, deleteIssue, fetchComments,
+     * fetchIssue, transitionIssue, updateIssue and watchers.
      * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
      * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
      * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
@@ -9733,7 +9735,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
+     * Create, update and query issues in Atlassian Jira, and poll Jira for new
+     * issues, new comments and changed fields.
      * 
      * Category: document
      * Since: 3.0
@@ -9742,9 +9745,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jira:type</code>
      * 
      * Path parameter: type (required)
-     * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-     * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-     * Watchers. See this class javadoc description for more information.
+     * The operation of the endpoint, case-insensitive. The consumer types are
+     * newIssues, newComments and watchUpdates. The producer types are addIssue,
+     * addComment, addIssueLink, addWorkLog, attach, deleteIssue, fetchComments,
+     * fetchIssue, transitionIssue, updateIssue and watchers.
      * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
      * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
      * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,

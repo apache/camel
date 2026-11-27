@@ -232,7 +232,7 @@ or removes its row.
 | camel-jetty | jetty |  |
 | camel-jgroups | jgroups |  |
 | camel-jgroups-raft | jgroups-raft |  |
-| camel-jira | jira |  |
+| camel-jira | jira | yes |
 | camel-jms | jms |  |
 | camel-jmx | jmx |  |
 | camel-jolt | jolt |  |

@@ -2362,7 +2362,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
+     * Create, update and query issues in Atlassian Jira, and poll Jira for new
+     * issues, new comments and changed fields.
      * 
      * Category: document
      * Since: 3.0
