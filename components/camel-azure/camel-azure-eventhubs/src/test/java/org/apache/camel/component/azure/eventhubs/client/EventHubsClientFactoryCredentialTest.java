@@ -21,12 +21,13 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.eventhubs.EventHubClientBuilder;
 import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.component.azure.eventhubs.EventHubsConfiguration;
+import org.apache.camel.component.azure.eventhubs.EventHubsEndpoint;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.RETURNS_SELF;
 import static org.mockito.Mockito.mockConstruction;
@@ -34,17 +35,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 /**
- * A DefaultAzureCredential set as tokenCredential is the credential of the clients with AZURE_IDENTITY.
+ * A DefaultAzureCredential set as tokenCredential is the credential of the clients. With no credentialType, the
+ * component chooses AZURE_IDENTITY for it.
  */
-class EventHubsClientFactoryCredentialTest {
+class EventHubsClientFactoryCredentialTest extends CamelTestSupport {
 
     @Test
-    void azureIdentityUsesTheTokenCredential() {
+    void defaultAzureCredentialAsTokenCredentialIsUsed() {
         DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().managedIdentityClientId("my-id").build();
-        EventHubsConfiguration configuration = configuration();
-        configuration.setTokenCredential(credential);
+        context.getRegistry().bind("cred", credential);
 
-        assertSame(credential, EventHubsClientFactory.azureIdentityCredential(configuration));
+        // no credentialType: the component sets AZURE_IDENTITY for a DefaultAzureCredential
+        EventHubsConfiguration configuration = context.getEndpoint(
+                "azure-eventhubs:mynamespace/myhub?tokenCredential=#cred", EventHubsEndpoint.class).getConfiguration();
+        assertEquals(CredentialType.AZURE_IDENTITY, configuration.getCredentialType());
 
         try (MockedConstruction<EventHubClientBuilder> builders
                 = mockConstruction(EventHubClientBuilder.class, withSettings().defaultAnswer(RETURNS_SELF))) {
@@ -59,14 +63,15 @@ class EventHubsClientFactoryCredentialTest {
 
     @Test
     void azureIdentityWithoutTokenCredentialBuildsOne() {
-        assertNotNull(EventHubsClientFactory.azureIdentityCredential(configuration()));
-    }
+        EventHubsConfiguration configuration = context.getEndpoint(
+                "azure-eventhubs:mynamespace/myhub?credentialType=AZURE_IDENTITY", EventHubsEndpoint.class)
+                .getConfiguration();
 
-    private static EventHubsConfiguration configuration() {
-        EventHubsConfiguration configuration = new EventHubsConfiguration();
-        configuration.setCredentialType(CredentialType.AZURE_IDENTITY);
-        configuration.setNamespace("mynamespace");
-        configuration.setEventHubName("myhub");
-        return configuration;
+        try (MockedConstruction<EventHubClientBuilder> builders
+                = mockConstruction(EventHubClientBuilder.class, withSettings().defaultAnswer(RETURNS_SELF))) {
+            EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+
+            verify(builders.constructed().get(0)).credential(any(DefaultAzureCredential.class));
+        }
     }
 }
