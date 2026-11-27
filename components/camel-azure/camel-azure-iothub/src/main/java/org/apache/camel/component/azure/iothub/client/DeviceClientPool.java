@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.azure.iothub.client;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -42,7 +46,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Thread-safe pool of Azure IoT Hub {@link DeviceClient} instances, keyed by the resolved hub/device/module identity
- * derived from the connection string instead of only the raw device id.
+ * derived from the connection string instead of only the raw device id, together with a SHA-256 hash of the whole
+ * connection string. A client is only reused for the same connection string, so a connection string with another key
+ * (or without a key) never gets a client that was opened with a different credential: it opens its own client, and IoT
+ * Hub checks its credential.
  *
  * <p>
  * Clients are created lazily, reused across messages, and evicted after an idle timeout. A client is idle only while it
@@ -126,8 +133,8 @@ public class DeviceClientPool {
 
     private final Duration idleTimeout;
     private final Duration evictionInterval;
-    private final Map<String, PooledClient> pool = new ConcurrentHashMap<>();
-    private final Map<String, CompletableFuture<DeviceClient>> creationFutures = new ConcurrentHashMap<>();
+    private final Map<PoolKey, PooledClient> pool = new ConcurrentHashMap<>();
+    private final Map<PoolKey, CompletableFuture<DeviceClient>> creationFutures = new ConcurrentHashMap<>();
     private final Set<PooledClient> pendingClose = ConcurrentHashMap.newKeySet();
     private final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
@@ -186,7 +193,7 @@ public class DeviceClientPool {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString);
 
         PooledClient existing = pool.get(poolKey);
         if (existing != null) {
@@ -256,7 +263,7 @@ public class DeviceClientPool {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString);
 
         for (;;) {
             // read the clock on every attempt: getOrCreate below can block for a whole open of the client
@@ -275,7 +282,7 @@ public class DeviceClientPool {
                 return new Lease(this, existing);
             }
             if (evicted.get() != null) {
-                closeQuietly(poolKey, evicted.get().client, "idle eviction");
+                closeQuietly(poolKey.toString(), evicted.get().client, "idle eviction");
                 continue;
             }
 
@@ -304,7 +311,7 @@ public class DeviceClientPool {
         return acquire(deviceId, connectionString, protocol);
     }
 
-    private boolean isCreationInProgress(String poolKey) {
+    private boolean isCreationInProgress(PoolKey poolKey) {
         return creationFutures.containsKey(poolKey);
     }
 
@@ -312,8 +319,8 @@ public class DeviceClientPool {
         if (deviceId == null || deviceId.isBlank()) {
             return false;
         }
-        for (String poolKey : creationFutures.keySet()) {
-            if (matchesDeviceId(poolKey, deviceId)) {
+        for (PoolKey poolKey : creationFutures.keySet()) {
+            if (poolKey.matchesDeviceId(deviceId)) {
                 return true;
             }
         }
@@ -333,53 +340,59 @@ public class DeviceClientPool {
             return;
         }
 
-        String directKey = deviceId;
-        PooledClient pooled = pool.remove(directKey);
-        if (pooled != null) {
-            closeQuietly(deviceId, pooled.client, "explicit removal");
-            return;
-        }
-
-        for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
-            String key = entry.getKey();
-            if (matchesDeviceId(key, deviceId)) {
-                if (pool.remove(key, entry.getValue())) {
-                    closeQuietly(deviceId, entry.getValue().client, "explicit removal");
-                    return;
-                }
+        // a device can have several clients, one per connection string (for example while a key is rotated)
+        for (Map.Entry<PoolKey, PooledClient> entry : pool.entrySet()) {
+            if (entry.getKey().matchesDeviceId(deviceId) && pool.remove(entry.getKey(), entry.getValue())) {
+                closeQuietly(deviceId, entry.getValue().client, "explicit removal");
             }
         }
     }
 
-    private void removePoolEntry(String poolKey) {
-        if (poolKey == null || poolKey.isBlank()) {
-            return;
-        }
+    private void removePoolEntry(PoolKey poolKey) {
         if (isCreationInProgress(poolKey)) {
             LOG.debug("Skipping removal of in-flight DeviceClient for device {} while creation is still in progress", poolKey);
             return;
         }
         PooledClient pooled = pool.remove(poolKey);
         if (pooled != null) {
-            closeQuietly(poolKey, pooled.client, "explicit removal");
+            closeQuietly(poolKey.toString(), pooled.client, "explicit removal");
         }
     }
 
-    private static boolean matchesDeviceId(String poolKey, String deviceId) {
-        if (poolKey == null) {
-            return false;
+    /**
+     * The key of a pooled client: the hub, device and module of the connection string, and a SHA-256 hash of the whole
+     * connection string, so the credential (SharedAccessKey, SharedAccessSignature, ...) is part of the key without the
+     * key holding it. {@link #toString()} leaves the hash out, as it is used in log messages.
+     */
+    private record PoolKey(String hostName, String deviceId, String moduleId, String connectionStringHash) {
+
+        boolean matchesDeviceId(String id) {
+            return deviceId != null && deviceId.equals(id);
         }
-        if (poolKey.equals(deviceId)) {
-            return true;
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            if (hostName != null) {
+                sb.append(hostName);
+            }
+            if (deviceId != null) {
+                if (!sb.isEmpty()) {
+                    sb.append(':');
+                }
+                sb.append(deviceId);
+            }
+            if (moduleId != null) {
+                if (!sb.isEmpty()) {
+                    sb.append(':');
+                }
+                sb.append(moduleId);
+            }
+            return sb.toString();
         }
-        String[] parts = poolKey.split(":");
-        return parts.length >= 2 && parts[1].equals(deviceId);
     }
 
-    private static String resolvePoolKey(String deviceId, String connectionString) {
-        if (deviceId == null || deviceId.isBlank()) {
-            return connectionString;
-        }
+    private static PoolKey resolvePoolKey(String deviceId, String connectionString) {
         String[] items = connectionString == null ? new String[0] : connectionString.split(";");
         String hostName = null;
         String csDeviceId = null;
@@ -403,27 +416,28 @@ public class DeviceClientPool {
                 }
             }
         }
-        if (csDeviceId != null && !csDeviceId.equals(deviceId)) {
+        boolean hasDeviceId = deviceId != null && !deviceId.isBlank();
+        if (hasDeviceId && csDeviceId != null && !csDeviceId.equals(deviceId)) {
             throw new IllegalArgumentException(
                     "Device id '" + deviceId + "' does not match the connection string's DeviceId '" + csDeviceId + "'");
         }
-        StringBuilder identity = new StringBuilder();
-        if (hostName != null && !hostName.isBlank()) {
-            identity.append(hostName);
+        String device = csDeviceId != null && !csDeviceId.isBlank() ? csDeviceId : hasDeviceId ? deviceId : null;
+        return new PoolKey(
+                hostName != null && !hostName.isBlank() ? hostName : null,
+                device,
+                moduleId != null && !moduleId.isBlank() ? moduleId : null,
+                sha256(connectionString));
+    }
+
+    private static String sha256(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest((value == null ? "" : value).getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            // every Java platform must support SHA-256
+            throw new IllegalStateException("SHA-256 is not available", e);
         }
-        if (csDeviceId != null && !csDeviceId.isBlank()) {
-            if (!identity.isEmpty()) {
-                identity.append(':');
-            }
-            identity.append(csDeviceId);
-        }
-        if (moduleId != null && !moduleId.isBlank()) {
-            if (!identity.isEmpty()) {
-                identity.append(':');
-            }
-            identity.append(moduleId);
-        }
-        return !identity.isEmpty() ? identity.toString() : deviceId;
     }
 
     private DeviceClient createClient(String deviceId, String connectionString, IotHubClientProtocol protocol) {
@@ -478,7 +492,7 @@ public class DeviceClientPool {
             return;
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString);
 
         AtomicReference<PooledClient> removed = new AtomicReference<>();
         pool.computeIfPresent(poolKey, (key, pooled) -> {
@@ -535,8 +549,8 @@ public class DeviceClientPool {
             return;
         }
         long now = nowMillis();
-        for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
-            String key = entry.getKey();
+        for (Map.Entry<PoolKey, PooledClient> entry : pool.entrySet()) {
+            PoolKey key = entry.getKey();
             AtomicReference<PooledClient> retired = new AtomicReference<>();
             pool.computeIfPresent(key, (k, current) -> {
                 if (current.isIdle(now, idleTimeout.toMillis())) {
@@ -574,8 +588,8 @@ public class DeviceClientPool {
             }
         }
         creationFutures.clear();
-        for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
-            closeQuietly(entry.getKey(), entry.getValue() == null ? null : entry.getValue().client, "shutdown");
+        for (Map.Entry<PoolKey, PooledClient> entry : pool.entrySet()) {
+            closeQuietly(entry.getKey().toString(), entry.getValue() == null ? null : entry.getValue().client, "shutdown");
         }
         pool.clear();
     }
