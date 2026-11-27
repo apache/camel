@@ -52,7 +52,6 @@ public interface ECS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
@@ -69,7 +68,6 @@ public interface ECS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
@@ -691,7 +689,7 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: listClusters
+         * Group: producer
          * 
          * @return the name of the header {@code AwsECSNextToken}.
          */
@@ -704,7 +702,7 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: listClusters
+         * Group: producer
          * 
          * @return the name of the header {@code AwsECSIsTruncated}.
          */
@@ -717,7 +715,7 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: createCluster describeCluster deleteCluster
+         * Group: producer
          * 
          * @return the name of the header {@code AwsECSClusterArn}.
          */

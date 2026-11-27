@@ -28,7 +28,9 @@ import org.apache.camel.support.DefaultComponent;
 @Component("xmlsecurity-verify")
 public class XmlVerifierComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "A shared XmlVerifierConfiguration that the endpoints of the component start from: the component"
+                            + " copies it for each new endpoint and then sets the options of the endpoint URI on the copy.")
     private XmlVerifierConfiguration verifierConfiguration;
 
     public XmlVerifierComponent() {
@@ -58,9 +60,6 @@ public class XmlVerifierComponent extends DefaultComponent {
         return verifierConfiguration;
     }
 
-    /**
-     * To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
-     */
     public void setVerifierConfiguration(XmlVerifierConfiguration verifierConfiguration) {
         this.verifierConfiguration = verifierConfiguration;
     }

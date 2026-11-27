@@ -71,7 +71,7 @@ import static org.apache.camel.util.StringHelper.after;
 import static org.apache.camel.util.StringHelper.before;
 
 /**
- * To call and expose REST services using a Postman Collection as contract.
+ * Call the REST APIs described by a Postman Collection, or serve its requests as a contract-first REST service.
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "rest-postman", title = "REST Postman",
              syntax = "rest-postman:collectionSource#requestId", category = { Category.REST, Category.API },
@@ -112,16 +112,18 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
     Map<String, Object> parameters = Collections.emptyMap();
 
     @UriPath(description = "The Postman Collection to use. Either a resource URI of a Collection v2.1 JSON document"
-                           + " (classpath:, file: or http:), or the uid of a collection to fetch from the Postman"
-                           + " cloud, which requires postmanApiKey.",
+                           + " (classpath:, file: or http:), where a name without a scheme is loaded from the"
+                           + " classpath, or the uid of a collection to fetch from the Postman cloud, which requires"
+                           + " postmanApiKey.",
              defaultValue = RestPostmanConfiguration.DEFAULT_COLLECTION_SOURCE,
              defaultValueNote = "By default loads the postman-collection.json file")
     private String collectionSource;
 
-    @UriPath(description = "The request to invoke, identified by its id in the collection or by its slugified name,"
-                           + " for example getUserById. Use a folder id to run every request in that folder, and"
-                           + " leave it out to run the whole collection. Append a slash to force a folder match when"
-                           + " a request and a folder share a name.",
+    @UriPath(description = "The request to invoke: its id in the collection, its slugified name such as getUserById,"
+                           + " or its folder qualified slug such as users/getUserById. A folder slug selects every"
+                           + " request in that folder, and leaving it out selects the whole collection. Append a"
+                           + " slash to force a folder match when a request and a folder share a name. A consumer"
+                           + " serves only the selected requests.",
              label = "producer")
     private String requestId;
 

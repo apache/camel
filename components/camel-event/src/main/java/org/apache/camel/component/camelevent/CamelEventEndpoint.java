@@ -98,8 +98,9 @@ public class CamelEventEndpoint extends DefaultEndpoint {
     private int asyncQueueSize = 1000;
 
     @UriParam(description = "What happens to an event when the async queue is full. Block makes the thread that fires the"
-                            + " event wait for space, Drop discards the event with a DEBUG log, and Fail throws an exception,"
-                            + " which Camel logs at WARN and ignores, so the event is lost.",
+                            + " event wait for space, Drop discards the event with a DEBUG log, and Fail discards the event and"
+                            + " passes an IllegalStateException to the exception handler of the consumer, which logs it at"
+                            + " WARN by default, or with bridgeErrorHandler=true hands it to the error handler of the route.",
               defaultValue = "Block")
     private BackpressurePolicy backpressurePolicy = BackpressurePolicy.Block;
 
@@ -115,6 +116,8 @@ public class CamelEventEndpoint extends DefaultEndpoint {
     private long batchTimeout = 1000;
 
     private Set<CamelEvent.Type> eventTypes;
+    // the types named in events, rather than matched by a wildcard
+    private Set<CamelEvent.Type> namedEventTypes = Collections.emptySet();
     private Set<String> includeValues;
     private Set<String> excludeValues;
     private Class<?> customEventClazz;
@@ -150,17 +153,21 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         // Parse event types (with wildcard support)
         if (events != null && !events.isEmpty()) {
             Set<CamelEvent.Type> types = new LinkedHashSet<>();
+            Set<CamelEvent.Type> named = new LinkedHashSet<>();
             for (String token : events.split(",")) {
                 String name = token.trim();
                 if (!name.isEmpty()) {
                     if (name.contains("*")) {
                         types.addAll(resolveWildcard(name));
                     } else {
-                        types.add(resolveEventType(name));
+                        CamelEvent.Type type = resolveEventType(name);
+                        types.add(type);
+                        named.add(type);
                     }
                 }
             }
             eventTypes = Collections.unmodifiableSet(types);
+            namedEventTypes = Collections.unmodifiableSet(named);
         } else {
             eventTypes = Collections.emptySet();
         }
@@ -303,6 +310,13 @@ public class CamelEventEndpoint extends DefaultEndpoint {
 
     public Set<CamelEvent.Type> getEventTypes() {
         return eventTypes;
+    }
+
+    /**
+     * The event types named in the events option, without the ones only matched by a wildcard.
+     */
+    Set<CamelEvent.Type> getNamedEventTypes() {
+        return namedEventTypes;
     }
 
     public Set<String> getIncludeValues() {

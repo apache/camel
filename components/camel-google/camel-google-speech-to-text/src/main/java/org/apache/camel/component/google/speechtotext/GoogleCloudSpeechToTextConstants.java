@@ -19,10 +19,12 @@ package org.apache.camel.component.google.speechtotext;
 import org.apache.camel.spi.Metadata;
 
 public interface GoogleCloudSpeechToTextConstants {
-    @Metadata(description = "The operation to perform",
+    @Metadata(description = "The operation to perform, which overrides the operation of the endpoint URI. The only"
+                            + " operation is recognize. Not used when pojoRequest=true.",
               javaType = "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextOperations")
     String OPERATION = "CamelGoogleCloudSpeechToTextOperation";
-    @Metadata(description = "The response object resulting from the Google Cloud Speech-to-Text API invocation",
+    @Metadata(description = "The RecognizeResponse returned by the service, with all the results and alternatives. The"
+                            + " message body holds only the best alternative of each result.",
               javaType = "com.google.cloud.speech.v1.RecognizeResponse")
     String RESPONSE_OBJECT = "CamelGoogleCloudSpeechToTextResponseObject";
 }

@@ -33,47 +33,109 @@ public class VertxWebsocketConfiguration {
 
     private URI websocketURI;
 
-    @UriPath
+    @UriPath(description = "The host name or IP address. The server consumer binds its HTTP server to it, and the producer"
+                           + " and a consumer with consumeAsClient=true connect to it. If the URI has no host, the defaultHost"
+                           + " option of the component is used.")
     @Metadata(required = true)
     private String host;
-    @UriPath
+    @UriPath(description = "The port number. The server consumer binds its HTTP server to it, and with 0 to a free port that"
+                           + " the operating system picks. The producer and a consumer with consumeAsClient=true connect to it,"
+                           + " and with 0 to port 80, or to port 443 when the connection uses TLS. If the URI has no port, the"
+                           + " defaultPort option of the component is used.")
     @Metadata(required = true)
     private int port;
-    @UriPath
+    @UriPath(description = "The path of the WebSocket. The server consumer accepts WebSocket connections on it: the path can"
+                           + " hold parameters such as /chat/{user}, whose values the consumer sets as headers, and can end"
+                           + " with * to accept each path that starts with it. The producer and a consumer with"
+                           + " consumeAsClient=true connect to it. If the URI has no path, / is used.")
     private String path;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "A regular expression for the Origin header of the WebSocket handshake requests that the server"
+                            + " consumer accepts. A handshake request whose Origin header does not match is rejected with"
+                            + " status 403. If not set, the server consumer does not check the Origin header.")
     private String allowedOriginPattern;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced",
+              description = "The Vert.x Router of the HTTP server of the server consumer, for example to serve other HTTP"
+                            + " routes on the same server. All consumers on the same host and port share one HTTP server, which"
+                            + " uses the router of the consumer that starts first. If not set, the router option of the"
+                            + " component is used.")
     private Router router;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced",
+              description = "The Vert.x HttpServerOptions of the HTTP server of the server consumer. All consumers on the same"
+                            + " host and port share one HTTP server, which uses the options of the consumer that starts first."
+                            + " The server listens on the host and port of the endpoint, not on those of the options.")
     private HttpServerOptions serverOptions;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer connects as a WebSocket client to the server at the host, port and path,"
+                            + " instead of starting a WebSocket server, and routes each text or binary message that the server"
+                            + " sends. The consumer fails to start if it cannot connect. When the connection is lost later, it"
+                            + " reconnects as set by reconnectInitialDelay, reconnectInterval and maxReconnectAttempts.")
     private boolean consumeAsClient;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The delay in milliseconds from the loss of the connection to the first reconnect attempt, for a"
+                            + " consumer with consumeAsClient=true. With the default 0, the first attempt is made at once.")
     private int reconnectInitialDelay;
-    @UriParam(label = "consumer", defaultValue = "1000")
+    @UriParam(label = "consumer", defaultValue = "1000",
+              description = "The interval in milliseconds between the reconnect attempts of a consumer with"
+                            + " consumeAsClient=true. When an attempt is still running at the end of an interval, no other"
+                            + " attempt starts until it ends.")
     private int reconnectInterval = 1000;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The maximum number of failed reconnect attempts of a consumer with consumeAsClient=true, counted"
+                            + " again for each loss of the connection. When they are used up, the consumer logs a warning and"
+                            + " stays started without a connection. With the default 0, the consumer tries to reconnect"
+                            + " without limit.")
     private int maxReconnectAttempts;
     @UriParam(label = "consumer")
     private String connectMessage;
     @UriParam(label = "consumer,advanced")
     private boolean parallelProcessing;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "producer,advanced",
+              description = "The Vert.x WebSocketClientOptions of the WebSocket client that the producer and a consumer with"
+                            + " consumeAsClient=true connect with. Its connect timeout also limits how long they wait for the"
+                            + " handshake to complete. When sslContextParameters is set, its TLS settings are applied on top of"
+                            + " these options.")
     private WebSocketClientOptions clientOptions;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "Whether the producer sends each message to all the peers that are connected on the path of the"
+                            + " endpoint to a server consumer of this component with the same host name and port, instead of"
+                            + " to a remote WebSocket server. If no peer is connected, the message is not sent. The"
+                            + " CamelVertxWebsocket.sendToAll header replaces this option for a message.")
     private boolean sendToAll;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "A comma-separated list of the WebSocket subprotocols that the producer and a consumer with"
+                            + " consumeAsClient=true request in the Sec-WebSocket-Protocol header of the handshake request.")
     private String clientSubProtocols;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the server consumer also routes an exchange when a peer connects, with the event OPEN and"
+                            + " the Vert.x ServerWebSocket as body, and when a peer disconnects, with the event CLOSE and no"
+                            + " body. The CamelVertxWebsocket.event header holds the event. A consumer with"
+                            + " consumeAsClient=true does not use it.")
     private boolean fireWebSocketConnectionEvents;
-    @UriParam(label = "security", defaultValue = "true")
+    @UriParam(label = "security", defaultValue = "true",
+              description = "Whether the producer and a consumer with consumeAsClient=true add an Origin header, derived from"
+                            + " the host and port of the server, to the WebSocket handshake request. Set it to false for a"
+                            + " server that rejects handshake requests with an Origin header. Not used when originHeaderUrl is"
+                            + " set, as that Origin is always sent.")
     private boolean allowOriginHeader = true;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The value of the Origin header of the WebSocket handshake request that the producer and a"
+                            + " consumer with consumeAsClient=true send, such as https://example.com. It is sent even when"
+                            + " allowOriginHeader is false. If not set, the Origin is derived from the host and port of the"
+                            + " server, unless allowOriginHeader is false.")
     private String originHeaderUrl;
-    @UriParam(label = "security", prefix = "handshake.", multiValue = true)
+    @UriParam(label = "security", prefix = "handshake.", multiValue = true,
+              description = "The HTTP headers to add to the WebSocket handshake request that the producer and a consumer with"
+                            + " consumeAsClient=true send, such as handshake.X-Tenant=acme for an X-Tenant header. The server"
+                            + " consumer does not use them.")
     private Map<String, Object> handshakeHeaders;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The TLS configuration as org.apache.camel.support.jsse.SSLContextParameters. The server consumer"
+                            + " accepts wss connections with it, and all consumers on the same host and port must use the same"
+                            + " instance or none, otherwise the consumer fails to start. The producer and a consumer with"
+                            + " consumeAsClient=true connect with TLS using it. If not set and the"
+                            + " useGlobalSslContextParameters option of the component is true, the global SSL context"
+                            + " parameters are used.")
     private SSLContextParameters sslContextParameters;
 
     /**
@@ -94,9 +156,6 @@ public class VertxWebsocketConfiguration {
         return host;
     }
 
-    /**
-     * WebSocket hostname, such as localhost or a remote host when in client mode.
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -105,9 +164,6 @@ public class VertxWebsocketConfiguration {
         return port;
     }
 
-    /**
-     * WebSocket port number to use.
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -116,16 +172,10 @@ public class VertxWebsocketConfiguration {
         return path;
     }
 
-    /**
-     * WebSocket path to use.
-     */
     public void setPath(String path) {
         this.path = path;
     }
 
-    /**
-     * Sets customized options for configuring the WebSocket client used in the producer
-     */
     public void setClientOptions(WebSocketClientOptions clientOptions) {
         this.clientOptions = clientOptions;
     }
@@ -134,9 +184,6 @@ public class VertxWebsocketConfiguration {
         return serverOptions;
     }
 
-    /**
-     * Sets customized options for configuring the HTTP server hosting the WebSocket for the consumer
-     */
     public void setServerOptions(HttpServerOptions serverOptions) {
         this.serverOptions = serverOptions;
     }
@@ -149,10 +196,6 @@ public class VertxWebsocketConfiguration {
         return reconnectInitialDelay;
     }
 
-    /**
-     * When consumeAsClient is set to true this sets the initial delay in milliseconds before attempting to reconnect to
-     * a previously closed WebSocket.
-     */
     public void setReconnectInitialDelay(int reconnectInitialDelay) {
         this.reconnectInitialDelay = reconnectInitialDelay;
     }
@@ -161,10 +204,6 @@ public class VertxWebsocketConfiguration {
         return reconnectInterval;
     }
 
-    /**
-     * When consumeAsClient is set to true this sets the interval in milliseconds at which reconnecting to a previously
-     * closed WebSocket occurs.
-     */
     public void setReconnectInterval(int reconnectInterval) {
         this.reconnectInterval = reconnectInterval;
     }
@@ -173,10 +212,6 @@ public class VertxWebsocketConfiguration {
         return maxReconnectAttempts;
     }
 
-    /**
-     * When consumeAsClient is set to true this sets the maximum number of allowed reconnection attempts to a previously
-     * closed WebSocket. A value of 0 (the default) will attempt to reconnect indefinitely.
-     */
     public void setMaxReconnectAttempts(int maxReconnectAttempts) {
         this.maxReconnectAttempts = maxReconnectAttempts;
     }
@@ -207,9 +242,6 @@ public class VertxWebsocketConfiguration {
         this.parallelProcessing = parallelProcessing;
     }
 
-    /**
-     * When set to true, the consumer acts as a WebSocket client, creating exchanges on each received WebSocket event.
-     */
     public void setConsumeAsClient(boolean consumeAsClient) {
         this.consumeAsClient = consumeAsClient;
     }
@@ -218,13 +250,6 @@ public class VertxWebsocketConfiguration {
         return clientOptions;
     }
 
-    /**
-     * To send to all websocket subscribers. Can be used to configure at the endpoint level, instead of providing the
-     * {@code VertxWebsocketConstants.SEND_TO_ALL} header on the message. Note that when using this option, the host
-     * name specified for the vertx-websocket producer URI must match one used for an existing vertx-websocket consumer.
-     * Note that this option only applies when producing messages to endpoints hosted by the vertx-websocket consumer
-     * and not to an externally hosted WebSocket.
-     */
     public void setSendToAll(boolean sendToAll) {
         this.sendToAll = sendToAll;
     }
@@ -233,9 +258,6 @@ public class VertxWebsocketConfiguration {
         return sendToAll;
     }
 
-    /**
-     * To configure security using SSLContextParameters
-     */
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
@@ -248,9 +270,6 @@ public class VertxWebsocketConfiguration {
         return allowedOriginPattern;
     }
 
-    /**
-     * Regex pattern to match the origin header sent by WebSocket clients
-     */
     public void setAllowedOriginPattern(String allowedOriginPattern) {
         this.allowedOriginPattern = allowedOriginPattern;
     }
@@ -259,16 +278,10 @@ public class VertxWebsocketConfiguration {
         return router;
     }
 
-    /**
-     * To use an existing vertx router for the HTTP server
-     */
     public void setRouter(Router router) {
         this.router = router;
     }
 
-    /**
-     * Comma separated list of WebSocket subprotocols that the client should use for the Sec-WebSocket-Protocol header
-     */
     public void setClientSubProtocols(String clientSubProtocols) {
         this.clientSubProtocols = clientSubProtocols;
     }
@@ -277,9 +290,6 @@ public class VertxWebsocketConfiguration {
         return clientSubProtocols;
     }
 
-    /**
-     * Whether the server consumer will create a message exchange when a new WebSocket peer connects or disconnects
-     */
     public void setFireWebSocketConnectionEvents(boolean fireWebSocketConnectionEvents) {
         this.fireWebSocketConnectionEvents = fireWebSocketConnectionEvents;
     }
@@ -292,9 +302,6 @@ public class VertxWebsocketConfiguration {
         return allowOriginHeader;
     }
 
-    /**
-     * Whether the WebSocket client should add the Origin header to the WebSocket handshake request.
-     */
     public void setAllowOriginHeader(boolean allowOriginHeader) {
         this.allowOriginHeader = allowOriginHeader;
     }
@@ -303,10 +310,6 @@ public class VertxWebsocketConfiguration {
         return originHeaderUrl;
     }
 
-    /**
-     * The value of the Origin header that the WebSocket client should use on the WebSocket handshake request. When not
-     * specified, the WebSocket client will automatically determine the value for the Origin from the request URL.
-     */
     public void setOriginHeaderUrl(String originHeaderUrl) {
         this.originHeaderUrl = originHeaderUrl;
     }
@@ -315,10 +318,6 @@ public class VertxWebsocketConfiguration {
         return handshakeHeaders;
     }
 
-    /**
-     * Headers to send in the HTTP handshake request. When the endpoint is a consumer, it only works when it consumes a
-     * remote host as a client (i.e. consumeAsClient is true).
-     */
     public void setHandshakeHeaders(final Map<String, Object> handshakeHeaders) {
         this.handshakeHeaders = handshakeHeaders;
     }

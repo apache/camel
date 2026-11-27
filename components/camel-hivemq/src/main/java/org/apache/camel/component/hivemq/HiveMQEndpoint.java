@@ -35,6 +35,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
+/**
+ * Send messages to and receive messages from an MQTT broker with the HiveMQ MQTT Client.
+ */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "hivemq", title = "HiveMQ", syntax = "hivemq:topic",
              category = { Category.MESSAGING, Category.IOT }, headersClass = HiveMQConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]",
@@ -47,10 +50,9 @@ import org.apache.camel.support.DefaultEndpoint;
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    /**
-     * The MQTT topic name or pattern to subscribe to or publish on.
-     */
-    @UriPath
+    @UriPath(description = "The MQTT topic. The consumer subscribes to it as a topic filter, which can contain the"
+                           + " wildcards + and #. The producer publishes to it as a topic name without wildcards, and the"
+                           + " CamelHiveMQOverrideTopic header replaces it.")
     @Metadata(required = true)
     private String topic;
 

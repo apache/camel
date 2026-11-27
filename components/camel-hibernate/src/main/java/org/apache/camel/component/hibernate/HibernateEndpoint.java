@@ -38,7 +38,8 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder;
 
 /**
- * Execute selection and mutation queries and natural-id lookups using Hibernate ORM.
+ * Run HQL queries, look up, insert and upsert entities, and poll entities from a relational database with Hibernate
+ * ORM.
  */
 @UriEndpoint(firstVersion = "4.24.0", scheme = "hibernate", title = "Hibernate", syntax = "hibernate:entityClassName",
              category = { Category.DATABASE }, headersClass = HibernateConstants.class)
@@ -57,28 +58,43 @@ import org.hibernate.resource.transaction.spi.TransactionCoordinatorBuilder;
                                    description = "The result depends on the operation: a selection query returns a list, or a java.util.stream.Stream when streaming=true; a mutation query returns the affected-row count; a natural-id lookup returns the entity or null; stateless operations leave the body unchanged."))
 public class HibernateEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(description = "Target entity class name")
+    @UriPath(description = "The fully qualified class name of the Hibernate entity. It is the result type of the selection query"
+                           + " and the entity type of the natural-id lookup. The mutation query and the stateless operations do"
+                           + " not use it.")
     @Metadata(required = true)
     private String entityClassName;
 
-    @UriParam(description = "The HQL selection query to execute.")
+    @UriParam(description = "The HQL selection query, for example from MyEntity where status = :status. The consumer runs it on"
+                            + " each poll and routes one message per entity. The producer sets the result list as the body, and"
+                            + " binds the named parameters from the CamelHibernateParameters header.")
     private String selectionQuery;
 
-    @UriParam(description = "The HQL mutation query to execute.", label = "producer")
+    @UriParam(description = "The HQL update, delete or insert statement that the producer executes. The named parameters are"
+                            + " bound from the CamelHibernateParameters header, and the body is set to the number of affected"
+                            + " rows.",
+              label = "producer")
     private String mutationQuery;
 
-    @UriParam(description = "The natural-id property values used for lookup. String values can use Simple expressions from the message.",
+    @UriParam(description = "The values of the natural-id attributes for a lookup by natural id, keyed by attribute name, for"
+                            + " example naturalId.email=${header.email}. String values are evaluated as Simple expressions."
+                            + " Entries of the CamelHibernateParameters header are added and replace values of the same name.",
               label = "producer", prefix = "naturalId.", multiValue = true)
     @Metadata(supportSimpleExpression = true)
     private Map<String, Object> naturalIdParameters;
 
-    @UriParam(description = "Whether the Hibernate session and selection query should be read-only.")
+    @UriParam(description = "Whether to run the selection query read-only, so that Hibernate does not track changes of the"
+                            + " loaded entities. The session that the component opens is read-only by default too. Other"
+                            + " operations are not affected.")
     private boolean readOnly;
 
-    @UriParam(description = "Hibernate filters and their parameter values.", prefix = "filter.", multiValue = true)
+    @UriParam(description = "The Hibernate filters to enable on the session, with their parameter values, for example"
+                            + " filter.tenantFilter.tenantId=tenant-a. Values from the URI are strings; a #bean reference"
+                            + " passes another type. The stateless operations do not use filters.",
+              prefix = "filter.", multiValue = true)
     private Map<String, Map<String, Object>> filters;
 
-    @UriParam(description = "The tenant identifier used to create the Hibernate session.")
+    @UriParam(description = "The tenant identifier of the Hibernate sessions that the consumer and the producer open, for a"
+                            + " multi-tenant SessionFactory. If not set, the session uses no tenant identifier.")
     private String tenantIdentifier;
 
     public enum StatelessOperation {
@@ -86,20 +102,31 @@ public class HibernateEndpoint extends ScheduledPollEndpoint {
         UPSERT
     }
 
-    @UriParam(description = "Stateless operation to perform: insert or upsert.", label = "producer")
+    @UriParam(description = "Insert or upsert the entity of the message body with a Hibernate StatelessSession, in its own"
+                            + " transaction. The body is left unchanged.",
+              label = "producer")
     private StatelessOperation statelessOperation;
 
-    @UriParam(description = "Whether selection query results should be returned as a stream.", label = "producer")
+    @UriParam(description = "Whether the producer sets the result of the selection query as a java.util.stream.Stream instead"
+                            + " of a List. A session that the producer opens stays open until the stream is closed or the"
+                            + " exchange completes. The producer fails in a transacted exchange.",
+              label = "producer")
     private boolean streaming;
 
-    @UriParam(description = "Whether the consumer should skip rows that are already locked by another consumer.",
+    @UriParam(description = "Whether the consumer locks the selected rows with a pessimistic write lock and skips rows that"
+                            + " another transaction has locked (SKIP LOCKED), so that several consumers can poll the same"
+                            + " table. The database and its Hibernate dialect must support it.",
               label = "consumer")
     private boolean skipLocked;
 
-    @UriParam(description = "The maximum number of entities to retrieve in a single poll.", label = "consumer")
+    @UriParam(description = "The maximum number of entities that the consumer selects in one poll. The default 0 means no"
+                            + " limit.",
+              label = "consumer")
     private int maximumResults;
 
-    @UriParam(description = "Whether to delete consumed entities after successful processing.",
+    @UriParam(description = "Whether the consumer deletes each entity after it is processed successfully. The deletes are"
+                            + " committed with the poll transaction. If false, the selection query must exclude processed"
+                            + " entities, otherwise they are consumed again in the next poll.",
               label = "consumer", defaultValue = "true")
     private boolean consumeDelete = true;
 

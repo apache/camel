@@ -57,6 +57,9 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WS_PORT;
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME;
 
+/**
+ * Receive and send WebSocket messages with Vert.x, as a WebSocket server or as a client of a remote WebSocket server.
+ */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
              syntax = "vertx-websocket:host:port/path", category = { Category.HTTP, Category.NETWORKING },
              headersClass = VertxWebsocketConstants.class, lenientProperties = true)
@@ -92,7 +95,9 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
                             + " producers need a worker thread to complete, and then no message completes.")
     private boolean synchronous;
     @UriParam(label = "advanced",
-              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+              description = "To use a custom HeaderFilterStrategy to filter the query and path parameters of the WebSocket"
+                            + " handshake request, which the server consumer sets as headers of each exchange. The producer"
+                            + " does not use it.")
     private HeaderFilterStrategy headerFilterStrategy;
 
     private WebSocketClient client;
@@ -172,9 +177,6 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         return headerFilterStrategy;
     }
 
-    /**
-     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
-     */
     @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;

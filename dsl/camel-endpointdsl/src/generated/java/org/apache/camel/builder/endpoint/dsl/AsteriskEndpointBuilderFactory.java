@@ -47,7 +47,7 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * The host name or IP address of the Asterisk server. The consumer and
          * the producer connect to the Asterisk Manager Interface (AMI) of this
-         * host on port 5038, which cannot be changed.
+         * host on the port of the port option.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -62,13 +62,45 @@ public interface AsteriskEndpointBuilderFactory {
             return this;
         }
         /**
+         * The port of the Asterisk Manager Interface (AMI) of the Asterisk
+         * server, as set in the manager.conf file of the server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5038
+         * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointConsumerBuilder port(int port) {
+            doSetProperty("port", port);
+            return this;
+        }
+        /**
+         * The port of the Asterisk Manager Interface (AMI) of the Asterisk
+         * server, as set in the manager.conf file of the server.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5038
+         * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointConsumerBuilder port(String port) {
+            doSetProperty("port", port);
+            return this;
+        }
+        /**
          * The secret of the AMI user, as defined in the manager.conf file of
          * the Asterisk server.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Group: common
+         * Group: security
          * 
          * @param password the value to set
          * @return the dsl builder
@@ -85,7 +117,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Group: common
+         * Group: security
          * 
          * @param username the value to set
          * @return the dsl builder
@@ -237,7 +269,7 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * The host name or IP address of the Asterisk server. The consumer and
          * the producer connect to the Asterisk Manager Interface (AMI) of this
-         * host on port 5038, which cannot be changed.
+         * host on the port of the port option.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -252,36 +284,35 @@ public interface AsteriskEndpointBuilderFactory {
             return this;
         }
         /**
-         * The secret of the AMI user, as defined in the manager.conf file of
-         * the Asterisk server.
+         * The port of the Asterisk Manager Interface (AMI) of the Asterisk
+         * server, as set in the manager.conf file of the server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>int</code> type.
          * 
-         * Required: true
+         * Default: 5038
          * Group: common
          * 
-         * @param password the value to set
+         * @param port the value to set
          * @return the dsl builder
          */
-        default AsteriskEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
+        default AsteriskEndpointProducerBuilder port(int port) {
+            doSetProperty("port", port);
             return this;
         }
         /**
-         * The name of the AMI user, as defined in the manager.conf file of the
-         * Asterisk server. The consumer and the producer each log in with it
-         * when they start.
+         * The port of the Asterisk Manager Interface (AMI) of the Asterisk
+         * server, as set in the manager.conf file of the server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option will be converted to a <code>int</code> type.
          * 
-         * Required: true
+         * Default: 5038
          * Group: common
          * 
-         * @param username the value to set
+         * @param port the value to set
          * @return the dsl builder
          */
-        default AsteriskEndpointProducerBuilder username(String username) {
-            doSetProperty("username", username);
+        default AsteriskEndpointProducerBuilder port(String port) {
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -322,6 +353,39 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AsteriskEndpointProducerBuilder action(String action) {
             doSetProperty("action", action);
+            return this;
+        }
+        /**
+         * The secret of the AMI user, as defined in the manager.conf file of
+         * the Asterisk server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The name of the AMI user, as defined in the manager.conf file of the
+         * Asterisk server. The consumer and the producer each log in with it
+         * when they start.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -396,7 +460,7 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * The host name or IP address of the Asterisk server. The consumer and
          * the producer connect to the Asterisk Manager Interface (AMI) of this
-         * host on port 5038, which cannot be changed.
+         * host on the port of the port option.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -411,13 +475,45 @@ public interface AsteriskEndpointBuilderFactory {
             return this;
         }
         /**
+         * The port of the Asterisk Manager Interface (AMI) of the Asterisk
+         * server, as set in the manager.conf file of the server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5038
+         * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointBuilder port(int port) {
+            doSetProperty("port", port);
+            return this;
+        }
+        /**
+         * The port of the Asterisk Manager Interface (AMI) of the Asterisk
+         * server, as set in the manager.conf file of the server.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5038
+         * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointBuilder port(String port) {
+            doSetProperty("port", port);
+            return this;
+        }
+        /**
          * The secret of the AMI user, as defined in the manager.conf file of
          * the Asterisk server.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Group: common
+         * Group: security
          * 
          * @param password the value to set
          * @return the dsl builder
@@ -434,7 +530,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Group: common
+         * Group: security
          * 
          * @param username the value to set
          * @return the dsl builder

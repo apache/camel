@@ -2,7 +2,7 @@
 :doctitle: AWS Bedrock
 :shortname: aws-bedrock
 :artifactid: camel-aws-bedrock
-:description: Invoke Model of AWS Bedrock service.
+:description: Invoke Amazon Bedrock foundation models with the InvokeModel and Converse APIs, and check content with Bedrock guardrails.
 :since: 4.5
 :supportlevel: Stable
 :tabs-sync-option:
@@ -335,5 +335,3 @@ Maven users will need to add the following dependency to their pom.xml.
 ----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-

@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import static org.apache.camel.component.milo.MiloConstants.SCHEME_SERVER;
 
 /**
- * Make telemetry data available as an OPC UA server.
+ * Expose values as variable nodes of an embedded OPC UA server, which OPC UA clients can read and write.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_SERVER, syntax = "milo-server:itemId", title = "OPC UA Server",
              category = { Category.IOT })
@@ -50,7 +50,10 @@ public class MiloServerEndpoint extends DefaultEndpoint {
 
     private volatile CamelServerItem item;
 
-    @UriPath
+    @UriPath(description = "The ID of the item: the string node ID of a variable node in the namespace of the namespaceUri"
+                           + " option. A client addresses the item myItem in the default namespace as"
+                           + " nsu=urn:org:apache:camel;s=myItem. The consumer receives the values that clients write to the"
+                           + " node, and the producer sets its value.")
     @Metadata(required = true)
     private String itemId;
 
@@ -95,9 +98,6 @@ public class MiloServerEndpoint extends DefaultEndpoint {
         return item;
     }
 
-    /**
-     * ID of the item
-     */
     public void setItemId(final String itemId) {
         this.itemId = itemId;
     }
