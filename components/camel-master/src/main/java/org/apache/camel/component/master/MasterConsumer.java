@@ -62,7 +62,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     private volatile Consumer delegatedConsumer;
     private volatile CamelClusterView view;
     private ResumeStrategy resumeStrategy;
-    private ScheduledExecutorService leaderPool;
+    // a new pool for each lifecycle (doInit); the start attempts compare it with the pool they run on
+    private volatile ScheduledExecutorService leaderPool;
     // leadership state and the pending start task are guarded by leadershipLock. This is deliberately not
     // the lock of BaseService: the cluster view dispatches events while holding its own read lock and then
     // needs this lock, while doStop holds the service lock and needs the write lock of the view to remove
@@ -213,14 +214,17 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             final BackgroundTask task = createTask();
             // the consumer is created once and re-used by the start attempts of this task
             final AtomicReference<Consumer> attempt = new AtomicReference<>();
+            final ScheduledExecutorService pool = leaderPool;
             leaderTask = task;
-            leaderTaskFuture = task.schedule(getEndpoint().getCamelContext(), () -> startDelegatedConsumer(task, attempt));
+            leaderTaskFuture
+                    = task.schedule(getEndpoint().getCamelContext(), () -> startDelegatedConsumer(task, pool, attempt));
         } finally {
             leadershipLock.unlock();
         }
     }
 
-    private boolean startDelegatedConsumer(BackgroundTask task, AtomicReference<Consumer> attempt) {
+    private boolean startDelegatedConsumer(
+            BackgroundTask task, ScheduledExecutorService pool, AtomicReference<Consumer> attempt) {
         leadershipLock.lock();
         try {
             if (!isRunAllowed()) {
@@ -292,14 +296,21 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 throw new TaskRunFailureException(message, cause);
             }
 
-            if (task != leaderTask || delegatedConsumer != null || !leadershipTaken || !isRunAllowed()) {
+            // an attempt of an earlier lifecycle of this consumer (a stop and start of the same instance) runs on the
+            // pool of that lifecycle. Within one lifecycle, a task newer than this one only exists when the leadership
+            // was lost and taken again while this attempt was starting, and as the pool has a single thread, that task
+            // has not run yet: this attempt publishes its consumer below and cancels it
+            boolean earlierLifecycle = pool != leaderPool;
+            if (earlierLifecycle || delegatedConsumer != null || !leadershipTaken || !isRunAllowed()) {
                 // the leadership went away, or this consumer was stopped (and maybe started again), while the
                 // consumer was starting. This attempt is no longer the current one, so stop what it started instead
                 // of publishing it over the consumer of a newer attempt. Only the consumer: the endpoint is shared
-                // with that newer consumer, and onLeadershipLost and doStop stop it
+                // with that newer consumer, and onLeadershipLost and doStop stop it. And only stop it, not shut it
+                // down: a shutdown cannot be undone, and it would also shut down the processor of the route, which
+                // a newer consumer uses
                 LOG.info("Leadership lost or consumer stopped while the delegated consumer was starting. Stopping it: {}",
                         delegatedEndpoint);
-                ServiceHelper.stopAndShutdownService(consumer);
+                ServiceHelper.stopService(consumer);
                 if (delegatedConsumer != null) {
                     // stopping a consumer also stops its processor, the processor of the route, which the
                     // running delegated consumer uses too
@@ -312,7 +323,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             delegatedConsumer = consumer;
             LOG.info("Leadership taken. Attempt #{} success. Consumer started: {}", task.iteration(),
                     delegatedEndpoint);
-            // release the task, a later leadership term schedules a new one
+            // release the task, a later leadership term schedules a new one. When the leadership was lost and taken
+            // again while this attempt was starting, this cancels the newer task before it starts a second consumer
             cancelLeaderTask(false);
             return true; // no more attempts
         } finally {

@@ -347,6 +347,8 @@ public class MasterConsumerLeadershipTest {
     @Test
     @Timeout(60)
     void testStartAttemptFromBeforeARestartDoesNotReplaceTheNewConsumer() throws Exception {
+        // the route has threads(), whose thread pool cannot be started again after a shutdown
+        useRouteWithThreads();
         // the stop below waits this long for the start attempt that is still running, which outlasts it
         context.getExecutorServiceManager().setShutdownAwaitTermination(100);
         TestClusterView view = clusterService.getTestView();
@@ -373,23 +375,54 @@ public class MasterConsumerLeadershipTest {
             assertEquals(2, probe.started.get());
             assertEquals(1, probe.stopped.get(), "The consumer of the attempt from before the restart is still running");
         });
+        // it is only stopped: a shutdown would also shut down the processor of the route, which the second one uses
+        ProbeConsumer first = probe.consumers.get(0);
+        assertFalse(first.isShutdown(), "The consumer of the attempt from before the restart was shut down");
         ProbeConsumer second = probe.consumers.get(1);
         assertTrue(second.isStarted());
         assertTrue(((ProbeEndpoint) second.getEndpoint()).isStarted(), "The endpoint of the running consumer was stopped");
 
         // the route behind the running consumer still routes its messages
-        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedBodiesReceived("after restart");
-        Exchange exchange = second.createExchange(false);
-        exchange.getMessage().setBody("after restart");
-        second.getProcessor().process(exchange);
-        assertNull(exchange.getException());
-        mock.assertIsSatisfied();
+        assertRoutes(second, "after restart");
 
         // losing the leadership stops the running consumer, so none is left behind
         view.setLeader(false);
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(2, probe.stopped.get()));
         assertFalse(second.isStarted());
+    }
+
+    @Test
+    @Timeout(60)
+    void testLeadershipLostAndTakenAgainWhileStartIsInProgressKeepsTheRouteWorking() throws Exception {
+        useRouteWithThreads();
+        TestClusterView view = clusterService.getTestView();
+        CountDownLatch startGate = new CountDownLatch(1);
+        probe.startGate.set(startGate);
+        try {
+            view.setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() == 1);
+
+            // the leadership is lost and taken again while the first delegated consumer is still starting
+            view.setLeader(false);
+            view.setLeader(true);
+        } finally {
+            startGate.countDown();
+        }
+
+        // outlast the initial delay of a second start task, then exactly one delegated consumer must run
+        await().atMost(10, TimeUnit.SECONDS).until(() -> probe.started.get() >= 1);
+        await().during(2, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)
+                .until(() -> probe.consumers.stream().filter(ProbeConsumer::isStarted).count() == 1);
+        ProbeConsumer running = probe.consumers.stream().filter(ProbeConsumer::isStarted).findFirst().orElseThrow();
+
+        // and the route behind it, with threads(), still routes its messages
+        assertRoutes(running, "after leadership flap");
+        // the attempt that was starting is published, so no second consumer is started
+        assertEquals(1, probe.created.get(), "A second delegated consumer was started");
+        assertEquals(0, probe.stopped.get());
+
+        view.setLeader(false);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, probe.stopped.get()));
     }
 
     @Test
@@ -419,6 +452,29 @@ public class MasterConsumerLeadershipTest {
         stop.get(10, TimeUnit.SECONDS);
         assertEquals(1, probe.started.get());
         assertEquals(1, stoppedWhenStopReturned.get(), "The delegated consumer was still running when the stop returned");
+    }
+
+    private void useRouteWithThreads() throws Exception {
+        context.getRouteController().stopRoute("master-route");
+        context.removeRoute("master-route");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("master:ns:probe:test").routeId("master-route").threads().to("mock:result");
+            }
+        });
+    }
+
+    private void assertRoutes(ProbeConsumer consumer, String body) throws Exception {
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedBodiesReceived(body);
+        Exchange exchange = consumer.createExchange(false);
+        exchange.getMessage().setBody(body);
+        CountDownLatch done = new CountDownLatch(1);
+        consumer.getAsyncProcessor().process(exchange, doneSync -> done.countDown());
+        assertTrue(done.await(10, TimeUnit.SECONDS), "The route did not complete the message");
+        assertNull(exchange.getException());
+        mock.assertIsSatisfied();
     }
 
     // ************************************
