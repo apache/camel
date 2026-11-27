@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transform messages using a Velocity template.
+ * Render a Velocity template with the data of the message and use the text it writes as the new message body.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri",
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
@@ -63,13 +63,26 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;
 
-    @UriParam
+    @UriParam(description = "Whether the producer reads the CamelVelocityResourceUri, CamelVelocityTemplate,"
+                            + " CamelVelocityContext and CamelVelocitySupplementalContext headers. If false, the producer"
+                            + " ignores all four headers. Enable it only when the route sets these headers, not a message"
+                            + " sender.")
     private boolean allowTemplateFromHeader;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether the file resource loader of the VelocityEngine caches the templates that a template"
+                            + " includes with #parse or #include. It does not apply to the template of resourceUri, which the"
+                            + " producer reads itself and contentCache caches. Not used when the velocityEngine option of the"
+                            + " component is set, and the propertiesFile can override it.")
     private boolean loaderCache = true;
-    @UriParam
+    @UriParam(description = "The name of the character encoding (charset) that the producer uses to read the template of"
+                            + " resourceUri, for example UTF-8. If not set, the default charset of the JVM is used. Not used for"
+                            + " the template of the CamelVelocityTemplate header, which is already text, nor for the templates"
+                            + " that #parse or #include loads.")
     private String encoding;
-    @UriParam
+    @UriParam(description = "The URI of a Java properties file with the configuration of the VelocityEngine that the endpoint"
+                            + " creates, for example file:velocity.properties, or a path on the classpath when the URI has no"
+                            + " scheme. Its properties replace the defaults that Camel sets, such as the resource loaders and"
+                            + " loaderCache. Not used when the velocityEngine option of the component is set.")
     private String propertiesFile;
 
     public VelocityEndpoint() {
@@ -149,12 +162,6 @@ public class VelocityEndpoint extends ResourceEndpoint {
         return allowTemplateFromHeader;
     }
 
-    /**
-     * Whether to allow to use resource template from header or not (default false).
-     *
-     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
-     * security vulnerability if the header is coming from a malicious user, so use this with care.
-     */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
@@ -163,16 +170,10 @@ public class VelocityEndpoint extends ResourceEndpoint {
         return loaderCache;
     }
 
-    /**
-     * Enables / disables the velocity resource loader cache which is enabled by default
-     */
     public void setLoaderCache(boolean loaderCache) {
         this.loaderCache = loaderCache;
     }
 
-    /**
-     * Character encoding of the resource content.
-     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -181,9 +182,6 @@ public class VelocityEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
-    /**
-     * The URI of the properties file which is used for VelocityEngine initialization.
-     */
     public void setPropertiesFile(String file) {
         propertiesFile = file;
     }

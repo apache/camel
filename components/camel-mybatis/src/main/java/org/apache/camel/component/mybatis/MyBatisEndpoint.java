@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS;
 
 /**
- * Performs a query, poll, insert, update or delete in a relational database using MyBatis.
+ * Query, insert, update or delete rows in a relational database, or poll it for rows, with MyBatis mapped statements.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_MYBATIS, title = "MyBatis", syntax = "mybatis:statement",
              category = { Category.DATABASE }, headersClass = MyBatisConstants.class)
@@ -77,24 +77,47 @@ import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS
                                                  + " unchanged"))
 public class MyBatisEndpoint extends BaseMyBatisEndpoint {
 
-    @UriPath
+    @UriPath(description = "The ID of the mapped statement to run, as a mapper XML file or a mapper annotation of the MyBatis"
+                           + " configuration declares it, for example selectAllAccounts, or qualified by its namespace. The"
+                           + " consumer runs it as a select without parameter on each poll, and the producer as the"
+                           + " statementType option says.")
     @Metadata(required = true)
     private String statement;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The kind of operation that the producer runs the statement as. The producer requires it."
+                            + " SelectOne fails when the select returns more than one row. Insert, Update and Delete run the"
+                            + " statement once per element when the parameter is a Collection, an array or an Iterator, while"
+                            + " InsertList, UpdateList and DeleteList run it once with the whole List, for a foreach in the"
+                            + " statement.")
     private StatementType statementType;
     @UriParam(label = "consumer",
-              description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
-                            + " breaks out processing any further exchanges to cause a rollback eager.")
+              description = "Whether the consumer stops processing the other rows of the poll when an exchange fails or is"
+                            + " marked rollback only, and fails the poll with that exception. It does not start a transaction:"
+                            + " the select and the onConsume statements each run in their own MyBatis session.")
     private boolean transacted;
-    @UriParam(label = "consumer", defaultValue = "0")
+    @UriParam(label = "consumer", defaultValue = "0",
+              description = "The maximum number of exchanges that the consumer processes in one poll. The select still reads"
+                            + " all the rows, the other rows are not routed in that poll, and the next poll runs the select"
+                            + " again. A value of 0 or less means no limit.")
     private int maxMessagesPerPoll;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The ID of the mapped statement that the consumer runs as an update after an exchange is"
+                            + " processed successfully, with the row (or the List of rows) as parameter, for example to mark"
+                            + " the row as processed. Separate several statements with commas. A failed or rollback only"
+                            + " exchange does not run it, so the next poll selects the row again.")
     private String onConsume;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether the consumer routes each row of the select in its own exchange. If false, it routes all"
+                            + " the rows of a poll as one List in one exchange.")
     private boolean useIterator = true;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer routes an exchange with an empty List when the select returns no rows. It"
+                            + " applies only when useIterator is false; otherwise no rows means no exchange.")
     private boolean routeEmptyResultSet;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced",
+              description = "A custom org.apache.camel.component.mybatis.MyBatisProcessingStrategy that runs the select of a"
+                            + " poll and the onConsume statements. The default runs the select with selectList and each"
+                            + " onConsume statement with update, each in its own SqlSession.")
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
 
     public MyBatisEndpoint() {
@@ -128,10 +151,6 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         return statement;
     }
 
-    /**
-     * The statement name in the MyBatis XML mapping file which maps to the query, insert, update or delete operation
-     * you wish to evaluate.
-     */
     public void setStatement(String statement) {
         this.statement = statement;
     }
@@ -140,9 +159,6 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         return statementType;
     }
 
-    /**
-     * Mandatory to specify for the producer to control which kind of operation to invoke.
-     */
     public void setStatementType(StatementType statementType) {
         this.statementType = statementType;
     }
@@ -151,10 +167,6 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         return transacted;
     }
 
-    /**
-     * Enables or disables transaction. If enabled then if processing an exchange failed then the consumer + break out
-     * processing any further exchanges to cause a rollback eager
-     */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
     }
@@ -163,9 +175,6 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         return processingStrategy;
     }
 
-    /**
-     * To use a custom MyBatisProcessingStrategy
-     */
     public void setProcessingStrategy(MyBatisProcessingStrategy processingStrategy) {
         this.processingStrategy = processingStrategy;
     }
@@ -174,12 +183,6 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         return maxMessagesPerPoll;
     }
 
-    /**
-     * This option is intended to split results returned by the database pool into the batches and deliver them in
-     * multiple exchanges. This integer defines the maximum messages to deliver in single exchange. By default, no
-     * maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are
-     * thousands of files. Set a value of 0 or negative to disable it.
-     */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
@@ -188,9 +191,6 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         return onConsume;
     }
 
-    /**
-     * Statement to run after data has been processed in the route
-     */
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
     }
@@ -199,9 +199,6 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         return useIterator;
     }
 
-    /**
-     * Process resultset individually or as a list
-     */
     public void setUseIterator(boolean useIterator) {
         this.useIterator = useIterator;
     }
@@ -210,9 +207,6 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
         return routeEmptyResultSet;
     }
 
-    /**
-     * Whether allow empty resultset to be routed to the next hop
-     */
     public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
         this.routeEmptyResultSet = routeEmptyResultSet;
     }

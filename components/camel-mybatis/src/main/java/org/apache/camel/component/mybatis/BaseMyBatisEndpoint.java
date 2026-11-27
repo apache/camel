@@ -26,11 +26,21 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
 
     private SqlSessionFactory sqlSessionFactory;
 
-    @UriParam(label = "producer", defaultValue = "SIMPLE")
+    @UriParam(label = "producer", defaultValue = "SIMPLE",
+              description = "The MyBatis executor type of the session that the producer opens for each message: SIMPLE"
+                            + " prepares a new statement for each call, REUSE reuses the prepared statements, and BATCH"
+                            + " batches the updates and sends them together when the session is committed. With BATCH, MyBatis"
+                            + " returns a fixed placeholder value instead of the count of rows of an insert, update or delete."
+                            + " If not"
+                            + " set, the defaultExecutorType of the MyBatis configuration is used.")
     private ExecutorType executorType;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the header that holds the parameter of the statement, read instead of the message"
+                            + " body. If not set, the producer reads the message body.")
     private String inputHeader;
-    @UriParam
+    @UriParam(description = "The name of the header to store the result in, instead of the message body, which then stays"
+                            + " unchanged. The producer then does not set the CamelMyBatisResult header, and the consumer"
+                            + " puts each polled row, or the List of rows, in this header and leaves the body empty.")
     private String outputHeader;
 
     protected BaseMyBatisEndpoint() {
@@ -62,14 +72,6 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
         return executorType;
     }
 
-    /**
-     * The executor type to be used while executing statements.
-     * <ul>
-     * <li>simple - executor does nothing special.</li>
-     * <li>reuse - executor reuses prepared statements.</li>
-     * <li>batch - executor reuses statements and batches updates.</li>
-     * </ul>
-     */
     public void setExecutorType(ExecutorType executorType) {
         this.executorType = executorType;
     }
@@ -82,11 +84,6 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
         return inputHeader;
     }
 
-    /**
-     * User the header value for input parameters instead of the message body. By default, inputHeader == null and the
-     * input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters
-     * will be taken from the header instead of the body.
-     */
     public void setInputHeader(String inputHeader) {
         this.inputHeader = inputHeader;
     }
@@ -95,14 +92,6 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
         return outputHeader;
     }
 
-    /**
-     * Store the query result in a header instead of the message body. By default, outputHeader == null and the query
-     * result is stored in the message body, any existing content in the message body is discarded. If outputHeader is
-     * set, the value is used as the name of the header to store the query result and the original message body is
-     * preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be
-     * the same as outputHeader all the time. On a polling consumer, each polled row is stored in this header instead of
-     * the message body.
-     */
     public void setOutputHeader(String outputHeader) {
         this.outputHeader = outputHeader;
     }

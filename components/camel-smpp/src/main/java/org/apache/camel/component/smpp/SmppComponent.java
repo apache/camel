@@ -28,7 +28,9 @@ import org.apache.camel.support.DefaultComponent;
 @Component("smpp,smpps")
 public class SmppComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "A shared SmppConfiguration as the base of the endpoints: each endpoint uses a copy of it, which"
+                            + " the options of its URI change.")
     private SmppConfiguration configuration;
 
     public SmppComponent() {
@@ -78,9 +80,6 @@ public class SmppComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * To use the shared SmppConfiguration as configuration.
-     */
     public void setConfiguration(SmppConfiguration configuration) {
         this.configuration = configuration;
     }

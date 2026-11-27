@@ -2,7 +2,7 @@
 :doctitle: PostgreSQL Replication Slot
 :shortname: pg-replication-slot
 :artifactid: camel-pg-replication-slot
-:description: Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
+:description: Receive the changes of a PostgreSQL database from a logical replication slot.
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:

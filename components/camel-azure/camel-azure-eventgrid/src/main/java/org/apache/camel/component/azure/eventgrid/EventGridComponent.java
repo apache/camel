@@ -36,7 +36,8 @@ public class EventGridComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventGridComponent.class);
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of this component start from. Each endpoint gets a copy of"
+                            + " it, and the options of the endpoint replace its values.")
     private EventGridConfiguration configuration = new EventGridConfiguration();
 
     public EventGridComponent() {
@@ -75,9 +76,6 @@ public class EventGridComponent extends DefaultComponent {
         return endpoint;
     }
 
-    /**
-     * The component configurations
-     */
     public EventGridConfiguration getConfiguration() {
         return configuration;
     }

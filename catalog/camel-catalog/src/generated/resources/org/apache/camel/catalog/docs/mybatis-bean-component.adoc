@@ -2,7 +2,7 @@
 :doctitle: MyBatis Bean
 :shortname: mybatis-bean
 :artifactid: camel-mybatis
-:description: Perform queries, inserts, updates or deletes in a relational database using MyBatis.
+:description: Call a method of a MyBatis mapper interface to query, insert, update or delete rows in a relational database.
 :since: 2.22
 :supportlevel: Stable
 :tabs-sync-option:

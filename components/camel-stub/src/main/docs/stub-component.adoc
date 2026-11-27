@@ -2,7 +2,7 @@
 :doctitle: Stub
 :shortname: stub
 :artifactid: camel-stub
-:description: Stub out any physical endpoints while in development or testing.
+:description: Replace any endpoint with an in-memory queue while developing or testing, by adding stub: in front of its URI.
 :since: 2.10
 :supportlevel: Stable
 :tabs-sync-option:

@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
+ * Receive the changes of a PostgreSQL database from a logical replication slot.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgreSQL Replication Slot",
              syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
@@ -60,28 +60,50 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
     private static final Pattern URI_PATTERN = Pattern.compile(
             "^pg-replication-slot:(//)?(?<host>[^:]*):?(?<port>\\d*)?/(?<database>\\w+)/(?<slot>\\w+):(?<plugin>\\w+).*$");
 
-    @UriPath(description = "Postgres host", label = "common", defaultValue = "localhost")
+    @UriPath(description = "The host name or IP address of the PostgreSQL server.", label = "common",
+             defaultValue = "localhost")
     private String host = "localhost";
-    @UriPath(description = "Postgres port", label = "common", defaultValue = "5432")
+    @UriPath(description = "The port of the PostgreSQL server.", label = "common", defaultValue = "5432")
     private Integer port = 5432;
-    @UriPath(description = "Postgres database name", label = "common")
+    @UriPath(description = "The name of the database to connect to. A logical replication slot belongs to one database and"
+                           + " decodes only the changes of that database. The endpoint accepts only letters, digits and"
+                           + " underscores in the name.",
+             label = "common")
     @Metadata(required = true)
     private String database;
     @UriPath
-    @Metadata(description = "Replication Slot name", label = "common", required = true)
+    @Metadata(description = "The name of the logical replication slot to read the changes from. PostgreSQL accepts only lower"
+                            + " case letters, digits and underscores in a slot name.",
+              label = "common", required = true)
     private String slot;
     @UriPath
-    @Metadata(description = "Output plugin name", label = "common", required = true)
+    @Metadata(description = "The name of the logical decoding output plugin, for example test_decoding, wal2json or pgoutput,"
+                            + " which sets the format of the messages. The consumer uses it only when it creates the slot (see"
+                            + " autoCreateSlot): an existing slot keeps the plugin that it was created with.",
+              label = "common", required = true)
     private String outputPlugin;
-    @UriParam(description = "Postgres user", label = "common", defaultValue = "postgres")
+    @UriParam(description = "The name of the database user. The user needs the REPLICATION attribute, or must be a"
+                            + " superuser.",
+              label = "common", defaultValue = "postgres")
     private String user = "postgres";
-    @UriParam(description = "Postgres password", label = "common", security = "secret")
+    @UriParam(description = "The password of the database user.", label = "common", security = "secret")
     private String password;
-    @UriParam(label = "advanced", defaultValue = "10")
+    @UriParam(description = "The number of seconds between the status updates that the consumer sends to the PostgreSQL"
+                            + " server, which report the position that it has received and flushed. While a message is"
+                            + " routed, the consumer also sends a status update at this interval, so that the server does not"
+                            + " close the connection when routing takes longer than wal_sender_timeout.",
+              label = "advanced", defaultValue = "10")
     private Integer statusInterval = 10;
-    @UriParam(label = "advanced", prefix = "slotOptions.", multiValue = true)
+    @UriParam(description = "The options that the consumer passes to the output plugin when it starts reading from the slot,"
+                            + " for example slotOptions.include-xids=false for test_decoding, or slotOptions.proto_version=1"
+                            + " and slotOptions.publication_names=mypub for pgoutput. The plugin defines which options exist.",
+              label = "advanced", prefix = "slotOptions.", multiValue = true)
     private Map<String, Object> slotOptions = Collections.emptyMap();
-    @UriParam(label = "advanced", defaultValue = "true")
+    @UriParam(description = "Whether the consumer creates a logical replication slot with the outputPlugin when it connects"
+                            + " and no slot of this name exists. If false, the slot must exist, otherwise each poll fails. The"
+                            + " consumer never drops the slot, so PostgreSQL keeps the WAL that the slot has not confirmed, also"
+                            + " while the route is stopped.",
+              label = "advanced", defaultValue = "true")
     private Boolean autoCreateSlot = true;
 
     public PgReplicationSlotEndpoint(String uri, Component component) {
@@ -150,9 +172,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return host;
     }
 
-    /**
-     * PostgreSQL server host
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -161,9 +180,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return port;
     }
 
-    /**
-     * PostgreSQL server port
-     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -172,9 +188,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return database;
     }
 
-    /**
-     * PostgreSQL database name
-     */
     public void setDatabase(String database) {
         this.database = database;
     }
@@ -183,9 +196,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return slot;
     }
 
-    /**
-     * Replication slot name.
-     */
     public void setSlot(String slot) {
         this.slot = slot;
     }
@@ -194,9 +204,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return outputPlugin;
     }
 
-    /**
-     * Output plugin name (e.g. test_decoding, wal2json)
-     */
     public void setOutputPlugin(String outputPlugin) {
         this.outputPlugin = outputPlugin;
     }
@@ -205,9 +212,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return user;
     }
 
-    /**
-     * PostgreSQL username
-     */
     public void setUser(String user) {
         this.user = user;
     }
@@ -216,9 +220,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return password;
     }
 
-    /**
-     * PostgreSQL password
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -227,9 +228,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return statusInterval;
     }
 
-    /**
-     * Specifies the number of seconds between status packets sent back to Postgres server.
-     */
     public void setStatusInterval(Integer statusInterval) {
         this.statusInterval = statusInterval;
     }
@@ -238,9 +236,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return slotOptions;
     }
 
-    /**
-     * Slot options to be passed to the output plugin.
-     */
     public void setSlotOptions(Map<String, Object> slotOptions) {
         this.slotOptions = slotOptions;
     }
@@ -249,9 +244,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return autoCreateSlot;
     }
 
-    /**
-     * Auto create slot if it does not exist
-     */
     public void setAutoCreateSlot(Boolean autoCreateSlot) {
         this.autoCreateSlot = autoCreateSlot;
     }

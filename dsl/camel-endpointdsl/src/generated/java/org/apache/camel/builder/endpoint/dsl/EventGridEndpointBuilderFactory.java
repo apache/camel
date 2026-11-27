@@ -45,8 +45,10 @@ public interface EventGridEndpointBuilderFactory {
         }
 
         /**
-         * The EventGrid publisher client. If provided, it will be used instead
-         * of creating a new one.
+         * To use a custom
+         * com.azure.messaging.eventgrid.EventGridPublisherClient for
+         * CloudEvents. When it is set or autowired, the topicEndpoint and the
+         * credential options are not used.
          * 
          * The option is a:
          * <code>com.azure.messaging.eventgrid.EventGridPublisherClient&lt;com.azure.core.models.CloudEvent&gt;</code> type.
@@ -61,8 +63,10 @@ public interface EventGridEndpointBuilderFactory {
             return this;
         }
         /**
-         * The EventGrid publisher client. If provided, it will be used instead
-         * of creating a new one.
+         * To use a custom
+         * com.azure.messaging.eventgrid.EventGridPublisherClient for
+         * CloudEvents. When it is set or autowired, the topicEndpoint and the
+         * credential options are not used.
          * 
          * The option will be converted to a
          * <code>com.azure.messaging.eventgrid.EventGridPublisherClient&lt;com.azure.core.models.CloudEvent&gt;</code> type.
@@ -77,8 +81,9 @@ public interface EventGridEndpointBuilderFactory {
             return this;
         }
         /**
-         * The access key for the Event Grid topic. Required when using
-         * ACCESS_KEY credential type.
+         * The access key of the Event Grid topic, for credentialType
+         * ACCESS_KEY. The azureKeyCredential option replaces it, and it is not
+         * used when the tokenCredential option is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -92,8 +97,10 @@ public interface EventGridEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Azure Key Credential for authentication. This is automatically
-         * created from the accessKey if not provided.
+         * The access key of the Event Grid topic as a
+         * com.azure.core.credential.AzureKeyCredential, for credentialType
+         * ACCESS_KEY. It replaces the accessKey option, and it is not used when
+         * the tokenCredential option is set.
          * 
          * The option is a:
          * <code>com.azure.core.credential.AzureKeyCredential</code> type.
@@ -108,8 +115,10 @@ public interface EventGridEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Azure Key Credential for authentication. This is automatically
-         * created from the accessKey if not provided.
+         * The access key of the Event Grid topic as a
+         * com.azure.core.credential.AzureKeyCredential, for credentialType
+         * ACCESS_KEY. It replaces the accessKey option, and it is not used when
+         * the tokenCredential option is set.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.AzureKeyCredential</code> type.
@@ -124,7 +133,12 @@ public interface EventGridEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * How the producer authenticates: ACCESS_KEY with the
+         * azureKeyCredential or accessKey option, TOKEN_CREDENTIAL with the
+         * tokenCredential option, or AZURE_IDENTITY with a
+         * DefaultAzureCredential of the Azure Identity library. When one of
+         * these credential options is set, the component chooses the type from
+         * it, so set this option only for AZURE_IDENTITY.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -141,7 +155,12 @@ public interface EventGridEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * How the producer authenticates: ACCESS_KEY with the
+         * azureKeyCredential or accessKey option, TOKEN_CREDENTIAL with the
+         * tokenCredential option, or AZURE_IDENTITY with a
+         * DefaultAzureCredential of the Azure Identity library. When one of
+         * these credential options is set, the component chooses the type from
+         * it, so set this option only for AZURE_IDENTITY.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -158,8 +177,9 @@ public interface EventGridEndpointBuilderFactory {
             return this;
         }
         /**
-         * Provide custom authentication credentials using an implementation of
-         * TokenCredential.
+         * The com.azure.core.credential.TokenCredential that authenticates the
+         * producer with Microsoft Entra ID. When it is set, the accessKey and
+         * azureKeyCredential options are not used.
          * 
          * The option is a:
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -174,8 +194,9 @@ public interface EventGridEndpointBuilderFactory {
             return this;
         }
         /**
-         * Provide custom authentication credentials using an implementation of
-         * TokenCredential.
+         * The com.azure.core.credential.TokenCredential that authenticates the
+         * producer with Microsoft Entra ID. When it is set, the accessKey and
+         * azureKeyCredential options are not used.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -274,7 +295,11 @@ public interface EventGridEndpointBuilderFactory {
          * Syntax: <code>azure-eventgrid:topicEndpoint</code>
          * 
          * Path parameter: topicEndpoint (required)
-         * The topic endpoint URL where events will be published.
+         * The endpoint URL of the Event Grid topic that the producer publishes
+         * the events to, for example
+         * https://mytopic.westeurope-1.eventgrid.azure.net/api/events. The
+         * topic must accept the CloudEvents 1.0 schema. Not used when the
+         * publisherClient option is set.
          * 
          * @param path topicEndpoint
          * @return the dsl builder
@@ -293,7 +318,11 @@ public interface EventGridEndpointBuilderFactory {
          * Syntax: <code>azure-eventgrid:topicEndpoint</code>
          * 
          * Path parameter: topicEndpoint (required)
-         * The topic endpoint URL where events will be published.
+         * The endpoint URL of the Event Grid topic that the producer publishes
+         * the events to, for example
+         * https://mytopic.westeurope-1.eventgrid.azure.net/api/events. The
+         * topic must accept the CloudEvents 1.0 schema. Not used when the
+         * publisherClient option is set.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -316,7 +345,8 @@ public interface EventGridEndpointBuilderFactory {
         public static final EventGridHeaderNameBuilder INSTANCE = new EventGridHeaderNameBuilder();
 
         /**
-         * The event type of the event.
+         * The type of the event, the type attribute of the CloudEvent. If not
+         * set, the producer uses Camel.Event.
          * 
          * The option is a: {@code String} type.
          * 
@@ -328,7 +358,8 @@ public interface EventGridEndpointBuilderFactory {
             return "CamelAzureEventGridEventType";
         }
         /**
-         * The subject of the event.
+         * The subject of the event, the subject attribute of the CloudEvent. If
+         * not set, the producer uses /camel/event.
          * 
          * The option is a: {@code String} type.
          * 
@@ -340,7 +371,8 @@ public interface EventGridEndpointBuilderFactory {
             return "CamelAzureEventGridSubject";
         }
         /**
-         * The time the event was generated.
+         * The time when the event happened, the time attribute of the
+         * CloudEvent. If not set, the producer uses the current time.
          * 
          * The option is a: {@code java.time.OffsetDateTime} type.
          * 
@@ -352,7 +384,9 @@ public interface EventGridEndpointBuilderFactory {
             return "CamelAzureEventGridEventTime";
         }
         /**
-         * The unique identifier for the event.
+         * The ID of the event, the id attribute of the CloudEvent. If not set,
+         * the producer uses a random UUID for each event. For a List body,
+         * every event gets this ID.
          * 
          * The option is a: {@code String} type.
          * 

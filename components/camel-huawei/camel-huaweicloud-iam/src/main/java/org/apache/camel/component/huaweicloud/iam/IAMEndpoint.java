@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To securely manage users on Huawei Cloud
+ * List, read and update the users and user groups of Huawei Cloud Identity and Access Management (IAM).
  */
 @UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-iam", title = "Huawei Identity and Access Management (IAM)",
              syntax = "hwcloud-iam:operation",
@@ -63,53 +63,77 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " as domain_id, as in the JSON of the request"))
 public class IAMEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
+    @UriPath(description = "The operation that the producer performs: listUsers, getUser, updateUser, listGroups, getGroupUsers"
+                           + " or updateGroup. The CamelHwCloudIamOperation exchange property replaces this option.",
+             displayName = "Operation", label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "IAM service region", displayName = "Service region")
+    @UriParam(description = "The region ID of IAM, for example cn-north-4. The producer uses it to find the endpoint of IAM, and"
+                            + " fails to start the client when the Huawei Cloud SDK does not know the region for IAM.",
+              displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
+    @UriParam(description = "The host name or IP address of the proxy server. The producer uses a proxy only when this option"
+                            + " and the proxyPort option are set.",
+              displayName = "Proxy server host")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
+    @UriParam(description = "The port of the proxy server. The producer uses a proxy only when this option is above 0 and the"
+                            + " proxyHost option is set.",
+              displayName = "Proxy server port")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret")
+    @UriParam(description = "The user name to authenticate with the proxy server. It is used only when the proxyHost and"
+                            + " proxyPort options are set.",
+              displayName = "Proxy user", security = "secret")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret")
+    @UriParam(description = "The password to authenticate with the proxy server. It is used only when the proxyHost,"
+                            + " proxyPort and proxyUser options are set.",
+              displayName = "Proxy password", security = "secret")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored",
+    @UriParam(description = "Whether to skip the verification of the TLS certificate of the server. This makes the connection"
+                            + " insecure: use it only for testing.",
+              displayName = "SSL Verification Ignored",
               defaultValue = "false", label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
+    @UriParam(description = "The AK/SK pair as an org.apache.camel.component.huaweicloud.common.models.ServiceKeys. When set,"
+                            + " its accessKey and its secretKey replace the accessKey and secretKey options.",
+              displayName = "Service Configuration",
               security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret")
+    @UriParam(description = "The access key ID (AK) of the Huawei Cloud credentials. Not used when the serviceKeys option is"
+                            + " set.",
+              displayName = "API access key (AK)", security = "secret")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret")
+    @UriParam(description = "The secret access key (SK) of the Huawei Cloud credentials. Not used when the serviceKeys option is"
+                            + " set.",
+              displayName = "API secret key (SK)", security = "secret")
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "User ID to perform operation with", displayName = "User ID", security = "secret")
+    @UriParam(description = "The ID of the IAM user for getUser and updateUser, which fail without it. The"
+                            + " CamelHwCloudIamUserId exchange property replaces this option.",
+              displayName = "User ID", security = "secret")
     @Metadata(required = false)
     private String userId;
 
-    @UriParam(description = "Group ID to perform operation with", displayName = "Group ID", security = "secret")
+    @UriParam(description = "The ID of the user group for getGroupUsers and updateGroup, which fail without it. The"
+                            + " CamelHwCloudIamGroupId exchange property replaces this option.",
+              displayName = "Group ID", security = "secret")
     @Metadata(required = false)
     private String groupId;
 

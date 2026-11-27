@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "stub",
     "title": "Stub",
-    "description": "Stub out any physical endpoints while in development or testing.",
+    "description": "Replace any endpoint with an in-memory queue while developing or testing, by adding stub: in front of its URI.",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "core,testing",
@@ -35,8 +35,8 @@
     "autowiredEnabled": { "index": 7, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "defaultQueueFactory": { "index": 8, "kind": "property", "displayName": "Default Queue Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the default queue factory." },
     "queueSize": { "index": 9, "kind": "property", "displayName": "Queue Size", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1000, "description": "Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold)." },
-    "shadow": { "index": 10, "kind": "property", "displayName": "Shadow", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If shadow is enabled then the stub component will register a shadow endpoint with the actual uri that refers to the stub endpoint, meaning you can lookup the endpoint via both stub:kafka:cheese and kafka:cheese." },
-    "shadowPattern": { "index": 11, "kind": "property", "displayName": "Shadow Pattern", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "If shadow is enabled then this pattern can be used to filter which components to match. Multiple patterns can be separated by comma." }
+    "shadow": { "index": 10, "kind": "property", "displayName": "Shadow", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to also register each stub endpoint in the endpoint registry under its URI without the stub: prefix, so that looking up kafka:cheese returns the endpoint of stub:kafka:cheese." },
+    "shadowPattern": { "index": 11, "kind": "property", "displayName": "Shadow Pattern", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The pattern that selects which stub endpoints shadow is applied to. It is matched against the whole endpoint URI including the stub: prefix, as an exact URI, a wildcard with a trailing * (such as stub:kafka*), or a regular expression. If not set, shadow applies to all stub endpoints." }
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "unchanged" ], "description": "The body the producer sent" },

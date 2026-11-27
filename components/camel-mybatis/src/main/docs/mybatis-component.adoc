@@ -2,7 +2,7 @@
 :doctitle: MyBatis
 :shortname: mybatis
 :artifactid: camel-mybatis
-:description: Performs a query, poll, insert, update or delete in a relational database using MyBatis.
+:description: Query, insert, update or delete rows in a relational database, or poll it for rows, with MyBatis mapped statements.
 :since: 2.7
 :supportlevel: Stable
 :tabs-sync-option:

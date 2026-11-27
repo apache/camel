@@ -3030,7 +3030,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Minio (camel-minio)
-     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * Store and retrieve objects in MinIO or another Amazon S3 compatible
+     * object storage.
      * 
      * Category: cloud,file
      * Since: 3.5
@@ -3126,8 +3127,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * MyBatis (camel-mybatis)
-     * Performs a query, poll, insert, update or delete in a relational database
-     * using MyBatis.
+     * Query, insert, update or delete rows in a relational database, or poll it
+     * for rows, with MyBatis mapped statements.
      * 
      * Category: database
      * Since: 2.7
@@ -3140,8 +3141,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * MyBatis Bean (camel-mybatis)
-     * Perform queries, inserts, updates or deletes in a relational database
-     * using MyBatis.
+     * Call a method of a MyBatis mapper interface to query, insert, update or
+     * delete rows in a relational database.
      * 
      * Category: database
      * Since: 2.22
@@ -3520,8 +3521,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * PostgreSQL Replication Slot (camel-pg-replication-slot)
-     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
-     * Replication Slots.
+     * Receive the changes of a PostgreSQL database from a logical replication
+     * slot.
      * 
      * Category: database
      * Since: 3.0
@@ -3857,8 +3858,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * SMPP (camel-smpp)
-     * Send and receive SMS messages using a SMSC (Short Message Service
-     * Center).
+     * Send and receive SMS messages through an SMSC (Short Message Service
+     * Center) with the SMPP protocol.
      * 
      * Category: mobile
      * Since: 2.2
@@ -4179,8 +4180,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * TensorFlow Serving (camel-tensorflow-serving)
-     * Provide access to TensorFlow Serving model servers to run inference with
-     * TensorFlow saved models remotely
+     * Run inference on the models of a TensorFlow Serving model server over
+     * gRPC, and get their status and metadata.
      * 
      * Category: ai
      * Since: 4.10
@@ -4286,7 +4287,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Velocity (camel-velocity)
-     * Transform messages using a Velocity template.
+     * Render a Velocity template with the data of the message and use the text
+     * it writes as the new message body.
      * 
      * Category: transformation
      * Since: 1.2

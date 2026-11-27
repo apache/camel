@@ -109,7 +109,7 @@ or removes its row.
 | camel-aws2-transcribe | aws2-transcribe | yes |
 | camel-aws2-translate | aws2-translate |  |
 | camel-azure-cosmosdb | azure-cosmosdb | yes |
-| camel-azure-eventgrid | azure-eventgrid |  |
+| camel-azure-eventgrid | azure-eventgrid | yes |
 | camel-azure-eventhubs | azure-eventhubs |  |
 | camel-azure-files | azure-files | yes |
 | camel-azure-functions | azure-functions |  |
@@ -204,10 +204,10 @@ or removes its row.
 | camel-hibernate | hibernate | yes |
 | camel-hivemq | hivemq | yes |
 | camel-http | http, https |  |
-| camel-huaweicloud-dms | hwcloud-dms |  |
+| camel-huaweicloud-dms | hwcloud-dms | yes |
 | camel-huaweicloud-frs | hwcloud-frs |  |
 | camel-huaweicloud-functiongraph | hwcloud-functiongraph | yes |
-| camel-huaweicloud-iam | hwcloud-iam |  |
+| camel-huaweicloud-iam | hwcloud-iam | yes |
 | camel-huaweicloud-imagerecognition | hwcloud-imagerecognition | yes |
 | camel-huaweicloud-obs | hwcloud-obs |  |
 | camel-huaweicloud-smn | hwcloud-smn | yes |
@@ -273,7 +273,7 @@ or removes its row.
 | camel-milvus | milvus | yes |
 | camel-mina | mina |  |
 | camel-mina-sftp | mina-sftp |  |
-| camel-minio | minio (deprecated) |  |
+| camel-minio | minio (deprecated) | yes |
 | camel-mllp | mllp |  |
 | camel-mock | mock |  |
 | camel-mongodb | mongodb |  |
@@ -281,7 +281,7 @@ or removes its row.
 | camel-mtconnect | mtconnect |  |
 | camel-mustache | mustache | yes |
 | camel-mvel | mvel |  |
-| camel-mybatis | mybatis, mybatis-bean |  |
+| camel-mybatis | mybatis, mybatis-bean | yes |
 | camel-nats | nats |  |
 | camel-neo4j | neo4j |  |
 | camel-netty | netty |  |
@@ -302,7 +302,7 @@ or removes its row.
 | camel-paho | paho (deprecated) |  |
 | camel-paho-mqtt5 | paho-mqtt5 |  |
 | camel-pdf | pdf |  |
-| camel-pg-replication-slot | pg-replication-slot |  |
+| camel-pg-replication-slot | pg-replication-slot | yes |
 | camel-pgevent | pgevent |  |
 | camel-pgvector | pgvector | yes |
 | camel-pinecone | pinecone |  |
@@ -338,7 +338,7 @@ or removes its row.
 | camel-slack | slack | yes |
 | camel-smb | smb |  |
 | camel-smooks | smooks |  |
-| camel-smpp | smpp, smpps |  |
+| camel-smpp | smpp, smpps | yes |
 | camel-snmp | snmp |  |
 | camel-solr | solr | yes |
 | camel-spiffe | spiffe | yes |
@@ -362,10 +362,10 @@ or removes its row.
 | camel-stream | stream | yes |
 | camel-stringtemplate | string-template |  |
 | camel-stripe | stripe |  |
-| camel-stub | stub |  |
+| camel-stub | stub | yes |
 | camel-tahu | tahu-edge, tahu-host | yes |
 | camel-telegram | telegram | yes |
-| camel-tensorflow-serving | tensorflow-serving |  |
+| camel-tensorflow-serving | tensorflow-serving | yes |
 | camel-test-citrus | citrus |  |
 | camel-thrift | thrift |  |
 | camel-thymeleaf | thymeleaf |  |
@@ -376,7 +376,7 @@ or removes its row.
 | camel-typesafe-ai | typesafe-ai |  |
 | camel-undertow | undertow |  |
 | camel-validator | validator |  |
-| camel-velocity | velocity |  |
+| camel-velocity | velocity | yes |
 | camel-vertx | vertx |  |
 | camel-vertx-http | vertx-http |  |
 | camel-vertx-mqtt | vertx-mqtt | yes |

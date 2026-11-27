@@ -2789,7 +2789,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-eventgrid:topicEndpoint</code>
      * 
      * Path parameter: topicEndpoint (required)
-     * The topic endpoint URL where events will be published.
+     * The endpoint URL of the Event Grid topic that the producer publishes the
+     * events to, for example
+     * https://mytopic.westeurope-1.eventgrid.azure.net/api/events. The topic
+     * must accept the CloudEvents 1.0 schema. Not used when the publisherClient
+     * option is set.
      * 
      * @param path topicEndpoint
      * @return the dsl builder
@@ -2808,7 +2812,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-eventgrid:topicEndpoint</code>
      * 
      * Path parameter: topicEndpoint (required)
-     * The topic endpoint URL where events will be published.
+     * The endpoint URL of the Event Grid topic that the producer publishes the
+     * events to, for example
+     * https://mytopic.westeurope-1.eventgrid.azure.net/api/events. The topic
+     * must accept the CloudEvents 1.0 schema. Not used when the publisherClient
+     * option is set.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8489,8 +8497,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
-     * To integrate with a fully managed, high-performance message queuing
-     * service on Huawei Cloud
+     * Create, update, query, list and delete Kafka and RabbitMQ instances of
+     * Huawei Cloud Distributed Message Service (DMS).
      * 
      * Category: cloud
      * Since: 3.12
@@ -8499,7 +8507,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-dms:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to be performed
+     * The operation that the producer performs: createInstance, deleteInstance,
+     * listInstances, queryInstance or updateInstance. The
+     * CamelHwCloudDmsOperation exchange property replaces this option.
      * 
      * @param path operation
      * @return the dsl builder
@@ -8509,8 +8519,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
-     * To integrate with a fully managed, high-performance message queuing
-     * service on Huawei Cloud
+     * Create, update, query, list and delete Kafka and RabbitMQ instances of
+     * Huawei Cloud Distributed Message Service (DMS).
      * 
      * Category: cloud
      * Since: 3.12
@@ -8519,7 +8529,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-dms:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to be performed
+     * The operation that the producer performs: createInstance, deleteInstance,
+     * listInstances, queryInstance or updateInstance. The
+     * CamelHwCloudDmsOperation exchange property replaces this option.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8621,7 +8633,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
-     * To securely manage users on Huawei Cloud
+     * List, read and update the users and user groups of Huawei Cloud Identity
+     * and Access Management (IAM).
      * 
      * Category: cloud
      * Since: 3.11
@@ -8630,7 +8643,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-iam:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to be performed
+     * The operation that the producer performs: listUsers, getUser, updateUser,
+     * listGroups, getGroupUsers or updateGroup. The CamelHwCloudIamOperation
+     * exchange property replaces this option.
      * 
      * @param path operation
      * @return the dsl builder
@@ -8640,7 +8655,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
-     * To securely manage users on Huawei Cloud
+     * List, read and update the users and user groups of Huawei Cloud Identity
+     * and Access Management (IAM).
      * 
      * Category: cloud
      * Since: 3.11
@@ -8649,7 +8665,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-iam:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to be performed
+     * The operation that the producer performs: listUsers, getUser, updateUser,
+     * listGroups, getGroupUsers or updateGroup. The CamelHwCloudIamOperation
+     * exchange property replaces this option.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12897,7 +12915,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Minio (camel-minio)
-     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * Store and retrieve objects in MinIO or another Amazon S3 compatible
+     * object storage.
      * 
      * Category: cloud,file
      * Since: 3.5
@@ -12906,7 +12925,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>minio:bucketName</code>
      * 
      * Path parameter: bucketName (required)
-     * Bucket name
+     * The name of the bucket. Unless objectName is set, the endpoint checks at
+     * startup that the bucket exists, and creates it if autoCreateBucket is
+     * true. The CamelMinioOverrideBucketName header replaces it for the
+     * producer.
      * 
      * @param path bucketName
      * @return the dsl builder
@@ -12917,7 +12939,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Minio (camel-minio)
-     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * Store and retrieve objects in MinIO or another Amazon S3 compatible
+     * object storage.
      * 
      * Category: cloud,file
      * Since: 3.5
@@ -12926,7 +12949,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>minio:bucketName</code>
      * 
      * Path parameter: bucketName (required)
-     * Bucket name
+     * The name of the bucket. Unless objectName is set, the endpoint checks at
+     * startup that the bucket exists, and creates it if autoCreateBucket is
+     * true. The CamelMinioOverrideBucketName header replaces it for the
+     * producer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13267,8 +13293,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * MyBatis (camel-mybatis)
-     * Performs a query, poll, insert, update or delete in a relational database
-     * using MyBatis.
+     * Query, insert, update or delete rows in a relational database, or poll it
+     * for rows, with MyBatis mapped statements.
      * 
      * Category: database
      * Since: 2.7
@@ -13277,8 +13303,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>mybatis:statement</code>
      * 
      * Path parameter: statement (required)
-     * The statement name in the MyBatis XML mapping file which maps to the
-     * query, insert, update or delete operation you wish to evaluate.
+     * The ID of the mapped statement to run, as a mapper XML file or a mapper
+     * annotation of the MyBatis configuration declares it, for example
+     * selectAllAccounts, or qualified by its namespace. The consumer runs it as
+     * a select without parameter on each poll, and the producer as the
+     * statementType option says.
      * 
      * @param path statement
      * @return the dsl builder
@@ -13288,8 +13317,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * MyBatis (camel-mybatis)
-     * Performs a query, poll, insert, update or delete in a relational database
-     * using MyBatis.
+     * Query, insert, update or delete rows in a relational database, or poll it
+     * for rows, with MyBatis mapped statements.
      * 
      * Category: database
      * Since: 2.7
@@ -13298,8 +13327,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>mybatis:statement</code>
      * 
      * Path parameter: statement (required)
-     * The statement name in the MyBatis XML mapping file which maps to the
-     * query, insert, update or delete operation you wish to evaluate.
+     * The ID of the mapped statement to run, as a mapper XML file or a mapper
+     * annotation of the MyBatis configuration declares it, for example
+     * selectAllAccounts, or qualified by its namespace. The consumer runs it as
+     * a select without parameter on each poll, and the producer as the
+     * statementType option says.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13311,8 +13343,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * MyBatis Bean (camel-mybatis)
-     * Perform queries, inserts, updates or deletes in a relational database
-     * using MyBatis.
+     * Call a method of a MyBatis mapper interface to query, insert, update or
+     * delete rows in a relational database.
      * 
      * Category: database
      * Since: 2.22
@@ -13321,11 +13353,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>mybatis-bean:beanName:methodName</code>
      * 
      * Path parameter: beanName (required)
-     * Name of the bean with the MyBatis annotations. This can either by a type
-     * alias or a FQN class name.
+     * The mapper interface to call, as a type alias of the MyBatis
+     * configuration or a fully qualified class name. It is not a bean of the
+     * Camel registry: the mapper must be registered in the MyBatis
+     * configuration.
      * 
      * Path parameter: methodName (required)
-     * Name of the method on the bean that has the SQL query to be executed.
+     * The name of the method of the mapper interface to call. The bean binding
+     * of Camel selects the method and converts the parameter to the type that
+     * the method declares.
      * 
      * @param path beanName:methodName
      * @return the dsl builder
@@ -13335,8 +13371,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * MyBatis Bean (camel-mybatis)
-     * Perform queries, inserts, updates or deletes in a relational database
-     * using MyBatis.
+     * Call a method of a MyBatis mapper interface to query, insert, update or
+     * delete rows in a relational database.
      * 
      * Category: database
      * Since: 2.22
@@ -13345,11 +13381,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>mybatis-bean:beanName:methodName</code>
      * 
      * Path parameter: beanName (required)
-     * Name of the bean with the MyBatis annotations. This can either by a type
-     * alias or a FQN class name.
+     * The mapper interface to call, as a type alias of the MyBatis
+     * configuration or a fully qualified class name. It is not a bean of the
+     * Camel registry: the mapper must be registered in the MyBatis
+     * configuration.
      * 
      * Path parameter: methodName (required)
-     * Name of the method on the bean that has the SQL query to be executed.
+     * The name of the method of the mapper interface to call. The bean binding
+     * of Camel selects the method and converts the parameter to the type that
+     * the method declares.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14665,8 +14705,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * PostgreSQL Replication Slot (camel-pg-replication-slot)
-     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
-     * Replication Slots.
+     * Receive the changes of a PostgreSQL database from a logical replication
+     * slot.
      * 
      * Category: database
      * Since: 3.0
@@ -14676,21 +14716,29 @@ public class StaticEndpointBuilders {
      * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
      * 
      * Path parameter: slot (required)
-     * Replication Slot name
+     * The name of the logical replication slot to read the changes from.
+     * PostgreSQL accepts only lower case letters, digits and underscores in a
+     * slot name.
      * 
      * Path parameter: host
-     * Postgres host
+     * The host name or IP address of the PostgreSQL server.
      * Default value: localhost
      * 
      * Path parameter: port
-     * Postgres port
+     * The port of the PostgreSQL server.
      * Default value: 5432
      * 
      * Path parameter: database (required)
-     * Postgres database name
+     * The name of the database to connect to. A logical replication slot
+     * belongs to one database and decodes only the changes of that database.
+     * The endpoint accepts only letters, digits and underscores in the name.
      * 
      * Path parameter: outputPlugin (required)
-     * Output plugin name
+     * The name of the logical decoding output plugin, for example
+     * test_decoding, wal2json or pgoutput, which sets the format of the
+     * messages. The consumer uses it only when it creates the slot (see
+     * autoCreateSlot): an existing slot keeps the plugin that it was created
+     * with.
      * 
      * @param path host:port/database/slot:outputPlugin
      * @return the dsl builder
@@ -14700,8 +14748,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * PostgreSQL Replication Slot (camel-pg-replication-slot)
-     * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
-     * Replication Slots.
+     * Receive the changes of a PostgreSQL database from a logical replication
+     * slot.
      * 
      * Category: database
      * Since: 3.0
@@ -14711,21 +14759,29 @@ public class StaticEndpointBuilders {
      * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
      * 
      * Path parameter: slot (required)
-     * Replication Slot name
+     * The name of the logical replication slot to read the changes from.
+     * PostgreSQL accepts only lower case letters, digits and underscores in a
+     * slot name.
      * 
      * Path parameter: host
-     * Postgres host
+     * The host name or IP address of the PostgreSQL server.
      * Default value: localhost
      * 
      * Path parameter: port
-     * Postgres port
+     * The port of the PostgreSQL server.
      * Default value: 5432
      * 
      * Path parameter: database (required)
-     * Postgres database name
+     * The name of the database to connect to. A logical replication slot
+     * belongs to one database and decodes only the changes of that database.
+     * The endpoint accepts only letters, digits and underscores in the name.
      * 
      * Path parameter: outputPlugin (required)
-     * Output plugin name
+     * The name of the logical decoding output plugin, for example
+     * test_decoding, wal2json or pgoutput, which sets the format of the
+     * messages. The consumer uses it only when it creates the slot (see
+     * autoCreateSlot): an existing slot keeps the plugin that it was created
+     * with.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -16599,8 +16655,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * SMPP (camel-smpp)
-     * Send and receive SMS messages using a SMSC (Short Message Service
-     * Center).
+     * Send and receive SMS messages through an SMSC (Short Message Service
+     * Center) with the SMPP protocol.
      * 
      * Category: mobile
      * Since: 2.2
@@ -16609,11 +16665,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>smpp:host:port</code>
      * 
      * Path parameter: host
-     * Hostname for the SMSC server to use.
+     * The host name or IP address of the SMSC.
      * Default value: localhost
      * 
      * Path parameter: port
-     * Port number for the SMSC server to use.
+     * The TCP port of the SMSC.
      * Default value: 2775
      * 
      * @param path host:port
@@ -16624,8 +16680,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * SMPP (camel-smpp)
-     * Send and receive SMS messages using a SMSC (Short Message Service
-     * Center).
+     * Send and receive SMS messages through an SMSC (Short Message Service
+     * Center) with the SMPP protocol.
      * 
      * Category: mobile
      * Since: 2.2
@@ -16634,11 +16690,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>smpp:host:port</code>
      * 
      * Path parameter: host
-     * Hostname for the SMSC server to use.
+     * The host name or IP address of the SMSC.
      * Default value: localhost
      * 
      * Path parameter: port
-     * Port number for the SMSC server to use.
+     * The TCP port of the SMSC.
      * Default value: 2775
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -16651,8 +16707,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * SMPP (Secure) (camel-smpp)
-     * Send and receive SMS messages using a SMSC (Short Message Service
-     * Center).
+     * Send and receive SMS messages through an SMSC (Short Message Service
+     * Center) with the SMPP protocol.
      * 
      * Category: mobile
      * Since: 2.2
@@ -16661,11 +16717,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>smpps:host:port</code>
      * 
      * Path parameter: host
-     * Hostname for the SMSC server to use.
+     * The host name or IP address of the SMSC.
      * Default value: localhost
      * 
      * Path parameter: port
-     * Port number for the SMSC server to use.
+     * The TCP port of the SMSC.
      * Default value: 2775
      * 
      * @param path host:port
@@ -17918,7 +17974,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stub (camel-stub)
-     * Stub out any physical endpoints while in development or testing.
+     * Replace any endpoint with an in-memory queue while developing or testing,
+     * by adding stub: in front of its URI.
      * 
      * Category: core,testing
      * Since: 2.10
@@ -17937,7 +17994,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stub (camel-stub)
-     * Stub out any physical endpoints while in development or testing.
+     * Replace any endpoint with an in-memory queue while developing or testing,
+     * by adding stub: in front of its URI.
      * 
      * Category: core,testing
      * Since: 2.10
@@ -18104,8 +18162,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * TensorFlow Serving (camel-tensorflow-serving)
-     * Provide access to TensorFlow Serving model servers to run inference with
-     * TensorFlow saved models remotely
+     * Run inference on the models of a TensorFlow Serving model server over
+     * gRPC, and get their status and metadata.
      * 
      * Category: ai
      * Since: 4.10
@@ -18114,7 +18172,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tensorflow-serving:api</code>
      * 
      * Path parameter: api (required)
-     * The TensorFlow Serving API
+     * The TensorFlow Serving API that the producer calls: model-status
+     * (GetModelStatus of the ModelService), or model-metadata
+     * (GetModelMetadata), classify, regress or predict of the
+     * PredictionService.
      * There are 5 enums and the value can be one of: model-status,
      * model-metadata, classify, regress, predict
      * 
@@ -18126,8 +18187,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * TensorFlow Serving (camel-tensorflow-serving)
-     * Provide access to TensorFlow Serving model servers to run inference with
-     * TensorFlow saved models remotely
+     * Run inference on the models of a TensorFlow Serving model server over
+     * gRPC, and get their status and metadata.
      * 
      * Category: ai
      * Since: 4.10
@@ -18136,7 +18197,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tensorflow-serving:api</code>
      * 
      * Path parameter: api (required)
-     * The TensorFlow Serving API
+     * The TensorFlow Serving API that the producer calls: model-status
+     * (GetModelStatus of the ModelService), or model-metadata
+     * (GetModelMetadata), classify, regress or predict of the
+     * PredictionService.
      * There are 5 enums and the value can be one of: model-status,
      * model-metadata, classify, regress, predict
      * 
@@ -18692,7 +18756,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Velocity (camel-velocity)
-     * Transform messages using a Velocity template.
+     * Render a Velocity template with the data of the message and use the text
+     * it writes as the new message body.
      * 
      * Category: transformation
      * Since: 1.2
@@ -18717,7 +18782,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Velocity (camel-velocity)
-     * Transform messages using a Velocity template.
+     * Render a Velocity template with the data of the message and use the text
+     * it writes as the new message body.
      * 
      * Category: transformation
      * Since: 1.2
