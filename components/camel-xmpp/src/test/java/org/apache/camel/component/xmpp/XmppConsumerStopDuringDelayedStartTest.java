@@ -28,6 +28,7 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.awaitility.Awaitility.await;
@@ -63,6 +64,7 @@ class XmppConsumerStopDuringDelayedStartTest {
     }
 
     @Test
+    @Timeout(30)
     void chatConsumerStoppedWhileItsDelayedStartWaitsForTheLockIsNotStarted() throws Exception {
         int port = serverPort.getPort();
         stopWhileTheDelayedStartWaitsForTheLock(port, "xmpp://127.0.0.1:" + port + "/bob@" + FakeXmppServer.DOMAIN
@@ -71,6 +73,7 @@ class XmppConsumerStopDuringDelayedStartTest {
     }
 
     @Test
+    @Timeout(30)
     void roomConsumerStoppedWhileItsDelayedStartWaitsForTheLockIsNotStarted() throws Exception {
         int port = serverPort.getPort();
         stopWhileTheDelayedStartWaitsForTheLock(port, "xmpp://127.0.0.1:" + port + "?room=" + ROOM + "&nickname=camel"
