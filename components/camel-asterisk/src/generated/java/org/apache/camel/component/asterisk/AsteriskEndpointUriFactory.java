@@ -24,7 +24,7 @@ public class AsteriskEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(10);
         props.add("action");
         props.add("bridgeErrorHandler");
         props.add("exceptionHandler");
@@ -33,6 +33,7 @@ public class AsteriskEndpointUriFactory extends org.apache.camel.support.compone
         props.add("lazyStartProducer");
         props.add("name");
         props.add("password");
+        props.add("port");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);

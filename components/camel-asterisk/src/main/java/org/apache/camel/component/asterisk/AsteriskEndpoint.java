@@ -69,9 +69,14 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
     private String name;
 
     @UriParam(description = "The host name or IP address of the Asterisk server. The consumer and the producer connect to"
-                            + " the Asterisk Manager Interface (AMI) of this host on port 5038, which cannot be changed.")
+                            + " the Asterisk Manager Interface (AMI) of this host on the port of the port option.")
     @Metadata(required = true)
     private String hostname;
+
+    @UriParam(defaultValue = "5038",
+              description = "The port of the Asterisk Manager Interface (AMI) of the Asterisk server, as set in the"
+                            + " manager.conf file of the server.")
+    private int port = AsteriskConnection.DEFAULT_PORT;
 
     @UriParam(label = "producer",
               description = "The AMI action that the producer sends for each message: QUEUE_STATUS for the status of the queues"
@@ -81,13 +86,13 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
                             + " producer fails the message.")
     private AsteriskAction action;
 
-    @UriParam(security = "secret",
+    @UriParam(label = "security", security = "secret",
               description = "The name of the AMI user, as defined in the manager.conf file of the Asterisk server. The consumer"
                             + " and the producer each log in with it when they start.")
     @Metadata(required = true)
     private String username;
 
-    @UriParam(security = "secret",
+    @UriParam(label = "security", security = "secret",
               description = "The secret of the AMI user, as defined in the manager.conf file of the Asterisk server.")
     @Metadata(required = true)
     private String password;
@@ -163,6 +168,14 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public String getName() {
