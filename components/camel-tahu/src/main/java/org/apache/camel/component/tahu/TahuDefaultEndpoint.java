@@ -34,4 +34,17 @@ public abstract class TahuDefaultEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (configuration.getSslContextParameters() != null) {
+            throw new IllegalArgumentException(
+                    "The sslContextParameters option, or the global SSLContextParameters with useGlobalSslContextParameters=true,"
+                                               + " cannot be applied: Eclipse Tahu creates its MQTT clients without these TLS settings."
+                                               + " Remove the option. An ssl:// server is checked with the default trust store of the JVM,"
+                                               + " which the javax.net.ssl.* system properties configure.");
+        }
+    }
+
 }

@@ -48,6 +48,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.BodyTypeRegistry;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -487,7 +489,7 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson objNew;
                 if (null == updateCriteria) {
                     List<Bson> saveObj = getBsonListBody(exchange);
-                    if (saveObj.size() != 2) {
+                    if (saveObj == null || saveObj.size() != 2) {
                         throw new CamelMongoDbException(
                                 "MongoDB operation = update, failed because body is not a List of Document objects with size = 2");
                     }
@@ -524,20 +526,43 @@ public class MongoDbProducer extends DefaultProducer {
 
     /**
      * The body as a List of Bson: the criteria and the update of an update or a findOneAndUpdate without the criteria
-     * header, or the pipeline of an aggregate. A byte[] body, such as JSON text from a Kafka consumer or a file, is
-     * read as text first, so that a JSON array converts as it does from a String.
+     * header. See {@link #getListBodyAsText}.
      */
-    @SuppressWarnings("unchecked")
     private static List<Bson> getBsonListBody(Exchange exchange) throws InvalidPayloadException {
+        return toBsonList(exchange, getListBodyAsText(exchange));
+    }
+
+    /**
+     * The body of an update or a findOneAndUpdate without the criteria header, or of an aggregate. A payload body other
+     * than a String, such as JSON text as bytes, a stream, a StreamCache or a file from a Kafka, file or HTTP consumer,
+     * is read as text once, so that a JSON array converts as it does from a String, and a stream is not read twice.
+     */
+    private static Object getListBodyAsText(Exchange exchange) {
         Object body = exchange.getIn().getBody();
-        if (body instanceof byte[]) {
+        if (!(body instanceof String) && BodyFacts.kindOf(body) == BodyTypeRegistry.Kind.PAYLOAD) {
             body = exchange.getIn().getBody(String.class);
         }
+        return body;
+    }
+
+    /**
+     * Convert the body to a List of Bson, or null when it is not a list, such as text that is not a JSON array.
+     */
+    @SuppressWarnings("unchecked")
+    private static List<Bson> toBsonList(Exchange exchange, Object body) throws InvalidPayloadException {
         try {
             return exchange.getContext().getTypeConverter().mandatoryConvertTo(List.class, exchange, body);
         } catch (Exception e) {
             // keep the parse error of a malformed JSON array as the cause
             throw new InvalidPayloadException(exchange, List.class, exchange.getIn(), e);
+        }
+    }
+
+    private static Bson toBson(Exchange exchange, Object body) throws InvalidPayloadException {
+        try {
+            return exchange.getContext().getTypeConverter().mandatoryConvertTo(Bson.class, exchange, body);
+        } catch (Exception e) {
+            throw new InvalidPayloadException(exchange, Bson.class, exchange.getIn(), e);
         }
     }
 
@@ -562,7 +587,9 @@ public class MongoDbProducer extends DefaultProducer {
         return exchange -> {
             try {
                 MongoCollection<Document> dbCol = calculateCollection(exchange);
-                List<Bson> query = getBsonListBody(exchange);
+                // read a stream body as text once, for both the pipeline and the single stage
+                Object body = getListBodyAsText(exchange);
+                List<Bson> query = toBsonList(exchange, body);
 
                 // Allow body to be a pipeline
                 // @see http://docs.mongodb.org/manual/core/aggregation/
@@ -570,7 +597,7 @@ public class MongoDbProducer extends DefaultProducer {
                 if (query != null) {
                     queryList = new ArrayList<>(query);
                 } else {
-                    queryList = Collections.singletonList(exchange.getIn().getMandatoryBody(Bson.class));
+                    queryList = Collections.singletonList(toBson(exchange, body));
                 }
 
                 // The number to skip must be in body query
@@ -700,7 +727,7 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson update;
                 if (filter == null) {
                     List<Bson> saveObj = getBsonListBody(exchange);
-                    if (saveObj.size() != 2) {
+                    if (saveObj == null || saveObj.size() != 2) {
                         throw new CamelMongoDbException(
                                 "MongoDB operation = findOneAndUpdate, failed because body is not a List of Document objects with size = 2");
                     }

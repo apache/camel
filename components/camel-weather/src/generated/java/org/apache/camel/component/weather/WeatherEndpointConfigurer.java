@@ -34,7 +34,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cnt": target.getConfiguration().setCnt(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -30,12 +32,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
@@ -47,6 +51,7 @@ import org.apache.camel.util.ArtifactUtils;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,7 +162,7 @@ public class RestEndpoint extends DefaultEndpoint {
               description = "The query string of the request, such as foo=123&bar=456. A value {name} is filled with the"
                             + " header or the exchange variable of that name, and a parameter with the value {name?} is"
                             + " left out when neither is set. The endpoint also adds the parameters of its URI that it"
-                            + " does not know, except the options of the component that producerComponentName names.")
+                            + " does not know, except the options of the component that sends the HTTP request.")
     private String queryParameters;
     @UriParam(label = "producer", enums = "auto,off,json,xml,json_xml",
               description = "The binding mode of the producer, which replaces the bindingMode of the rest configuration"
@@ -181,6 +186,11 @@ public class RestEndpoint extends DefaultEndpoint {
     private String consumerComponentName;
 
     private Map<String, Object> parameters;
+    // the parameters of the endpoint uri that the endpoint does not know, which are added to the query parameters,
+    // except the options of the producer component (which may only be known when the producer is created)
+    private volatile Map<String, Object> uriQueryParameters;
+    // the queryParameters option as configured on the endpoint
+    private String configuredQueryParameters;
 
     public RestEndpoint(String endpointUri, RestComponent component) {
         super(endpointUri, component);
@@ -351,6 +361,10 @@ public class RestEndpoint extends DefaultEndpoint {
 
         LOG.debug("Using RestProducerFactory: {}", factoryResult.factory);
 
+        // the producer component is known now, so its options are not query parameters
+        // (when it was not configured, but auto-detected, they are still in the query parameters)
+        removeProducerOptionsFromQueryParameters(factoryResult.name);
+
         RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), null, factoryResult.name);
         Producer producer = createProducerInstance(factoryResult.factory, apiDocFactory, config);
 
@@ -360,6 +374,60 @@ public class RestEndpoint extends DefaultEndpoint {
         answer.setBindingMode(bindingMode);
 
         return answer;
+    }
+
+    /**
+     * Adds the parameters of the endpoint uri that the endpoint does not know to the query parameters, except the
+     * options of the given producer component.
+     *
+     * @param uriParameters         the parameters of the endpoint uri that the endpoint does not know
+     * @param producerComponentName the name of the producer component when it is configured, or null
+     */
+    void initUriQueryParameters(Map<String, Object> uriParameters, String producerComponentName)
+            throws URISyntaxException {
+        this.configuredQueryParameters = queryParameters;
+        this.uriQueryParameters = withoutProducerOptions(uriParameters, producerComponentName);
+        updateQueryParameters();
+    }
+
+    private void removeProducerOptionsFromQueryParameters(String producerComponentName) throws URISyntaxException {
+        Map<String, Object> current = uriQueryParameters;
+        if (current == null || current.isEmpty()) {
+            return;
+        }
+        Map<String, Object> answer = withoutProducerOptions(current, producerComponentName);
+        if (answer.size() != current.size()) {
+            uriQueryParameters = answer;
+            updateQueryParameters();
+        }
+    }
+
+    private Map<String, Object> withoutProducerOptions(Map<String, Object> uriParameters, String producerComponentName) {
+        Map<String, Object> answer = new LinkedHashMap<>(uriParameters);
+        EndpointUriFactory factory = getEndpointUriFactory(producerComponentName);
+        if (factory != null) {
+            answer.keySet().removeIf(factory.propertyNames()::contains);
+        }
+        return answer;
+    }
+
+    private void updateQueryParameters() throws URISyntaxException {
+        // the queryParameters option of the endpoint takes precedence
+        Map<String, Object> query = new LinkedHashMap<>(uriQueryParameters);
+        query.putAll(URISupport.parseQuery(configuredQueryParameters));
+        String answer = URISupport.createQueryString(query);
+        queryParameters = ObjectHelper.isNotEmpty(answer) ? answer : configuredQueryParameters;
+    }
+
+    private EndpointUriFactory getEndpointUriFactory(String name) {
+        if (name != null) {
+            UriFactoryResolver resolver
+                    = getCamelContext().getCamelContextExtension().getContextPlugin(UriFactoryResolver.class);
+            if (resolver != null) {
+                return resolver.resolveFactory(name, getCamelContext());
+            }
+        }
+        return null;
     }
 
     private void validateHost() {

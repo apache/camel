@@ -28,8 +28,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.asteriskjava.manager.ResponseEvents;
 import org.asteriskjava.manager.event.PeerEntryEvent;
@@ -46,6 +49,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Runs the producer against a fake Asterisk Manager Interface (AMI) server on a random port.
@@ -128,6 +132,52 @@ public class AsteriskProducerFakeServerTest extends CamelTestSupport {
         assertEquals(0, response.getStatus());
     }
 
+    @Test
+    void testProducerLogsInWithoutEvents() {
+        // the producer has no event listener, so it asks Asterisk not to send it the events of the PBX
+        assertEquals(List.of("off"), server.loginEvents);
+    }
+
+    @Test
+    void testPortOptionAndName() throws Exception {
+        AsteriskEndpoint endpoint = context.getEndpoint("asterisk:pbx?hostname="
+                                                        + InetAddress.getLoopbackAddress().getHostAddress() + "&port="
+                                                        + server.getPort()
+                                                        + "&username=admin&password=secret&action=EXTENSION_STATE",
+                AsteriskEndpoint.class);
+        assertEquals("pbx", endpoint.getName());
+
+        Producer portProducer = endpoint.createProducer();
+        portProducer.start();
+        try {
+            Exchange exchange = endpoint.createExchange();
+            exchange.getMessage().setHeader(AsteriskConstants.EXTENSION, "1001");
+            exchange.getMessage().setHeader(AsteriskConstants.CONTEXT, "default");
+            portProducer.process(exchange);
+
+            assertNull(exchange.getException());
+            assertEquals("1001", assertInstanceOf(ExtensionStateResponse.class, exchange.getMessage().getBody()).getExten());
+        } finally {
+            portProducer.stop();
+        }
+    }
+
+    @Test
+    void testConsumerLogsInWithEvents() throws Exception {
+        AsteriskEndpoint endpoint = context.getEndpoint("asterisk:pbx?hostname="
+                                                        + InetAddress.getLoopbackAddress().getHostAddress() + "&port="
+                                                        + server.getPort() + "&username=admin&password=secret",
+                AsteriskEndpoint.class);
+        Consumer consumer = endpoint.createConsumer(exchange -> {
+        });
+        consumer.start();
+        try {
+            assertEquals(List.of("off", "on"), server.loginEvents);
+        } finally {
+            consumer.stop();
+        }
+    }
+
     private Exchange send(AsteriskAction action) throws Exception {
         Exchange exchange = producer.getEndpoint().createExchange();
         exchange.getMessage().setHeader(AsteriskConstants.ACTION, action);
@@ -142,6 +192,8 @@ public class AsteriskProducerFakeServerTest extends CamelTestSupport {
 
         private final ServerSocket serverSocket;
         private final List<Socket> sockets = new ArrayList<>();
+        // the Events header of each login, in order
+        private final List<String> loginEvents = new CopyOnWriteArrayList<>();
 
         FakeAmiServer() throws IOException {
             serverSocket = new ServerSocket(0, 50, InetAddress.getLoopbackAddress());
@@ -192,6 +244,9 @@ public class AsteriskProducerFakeServerTest extends CamelTestSupport {
                         continue;
                     }
                     if (!packet.isEmpty()) {
+                        if ("login".equalsIgnoreCase(packet.get("action"))) {
+                            loginEvents.add(packet.get("events"));
+                        }
                         write(out, answer(packet.get("action"), packet.get("actionid")));
                         packet.clear();
                     }

@@ -28,10 +28,10 @@ def handle(inputs: Input):
     try:
         if not model:
             logging.debug("Initializing model")
-            device = '%s'
+            device = %s
             if device == 'auto':
                 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-            model = SentenceTransformer('%s', device=device, revision='%s')
+            model = SentenceTransformer(%s, device=device, revision=%s)
             logging.debug("Model initialized")
 
         if inputs.content.size() == 0:

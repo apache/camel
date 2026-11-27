@@ -20,12 +20,18 @@ import org.apache.camel.spi.Metadata;
 
 public interface SshConstants {
 
-    @Metadata(description = "The user name that the producer logs in with, instead of the username option.",
+    @Metadata(label = "producer",
+              description = "The user name that the producer logs in with, instead of the username option. Used only"
+                            + " when allowUsernameAndPasswordFromHeaders=true; otherwise ignored. It applies to every kind"
+                            + " of authentication: with certResource or keyPairProvider, the configured key logs in as"
+                            + " this user.",
               javaType = "String")
     String USERNAME_HEADER = "CamelSshUsername";
-    @Metadata(description = "The password that the producer uses for password authentication, instead of the password"
-                            + " option. It is not used when certResource or keyPairProvider is set.",
-              javaType = "String")
+    @Metadata(label = "producer",
+              description = "The password that the producer uses for password authentication, instead of the password"
+                            + " option. Used only when allowUsernameAndPasswordFromHeaders=true; otherwise ignored. It is"
+                            + " not used when certResource or keyPairProvider is set.",
+              javaType = "String", secret = true)
     String PASSWORD_HEADER = "CamelSshPassword";
     @Metadata(description = "The standard error of the command, as an InputStream.", javaType = "InputStream")
     String STDERR = "CamelSshStderr";

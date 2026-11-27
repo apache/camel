@@ -27,8 +27,8 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
 
     @UriParam(label = "advanced",
               description = "The Consul client (org.kiwiproject.consul.Consul) to use instead of creating one. When set, the"
-                            + " options that create the client (url, sslContextParameters, userName, password, the"
-                            + " timeouts and pingInstance) are not used.")
+                            + " options that create the client (url, sslContextParameters, aclToken, userName, password,"
+                            + " the timeouts and pingInstance) are not used.")
     @Metadata(autowired = true)
     private Consul consulClient;
     @UriParam

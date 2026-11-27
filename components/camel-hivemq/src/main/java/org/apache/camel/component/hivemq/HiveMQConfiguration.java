@@ -26,10 +26,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class HiveMQConfiguration implements Cloneable {
 
-    /**
-     * Hostname or IP address of the HiveMQ MQTT broker.
-     */
-    @UriParam(defaultValue = HiveMQConstants.DEFAULT_HOST)
+    @UriParam(defaultValue = HiveMQConstants.DEFAULT_HOST,
+              description = "The host name or IP address of the MQTT broker.")
     private String host = HiveMQConstants.DEFAULT_HOST;
 
     /**
@@ -38,28 +36,27 @@ public class HiveMQConfiguration implements Cloneable {
     @UriParam(defaultValue = "MQTT_5_0")
     private MqttVersion mqttVersion = MqttVersion.MQTT_5_0;
 
-    /**
-     * Port number of the HiveMQ MQTT broker.
-     */
-    @UriParam(defaultValue = "1883")
+    @UriParam(defaultValue = "1883",
+              description = "The TCP port of the MQTT broker. The port does not change when ssl is true: set it to the TLS"
+                            + " port of the broker, usually 8883.")
     private int port = HiveMQConstants.DEFAULT_PORT;
 
-    /**
-     * Client identifier used when connecting to the HiveMQ broker.
-     */
-    @UriParam
+    @UriParam(description = "The MQTT client identifier. If not set, the broker assigns one to each connection, but with"
+                            + " MQTT 3.1.1 the broker then rejects a connection with cleanStart false. Each consumer and each"
+                            + " producer opens its own connection, and the broker disconnects a client when another one"
+                            + " connects with the same identifier, so a set identifier must be unique per endpoint.")
     private String clientId;
 
-    /**
-     * Default Quality of Service (QoS) level to use for messages.
-     */
-    @UriParam(defaultValue = "AT_LEAST_ONCE")
+    @UriParam(defaultValue = "AT_LEAST_ONCE",
+              description = "The Quality of Service (QoS) level that the producer publishes with, and the maximum QoS of the"
+                            + " subscription of the consumer. The CamelHiveMQQos header replaces it for the producer. The"
+                            + " consumer acknowledges a QoS 1 or 2 message when it receives it, before the route processes it.")
     private MqttQos qos = MqttQos.AT_LEAST_ONCE;
 
-    /**
-     * Whether published messages should be retained by the MQTT broker.
-     */
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the producer publishes messages with the retain flag, so that the broker keeps the last"
+                            + " message of the topic and sends it to new subscribers. The CamelHiveMQRetained header replaces"
+                            + " it.")
     private boolean retained;
 
     /**
@@ -71,24 +68,20 @@ public class HiveMQConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean cleanStart = true;
 
-    /**
-     * Username for authentication with the HiveMQ broker.
-     */
-    @UriParam(label = "security")
+    @UriParam(label = "security", description = "The user name for MQTT simple authentication with the broker.")
     @Metadata(label = "security")
     private String username;
 
-    /**
-     * Password for authentication with the HiveMQ broker.
-     */
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", secret = true,
+              description = "The password for MQTT simple authentication with the broker. It is sent only when username is"
+                            + " set.")
     @Metadata(label = "security", secret = true)
     private String password;
 
-    /**
-     * Whether to enable SSL/TLS encryption for the broker connection.
-     */
-    @UriParam(defaultValue = "false", label = "security", security = "insecure:ssl", insecureValue = "false")
+    @UriParam(defaultValue = "false", label = "security", security = "insecure:ssl", insecureValue = "false",
+              description = "Whether to connect to the broker with TLS. The client uses the default trust store of the JVM"
+                            + " and no client certificate. The port option does not change: set it to the TLS port of the"
+                            + " broker, usually 8883.")
     private boolean ssl;
 
     public String getHost() {

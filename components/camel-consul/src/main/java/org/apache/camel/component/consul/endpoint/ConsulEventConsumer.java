@@ -34,9 +34,13 @@ import org.kiwiproject.consul.async.EventResponseCallback;
 import org.kiwiproject.consul.model.EventResponse;
 import org.kiwiproject.consul.model.event.Event;
 import org.kiwiproject.consul.option.QueryOptions;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConsulEventConsumer.class);
+
     private final ExecutorServiceManager executorServiceManager;
     private ScheduledExecutorService scheduledExecutorService;
 
@@ -110,7 +114,12 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
         }
 
         private void onEvent(Event event) {
-            LoggerFactory.getLogger(ConsulEventConsumer.this.getClass()).info("{}", event);
+            // the event holds the payload, so only its id and name are logged at DEBUG
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Received event: {}", event);
+            } else {
+                LOG.debug("Received event with id: {} and name: {}", event.getId(), event.getName());
+            }
 
             final Exchange exchange = createExchange(false);
             try {

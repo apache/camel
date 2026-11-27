@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.bedrock.runtime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -75,9 +76,32 @@ public class BedrockProducer extends DefaultProducer {
     private static final List<String> INFERENCE_PROFILE_REGION_PREFIXES = List.of("us.", "eu.", "apac.", "us-gov.");
     private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private transient String bedrockProducerToString;
+    private GuardrailStreamProcessingMode guardrailStreamProcessingMode;
 
     public BedrockProducer(Endpoint endpoint) {
         super(endpoint);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        guardrailStreamProcessingMode = toStreamProcessingMode(getConfiguration().getGuardrailStreamProcessingMode());
+    }
+
+    /**
+     * The processing mode of the guardrail of the endpoint for converseStream: sync when not set, and fails on a value
+     * that Bedrock does not know.
+     */
+    private static GuardrailStreamProcessingMode toStreamProcessingMode(String value) {
+        if (ObjectHelper.isEmpty(value)) {
+            return GuardrailStreamProcessingMode.SYNC;
+        }
+        GuardrailStreamProcessingMode mode = GuardrailStreamProcessingMode.fromValue(value.toLowerCase(Locale.ROOT));
+        if (mode == null || mode == GuardrailStreamProcessingMode.UNKNOWN_TO_SDK_VERSION) {
+            throw new IllegalArgumentException(
+                    "Unknown guardrailStreamProcessingMode: " + value + ". Use sync or async.");
+        }
+        return mode;
     }
 
     @Override
@@ -930,9 +954,7 @@ public class BedrockProducer extends DefaultProducer {
                         .trace(getConfiguration().isGuardrailTrace()
                                 ? GuardrailTrace.ENABLED
                                 : GuardrailTrace.DISABLED)
-                        .streamProcessingMode(getConfiguration().isGuardrailTrace()
-                                ? GuardrailStreamProcessingMode.ASYNC
-                                : GuardrailStreamProcessingMode.SYNC)
+                        .streamProcessingMode(guardrailStreamProcessingMode)
                         .build());
             }
 
