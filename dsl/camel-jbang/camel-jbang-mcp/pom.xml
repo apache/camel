@@ -53,6 +53,45 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Override Quarkus BOM's maven-resolver 1.x with the 2.x required by MIMA standalone-static.
+                 Quarkus 3.x pins maven-resolver to 1.9.x, but MIMA standalone-static 3.x is compiled against
+                 resolver 2.x (ScopeManagerConfiguration and other 2.x-only classes). Without this override
+                 the ServiceLoader fails to instantiate StandaloneStaticRuntime at test time. -->
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-api</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-spi</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-util</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-impl</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-named-locks</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-connector-basic</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-transport-file</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
