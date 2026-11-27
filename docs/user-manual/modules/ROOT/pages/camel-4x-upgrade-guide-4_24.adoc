@@ -12305,6 +12305,9 @@ That option is a comma separated list, so a token with a comma now fails when th
 method `withAuthToken` of `AbstractTaskPredictor` is removed. The `modelId`, `revision` and `device` values are now
 written into the handler as escaped Python string literals.
 
+DJL logs the options of the Python engine at DEBUG level, the `env` option included, so with the
+`ai.djl.python.engine` logger at DEBUG the token is written to the log. Keep that logger above DEBUG in production.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
