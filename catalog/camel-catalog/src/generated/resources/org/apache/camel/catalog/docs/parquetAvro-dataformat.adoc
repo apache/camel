@@ -58,7 +58,7 @@ With `unmarshalType`, the records are objects of that class. Without it, they ar
 
 == Marshal
 
-Marshalling is the reverse process of unmarshalling, so when you have a List of `GenericRecord` objects or POJOs and marshal it, you will get the parquet-formatted output stream on your producer endpoint. A single record that is not in a List fails.
+Marshalling is the reverse process of unmarshalling, so when you have a List of `GenericRecord` objects or POJOs and marshal it, you will get the parquet-formatted output stream on your producer endpoint. The body can also be another Collection, an array, an Iterator or a Stream of records, or a single record. Without `unmarshalType`, the records must be `GenericRecord` objects, as the schema of the Parquet file is taken from them, and an empty body fails.
 
 [tabs]
 ====
