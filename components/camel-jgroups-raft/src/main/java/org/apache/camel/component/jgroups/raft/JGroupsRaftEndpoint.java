@@ -40,7 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Exchange messages with JGroups-raft clusters.
+ * Append data to the replicated log of a JGroups-raft cluster, and receive the leader and follower role changes of the
+ * local member.
  */
 @UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName",
              category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsRaftConstants.class)
@@ -67,20 +68,38 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
 
     private RaftHandle resolvedRaftHandle;
 
-    @UriPath
+    @UriPath(description = "The name of the JGroups cluster that the channel of the RaftHandle connects to. All the members"
+                           + " of the Raft cluster use the same name.")
     @Metadata(required = true)
     private String clusterName;
-    @UriParam
+    @UriParam(description = "The Raft ID of this member, which also names the JChannel. A member whose ID is not in the"
+                            + " members attribute of RAFT in the channel configuration is a Learner, which does not vote. If"
+                            + " not set, the raftId of the component is used, else the raft_id of the channel configuration."
+                            + " Not used when the raftHandle option is set.")
     private String raftId;
-    @UriParam
+    @UriParam(description = "The JGroups XML configuration of the JChannel that the endpoint creates, as a file, a URL or a"
+                            + " classpath resource. If not set, the channelProperties of the component is used, else the"
+                            + " raft.xml in the camel-jgroups-raft JAR, and a WARN is logged when the endpoint starts. That"
+                            + " raft.xml is a sample for development and tests: it uses UDP multicast without authentication"
+                            + " or encryption, and lists A as the only RAFT member. In production, set your own"
+                            + " configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT, and the members of the cluster in"
+                            + " the members attribute of RAFT. Not used when the raftHandle option is set.")
     @Metadata(defaultValue = "raft.xml")
     private String channelProperties;
-    @UriParam
+    @UriParam(description = "To use a custom org.jgroups.raft.RaftHandle for this endpoint instead of the raftHandle of the"
+                            + " component. When set, the raftId, channelProperties and stateMachine options are not used. The"
+                            + " component closes its channel and its log when the component stops.")
     private RaftHandle raftHandle;
-    @UriParam
+    @UriParam(description = "The org.jgroups.raft.StateMachine that applies the committed log entries, for the RaftHandle that"
+                            + " the endpoint creates. If not set, the stateMachine of the component is used. The default"
+                            + " NopStateMachine ignores the entries and returns an empty byte array. Not used when the"
+                            + " raftHandle option is set.")
     @Metadata(defaultValue = "NopStateMachine")
     private StateMachine stateMachine;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether the consumer routes an exchange each time this member becomes the leader or a follower,"
+                            + " with LEADER or FOLLOWER in the CamelJGroupsRaftEventType header. A Learner counts as a"
+                            + " follower. If false, the consumer only connects the channel and routes no exchanges.")
     private boolean enableRoleChangeEvents;
 
     public JGroupsRaftEndpoint(String endpointUri, String clusterName, Component component,
@@ -198,6 +217,12 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             JChannel channel = new JChannel(channelProperties).name(raftId); // NOSONAR
             return new RaftHandle(channel, stateMachine).raftId(raftId);
         }
+        LOG.warn("The JGroups-raft endpoint {} has no channelProperties, so its channel uses {}, by default the sample"
+                 + " configuration in the camel-jgroups-raft JAR. That configuration is meant for development and tests:"
+                 + " it uses UDP multicast without authentication or encryption, and lists A as the only RAFT member. In"
+                 + " production, set channelProperties to your own JGroups configuration, with AUTH and SYM_ENCRYPT or"
+                 + " ASYM_ENCRYPT, and the members of the cluster in the members attribute of RAFT.",
+                getEndpointUri(), JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG);
         LOG.trace("Raft Handle created with defaults: {}, {},", JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG, stateMachine);
         @SuppressWarnings("resource")
         // NOTE: channel will be closed by this endpoint during
@@ -259,9 +284,6 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return clusterName;
     }
 
-    /**
-     * The name of the JGroupsraft cluster the component should connect to.
-     */
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
     }
@@ -270,10 +292,6 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return enableRoleChangeEvents;
     }
 
-    /**
-     * If set to true, the consumer endpoint will receive roleChange event as well (not just connecting and/or using the
-     * state machine). By default it is set to false.
-     */
     public void setEnableRoleChangeEvents(boolean enableRoleChangeEvents) {
         this.enableRoleChangeEvents = enableRoleChangeEvents;
     }
@@ -282,10 +300,6 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return channelProperties;
     }
 
-    /**
-     * Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is
-     * provided). Overrides the option of the component.
-     */
     public void setChannelProperties(String channelProperties) {
         this.channelProperties = channelProperties;
     }
@@ -294,9 +308,6 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return raftId;
     }
 
-    /**
-     * Unique raftId to use. Overrides the option of the component.
-     */
     public void setRaftId(String raftId) {
         this.raftId = raftId;
     }
@@ -305,9 +316,6 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return raftHandle;
     }
 
-    /**
-     * RaftHandle to use. Overrides the option of the component.
-     */
     public void setRaftHandle(RaftHandle raftHandle) {
         this.raftHandle = raftHandle;
     }
@@ -316,9 +324,6 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return stateMachine;
     }
 
-    /**
-     * StateMachine to use (ignored if raftHandle ref is provided). Overrides the option of the component.
-     */
     public void setStateMachine(StateMachine stateMachine) {
         this.stateMachine = stateMachine;
     }

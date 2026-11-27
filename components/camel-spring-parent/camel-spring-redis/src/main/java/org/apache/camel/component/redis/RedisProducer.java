@@ -524,7 +524,7 @@ public class RedisProducer extends HeaderSelectorProducer {
     @InvokeOnHeader("ZREMRANGEBYSCORE")
     public void invokeZremrangebyscore(Exchange exchange) {
         client.zremrangebyscore(exchangeConverter.getKey(exchange),
-                exchangeConverter.getStart(exchange), exchangeConverter.getEnd(exchange));
+                exchangeConverter.getMinOrStart(exchange), exchangeConverter.getMaxOrEnd(exchange));
     }
 
     @InvokeOnHeader("ZREVRANGE")

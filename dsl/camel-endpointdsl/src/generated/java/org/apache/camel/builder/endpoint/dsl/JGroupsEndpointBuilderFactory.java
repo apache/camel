@@ -44,8 +44,14 @@ public interface JGroupsEndpointBuilderFactory {
             return (AdvancedJGroupsEndpointConsumerBuilder) this;
         }
         /**
-         * Specifies configuration properties of the JChannel used by the
-         * endpoint.
+         * The JGroups configuration of the JChannel that the endpoint creates,
+         * as an XML file, a URL or a classpath resource. If not set, the
+         * channelProperties of the component is used. If neither is set and the
+         * component has no channel, the default udp.xml in the JGroups JAR is
+         * used, and a WARN is logged when the endpoint starts. That udp.xml is
+         * meant for development and tests: it uses UDP multicast without
+         * authentication or encryption. In production, set your own
+         * configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -303,8 +309,14 @@ public interface JGroupsEndpointBuilderFactory {
         }
 
         /**
-         * Specifies configuration properties of the JChannel used by the
-         * endpoint.
+         * The JGroups configuration of the JChannel that the endpoint creates,
+         * as an XML file, a URL or a classpath resource. If not set, the
+         * channelProperties of the component is used. If neither is set and the
+         * component has no channel, the default udp.xml in the JGroups JAR is
+         * used, and a WARN is logged when the endpoint starts. That udp.xml is
+         * meant for development and tests: it uses UDP multicast without
+         * authentication or encryption. In production, set your own
+         * configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -387,8 +399,14 @@ public interface JGroupsEndpointBuilderFactory {
         }
 
         /**
-         * Specifies configuration properties of the JChannel used by the
-         * endpoint.
+         * The JGroups configuration of the JChannel that the endpoint creates,
+         * as an XML file, a URL or a classpath resource. If not set, the
+         * channelProperties of the component is used. If neither is set and the
+         * component has no channel, the default udp.xml in the JGroups JAR is
+         * used, and a WARN is logged when the endpoint starts. That udp.xml is
+         * meant for development and tests: it uses UDP multicast without
+         * authentication or encryption. In production, set your own
+         * configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

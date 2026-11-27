@@ -127,8 +127,9 @@ public interface TelegramComponentBuilderFactory {
     
         
         /**
-         * Can be used to set an alternative base URI, e.g. when you want to
-         * test the component against a mock Telegram API.
+         * The base URI of the Telegram Bot API, for example of a local Bot API
+         * server or of a mock in tests. It is used by every endpoint that does
+         * not set its own baseUri.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -144,7 +145,9 @@ public interface TelegramComponentBuilderFactory {
         }
     
         /**
-         * To use a custom java.net.http.HttpClient.
+         * To use a custom java.net.http.HttpClient for every endpoint that does
+         * not set its own client. The endpoints then do not use the proxy
+         * options.
          * 
          * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
          * type.
@@ -198,8 +201,8 @@ public interface TelegramComponentBuilderFactory {
         }
     
         /**
-         * The default Telegram authorization token to be used when the
-         * information is not provided in the endpoints.
+         * The token of the bot, used by every endpoint that does not set its
+         * own authorizationToken.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

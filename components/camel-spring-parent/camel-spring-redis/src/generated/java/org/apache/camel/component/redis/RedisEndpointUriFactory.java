@@ -56,8 +56,8 @@ public class RedisEndpointUriFactory extends org.apache.camel.support.component.
 
         Map<String, Object> copy = copyParameters(properties);
 
-        uri = buildPathParameter(syntax, uri, "host", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "port", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "host", "localhost", true, copy);
+        uri = buildPathParameter(syntax, uri, "port", 6379, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

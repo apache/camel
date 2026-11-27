@@ -2,7 +2,7 @@
 :doctitle: REST Postman
 :shortname: rest-postman
 :artifactid: camel-rest-postman
-:description: To call and expose REST services using a Postman Collection as contract.
+:description: Call the REST APIs described by a Postman Collection, or serve its requests as a contract-first REST service.
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
@@ -396,7 +396,25 @@ On the consumer side the collection's auth block describes what a client must pr
 
 === Serving the collection document
 
-When `apiContextPath` is set, the collection is served on that path with every `auth` block removed and the value of
-every variable of type `secret` replaced. This redaction is unconditional.
+When `apiContextPath` is set, the collection is served on that path with the credentials removed or masked with `+***+`.
+This redaction is unconditional:
+
+* every `auth` block is removed
+* the value of every variable of type `secret` is masked, and so is the value of any other variable whose name marks a
+credential, such as `apiKey`, `password` or `accessToken`
+* the value of a header whose name marks a credential is masked, in the requests and in the example responses: for
+example `Authorization`, `Proxy-Authorization`, `x-api-key`, `api-key`, `Cookie`, `Set-Cookie` and any header whose name
+contains `token`, `password` or `secret`. The same applies to the `urlencoded` and `formdata` body fields.
+* the value of every cookie of an example response is masked
+* in a URL, the password of the userinfo (`+https://user:password@host+`) and the value of a query parameter whose name
+marks a credential (such as `api_key`, `apikey`, `token`, `access_token`, `password` or `secret`) are masked, in the
+`raw` URL as well as in the `host` and `query` parts of a structured URL, and in a variable that holds a URL
+
+A name marks a credential when Camel treats it as sensitive (see `SensitiveUtils.isSensitiveHeader`, which also covers
+names such as `user` and `clientId`), or when it contains `token`, `password` or `secret`.
+
+A value that is only a Postman variable reference, such as `+{{apiKey}}+` or `+Bearer {{token}}+`, is a placeholder and
+is served as it is, so a client can see which variable to provide. The variable it refers to is masked where the
+collection defines it, when it holds a literal value.
 
 include::spring-boot:partial$starter.adoc[]

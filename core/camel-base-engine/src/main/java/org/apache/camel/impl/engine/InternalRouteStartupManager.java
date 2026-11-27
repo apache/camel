@@ -35,8 +35,6 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StartupStep;
-import org.apache.camel.StatefulService;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteStartupOrder;
@@ -132,24 +130,11 @@ final class InternalRouteStartupManager {
     }
 
     private static boolean isStartable(Map.Entry<String, RouteService> entry) {
-        boolean startable = false;
-
-        Consumer consumer = entry.getValue().getRoute().getConsumer();
-        if (consumer instanceof SuspendableService suspendableService) {
-            // consumer could be suspended, which is not reflected in
-            // the BaseRouteService status
-            startable = suspendableService.isSuspended();
-        }
-
-        if (!startable && consumer instanceof StatefulService statefulService) {
-            // consumer could be stopped, which is not reflected in the
-            // BaseRouteService status
-            startable = statefulService.getStatus().isStartable();
-        } else if (!startable) {
-            // no consumer so use state from route service
-            startable = entry.getValue().getStatus().isStartable();
-        }
-        return startable;
+        // only the status of the route service is used, and not the state of its consumer: a route that is started
+        // is not started again, even if its consumer is stopped or suspended, as a route policy may keep the
+        // consumer stopped while the route is started (such as the master route policy). Suspending the
+        // CamelContext marks the route services as suspended (or stopped), so they are resumed
+        return entry.getValue().getStatus().isStartable();
     }
 
     /**

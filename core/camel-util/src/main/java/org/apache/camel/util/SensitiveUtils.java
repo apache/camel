@@ -147,6 +147,7 @@ public final class SensitiveUtils {
                     "username",
                     "userpassword",
                     "verificationcode",
+                    "webhookurl",
                     "webhookverifytoken",
                     "zookeeperpassword"
             // SENSITIVE-KEYS: END
@@ -305,6 +306,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qusername\\E"
                                                     + "|\\Quserpassword\\E"
                                                     + "|\\Qverificationcode\\E"
+                                                    + "|\\Qwebhookurl\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
     // SENSITIVE-PATTERN: END

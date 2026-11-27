@@ -2,7 +2,7 @@
 :doctitle: MongoDB GridFS
 :shortname: mongodb-gridfs
 :artifactid: camel-mongodb-gridfs
-:description: Interact with MongoDB GridFS.
+:description: Store, read and remove files in a MongoDB GridFS bucket, and receive the files that are uploaded to it.
 :since: 2.18
 :supportlevel: Stable
 :tabs-sync-option:

@@ -27,27 +27,52 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommonConfiguration {
 
-    @UriPath(label = "common", description = "The user-defined name of the function")
+    @UriPath(label = "common",
+             description = "The name of the function, without the projects/{project}/locations/{location}/functions/ prefix."
+                           + " The producer builds the full name from it and the project and location options. Not used by"
+                           + " listFunctions and generateUploadUrl, and not used when pojoRequest=true.")
     @Metadata(required = true)
     private String functionName;
 
-    @UriParam(label = "common", description = "Service account key to authenticate an application as a service account")
+    @UriParam(label = "common",
+              description = "The service account key file (JSON) used to create the CloudFunctionsServiceClient. It is loaded as"
+                            + " a resource with the classpath:, file:, http: or https: prefix, and a value without a prefix is"
+                            + " read from the classpath. When not set, the Application Default Credentials are used, for example"
+                            + " from the GOOGLE_APPLICATION_CREDENTIALS environment variable. Not used when the client option is"
+                            + " set.")
     private String serviceAccountKey;
 
-    @UriParam(label = "producer", description = "The Google Cloud Project name where the Function is located")
+    @UriParam(label = "producer",
+              description = "The ID of the Google Cloud project that holds the functions. Every operation needs it, unless"
+                            + " pojoRequest=true, where the request object names the project.")
     private String project;
 
-    @UriParam(label = "producer", description = "The Google Cloud Location (Region) where the Function is located")
+    @UriParam(label = "producer",
+              description = "The region of the functions, for example us-central1. Every operation needs it, unless"
+                            + " pojoRequest=true, where the request object names the location.")
     private String location;
 
     @UriParam(label = "producer",
+              description = "The operation that the producer performs with the Cloud Functions v1 API. When not set,"
+                            + " callFunction is used, which Google allows only for limited traffic, such as tests. The"
+                            + " CamelGoogleCloudFunctionsOperation header overrides this option. updateFunction works only"
+                            + " with pojoRequest=true.",
               enums = "listFunctions,getFunction,callFunction,generateDownloadUrl,generateUploadUrl,createFunction,updateFunction,deleteFunction")
     private GoogleCloudFunctionsOperations operation;
 
-    @UriParam(defaultValue = "false", description = "Specifies if the request is a pojo request")
+    @UriParam(defaultValue = "false",
+              description = "Whether the message body is the request object of the Google Cloud SDK for the operation, which"
+                            + " is sent as it is: a ListFunctionsRequest, a CloudFunctionName for getFunction, a"
+                            + " CallFunctionRequest, a GenerateDownloadUrlRequest, a GenerateUploadUrlRequest, a"
+                            + " CreateFunctionRequest, an UpdateFunctionRequest or a DeleteFunctionRequest. The project,"
+                            + " location and functionName options and the createFunction headers are then not used.")
     private boolean pojoRequest;
 
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The CloudFunctionsServiceClient to use for the calls. When not set, a single"
+                            + " CloudFunctionsServiceClient in the registry is used, otherwise the endpoint creates one with"
+                            + " the serviceAccountKey or the Application Default Credentials and closes it when it stops. A"
+                            + " client that is set or autowired is not closed by the endpoint.")
     @Metadata(autowired = true)
     private CloudFunctionsServiceClient client;
 
@@ -55,11 +80,6 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommo
         return functionName;
     }
 
-    /**
-     * Set the function name
-     *
-     * @param functionName
-     */
     public void setFunctionName(String functionName) {
         this.functionName = functionName;
     }
@@ -69,11 +89,6 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommo
         return serviceAccountKey;
     }
 
-    /**
-     * Service account key
-     *
-     * @param serviceAccountKey
-     */
     public void setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
     }
@@ -82,11 +97,6 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommo
         return project;
     }
 
-    /**
-     * The project to work with.
-     *
-     * @param project
-     */
     public void setProject(String project) {
         this.project = project;
     }
@@ -95,11 +105,6 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommo
         return location;
     }
 
-    /**
-     * The target location.
-     *
-     * @param location
-     */
     public void setLocation(String location) {
         this.location = location;
     }
@@ -108,9 +113,6 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommo
         return operation;
     }
 
-    /**
-     * The operation to perform on the producer.
-     */
     public void setOperation(GoogleCloudFunctionsOperations operation) {
         this.operation = operation;
     }
@@ -119,9 +121,6 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommo
         return client;
     }
 
-    /**
-     * The client to use during service invocation.
-     */
     public void setClient(CloudFunctionsServiceClient client) {
         this.client = client;
     }
@@ -130,11 +129,6 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommo
         return pojoRequest;
     }
 
-    /**
-     * Configure the input type. If true the message will be POJO type.
-     *
-     * @param pojoRequest
-     */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }

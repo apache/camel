@@ -16,43 +16,82 @@
  */
 package org.apache.camel.component.huggingface.tasks;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
 import org.apache.camel.component.huggingface.HuggingFaceConfiguration;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The configured Hugging Face token must be applied for every task, not only chat, so that gated or private models can
- * be loaded. The token is injected centrally as the HF_TOKEN environment variable of the generated handler.
+ * be loaded. The token is given to the Python process as the HF_TOKEN environment variable (the env option of the DJL
+ * Python engine), and is not written into the generated handler.
  */
 class AuthTokenInjectionTest {
 
+    @TempDir
+    Path dir;
+
+    private DefaultCamelContext context;
+
+    @BeforeEach
+    void setUp() {
+        context = new DefaultCamelContext();
+    }
+
+    @AfterEach
+    void tearDown() {
+        context.stop();
+    }
+
     private TextGenerationPredictor predictorWithToken(String token) {
         HuggingFaceConfiguration config = new HuggingFaceConfiguration();
+        config.setModelId("gpt2");
         config.setAuthToken(token);
-        return new TextGenerationPredictor(new HuggingFaceEndpoint(null, null, config));
+        HuggingFaceEndpoint endpoint = new HuggingFaceEndpoint(null, null, config);
+        endpoint.setCamelContext(context);
+        return new TextGenerationPredictor(endpoint);
     }
 
     @Test
-    void authTokenIsExposedAsHfTokenEnvForEveryTask() {
-        String result = predictorWithToken("hf_secret123").withAuthToken("PIPELINE");
-        assertTrue(result.contains("os.environ['HF_TOKEN'] = 'hf_secret123'"),
-                "generated script should export the token as HF_TOKEN");
-        assertTrue(result.endsWith("PIPELINE"), "the original task script must be preserved");
+    void authTokenIsGivenAsHfTokenEnvironmentVariable() {
+        Map<String, String> options = predictorWithToken("hf_secret123").modelOptions(dir.resolve("requirements.txt"));
+        assertEquals("HF_TOKEN=hf_secret123", options.get("env"));
+        assertEquals("handler.py", options.get("entryPoint"));
     }
 
     @Test
-    void noAuthTokenLeavesTheScriptUnchanged() {
-        assertEquals("PIPELINE", predictorWithToken(null).withAuthToken("PIPELINE"));
-        assertEquals("PIPELINE", predictorWithToken("").withAuthToken("PIPELINE"));
+    void noAuthTokenSetsNoEnvironmentVariable() {
+        assertNull(predictorWithToken(null).modelOptions(dir.resolve("requirements.txt")).get("env"));
+        assertNull(predictorWithToken("").modelOptions(dir.resolve("requirements.txt")).get("env"));
     }
 
     @Test
-    void authTokenWithASingleQuoteIsEscaped() {
-        String result = predictorWithToken("ab'cd").withAuthToken("PIPELINE");
-        assertTrue(result.contains("os.environ['HF_TOKEN'] = 'ab\\'cd'"),
-                "a single quote in the token must be escaped so it cannot break the Python string literal");
+    void authTokenIsNotWrittenIntoTheHandler() throws Exception {
+        predictorWithToken("hf_secret123").writeModelFiles(dir);
+
+        String handler = Files.readString(dir.resolve("handler.py"));
+        assertFalse(handler.contains("hf_secret123"), "the token must not be in the generated handler");
+        assertFalse(handler.contains("HF_TOKEN"), "the handler must not set the token itself");
+        assertFalse(Files.readString(dir.resolve("requirements.txt")).contains("hf_secret123"));
+    }
+
+    @Test
+    void authTokenWithACommaFails() {
+        TextGenerationPredictor predictor = predictorWithToken("hf_ab,cd");
+        Path reqPath = dir.resolve("requirements.txt");
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> predictor.modelOptions(reqPath));
+        assertFalse(e.getMessage().contains("hf_ab"), "the message must not show the token");
     }
 }

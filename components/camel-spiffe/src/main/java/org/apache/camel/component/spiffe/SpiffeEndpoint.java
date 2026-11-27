@@ -61,7 +61,8 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " JwtSvid. The SPIFFE ID is in the CamelSpiffeSpiffeId header"))
 public class SpiffeEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Logical name of the endpoint")
+    @UriPath(description = "Free text to tell several spiffe endpoints apart, for example spiffe:mint and spiffe:verify."
+                           + " The component does not use the value.")
     @Metadata(required = false)
     private String label;
 

@@ -34,6 +34,7 @@ import org.apache.camel.component.bonita.api.model.CaseCreationResponse;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -58,7 +59,18 @@ public class BonitaStartProducer extends BonitaProducer {
         String port = this.configuration.getPort();
         String username = this.configuration.getUsername();
         String password = this.configuration.getPassword();
-        BonitaAPIConfig bonitaAPIConfig = new BonitaAPIConfig(hostname, port, username, password);
+        // without them every exchange fails, so fail when the route starts instead
+        if (ObjectHelper.isEmpty(this.configuration.getProcessName())) {
+            throw new IllegalArgumentException("The processName option must be set on " + getEndpoint());
+        }
+        if (ObjectHelper.isEmpty(username)) {
+            throw new IllegalArgumentException("The username option must be set on " + getEndpoint());
+        }
+        if (ObjectHelper.isEmpty(password)) {
+            throw new IllegalArgumentException("The password option must be set on " + getEndpoint());
+        }
+        BonitaAPIConfig bonitaAPIConfig
+                = new BonitaAPIConfig(hostname, port, username, password, this.configuration.getBasePath());
         // fails the start for a protocol that is not http or https
         bonitaAPIConfig.setProtocol(this.configuration.getProtocol());
         SSLContextParameters sslContextParameters = this.configuration.getSslContextParameters();
@@ -86,7 +98,8 @@ public class BonitaStartProducer extends BonitaProducer {
         Map inputs = getInputs(exchange);
         String processName = this.configuration.getProcessName();
         BonitaAPI api = bonitaApi;
-        ProcessDefinitionResponse processDefinition = api.getProcessDefinition(processName);
+        ProcessDefinitionResponse processDefinition
+                = api.getProcessDefinition(processName, this.configuration.getProcessVersion());
         CaseCreationResponse response = api.startCase(processDefinition, inputs);
         if (response != null) {
             exchange.getMessage().setHeader(BonitaConstants.CASE_ID, response.getCaseId());

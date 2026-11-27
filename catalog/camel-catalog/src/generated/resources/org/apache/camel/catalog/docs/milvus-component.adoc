@@ -2,7 +2,7 @@
 :doctitle: Milvus
 :shortname: milvus
 :artifactid: camel-milvus
-:description: Perform operations on the Milvus Vector Database.
+:description: Create collections and indexes, and insert, upsert, delete, search and query entities in the Milvus vector database.
 :since: 4.5
 :supportlevel: Stable
 :tabs-sync-option:
@@ -33,6 +33,32 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+== TLS
+
+By default, the component connects to Milvus over plaintext gRPC, and the `token` is sent in clear text.
+The following options of the endpoint (or of the component configuration) connect with TLS:
+
+[width="100%",cols="1,3",options="header"]
+|===
+| Options | Connection
+| `secure=true` | TLS, trusting the certificate authorities of the JVM, such as a Zilliz Cloud endpoint.
+| `serverPemPath` | One-way TLS, trusting the server certificate (or the certificate authority that signed it) in the PEM file. `serverName` sets the name expected in the certificate when it differs from `host`.
+| `caPemPath`, `clientPemPath` and `clientKeyPath` | Mutual TLS: the client trusts the certificate authority in `caPemPath`, and presents the certificate in `clientPemPath` with its private key (PKCS#8) in `clientKeyPath`. The three options must be set together. `serverName` sets the name expected in the server certificate when it differs from `host`.
+|===
+
+The file options connect with TLS also when `secure` is not set.
+The component fails at startup when only some of `caPemPath`, `clientPemPath` and `clientKeyPath` are set, when `serverPemPath` is set together with them, or when `serverName` is set without them or `serverPemPath`.
+
+[source,java]
+----
+from("direct:search")
+    .to("milvus:myCollection?action=SEARCH&host=milvus.example.com&secure=true"
+        + "&serverPemPath=/etc/milvus/certs/server.pem&token=RAW({{milvus.token}})");
+----
+
+The Milvus SDK reads the certificates and the key from files and builds its own SSL context, so the component does not support `sslContextParameters`.
+For other TLS settings, create a `MilvusServiceClient` with your own `ConnectParam` and set it with `MilvusConfiguration.setClient()`: the TLS options are then not used.
 
 == Examples
 
@@ -274,5 +300,3 @@ This is particularly important when you design your Milvus database.
 The transformer only supports insert/upsert objects, so the only operation you can set via header are INSERT and UPSERT,
 otherwise the transformer will fail with an error log.
 The transformer runs before the endpoint, so it reads the `CamelMilvusAction` header only, not the `action` option of the endpoint.
-
-

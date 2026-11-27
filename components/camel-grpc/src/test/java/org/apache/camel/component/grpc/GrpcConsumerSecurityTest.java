@@ -17,12 +17,18 @@
 package org.apache.camel.component.grpc;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyStore;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLException;
 
 import io.grpc.ManagedChannel;
+import io.grpc.StatusRuntimeException;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -38,11 +44,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerSecurityTest extends GrpcTestSupport {
@@ -133,6 +141,76 @@ public class GrpcConsumerSecurityTest extends GrpcTestSupport {
         assertNotNull(pongResponse);
         assertEquals(GRPC_TEST_PING_ID, pongResponse.getPongId());
         assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, pongResponse.getPongName());
+    }
+
+    @Test
+    public void testClientCertificateOfOwnCaIsAccepted() {
+        PingRequest pingRequest
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+
+        PongResponse pongResponse = PingPongGrpc.newBlockingStub(tlsChannel).withDeadlineAfter(20, TimeUnit.SECONDS)
+                .pingSyncSync(pingRequest);
+
+        assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, pongResponse.getPongName());
+    }
+
+    @Test
+    public void testClientCertificateOfOtherCaIsRejected(@TempDir Path tempDir) throws Exception {
+        // a self-signed client certificate, so it is not issued by the CA in trustCertCollectionResource
+        KeyManagerFactory otherClientKeys = createSelfSignedClientKeys(tempDir);
+        SslContext sslContext = GrpcSslContexts.forClient()
+                .keyManager(otherClientKeys)
+                .trustManager(new File("src/test/resources/certs/ca.pem"))
+                .build();
+        ManagedChannel otherCaChannel = NettyChannelBuilder.forAddress("localhost", getRoutePort("grpc-tls"))
+                .sslContext(sslContext)
+                .build();
+        try {
+            PingRequest pingRequest
+                    = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+            PingPongGrpc.PingPongBlockingStub stub
+                    = PingPongGrpc.newBlockingStub(otherCaChannel).withDeadlineAfter(20, TimeUnit.SECONDS);
+
+            assertThrows(StatusRuntimeException.class, () -> stub.pingSyncSync(pingRequest));
+
+            MockEndpoint mockEndpoint = getMockEndpoint("mock:tls-enable");
+            mockEndpoint.expectedMessageCount(0);
+            mockEndpoint.assertIsSatisfied();
+        } finally {
+            otherCaChannel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+        }
+    }
+
+    private static KeyManagerFactory createSelfSignedClientKeys(Path dir) throws Exception {
+        Path keytool = Path.of(System.getProperty("java.home"), "bin", "keytool");
+        Assumptions.assumeTrue(Files.isExecutable(keytool), "keytool not found");
+        Path keystore = dir.resolve("other-client.p12");
+        char[] password = "changeit".toCharArray();
+        Process process = new ProcessBuilder(
+                keytool.toString(), "-genkeypair", "-alias", "client", "-keyalg", "RSA", "-keysize", "2048",
+                "-dname", "CN=localhost", "-validity", "2", "-storetype", "PKCS12",
+                "-keystore", keystore.toString(), "-storepass", "changeit", "-keypass", "changeit")
+                .redirectErrorStream(true)
+                .redirectOutput(dir.resolve("keytool.log").toFile())
+                .start();
+        assertTrue(process.waitFor(60, TimeUnit.SECONDS), "keytool did not finish");
+        assertEquals(0, process.exitValue(), () -> "keytool failed: " + readLog(dir.resolve("keytool.log")));
+
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        try (InputStream is = Files.newInputStream(keystore)) {
+            ks.load(is, password);
+        }
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        kmf.init(ks, password);
+        return kmf;
+    }
+
+    private static String readLog(Path log) {
+        try {
+            return Files.readString(log);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     @Test
