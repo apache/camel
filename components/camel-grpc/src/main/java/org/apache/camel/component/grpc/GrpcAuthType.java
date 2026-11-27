@@ -26,7 +26,8 @@ public enum GrpcAuthType {
     NONE,
 
     /**
-     * Google OAuth2 token auth. Valid for producer interacting with Google public services with gRPC support only
+     * Google OAuth2 token auth. Supported only on the producer, for calling Google services with gRPC support. A
+     * consumer with this type fails to start
      */
     GOOGLE,
 

@@ -50,7 +50,7 @@ include::partial$component-endpoint-headers.adoc[]
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 
 * *SSL/TLS:* gRPC has SSL/TLS integration and promotes the use of SSL/TLS to authenticate the server, and to encrypt all the data exchanged between the client and the server. Optional mechanisms are available for clients to provide certificates for mutual authentication.
-* *Token-based authentication with Google:* gRPC provides a generic mechanism to attach metadata-based credentials to requests and responses. Additional support for acquiring access tokens while accessing Google APIs through gRPC is provided. In general, this mechanism must be used as well as SSL/TLS on the channel.
+* *Token-based authentication with Google:* gRPC provides a generic mechanism to attach metadata-based credentials to requests and responses. Additional support for acquiring access tokens while accessing Google APIs through gRPC is provided. In general, this mechanism must be used as well as SSL/TLS on the channel. This mechanism is supported only on the producer: a consumer with `authenticationType=GOOGLE` fails to start, as the consumer has no check of these tokens. To authenticate the clients of a consumer, use JWT or mutual TLS.
 
 To enable these features, the following component properties combinations must be configured:
 
@@ -62,7 +62,7 @@ To enable these features, the following component properties combinations must b
 |||keyResource||Required on a consumer. Optional on a producer: only for mutual TLS, together with keyCertChainResource
 |||keyPassword||Optional
 |||trustCertCollectionResource||Optional. When not set, a producer verifies the server with the default trust store of the JVM
-|2|*Token-based authentication with Google API*|authenticationType|GOOGLE|Required
+|2|*Token-based authentication with Google API* (producer only)|authenticationType|GOOGLE|Required
 |||negotiationType|TLS|Required
 |||serviceAccountResource||Required
 |3|*Custom JSON Web Token implementation authentication*|authenticationType|JWT|Required
