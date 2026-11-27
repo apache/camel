@@ -76,7 +76,10 @@ public class TahuConfiguration implements Cloneable {
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
     private int keepAliveTimeout = 30;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Not supported: Eclipse Tahu creates its MQTT clients without these TLS settings, so the endpoint"
+                            + " fails to start when this option is set. An ssl:// server is checked with the default trust store"
+                            + " of the JVM, which the javax.net.ssl.* system properties configure.")
     @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
     private SSLContextParameters sslContextParameters;
 

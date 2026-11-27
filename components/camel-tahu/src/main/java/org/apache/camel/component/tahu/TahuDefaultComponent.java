@@ -38,7 +38,11 @@ public abstract class TahuDefaultComponent extends DefaultComponent implements S
                             + " of the endpoint then change.")
     TahuConfiguration configuration;
 
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Not supported: when true and a global SSLContextParameters is configured, the endpoints fail to"
+                            + " start, as Eclipse Tahu creates its MQTT clients without these TLS settings. An ssl:// server is"
+                            + " checked with the default trust store of the JVM, which the javax.net.ssl.* system properties"
+                            + " configure.")
     boolean useGlobalSslContextParameters;
 
     protected TahuDefaultComponent() {

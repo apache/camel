@@ -222,7 +222,10 @@ public interface TahuEdgeComponentBuilderFactory {
         }
     
         /**
-         * SSL configuration for MQTT server connections.
+         * Not supported: Eclipse Tahu creates its MQTT clients without these
+         * TLS settings, so the endpoint fails to start when this option is set.
+         * An ssl:// server is checked with the default trust store of the JVM,
+         * which the javax.net.ssl.* system properties configure.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
@@ -239,7 +242,11 @@ public interface TahuEdgeComponentBuilderFactory {
     
         
         /**
-         * Enable/disable global SSL context parameters use.
+         * Not supported: when true and a global SSLContextParameters is
+         * configured, the endpoints fail to start, as Eclipse Tahu creates its
+         * MQTT clients without these TLS settings. An ssl:// server is checked
+         * with the default trust store of the JVM, which the javax.net.ssl.*
+         * system properties configure.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
