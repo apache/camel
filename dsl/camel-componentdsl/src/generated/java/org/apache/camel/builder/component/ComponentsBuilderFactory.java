@@ -4829,7 +4829,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
+     * Index, search and delete documents in Apache Solr.
      * 
      * Category: search,monitoring
      * Since: 4.8

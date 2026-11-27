@@ -16195,7 +16195,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
+     * Index, search and delete documents in Apache Solr.
      * 
      * Category: search,monitoring
      * Since: 4.8
@@ -16204,15 +16204,18 @@ public class StaticEndpointBuilders {
      * Syntax: <code>solr:host:port/basePath</code>
      * 
      * Path parameter: host (required)
-     * The solr instance host name (set to 'default' to use the host name
-     * defined on component level)
+     * The host name of the Solr server. Set it to default to use the host
+     * option of the component, or localhost when that is not set.
      * 
      * Path parameter: port
-     * The solr instance port number
+     * The port of the Solr server. If not set, the port option of the component
+     * is used, or 8983 when that is not set.
      * Default value: 8983
      * 
      * Path parameter: basePath
-     * The solr instance base path (usually /solr)
+     * The base path of the Solr server. A path that starts with /solr/ sets the
+     * collection and the request handler instead: in /solr/products/update,
+     * products is the collection and /update the request handler.
      * Default value: /solr
      * 
      * @param path host:port/basePath
@@ -16223,7 +16226,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
+     * Index, search and delete documents in Apache Solr.
      * 
      * Category: search,monitoring
      * Since: 4.8
@@ -16232,15 +16235,18 @@ public class StaticEndpointBuilders {
      * Syntax: <code>solr:host:port/basePath</code>
      * 
      * Path parameter: host (required)
-     * The solr instance host name (set to 'default' to use the host name
-     * defined on component level)
+     * The host name of the Solr server. Set it to default to use the host
+     * option of the component, or localhost when that is not set.
      * 
      * Path parameter: port
-     * The solr instance port number
+     * The port of the Solr server. If not set, the port option of the component
+     * is used, or 8983 when that is not set.
      * Default value: 8983
      * 
      * Path parameter: basePath
-     * The solr instance base path (usually /solr)
+     * The base path of the Solr server. A path that starts with /solr/ sets the
+     * collection and the request handler instead: in /solr/products/update,
+     * products is the collection and /update the request handler.
      * Default value: /solr
      * 
      * @param componentName to use a custom component name for the endpoint
