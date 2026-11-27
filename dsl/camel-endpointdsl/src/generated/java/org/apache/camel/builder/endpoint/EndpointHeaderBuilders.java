@@ -2121,7 +2121,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Iggy (camel-iggy)
-     * Send and receive message to Apache Iggy streaming platform.
+     * Send messages to and receive messages from topics of the Apache Iggy
+     * message streaming platform.
      * 
      * Category: messaging
      * Since: 4.17
