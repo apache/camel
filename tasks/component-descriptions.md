@@ -323,7 +323,7 @@ or removes its row.
 | camel-robotframework | robotframework |  |
 | camel-rocketmq | rocketmq |  |
 | camel-rss | rss |  |
-| camel-saga | saga |  |
+| camel-saga | saga | yes |
 | camel-salesforce | salesforce |  |
 | camel-sap-netweaver | sap-netweaver |  |
 | camel-saxon | xquery |  |
