@@ -379,7 +379,13 @@ public interface FileWatchEndpointBuilderFactory {
         }
         /**
          * The number of threads polling WatchService. Increase this value, if
-         * you see OVERFLOW messages in log.
+         * you see OVERFLOW messages in log. All the threads read the same
+         * WatchService, and each one registers the watched directories again
+         * when the consumer starts (and hashes their files again when
+         * useFileHashing is enabled), so on a large tree a higher value makes
+         * the start slower. More threads can only help when the events come
+         * from several directories at the same time, as the events of one
+         * directory are read by one thread at a time.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -395,7 +401,13 @@ public interface FileWatchEndpointBuilderFactory {
         }
         /**
          * The number of threads polling WatchService. Increase this value, if
-         * you see OVERFLOW messages in log.
+         * you see OVERFLOW messages in log. All the threads read the same
+         * WatchService, and each one registers the watched directories again
+         * when the consumer starts (and hashes their files again when
+         * useFileHashing is enabled), so on a large tree a higher value makes
+         * the start slower. More threads can only help when the events come
+         * from several directories at the same time, as the events of one
+         * directory are read by one thread at a time.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -639,6 +651,19 @@ public interface FileWatchEndpointBuilderFactory {
          */
         public String fileLastModified() {
             return "CamelFileLastModified";
+        }
+        /**
+         * The time the consumer received the event, in milliseconds since the
+         * epoch.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "CamelMessageTimestamp";
         }
     }
     static FileWatchEndpointBuilder endpointBuilder(String componentName, String path) {

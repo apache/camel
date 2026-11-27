@@ -58,6 +58,9 @@ public final class FileWatchConstants {
                             + " Not set when the file no longer exists, such as for a DELETE event.",
               javaType = "long")
     public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
+    @Metadata(description = "The time the consumer received the event, in milliseconds since the epoch.",
+              javaType = "long")
+    public static final String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
     private FileWatchConstants() {
         // Utility class

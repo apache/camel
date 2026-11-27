@@ -47,7 +47,7 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
     @Metadata(required = true)
     private String path;
     @UriParam(description = "Comma separated list of events to watch. Possible values: CREATE,MODIFY,DELETE",
-              defaultValue = "CREATE,MODIFY,DELETE")
+              defaultValue = "CREATE,MODIFY,DELETE", enums = "CREATE,MODIFY,DELETE", multiEnum = true)
     private String events = "CREATE,MODIFY,DELETE";
     @UriParam(description = "Auto create directory if does not exist.", defaultValue = "true")
     private boolean autoCreate = true;
@@ -58,12 +58,16 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
               description = "The number of concurrent consumers. Increase this value, if your route is slow to prevent"
                             + " buffering in queue.",
               defaultValue = "1")
-    private int concurrentConsumers;
+    private int concurrentConsumers = 1;
     @UriParam(label = "advanced",
               description = "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in"
-                            + " log.",
+                            + " log. All the threads read the same WatchService, and each one registers the watched"
+                            + " directories again when the consumer starts (and hashes their files again when"
+                            + " useFileHashing is enabled), so on a large tree a higher value makes the start slower."
+                            + " More threads can only help when the events come from several directories at the same time,"
+                            + " as the events of one directory are read by one thread at a time.",
               defaultValue = "1")
-    private int pollThreads;
+    private int pollThreads = 1;
     @UriParam(description = "ANT style pattern to match files. The file is matched against path relative to endpoint path. "
                             + "Pattern must be also relative (not starting with slash)",
               defaultValue = "**")
@@ -72,7 +76,7 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
               description = "Maximum size of queue between WatchService and consumer. Unbounded by default."
                             + " When the queue is full, file events are dropped.",
               defaultValue = "" + Integer.MAX_VALUE)
-    private int queueSize;
+    private int queueSize = Integer.MAX_VALUE;
     @UriParam(label = "advanced",
               description = "Reference to io.methvin.watcher.hashing.FileHasher. This prevents emitting duplicate events on"
                             + " some platforms. For working with large files and if you dont need detect multiple modifications"
@@ -84,7 +88,7 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
                             + "If you disable this, you can get some events multiple times on some platforms and JDKs. "
                             + "Check java.nio.file.WatchService limitations for your target platform.",
               defaultValue = "true")
-    private boolean useFileHashing;
+    private boolean useFileHashing = true;
 
     public FileWatchEndpoint() {
     }
