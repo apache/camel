@@ -2,7 +2,7 @@
 :doctitle: Chunk
 :shortname: chunk
 :artifactid: camel-chunk
-:description: Transform messages using Chunk templating engine.
+:description: Transform a message into text with a Chunk template.
 :since: 2.15
 :supportlevel: Stable
 :tabs-sync-option:

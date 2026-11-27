@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai.handler;
 
+import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.ibm.watsonx.ai.textprocessing.OcrMode;
+import com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationParameters;
+import com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationParameters.ClassificationMode;
 import com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse;
 import com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations;
@@ -48,6 +54,8 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
                 return processTextClassificationUpload(exchange);
             case textClassificationUploadAndFetch:
                 return processTextClassificationUploadAndFetch(exchange);
+            case textClassificationAndFetch:
+                return processTextClassificationAndFetch(exchange);
             case textClassificationUploadFile:
                 return processTextClassificationUploadFile(exchange);
             case textClassificationDeleteFile:
@@ -66,6 +74,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
                 WatsonxAiOperations.textClassificationFetch,
                 WatsonxAiOperations.textClassificationUpload,
                 WatsonxAiOperations.textClassificationUploadAndFetch,
+                WatsonxAiOperations.textClassificationAndFetch,
                 WatsonxAiOperations.textClassificationUploadFile,
                 WatsonxAiOperations.textClassificationDeleteFile,
                 WatsonxAiOperations.textClassificationDeleteRequest
@@ -88,7 +97,7 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
 
         // Call the service
         TextClassificationService service = endpoint.getTextClassificationService();
-        TextClassificationResponse response = service.startClassification(filePath);
+        TextClassificationResponse response = service.startClassification(filePath, parameters(false, false));
 
         // Build response headers
         Map<String, Object> headers = new HashMap<>();
@@ -142,9 +151,9 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
 
         TextClassificationResponse response;
         if (input.isFile()) {
-            response = service.uploadAndStartClassification(input.file());
+            response = service.uploadAndStartClassification(input.file(), parameters(false, true));
         } else {
-            response = service.uploadAndStartClassification(input.inputStream(), input.fileName());
+            response = service.uploadAndStartClassification(input.inputStream(), input.fileName(), parameters(false, true));
         }
 
         Map<String, Object> headers = new HashMap<>();
@@ -160,11 +169,31 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
 
         TextClassificationResponse.ClassificationResult result;
         if (input.isFile()) {
-            result = service.uploadClassifyAndFetch(input.file());
+            result = service.uploadClassifyAndFetch(input.file(), parameters(true, true));
         } else {
-            result = service.uploadClassifyAndFetch(input.inputStream(), input.fileName());
+            result = service.uploadClassifyAndFetch(input.inputStream(), input.fileName(), parameters(true, true));
         }
 
+        return classificationResult(result);
+    }
+
+    private WatsonxAiOperationResponse processTextClassificationAndFetch(Exchange exchange) throws Exception {
+        Message in = exchange.getIn();
+        String filePath = in.getHeader(WatsonxAiConstants.FILE_PATH, String.class);
+        if (filePath == null || filePath.isEmpty()) {
+            filePath = readAsText(in, "the file path");
+        }
+        if (filePath == null || filePath.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "File path must be provided via message body or header '" + WatsonxAiConstants.FILE_PATH + "'");
+        }
+
+        // classify a document already in the document bucket and wait for the result
+        return classificationResult(
+                endpoint.getTextClassificationService().classifyAndFetch(filePath, parameters(true, false)));
+    }
+
+    private static WatsonxAiOperationResponse classificationResult(TextClassificationResponse.ClassificationResult result) {
         Map<String, Object> headers = new HashMap<>();
         headers.put(WatsonxAiConstants.CLASSIFICATION_STATUS, result.status());
         if (result.documentType() != null) {
@@ -175,6 +204,42 @@ public class TextClassificationHandler extends AbstractWatsonxAiHandler {
         }
 
         return WatsonxAiOperationResponse.create(result, headers);
+    }
+
+    /**
+     * The parameters of the options, or {@code null} when none is set, so that the defaults of the SDK apply. The
+     * removal of the document applies only to the operations that upload it and wait for the result: the SDK would
+     * otherwise delete a document that the route did not upload.
+     */
+    TextClassificationParameters parameters(boolean waitForResult, boolean uploaded) {
+        WatsonxAiConfiguration config = getConfiguration();
+        boolean cleanup = waitForResult && uploaded && Boolean.TRUE.equals(config.getRemoveUploadedFile());
+        if (config.getOcrMode() == null && config.getClassificationMode() == null && config.getDocumentLanguages() == null
+                && config.getAutoRotationCorrection() == null && config.getProcessingTimeout() == null && !cleanup) {
+            return null;
+        }
+        TextClassificationParameters.Builder builder = TextClassificationParameters.builder();
+        if (config.getOcrMode() != null) {
+            builder.ocrMode(OcrMode.valueOf(TextExtractionHandler.enumName(config.getOcrMode())));
+        }
+        if (config.getClassificationMode() != null) {
+            builder.classificationMode(
+                    ClassificationMode.valueOf(TextExtractionHandler.enumName(config.getClassificationMode())));
+        }
+        List<String> languages = toList(null, config.getDocumentLanguages());
+        if (languages != null) {
+            builder.languages(languages);
+        }
+        if (config.getAutoRotationCorrection() != null) {
+            builder.autoRotationCorrection(config.getAutoRotationCorrection());
+        }
+        if (waitForResult) {
+            builder.removeUploadedFile(cleanup);
+        }
+        if (config.getProcessingTimeout() != null) {
+            builder.timeout(Duration.ofMillis(config.getProcessingTimeout()));
+        }
+        return builder.build();
     }
 
     private WatsonxAiOperationResponse processTextClassificationUploadFile(Exchange exchange) throws Exception {

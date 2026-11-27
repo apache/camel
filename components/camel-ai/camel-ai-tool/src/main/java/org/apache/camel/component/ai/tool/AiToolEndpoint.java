@@ -32,8 +32,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import static org.apache.camel.component.ai.tool.AiTool.SCHEME;
 
 /**
- * Framework-agnostic consumer endpoint that registers a Camel route as an LLM tool in the shared
- * {@link AiToolRegistry}.
+ * Expose a Camel route as a tool that a model calls through a Camel AI producer, or that MCP clients call through the
+ * Camel MCP server.
  *
  * @since 4.22
  */
@@ -59,7 +59,9 @@ import static org.apache.camel.component.ai.tool.AiTool.SCHEME;
 public class AiToolEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
-    @UriPath(description = "The tool name. This is the name the LLM sees and uses to invoke the tool.")
+    @UriPath(description = "The name of the tool, which the model sees and uses to call it, and which MCP clients see"
+                           + " in tools/list. It must not contain a slash. A route whose tool name is already registered"
+                           + " under one of its tags, or in the pool of tools without tags, fails to start.")
     private final String toolName;
 
     @UriParam(description = "Tool configuration including tags, description, and parameter definitions.")

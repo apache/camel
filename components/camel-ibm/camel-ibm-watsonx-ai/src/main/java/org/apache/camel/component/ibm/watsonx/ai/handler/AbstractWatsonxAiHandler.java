@@ -19,15 +19,39 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import com.ibm.watsonx.ai.chat.ChatModeration;
+import com.ibm.watsonx.ai.chat.ChatResponse;
+import com.ibm.watsonx.ai.chat.TextChatResponse;
+import com.ibm.watsonx.ai.chat.model.AssistantMessage;
+import com.ibm.watsonx.ai.chat.model.BaseChatParameters.ToolChoiceOption;
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
+import com.ibm.watsonx.ai.chat.model.ExtractionTags;
 import com.ibm.watsonx.ai.chat.model.SystemMessage;
+import com.ibm.watsonx.ai.chat.model.Thinking;
+import com.ibm.watsonx.ai.chat.model.ThinkingEffort;
 import com.ibm.watsonx.ai.chat.model.UserMessage;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationParameters;
+import com.ibm.watsonx.ai.timeseries.ForecastData;
+import com.ibm.watsonx.ai.timeseries.InputSchema;
+import com.ibm.watsonx.ai.timeseries.TimeSeriesParameters;
+import com.ibm.watsonx.ai.timeseries.TimeSeriesRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
@@ -44,6 +68,13 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
     static final String AWS_S3_KEY_HEADER = "CamelAwsS3Key";
     /** The blob name header set by camel-azure-storage-blob ({@code BlobConstants.BLOB_NAME}). */
     static final String AZURE_BLOB_NAME_HEADER = "CamelAzureStorageBlobBlobName";
+
+    /** The default timeout of the watsonx.ai SDK. */
+    static final long DEFAULT_TIMEOUT_MILLIS = 60_000;
+    /** How much longer than the time limit of the generation a stream may take. */
+    static final long STREAM_GRACE_MILLIS = 30_000;
+    /** The name of the JSON schema of the answer, which watsonx.ai requires. */
+    static final String JSON_SCHEMA_NAME = "response";
 
     protected final WatsonxAiEndpoint endpoint;
 
@@ -428,5 +459,384 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         if (headerTopP != null) {
             builder.topP(headerTopP);
         }
+
+        applyToolChoice(builder, in.getHeader(WatsonxAiConstants.TOOL_CHOICE, config.getToolChoice(), String.class));
+        applyResponseFormat(builder, in, config);
+
+        List<String> guidedChoice = toList(in.getHeader(WatsonxAiConstants.GUIDED_CHOICE), config.getGuidedChoice());
+        if (guidedChoice != null) {
+            builder.guidedChoice(new LinkedHashSet<>(guidedChoice));
+        }
+        if (config.getGuidedRegex() != null) {
+            builder.guidedRegex(config.getGuidedRegex());
+        }
+        if (config.getGuidedGrammar() != null) {
+            builder.guidedGrammar(config.getGuidedGrammar());
+        }
+        Integer seed = in.getHeader(WatsonxAiConstants.SEED, config.getSeed(), Integer.class);
+        if (seed != null) {
+            builder.seed(seed);
+        }
+        List<String> stop = toLiteralList(in.getHeader(WatsonxAiConstants.STOP), config.getStop());
+        if (stop != null) {
+            builder.stop(stop);
+        }
+        if (config.getNumberOfChoices() != null) {
+            builder.n(config.getNumberOfChoices());
+        }
+    }
+
+    /**
+     * The response format of the headers, or else of the options: a header wins over both options, so that a message
+     * can ask for text from an endpoint with a jsonSchema. Of two headers, or two options, the JSON schema wins.
+     */
+    private static void applyResponseFormat(ChatParameters.Builder builder, Message in, WatsonxAiConfiguration config) {
+        Object jsonSchema = in.getHeader(WatsonxAiConstants.JSON_SCHEMA);
+        String format = in.getHeader(WatsonxAiConstants.RESPONSE_FORMAT, String.class);
+        if (isUnset(jsonSchema) && isUnset(format)) {
+            jsonSchema = config.getJsonSchema();
+            format = config.getResponseFormat();
+        }
+        boolean strict = !Boolean.FALSE.equals(config.getJsonSchemaStrict());
+        if (jsonSchema instanceof Map<?, ?> map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> schema = (Map<String, Object>) map;
+            builder.responseAsJsonSchema(JSON_SCHEMA_NAME, schema, strict);
+            return;
+        } else if (!isUnset(jsonSchema)) {
+            builder.responseAsJsonSchema(JSON_SCHEMA_NAME, jsonSchema.toString(), strict);
+            return;
+        }
+        if (isUnset(format)) {
+            return;
+        }
+        switch (format.trim().toLowerCase(Locale.ROOT)) {
+            case "text" -> builder.responseAsText();
+            case "json", "json_object" -> builder.responseAsJson();
+            default -> throw new IllegalArgumentException(
+                    "The response format must be text or json (set jsonSchema for a JSON schema), but it is " + format);
+        }
+    }
+
+    private static boolean isUnset(Object value) {
+        return value == null || value instanceof CharSequence text && text.toString().isBlank();
+    }
+
+    /**
+     * A List, or the comma separated values of a String (of the header, or else of the option).
+     */
+    static List<String> toList(Object header, String option) {
+        Object value = header != null ? header : option;
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(String::valueOf).toList();
+        }
+        String text = value.toString();
+        if (text.isEmpty()) {
+            return null;
+        }
+        return Arrays.stream(text.split(",")).map(String::trim).filter(v -> !v.isEmpty()).toList();
+    }
+
+    /**
+     * Like {@link #toList(Object, String)}, but the values are kept as they are, such as stop sequences with
+     * significant spaces or a sequence of new lines: only a value that is empty is dropped.
+     */
+    static List<String> toLiteralList(Object header, String option) {
+        Object value = header != null ? header : option;
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(String::valueOf).toList();
+        }
+        List<String> values = Arrays.stream(value.toString().split(",")).filter(v -> !v.isEmpty()).toList();
+        return values.isEmpty() ? null : values;
+    }
+
+    /**
+     * The reasoning settings of chat: the thinking, includeReasoning, reasoningEffort and thinkingTags options.
+     *
+     * @return the settings, or {@code null} when none is set
+     */
+    protected Thinking buildThinking(Exchange exchange) {
+        WatsonxAiConfiguration config = getConfiguration();
+        String effort = exchange.getIn().getHeader(WatsonxAiConstants.REASONING_EFFORT, config.getReasoningEffort(),
+                String.class);
+        if (config.getThinking() == null && config.getIncludeReasoning() == null && effort == null
+                && config.getThinkingTags() == null) {
+            return null;
+        }
+        Thinking.Builder thinking = Thinking.builder();
+        if (config.getThinking() != null) {
+            thinking.enabled(config.getThinking());
+        }
+        if (config.getIncludeReasoning() != null) {
+            thinking.includeReasoning(config.getIncludeReasoning());
+        }
+        if (effort != null) {
+            thinking.thinkingEffort(ThinkingEffort.valueOf(effort.trim().toUpperCase(Locale.ROOT)));
+        }
+        List<String> tags = toList(null, config.getThinkingTags());
+        if (tags != null && !tags.isEmpty()) {
+            ExtractionTags.Think think = new ExtractionTags.Think("<" + tags.get(0) + ">", "</" + tags.get(0) + ">");
+            thinking.extractionTags(tags.size() > 1
+                    ? ExtractionTags.of(think, new ExtractionTags.Response("<" + tags.get(1) + ">", "</" + tags.get(1) + ">"))
+                    : ExtractionTags.of(think));
+        }
+        return thinking.build();
+    }
+
+    /**
+     * The guardrails of chat: the moderationHap, moderationPii and moderationGraniteGuardian options, on the input and
+     * (but for Granite Guardian, which watsonx.ai applies to the input only) on the answer.
+     *
+     * @return the guardrails, or {@code null} when none is enabled
+     */
+    protected ChatModeration buildModerations() {
+        WatsonxAiConfiguration config = getConfiguration();
+        boolean hap = Boolean.TRUE.equals(config.getModerationHap());
+        boolean pii = Boolean.TRUE.equals(config.getModerationPii());
+        boolean graniteGuardian = Boolean.TRUE.equals(config.getModerationGraniteGuardian());
+        if (!hap && !pii && !graniteGuardian) {
+            return null;
+        }
+        float threshold = config.getModerationThreshold() != null ? config.getModerationThreshold() : 0.5f;
+        ChatModeration.Builder moderations = ChatModeration.builder();
+        if (hap) {
+            moderations.hap(h -> h.input(threshold).output(threshold));
+        }
+        if (pii) {
+            moderations.pii(p -> p.input(true).output(true));
+        }
+        if (graniteGuardian) {
+            moderations.graniteGuardian(g -> g.input(threshold));
+        }
+        return moderations.build();
+    }
+
+    /**
+     * The headers of the answer of chat, chatStreaming and deploymentChat. The generated text is the content of the
+     * first answer. When the model calls tools, the messages that were sent are kept in the messages header, for
+     * processToolCalls. A header without value is removed, so that no value of an earlier answer remains.
+     */
+    protected Map<String, Object> chatResponseHeaders(ChatResponse response, List<ChatMessage> messages) {
+        Map<String, Object> headers = new HashMap<>();
+        if (response.usage() != null) {
+            headers.put(WatsonxAiConstants.INPUT_TOKEN_COUNT, response.usage().promptTokens());
+            headers.put(WatsonxAiConstants.OUTPUT_TOKEN_COUNT, response.usage().completionTokens());
+        }
+        if (response.finishReason() != null) {
+            headers.put(WatsonxAiConstants.STOP_REASON, response.finishReason().value());
+        }
+        headers.put(WatsonxAiConstants.MODERATION_RESULTS,
+                response instanceof TextChatResponse text && text.moderations() != null && !text.moderations().isEmpty()
+                        ? text.moderations() : null);
+
+        List<AssistantMessage> answers = response.toAssistantMessages();
+        AssistantMessage answer = answers.get(0);
+        headers.put(WatsonxAiConstants.GENERATED_TEXT, answer.content());
+        headers.put(WatsonxAiConstants.ASSISTANT_MESSAGE, answer);
+        headers.put(WatsonxAiConstants.ASSISTANT_MESSAGES, answers.size() > 1 ? answers : null);
+        headers.put(WatsonxAiConstants.REASONING_CONTENT, answer.thinking());
+        headers.put(WatsonxAiConstants.REFUSAL, answer.refusal());
+        headers.put(WatsonxAiConstants.HAS_TOOL_CALLS, answer.hasToolCalls());
+        if (answer.hasToolCalls()) {
+            headers.put(WatsonxAiConstants.TOOL_CALLS, answer.toolCalls());
+            // the conversation goes on from these messages, which processToolCalls extends with the tool calls and
+            // their results, whether they came from the body, the system and user message headers or this header
+            headers.put(WatsonxAiConstants.MESSAGES, new ArrayList<>(messages));
+        } else {
+            // no tool calls of a previous answer must be left on the message
+            headers.put(WatsonxAiConstants.TOOL_CALLS, null);
+        }
+        return headers;
+    }
+
+    /**
+     * Waits for the end of a stream, at most the timeout of the endpoint (60 seconds by default, which is also the time
+     * limit of the generation) and 30 seconds more, and stops the stream when the wait ends otherwise.
+     */
+    protected <T> T awaitStream(CompletableFuture<T> future) throws Exception {
+        Long timeout = getConfiguration().getTimeout();
+        long wait = (timeout != null ? timeout : DEFAULT_TIMEOUT_MILLIS) + STREAM_GRACE_MILLIS;
+        try {
+            return future.get(wait, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new RuntimeCamelException("The stream of watsonx.ai did not end within " + wait + " ms", e);
+        } catch (InterruptedException e) {
+            future.cancel(true);
+            Thread.currentThread().interrupt();
+            throw e;
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause() instanceof CompletionException && e.getCause().getCause() != null
+                    ? e.getCause().getCause() : e.getCause();
+            if (cause instanceof Exception exception) {
+                throw exception;
+            }
+            throw new RuntimeCamelException(cause);
+        }
+    }
+
+    /**
+     * auto, required and none are the tool choice options of watsonx.ai; any other value names the tool to call.
+     */
+    static void applyToolChoice(ChatParameters.Builder builder, String toolChoice) {
+        if (toolChoice == null || toolChoice.isBlank()) {
+            return;
+        }
+        switch (toolChoice.trim().toLowerCase(Locale.ROOT)) {
+            case "auto" -> builder.toolChoiceOption(ToolChoiceOption.AUTO);
+            case "required" -> builder.toolChoiceOption(ToolChoiceOption.REQUIRED);
+            case "none" -> builder.toolChoiceOption(ToolChoiceOption.NONE);
+            default -> builder.toolChoice(toolChoice.trim());
+        }
+    }
+
+    /**
+     * Builds the request of forecast and deploymentForecast. A TimeSeriesRequest body is sent as it is, with its
+     * parameters, unless the input schema and data headers are set: then the request is built from them, with the
+     * prediction length of the header or the predictionLength option, and the future data of its header.
+     *
+     * @param deploymentId      the deployment to forecast with, or {@code null} for a foundation model
+     * @param futureDataAllowed whether the operation sends future data, which only deployments accept
+     */
+    protected TimeSeriesRequest getTimeSeriesRequest(Exchange exchange, String deploymentId, boolean futureDataAllowed) {
+        Message in = exchange.getIn();
+        InputSchema inputSchema = toInputSchema(in.getHeader(WatsonxAiConstants.FORECAST_INPUT_SCHEMA));
+        ForecastData forecastData = toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_DATA),
+                WatsonxAiConstants.FORECAST_DATA);
+
+        boolean futureDataHeader = in.getHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA) != null;
+        if (!futureDataAllowed && futureDataHeader) {
+            throw futureDataRefused();
+        }
+        if ((inputSchema == null || forecastData == null) && in.getBody() instanceof TimeSeriesRequest request) {
+            if (!futureDataAllowed && request.parameters() != null && request.parameters().futureData() != null) {
+                throw futureDataRefused();
+            }
+            if (deploymentId == null || deploymentId.equals(request.deploymentId())) {
+                return request;
+            }
+            return TimeSeriesRequest.builder()
+                    .deploymentId(deploymentId)
+                    .inputSchema(request.inputSchema())
+                    .data(request.data())
+                    .parameters(request.parameters())
+                    .build();
+        }
+
+        if (inputSchema == null) {
+            throw new IllegalArgumentException(
+                    "Input schema must be provided via header '" + WatsonxAiConstants.FORECAST_INPUT_SCHEMA
+                                               + "' or as part of TimeSeriesRequest in body");
+        }
+        if (forecastData == null) {
+            throw new IllegalArgumentException(
+                    "Forecast data must be provided via header '" + WatsonxAiConstants.FORECAST_DATA
+                                               + "' or as part of TimeSeriesRequest in body");
+        }
+
+        Integer predictionLength = in.getHeader(WatsonxAiConstants.FORECAST_PREDICTION_LENGTH, Integer.class);
+        if (predictionLength == null) {
+            predictionLength = getConfiguration().getPredictionLength();
+        }
+        ForecastData futureData = futureDataHeader
+                ? toForecastData(in.getHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA), WatsonxAiConstants.FORECAST_FUTURE_DATA)
+                : null;
+
+        TimeSeriesParameters parameters = null;
+        if (predictionLength != null || futureData != null) {
+            TimeSeriesParameters.Builder builder = TimeSeriesParameters.builder();
+            if (predictionLength != null) {
+                builder.predictionLength(predictionLength);
+            }
+            if (futureData != null) {
+                builder.futureData(futureData);
+            }
+            parameters = builder.build();
+        }
+
+        return TimeSeriesRequest.builder()
+                .deploymentId(deploymentId)
+                .inputSchema(inputSchema)
+                .data(forecastData)
+                .parameters(parameters)
+                .build();
+    }
+
+    private static IllegalArgumentException futureDataRefused() {
+        return new IllegalArgumentException(
+                "Future data (header '" + WatsonxAiConstants.FORECAST_FUTURE_DATA + "' or the parameters of the"
+                                            + " TimeSeriesRequest) is accepted by deploymentForecast only: watsonx.ai takes no"
+                                            + " future data for the forecast of a foundation model");
+    }
+
+    private static InputSchema toInputSchema(Object value) {
+        if (value == null || value instanceof InputSchema) {
+            return (InputSchema) value;
+        }
+        if (value instanceof Map<?, ?> map) {
+            InputSchema.Builder builder = InputSchema.builder();
+            Object timestampColumn = valueOf(map, "timestamp_column", "timestampColumn");
+            if (timestampColumn != null) {
+                builder.timestampColumn(timestampColumn.toString());
+            }
+            Object freq = valueOf(map, "freq", "frequency");
+            if (freq != null) {
+                builder.freq(freq.toString());
+            }
+            List<String> idColumns = toStrings(valueOf(map, "id_columns", "idColumns"));
+            if (idColumns != null) {
+                builder.idColumns(idColumns);
+            }
+            List<String> targetColumns = toStrings(valueOf(map, "target_columns", "targetColumns"));
+            if (targetColumns != null) {
+                builder.targetColumns(targetColumns);
+            }
+            return builder.build();
+        }
+        throw new IllegalArgumentException(
+                "The header '" + WatsonxAiConstants.FORECAST_INPUT_SCHEMA + "' must be an InputSchema or a Map, but it is a "
+                                           + value.getClass().getName());
+    }
+
+    private static Object valueOf(Map<?, ?> map, String key, String alternativeKey) {
+        Object value = map.get(key);
+        return value != null ? value : map.get(alternativeKey);
+    }
+
+    private static List<String> toStrings(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof List<?> list) {
+            return list.stream().map(String::valueOf).toList();
+        }
+        return List.of(value.toString().split("\\s*,\\s*"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ForecastData toForecastData(Object value, String header) {
+        if (value == null || value instanceof ForecastData) {
+            return (ForecastData) value;
+        }
+        if (value instanceof Map<?, ?> map) {
+            ForecastData data = ForecastData.create();
+            map.forEach((column, values) -> {
+                if (values instanceof List<?> list) {
+                    data.addAll(String.valueOf(column), list);
+                } else {
+                    data.add(String.valueOf(column), values);
+                }
+            });
+            return data;
+        }
+        throw new IllegalArgumentException(
+                "The header '" + header + "' must be a ForecastData or a Map of column to values, but it is a "
+                                           + value.getClass().getName());
     }
 }

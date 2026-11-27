@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
+ * Expose the OpenAPI document of the REST services that are defined with the Rest DSL.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "rest-api", title = "REST API", syntax = "rest-api:path",
              remote = false, consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
@@ -66,12 +66,20 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestApiEndpoint.class);
 
-    @UriPath
+    @UriPath(description = "The path that serves the API document, such as api-doc. The Rest DSL sets it from the"
+                           + " apiContextPath of the rest configuration. The document is JSON, or YAML when the path ends"
+                           + " with .yaml or the Accept header asks for YAML.")
     @Metadata(required = true)
     private String path;
-    @UriParam
+    @UriParam(description = "The name of the Camel component that serves the API document, such as platform-http, servlet"
+                            + " or jetty. If not set, the component of the rest configuration is used. If that is not set"
+                            + " either, the consumer takes the first component of the CamelContext that is a"
+                            + " RestApiConsumerFactory, then a single RestApiConsumerFactory in the registry, then"
+                            + " platform-http, servlet, jetty, undertow or netty-http, whichever is on the classpath.")
     private String consumerComponentName;
-    @UriParam
+    @UriParam(description = "The name of the module that creates the API document, such as openapi (camel-openapi-java)."
+                            + " If not set, the apiComponent of the rest configuration is used, or else openapi. A single"
+                            + " RestApiProcessorFactory in the registry is used in its place.")
     private String apiComponentName;
 
     private Map<String, Object> parameters;
@@ -95,9 +103,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
         return path;
     }
 
-    /**
-     * The base path
-     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -106,12 +111,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
         return consumerComponentName;
     }
 
-    /**
-     * The Camel Rest component to use for the consumer REST transport, such as jetty, servlet, undertow. If no
-     * component has been explicitly configured, then Camel will lookup if there is a Camel component that integrates
-     * with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one
-     * is found, then that is being used.
-     */
     public void setConsumerComponentName(String consumerComponentName) {
         this.consumerComponentName = consumerComponentName;
     }
@@ -120,9 +119,6 @@ public class RestApiEndpoint extends DefaultEndpoint {
         return apiComponentName;
     }
 
-    /**
-     * The Camel Rest API component to use for generating the API of the REST services, such as openapi.
-     */
     public void setApiComponentName(String apiComponentName) {
         this.apiComponentName = apiComponentName;
     }
