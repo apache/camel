@@ -382,7 +382,7 @@ or removes its row.
 | camel-vertx-mqtt | vertx-mqtt |  |
 | camel-vertx-websocket | vertx-websocket |  |
 | camel-wasm | wasm |  |
-| camel-weather | weather |  |
+| camel-weather | weather | yes |
 | camel-weaviate | weaviate |  |
 | camel-web3j | web3j |  |
 | camel-webhook | webhook |  |
