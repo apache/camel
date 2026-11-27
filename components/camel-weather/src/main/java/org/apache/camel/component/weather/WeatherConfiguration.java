@@ -38,48 +38,96 @@ public class WeatherConfiguration {
     @UriPath(description = "The name value is not used.")
     @Metadata(required = true)
     private String name;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The API key of the OpenWeatherMap account, sent as the APPID query parameter of every request.",
+              label = "security", security = "secret")
     @Metadata(required = true)
     private String appid;
-    @UriParam
+    @UriParam(description = "The OpenWeatherMap API to call. Station queries weather stations instead of cities, for ids, "
+                            + "for lat and lon with cnt, and for a bounding box. When period is set, Hourly gets the 3-hour "
+                            + "forecast and any other value, or none, the daily forecast; without period, Hourly and Daily get "
+                            + "the current weather.")
     private WeatherApi weatherApi;
-    @UriParam(label = "filter")
+    @UriParam(description = "The city to get the weather for, by name and optionally a country code, for example London,uk. "
+                            + "If empty or current, the latitude and longitude come from the geoLocationProvider. The lat and "
+                            + "lon, zip and ids options take precedence over this option, and the CamelWeatherLocation header "
+                            + "replaces it for the producer.",
+              label = "filter")
     private String location = "";
-    @UriParam(label = "filter")
+    @UriParam(description = "The latitude of the location, used together with lon, and taking precedence over the zip, ids "
+                            + "and location options. For a bounding box query (with rightLon and topLat) it is the bottom "
+                            + "latitude. With cnt set, the query finds that many cities, or stations with weatherApi Station, "
+                            + "around the point.",
+              label = "filter")
     private String lat;
-    @UriParam(label = "filter")
+    @UriParam(description = "The longitude of the location, used together with lat. For a bounding box query (with rightLon "
+                            + "and topLat) it is the left longitude.",
+              label = "filter")
     private String lon;
-    @UriParam(label = "filter")
+    @UriParam(description = "The right longitude of a bounding box query, which also needs lat, lon, topLat and zoom. The "
+                            + "query gets the weather of the cities in the box, or of the stations with weatherApi Station.",
+              label = "filter")
     private String rightLon;
-    @UriParam(label = "filter")
+    @UriParam(description = "The top latitude of a bounding box query, which also needs lat, lon, rightLon and zoom.",
+              label = "filter")
     private String topLat;
-    @UriParam(label = "filter")
+    @UriParam(description = "The map zoom level of a bounding box query, which also needs lat, lon, rightLon and topLat.",
+              label = "filter")
     private Integer zoom;
-    @UriParam
+    @UriParam(description = "The length of a forecast, sent as the cnt query parameter: the number of days of the daily "
+                            + "forecast, or the number of 3-hour steps with weatherApi Hourly. Only the first number in the "
+                            + "value is read, so 7 days is the same as 7, and a value with no number, or 0, is ignored. "
+                            + "If empty, the current weather is queried instead of a forecast.")
     private String period = "";
-    @UriParam(defaultValue = "JSON")
+    @UriParam(description = "The format of the response from OpenWeatherMap: JSON, XML or HTML. XML and HTML are sent as the "
+                            + "mode query parameter.",
+              defaultValue = "JSON")
     private WeatherMode mode = JSON;
-    @UriParam
+    @UriParam(description = "The units of measurement in the response, for example of temperature and wind speed, sent as "
+                            + "the units query parameter. If not set, OpenWeatherMap uses its standard units, with the "
+                            + "temperature in Kelvin.")
     private WeatherUnits units;
-    @UriParam(defaultValue = "en")
+    @UriParam(description = "The language of the weather descriptions in the response, sent as the lang query parameter.",
+              defaultValue = "en")
     private WeatherLanguage language = en;
-    @UriParam
+    @UriParam(description = "The name of the header to store the response in, instead of the message body. The producer then "
+                            + "leaves the body as it is, and the consumer sends an exchange without a body.")
     private String headerName;
-    @UriParam(label = "filter")
+    @UriParam(description = "The zip code and the country code of the location, for example 94040,us. It is used when lat "
+                            + "and lon are not set, and takes precedence over the ids and location options.",
+              label = "filter")
     private String zip;
-    @UriParam(label = "filter", javaType = "java.lang.String")
+    @UriParam(description = "The ID of a city, or of a station with weatherApi Station, or a comma-separated list of city "
+                            + "IDs to get the current weather of all of them in one request. It is used when lat, lon and zip "
+                            + "are not set, and takes precedence over the location option.",
+              label = "filter", javaType = "java.lang.String")
     private String ids;
-    @UriParam(label = "filter")
+    @UriParam(description = "The number of results, sent as the cnt query parameter, for example the number of cities or "
+                            + "stations to find around lat and lon. The period option takes precedence over this option.",
+              label = "filter")
     private Integer cnt;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The access key of the ipstack API, which the default geoLocationProvider uses. It is needed "
+                            + "only when the location is looked up: location is empty or current, and none of lat and lon, zip "
+                            + "or ids is set.",
+              label = "security", security = "secret")
     @Metadata(required = true)
     private String geolocationAccessKey;
-    @UriParam(label = "security")
+    @UriParam(description = "The IP address that the default geoLocationProvider looks up with the ipstack API to find the "
+                            + "latitude and longitude of the location. It is needed only when the location is looked up, as "
+                            + "for geolocationAccessKey.",
+              label = "security")
     @Metadata(required = true)
     private String geolocationRequestHostIP;
-    @UriParam(label = "advanced")
+    @UriParam(description = "To use a custom org.apache.hc.client5.http.impl.classic.CloseableHttpClient, for example one "
+                            + "with an HTTP proxy, for the requests to OpenWeatherMap and to the default geoLocationProvider. "
+                            + "By default each endpoint creates its own client. The endpoint closes the client when it stops, "
+                            + "also a client that is set.",
+              label = "advanced")
     private CloseableHttpClient httpClient = HttpClients.createDefault();
-    @UriParam(label = "advanced")
+    @UriParam(description = "A custom org.apache.camel.component.weather.geolocation.GeoLocationProvider for the latitude "
+                            + "and longitude of the location when location is empty or current, and none of lat and lon, zip "
+                            + "or ids is set. The default looks up geolocationRequestHostIP with the ipstack API, and needs "
+                            + "geolocationAccessKey.",
+              label = "advanced")
     private GeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(this);
 
     public WeatherConfiguration() {
@@ -90,10 +138,6 @@ public class WeatherConfiguration {
         return period;
     }
 
-    /**
-     * If null, the current weather will be returned, else use values of 5, 7, 14 days. Only the numeric value for the
-     * forecast period is actually parsed, so spelling, capitalisation of the time period is up to you (its ignored)
-     */
     public void setPeriod(String period) {
         notNull(period, "period");
         int result = 0;
@@ -119,9 +163,6 @@ public class WeatherConfiguration {
         return mode;
     }
 
-    /**
-     * The output format of the weather data.
-     */
     public void setMode(WeatherMode mode) {
         this.mode = notNull(mode, "mode");
     }
@@ -130,9 +171,6 @@ public class WeatherConfiguration {
         return units;
     }
 
-    /**
-     * The units for temperature measurement.
-     */
     public void setUnits(WeatherUnits units) {
         this.units = notNull(units, "units");
     }
@@ -141,13 +179,6 @@ public class WeatherConfiguration {
         return location;
     }
 
-    /**
-     * If null Camel will try and determine your current location using the geolocation of your ip address, else specify
-     * the city,country. For well known city names, Open Weather Map will determine the best fit, but multiple results
-     * may be returned. Hence specifying and country as well will return more accurate data. If you specify "current" as
-     * the location then the component will try to get the current latitude and longitude and use that to get the
-     * weather details. You can use lat and lon options instead of location.
-     */
     public void setLocation(String location) {
         this.location = location;
     }
@@ -156,10 +187,6 @@ public class WeatherConfiguration {
         return headerName;
     }
 
-    /**
-     * To store the weather result in this header instead of the message body. This is useable if you want to keep
-     * current message body as-is.
-     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
@@ -168,10 +195,6 @@ public class WeatherConfiguration {
         return lat;
     }
 
-    /**
-     * Latitude of location. You can use lat and lon options instead of location. For boxed queries this is the bottom
-     * latitude.
-     */
     public void setLat(String lat) {
         this.lat = lat;
     }
@@ -180,17 +203,10 @@ public class WeatherConfiguration {
         return lon;
     }
 
-    /**
-     * Longitude of location. You can use lat and lon options instead of location. For boxed queries this is the left
-     * longtitude.
-     */
     public void setLon(String lon) {
         this.lon = lon;
     }
 
-    /**
-     * APPID ID used to authenticate the user connected to the API Server
-     */
     public void setAppid(String appid) {
         this.appid = appid;
     }
@@ -203,9 +219,6 @@ public class WeatherConfiguration {
         return language;
     }
 
-    /**
-     * Language of the response.
-     */
     public void setLanguage(WeatherLanguage language) {
         this.language = language;
     }
@@ -214,9 +227,6 @@ public class WeatherConfiguration {
         return rightLon;
     }
 
-    /**
-     * For boxed queries this is the right longtitude. Needs to be used in combination with topLat and zoom.
-     */
     public void setRightLon(String rightLon) {
         this.rightLon = rightLon;
     }
@@ -225,9 +235,6 @@ public class WeatherConfiguration {
         return topLat;
     }
 
-    /**
-     * For boxed queries this is the top latitude. Needs to be used in combination with rightLon and zoom.
-     */
     public void setTopLat(String topLat) {
         this.topLat = topLat;
     }
@@ -236,9 +243,6 @@ public class WeatherConfiguration {
         return zoom;
     }
 
-    /**
-     * For boxed queries this is the zoom. Needs to be used in combination with rightLon and topLat.
-     */
     public void setZoom(Integer zoom) {
         this.zoom = zoom;
     }
@@ -247,9 +251,6 @@ public class WeatherConfiguration {
         return zip;
     }
 
-    /**
-     * Zip-code, e.g. 94040,us
-     */
     public void setZip(String zip) {
         this.zip = zip;
     }
@@ -266,9 +267,6 @@ public class WeatherConfiguration {
         }
     }
 
-    /**
-     * List of id's of city/stations. You can separate multiple ids by comma.
-     */
     public void setIds(String ids) {
         this.ids = ids;
     }
@@ -277,9 +275,6 @@ public class WeatherConfiguration {
         return cnt;
     }
 
-    /**
-     * Number of results to be found
-     */
     public void setCnt(Integer cnt) {
         this.cnt = cnt;
     }
@@ -288,9 +283,6 @@ public class WeatherConfiguration {
         return weatherApi;
     }
 
-    /**
-     * The API to use (current, forecast/3 hour, forecast daily, station)
-     */
     public void setWeatherApi(WeatherApi weatherApi) {
         this.weatherApi = weatherApi;
     }
@@ -299,9 +291,6 @@ public class WeatherConfiguration {
         return geolocationAccessKey;
     }
 
-    /**
-     * The geolocation service now needs an accessKey to be used
-     */
     public void setGeolocationAccessKey(String geolocationAccessKey) {
         this.geolocationAccessKey = geolocationAccessKey;
     }
@@ -310,9 +299,6 @@ public class WeatherConfiguration {
         return geolocationRequestHostIP;
     }
 
-    /**
-     * The geolocation service now needs to specify the IP associated to the accessKey you're using
-     */
     public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
         this.geolocationRequestHostIP = geolocationRequestHostIP;
     }
@@ -321,9 +307,6 @@ public class WeatherConfiguration {
         return httpClient;
     }
 
-    /**
-     * To use an existing configured http client (for example with http proxy)
-     */
     public void setHttpClient(CloseableHttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -332,11 +315,6 @@ public class WeatherConfiguration {
         return geoLocationProvider;
     }
 
-    /**
-     * A custom geolocation provider to determine the longitude and latitude to use when no location information is set.
-     *
-     * The default implementation uses the ipstack API and requires geolocationAccessKey and geolocationRequestHostIP
-     */
     public void setGeoLocationProvider(GeoLocationProvider geoLocationProvider) {
         this.geoLocationProvider = geoLocationProvider;
     }

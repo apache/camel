@@ -30,7 +30,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Component("spring-redis")
 public class RedisComponent extends DefaultComponent {
 
-    @Metadata(autowired = true)
+    @Metadata(autowired = true,
+              description = "The org.springframework.data.redis.core.RedisTemplate that the producers of the endpoints of"
+                            + " this component run the commands with, unless an endpoint sets its own redisTemplate."
+                            + " Autowired from the registry when it has exactly one RedisTemplate.")
     private RedisTemplate<?, ?> redisTemplate;
 
     public RedisComponent() {
@@ -61,9 +64,6 @@ public class RedisComponent extends DefaultComponent {
         return redisTemplate;
     }
 
-    /**
-     * Reference to a pre-configured RedisTemplate instance to use.
-     */
     public void setRedisTemplate(RedisTemplate<?, ?> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }

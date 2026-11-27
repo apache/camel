@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Copy files to/from remote hosts using the secure copy protocol (SCP).
+ * Copy files to remote hosts using the secure copy protocol (SCP).
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "scp", extendsScheme = "ftp", title = "SCP",
              syntax = "scp:host:port/directoryName", producerOnly = true, category = { Category.FILE })

@@ -2,7 +2,7 @@
 :doctitle: Printer
 :shortname: lpr
 :artifactid: camel-printer
-:description: Send print jobs to printers.
+:description: Send documents as print jobs to local or network printers by using the Java Print Service API.
 :since: 2.1
 :supportlevel: Stable
 :tabs-sync-option:

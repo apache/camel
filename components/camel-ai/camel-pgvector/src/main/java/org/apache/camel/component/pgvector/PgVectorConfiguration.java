@@ -34,17 +34,24 @@ public class PgVectorConfiguration implements Cloneable {
     private PgVectorAction action;
 
     @Metadata(autowired = true,
-              description = "The DataSource to use for connecting to the PostgreSQL database with pgvector extension.")
+              description = "The javax.sql.DataSource of the PostgreSQL database. The endpoint fails to start when no"
+                            + " DataSource is set or autowired. The producer takes a new connection from it for each message,"
+                            + " so a pooling DataSource is recommended.")
     @UriParam
     private DataSource dataSource;
 
     @Metadata(label = "producer",
-              description = "The dimension of the vectors to store.")
+              description = "The number of dimensions of the embedding column that CREATE_TABLE creates, as vector(n). It"
+                            + " must match the size of the vectors of the embedding model, as PostgreSQL rejects a vector of"
+                            + " another size. The other actions do not use it.")
     @UriParam(defaultValue = "384")
     private int dimension = 384;
 
     @Metadata(label = "producer",
-              description = "The distance type to use for similarity search.")
+              description = "The distance function of SIMILARITY_SEARCH and of the HNSW index that CREATE_INDEX creates:"
+                            + " COSINE (cosine distance), EUCLIDEAN (L2 distance) or INNER_PRODUCT (the negative inner product,"
+                            + " so the closest records have the lowest distance). A search uses the index only when both use"
+                            + " the same distance type.")
     @UriParam(defaultValue = "COSINE")
     private PgVectorDistanceType distanceType = PgVectorDistanceType.COSINE;
 
@@ -52,9 +59,6 @@ public class PgVectorConfiguration implements Cloneable {
         return action;
     }
 
-    /**
-     * The action to perform. The CamelPgVectorAction header, when set, wins over this option.
-     */
     public void setAction(PgVectorAction action) {
         this.action = action;
     }
@@ -63,9 +67,6 @@ public class PgVectorConfiguration implements Cloneable {
         return dataSource;
     }
 
-    /**
-     * The DataSource to use for connecting to the PostgreSQL database with pgvector extension.
-     */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -74,9 +75,6 @@ public class PgVectorConfiguration implements Cloneable {
         return dimension;
     }
 
-    /**
-     * The dimension of the vectors to store.
-     */
     public void setDimension(int dimension) {
         this.dimension = dimension;
     }
@@ -85,9 +83,6 @@ public class PgVectorConfiguration implements Cloneable {
         return distanceType;
     }
 
-    /**
-     * The distance type to use for similarity search. Supported values: COSINE, EUCLIDEAN, INNER_PRODUCT.
-     */
     public void setDistanceType(PgVectorDistanceType distanceType) {
         this.distanceType = distanceType;
     }

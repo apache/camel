@@ -23,11 +23,16 @@ import org.apache.camel.spi.Metadata;
  */
 public final class CamelEventConstants {
 
-    @Metadata(label = "consumer", description = "The event type name (e.g., RouteStarted, ExchangeCompleted)",
+    @Metadata(label = "consumer",
+              description = "The name of the event type, such as RouteStarted or ExchangeCompleted. For a batch, the type of"
+                            + " the first event in the List.",
               javaType = "String")
     public static final String HEADER_EVENT_TYPE = "CamelEventType";
 
-    @Metadata(label = "consumer", description = "The event timestamp in milliseconds since epoch (if available)",
+    @Metadata(label = "consumer",
+              description = "The time of the event in milliseconds since the epoch. Only set when the event factory of the"
+                            + " CamelContext records timestamps, for example with"
+                            + " camel.main.camelEventsTimestampEnabled=true.",
               javaType = "Long")
     public static final String HEADER_EVENT_TIMESTAMP = "CamelEventTimestamp";
 
@@ -68,7 +73,7 @@ public final class CamelEventConstants {
     public static final String HEADER_EVENT_REDELIVERY_ATTEMPT = "CamelEventRedeliveryAttempt";
 
     @Metadata(label = "consumer",
-              description = "The number of events in a batch (only set when batchSize is configured)",
+              description = "The number of events in the List body. Only set on a batch, when batchSize is greater than 1.",
               javaType = "Integer")
     public static final String HEADER_EVENT_BATCH_SIZE = "CamelEventBatchSize";
 
