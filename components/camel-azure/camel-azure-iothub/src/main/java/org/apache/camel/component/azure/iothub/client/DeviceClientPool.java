@@ -421,7 +421,12 @@ public class DeviceClientPool {
             throw new IllegalArgumentException(
                     "Device id '" + deviceId + "' does not match the connection string's DeviceId '" + csDeviceId + "'");
         }
-        String device = csDeviceId != null && !csDeviceId.isBlank() ? csDeviceId : hasDeviceId ? deviceId : null;
+        String device;
+        if (csDeviceId != null && !csDeviceId.isBlank()) {
+            device = csDeviceId;
+        } else {
+            device = hasDeviceId ? deviceId : null;
+        }
         return new PoolKey(
                 hostName != null && !hostName.isBlank() ? hostName : null,
                 device,
