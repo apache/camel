@@ -28,7 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component(value = "aws2-step-functions")
 public class StepFunctions2Component extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of the component start from. Each endpoint uses a copy"
+                            + " of it, in which its own URI options replace the values.")
     private StepFunctions2Configuration configuration = new StepFunctions2Configuration();
 
     public StepFunctions2Component() {
@@ -61,9 +62,6 @@ public class StepFunctions2Component extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(StepFunctions2Configuration configuration) {
         this.configuration = configuration;
     }

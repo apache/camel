@@ -28,7 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component(value = "aws2-redshift-data")
 public class RedshiftData2Component extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the component copies to each endpoint that it creates, so that the"
+                            + " endpoints share its values.")
     private RedshiftData2Configuration configuration = new RedshiftData2Configuration();
 
     public RedshiftData2Component() {
@@ -61,9 +62,6 @@ public class RedshiftData2Component extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(RedshiftData2Configuration configuration) {
         this.configuration = configuration;
     }

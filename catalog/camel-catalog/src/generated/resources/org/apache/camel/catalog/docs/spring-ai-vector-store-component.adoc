@@ -2,7 +2,7 @@
 :doctitle: Spring AI Vector Store
 :shortname: spring-ai-vector-store
 :artifactid: camel-spring-ai-vector-store
-:description: Spring AI Vector Store
+:description: Store, delete and search documents in a vector database with Spring AI.
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:
@@ -429,4 +429,3 @@ IMPORTANT: Make sure your vector store is configured with an embedding model to 
 * `similarityThreshold` - Minimum similarity score 0-1 (default: 0.0)
 * `filterExpression` - Metadata-based filter expression
 * `searchByVector` - Search with the `float[]` body instead of the text of the `CamelSpringAiEmbeddingInputText` header (default: false)
-

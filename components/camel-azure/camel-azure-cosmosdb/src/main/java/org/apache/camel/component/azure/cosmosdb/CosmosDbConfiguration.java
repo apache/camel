@@ -34,76 +34,163 @@ import static org.apache.camel.component.azure.common.CredentialType.SHARED_ACCO
 @UriParams
 public class CosmosDbConfiguration implements Cloneable {
 
-    @UriPath
+    @UriPath(description = "The name of the database. The consumer requires it. The producer uses it for each operation"
+                           + " except listDatabases and queryDatabases, and the CamelAzureCosmosDbDatabaseName header"
+                           + " replaces it.")
     private String databaseName;
-    @UriPath
+    @UriPath(description = "The name of the container. The consumer requires it, and receives the changes of this"
+                           + " container. The producer uses it for the operations on a container and on its items, and the"
+                           + " CamelAzureCosmosDbContainerName header replaces it.")
     private String containerName;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The key of the Azure Cosmos DB account, a read-write key or a read-only key, that authorizes"
+                            + " the requests when credentialType is SHARED_ACCOUNT_KEY. Not used when the"
+                            + " cosmosAsyncClient option is set.")
     @Metadata(required = false)
     private String accountKey;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The URI of the Azure Cosmos DB account, for example https://myaccount.documents.azure.com:443/."
+                            + " Required unless the cosmosAsyncClient option is set, which replaces it.")
     @Metadata(required = true)
     private String databaseEndpoint;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The partition key path of a container that the component creates, for example /myPartitionKey."
+                            + " A / is added in front when it is missing. Required by createContainer and when"
+                            + " createContainerIfNotExists is true, and the CamelAzureCosmosDbContainerPartitionKeyPath header"
+                            + " replaces it for the producer.")
     private String containerPartitionKeyPath;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "To use a custom com.azure.cosmos.CosmosAsyncClient for all requests. When this option is set or"
+                            + " autowired, the databaseEndpoint, accountKey, credentialType, consistencyLevel,"
+                            + " preferredRegions, clientTelemetryEnabled, connectionSharingAcrossClientsEnabled,"
+                            + " multipleWriteRegionsEnabled, readRequestsFallbackEnabled and contentResponseOnWriteEnabled"
+                            + " options are not used. The endpoint does not close a client that is set or autowired.")
     @Metadata(autowired = true)
     private CosmosAsyncClient cosmosAsyncClient;
-    @UriParam(label = "common", defaultValue = "SESSION")
+    @UriParam(label = "common", defaultValue = "SESSION",
+              description = "The default consistency level of the requests of the client. It must be the same as or weaker"
+                            + " than the default consistency level of the account. From the strongest to the weakest: Strong,"
+                            + " BoundedStaleness, Session, ConsistentPrefix and Eventual.")
     private ConsistencyLevel consistencyLevel = ConsistencyLevel.SESSION;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "A comma-separated list of the preferred regions of a geo-replicated account, in order of"
+                            + " preference, for example East US,West US. The client sends its requests to the first"
+                            + " available region of this list.")
     private String preferredRegions;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Whether to enable client telemetry. This has no effect: the azure-cosmos SDK ignores this flag,"
+                            + " as it can no longer send client telemetry to the service.")
     private boolean clientTelemetryEnabled;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Whether the client shares its connections in Direct mode with the other clients of the JVM that"
+                            + " enable this option, such as the clients of other endpoints or of other accounts. The"
+                            + " connection settings of the first of these clients, such as its timeouts, then apply to all"
+                            + " of them.")
     private boolean connectionSharingAcrossClientsEnabled;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Whether the client sends writes to any writable region of a geo-replicated account, in the order"
+                            + " of preferredRegions. Has no effect unless multi-region writes are enabled on the account.")
     private boolean multipleWriteRegionsEnabled = true;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Whether the client can send reads to the other regions of the account, for example when a"
+                            + " region is not available. Has no effect unless the account has more than one region.")
     private boolean readRequestsFallbackEnabled = true;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Whether Cosmos DB returns the item in the response of createItem, upsertItem and replaceItem,"
+                            + " which the producer then sets as the body. If false, the body is null after these operations,"
+                            + " which saves network traffic. The consumer requires true: its change feed processor fails"
+                            + " to start with false.")
     private boolean contentResponseOnWriteEnabled = true;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Whether to create the database when it does not exist, with the throughputProperties option. The"
+                            + " consumer creates it when it starts, and the producer before each operation on the database,"
+                            + " its containers or their items, except deleteDatabase and deleteContainer. The"
+                            + " CamelAzureCosmosDbCreateDatabaseIfNotExist header replaces it for the producer.")
     private boolean createDatabaseIfNotExists;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false",
+              description = "Whether to create the container when it does not exist, with the containerPartitionKeyPath and"
+                            + " throughputProperties options, and the indexingPolicy option for the producer. The consumer"
+                            + " creates it when it starts, and the producer before replaceContainerThroughput and each"
+                            + " operation on items except deleteItem. The CamelAzureCosmosDbCreateContainerIfNotExist header"
+                            + " replaces it for the producer.")
     private boolean createContainerIfNotExists;
-    @UriParam(label = "common, advanced")
+    @UriParam(label = "common, advanced",
+              description = "The com.azure.cosmos.models.IndexingPolicy of a container that the producer creates, with"
+                            + " createContainer or because createContainerIfNotExists is true. If not set, the container gets"
+                            + " the default indexing policy of Cosmos DB. The CamelAzureCosmosDbIndexingPolicy header replaces"
+                            + " it, and the consumer does not use it.")
     private IndexingPolicy indexingPolicy;
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The throughput, as a com.azure.cosmos.models.ThroughputProperties, for createDatabase,"
+                            + " createContainer, replaceDatabaseThroughput and replaceContainerThroughput, and for the"
+                            + " databases and containers that the create*IfNotExists options create, the lease database and"
+                            + " lease container included. The CamelAzureCosmosDbThroughputProperties header replaces it for"
+                            + " the producer.")
     private ThroughputProperties throughputProperties;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether the consumer creates the lease database when it does not exist, with the"
+                            + " throughputProperties option.")
     private boolean createLeaseDatabaseIfNotExists;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether the consumer creates the lease container when it does not exist, with the partition key"
+                            + " path /id and the throughputProperties option.")
     private boolean createLeaseContainerIfNotExists;
-    @UriParam(label = "consumer", defaultValue = "camel-lease")
+    @UriParam(label = "consumer", defaultValue = "camel-lease",
+              description = "The name of the lease container, where the change feed processor of the consumer stores how far"
+                            + " it has processed each range of the feed and which host processes it. The consumers that use"
+                            + " the same lease container for the same container share the work of processing its changes. The lease container"
+                            + " must have the partition key path /id.")
     private String leaseContainerName = "camel-lease";
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The name of the database of the lease container. If not set, the database of the databaseName"
+                            + " option is used.")
     private String leaseDatabaseName;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The name of the host, which identifies this consumer in the leases of the change feed processor."
+                            + " The consumers that share a lease container need different names. If not set, a random name"
+                            + " is generated each time the change feed processor is built.")
     private String hostName;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The com.azure.cosmos.models.ChangeFeedProcessorOptions of the change feed processor, for example"
+                            + " to start from the beginning of the change feed or from a point in time. If not set, the"
+                            + " defaults of the SDK apply: at most 100 items per batch, a lease renew interval of 17 seconds,"
+                            + " a lease acquire interval of 13 seconds, a lease expiration interval of 60 seconds, a feed poll"
+                            + " delay of 5 seconds, no maximum scale count, and only the changes after the first start.")
     private ChangeFeedProcessorOptions changeFeedProcessorOptions;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The SQL query of queryDatabases, queryContainers and queryItems, for example SELECT * FROM c"
+                            + " WHERE c.id = '1'. The CamelAzureCosmosDbQuery header replaces it.")
     private String query;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The value of the partition key of the item, as a String, for createItem, upsertItem,"
+                            + " replaceItem, deleteItem and readItem, and of the items that readAllItems reads. If not set,"
+                            + " the partition key value is null. The CamelAzureCosmosDbItemPartitionKey header replaces it.")
     private String itemPartitionKey;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The id of the item for readItem, replaceItem and deleteItem. The CamelAzureCosmosDbItemId header"
+                            + " replaces it.")
     private String itemId;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The com.azure.cosmos.models.CosmosQueryRequestOptions of queryDatabases, listContainers,"
+                            + " queryContainers, readAllItems and queryItems, for example to set the maximum number of items"
+                            + " per page. The CamelAzureCosmosDbQueryRequestOptions header replaces it.")
     private CosmosQueryRequestOptions queryRequestOptions;
-    @UriParam(label = "producer", defaultValue = "listDatabases")
+    @UriParam(label = "producer", defaultValue = "listDatabases",
+              description = "The operation that the producer performs. The operations on a database use databaseName, and"
+                            + " the operations on a container or its items also use containerName. The"
+                            + " CamelAzureCosmosDbOperation header replaces this option.")
     private CosmosDbOperationsDefinition operation = CosmosDbOperationsDefinition.listDatabases;
     @UriParam(label = "security", enums = "SHARED_ACCOUNT_KEY,AZURE_IDENTITY",
-              defaultValue = "SHARED_ACCOUNT_KEY")
+              defaultValue = "SHARED_ACCOUNT_KEY",
+              description = "How the client authenticates. SHARED_ACCOUNT_KEY: with the accountKey option. AZURE_IDENTITY:"
+                            + " with a DefaultAzureCredential of the Azure Identity library, which finds the credentials in"
+                            + " the environment, such as environment variables, a managed identity or the Azure CLI. Not used"
+                            + " when the cosmosAsyncClient option is set.")
     private CredentialType credentialType = SHARED_ACCOUNT_KEY;
 
     public CosmosDbConfiguration() {
     }
 
-    /**
-     * The name of the Cosmos database that component should connect to. In case you are producing data and have
-     * createDatabaseIfNotExists=true, the component will automatically auto create a Cosmos database.
-     */
     public String getDatabaseName() {
         return databaseName;
     }
@@ -112,10 +199,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.databaseName = databaseName;
     }
 
-    /**
-     * The name of the Cosmos container that component should connect to. In case you are producing data and have
-     * createContainerIfNotExists=true, the component will automatically auto create a Cosmos container.
-     */
     public String getContainerName() {
         return containerName;
     }
@@ -124,9 +207,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.containerName = containerName;
     }
 
-    /**
-     * Sets either a master or readonly key used to perform authentication for accessing resource.
-     */
     public String getAccountKey() {
         return accountKey;
     }
@@ -139,16 +219,10 @@ public class CosmosDbConfiguration implements Cloneable {
         return credentialType;
     }
 
-    /**
-     * Determines the credential strategy to adopt
-     */
     public void setCredentialType(CredentialType credentialType) {
         this.credentialType = credentialType;
     }
 
-    /**
-     * Sets the Azure Cosmos database endpoint the component will connect to.
-     */
     public String getDatabaseEndpoint() {
         return databaseEndpoint;
     }
@@ -157,9 +231,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.databaseEndpoint = databaseEndpoint;
     }
 
-    /**
-     * Sets the container partition key path.
-     */
     public String getContainerPartitionKeyPath() {
         return containerPartitionKeyPath;
     }
@@ -168,10 +239,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.containerPartitionKeyPath = containerPartitionKeyPath;
     }
 
-    /**
-     * Sets partition key. Represents a partition key value in the Azure Cosmos DB database service. A partition key
-     * identifies the partition where the item is stored in.
-     */
     public String getItemPartitionKey() {
         return itemPartitionKey;
     }
@@ -180,9 +247,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.itemPartitionKey = itemPartitionKey;
     }
 
-    /**
-     * Sets the itemId in case needed for operation on item like delete, replace
-     */
     public String getItemId() {
         return itemId;
     }
@@ -191,10 +255,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.itemId = itemId;
     }
 
-    /**
-     * Sets if the component should create the Cosmos database automatically in case it doesn't exist in the Cosmos
-     * account
-     */
     public boolean isCreateDatabaseIfNotExists() {
         return createDatabaseIfNotExists;
     }
@@ -203,10 +263,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.createDatabaseIfNotExists = createDatabaseIfNotExists;
     }
 
-    /**
-     * Sets if the component should create the Cosmos container automatically in case it doesn't exist in the Cosmos
-     * database
-     */
     public boolean isCreateContainerIfNotExists() {
         return createContainerIfNotExists;
     }
@@ -215,10 +271,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.createContainerIfNotExists = createContainerIfNotExists;
     }
 
-    /**
-     * Sets if the component should create the Cosmos lease database for the consumer automatically in case it doesn't
-     * exist in the Cosmos account
-     */
     public boolean isCreateLeaseDatabaseIfNotExists() {
         return createLeaseDatabaseIfNotExists;
     }
@@ -227,10 +279,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.createLeaseDatabaseIfNotExists = createLeaseDatabaseIfNotExists;
     }
 
-    /**
-     * Sets if the component should create Cosmos lease container for the consumer automatically in case it doesn't
-     * exist in Cosmos database
-     */
     public boolean isCreateLeaseContainerIfNotExists() {
         return createLeaseContainerIfNotExists;
     }
@@ -239,11 +287,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.createLeaseContainerIfNotExists = createLeaseContainerIfNotExists;
     }
 
-    /**
-     * Inject an external {@link CosmosAsyncClient} into the component which provides a client-side logical
-     * representation of the Azure Cosmos DB service. This asynchronous client is used to configure and execute requests
-     * against the service.
-     */
     public CosmosAsyncClient getCosmosAsyncClient() {
         return cosmosAsyncClient;
     }
@@ -252,10 +295,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.cosmosAsyncClient = cosmosAsyncClient;
     }
 
-    /**
-     * Set additional QueryRequestOptions that can be used with queryItems, queryContainers, queryDatabases,
-     * listDatabases, listItems, listContainers operations
-     */
     public CosmosQueryRequestOptions getQueryRequestOptions() {
         return queryRequestOptions;
     }
@@ -264,15 +303,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.queryRequestOptions = queryRequestOptions;
     }
 
-    /**
-     * Sets the consistency levels supported for Azure Cosmos DB client operations in the Azure Cosmos DB service.
-     * <p>
-     * The requested ConsistencyLevel must match or be weaker than that provisioned for the database account.
-     * Consistency levels by order of strength are STRONG, BOUNDED_STALENESS, SESSION and EVENTUAL.
-     *
-     * Refer to consistency level documentation for additional details:
-     * https://docs.microsoft.com/en-us/azure/cosmos-db/consistency-levels
-     */
     public ConsistencyLevel getConsistencyLevel() {
         return consistencyLevel;
     }
@@ -281,13 +311,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.consistencyLevel = consistencyLevel;
     }
 
-    /**
-     * Sets the comma separated preferred regions for geo-replicated database accounts. For example, "East US" as the
-     * preferred region.
-     * <p>
-     * When EnableEndpointDiscovery is true and PreferredRegions is non-empty, the SDK will prefer to use the regions in
-     * the container in the order they are specified to perform operations.
-     */
     public String getPreferredRegions() {
         return preferredRegions;
     }
@@ -296,13 +319,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.preferredRegions = preferredRegions;
     }
 
-    /**
-     * Sets the flag to enable client telemetry which will periodically collect database operations aggregation
-     * statistics, system information like cpu/memory and send it to cosmos monitoring service, which will be helpful
-     * during debugging.
-     * <p>
-     * DEFAULT value is false indicating this is an opt-in feature, by default no telemetry collection.
-     */
     public boolean isClientTelemetryEnabled() {
         return clientTelemetryEnabled;
     }
@@ -311,14 +327,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.clientTelemetryEnabled = clientTelemetryEnabled;
     }
 
-    /**
-     * Enables connections sharing across multiple Cosmos Clients. The default is false. When you have multiple
-     * instances of Cosmos Client in the same JVM interacting with multiple Cosmos accounts, enabling this allows
-     * connection sharing in Direct mode if possible between instances of Cosmos Client.
-     *
-     * Please note, when setting this option, the connection configuration (e.g., socket timeout config, idle timeout
-     * config) of the first instantiated client will be used for all other client instances.
-     */
     public boolean isConnectionSharingAcrossClientsEnabled() {
         return connectionSharingAcrossClientsEnabled;
     }
@@ -327,17 +335,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.connectionSharingAcrossClientsEnabled = connectionSharingAcrossClientsEnabled;
     }
 
-    /**
-     * Sets the flag to enable writes on any regions for geo-replicated database accounts in the Azure Cosmos DB
-     * service.
-     * <p>
-     * When the value of this property is true, the SDK will direct write operations to available writable regions of
-     * geo-replicated database account. Writable regions are ordered by PreferredRegions property. Setting the property
-     * value to true has no effect until EnableMultipleWriteRegions in DatabaseAccount is also set to true.
-     * <p>
-     * DEFAULT value is true indicating that writes are directed to available writable regions of geo-replicated
-     * database account.
-     */
     public boolean isMultipleWriteRegionsEnabled() {
         return multipleWriteRegionsEnabled;
     }
@@ -346,15 +343,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.multipleWriteRegionsEnabled = multipleWriteRegionsEnabled;
     }
 
-    /**
-     * Sets whether to allow for reads to go to multiple regions configured on an account of Azure Cosmos DB service.
-     * <p>
-     * DEFAULT value is true.
-     * <p>
-     * If this property is not set, the default is true for all Consistency Levels other than Bounded Staleness, The
-     * default is false for Bounded Staleness. 1. {@link #endpointDiscoveryEnabled} is true 2. the Azure Cosmos DB
-     * account has more than one region
-     */
     public boolean isReadRequestsFallbackEnabled() {
         return readRequestsFallbackEnabled;
     }
@@ -363,10 +351,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.readRequestsFallbackEnabled = readRequestsFallbackEnabled;
     }
 
-    /**
-     * An SQL query to execute on a given resources. To learn more about Cosmos SQL API, check this link
-     * {@link https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started}
-     */
     public String getQuery() {
         return query;
     }
@@ -375,9 +359,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.query = query;
     }
 
-    /**
-     * Sets throughput of the resources in the Azure Cosmos DB service.
-     */
     public ThroughputProperties getThroughputProperties() {
         return throughputProperties;
     }
@@ -386,14 +367,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.throughputProperties = throughputProperties;
     }
 
-    /**
-     * Sets the boolean to only return the headers and status code in Cosmos DB response in case of Create, Update and
-     * Delete operations on CosmosItem.
-     *
-     * In Consumer, it is enabled by default because of the ChangeFeed in the consumer that needs this flag to be
-     * enabled, and thus it shouldn't be overridden. In Producer, it is advised to disable it since it reduces the
-     * network overhead
-     */
     public boolean isContentResponseOnWriteEnabled() {
         return contentResponseOnWriteEnabled;
     }
@@ -402,13 +375,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.contentResponseOnWriteEnabled = contentResponseOnWriteEnabled;
     }
 
-    /**
-     * Sets the lease container which acts as a state storage and coordinates processing the change feed across multiple
-     * workers. The lease container can be stored in the same account as the monitored container or in a separate
-     * account.
-     *
-     * It will be auto-created if {@link createLeaseContainerIfNotExists} is set to true.
-     */
     public String getLeaseContainerName() {
         return leaseContainerName;
     }
@@ -417,12 +383,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.leaseContainerName = leaseContainerName;
     }
 
-    /**
-     * Sets the lease database where the {@link leaseContainerName} will be stored. If it is not specified, this
-     * component will store the lease container in the same database that is specified in {@link databaseName}.
-     *
-     * It will be auto-created if {@link createLeaseDatabaseIfNotExists} is set to true.
-     */
     public String getLeaseDatabaseName() {
         return leaseDatabaseName;
     }
@@ -431,13 +391,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.leaseDatabaseName = leaseDatabaseName;
     }
 
-    /**
-     * Sets the hostname. The host: a host is an application instance that uses the change feed processor to listen for
-     * changes. Multiple instances with the same lease configuration can run in parallel, but each instance should have
-     * a different instance name.
-     *
-     * If not specified, this will be a generated random hostname.
-     */
     public String getHostName() {
         return hostName;
     }
@@ -446,18 +399,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.hostName = hostName;
     }
 
-    /**
-     * Sets the {@link ChangeFeedProcessorOptions} to be used. Unless specifically set the default values that will be
-     * used are:
-     * <ul>
-     * <li>maximum items per page or FeedResponse: 100</li>
-     * <li>lease renew interval: 17 seconds</li>
-     * <li>lease acquire interval: 13 seconds</li>
-     * <li>lease expiration interval: 60 seconds</li>
-     * <li>feed poll delay: 5 seconds</li>
-     * <li>maximum scale count: unlimited</li>
-     * </ul>
-     */
     public ChangeFeedProcessorOptions getChangeFeedProcessorOptions() {
         return changeFeedProcessorOptions;
     }
@@ -466,9 +407,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.changeFeedProcessorOptions = changeFeedProcessorOptions;
     }
 
-    /**
-     * The CosmosDB operation that can be used with this component on the producer.
-     */
     public CosmosDbOperationsDefinition getOperation() {
         return operation;
     }
@@ -477,10 +415,6 @@ public class CosmosDbConfiguration implements Cloneable {
         this.operation = operation;
     }
 
-    /**
-     * The CosmosDB Indexing Policy that will be set in case of container creation, this option is related to
-     * {@link createLeaseContainerIfNotExists} and it will be taken into account when the latter is true.
-     */
     public IndexingPolicy getIndexingPolicy() {
         return indexingPolicy;
     }

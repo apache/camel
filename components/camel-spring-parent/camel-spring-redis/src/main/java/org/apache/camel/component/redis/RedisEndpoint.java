@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.springframework.data.redis.core.RedisTemplate;
 
 /**
- * Send and receive messages from Redis.
+ * Send commands to Redis and receive the messages of Redis Pub/Sub channels, using Spring Data Redis.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port",
              category = { Category.CACHE }, headersClass = RedisConstants.class)

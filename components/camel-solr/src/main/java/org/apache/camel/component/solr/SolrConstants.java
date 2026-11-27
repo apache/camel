@@ -21,25 +21,40 @@ import org.apache.camel.spi.Metadata;
 
 public interface SolrConstants {
 
-    @Metadata(description = "The operation to perform.", javaType = "String")
+    @Metadata(description = "The operation to perform: INSERT, DELETE, SEARCH or PING. It replaces the operation option, and a"
+                            + " body that is a SolrJ request replaces it. Older values such as DELETE_BY_QUERY or COMMIT still"
+                            + " work, and log a warning.",
+              javaType = "String")
     String PARAM_OPERATION = "CamelSolrOperation";
-    @Metadata(description = "The collection to execute the request against.", javaType = "String")
+    @Metadata(description = "The name of the collection that the request goes to. It replaces the collection option.",
+              javaType = "String")
     String PARAM_COLLECTION = "CamelSolrCollection";
-    @Metadata(description = "The request handler to execute the solr request against.", javaType = "String")
+    @Metadata(description = "The path of the request handler, for example /update/json. It replaces the requestHandler option.",
+              javaType = "String")
     String PARAM_REQUEST_HANDLER = "CamelSolrRequestHandler";
-    @Metadata(description = "The query to execute.", javaType = "String")
+    @Metadata(description = "The query of a search. It replaces a text body, but not a SolrQuery or QueryRequest body. When no"
+                            + " operation is set, a message with this header is a search.",
+              javaType = "String")
     String PARAM_QUERY_STRING = "CamelSolrQueryString";
-    @Metadata(description = "The size of the response.", javaType = "Integer")
+    @Metadata(description = "The maximum number of documents that a search returns, which is the rows parameter of Solr. It"
+                            + " replaces the size option.",
+              javaType = "Integer")
     String PARAM_SIZE = "CamelSolrSize";
-    @Metadata(description = "The starting index of the response.", javaType = "Integer")
+    @Metadata(description = "The index of the first document that a search returns, which is the start parameter of Solr. It"
+                            + " replaces the from option.",
+              javaType = "Integer")
     String PARAM_FROM = "CamelSolrFrom";
-    @Metadata(description = "The solr parameters to use for the request.",
+    @Metadata(description = "The request parameters to send to Solr with an insert, a delete or a search. The headers with the"
+                            + " CamelSolrParam. prefix add to them.",
               javaType = "org.apache.solr.common.params.SolrParams")
     String PARAM_SOLR_PARAMS = "CamelSolrParams";
-    @Metadata(description = "For the delete instruction, interpret body as query/queries instead of id/ids.",
+    @Metadata(description = "Whether a DELETE takes the body as a query, or a collection of queries, instead of the id of the"
+                            + " documents to delete. It replaces the deleteByQuery option.",
               javaType = "boolean", defaultValue = "false")
     String PARAM_DELETE_BY_QUERY = "CamelSolrDeleteByQuery";
-    @Metadata(description = "The content type is used to identify the type when inserting files.", javaType = "String")
+    @Metadata(description = "The content type of a file or text body to insert, for example application/json. If not set, it"
+                            + " is detected from the file or the text.",
+              javaType = "String")
     String PARAM_CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
     @Metadata(description = "The prefix of the headers that carry the fields of the document to insert: the header"

@@ -35,7 +35,7 @@ import org.jooq.Query;
 import org.jooq.ResultQuery;
 
 /**
- * Store and retrieve Java objects from an SQL database using JOOQ.
+ * Store and consume jOOQ records in an SQL database, and run jOOQ or plain SQL queries.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType", title = "JOOQ",
              category = { Category.DATABASE })

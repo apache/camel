@@ -20,18 +20,23 @@ import org.apache.camel.spi.Metadata;
 
 public class SpringAiVectorStoreHeaders {
     // Operation control
-    @Metadata(description = "The operation to perform (ADD, DELETE, SIMILARITY_SEARCH, UPSERT)",
+    @Metadata(description = "The operation that the producer performs. It replaces the operation option.",
               javaType = "org.apache.camel.component.springai.vectorstore.SpringAiVectorStoreOperation")
     public static final String OPERATION = "CamelSpringAiVectorStoreOperation";
 
     // Search parameters
-    @Metadata(description = "The maximum number of similar documents to return (topK)", javaType = "Integer")
+    @Metadata(description = "The maximum number of documents that SIMILARITY_SEARCH returns. It replaces the topK option.",
+              javaType = "Integer")
     public static final String TOP_K = "CamelSpringAiVectorStoreTopK";
 
-    @Metadata(description = "The similarity threshold (0-1)", javaType = "Double")
+    @Metadata(description = "The minimum similarity score, from 0 to 1, of the documents that SIMILARITY_SEARCH returns. It"
+                            + " replaces the similarityThreshold option.",
+              javaType = "Double")
     public static final String SIMILARITY_THRESHOLD = "CamelSpringAiVectorStoreSimilarityThreshold";
 
-    @Metadata(description = "Filter expression for metadata-based filtering", javaType = "String")
+    @Metadata(description = "The filter on the metadata of the documents for SIMILARITY_SEARCH, in the portable filter"
+                            + " expression syntax of Spring AI. It replaces the filterExpression option.",
+              javaType = "String")
     public static final String FILTER_EXPRESSION = "CamelSpringAiVectorStoreFilterExpression";
 
     // Upsert parameters: not the DocumentIds header, which ADD, UPSERT and SIMILARITY_SEARCH set to their output ids
@@ -46,13 +51,13 @@ public class SpringAiVectorStoreHeaders {
     public static final String UPSERT_DOCUMENT_IDS = "CamelSpringAiVectorStoreUpsertDocumentIds";
 
     // Delete parameters / Results
-    @Metadata(description = "List of document IDs (output of ADD, UPSERT and SIMILARITY_SEARCH, and input of DELETE when the"
-                            + " message has no body)",
+    @Metadata(description = "The ids of the documents that ADD or UPSERT wrote, or that SIMILARITY_SEARCH found. DELETE"
+                            + " reads the ids to delete from this header when the message has no body.",
               javaType = "java.util.List<String>")
     public static final String DOCUMENT_IDS = "CamelSpringAiVectorStoreDocumentIds";
 
     // Results
-    @Metadata(description = "List of similar documents found",
+    @Metadata(description = "The documents that SIMILARITY_SEARCH found. The message body holds the same List.",
               javaType = "java.util.List<org.springframework.ai.document.Document>")
     public static final String SIMILAR_DOCUMENTS = "CamelSpringAiVectorStoreSimilarDocuments";
 

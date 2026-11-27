@@ -35,23 +35,28 @@ import org.apache.camel.spi.UriParams;
 public class AiPromptConfiguration implements Cloneable {
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Comma-separated list of tags used to group prompts. MCP servers select which prompts to "
-                            + "expose using these tags. When omitted, the prompt goes into a default pool that is not "
-                            + "exposed to remote clients.")
+    @UriParam(description = "A comma-separated list of tags to register the prompt under. The MCP server exposes the"
+                            + " prompts whose tags match its tag patterns. Without tags, the prompt goes into a default"
+                            + " pool that the MCP server never exposes.")
     private String tags;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Human-readable description of what this prompt provides. When omitted, defaults to the "
-                            + "prompt name.")
+    @UriParam(description = "The description of what the prompt provides, which MCP clients see in prompts/list and"
+                            + " receive in the prompts/get result. If not set or blank, the prompt name is used.")
     private String description;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Optional display title for MCP prompt listings.")
+    @UriParam(description = "The human-readable title of the prompt, which MCP clients can show in prompts/list instead"
+                            + " of the name. If not set, the prompt has no title.")
     private String title;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Prompt arguments. Configure each argument with argument.NAME.description=TEXT and/or "
-                            + "argument.NAME.required=true or false. An argument is declared by either option.",
+    @UriParam(description = "The arguments of the prompt, set as argument.NAME.description=TEXT and"
+                            + " argument.NAME.required=true or false, where either option declares the argument NAME and an"
+                            + " argument is optional by default. The route receives each argument as a String header named"
+                            + " NAME; undeclared arguments of a request are ignored, and a request without a required"
+                            + " argument is rejected before the route runs. A NAME that starts with camel or"
+                            + " org.apache.camel. in any case is not allowed.",
               prefix = "argument.", multiValue = true)
     private Map<String, String> arguments;
 

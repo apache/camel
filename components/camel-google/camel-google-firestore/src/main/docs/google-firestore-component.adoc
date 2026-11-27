@@ -2,7 +2,7 @@
 :doctitle: Google Firestore
 :shortname: google-firestore
 :artifactid: camel-google-firestore
-:description: Store and retrieve data from Google Cloud Firestore NoSQL database.
+:description: Store, retrieve and query documents in Google Cloud Firestore collections.
 :since: 4.19
 :supportlevel: Stable
 :tabs-sync-option:
