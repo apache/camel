@@ -64,7 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A2A endpoint for agent-to-agent communication.
+ * Expose a route as an agent and call remote agents with the Agent2Agent (A2A) protocol.
  */
 @UriEndpoint(
              firstVersion = "4.21.0",
@@ -149,7 +149,14 @@ public class A2AEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(A2AEndpoint.class);
 
     @UriPath
-    @Metadata(required = true, description = "The agent card source (classpath:, file:, http://, https://, or plain name)")
+    @Metadata(required = true,
+              description = "Where the agent card comes from: a JSON file on the classpath (classpath:) or in the file"
+                            + " system (file:), an http:// or https:// URL that the endpoint downloads the card from when"
+                            + " it starts, or a plain name, which is the agent name when no card gives one. A URL that"
+                            + " does not end with .json gets the path /.well-known/agent-card.json. The consumer serves"
+                            + " the card as its own. The producer calls the URL that the card gives for protocolBinding,"
+                            + " or this URL without the well-known path when the card gives none or when apiKey,"
+                            + " bearerToken or oauthProfile is set.")
     private String agentCardSource;
 
     @UriParam

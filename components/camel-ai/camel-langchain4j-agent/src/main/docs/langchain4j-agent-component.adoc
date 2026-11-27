@@ -2,7 +2,7 @@
 :doctitle: LangChain4j Agent
 :shortname: langchain4j-agent
 :artifactid: camel-langchain4j-agent
-:description: LangChain4j Agent component
+:description: Send a message to an AI agent of LangChain4j, which can call Camel routes and MCP servers as tools, and return its answer.
 :since: 4.14
 :supportlevel: Preview
 :tabs-sync-option:

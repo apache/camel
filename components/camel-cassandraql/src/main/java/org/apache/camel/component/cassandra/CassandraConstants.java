@@ -23,13 +23,18 @@ import org.apache.camel.spi.Metadata;
  */
 public final class CassandraConstants {
 
-    /**
-     * In Message header: CQL Query
-     */
-    @Metadata(label = "producer", description = "The CQL query to execute.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The CQL statement that the producer executes instead of the cql option: a String, or a"
+                            + " com.datastax.oss.driver.api.core.cql.SimpleStatement. An empty String uses the cql option."
+                            + " With prepareStatements, the statement is prepared for each message.",
+              javaType = "String")
     public static final String CQL_QUERY = "CamelCqlQuery";
 
-    @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "Not a message header: the name of the org.apache.camel.resume.ResumeAction bean that the"
+                            + " consumer looks up in the registry when it starts with a resume strategy whose adapter takes"
+                            + " a resume action.",
+              javaType = "String")
     public static final String CASSANDRA_RESUME_ACTION = "CamelCqlResumeAction";
 
     private CassandraConstants() {

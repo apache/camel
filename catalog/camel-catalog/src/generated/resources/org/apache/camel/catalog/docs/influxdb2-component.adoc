@@ -2,7 +2,7 @@
 :doctitle: InfluxDB2
 :shortname: influxdb2
 :artifactid: camel-influxdb2
-:description: Interact with InfluxDB v2, a time series database.
+:description: Write time series data to InfluxDB 2.x.
 :since: 3.20
 :supportlevel: Stable
 :tabs-sync-option:

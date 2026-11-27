@@ -22,23 +22,33 @@ import org.apache.camel.spi.Metadata;
  * Constants used in Camel AWS2 ECS module
  */
 public interface ECS2Constants {
-    @Metadata(description = "The operation we want to perform", javaType = "String")
+    @Metadata(description = "The operation that the producer performs. It replaces the operation option.", javaType = "String")
     String OPERATION = "CamelAwsECSOperation";
-    @Metadata(description = "The limit number of results while listing clusters", javaType = "Integer")
+    @Metadata(description = "The maximum number of clusters that listClusters returns in one page, from 1 to 100. If not"
+                            + " set, Amazon ECS returns up to 100.",
+              javaType = "Integer")
     String MAX_RESULTS = "CamelAwsECSMaxResults";
-    @Metadata(description = "The cluster name", javaType = "String")
+    @Metadata(description = "The short name or the full ARN of the cluster. createCluster takes the name of the new cluster"
+                            + " and deleteCluster requires it. If not set, Amazon ECS uses the cluster named default for"
+                            + " createCluster and describeCluster.",
+              javaType = "String")
     String CLUSTER_NAME = "CamelAwsECSClusterName";
 
     // Pagination constants
     @Metadata(label = "listClusters",
-              description = "The token for the next set of results.", javaType = "String")
+              description = "The token of the next page of listClusters. The producer reads it to request that page, and"
+                            + " sets it from the response, or to null on the last page.",
+              javaType = "String")
     String NEXT_TOKEN = "CamelAwsECSNextToken";
     @Metadata(label = "listClusters",
-              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+              description = "Whether more clusters follow the ones that listClusters returned, that is whether the response"
+                            + " has a next token. The producer sets it.",
+              javaType = "Boolean")
     String IS_TRUNCATED = "CamelAwsECSIsTruncated";
 
     // Response metadata
     @Metadata(label = "createCluster describeCluster deleteCluster",
-              description = "The ARN of the cluster.", javaType = "String")
+              description = "The ARN of the cluster that the operation created, described or deleted. The producer sets it.",
+              javaType = "String")
     String CLUSTER_ARN = "CamelAwsECSClusterArn";
 }

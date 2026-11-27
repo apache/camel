@@ -2,7 +2,7 @@
 :doctitle: Huawei Cloud Image Recognition
 :shortname: hwcloud-imagerecognition
 :artifactid: camel-huaweicloud-imagerecognition
-:description: To identify objects, scenes, and concepts in images on Huawei Cloud
+:description: Recognize celebrities and tag the objects, scenes and concepts in images with Huawei Cloud Image Recognition.
 :since: 3.12
 :supportlevel: Stable
 :tabs-sync-option:
@@ -207,5 +207,3 @@ YAML::
               region: cn-north-4
 ----
 ====
-
-

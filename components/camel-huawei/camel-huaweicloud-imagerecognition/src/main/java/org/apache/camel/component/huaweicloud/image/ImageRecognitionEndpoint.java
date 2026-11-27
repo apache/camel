@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * To identify objects, scenes, and concepts in images on Huawei Cloud
+ * Recognize celebrities and tag the objects, scenes and concepts in images with Huawei Cloud Image Recognition.
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-imagerecognition", title = "Huawei Cloud Image Recognition",
              syntax = "hwcloud-imagerecognition:operation",
@@ -54,94 +54,111 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " CelebrityRecognitionResultBody per celebrity found, and for tagRecognition"
                                                  + " an ImageTaggingResponseResult with the tags"))
 public class ImageRecognitionEndpoint extends DefaultEndpoint {
-    @UriPath(
-             description = "Name of Image Recognition operation to perform, including celebrityRecognition and tagRecognition",
+    @UriPath(description = "The operation that the producer performs: celebrityRecognition to recognize the celebrities in"
+                           + " the image, or tagRecognition to return tags for the objects, scenes and concepts in the image.",
              displayName = "Operation name", label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "Configuration object for cloud service authentication",
+    @UriParam(description = "The access key and secret key as an"
+                            + " org.apache.camel.component.huaweicloud.common.models.ServiceKeys. Its accessKey and its"
+                            + " secretKey are each used when the option of the same name is not set.",
               displayName = "Service Configuration", security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "Account access key (AK)", security = "secret")
+    @UriParam(description = "The access key ID (AK) of the Huawei Cloud account, which signs the requests to Image Recognition."
+                            + " If not set, the accessKey of the serviceKeys option is used.",
+              displayName = "Account access key (AK)", security = "secret")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "Account secret key (SK)", security = "secret")
+    @UriParam(description = "The secret access key (SK) of the Huawei Cloud account, which signs the requests to Image"
+                            + " Recognition. If not set, the secretKey of the serviceKeys option is used.",
+              displayName = "Account secret key (SK)", security = "secret")
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "Cloud project ID", displayName = "Project ID")
+    @UriParam(description = "The ID of the Huawei Cloud project that the requests to Image Recognition are made in.",
+              displayName = "Project ID")
     @Metadata(required = true)
     private String projectId;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
+    @UriParam(description = "The host name or IP address of the proxy server for the requests to Image Recognition. If not"
+                            + " set, no proxy is used.",
+              displayName = "Proxy server host")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
+    @UriParam(description = "The port of the proxy server. It is used only when the proxyHost option is set.",
+              displayName = "Proxy server port")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret")
+    @UriParam(description = "The user name for the authentication with the proxy server. It is used only when the proxyHost"
+                            + " option is set.",
+              displayName = "Proxy user", security = "secret")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret")
+    @UriParam(description = "The password for the authentication with the proxy server. It is used only when the proxyHost"
+                            + " and proxyUser options are set.",
+              displayName = "Proxy password", security = "secret")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored",
+    @UriParam(description = "Whether to skip the verification of the TLS certificate of Image Recognition. This is unsafe,"
+                            + " and meant for testing only.",
+              displayName = "SSL Verification Ignored",
               defaultValue = "false", label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
-    @UriParam(
-              description = "Image Recognition service region. Currently only cn-north-1 and cn-north-4 are supported. This is lower precedence than endpoint based configuration.",
+    @UriParam(description = "The region ID of Image Recognition, for example cn-north-4. If the endpoint option is not set,"
+                            + " the producer looks up the endpoint of this region in the Huawei Cloud SDK, and fails for a"
+                            + " region that the SDK does not know.",
               displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(
-              description = "Fully qualified Image Recognition service url. Carries higher precedence than region based configuration.",
+    @UriParam(description = "The URL of Image Recognition, for example https://image.cn-north-4.myhuaweicloud.com. If set,"
+                            + " the region option is not used.",
               displayName = "Service endpoint")
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(
-              description = """
-                      Indicates the Base64 character string converted from the image. The size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels.The supported image formats include JPG, PNG, and BMP.\s
-                      Configure either this parameter or imageUrl, and this one carries higher precedence than imageUrl.""",
+    @UriParam(description = "The image as a Base64 string, in JPG, PNG or BMP format and at most 10 MB. The"
+                            + " CamelHwCloudImageContent exchange property replaces this option. Set this option or imageUrl;"
+                            + " if both are set, the producer sends both to Image Recognition.",
               displayName = "Image in Base64")
     @Metadata(required = false)
     private String imageContent;
 
-    @UriParam(description = """
-            Indicates the URL of an image. The options are as follows:
-            HTTP/HTTPS URLs on the public network
-            OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS.\s
-            Configure either this parameter or imageContent, and this one carries lower precedence than imageContent.""",
+    @UriParam(description = "The URL of the image: a public HTTP or HTTPS URL, or the URL of an object in Object Storage"
+                            + " Service (OBS) that Image Recognition is authorized to read. The CamelHwCloudImageUrl exchange"
+                            + " property replaces this option. Set this option or imageContent; if both are set, the producer"
+                            + " sends both to Image Recognition.",
               displayName = "Image Url")
     @Metadata(required = false)
     private String imageUrl;
 
-    @UriParam(
-              description = "Indicates the language of the returned tags when the operation is tagRecognition, including zh and en.",
+    @UriParam(description = "The language of the tags that tagRecognition returns: zh for Chinese or en for English. The"
+                            + " CamelHwCloudImageTagLanguage exchange property replaces this option. The producer rejects"
+                            + " any other value.",
               displayName = "Tag Language", defaultValue = "zh")
     @Metadata(required = false)
     private String tagLanguage = ImageRecognitionConstants.TAG_LANGUAGE_ZH;
 
-    @UriParam(description = """
-            Indicates the threshold of confidence.
-            When the operation is tagRecognition, this parameter ranges from 0 to 100. Tags whose confidence score is lower than the threshold will not be returned. The default value is 60.
-            When the operation is celebrityRecognition, this parameter ranges from 0 to 1. Labels whose confidence score is lower than the threshold will not be returned. The default value is 0.48.""",
+    @UriParam(description = "The minimum confidence score of a returned result: from 0 to 100 for tagRecognition (60 if not"
+                            + " set), and from 0 to 1 for celebrityRecognition (0.48 if not set). The"
+                            + " CamelHwCloudImageThreshold exchange property replaces this option. The producer rejects a"
+                            + " value outside the range of the operation.",
               displayName = "Threshold of confidence")
     @Metadata(required = false)
     private float threshold = -1;
 
-    @UriParam(description = "Indicates the maximum number of the returned tags when the operation is tagRecognition.",
+    @UriParam(description = "The maximum number of tags that tagRecognition returns. The CamelHwCloudImageTagLimit exchange"
+                            + " property replaces this option.",
               displayName = "Tag Limit", defaultValue = "50")
     @Metadata(required = false)
     private int tagLimit = ImageRecognitionConstants.DEFAULT_TAG_LIMIT;

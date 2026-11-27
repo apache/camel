@@ -25,20 +25,35 @@ import org.jooq.Configuration;
 @UriParams
 public class JooqConfiguration implements Cloneable {
 
-    @UriPath(label = "common", description = "JOOQ entity class")
+    @UriPath(label = "common",
+             description = "The fully qualified name of the jOOQ generated record class (an org.jooq.UpdatableRecord) of the"
+                           + " table. The consumer reads the rows of its table, and the producer stores records of this class"
+                           + " for the NONE operation. The operation can follow after a slash, for example"
+                           + " jooq:com.foo.BookRecord/fetch.")
     private Class<?> entityType;
 
-    @UriParam(label = "producer", description = "Type of operation to execute on query", defaultValue = "NONE",
+    @UriParam(label = "producer",
+              description = "The operation that the producer performs. NONE stores the record of the entityType in the"
+                            + " message body (an insert or an update), EXECUTE runs a query, and FETCH runs a select query and"
+                            + " sets its org.jooq.Result as the message body.",
+              defaultValue = "NONE",
               enums = "NONE,EXECUTE,FETCH")
     private JooqOperation operation = JooqOperation.NONE;
 
-    @UriParam(label = "consumer", defaultValue = "true", description = "Delete entity after it is consumed")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether the consumer deletes a row from the table after its exchange is processed successfully."
+                            + " A row whose exchange failed or was marked rollback only is not deleted and is consumed again"
+                            + " in the next poll. If false, every poll consumes all the rows of the table again.")
     private boolean consumeDelete = true;
 
-    @UriParam(label = "producer", description = "To execute plain SQL query")
+    @UriParam(label = "producer",
+              description = "A plain SQL statement that the producer runs for the EXECUTE and FETCH operations. When set, the"
+                            + " message body is not read. The NONE operation does not use it.")
     private String query;
 
-    @UriParam(label = "common", description = "To use a specific database configuration")
+    @UriParam(label = "common",
+              description = "The org.jooq.Configuration that the consumer and the producer use to run their queries. It holds"
+                            + " the connection to the database (a connection provider or a data source) and the SQL dialect.")
     private Configuration databaseConfiguration;
 
     public JooqConfiguration() {

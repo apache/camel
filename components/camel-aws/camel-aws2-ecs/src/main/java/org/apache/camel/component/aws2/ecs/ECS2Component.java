@@ -31,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("aws2-ecs")
 public class ECS2Component extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The shared configuration of the component. Each endpoint starts from a copy of it and then"
+                            + " applies its own options.")
     private ECS2Configuration configuration = new ECS2Configuration();
 
     public ECS2Component() {
@@ -64,9 +65,6 @@ public class ECS2Component extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(ECS2Configuration configuration) {
         this.configuration = configuration;
     }

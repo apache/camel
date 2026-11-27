@@ -25,27 +25,48 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class ArangoDbConfiguration implements Cloneable {
 
-    @UriPath(description = "database name")
+    @UriPath(description = "The name of the ArangoDB database that the producer works on. The producer does not create the"
+                           + " database.")
     @Metadata(required = true)
     private String database;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The host name or IP address of the ArangoDB server. Must be set together with port, unless the"
+                            + " arangoDB option sets a client, in which case it is not used.")
     private String host;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The port of the ArangoDB server, for example 8529, the default port of ArangoDB. Must be set"
+                            + " together with host, unless the arangoDB option sets a client, in which case it is not used.")
     private int port;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The name of the user that the ArangoDB client logs in with. Only used when password is set as"
+                            + " well. If either is not set, the ArangoDB driver logs in as the user root with no password. Not"
+                            + " used when the arangoDB option sets a client.")
     private String user;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password of the user that the ArangoDB client logs in with. Only used when user is set as"
+                            + " well. Not used when the arangoDB option sets a client.")
     private String password;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the document collection for the operations SAVE_DOCUMENT, FIND_DOCUMENT_BY_KEY,"
+                            + " UPDATE_DOCUMENT and DELETE_DOCUMENT. The producer does not create the collection.")
     private String documentCollection;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The operation that the producer performs. Required: the producer fails to start without it, and"
+                            + " no header replaces it. AQL_QUERY needs only the database, not a collection or a graph.")
     private ArangoDbOperation operation;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the named graph for the vertex and edge operations, such as SAVE_VERTEX and"
+                            + " SAVE_EDGE. Use it with vertexCollection for the vertex operations, and with edgeCollection for"
+                            + " the edge operations.")
     private String graph;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the vertex collection of the graph for the operations SAVE_VERTEX,"
+                            + " FIND_VERTEX_BY_KEY, UPDATE_VERTEX and DELETE_VERTEX. The graph option must be set as well.")
     private String vertexCollection;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the edge collection of the graph for the operations SAVE_EDGE, FIND_EDGE_BY_KEY,"
+                            + " UPDATE_EDGE and DELETE_EDGE. The graph option must be set as well.")
     private String edgeCollection;
 
     public ArangoDbConfiguration() {
@@ -68,11 +89,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return host;
     }
 
-    /**
-     * ArangoDB host. If host and port are default, this field is Optional.
-     *
-     * @param host
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -81,11 +97,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return port;
     }
 
-    /**
-     * ArangoDB exposed port. If host and port are default, this field is Optional.
-     *
-     * @param port
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -94,11 +105,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return user;
     }
 
-    /**
-     * ArangoDB user. If user and password are default, this field is Optional.
-     *
-     * @param user
-     */
     public void setUser(String user) {
         this.user = user;
     }
@@ -107,11 +113,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return password;
     }
 
-    /**
-     * ArangoDB password. If user and password are default, this field is Optional.
-     *
-     * @param password
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -120,13 +121,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return documentCollection;
     }
 
-    /**
-     * Collection name, when using ArangoDb as a Document Database. Set the documentCollection name when using the CRUD
-     * operation on the document database collections (SAVE_DOCUMENT , FIND_DOCUMENT_BY_KEY, UPDATE_DOCUMENT,
-     * DELETE_DOCUMENT).
-     *
-     * @param documentCollection
-     */
     public void setDocumentCollection(String documentCollection) {
         this.documentCollection = documentCollection;
     }
@@ -135,11 +129,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return operation;
     }
 
-    /**
-     * Operations to perform on ArangoDb. For the operation AQL_QUERY, no need to specify a collection or graph.
-     *
-     * @param operation
-     */
     public void setOperation(ArangoDbOperation operation) {
         this.operation = operation;
     }
@@ -148,12 +137,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return graph;
     }
 
-    /**
-     * Graph name, when using ArangoDb as a Graph Database. Combine this attribute with one of the two attributes
-     * vertexCollection and edgeCollection.
-     *
-     * @param graph
-     */
     public void setGraph(String graph) {
         this.graph = graph;
     }
@@ -162,13 +145,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return vertexCollection;
     }
 
-    /**
-     * Collection name of vertices, when using ArangoDb as a Graph Database. Set the vertexCollection name to perform
-     * CRUD operation on vertices using these operations : SAVE_EDGE, FIND_EDGE_BY_KEY, UPDATE_EDGE, DELETE_EDGE. The
-     * graph attribute is mandatory.
-     *
-     * @param vertexCollection
-     */
     public void setVertexCollection(String vertexCollection) {
         this.vertexCollection = vertexCollection;
     }
@@ -177,13 +153,6 @@ public class ArangoDbConfiguration implements Cloneable {
         return edgeCollection;
     }
 
-    /**
-     * Collection name of vertices, when using ArangoDb as a Graph Database. Set the edgeCollection name to perform CRUD
-     * operation on edges using these operations : SAVE_VERTEX, FIND_VERTEX_BY_KEY, UPDATE_VERTEX, DELETE_VERTEX. The
-     * graph attribute is mandatory.
-     *
-     * @param edgeCollection
-     */
     public void setEdgeCollection(String edgeCollection) {
         this.edgeCollection = edgeCollection;
     }

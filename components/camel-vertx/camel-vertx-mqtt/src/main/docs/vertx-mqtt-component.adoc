@@ -2,7 +2,7 @@
 :doctitle: Vert.x MQTT
 :shortname: vertx-mqtt
 :artifactid: camel-vertx-mqtt
-:description: Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5, with the Vert.x MQTT client.
+:description: Send and receive messages with an MQTT 3.1.1 or MQTT 5 broker, using the Vert.x MQTT client.
 :since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
