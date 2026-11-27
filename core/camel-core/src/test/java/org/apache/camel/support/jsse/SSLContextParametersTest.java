@@ -773,17 +773,12 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        if (Arrays.asList(controlNamedGroups).contains("X25519MLKEM768")) {
-            // PQC auto-configuration reorders groups with X25519MLKEM768 first
-            assertEquals("X25519MLKEM768", getNamedGroups(engine.getSSLParameters())[0]);
-            assertEquals("X25519MLKEM768", getNamedGroups(socket.getSSLParameters())[0]);
-            assertEquals("X25519MLKEM768", getNamedGroups(serverSocket.getSSLParameters())[0]);
         String expectedFirstGroup = expectedFirstPqcGroup(controlNamedGroups);
         if (expectedFirstGroup != null) {
             // PQC auto-configuration reorders groups with the hybrid ML-KEM group first
-            assertEquals(expectedFirstGroup, engine.getSSLParameters().getNamedGroups()[0]);
-            assertEquals(expectedFirstGroup, socket.getSSLParameters().getNamedGroups()[0]);
-            assertEquals(expectedFirstGroup, serverSocket.getSSLParameters().getNamedGroups()[0]);
+            assertEquals(expectedFirstGroup, getNamedGroups(engine.getSSLParameters())[0]);
+            assertEquals(expectedFirstGroup, getNamedGroups(socket.getSSLParameters())[0]);
+            assertEquals(expectedFirstGroup, getNamedGroups(serverSocket.getSSLParameters())[0]);
         } else {
             // No PQC available, should keep JVM defaults
             assertArrayEquals(controlNamedGroups, getNamedGroups(engine.getSSLParameters()));
@@ -850,15 +845,11 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        if (Arrays.asList(controlNamedGroups).contains("X25519MLKEM768")) {
-            assertEquals("X25519MLKEM768", getNamedGroups(engine.getSSLParameters())[0]);
-            assertEquals("X25519MLKEM768", getNamedGroups(socket.getSSLParameters())[0]);
-            assertEquals("X25519MLKEM768", getNamedGroups(serverSocket.getSSLParameters())[0]);
         String expectedFirstGroup = expectedFirstPqcGroup(controlNamedGroups);
         if (expectedFirstGroup != null) {
-            assertEquals(expectedFirstGroup, engine.getSSLParameters().getNamedGroups()[0]);
-            assertEquals(expectedFirstGroup, socket.getSSLParameters().getNamedGroups()[0]);
-            assertEquals(expectedFirstGroup, serverSocket.getSSLParameters().getNamedGroups()[0]);
+            assertEquals(expectedFirstGroup, getNamedGroups(engine.getSSLParameters())[0]);
+            assertEquals(expectedFirstGroup, getNamedGroups(socket.getSSLParameters())[0]);
+            assertEquals(expectedFirstGroup, getNamedGroups(serverSocket.getSSLParameters())[0]);
         } else {
             assertArrayEquals(controlNamedGroups, getNamedGroups(engine.getSSLParameters()));
             assertArrayEquals(controlNamedGroups, getNamedGroups(socket.getSSLParameters()));
@@ -1152,10 +1143,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // Named groups may be reordered by PQC auto-configuration, but same groups should be present
         String[] controlGroups = getNamedGroups(controlEngine.getSSLParameters());
         String[] engineGroups = getNamedGroups(engine.getSSLParameters());
-        if (controlGroups != null && Arrays.asList(controlGroups).contains("X25519MLKEM768")) {
-            assertEquals("X25519MLKEM768", engineGroups[0]);
-        String[] controlGroups = controlEngine.getSSLParameters().getNamedGroups();
-        String[] engineGroups = engine.getSSLParameters().getNamedGroups();
         String expectedFirstGroup = controlGroups == null ? null : expectedFirstPqcGroup(controlGroups);
         if (expectedFirstGroup != null) {
             assertEquals(expectedFirstGroup, engineGroups[0]);
@@ -1259,9 +1246,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         controlContext.init(null, null, null);
         SSLEngine controlEngine = controlContext.createSSLEngine();
         String[] controlNamedGroups = getNamedGroups(controlEngine.getSSLParameters());
-        boolean pqcAvailable = controlNamedGroups != null
-                && Arrays.asList(controlNamedGroups).contains("X25519MLKEM768");
-        String[] controlNamedGroups = controlEngine.getSSLParameters().getNamedGroups();
         String expectedFirstGroup = controlNamedGroups == null ? null : expectedFirstPqcGroup(controlNamedGroups);
 
         SSLContextParameters scp = new SSLContextParameters();
@@ -1397,10 +1381,11 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
+    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testPqcAutoConfigurationIsThreadSafe() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
-        String[] controlNamedGroups = controlContext.createSSLEngine().getSSLParameters().getNamedGroups();
+        String[] controlNamedGroups = getNamedGroups(controlContext.createSSLEngine().getSSLParameters());
         String expectedFirstGroup = controlNamedGroups == null ? null : expectedFirstPqcGroup(controlNamedGroups);
 
         // one instance shared by many components, as a global camel.ssl configuration is
@@ -1426,10 +1411,10 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
             for (Future<SSLContext> future : futures) {
                 SSLEngine engine = future.get(30, TimeUnit.SECONDS).createSSLEngine();
                 if (expectedFirstGroup != null) {
-                    assertEquals(expectedFirstGroup, engine.getSSLParameters().getNamedGroups()[0],
+                    assertEquals(expectedFirstGroup, getNamedGroups(engine.getSSLParameters())[0],
                             "every concurrently created context must prefer the post-quantum group");
                 } else {
-                    assertArrayEquals(controlNamedGroups, engine.getSSLParameters().getNamedGroups());
+                    assertArrayEquals(controlNamedGroups, getNamedGroups(engine.getSSLParameters()));
                 }
             }
         } finally {
@@ -1465,6 +1450,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         Method m = SSLParameters.class.getMethod("getSignatureSchemes");
         return (String[]) m.invoke(params);
     }
+
     /**
      * The hybrid ML-KEM group the auto-configuration is expected to put first, or {@code null} when this JVM offers
      * none of them and the ordering must be left untouched. A JVM that already leads with a hybrid keeps its order, so
