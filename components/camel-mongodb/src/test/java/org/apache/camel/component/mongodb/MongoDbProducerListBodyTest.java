@@ -18,6 +18,8 @@ package org.apache.camel.component.mongodb;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import com.mongodb.MongoClientSettings;
@@ -43,6 +45,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.json.JsonParseException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
@@ -118,7 +121,8 @@ class MongoDbProducerListBodyTest extends CamelTestSupport {
     @Test
     void testUpdateInputStreamBodyWithCriteriaAndUpdate() {
         String body = "[{\"name\": \"order-1\"}, {\"$set\": {\"qty\": 3}}]";
-        template.requestBody("direct:update", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)));
+        // a route without stream caching, so that the body reaches the producer as a plain InputStream
+        template.requestBody("direct:updateNoStreamCaching", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)));
 
         ArgumentCaptor<Bson> criteria = ArgumentCaptor.forClass(Bson.class);
         ArgumentCaptor<Bson> update = ArgumentCaptor.forClass(Bson.class);
@@ -139,6 +143,32 @@ class MongoDbProducerListBodyTest extends CamelTestSupport {
         verify(collection).aggregate(pipeline.capture());
         assertEquals(2, pipeline.getValue().size());
         assertEquals(5, toBsonDocument(pipeline.getValue().get(1)).getInt32("$limit").getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testAggregateStreamCacheBodyWithASingleStage() {
+        // a single stage is not a JSON array: the fallback converts the same text, the stream is not read twice
+        String body = "{\"$match\": {\"qty\": 3}}";
+        template.requestBody("direct:aggregate",
+                new ByteArrayInputStreamCache(new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8))));
+
+        ArgumentCaptor<List<Bson>> pipeline = ArgumentCaptor.forClass(List.class);
+        verify(collection).aggregate(pipeline.capture());
+        assertEquals(1, pipeline.getValue().size());
+        assertEquals(3, toBsonDocument(pipeline.getValue().get(0)).getDocument("$match").getInt32("qty").getValue());
+    }
+
+    @Test
+    void testUpdateFileBodyWithCriteriaAndUpdate(@TempDir Path dir) throws Exception {
+        // as a file consumer delivers it
+        Path file = dir.resolve("update.json");
+        Files.writeString(file, "[{\"name\": \"order-1\"}, {\"$set\": {\"qty\": 3}}]\n");
+        template.requestBody("direct:update", file.toFile());
+
+        ArgumentCaptor<Bson> criteria = ArgumentCaptor.forClass(Bson.class);
+        verify(collection).updateOne(criteria.capture(), any(Bson.class), any(UpdateOptions.class));
+        assertEquals("order-1", toBsonDocument(criteria.getValue()).getString("name").getValue());
     }
 
     @Test
@@ -221,6 +251,8 @@ class MongoDbProducerListBodyTest extends CamelTestSupport {
                         .to("mongodb:mongoClient?database=test&collection=c&operation=update&dynamicity=false");
                 from("direct:findOneAndUpdate")
                         .to("mongodb:mongoClient?database=test&collection=c&operation=findOneAndUpdate&dynamicity=false");
+                from("direct:updateNoStreamCaching").noStreamCaching()
+                        .to("mongodb:mongoClient?database=test&collection=c&operation=update&dynamicity=false");
                 from("direct:aggregate")
                         .to("mongodb:mongoClient?database=test&collection=c&operation=aggregate&dynamicity=false");
             }
