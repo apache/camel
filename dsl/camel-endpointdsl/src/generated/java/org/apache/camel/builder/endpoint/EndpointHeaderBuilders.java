@@ -4045,7 +4045,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Stream (camel-stream)
-     * Read from system-in and write to system-out and system-err streams.
+     * Read from System.in, a file or an HTTP URL, and write to System.out,
+     * System.err, a file or an output stream in a message header.
      * 
      * Category: file,core
      * Since: 1.3

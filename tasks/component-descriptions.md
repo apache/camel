@@ -359,7 +359,7 @@ or removes its row.
 | camel-state-store | state-store |  |
 | camel-stax | stax |  |
 | camel-stitch | stitch |  |
-| camel-stream | stream |  |
+| camel-stream | stream | yes |
 | camel-stringtemplate | string-template |  |
 | camel-stripe | stripe |  |
 | camel-stub | stub |  |
