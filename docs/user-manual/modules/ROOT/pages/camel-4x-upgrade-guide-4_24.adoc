@@ -486,6 +486,12 @@ exchanges is low enough again.
 
 A custom `RoutePolicySupport` can take part by overriding `isConsumerKeptSuspended(Route)`.
 
+=== camel-browse - the filter only chooses the messages kept for browsing
+
+The `filter` option of a browse endpoint now only chooses the messages that the endpoint keeps for browsing. A route
+that consumes from the endpoint gets every message. Before, a message that the filter skipped was not passed to the
+consuming route either. To drop messages in the consuming route, use the Filter EIP in that route.
+
 === camel-seda - a discarded request-reply message fails at once
 
 When the SEDA producer waits for the reply (`InOut` messages, or `waitForTaskToComplete=Always`) and discards the
