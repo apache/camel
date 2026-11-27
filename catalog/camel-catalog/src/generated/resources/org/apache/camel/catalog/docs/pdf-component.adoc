@@ -113,6 +113,50 @@ With the default `textProcessingFactory=lineTermination`, the text is written li
 The `pageSize` option takes `LETTER`, `LEGAL` or `A0` to `A6` (default `A4`). The older names `PAGE_SIZE_A0` to
 `PAGE_SIZE_A6` and `PAGE_SIZE_LETTER` are still accepted. An unknown value fails when the endpoint is created.
 
+=== Fonts
+
+The `font` option selects one of the 14 standard fonts of PDF (default `HELVETICA`). These fonts are not embedded in
+the document, and cover only Latin text: a character they do not have, such as Cyrillic, Greek, Chinese or an emoji,
+fails the `create` or `append` operation with an `IllegalArgumentException` that names the character.
+
+To write such characters, set the `fontFile` option to a TrueType font file (`.ttf`) that has them. The font file is
+loaded as a resource when the endpoint is created, so it can be prefixed with `classpath:` (the default), `file:` or
+`http:`, and the characters that are used are embedded in the document. When `fontFile` is set, the `font` option is
+not used. A character the font file does not have also fails the operation, rather than being left out.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("pdf:create?fontFile=file:/fonts/NotoSans-Regular.ttf")
+    .to("file:target/out?fileName=hello.pdf");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: pdf:create
+            parameters:
+              fontFile: file:/fonts/NotoSans-Regular.ttf
+        - to:
+            uri: file:target/out
+            parameters:
+              fileName: hello.pdf
+----
+====
+
+Choose a font that has the characters of the text. It must be a TrueType font: OpenType fonts with CFF outlines
+(most `.otf` files) and font collections (`.ttc`) cannot be used, and fail when the endpoint is created.
+
 === Merging PDF files
 
 The `merge` operation reads the files to merge from the `CamelPdfFilesToMerge` header: a list of at least two

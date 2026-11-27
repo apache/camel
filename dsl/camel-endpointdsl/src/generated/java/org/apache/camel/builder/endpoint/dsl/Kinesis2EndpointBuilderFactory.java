@@ -170,6 +170,46 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of shards that the consumer reads at the same time in
+         * a poll, each on a thread of a thread pool of the consumer, which also
+         * routes the records of the shard. With 1 (or less), or a stream of one
+         * shard, the consumer reads the shards one after the other on its own
+         * thread. Not used with shardId, or by the KCL consumer
+         * (useKclConsumers).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxConcurrentShards the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder maxConcurrentShards(int maxConcurrentShards) {
+            doSetProperty("maxConcurrentShards", maxConcurrentShards);
+            return this;
+        }
+        /**
+         * Maximum number of shards that the consumer reads at the same time in
+         * a poll, each on a thread of a thread pool of the consumer, which also
+         * routes the records of the shard. With 1 (or less), or a stream of one
+         * shard, the consumer reads the shards one after the other on its own
+         * thread. Not used with shardId, or by the KCL consumer
+         * (useKclConsumers).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxConcurrentShards the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder maxConcurrentShards(String maxConcurrentShards) {
+            doSetProperty("maxConcurrentShards", maxConcurrentShards);
+            return this;
+        }
+        /**
          * Maximum number of records fetched from each shard in each poll: the
          * Limit of the GetRecords request, from 1 to 10000. Not used by the KCL
          * consumer (useKclConsumers).

@@ -126,6 +126,33 @@ camel.main.shutdownLogInflightExchangesOnTimeout = false
 ----
 ====
 
+=== A consumer whose suspend or stop does not return
+
+The timeout is when Camel stops waiting for the inflight exchanges and switches to the forced shutdown: it does not
+bound the suspend or stop of a consumer. A consumer whose suspend or stop does not return, such as a client call that
+waits for a reply from a broker or server that stopped answering, makes the shutdown wait until the call returns, as
+the forced shutdown, and a later stop or start of the route, need the same consumer.
+
+When the timeout elapses while such a call runs, Camel logs a WARN that names the route, the endpoint it consumes
+from, and where the call waits:
+
+[source,log]
+---------------------------------
+WARN DefaultShutdownStrategy - The suspend of the consumer of route: route1 (consuming from: jms://queue:orders) has not returned within the timeout. Stopping or starting this route waits until it returns. The thread Camel (camel-1) thread #3 - ShutdownTask running it waits at:
+	at ...
+---------------------------------
+
+Set the timeouts of the client that the component uses (such as its connection, read or request timeouts) so that its
+calls return when the remote system stops answering. Some consumers bound such calls themselves: the
+xref:components::jms-component.adoc[JMS] and xref:components::spring-rabbitmq-component.adoc[Spring RabbitMQ] consumers
+wait for their listener container to stop at most the `shutdownAwaitTermination` of the `ExecutorServiceManager`
+(10 seconds by default; Spring RabbitMQ adds the `shutdownTimeout` of the component, in which the listener container
+waits for the messages in progress), and let it stop in the background after that.
+
+That bound is per consumer: with several routes that consume from a broker that does not answer, the graceful shutdown
+waits for them one after the other until its own timeout elapses. Then the shutdown interrupts the suspend in
+progress, and the consumers that it suspends after that wait for their listener container at most 100 milliseconds.
+
 === JMX managed
 
 The `ShutdownStrategy` is JMX aware, so you can manage it from a

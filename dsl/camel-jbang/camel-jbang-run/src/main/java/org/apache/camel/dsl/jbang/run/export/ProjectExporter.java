@@ -90,7 +90,14 @@ public class ProjectExporter {
      * @return         0 when the project was exported, or the exit code of the failure
      */
     public int export(ExportRequest request) throws Exception {
-        Path baseDir = prepare(request);
+        Path baseDir;
+        try {
+            baseDir = prepare(request);
+        } catch (FileNotFoundException ex) {
+            // as in export(Path, ExportRequest): on stderr, and exit 66
+            printer().printErr(ex.getMessage());
+            return RunPipeline.FILE_NOT_FOUND;
+        }
 
         if (request.runtime == null) {
             printer().printErr("The runtime option must be specified");
@@ -121,6 +128,9 @@ public class ProjectExporter {
     public Path prepare(ExportRequest request) throws Exception {
         Path baseDir = request.baseDir != null ? request.baseDir : Path.of(".");
 
+        // expand wildcards before the project name is taken from the first file (otherwise the artifactId becomes *)
+        ExportHelper.expandWildcards(request.files);
+
         // special if user type: camel run . or camel run dirName
         if (request.files != null && request.files.size() == 1) {
             String name = FileUtil.stripTrailingSeparator(request.files.get(0));
@@ -129,6 +139,9 @@ public class ProjectExporter {
                 if (Files.isDirectory(first)) {
                     baseDir = first;
                     ExportHelper.dirToFiles(name, request.files);
+                    if (request.files.isEmpty()) {
+                        throw new FileNotFoundException("No files found in directory: " + name);
+                    }
                 }
             }
         }
@@ -178,6 +191,7 @@ public class ProjectExporter {
         }
 
         try {
+            ExportHelper.expandWildcards(request.files);
             verifyExportFiles(request.files);
         } catch (FileNotFoundException ex) {
             // as camel run: on stderr, and exit 66; it was on stdout, with exit 1 (CAMEL-26931)
@@ -262,9 +276,6 @@ public class ProjectExporter {
                     if (fn.startsWith("//")) {
                         fn = fn.substring(2);
                     }
-                }
-                if (fn.endsWith("/*")) {
-                    fn = fn.substring(0, fn.length() - 2);
                 }
                 if (!Files.exists(Paths.get(fn))) {
                     throw new FileNotFoundException("Path does not exist: " + fn);

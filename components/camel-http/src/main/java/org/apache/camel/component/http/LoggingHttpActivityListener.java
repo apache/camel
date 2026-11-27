@@ -21,6 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
@@ -36,6 +38,7 @@ import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
@@ -53,6 +56,15 @@ import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
           annotations = { "interfaceName=org.apache.camel.component.http.HttpActivityListener" })
 @Configurer(metadataOnly = true)
 public class LoggingHttpActivityListener extends ServiceSupport implements CamelContextAware, HttpActivityListener {
+
+    /**
+     * HTTP headers that carry a credential, but whose name is not a sensitive key known by {@link SensitiveUtils} (such
+     * as Authorization), in lower case.
+     */
+    private static final Set<String> SENSITIVE_HEADERS
+            = Set.of("proxy-authorization", "cookie", "set-cookie", "x-api-key", "x-auth-token");
+
+    private static final String DEFAULT_MASK = "xxxxx";
 
     private CamelContext camelContext;
     private MaskingFormatter maskingFormatter;
@@ -77,7 +89,8 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
     private boolean showBinary;
     @Metadata(defaultValue = "50000", description = "Limits the number of characters logged from the HTTP body")
     private int maxChars = 50000;
-    @Metadata(description = "If true, mask sensitive information like password or passphrase in the log")
+    @Metadata(description = "If true, mask sensitive information like password or passphrase in the log."
+                            + " The values of the headers that carry a credential (such as Authorization or Cookie) are always masked.")
     private Boolean logMask;
     @Metadata(defaultValue = "false", description = "If enabled then each information is outputted as separate LOG events")
     private boolean multiline;
@@ -155,7 +168,15 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
         if (showHeaders) {
             Header[] headers = request != null ? request.getHeaders() : response.getHeaders();
             for (Header h : headers) {
-                lines.add(String.format("%s: %s", h.getName(), getValue(h.isSensitive(), h.getValue())));
+                String value;
+                if (h.isSensitive() || isSensitiveHeader(h.getName())) {
+                    // the value of a credential header, or of a header HttpClient flags as sensitive, is always masked
+                    // as a whole
+                    value = getMaskString();
+                } else {
+                    value = getValue(false, h.getValue());
+                }
+                lines.add(String.format("%s: %s", h.getName(), value));
             }
         }
         if (showBody) {
@@ -257,6 +278,22 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
             level = LoggingLevel.valueOf(loggingLevel);
         }
         return new CamelLogger(name, level);
+    }
+
+    /**
+     * Whether the value of the HTTP header with the given name is a credential (such as Authorization, Cookie or an API
+     * key), which is never logged
+     */
+    protected boolean isSensitiveHeader(String name) {
+        return name != null
+                && (SENSITIVE_HEADERS.contains(name.toLowerCase(Locale.ENGLISH)) || SensitiveUtils.containsSensitive(name));
+    }
+
+    private String getMaskString() {
+        if (maskingFormatter instanceof DefaultMaskingFormatter dmf && dmf.getMaskString() != null) {
+            return dmf.getMaskString();
+        }
+        return DEFAULT_MASK;
     }
 
     private String getValue(boolean sensitive, Object value) {

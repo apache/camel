@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibm.watsonx.ai;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -400,6 +401,34 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void chatReadsAByteArrayOutputStreamBodyAsTheUserMessage() throws Exception {
+        // the body camel-tika parse produces, a payload like bytes
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.writeBytes("What is Apache Camel?".getBytes(StandardCharsets.UTF_8));
+
+        call(WatsonxAiOperations.chat, body);
+
+        assertUserMessage("What is Apache Camel?", request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    @Test
+    void chatDecodesAByteArrayOutputStreamBodyWithTheCharsetOfTheExchange() throws Exception {
+        // camel-tika parse sets the charset of the text it writes; toString() would decode with the platform default
+        String text = "Z\u00fcrich";
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.writeBytes(text.getBytes(StandardCharsets.ISO_8859_1));
+
+        Exchange result = template.send("direct:watsonx", exchange -> {
+            exchange.getIn().setHeader(WatsonxAiConstants.OPERATION, WatsonxAiOperations.chat);
+            exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+            exchange.getIn().setBody(body);
+        });
+
+        assertNoException(result);
+        assertUserMessage(text, request("/ml/v1/text/chat").get("messages").get(0));
+    }
+
+    @Test
     void chatFailsWithoutABody() {
         Exchange result = send(WatsonxAiOperations.chat, null);
 
@@ -433,6 +462,60 @@ class WatsonxAiMessageBodyTest extends CamelTestSupport {
 
         call(WatsonxAiOperations.embedding, List.of("Apache Camel", "Integration"));
         assertInputs(request("/ml/v1/text/embeddings").get("inputs"), "Apache Camel", "Integration");
+    }
+
+    @Test
+    void embeddingFailsForAListWithAnotherElement() {
+        List<Object> body = new ArrayList<>();
+        body.add("Apache Camel");
+        body.add(42);
+
+        Exchange result = send(WatsonxAiOperations.embedding, body);
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
+        assertTrue(e.getMessage().contains("must be Strings"), e.getMessage());
+        assertTrue(e.getMessage().contains("index 1 is java.lang.Integer"), e.getMessage());
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/embeddings"), "no request is sent");
+    }
+
+    @Test
+    void embeddingFailsForANullElementInTheInputsHeader() {
+        List<Object> inputs = new ArrayList<>();
+        inputs.add("Apache Camel");
+        inputs.add(null);
+
+        Exchange result = template.send("direct:watsonx", exchange -> {
+            exchange.getIn().setHeader(WatsonxAiConstants.OPERATION, WatsonxAiOperations.embedding);
+            exchange.getIn().setHeader(WatsonxAiConstants.INPUTS, inputs);
+        });
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
+        assertTrue(e.getMessage().contains("header '" + WatsonxAiConstants.INPUTS + "'"), e.getMessage());
+        assertTrue(e.getMessage().contains("index 1 is null"), e.getMessage());
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/embeddings"), "no request is sent");
+    }
+
+    /** A value whose text is its toString() is read as text, as a single body is. */
+    @Test
+    void embeddingReadsAUuidInAListAsItsText() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        call(WatsonxAiOperations.embedding, List.of("Apache Camel", uuid));
+
+        assertInputs(request("/ml/v1/text/embeddings").get("inputs"), "Apache Camel", uuid.toString());
+    }
+
+    @Test
+    void rerankFailsForAListWithAMapElement() {
+        List<Object> body = new ArrayList<>();
+        body.add("Apache Camel is an integration framework");
+        body.add(Map.of("text", "Camel routes messages"));
+
+        Exchange result = rerank(body);
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
+        assertTrue(e.getMessage().contains("must be Strings"), e.getMessage());
+        assertTrue(e.getMessage().contains("index 1 is java.util."), e.getMessage());
+        assertFalse(REQUESTS.containsKey("/ml/v1/text/rerank"), "no request is sent");
     }
 
     @Test

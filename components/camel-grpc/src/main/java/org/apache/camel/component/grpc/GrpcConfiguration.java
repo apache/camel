@@ -303,7 +303,9 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The X.509 certificate chain file resource in PEM format link
+     * The X.509 certificate chain file resource in PEM format link. On a consumer, this is the certificate of the
+     * server and is required for TLS. On a producer, this is the certificate of the client, set together with
+     * keyResource only for mutual TLS (when the server requires a client certificate).
      */
     public void setKeyCertChainResource(String keyCertChainResource) {
         this.keyCertChainResource = keyCertChainResource;
@@ -314,7 +316,9 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The PKCS#8 private key file resource in PEM format link
+     * The PKCS#8 private key file resource in PEM format link. On a consumer, this is the key of the server and is
+     * required for TLS. On a producer, this is the key of the client, set together with keyCertChainResource only for
+     * mutual TLS (when the server requires a client certificate).
      */
     public void setKeyResource(String keyResource) {
         this.keyResource = keyResource;
@@ -336,7 +340,8 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The trusted certificates collection file resource in PEM format for verifying the remote endpoint's certificate
+     * The trusted certificates collection file resource in PEM format for verifying the remote endpoint's certificate.
+     * When not set, a producer verifies the server with the default trust store of the JVM.
      */
     public void setTrustCertCollectionResource(String trustCertCollectionResource) {
         this.trustCertCollectionResource = trustCertCollectionResource;

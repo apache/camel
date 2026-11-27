@@ -1183,6 +1183,32 @@ To act on these errors, set an option on the consumer:
 
 The `bridgeErrorHandler` option is not supported: a message that fails already goes to the error handler of the route.
 
+=== Suspending or stopping a consumer when the broker does not answer
+
+Suspending or stopping a consumer (for example, when its route or the CamelContext is stopped) stops its listener
+container, which stops its JMS connection. When the broker does not answer, the JMS client may only return from that
+call once a timeout of its own elapses (the `callTimeout` of ActiveMQ Artemis, 30 seconds by default), and does not
+react to an interrupt. The consumer waits for its listener container to stop up to the `shutdownAwaitTermination` of
+the `ExecutorServiceManager` (10 seconds by default, at least 100 milliseconds), or until the thread that waits is
+interrupted (as the graceful shutdown does when its timeout elapses: then it waits at most 100 milliseconds more). It
+then logs a WARN and no longer uses that listener container:
+the listener container is stopped and destroyed in the background, once the call returns, and the consumer creates a
+new one when it is resumed or started again. A listener container that is destroyed ends its non-durable topic
+subscriptions: the messages published to the topic until the new listener container subscribes do not reach the
+consumer. Use a durable subscription when they must.
+
+A JMS client also stops a connection only once the message listeners that it is calling return. With
+`consumerType=Simple` and Spring's `SyncTaskExecutor` as `taskExecutor`, the JMS client calls the route itself: the
+consumer then waits as long as the route processes messages, and the time above after the last one. With a thread pool
+(the one that Camel creates by default, or one of your own), the route processes the messages on its threads, which the
+JMS client does not wait for.
+
+With `asyncStopListener=true`, stopping the consumer does not wait for its listener container. Stopping a route or the
+CamelContext suspends the consumer first, though (unless the route has `shutdownRoute` set to `Defer`), and the suspend
+waits as described above. A suspend from the thread that processes a message of the consumer, such as by a route
+policy when an exchange is done, stops the listener container on that thread, without this time limit, and so does a
+stop from that thread, unless `asyncStopListener=true`.
+
 === Concurrent Consuming
 
 A common requirement with JMS is to consume messages concurrently in

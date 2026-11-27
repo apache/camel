@@ -17,20 +17,25 @@
 package org.apache.camel.component.springai.embeddings;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.content.Media;
@@ -90,6 +95,13 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         };
 
         component.getConfiguration().setEmbeddingModel(embeddingModel);
+
+        context.getTypeConverterRegistry().addTypeConverter(String.class, Headline.class, new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+                return type.cast(((Headline) value).text());
+            }
+        });
 
         return context;
     }
@@ -238,7 +250,9 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
 
         assertThat(exchange.getException())
                 .isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("convert the body to text before the endpoint");
+                .hasMessageContaining("Camel reads this value only as its toString()")
+                .hasMessageContaining("marshal it first")
+                .hasMessageContaining("convertBodyTo(String.class)");
         assertThat(requests).isEmpty();
     }
 
@@ -249,7 +263,9 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
 
         assertThat(exchange.getException())
                 .isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("convert the body to text before the endpoint");
+                .hasMessageContaining("Camel reads this value only as its toString()")
+                .hasMessageContaining("marshal it first")
+                .hasMessageContaining("convertBodyTo(String.class)");
         assertThat(requests).isEmpty();
     }
 
@@ -266,41 +282,101 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testListWithNumberElementFails() {
-        Exchange exchange = template.send("spring-ai-embeddings:listnumber",
-                e -> e.getMessage().setBody(List.of("hello", 42)));
+    public void testListWithNumberElementIsEmbeddedAsText() {
+        fluentTemplate.to("spring-ai-embeddings:listnumber")
+                .withBody(List.of("hello", 42))
+                .request(Message.class);
 
-        assertThat(exchange.getException())
-                .isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("the element at index 1 of the List body is java.lang.Integer");
-        assertThat(requests).isEmpty();
+        assertThat(requests).containsExactly(List.of("hello", "42"));
     }
 
     @Test
-    public void testCharArrayBodyFailsAndConvertBodyToStringEmbedsIt() throws Exception {
-        // the upgrade guide: a body Camel converts to text but that is not text, bytes, a stream or a file, such as a
-        // char[], fails; convertBodyTo(String.class) before the endpoint embeds its text
-        Exchange exchange = template.send("spring-ai-embeddings:chars",
-                e -> e.getMessage().setBody("hello".toCharArray()));
-
-        assertThat(exchange.getException())
-                .isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("convert the body to text before the endpoint");
-        assertThat(requests).isEmpty();
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:chars")
-                        .convertBodyTo(String.class)
-                        .to("spring-ai-embeddings:chars");
-            }
-        });
-
-        Message result = fluentTemplate.to("direct:chars").withBody("hello".toCharArray()).request(Message.class);
+    public void testCharArrayBodyIsEmbeddedAsText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:chars")
+                .withBody("hello".toCharArray())
+                .request(Message.class);
 
         assertThat(requests).containsExactly(List.of("hello"));
         assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isEqualTo("hello");
+    }
+
+    @Test
+    public void testByteBufferBodyIsEmbeddedAsText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:buffer")
+                .withBody(ByteBuffer.wrap("buffered text".getBytes(StandardCharsets.UTF_8)))
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("buffered text"));
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isEqualTo("buffered text");
+    }
+
+    @Test
+    public void testByteArrayOutputStreamBodyIsEmbeddedAsText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:baos")
+                .withBody(outputStreamOf("parsed by tika"))
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("parsed by tika"));
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isEqualTo("parsed by tika");
+    }
+
+    @Test
+    public void testListWithByteArrayOutputStreamElementIsEmbeddedAsText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:listbaos")
+                .withBody(List.of("hello", outputStreamOf("world")))
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("hello", "world"));
+        assertThat(result.getBody(List.class)).hasSize(2);
+    }
+
+    @Test
+    public void testBodyWithItsOwnConverterToStringIsEmbeddedAsText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:headline")
+                .withBody(new Headline("Camel 4.24 released"))
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("Camel 4.24 released"));
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isEqualTo("Camel 4.24 released");
+    }
+
+    @Test
+    public void testListWithCharArrayElementIsEmbeddedAsText() {
+        Message result = fluentTemplate.to("spring-ai-embeddings:listchars")
+                .withBody(List.of("hello", "world".toCharArray()))
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("hello", "world"));
+        assertThat(result.getBody(List.class)).hasSize(2);
+    }
+
+    @Test
+    public void testUuidBodyIsEmbeddedAsItsText() {
+        UUID uuid = UUID.randomUUID();
+
+        Message result = fluentTemplate.to("spring-ai-embeddings:uuid")
+                .withBody(uuid)
+                .request(Message.class);
+
+        assertThat(requests).containsExactly(List.of(uuid.toString()));
+        assertThat(result.getHeader(SpringAiEmbeddingsHeaders.INPUT_TEXT)).isEqualTo(uuid.toString());
+    }
+
+    @Test
+    public void testConvertBodyToStringEmbedsThePojoToString() throws Exception {
+        // the way out the message of a POJO body gives, when its toString() is the text to embed
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:pojo")
+                        .convertBodyTo(String.class)
+                        .to("spring-ai-embeddings:pojo");
+            }
+        });
+
+        fluentTemplate.to("direct:pojo").withBody(new Pojo("hello")).request(Message.class);
+
+        assertThat(requests).containsExactly(List.of("Pojo[text=hello]"));
     }
 
     @Test
@@ -349,6 +425,10 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         assertThat(requests).isEmpty();
     }
 
+    /** A type with its own converter to String, registered on the context, whose toString() is not its text. */
+    private record Headline(String text) {
+    }
+
     private static final class Pojo {
         private final String text;
 
@@ -360,5 +440,11 @@ public class SpringAiEmbeddingsComponentTest extends CamelTestSupport {
         public String toString() {
             return "Pojo[text=" + text + "]";
         }
+    }
+
+    private static ByteArrayOutputStream outputStreamOf(String text) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.writeBytes(text.getBytes(StandardCharsets.UTF_8));
+        return out;
     }
 }

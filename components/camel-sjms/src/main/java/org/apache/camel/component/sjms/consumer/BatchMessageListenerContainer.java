@@ -81,8 +81,11 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
 
     @Override
     protected void configureConsumer(MessageConsumer consumer, Session session) {
+        // a worker starts no batch of a transacted or CLIENT_ACKNOWLEDGE session while the container is suspended or
+        // stopping, and routes the buffered messages of an AUTO_ACKNOWLEDGE session right away
         BatchConsumerWorker worker = new BatchConsumerWorker(
-                this.endpoint, this.batchListener, session, consumer);
+                this.endpoint, this.batchListener, session, consumer,
+                () -> isSuspendingOrSuspended() || isStoppingOrStopped());
         addWorker(worker);
         CompletableFuture.runAsync(worker, workerExecutorService)
                 .whenComplete((v, ex) -> onWorkerExit(worker, ex));
@@ -99,6 +102,25 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
         }
 
         super.doStop();
+    }
+
+    /**
+     * The number of messages that the workers still route before they end, for the graceful shutdown to wait for: the
+     * batches being routed, and the buffered messages of an AUTO_ACKNOWLEDGE session (acknowledged on receipt). The
+     * buffered messages of a transacted or CLIENT_ACKNOWLEDGE session are not counted, as they are redelivered when the
+     * consumer stops.
+     */
+    public int getPendingExchangesSize() {
+        workersLock.lock();
+        try {
+            int answer = 0;
+            for (BatchConsumerWorker worker : workers) {
+                answer += worker.getPendingMessages();
+            }
+            return answer;
+        } finally {
+            workersLock.unlock();
+        }
     }
 
     private void invalidateWorkers() {

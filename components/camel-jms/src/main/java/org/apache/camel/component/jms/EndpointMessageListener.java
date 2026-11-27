@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -48,7 +50,12 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  */
 public class EndpointMessageListener implements SessionAwareMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
+    // the message listener that processes a message on the current thread
+    private static final ThreadLocal<EndpointMessageListener> CURRENT = new ThreadLocal<>();
     private final Lock lock = new ReentrantLock();
+    // the messages that this message listener is processing, and has processed
+    private final AtomicInteger processing = new AtomicInteger();
+    private final AtomicLong processed = new AtomicLong();
     private final JmsConsumer consumer;
     private final JmsEndpoint endpoint;
     private final AsyncProcessor processor;
@@ -68,6 +75,47 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
     @Override
     public void onMessage(Message message, Session session) throws JMSException {
+        // a suspend or stop of the consumer from this thread (such as by a route policy when the exchange is done)
+        // stops the listener container of this message listener on this thread
+        EndpointMessageListener previous = CURRENT.get();
+        CURRENT.set(this);
+        processing.incrementAndGet();
+        try {
+            doOnMessage(message, session);
+        } finally {
+            processing.decrementAndGet();
+            processed.incrementAndGet();
+            if (previous == null) {
+                CURRENT.remove();
+            } else {
+                CURRENT.set(previous);
+            }
+        }
+    }
+
+    /**
+     * Whether this message listener is processing a message (onMessage did not return yet).
+     */
+    boolean isProcessing() {
+        return processing.get() > 0;
+    }
+
+    /**
+     * The number of messages that this message listener has processed (onMessage returned).
+     */
+    long getProcessed() {
+        return processed.get();
+    }
+
+    /**
+     * Whether the current thread processes a message in the given message listener (the message listener of a listener
+     * container).
+     */
+    static boolean isProcessingOnCurrentThread(Object messageListener) {
+        return messageListener != null && CURRENT.get() == messageListener;
+    }
+
+    private void doOnMessage(Message message, Session session) throws JMSException {
         LOG.trace("onMessage START");
 
         LOG.debug("{} consumer received JMS message: {}", endpoint, message);

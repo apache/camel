@@ -257,6 +257,9 @@ YAML::
 ----
 ====
 
+The Saga EIP applies to the entire route, and the steps keep the order they are written in: in the XML and YAML DSL,
+the steps before the `saga`, its nested steps and the steps after it are all part of the saga, in that order.
+
 *That's it*. The buy action will not change for the rest of the examples. We'll just see different options that can be used to model the "New Order" and "Reserve Credit" actions in the following.
 
 [NOTE]

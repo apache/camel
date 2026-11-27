@@ -225,8 +225,13 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         }
 
         // creates a generic file
-        Supplier<GenericFile<File>> gf = Suppliers.memorize(
-                () -> asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType()));
+        Supplier<GenericFile<File>> gf = Suppliers.memorize(() -> {
+            GenericFile<File> answer
+                    = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
+            // the type converter reads the content, so the file carries how to handle characters it cannot decode
+            answer.setCharsetErrorAction(getEndpoint().getCharsetErrorAction());
+            return answer;
+        });
 
         if (resumeStrategy != null) {
             final ResumeAdapter adapter = setupResumeStrategy(gf.get());

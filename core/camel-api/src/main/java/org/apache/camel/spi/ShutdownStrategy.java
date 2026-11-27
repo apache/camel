@@ -120,6 +120,10 @@ public interface ShutdownStrategy extends StaticService {
      * {@link Long#MAX_VALUE}
      * <p>
      * The default timeout unit is <code>SECONDS</code>
+     * <p>
+     * When the timeout elapses, the remaining consumers are shutdown now or ignored (see
+     * {@link #setShutdownNowOnTimeout(boolean)}). The timeout does not bound the suspend or stop of a consumer: one
+     * that does not return makes the shutdown wait until it returns.
      *
      * @throws IllegalArgumentException if the timeout value is 0 or negative
      * @param  timeout                  timeout

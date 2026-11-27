@@ -1066,13 +1066,47 @@ public class AggregateProcessor extends BaseProcessorSupport
         // discard due timeout
         LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
         // must confirm the discarded exchange
-        aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
+        if (isRecoverableRepository()) {
+            confirmDiscarded(aggregated);
+        } else {
+            aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
+        }
         // and remove redelivery state as well
         redeliveryState.remove(aggregated.getExchangeId());
         // and release the references that the discarded exchange holds to spooled stream caches (only those, as the
         // other on completions of the exchange are left as they are when it is not discarded)
         releaseSpooledStreamCaches(aggregated);
         // the completion was from timeout and we should just discard it
+    }
+
+    /**
+     * Confirms a discarded exchange, which a recoverable repository has moved to its completed store. When the confirm
+     * fails, the exchange is kept as not confirmed, as a processed exchange (see AggregateOnCompletion), so the recover
+     * task tries to confirm it again instead of recovering it and sending it.
+     */
+    private void confirmDiscarded(Exchange aggregated) {
+        String exchangeId = aggregated.getExchangeId();
+        boolean confirmed;
+        try {
+            confirmed = ((RecoverableAggregationRepository) aggregationRepository).confirmWithResult(aggregated.getContext(),
+                    exchangeId);
+        } catch (VirtualMachineError e) {
+            // left as before: a JVM-level failure is not handled here
+            throw e;
+        } catch (RuntimeException | Error e) {
+            LOG.warn("Error confirming the aggregated exchange with id: {}, which was discarded. It is kept as not"
+                     + " confirmed: the recover task will try to confirm it again, and will not send it.",
+                    exchangeId, e);
+            confirmed = false;
+        }
+        if (!confirmed) {
+            // the exchange is still marked as being completed, so a recover check cannot recover it before this: a
+            // check that has already taken its snapshot must see it as well, as onSubmitCompletion does
+            unconfirmedCompleteExchanges.add(exchangeId);
+            if (recoveryInProgress.get()) {
+                inProgressCompleteExchangesForRecoveryTask.add(exchangeId);
+            }
+        }
     }
 
     /**

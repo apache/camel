@@ -38,11 +38,12 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              }, headersClass = SpringAiEmbeddingsHeaders.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.LIST },
-                                  description = "The text to embed: a String, bytes, a stream or a file read as text, or a"
-                                                + " Spring AI Document as its text; or a java.util.List of them for a batch (a"
-                                                + " Set or an array of them fails). Another body or List element, such as a"
-                                                + " Map or a POJO, fails, as do no body and a null element: convert it to"
-                                                + " text first"),
+                                  description = "The text to embed: a String, bytes, a stream, a file or another value"
+                                                + " Camel converts to its text, such as a char[], or a Spring AI Document as"
+                                                + " its text; or a java.util.List of them for a batch (a Set or an array of"
+                                                + " them fails). A body or List element Camel reads only as its toString(),"
+                                                + " such as a Map or a POJO, fails, as do no body and a null element:"
+                                                + " marshal it first"),
            producerOut = @BodyType(value = Carrier.LIST,
                                    description = "The vector as a float[] for one text, and a List of float[] for a List"
                                                  + " of texts, also for a List with one text or none. The Embedding and"

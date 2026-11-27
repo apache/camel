@@ -187,6 +187,20 @@ The `HybridSignatureComponents` and `HybridEncapsulationComponents` record const
 (`classicalBytes`, `pqcBytes`) to 5 arguments (`classicalBytes`, `pqcBytes`, `classicalAlgorithmId`, `pqcAlgorithmId`,
 `version`). Code that constructs these records directly must be updated.
 
+=== camel-box - Box Java SDK 5
+
+The `camel-box` component is upgraded from Box Java SDK 4.16.4 to 5.21.0. The `com.box.sdk` package, which
+`camel-box` uses, is the same in version 5, so the component options and the calls it makes to Box are unchanged.
+
+Version 5 adds the generated `com.box.sdkgen` package to the same `box-java-sdk` jar, which is about 6 MB now (it was
+about 0.6 MB). That package needs Jackson 2 and `commons-codec`, which `camel-box` excludes, as it only uses
+`com.box.sdk`. Application code that uses `com.box.sdkgen` directly must add `jackson-databind` (2.x) and
+`commons-codec` itself.
+
+Box has deprecated `com.box.sdk.BoxAPIConnection` and its constructors in favour of `com.box.sdkgen.client.BoxClient`.
+Application code that creates a `BoxAPIConnection` itself, for example for the `boxConnection` option of the component,
+compiles with deprecation warnings, but works as before.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
@@ -271,6 +285,40 @@ Spring and Quartz schedulers kept running the task. Another `Error` of the poll 
 client library) is now a failed poll, as an exception, and the consumer polls again; previously, with the default
 scheduler, it also ended the scheduled task. See the section "camel-core - a VirtualMachineError fails the exchange,
 and Camel does not recover from it".
+
+=== camel-file - a file lock cluster member waits for an open of the lock file that timed out
+
+When an open of the lock file of the file lock cluster service (`FileLockClusterService`) takes longer than
+`clusterDataTaskTimeout`, the open keeps running, and the member no longer tries the lock with a retry meanwhile:
+the file of the late open, closed later by the garbage collector, released the lock of the leader. The member tries
+the lock again once the open has ended, and a WARN names the lock file when the wait starts. If the open never returns
+(for example on a hung network mount), no cluster view of that JVM tries the lock on that file until the JVM restarts,
+so a cluster with no member on another JVM stays without a leader. Previously the retry took the lock in that case.
+
+=== camel-jms, camel-spring-rabbitmq - suspending or stopping a consumer waits at most shutdownAwaitTermination for its listener container
+
+Suspending or stopping a consumer of camel-jms (and of the components built on it, such as camel-activemq,
+camel-activemq6 and camel-amqp) or of camel-spring-rabbitmq now waits for its listener container to stop at most the
+`shutdownAwaitTermination` of the `ExecutorServiceManager` (10 seconds by default, at least 100 milliseconds), or until
+the waiting thread is interrupted, as the graceful shutdown does when its timeout elapses. camel-spring-rabbitmq waits
+the `shutdownTimeout` of the component (5 seconds by default), in which the listener container waits for the messages
+in progress, on top of that. camel-jms with `consumerType=Simple` and Spring's `SyncTaskExecutor` as `taskExecutor` also
+waits as long as the route processes messages, as the JMS client does. Previously, it waited without bound when the
+broker did not answer: for the `callTimeout` of ActiveMQ Artemis (30 seconds by default), or for the
+`channelRpcTimeout` of the RabbitMQ client (10 minutes by default), past the shutdown timeout.
+
+When that time elapses, the consumer logs a WARN, the listener container is stopped and destroyed in the background,
+and the consumer creates a new listener container when it is resumed or started again. A stop that returns then no
+longer means that the listener container has released its connection. With camel-jms, the destroyed listener container
+ends its non-durable topic subscriptions: the messages published until the new listener container subscribes do not
+reach the consumer. A camel-jms suspend or stop from the thread that processes a message of the consumer (such as a
+route policy when an exchange is done) still stops the listener container on that thread, without this time limit.
+
+The stop of the listener container runs on a new thread pool of the component: `JmsStopListenerContainer` for
+camel-jms, and `SpringRabbitMQStopListenerContainer` for camel-spring-rabbitmq. camel-jms with
+`asyncStopListener=true` is unchanged. The `shutdownAwaitTermination` can be raised with
+`camelContext.getExecutorServiceManager().setShutdownAwaitTermination(...)`; it is also the time that Camel waits for
+each thread pool to terminate when the CamelContext stops.
 
 === camel-core - a to with an expression in its endpoint uri logs a WARN
 
@@ -408,6 +456,15 @@ keys. Code that walks `getOutputs()` (route dumps, tooling) now sees them, and `
 the outputs, for example with advice-with, is no longer used, and changing the list returned by `getCatchClauses()`
 no longer changes the doTry. Use `setCatchClauses` and `setFinallyClause`, or the outputs, instead.
 
+=== camel-core-model - saga and transacted keep the order of the steps
+
+A `saga` or `transacted` wraps the entire route. When it has nested steps of its own, as in the XML and YAML DSL, and
+the route has steps after it, the steps now run in the order they are written in: the steps before the `saga` or
+`transacted`, its nested steps, then the steps after it. Before, the steps after it ran before its nested steps. In the
+Java DSL the steps after `.saga()` or `.transacted()` are its nested steps, so only a route that closes it with
+`.end()` and has steps after that is affected. When a route has both a
+`saga` and a `transacted` as top-level steps, the nested steps of the `transacted` are now part of the saga too.
+
 === camel-core-model - EIP options given an expression in the Java DSL keep its language
 
 In the Java DSL, `completionSize`, `completionTimeout` and `completionPredicate` of the Aggregate EIP, and `handled`,
@@ -417,6 +474,17 @@ a route template now has its own copy of the expression, so a template parameter
 `+completionSize(simple("{{size}}"))+`, takes the value of that route: before, every route used the value of the first
 route created from the template. Route dumps and the JMX attributes of the aggregator (`CompletionSizeExpression`,
 `CompletionSizeExpressionLanguage` and the others) now show the language and the expression.
+
+=== camel-core - throttling route policies on the same route wait for each other
+
+When a route has both `ThrottlingInflightRoutePolicy` and `ThrottlingExceptionRoutePolicy`, each of them now resumes the
+consumer only when the other one no longer keeps it suspended. The inflight policy no longer resumes the consumer while
+the circuit of the exception policy is open and the exception policy suspended that consumer when it opened the circuit,
+so no new messages are taken until the circuit is half open. When the circuit is half open, the exception policy does
+not resume a consumer that the inflight policy has suspended; the inflight policy resumes it when the number of inflight
+exchanges is low enough again.
+
+A custom `RoutePolicySupport` can take part by overriding `isConsumerKeptSuspended(Route)`.
 
 === camel-seda - a discarded request-reply message fails at once
 
@@ -435,6 +503,16 @@ poll next to the threads of the new start. The `taskCount` arithmetic that `setu
 restart is gone. A class that extends `SedaConsumer` and overrides `doRun()` must override `doRun(int start)`
 instead, and should keep the loop condition `isCurrentStart(start) && isRunAllowed()` of the default implementation.
 The new protected method `isCurrentStart(int start)` returns true while no later start of the consumer has happened.
+
+=== camel-resilience4j - a call that times out before it starts is not started later
+
+In asynchronous mode (`asynchronous=true`) with a timeout, the `timeoutCancelRunningFuture` option (`true` by default)
+now has an effect, where before it had none. A call that times out while its task still waits for a thread of the
+timeout executor service is no longer started once a thread is free, so it no longer reaches the backend after its
+exchange has gone on with the timeout (or the fallback). With a bulkhead, the permit of such a call is released at the
+timeout, and not when a thread takes the call. In synchronous mode with a bulkhead, a call that times out while it waits
+for a thread is not started later either. Set `timeoutCancelRunningFuture=false` to keep the old asynchronous behaviour,
+where the timed out call still runs once a thread is free.
 
 === camel-ehcache - shared CacheManager and changed defaults
 
@@ -759,6 +837,15 @@ A URL whose path is not the endpoint of the server, such as `http://host:8080/v1
 because its path was ignored, and now fails: set the URL of the endpoint, here `http://host:8080/mcp`, or remove the
 path. The URL must be absolute, with a scheme and a host.
 
+=== camel-ibm-watsonx-data - the OAuth token of oauthProfile is sent as a Bearer token
+
+With `oauthProfile`, the endpoint used to obtain an access token once at startup and use it as `apiKey`, so the token
+was posted to IBM Cloud IAM as if it were an IBM Cloud API key, which IAM rejects. The token is now sent to
+watsonx.data as a `Bearer` token, and asked from `camel-oauth` again for every request, so it is renewed when it
+expires; the endpoint fails to start when the profile gives no token. The identity provider must therefore issue tokens
+that watsonx.data accepts. `apiKey` is no longer marked as required in the catalog, as `oauthProfile` can take its
+place; an endpoint with neither still fails to start.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
@@ -895,6 +982,15 @@ schema generated from `+parameter.*+`. A client that validates the input, such a
 undeclared argument; previously Camel accepted the call and dropped the argument with a WARN. To accept other
 arguments, set `additionalProperties` in the schema yourself; the route still receives only the declared top-level
 arguments.
+
+=== camel-mcp-server - a tool whose schema is not a valid JSON Schema is refused
+
+The MCP server now refuses an `ai-tool` route whose input schema (`argSchema`) or output schema is not a valid
+JSON Schema 2020-12 document, in every protocol era. It logs an ERROR naming the tool; the route keeps running and
+the other tools are still served. Previously, a tool whose route started before the MCP server failed the
+CamelContext startup, and a tool added later was left out with a generic WARN from the tool registry, except in the
+`modern` protocol era, which served it without any check. The stdio transport checks the input schema only, because
+it does not publish output schemas.
 
 === camel-docling - the CamelDoclingOutputFilePath header is a relative path unless outputBaseDirectory is set
 
@@ -1532,6 +1628,27 @@ is now sent with the first request; before, the request failed with `IllegalStat
 `authMethod=NTLM`, on the endpoint or in the `httpConfiguration` of the component, now authenticates with NTLM also
 when `authDomain` is not set. Before, the endpoint answered only Basic and Digest challenges with these credentials,
 and the component did not use them. If the server asks for Basic credentials, remove `authMethod=NTLM`.
+
+=== camel-http - the producer of a rest-openapi endpoint uses its own options
+
+The http endpoint that camel-http creates for a rest producer, such as a `rest-openapi` producer, now has the options
+of that producer in its uri, such as the login options (`authMethod`, `authUsername`, `authPassword`,
+`authBearerToken`, `authenticationPreemptive` and the `oauth2*` options) given on a `rest-openapi` endpoint. Producers
+that call the same url with different options get their own http endpoint.
+
+Before, all producers for the same url used the http endpoint of the first one created, and its options: for example a
+second `rest-openapi` endpoint of the same operation sent the login of the first one, or none if the first one had
+no login options. The http endpoints of these producers now show their options in the endpoint list, with secret
+values masked.
+
+=== camel-http - logHttpActivity masks the values of sensitive headers
+
+With `logHttpActivity=true`, the `LoggingHttpActivityListener` now always masks the value of a request or response
+header that carries a credential, such as `Authorization`, `Proxy-Authorization`, `Cookie`, `Set-Cookie` and
+`X-Api-Key`, or that the HTTP client flags as sensitive, and logs for example `Authorization: xxxxx`. Before, these
+values were logged in clear text, even with `logMask=true`, as the masking formatter only masks `key=value`, XML and
+JSON shapes. The other headers and the
+body are masked as before, only when `logMask=true`.
 
 === camel-platform-http-main, camel-netty-http, camel-undertow - the Authorization header is removed after the login is checked
 
@@ -2330,7 +2447,7 @@ a success reply, and the exchange could stay inflight. Compared with 4.23:
   is restarted. Before, the error ended some loops silently (a polling task, a `seda` thread, every route on a shared
   `timer`) and left others running. A consumer that is pushed requests (such as HTTP or `direct`) only fails that
   request. A route that catches the `Error` explicitly keeps its consumer going. Not yet covered: a batch consumer that
-  does not check between the messages of a batch whether it may go on (such as `aws2-kinesis` or `couchdb`) routes the
+  does not check between the messages of a batch whether it may go on (such as `couchdb`) routes the
   rest of the batch it has already fetched before it stops, and a `VirtualMachineError` thrown by a `RoutePolicy`
   fails the exchange without stopping the consumer.
 * A polling consumer whose poll throws another `Error` (such as a `NoClassDefFoundError` of a client library) treats it
@@ -2910,6 +3027,18 @@ with code `1` (fix the route) instead of `70` (internal error), and prints the e
 The stack trace is in the log of the integration, and is no longer printed a second time on stderr (add `--verbose`
 for it). Scripts that checked for `70` after a failed start should check for `1`.
 
+=== camel-jbang - camel infra run names the connection details as properties
+
+The connection details that `camel infra run`, `camel infra get` and `camel infra ps --json` print (and that
+`camel infra run` writes to `~/.camel/infra-<service>-<pid>.json`) were named as the Java methods of the test-infra
+service, such as `getPort` and `getBootstrapServers`, often next to the same detail named as the Camel option, such as
+`port`. They are now named as properties: a getter loses its `get` (`getFtpRootDir` is `ftpRootDir`,
+`getBootstrapServers` is `bootstrapServers`), a getter of a detail that the service also names as the Camel option is
+left out (FTP prints `port`, not `getPort` as well), and so are the deprecated ones (`hostname` of FTP, use `host`).
+ClickHouse, Neo4j, OpenSearch, Pinecone, Weaviate, OPA, OpenFGA and Apicurio Registry now also print their details
+named as the options of their component, such as `serverUrl` of `camel-clickhouse`. A script that reads a `get...` key
+should read the key without `get`, or the Camel option.
+
 === camel-jbang - a Camel version that does not exist exits with 3
 
 A `--camel-version` that was never released, in `camel catalog`, `camel doc` and `camel validate`, now says
@@ -3081,6 +3210,25 @@ again after its ack deadline, and again after each later delivery.
 
 Manual acknowledgement (`ackMode=NONE`) is unchanged: the `GooglePubsubAcknowledge` of the synchronous consumer acks
 the ack ids of the exchange given to `ack` or `nack`, so that an aggregated exchange acks every grouped message.
+
+=== camel-google-pubsub - the consumer subscribes or pulls again after any failure, and has a health check
+
+A `google-pubsub` consumer no longer stops getting messages for good while its route stays started. Before, a
+subscriber loop ended after a non-retryable error (such as `PERMISSION_DENIED` while an IAM binding is changed, or
+`NOT_FOUND` while the subscription is created again, with the synchronous or the asynchronous pull), after credentials
+that could not be loaded when an asynchronous subscriber was created, and, without any log line, after an `Error` (such
+as a `NoClassDefFoundError` of client libraries that do not match). The consumer then received nothing until the route
+was restarted. Now such a failure is logged (the first one in a row at ERROR with its stack trace, the next ones in one
+WARN line), given to the `ExceptionHandler` (with `bridgeErrorHandler=true`, to the error handler of the route), and the
+loop subscribes or pulls again every 5 seconds until the cause is gone.
+
+The consumer has a readiness health check: the check of the consumer of the route (`consumer:<routeId>`, with the
+consumer health checks of Camel enabled, the default) is DOWN with the failure while a subscriber loop waits to subscribe
+or pull again. After failed attempts, an asynchronous subscriber only counts as working once it has run for 5 seconds.
+
+A `VirtualMachineError` (such as an `OutOfMemoryError`) of the consumer, or of a route of a message that it received,
+that the route did not catch now stops the consumer until the route is restarted, as for the other consumers that pull
+messages in a loop, and its health check is DOWN meanwhile.
 
 === camel-aws2-s3, camel-azure-storage-blob, camel-aws2-sqs - the consumer deletes or moves what it consumed
 
@@ -3499,6 +3647,15 @@ missing, or a setting of its login is missing. Before, a missing host failed onl
 The `hashicorp-secrets` dev console now shows the login (`Token`, `AppRole`, `Kubernetes` or `JWT`) instead of
 `OAuth Token`.
 
+=== camel-hashicorp-vault, camel-aws-secrets-manager - a failed reload after a secret update is tried again
+
+When the context reload that the secret refresh task triggers fails (for example a route cannot start), the update
+is no longer marked as seen: the next check of the task reloads again, up to 10 times in a row, and logs a warning
+each time. Each such reload stops and starts the routes, as any reload does. Before, the task did not reload again
+until the next update of a secret, and the routes that did not start stayed stopped. With SQS notification
+(`camel.vault.aws.useSqsNotification=true`), the notification of the update is deleted from the queue once the
+reload succeeded, instead of when it is received, so the queue delivers it again after a failed reload.
+
 === camel-hivemq - a body that does not convert to a byte array fails the exchange
 
 The `hivemq` producer published a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a
@@ -3668,16 +3825,16 @@ Each element of a `List` body is now read as text, and a `null` element fails wi
 Before, a `List` of other objects failed with a `ClassCastException` in the embedding model. An empty `List` now gives
 an empty `List` without calling the embedding model.
 
-The body, and each element of a `List` body, must now be text, bytes, a stream, a `Reader`, a file or a Spring AI
-`Document` (its text is embedded). Any other value, such as a `Map`, a POJO or a number, fails the exchange with an
-`InvalidPayloadException`. Before, such a body was embedded as its `toString()`, for example `{a=1, b=2}`, and a
-`Document` too. Convert the body to text before the endpoint, with `convertBodyTo(String.class)` or a marshal to JSON.
+A Spring AI `Document` body, or `List` element, is now embedded as its text. Before, it was embedded as its
+`toString()`.
 
-This also applies to bodies that Camel can convert to text but that are not in the list above, and that were embedded
-as their text before: a `char[]`, a Netty `ByteBuf` (for example from netty-http with `disableStreamCache=true`), and a
-custom type with its own type converter to `String`. A `List` with such an element fails too, as do a `Set` and an
-array of texts (only a `java.util.List` is embedded as a batch). Add `convertBodyTo(String.class)` before the
-endpoint for such a body, or convert each element of the `List` to a `String`.
+A body, or element of a `List` body, that Camel reads only as its `toString()`, such as a `Map` or a POJO, now fails
+the exchange with an `InvalidPayloadException`. Before, it was embedded as that `toString()`, for example `{a=1, b=2}`.
+Marshal such a body before the endpoint, to JSON for example, or, when its `toString()` is the text to embed, add
+`convertBodyTo(String.class)`. A `Set` and an array of texts fail too, as only a `java.util.List` is embedded as a
+batch. A body that Camel converts to its text is still embedded as that text: text, bytes, a stream, a `Reader`, a
+file, a `char[]`, a Netty `ByteBuf` (for example from netty-http with `disableStreamCache=true`), a number, a custom
+type with its own type converter to `String`, and a `UUID`, a `URI`, a `URL`, a `java.time` value or a `Date`.
 
 === camel-spring-ai-vector-store - DELETE takes the ids from the body first, and the embeddings headers go with a vector body
 
@@ -5265,6 +5422,20 @@ cluster. The policy now releases the lock when the last route that uses it is re
 it competes for the lock again when a route that uses it is added again (with the same or a new policy instance). So a
 route reloaded on the leader can now move to another node.
 
+=== camel-hazelcast - ReplicatedHazelcastAggregationRepository fails to start with optimistic=true
+
+A `ReplicatedHazelcastAggregationRepository` created with `optimistic=true` could never add a message to a stored group,
+nor complete a stored group: every such update failed with an `OptimisticLockingException` and was tried again, forever
+with the default retry policy of the Aggregate EIP. When two members started the same group at the same time, the first
+message of one of them was lost. A Hazelcast `ReplicatedMap` has no atomic compare-and-set, so the repository now fails
+to start with `optimistic=true` (an `IllegalArgumentException`), and so does the route that uses it. The only route that
+ran before with `optimistic=true` is one whose groups all complete on their first message (for example
+`completionSize(1)`), where the repository is never written; such a route now fails to start too, and runs again with
+`optimistic=false`. Use the repository with `optimistic=false` and without `optimisticLocking` on the Aggregate EIP; the
+xref:components::hazelcast-summary.adoc[Hazelcast component] page says when that mode is safe. When the Aggregate EIP
+has `optimisticLocking` turned on and uses a `ReplicatedHazelcastAggregationRepository` with `optimistic=false`, each
+message still fails, as before, now with an `UnsupportedOperationException` that says so.
+
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 
 The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
@@ -6584,6 +6755,17 @@ first ran is no longer served: its messages no longer reach the route and it no 
 sends, and the connection is closed. Clients that open a connection in this window must reconnect after the consumer
 has started.
 
+=== camel-undertow - a WebSocket message not sent within sendTimeout fails the exchange
+
+The `sendTimeout` option of a WebSocket producer (30 seconds by default) now applies to text messages, that is a
+`String` or `Reader` body, and to bodies converted to `String`. Before, it applied only to `byte[]` and `InputStream`
+bodies, so a text message to a peer that stopped reading stayed in flight, with its exchange, until the peer read it
+or the connection closed.
+
+A message that is not sent to a peer within `sendTimeout` now fails the exchange with a `CamelExchangeException`
+caused by a `TimeoutException`, and the connection to that peer is closed. Before, the timeout of a binary message
+only dropped the message, and the exchange completed as if it was sent. Set `sendTimeout` to `0` for no timeout.
+
 === camel-undertow, camel-vertx-http - CamelHttpPath with a query in the endpoint uri
 
 When the endpoint uri of an undertow or vertx-http producer has a query, the `CamelHttpPath` header now goes before
@@ -6966,8 +7148,10 @@ gets the UUID (or the timestamp), the first one too: `camel-<uuid>.txt`. The pro
 
 === camel-aws2-s3 - streaming upload writes concurrent exchanges one at a time
 
-With `streamingUploadMode=true` (without `timestampGroupingEnabled`), the producer now writes one exchange at a time,
-so exchanges sent concurrently (concurrent consumers, parallel splits, `threads()`) no longer lose objects or parts.
+With `streamingUploadMode=true`, the producer now writes one exchange at a time, so exchanges sent concurrently
+(concurrent consumers, parallel splits, `threads()`) no longer lose objects or parts. With `timestampGroupingEnabled`,
+the bytes of an exchange are no longer mixed with the bytes of another exchange of the same window, and the
+`streamingUploadTimeout` flush no longer cuts an exchange into two objects.
 The body of an exchange is read while the other exchanges of the same producer wait, and bodies that complete an
 upload of their own (`batchSize` or more, or `batchMessageNumber=1`) are no longer uploaded in parallel. To upload
 large bodies in parallel, use the producer without `streamingUploadMode`.
@@ -7217,15 +7401,43 @@ that many records, so with the default `delay` of 500 ms it can read up to about
 1000 records per shard in memory while they are routed. The KCL consumer (`useKclConsumers=true`) does not use this
 option.
 
-A graceful shutdown waits until the consumer has routed all the records of the poll that is running. With 1000 records
-per shard and a route that takes 50 ms per record, a poll takes about 50 seconds, which is more than the default
-xref:graceful-shutdown.adoc[shutdown timeout] of 45 seconds. The shutdown is then forced, and the records of the poll
-that are not routed yet fail with a `RouteStoppingException`. Before, a poll held one record per shard. Lower
-`maxResultsPerRequest`, or raise the shutdown timeout, so that the records of a poll are routed within the timeout.
+A stop or suspend of the route ends the poll after the record being routed (see the next section). With
+`shutdownRunningTask` set to `CompleteAllTasks`, a graceful shutdown waits until the consumer has routed all the
+records of the poll that is running: with 1000 records per shard and a route that takes 50 ms per record, a poll takes
+about 50 seconds, which is more than the default xref:graceful-shutdown.adoc[shutdown timeout] of 45 seconds. The
+shutdown is then forced, and the records of the poll that are not routed yet fail with a `RouteStoppingException`.
+Lower `maxResultsPerRequest`, or raise the shutdown timeout, so that the records of a poll are routed within the
+timeout.
 
 To keep the previous behaviour, set `maxResultsPerRequest=1`. See the
 xref:components::aws2-kinesis-component.adoc[AWS Kinesis component] for how `maxResultsPerRequest`, `delay` and
 `greedy` relate to the Kinesis read quotas of a shard.
+
+=== camel-aws2-kinesis - a stop or suspend ends the poll after the record being routed
+
+The polling consumer (without `useKclConsumers`) now stops routing the records of a `GetRecords` response when its
+route is stopped or suspended, after the record it is routing from each shard, as the other batch consumers do (such
+as `aws2-sqs`, `aws2-ddbstream` and `file`). Before, it routed all the records of the poll first (up to
+`maxResultsPerRequest` per shard), so with a slow route a stop could reach the shutdown timeout and be forced, and the
+records not routed by then failed with a `RouteStoppingException`.
+
+The consumer does not move past the records it did not route: after a resume it reads them again (with a new shard
+iterator at the first record it did not route). A route that is stopped and started again gets a new consumer, which starts
+from `iteratorType`, or from its resume strategy, as before. Routes that need the previous behaviour set
+`shutdownRunningTask` to `CompleteAllTasks`.
+
+=== camel-aws2-kinesis - the consumer reads the shards on a thread pool of its own
+
+The polling consumer (without `useKclConsumers` and `shardId`) now reads the shards of a stream, and routes their
+records, on a thread pool that Camel manages (threads named `Kinesis_shard_reader`), sized by the new option
+`maxConcurrentShards` (10 by default), and shut down when the consumer stops. Before, it read them with a parallel
+stream on the common fork-join pool of the JVM (threads named `ForkJoinPool.commonPool-worker-N`, shared with the rest
+of the JVM), plus the thread of the consumer: the number of shards read at the same time was the number of CPUs (at
+least 2), and could not be set per endpoint. A stream of one shard is read on the thread of the consumer, as before.
+
+On a machine with fewer than 10 CPUs, a stream with more shards than CPUs is now read with more shards at the same
+time, so more records are routed at the same time. Set `maxConcurrentShards` to limit it; `maxConcurrentShards=1`
+reads the shards one after the other on the thread of the consumer.
 
 === camel-aws2-kinesis - shardClosed=fail reports a closed shard once
 
@@ -7246,6 +7458,17 @@ When the consumer reads all the shards (no `shardId`) and the read of a shard fa
 other shards of the poll have been read and routed, with the exception of that shard (the failures of other shards
 are added as suppressed exceptions). Before, the poll failed as soon as one shard failed, with the exception wrapped
 by the parallel stream, while the other shards were still being read.
+
+=== camel-aws2-kinesis - the consumer is not ready before it has listed the shards
+
+The consumer (without `useKclConsumers`) reads the shards that its shard monitor lists with `ListShards`. Until that
+listing has succeeded once, the consumer is no longer reported ready, and a poll fails with an
+`IllegalStateException` whose cause is the error of the last `ListShards` (for example an `AccessDeniedException`
+without the `kinesis:ListShards` permission, or a `ResourceNotFoundException` for a stream that does not exist). The
+consumer health check (a readiness check) is then DOWN with that error, and each poll is reported to the exception
+handler of the consumer (with `bridgeErrorHandler`, to the error handler of the route), as for other poll failures;
+`backoffErrorThreshold` and `backoffMultiplier` make the consumer poll less often meanwhile. Before, such a consumer
+read nothing and was reported UP, and only the shard monitor logged a WARN.
 
 === camel-graphql - the credentials are only sent to the authority of httpUri
 
@@ -8946,7 +9169,7 @@ the exchange, as it reads a stream or a file and takes a String as it is, so the
 whatever the type of the body. Before, Gson wrote the bytes as a JSON array of numbers. A stream or a file body, which
 failed before, is now read as text as well.
 
-=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - sendNoop also applies to the consumer
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - sendNoop also applies to the consumer, and to a rename or delete
 
 The `sendNoop` option now also applies to the check a consumer makes before each poll, not only to the pre-write check
 of a producer, and its label is now `common,advanced` instead of `producer,advanced`. The default is still `true`, so a
@@ -8960,9 +9183,16 @@ For ftp and ftps the client does not notice a connection that the server has clo
 when the next operation fails, during the poll or while processing a file. After a failure caused by an I/O error, the
 consumer sends a noop before the next poll, and connects again if the noop fails. If the FTP server closes idle
 connections and the `delay` between polls is longer than its idle timeout, every other poll fails and is logged before
-the consumer connects again. Keep `sendNoop=true` for such a consumer. Whatever `sendNoop` is, the ftp and ftps
-consumer still sends a noop before it renames or deletes a file on the server, as it does for each processed file
-unless `noop=true`.
+the consumer connects again. Keep `sendNoop=true` for such a consumer.
+
+With `sendNoop=false`, ftp and ftps also no longer send a noop before they rename or delete a file on the server. The
+consumer sent one for each processed file unless `noop=true` (as it deletes or moves the file with `delete`, `move`,
+`preMove` or `moveFailed`, and more for `readLock=rename` and done files), and the producer before it renames a
+`tempFileName` to the target name or deletes an existing file or a done file. Such a rename or delete now only checks
+whether the client still regards itself as connected, as sftp and mina-sftp already did. If the server closed the idle
+connection while a long-running route processed the file, the rename or delete fails instead of connecting again first,
+so the file stays where it is and a later poll processes it again, unless an idempotent repository prevents that. Keep
+`sendNoop=true` for such a consumer. With the default `sendNoop=true` nothing changes.
 
 For sftp and mina-sftp the client notices a closed connection, but not one that dropped silently. For sftp the noop is
 a keep-alive message that does not wait for a reply, so it does not find such a connection either. For mina-sftp the

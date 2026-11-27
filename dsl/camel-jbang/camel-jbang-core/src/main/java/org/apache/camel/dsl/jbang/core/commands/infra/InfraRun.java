@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
@@ -364,24 +365,7 @@ public class InfraRun extends InfraBaseCommand {
             throw e;
         }
 
-        Method[] serviceMethods = cl.loadClass(serviceInterface).getDeclaredMethods();
-        Map<String, Object> properties = new TreeMap<>();
-        for (Method method : serviceMethods) {
-            // Skip methods that return complex objects or have side effects
-            if (method.getParameterCount() == 0
-                    && !method.getName().equals("registerProperties")
-                    && !method.getName().equals("getContainer")) {
-                Object value = null;
-                try {
-                    value = method.invoke(actualService);
-                } catch (Exception e) {
-                    // ignore
-                }
-                if (value != null) {
-                    properties.put(method.getName(), value);
-                }
-            }
-        }
+        Map<String, Object> properties = serviceProperties(cl.loadClass(serviceInterface), actualService);
 
         if (testInfraService.serviceVersion() != null && !testInfraService.serviceVersion().isEmpty()) {
             properties.put("serviceVersion", testInfraService.serviceVersion());
@@ -464,6 +448,68 @@ public class InfraRun extends InfraBaseCommand {
         shutdownInfra(closed, logFile, jsonFile, actualService, replacedProperties);
 
         return 0;
+    }
+
+    /**
+     * The connection details of a service, named as the options of the Camel component it is for (CAMEL-22083): a
+     * method {@code port()} is {@code port}, and a getter {@code getFtpRootDir()} is {@code ftpRootDir}. A getter that
+     * has a method of the same name, such as {@code getPort()} next to {@code port()}, and a deprecated method are left
+     * out.
+     */
+    static Map<String, Object> serviceProperties(Class<?> serviceInterface, Object service) {
+        Map<String, Method> methods = new TreeMap<>();
+        for (Method method : serviceInterface.getDeclaredMethods()) {
+            // skip methods that take arguments, return complex objects or have side effects
+            if (method.getParameterCount() != 0 || method.isAnnotationPresent(Deprecated.class)
+                    || method.getName().equals("registerProperties") || method.getName().equals("getContainer")) {
+                continue;
+            }
+            String name = propertyName(method.getName());
+            Method other = methods.get(name);
+            // the method named as the property wins over its getter
+            if (other == null || other.getName().length() > method.getName().length()) {
+                methods.put(name, method);
+            }
+        }
+        Map<String, Object> properties = new TreeMap<>();
+        methods.forEach((name, method) -> {
+            Object value = null;
+            try {
+                value = method.invoke(service);
+            } catch (Exception e) {
+                // ignore
+            }
+            if (value != null) {
+                properties.put(name, value);
+            }
+        });
+        return properties;
+    }
+
+    /**
+     * The property of a method: the name of a getter without get or is ({@code getFtpRootDir} is {@code ftpRootDir},
+     * {@code getCQL3Port} is {@code cql3Port}), else the name of the method.
+     */
+    static String propertyName(String method) {
+        String name = null;
+        if (method.length() > 3 && method.startsWith("get") && Character.isUpperCase(method.charAt(3))) {
+            name = method.substring(3);
+        } else if (method.length() > 2 && method.startsWith("is") && Character.isUpperCase(method.charAt(2))) {
+            name = method.substring(2);
+        }
+        if (name == null) {
+            return method;
+        }
+        // the leading capitals in lower case, but the last of them when a word follows: CQL3Port is cql3Port
+        int upper = 0;
+        while (upper < name.length() && Character.isUpperCase(name.charAt(upper))) {
+            upper++;
+        }
+        if (upper == name.length()) {
+            return name.toLowerCase(Locale.ROOT);
+        }
+        int lower = upper > 1 && Character.isLowerCase(name.charAt(upper)) ? upper - 1 : upper;
+        return name.substring(0, lower).toLowerCase(Locale.ROOT) + name.substring(lower);
     }
 
     /**

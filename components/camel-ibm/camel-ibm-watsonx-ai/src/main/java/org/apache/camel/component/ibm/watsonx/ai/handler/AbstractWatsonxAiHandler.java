@@ -18,14 +18,8 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
@@ -39,7 +33,6 @@ import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.support.FileInput;
-import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.support.BodyFacts;
 
 /**
@@ -87,18 +80,18 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
     /**
      * Extracts list of inputs from exchange body or header.
      */
-    @SuppressWarnings("unchecked")
     protected List<String> getInputs(Exchange exchange) {
         Message in = exchange.getIn();
 
         // Try header first
-        List<String> inputs = in.getHeader(WatsonxAiConstants.INPUTS, List.class);
+        List<String> inputs = toInputs(in.getHeader(WatsonxAiConstants.INPUTS, List.class),
+                "header '" + WatsonxAiConstants.INPUTS + "'");
 
         // Fall back to body
-        if (inputs == null || inputs.isEmpty()) {
+        if (inputs.isEmpty()) {
             Object body = in.getBody();
-            if (body instanceof List) {
-                inputs = (List<String>) body;
+            if (body instanceof List<?> list) {
+                inputs = toInputs(list, "message body");
             } else if (body != null) {
                 // Single input, read as text (as textGeneration does), so a byte[] or InputStream body works too
                 String text = readAsText(in, "the input text");
@@ -113,6 +106,31 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
                     "Input texts must be provided via message body or header '" + WatsonxAiConstants.INPUTS + "'");
         }
 
+        return inputs;
+    }
+
+    /**
+     * Checks the elements of a list of input texts: a String is an input text, and so is a value whose
+     * {@code toString()} is its text, such as a UUID or a URI (as for a single body since CAMEL-26521). Any other
+     * element fails with its index and class, instead of reaching the watsonx.ai SDK as something that is not text.
+     */
+    private static List<String> toInputs(List<?> list, String source) {
+        if (list == null || list.isEmpty()) {
+            return List.of();
+        }
+        List<String> inputs = new ArrayList<>(list.size());
+        for (int i = 0; i < list.size(); i++) {
+            Object element = list.get(i);
+            if (element instanceof String text) {
+                inputs.add(text);
+            } else if (BodyFacts.isTextValue(element)) {
+                inputs.add(element.toString());
+            } else {
+                throw new IllegalArgumentException(
+                        "The input texts in the " + source + " must be Strings, but the element at index " + i + " is "
+                                                   + (element == null ? "null" : element.getClass().getName()));
+            }
+        }
         return inputs;
     }
 
@@ -207,7 +225,7 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
     protected static String readAsText(Message in, String what) {
         Object body = in.getBody();
         String text = in.getBody(String.class);
-        if (text != null && isOnlyToString(body, text)) {
+        if (text != null && BodyFacts.isOnlyToString(body, text)) {
             throw new IllegalArgumentException(
                     "The message body must be " + what + " as text (a String, bytes, a stream or a file), but it is a "
                                                + body.getClass().getName()
@@ -217,27 +235,6 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
                                                + " convertBodyTo(String.class)");
         }
         return text;
-    }
-
-    /**
-     * Whether the text is no more than the {@code toString()} of the body, which {@code ToStringTypeConverter} gives
-     * for an object no type converter reads as text. A payload (text, bytes, a stream, a file) or a single value (a
-     * number, a boolean) is text by itself, whatever its {@code toString()}.
-     */
-    private static boolean isOnlyToString(Object body, String text) {
-        return BodyFacts.kindOf(body) != BodyTypeRegistry.Kind.PAYLOAD && !isTextValue(body)
-                && text.equals(body.toString());
-    }
-
-    /**
-     * A value whose {@code toString()} is its text, rather than a dump of its fields: an id, an address or a point in
-     * time. {@link BodyFacts} counts text, a number, a boolean and an enum as a payload, but not these, and the type
-     * converter has nothing for them either, so they would otherwise be read as only a {@code toString()} (raised in
-     * the review of CAMEL-26521).
-     */
-    private static boolean isTextValue(Object body) {
-        return body instanceof UUID || body instanceof URI || body instanceof URL || body instanceof Temporal
-                || body instanceof TemporalAmount || body instanceof Date;
     }
 
     /**

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.pdf;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -27,6 +31,10 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 /**
  * Create, modify or extract content from PDF documents.
@@ -66,6 +74,29 @@ public class PdfEndpoint extends DefaultEndpoint {
     @Override
     public boolean isRemote() {
         return false;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        String fontFile = pdfConfiguration.getFontFile();
+        if (fontFile != null && pdfConfiguration.getFontFileContent() == null) {
+            // load the font once, and fail when the endpoint is created rather than with the first message
+            byte[] content;
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), fontFile);
+            try {
+                content = is.readAllBytes();
+            } finally {
+                IOHelper.close(is);
+            }
+            // check that PDFBox can use the font, such as not an OpenType font with CFF outlines
+            try (PDDocument document = new PDDocument()) {
+                PDType0Font.load(document, new ByteArrayInputStream(content));
+            } catch (IOException e) {
+                throw new IOException(String.format("Cannot use the fontFile %s: %s", fontFile, e.getMessage()), e);
+            }
+            pdfConfiguration.setFontFileContent(content);
+        }
     }
 
     @Override

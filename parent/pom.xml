@@ -62,7 +62,7 @@
         <activemq6-version>6.4.0</activemq6-version>
         <activemq-artemis-version>2.57.0</activemq-artemis-version>
         <aesh-version>3.19.2</aesh-version>
-        <agroal-version>3.2.1</agroal-version>
+        <agroal-version>3.3</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <alibabacloud-oss-version>0.6.1</alibabacloud-oss-version>
         <aliyun-sdk-mns-version>2.0.0</aliyun-sdk-mns-version>
@@ -103,7 +103,7 @@
         <azure-storage-blob-changefeed-version>12.0.0-beta.40</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
         <bouncycastle-version>1.87</bouncycastle-version>
-        <box-java-sdk-version>4.16.4</box-java-sdk-version>
+        <box-java-sdk-version>5.21.0</box-java-sdk-version>
         <braintree-gateway-version>3.55.1</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.7.0</build-helper-maven-plugin-version>
         <bytebuddy-version>1.18.16</bytebuddy-version>
@@ -368,7 +368,7 @@
         <langchain4j-version>1.24.0</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
         <langchain4j-beta-version>1.24.0-beta34</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
-        <langchain4j-community-version>1.23.0-beta33</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
+        <langchain4j-community-version>1.24.0-beta34</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
@@ -421,7 +421,7 @@
         <mybatis-version>3.6.0</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
         <neo4j-version>6.3.0</neo4j-version>
-        <netty-version>4.2.20.Final</netty-version>
+        <netty-version>4.2.21.Final</netty-version>
         <networknt-json-schema-validator-version>3.0.9</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.10</nimbus-jose-jwt>
         <olingo2-version>2.0.13</olingo2-version>

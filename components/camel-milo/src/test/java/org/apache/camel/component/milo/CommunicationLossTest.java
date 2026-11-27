@@ -19,6 +19,7 @@ package org.apache.camel.component.milo;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -30,6 +31,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
@@ -233,12 +235,27 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
             assertSame(client, connection.getOpcUaClient());
             assertEquals(sessionId, client.getSession().getSessionId());
 
-            // changes arrive as before
+            // changes arrive as before: the OPC UA subscription republish after the first connection drop may deliver
+            // stale "Foo" notifications after the reset, so we wait for a "Bar" value instead of asserting on
+            // message(0) which could race against those late republish deliveries
             item1Endpoint.reset();
-            item1Endpoint.expectedMessageCount(1);
-            testBody(item1Endpoint.message(0), assertGoodValue("Bar"));
             producer1.sendBody("Bar");
-            item1Endpoint.assertIsSatisfied();
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+                List<Exchange> exchanges = item1Endpoint.getReceivedExchanges();
+                // Find the last good-status exchange and verify its value is "Bar".
+                // Using the last good exchange (not anyMatch) ensures that a stale "Foo" republished
+                // after the reset cannot satisfy the assertion even if it arrives after "Bar".
+                Optional<Exchange> lastGood = exchanges.stream()
+                        .filter(e -> {
+                            DataValue v = e.getMessage().getBody(DataValue.class);
+                            return v != null && v.getStatusCode().isGood();
+                        })
+                        .reduce((first, second) -> second);
+                assertTrue(lastGood.isPresent(), "Expected a good-status value notification after reset, but none arrived");
+                DataValue lastGoodValue = lastGood.get().getMessage().getBody(DataValue.class);
+                assertEquals("Bar", lastGoodValue.getValue().getValue(),
+                        "Expected last good value to be 'Bar' after reset");
+            });
 
             // a second loss reports the node once more
             item1Endpoint.reset();

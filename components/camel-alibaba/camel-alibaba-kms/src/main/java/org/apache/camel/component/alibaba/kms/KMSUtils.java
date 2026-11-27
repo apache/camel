@@ -16,16 +16,10 @@
  */
 package org.apache.camel.component.alibaba.kms;
 
-import java.net.URI;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
 import java.util.Base64;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import com.aliyun.kms20160120.Client;
 import com.aliyun.kms20160120.models.DecryptResponse;
@@ -41,7 +35,6 @@ import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.kms.constants.KMSOperations;
 import org.apache.camel.component.alibaba.kms.constants.KMSProperties;
 import org.apache.camel.component.alibaba.kms.models.ClientConfigurations;
-import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.support.BodyFacts;
 import org.apache.camel.util.ObjectHelper;
 
@@ -116,8 +109,7 @@ public final class KMSUtils {
             return null;
         }
         String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
-        if (text != null && BodyFacts.kindOf(value) != BodyTypeRegistry.Kind.PAYLOAD && !isTextValue(value)
-                && text.equals(value.toString())) {
+        if (text != null && BodyFacts.isOnlyToString(value, text)) {
             throw new IllegalArgumentException(
                     "The " + KMSProperties.PLAINTEXT + " " + where + " must be the plaintext as text, but it is a "
                                                + value.getClass().getName()
@@ -125,17 +117,6 @@ public final class KMSUtils {
                                                + " example with marshal().json(), or set it to the text");
         }
         return text;
-    }
-
-    /**
-     * A value whose toString() is its text, rather than a dump of its fields: an id, an address or a point in time.
-     * BodyFacts counts text, a number, a boolean and an enum as a payload, but not these, and the type converter has
-     * nothing for them either, so they would otherwise be read as only a toString() (raised in the review of
-     * CAMEL-26521, which uses the same rule).
-     */
-    private static boolean isTextValue(Object value) {
-        return value instanceof UUID || value instanceof URI || value instanceof URL || value instanceof Temporal
-                || value instanceof TemporalAmount || value instanceof Date;
     }
 
     /**

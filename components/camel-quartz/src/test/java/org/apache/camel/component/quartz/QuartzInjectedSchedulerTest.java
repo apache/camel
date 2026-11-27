@@ -35,6 +35,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
@@ -89,6 +90,11 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
 
     @BeforeEach
     void captureWarnings() {
+        // the test classes run in parallel: while another one is still starting log4j, the logger has the default
+        // configuration, which log4j replaces once it has read log4j2.properties, and the appender attached to it is
+        // stopped and lost (CAMEL-27281), so attach it once log4j has started
+        LoggerContext logging = componentLogger().getContext();
+        await().atMost(30, TimeUnit.SECONDS).until(logging::isStarted);
         appender.start();
         componentLogger().addAppender(appender);
         // addAppender creates a non-additive logger config, which would hide this logger from the root appenders
@@ -261,6 +267,8 @@ class QuartzInjectedSchedulerTest extends CamelTestSupport {
                + ", loggerConfig=" + logger.get().getName()
                + ", additive=" + logger.isAdditive()
                + ", warnEnabled=" + logger.isWarnEnabled()
+               + ", loggingStarted=" + logger.getContext().isStarted()
+               + ", loggingConfiguration=" + logger.getContext().getConfiguration().getClass().getSimpleName()
                + ", quartzComponentStatus=" + quartzComponentStatus()
                + ", thread=" + Thread.currentThread().getName();
     }

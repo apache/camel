@@ -804,14 +804,24 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             }
         }
 
-        url = HttpUtil.recreateUrl(map, url);
-
         parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();
+        Map<String, Object> componentProperties = (Map<String, Object>) parameters.remove("component");
+
+        // the options of this producer (such as the login options given on a rest-openapi endpoint) are part of
+        // the endpoint uri, as on a plain http endpoint, so producers with different options get their own endpoint,
+        // instead of all of them using the endpoint (and the login) of the first producer created for the same url
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            if (isUriValue(entry.getValue())) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        url = HttpUtil.recreateUrl(map, url);
 
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component, one such case is when we switch from "http" to "https" component name
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, componentProperties);
 
         HttpEndpoint endpoint = (HttpEndpoint) camelContext.getEndpoint(url, parameters);
 
@@ -828,6 +838,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         ServiceHelper.startService(endpoint);
 
         return endpoint.createProducer();
+    }
+
+    /**
+     * Whether the option value can be written in an endpoint uri. Other values (such as a bean instance) are still
+     * given to the endpoint, but are not part of its uri.
+     */
+    private static boolean isUriValue(Object value) {
+        return value instanceof CharSequence || value instanceof Number || value instanceof Boolean
+                || value instanceof Character || value instanceof Enum<?>;
     }
 
     public HttpClientConfigurer getHttpClientConfigurer() {

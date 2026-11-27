@@ -20,7 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
+import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
@@ -34,13 +36,35 @@ import io.modelcontextprotocol.spec.McpSchema;
  */
 public final class McpPromptSdkSupport {
 
+    // an engine without a caller identity, such as stdio
+    private static final Function<McpTransportContext, McpToolCallContext> NO_CALLER
+            = transportContext -> McpToolCallContext.EMPTY;
+
     private McpPromptSdkSupport() {
     }
 
     public static McpServerFeatures.SyncPromptSpecification buildSpecification(
             McpServerPrompt prompt, McpJsonMapper jsonMapper) {
+        return buildSpecification(prompt, jsonMapper, NO_CALLER);
+    }
+
+    /**
+     * Builds the specification for the MCP SDK session server, passing the caller of each {@code prompts/get} to the
+     * prompt handler, so the bridge stamps the caller identity onto the prompt exchange.
+     *
+     * @param  prompt        the prompt to serve
+     * @param  jsonMapper    the JSON mapper of the MCP server
+     * @param  callerContext derives the caller context from the MCP transport context of the request; it returns
+     *                       {@link McpToolCallContext#EMPTY} when there is no caller identity
+     * @return               the prompt specification
+     * @since                4.24
+     */
+    public static McpServerFeatures.SyncPromptSpecification buildSpecification(
+            McpServerPrompt prompt, McpJsonMapper jsonMapper,
+            Function<McpTransportContext, McpToolCallContext> callerContext) {
         return new McpServerFeatures.SyncPromptSpecification(
-                buildPrompt(prompt), (exchange, request) -> getPrompt(prompt, request, jsonMapper));
+                buildPrompt(prompt), (exchange, request) -> getPrompt(prompt, request, jsonMapper,
+                        callerContext.apply(exchange.transportContext())));
     }
 
     /**
@@ -50,8 +74,27 @@ public final class McpPromptSdkSupport {
      */
     public static McpStatelessServerFeatures.SyncPromptSpecification buildStatelessSpecification(
             McpServerPrompt prompt, McpJsonMapper jsonMapper) {
+        return buildStatelessSpecification(prompt, jsonMapper, NO_CALLER);
+    }
+
+    /**
+     * Builds the specification for the MCP SDK stateless server, which serves each request without a session, passing
+     * the caller of each {@code prompts/get} to the prompt handler, so the bridge stamps the caller identity onto the
+     * prompt exchange.
+     *
+     * @param  prompt        the prompt to serve
+     * @param  jsonMapper    the JSON mapper of the MCP server
+     * @param  callerContext derives the caller context from the MCP transport context of the request; it returns
+     *                       {@link McpToolCallContext#EMPTY} when there is no caller identity
+     * @return               the prompt specification
+     * @since                4.24
+     */
+    public static McpStatelessServerFeatures.SyncPromptSpecification buildStatelessSpecification(
+            McpServerPrompt prompt, McpJsonMapper jsonMapper,
+            Function<McpTransportContext, McpToolCallContext> callerContext) {
         return new McpStatelessServerFeatures.SyncPromptSpecification(
-                buildPrompt(prompt), (transportContext, request) -> getPrompt(prompt, request, jsonMapper));
+                buildPrompt(prompt), (transportContext, request) -> getPrompt(prompt, request, jsonMapper,
+                        callerContext.apply(transportContext)));
     }
 
     private static McpSchema.Prompt buildPrompt(McpServerPrompt prompt) {
@@ -70,7 +113,8 @@ public final class McpPromptSdkSupport {
     }
 
     private static McpSchema.GetPromptResult getPrompt(
-            McpServerPrompt prompt, McpSchema.GetPromptRequest request, McpJsonMapper jsonMapper) {
+            McpServerPrompt prompt, McpSchema.GetPromptRequest request, McpJsonMapper jsonMapper,
+            McpToolCallContext callerContext) {
         Map<String, String> arguments = new LinkedHashMap<>();
         if (request.arguments() != null) {
             request.arguments().forEach((name, value) -> {
@@ -82,7 +126,7 @@ public final class McpPromptSdkSupport {
                 arguments.put(name, stringValue);
             });
         }
-        McpPromptResult result = prompt.handler().get(arguments);
+        McpPromptResult result = prompt.handler().get(arguments, callerContext);
         if (result == null) {
             throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
                     .message("Prompt execution failed")
