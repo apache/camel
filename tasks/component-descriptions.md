@@ -119,7 +119,7 @@ or removes its row.
 | camel-azure-storage-blob | azure-storage-blob |  |
 | camel-azure-storage-datalake | azure-storage-datalake |  |
 | camel-azure-storage-queue | azure-storage-queue | yes |
-| camel-bean | bean, class |  |
+| camel-bean | bean, class | yes |
 | camel-bean-validator | bean-validator |  |
 | camel-bonita | bonita | yes |
 | camel-box | box |  |

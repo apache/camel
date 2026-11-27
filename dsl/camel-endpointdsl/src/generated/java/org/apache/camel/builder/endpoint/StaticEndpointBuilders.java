@@ -3184,7 +3184,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Bean (camel-bean)
-     * Invoke methods of Java beans stored in Camel registry.
+     * Invoke a method of a Java bean, looked up by name in the Camel registry
+     * or created from a class name.
      * 
      * Category: core,script
      * Since: 1.0
@@ -3193,7 +3194,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>bean:beanName</code>
      * 
      * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
+     * The name of the bean to invoke. The bean component looks it up in the
+     * Camel registry and, when no bean has that name, takes it as a class name
+     * and creates an instance. The class component takes it as the fully
+     * qualified class name.
      * 
      * @param path beanName
      * @return the dsl builder
@@ -3203,7 +3207,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Bean (camel-bean)
-     * Invoke methods of Java beans stored in Camel registry.
+     * Invoke a method of a Java bean, looked up by name in the Camel registry
+     * or created from a class name.
      * 
      * Category: core,script
      * Since: 1.0
@@ -3212,7 +3217,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>bean:beanName</code>
      * 
      * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
+     * The name of the bean to invoke. The bean component looks it up in the
+     * Camel registry and, when no bean has that name, takes it as a class name
+     * and creates an instance. The class component takes it as the fully
+     * qualified class name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -3806,7 +3814,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Class (camel-bean)
-     * Invoke methods of Java beans specified by class name.
+     * Invoke a method of a Java bean given by its fully qualified class name.
      * 
      * Category: core,script
      * Since: 2.4
@@ -3815,7 +3823,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>class:beanName</code>
      * 
      * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
+     * The name of the bean to invoke. The bean component looks it up in the
+     * Camel registry and, when no bean has that name, takes it as a class name
+     * and creates an instance. The class component takes it as the fully
+     * qualified class name.
      * 
      * @param path beanName
      * @return the dsl builder
@@ -3825,7 +3836,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Class (camel-bean)
-     * Invoke methods of Java beans specified by class name.
+     * Invoke a method of a Java bean given by its fully qualified class name.
      * 
      * Category: core,script
      * Since: 2.4
@@ -3834,7 +3845,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>class:beanName</code>
      * 
      * Path parameter: beanName (required)
-     * Sets the name of the bean to invoke
+     * The name of the bean to invoke. The bean component looks it up in the
+     * Camel registry and, when no bean has that name, takes it as a class name
+     * and creates an instance. The class component takes it as the fully
+     * qualified class name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -992,7 +992,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Bean (camel-bean)
-     * Invoke methods of Java beans stored in Camel registry.
+     * Invoke a method of a Java bean, looked up by name in the Camel registry
+     * or created from a class name.
      * 
      * Category: core,script
      * Since: 1.0
@@ -1165,7 +1166,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Class (camel-bean)
-     * Invoke methods of Java beans specified by class name.
+     * Invoke a method of a Java bean given by its fully qualified class name.
      * 
      * Category: core,script
      * Since: 2.4
