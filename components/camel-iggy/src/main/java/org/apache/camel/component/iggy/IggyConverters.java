@@ -46,10 +46,15 @@ public final class IggyConverters {
             return Partitioning.balanced();
         }
         if (lower.startsWith(PARTITION_ID)) {
-            return Partitioning.partitionId(Long.valueOf(value.substring(PARTITION_ID.length()).trim()));
+            try {
+                return Partitioning.partitionId(Long.valueOf(value.substring(PARTITION_ID.length()).trim()));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(
+                        "Invalid partition id in: " + text + ". Use partitionId:<partition id>", e);
+            }
         }
         if (lower.startsWith(MESSAGES_KEY)) {
-            return Partitioning.messagesKey(value.substring(MESSAGES_KEY.length()));
+            return Partitioning.messagesKey(value.substring(MESSAGES_KEY.length()).trim());
         }
         throw new IllegalArgumentException(
                 "Unknown partitioning: " + text + ". Use balanced, partitionId:<partition id> or messagesKey:<key>");

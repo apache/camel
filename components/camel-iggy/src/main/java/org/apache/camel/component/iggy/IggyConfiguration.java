@@ -272,6 +272,9 @@ public class IggyConfiguration implements Cloneable {
         this.partitionId = partitionId;
     }
 
+    /**
+     * @deprecated the consumer polls the topic with one task, so a value above 1 only adds idle threads
+     */
     @Deprecated(since = "4.24.0")
     public int getConsumersCount() {
         return consumersCount;

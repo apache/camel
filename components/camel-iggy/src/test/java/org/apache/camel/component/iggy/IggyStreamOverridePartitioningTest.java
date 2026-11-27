@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -82,6 +83,23 @@ public class IggyStreamOverridePartitioningTest extends CamelTestSupport {
     void anUnknownPartitioningFailsTheEndpoint() {
         assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("iggy:topic?streamName=stream&partitioning=roundRobin"));
+    }
+
+    @Test
+    void theKeyOfMessagesKeyIsTrimmed() {
+        Partitioning partitioning = IggyConverters.toPartitioning("messagesKey: order-1");
+
+        assertEquals(PartitioningKind.MessagesKey, partitioning.kind());
+        assertArrayEquals("order-1".getBytes(StandardCharsets.UTF_8), partitioning.value());
+    }
+
+    @Test
+    void anInvalidPartitionIdFailsWithTheExpectedFormat() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> IggyConverters.toPartitioning("partitionId:abc"));
+
+        assertEquals("Invalid partition id in: partitionId:abc. Use partitionId:<partition id>", e.getMessage());
+        assertInstanceOf(NumberFormatException.class, e.getCause());
     }
 
     private void assertPartitioning(String text, PartitioningKind kind, byte[] value) {
