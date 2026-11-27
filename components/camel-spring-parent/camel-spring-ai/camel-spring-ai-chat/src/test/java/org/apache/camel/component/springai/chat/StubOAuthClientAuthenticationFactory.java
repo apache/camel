@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.springai.chat;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.OAuthClientAuthenticationFactory;
 import org.apache.camel.spi.OAuthClientConfig;
@@ -23,8 +28,38 @@ import org.apache.camel.spi.OAuthClientConfig;
 /**
  * Stands in for camel-oauth in tests: returns a fixed token per profile, without calling a token endpoint. Registered
  * in {@code META-INF/services/org/apache/camel/oauth-client-authentication-factory}.
+ *
+ * <p>
+ * Tests that need rotating tokens can call {@link #registerRotating(String, String...)} before the test and
+ * {@link #reset(String)} after.
  */
 public class StubOAuthClientAuthenticationFactory implements OAuthClientAuthenticationFactory {
+
+    private static final Map<String, Supplier<String>> TOKEN_SUPPLIERS = new ConcurrentHashMap<>();
+
+    /**
+     * Registers a rotating token sequence for the given profile. Successive calls to
+     * {@link #resolveToken(CamelContext, String)} return the tokens in order; the last token is repeated.
+     */
+    static void registerRotating(String profileName, String... tokens) {
+        AtomicInteger idx = new AtomicInteger(0);
+        TOKEN_SUPPLIERS.put(profileName, () -> tokens[Math.min(idx.getAndIncrement(), tokens.length - 1)]);
+    }
+
+    /**
+     * Registers a fixed token that can be changed later with another call. Use this when the exact number of requests
+     * per session is unknown and each session must carry a specific token.
+     */
+    static void registerFixed(String profileName, String token) {
+        TOKEN_SUPPLIERS.put(profileName, () -> token);
+    }
+
+    /**
+     * Removes any rotating token supplier for the given profile, reverting to the default fixed-token behavior.
+     */
+    static void reset(String profileName) {
+        TOKEN_SUPPLIERS.remove(profileName);
+    }
 
     static String tokenFor(String profileName) {
         return "token-for-" + profileName;
@@ -37,7 +72,8 @@ public class StubOAuthClientAuthenticationFactory implements OAuthClientAuthenti
 
     @Override
     public String resolveToken(CamelContext context, String profileName) {
-        return tokenFor(profileName);
+        Supplier<String> supplier = TOKEN_SUPPLIERS.get(profileName);
+        return supplier != null ? supplier.get() : tokenFor(profileName);
     }
 
     @Override

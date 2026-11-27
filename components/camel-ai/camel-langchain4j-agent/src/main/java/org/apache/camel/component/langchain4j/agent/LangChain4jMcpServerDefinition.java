@@ -217,6 +217,15 @@ public class LangChain4jMcpServerDefinition {
         return clientBuilder.build();
     }
 
+    /**
+     * Builds the MCP transport for this server definition.
+     *
+     * <p>
+     * When an {@code oauthProfile} is configured, the OAuth token is resolved lazily via a {@code Supplier} on every
+     * outgoing request rather than eagerly at startup. This enables short-lived tokens to be refreshed when they
+     * expire, at the cost of deferring misconfiguration errors (wrong profile name, unreachable OIDC server) to the
+     * first request rather than surfacing them at endpoint start.
+     */
     @SuppressWarnings("deprecation")
     private McpTransport buildTransport(CamelContext camelContext) throws Exception {
         if ("http".equalsIgnoreCase(transportType) || "streamableHttp".equalsIgnoreCase(transportType)) {

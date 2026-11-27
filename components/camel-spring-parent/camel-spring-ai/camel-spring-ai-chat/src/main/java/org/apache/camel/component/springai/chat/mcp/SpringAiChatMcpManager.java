@@ -151,6 +151,15 @@ public class SpringAiChatMcpManager {
         LOG.debug("All MCP clients closed");
     }
 
+    /**
+     * Creates the MCP transport for the given server configuration.
+     *
+     * <p>
+     * When an {@code oauthProfile} is configured, the OAuth token is resolved lazily via a per-request customizer
+     * rather than eagerly at startup. This enables short-lived tokens to be refreshed when they expire, at the cost of
+     * deferring misconfiguration errors (wrong profile name, unreachable OIDC server) to the first request rather than
+     * surfacing them at endpoint start.
+     */
     private McpClientTransport createTransport(
             String serverName, String transportType, Map<String, String> props, CamelContext camelContext)
             throws Exception {

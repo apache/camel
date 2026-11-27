@@ -1119,7 +1119,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     }
 
     protected String resolveApiKey() throws Exception {
-        // Priority: URI parameter > environment variable > system property
+        // Priority: configuration property (apiKey) > environment variable > system property
         // OAuth profile is handled separately in createClient() via BearerTokenCredential.create(Supplier)
         // so that tokens are re-resolved on every request rather than once at startup.
         if (ObjectHelper.isNotEmpty(configuration.getApiKey())) {
