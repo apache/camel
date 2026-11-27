@@ -48,6 +48,22 @@ public class NettyHttpPostFormFieldWithoutValueTest extends BaseNettyTestSupport
         assertNull(exchange.getMessage().getHeader(TEXT));
     }
 
+    @Test
+    public void testFieldWithEmptyName() {
+        // a field such as =x has an empty name, which the WHATWG parser keeps, and so does the binding; the
+        // response does not write it, as it is not a valid header name
+        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/empty", e -> {
+            e.getIn().setBody("=x&a=1");
+            e.getIn().setHeader(Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded");
+            e.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
+        });
+
+        assertNull(exchange.getException());
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("empty=[x] a=1", exchange.getMessage().getBody(String.class));
+        assertNull(exchange.getMessage().getHeader(""));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -55,6 +71,9 @@ public class NettyHttpPostFormFieldWithoutValueTest extends BaseNettyTestSupport
                 from("netty-http:http://localhost:{{port}}/echo")
                         .process(e -> e.getMessage().setBody(
                                 "text=[" + e.getIn().getHeader(TEXT) + "] a=" + e.getIn().getHeader("a")));
+                from("netty-http:http://localhost:{{port}}/empty")
+                        .process(e -> e.getMessage().setBody(
+                                "empty=[" + e.getIn().getHeader("") + "] a=" + e.getIn().getHeader("a")));
             }
         };
     }
