@@ -106,6 +106,7 @@ class SensitiveUtilsTest {
 
         // a well-known header that ends in such a word but carries no secret
         assertThat(SensitiveUtils.isSensitiveHeader("Idempotency-Key")).isFalse();
+        assertThat(SensitiveUtils.isSensitiveHeader("Access-Control-Allow-Credentials")).isFalse();
 
         // ordinary headers
         assertThat(SensitiveUtils.isSensitiveHeader("Content-Type")).isFalse();

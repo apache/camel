@@ -322,6 +322,7 @@ public final class SensitiveUtils {
     // well-known HTTP headers whose name ends in a word that marks a credential but that carry no secret,
     // in lower case without dashes
     private static final Set<String> NOT_SENSITIVE_HEADERS = Set.of(
+            "accesscontrolallowcredentials",
             "idempotencykey");
 
     // the words that mark a credential when they end the name of an HTTP header, in lower case
