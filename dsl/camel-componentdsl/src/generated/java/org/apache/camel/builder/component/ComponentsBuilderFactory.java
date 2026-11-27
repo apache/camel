@@ -839,8 +839,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
-     * To read and write records to the CosmosDB database on Azure cloud
-     * platform.
+     * Store, read and query items in Azure Cosmos DB, and receive the changes
+     * of a container from its change feed.
      * 
      * Category: cloud,database
      * Since: 3.10

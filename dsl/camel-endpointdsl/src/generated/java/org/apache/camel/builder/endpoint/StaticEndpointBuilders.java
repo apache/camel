@@ -2598,8 +2598,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
-     * To read and write records to the CosmosDB database on Azure cloud
-     * platform.
+     * Store, read and query items in Azure Cosmos DB, and receive the changes
+     * of a container from its change feed.
      * 
      * Category: cloud,database
      * Since: 3.10
@@ -2608,14 +2608,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
      * 
      * Path parameter: databaseName
-     * The name of the Cosmos database that component should connect to. In case
-     * you are producing data and have createDatabaseIfNotExists=true, the
-     * component will automatically auto create a Cosmos database.
+     * The name of the database. The consumer requires it. The producer uses it
+     * for each operation except listDatabases and queryDatabases, and the
+     * CamelAzureCosmosDbDatabaseName header replaces it.
      * 
      * Path parameter: containerName
-     * The name of the Cosmos container that component should connect to. In
-     * case you are producing data and have createContainerIfNotExists=true, the
-     * component will automatically auto create a Cosmos container.
+     * The name of the container. The consumer requires it, and receives the
+     * changes of this container. The producer uses it for the operations on a
+     * container and on its items, and the CamelAzureCosmosDbContainerName
+     * header replaces it.
      * 
      * @param path databaseName/containerName
      * @return the dsl builder
@@ -2625,8 +2626,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
-     * To read and write records to the CosmosDB database on Azure cloud
-     * platform.
+     * Store, read and query items in Azure Cosmos DB, and receive the changes
+     * of a container from its change feed.
      * 
      * Category: cloud,database
      * Since: 3.10
@@ -2635,14 +2636,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
      * 
      * Path parameter: databaseName
-     * The name of the Cosmos database that component should connect to. In case
-     * you are producing data and have createDatabaseIfNotExists=true, the
-     * component will automatically auto create a Cosmos database.
+     * The name of the database. The consumer requires it. The producer uses it
+     * for each operation except listDatabases and queryDatabases, and the
+     * CamelAzureCosmosDbDatabaseName header replaces it.
      * 
      * Path parameter: containerName
-     * The name of the Cosmos container that component should connect to. In
-     * case you are producing data and have createContainerIfNotExists=true, the
-     * component will automatically auto create a Cosmos container.
+     * The name of the container. The consumer requires it, and receives the
+     * changes of this container. The producer uses it for the operations on a
+     * container and on its items, and the CamelAzureCosmosDbContainerName
+     * header replaces it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
