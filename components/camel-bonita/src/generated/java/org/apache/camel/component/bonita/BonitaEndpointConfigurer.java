@@ -31,6 +31,9 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": target.getConfiguration().setPort(property(camelContext, java.lang.String.class, value)); return true;
         case "processname":
         case "processName": target.getConfiguration().setProcessName(property(camelContext, java.lang.String.class, value)); return true;
+        case "protocol": target.getConfiguration().setProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -46,6 +49,9 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": return java.lang.String.class;
         case "processname":
         case "processName": return java.lang.String.class;
+        case "protocol": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -62,6 +68,9 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": return target.getConfiguration().getPort();
         case "processname":
         case "processName": return target.getConfiguration().getProcessName();
+        case "protocol": return target.getConfiguration().getProtocol();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

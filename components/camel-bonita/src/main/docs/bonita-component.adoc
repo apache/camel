@@ -40,6 +40,25 @@ Any other body, also JSON text that is not an object (such as a JSON array), fai
 After the operation, the body is still the `Map` of the inputs, or the JSON text that was sent.
 The id of the started case is set in the `CamelBonitaCaseId` header.
 
+=== Using HTTPS
+
+By default, the producer calls the REST API of Bonita over plain HTTP, so the username and password of the login,
+the session cookies and the `X-Bonita-API-Token` header are sent in clear text.
+Set the `protocol` option to `https` to send them over TLS, and set `port` to the HTTPS port of the Bonita server.
+
+When the JVM does not trust the certificate of the Bonita server, configure a trust store with the
+`sslContextParameters` option (or with the global SSL context parameters of Camel and the
+`useGlobalSslContextParameters` option of the component). The SSL context is used for the login and for all the
+requests of the producer. Without it, the default SSL context of the JVM is used. It is ignored with the `http`
+protocol.
+
+[source,java]
+----
+from("direct:start")
+    .to("bonita:startCase?protocol=https&hostname=bonita.example.com&port=8443&processName=TestProcess"
+        + "&username=install&password=install&sslContextParameters=#bonitaSsl");
+----
+
 
 == Examples
 

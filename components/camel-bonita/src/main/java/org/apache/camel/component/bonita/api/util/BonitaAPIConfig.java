@@ -16,8 +16,20 @@
  */
 package org.apache.camel.component.bonita.api.util;
 
+import java.util.Locale;
+
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+
+import javax.net.ssl.SSLContext;
+
 public class BonitaAPIConfig {
 
+    public static final String HTTP = "http";
+    public static final String HTTPS = "https";
+
+    private String protocol = HTTP;
+    private SSLContext sslContext;
     private String hostname;
     private String port;
     private String username;
@@ -31,12 +43,57 @@ public class BonitaAPIConfig {
     }
 
     public String getBaseBonitaURI() {
-        return "http://" + hostname + ":" + port + "/bonita";
+        return protocol + "://" + hostname + ":" + port + "/bonita";
     }
 
     public String getProcessFileUploadBaseURI(String processName, String processVersion) {
         return getBaseBonitaURI() + "portal/resource/process/" + processName + "/" + processVersion
                + "/API/formFileUpload";
+    }
+
+    /**
+     * Creates a new JAX-RS client for the Bonita server of this configuration, with the {@link #getSslContext() SSL
+     * context} of this configuration when it has one. The caller closes the client.
+     */
+    public Client newClient() {
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        if (sslContext != null) {
+            builder = builder.sslContext(sslContext);
+        }
+        return builder.build();
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The protocol of the URIs of the Bonita server: http or https (in any case); null is http.
+     *
+     * @throws IllegalArgumentException for any other protocol
+     */
+    public void setProtocol(String protocol) {
+        if (protocol == null) {
+            this.protocol = HTTP;
+            return;
+        }
+        String value = protocol.trim().toLowerCase(Locale.ROOT);
+        if (!HTTP.equals(value) && !HTTPS.equals(value)) {
+            throw new IllegalArgumentException(
+                    "The protocol of the Bonita server must be http or https, but is: " + protocol);
+        }
+        this.protocol = value;
+    }
+
+    public SSLContext getSslContext() {
+        return sslContext;
+    }
+
+    /**
+     * The SSL context of the clients that {@link #newClient()} creates; null uses the default SSL context of the JVM.
+     */
+    public void setSslContext(SSLContext sslContext) {
+        this.sslContext = sslContext;
     }
 
     public String getHostname() {

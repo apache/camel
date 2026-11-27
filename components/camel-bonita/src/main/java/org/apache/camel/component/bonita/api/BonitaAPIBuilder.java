@@ -17,7 +17,6 @@
 package org.apache.camel.component.bonita.api;
 
 import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
@@ -31,20 +30,23 @@ public class BonitaAPIBuilder {
     }
 
     /**
-     * Builds an API that sends its requests with a new JAX-RS client. Nothing closes that client; a caller that uses
-     * the API for a while should use {@link #build(BonitaAPIConfig, Client)} with a client that it closes.
+     * Builds an API that sends its requests with a new JAX-RS client, created with {@link BonitaAPIConfig#newClient()}.
+     * Nothing closes that client; a caller that uses the API for a while should use
+     * {@link #build(BonitaAPIConfig, Client)} with a client that it closes.
      */
     public static BonitaAPI build(BonitaAPIConfig bonitaAPIConfig) {
         if (bonitaAPIConfig == null) {
             throw new IllegalArgumentException("bonitaApiConfig is null");
         }
-        return build(bonitaAPIConfig, ClientBuilder.newBuilder().build());
+        return build(bonitaAPIConfig, bonitaAPIConfig.newClient());
     }
 
     /**
      * Builds an API that sends its requests with the given JAX-RS client. The JSON provider and the login filter of the
      * configuration are registered on the client, and the file inputs of a case are uploaded with it too. The client
-     * stays with the caller, which closes it when the API is no longer used.
+     * stays with the caller, which closes it when the API is no longer used. For https the caller builds the client
+     * with the SSL context to use (such as with {@link BonitaAPIConfig#newClient()}); the login filter creates its
+     * clients with {@link BonitaAPIConfig#newClient()}.
      */
     public static BonitaAPI build(BonitaAPIConfig bonitaAPIConfig, Client client) {
         if (bonitaAPIConfig == null) {
