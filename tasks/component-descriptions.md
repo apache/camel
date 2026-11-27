@@ -270,7 +270,7 @@ or removes its row.
 | camel-metrics | metrics | yes |
 | camel-micrometer | micrometer |  |
 | camel-milo | milo-browse, milo-client, milo-server |  |
-| camel-milvus | milvus |  |
+| camel-milvus | milvus | yes |
 | camel-mina | mina |  |
 | camel-mina-sftp | mina-sftp |  |
 | camel-minio | minio (deprecated) |  |

@@ -12516,7 +12516,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Milvus (camel-milvus)
-     * Perform operations on the Milvus Vector Database.
+     * Create collections and indexes, and insert, upsert, delete, search and
+     * query entities in the Milvus vector database.
      * 
      * Category: database,ai
      * Since: 4.5
@@ -12525,7 +12526,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milvus:collection</code>
      * 
      * Path parameter: collection (required)
-     * The collection Name
+     * The name of the collection that the producer loads into memory before
+     * SEARCH, QUERY and DELETE. The request in the message body names the
+     * collection that the action works on, so it must name the same collection.
      * 
      * @param path collection
      * @return the dsl builder
@@ -12535,7 +12538,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Milvus (camel-milvus)
-     * Perform operations on the Milvus Vector Database.
+     * Create collections and indexes, and insert, upsert, delete, search and
+     * query entities in the Milvus vector database.
      * 
      * Category: database,ai
      * Since: 4.5
@@ -12544,7 +12548,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milvus:collection</code>
      * 
      * Path parameter: collection (required)
-     * The collection Name
+     * The name of the collection that the producer loads into memory before
+     * SEARCH, QUERY and DELETE. The request in the message body names the
+     * collection that the action works on, so it must name the same collection.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

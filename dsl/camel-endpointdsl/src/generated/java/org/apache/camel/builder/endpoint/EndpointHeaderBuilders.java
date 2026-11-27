@@ -2964,7 +2964,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Milvus (camel-milvus)
-     * Perform operations on the Milvus Vector Database.
+     * Create collections and indexes, and insert, upsert, delete, search and
+     * query entities in the Milvus vector database.
      * 
      * Category: database,ai
      * Since: 4.5

@@ -19,28 +19,47 @@ package org.apache.camel.component.milvus;
 import org.apache.camel.spi.Metadata;
 
 public class MilvusHeaders {
-    @Metadata(description = "The action to be performed.", javaType = "String",
+    @Metadata(description = "The action that the producer performs. It wins over the action option. The milvus:embeddings"
+                            + " transformer reads it too, and accepts only INSERT and UPSERT.",
+              javaType = "String",
               enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,QUERY,DELETE")
     public static final String ACTION = "CamelMilvusAction";
 
-    @Metadata(description = "Operation Status.", javaType = "String")
+    @Metadata(description = "The status code of the response of Milvus. The producer sets it only after an action that"
+                            + " succeeded, so it is always 0. When Milvus returns another code, the producer fails the exchange.",
+              javaType = "String")
     public static final String OPERATION_STATUS = "CamelMilvusOperationStatus";
 
-    @Metadata(description = "Operation Status Value.", javaType = "int")
+    @Metadata(description = "The status code of the response of Milvus as an int, the same value as the"
+                            + " CamelMilvusOperationStatus header.",
+              javaType = "int")
     public static final String OPERATION_STATUS_VALUE = "CamelMilvusOperationStatusValue";
 
-    @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "The name of the field for the text of the TextSegment, in the InsertParam or UpsertParam"
+                            + " that the milvus:embeddings transformer builds. The default is text.",
+              javaType = "String")
     public static final String TEXT_FIELD_NAME = "CamelMilvusTextFieldName";
 
-    @Metadata(description = "Vector Field Name for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "The name of the field for the embedding vector, in the InsertParam or UpsertParam that the"
+                            + " milvus:embeddings transformer builds. The default is vector.",
+              javaType = "String")
     public static final String VECTOR_FIELD_NAME = "CamelMilvusVectorFieldName";
 
-    @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "The name of the collection, in the InsertParam or UpsertParam that the milvus:embeddings"
+                            + " transformer builds. The default is embeddings: the transformer does not use the collection of"
+                            + " the endpoint.",
+              javaType = "String")
     public static final String COLLECTION_NAME = "CamelMilvusCollectionName";
 
-    @Metadata(description = "Key Name for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "The name of the primary key field, in the InsertParam or UpsertParam that the"
+                            + " milvus:embeddings transformer builds. The default is id. The transformer adds the key field only"
+                            + " when the CamelMilvusKeyValue header is set.",
+              javaType = "String")
     public static final String KEY_NAME = "CamelMilvusKeyName";
 
-    @Metadata(description = "Key Value for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "The value of the primary key, in the InsertParam or UpsertParam that the milvus:embeddings"
+                            + " transformer builds. If not set, the transformer adds no key field, as for a collection whose"
+                            + " primary key has autoID enabled.",
+              javaType = "String")
     public static final String KEY_VALUE = "CamelMilvusKeyValue";
 }
