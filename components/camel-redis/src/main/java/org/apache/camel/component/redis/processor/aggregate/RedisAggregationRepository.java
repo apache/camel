@@ -495,8 +495,8 @@ public class RedisAggregationRepository extends ServiceSupport
 
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        Object holder = marshallHolder(exchange);
-
+        // the given exchange is serialized only to be stored in the recoverable storage: the optimistic compare uses
+        // the bytes that get() read
         if (optimistic) {
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.",
                     exchange.getExchangeId(), key);
@@ -505,6 +505,7 @@ public class RedisAggregationRepository extends ServiceSupport
                 LOG.trace("Atomically moving exchange with ID {} for key {} into recoverable storage.",
                         exchange.getExchangeId(), key);
 
+                Object holder = marshallHolder(exchange);
                 // the arguments are passed as bytes, encoded as the fields and values of the hashes
                 RScript script = redisson.getScript(ByteArrayCodec.INSTANCE);
 
@@ -544,6 +545,7 @@ public class RedisAggregationRepository extends ServiceSupport
         } else {
             if (useRecovery) {
                 LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+                Object holder = marshallHolder(exchange);
                 TransactionOptions tOpts = TransactionOptions.defaults();
                 RTransaction transaction = redisson.createTransaction(tOpts);
 

@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -329,6 +330,34 @@ public class RedisAggregationRepositoryOptimisticTest extends CamelTestSupport {
         repository.remove(context, key, group);
 
         assertTrue(hash("sameValue").isEmpty());
+    }
+
+    @Test
+    void testRemoveWithoutRecoveryDoesNotSerializeTheGroup() {
+        AtomicInteger marshalled = new AtomicInteger();
+        RedisAggregationRepository repository = new RedisAggregationRepository() {
+            @Override
+            protected Object marshallHolder(Exchange exchange) {
+                marshalled.incrementAndGet();
+                return super.marshallHolder(exchange);
+            }
+        };
+        repository.setRedisson(redisson);
+        repository.setMapName("noSerialize");
+        repository.setOptimistic(true);
+        repository.setUseRecovery(false);
+        repository.start();
+        repositories.add(repository);
+        repository.add(context, "K", null, exchange("a", "K"));
+
+        Exchange group = repository.get(context, "K");
+        group.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, "K");
+        marshalled.set(0);
+        repository.remove(context, "K", group);
+
+        // the remove compares with the bytes that get() read, and there is no recoverable storage to write to
+        assertEquals(0, marshalled.get(), "the group was serialized by the remove");
+        assertTrue(hash("noSerialize").isEmpty());
     }
 
     @Test
