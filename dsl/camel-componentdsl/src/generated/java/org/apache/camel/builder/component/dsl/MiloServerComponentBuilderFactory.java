@@ -284,7 +284,9 @@ public interface MiloServerComponentBuilderFactory {
          * To use a custom
          * org.eclipse.milo.opcua.stack.core.security.CertificateManager that
          * holds the certificate and the key pair of the server. Not used when
-         * certificateValidator or defaultCertificateValidator is set.
+         * defaultCertificateValidator is set. When certificateValidator is set,
+         * the certificate groups of this certificate manager validate the
+         * certificates of the clients with that validator.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.milo.opcua.stack.core.security.CertificateManager&lt;/code&gt; type.
@@ -300,7 +302,12 @@ public interface MiloServerComponentBuilderFactory {
         }
     
         /**
-         * Validator for client certificates.
+         * To use a custom
+         * org.eclipse.milo.opcua.stack.core.security.CertificateValidator that
+         * validates the certificates of the OPC UA clients, instead of the
+         * validators of the certificate groups of certificateManager. Requires
+         * certificateManager, which holds the certificate of the server. Cannot
+         * be used together with defaultCertificateValidator.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.milo.opcua.stack.core.security.CertificateValidator&lt;/code&gt; type.
