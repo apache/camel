@@ -76,7 +76,7 @@ public class WeatherQuery {
             answer += "&cnt=" + weatherConfiguration.getCnt();
         }
 
-        // append the desired measurement unit if not the default (which is metric)
+        // append the desired measurement unit, if set: without it OpenWeatherMap uses its standard units (Kelvin)
         if (weatherConfiguration.getUnits() != null) {
             answer += "&units=" + weatherConfiguration.getUnits().name().toLowerCase();
         }
@@ -109,12 +109,8 @@ public class WeatherQuery {
             }
         } else if (weatherConfiguration.getIds() != null && !weatherConfiguration.getIds().isEmpty()) {
             if (weatherConfiguration.getIdsAsList().size() == 1) {
-                if (!isEmpty(weatherConfiguration.getPeriod())) {
-                    if (weatherConfiguration.getWeatherApi() == WeatherApi.Hourly) {
-                        answer = "forecast?";
-                    } else {
-                        answer = "forecast/daily?";
-                    }
+                if (isForecast()) {
+                    answer = forecastContext();
                 } else if (weatherConfiguration.getWeatherApi() == WeatherApi.Station) {
                     answer = "station?";
                 } else {
@@ -123,16 +119,26 @@ public class WeatherQuery {
             } else {
                 answer = "group?";
             }
-        } else if (isEmpty(weatherConfiguration.getPeriod())) {
-            answer = "weather?";
+        } else if (isForecast()) {
+            answer = forecastContext();
         } else {
-            if (weatherConfiguration.getWeatherApi() == WeatherApi.Hourly) {
-                answer = "forecast?";
-            } else {
-                answer = "forecast/daily?";
-            }
+            answer = "weather?";
         }
         return answer;
+    }
+
+    /**
+     * A forecast is queried with a period, or with weatherApi Hourly or Daily, which without a period get the forecast
+     * length that OpenWeatherMap uses by default.
+     */
+    private boolean isForecast() {
+        return !isEmpty(weatherConfiguration.getPeriod())
+                || weatherConfiguration.getWeatherApi() == WeatherApi.Hourly
+                || weatherConfiguration.getWeatherApi() == WeatherApi.Daily;
+    }
+
+    private String forecastContext() {
+        return weatherConfiguration.getWeatherApi() == WeatherApi.Hourly ? "forecast?" : "forecast/daily?";
     }
 
     private static String createLatLonQueryString(String lat, String lon) {

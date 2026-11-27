@@ -132,7 +132,9 @@ public interface WeatherEndpointBuilderFactory {
          * of days of the daily forecast, or the number of 3-hour steps with
          * weatherApi Hourly. Only the first number in the value is read, so 7
          * days is the same as 7, and a value with no number, or 0, is ignored.
-         * If empty, the current weather is queried instead of a forecast.
+         * If empty, the current weather is queried instead of a forecast,
+         * except with weatherApi Hourly or Daily, which then get the forecast
+         * with the length that OpenWeatherMap uses by default.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -186,7 +188,9 @@ public interface WeatherEndpointBuilderFactory {
          * instead of cities, for ids, for lat and lon with cnt, and for a
          * bounding box. When period is set, Hourly gets the 3-hour forecast and
          * any other value, or none, the daily forecast; without period, Hourly
-         * and Daily get the current weather.
+         * gets the 3-hour forecast and Daily the daily forecast, with the
+         * length that OpenWeatherMap uses by default, and any other value, or
+         * none, the current weather.
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -205,7 +209,9 @@ public interface WeatherEndpointBuilderFactory {
          * instead of cities, for ids, for lat and lon with cnt, and for a
          * bounding box. When period is set, Hourly gets the 3-hour forecast and
          * any other value, or none, the daily forecast; without period, Hourly
-         * and Daily get the current weather.
+         * gets the 3-hour forecast and Daily the daily forecast, with the
+         * length that OpenWeatherMap uses by default, and any other value, or
+         * none, the current weather.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -533,7 +539,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 500
+         * Default: 3600000
          * Group: scheduler
          * 
          * @param delay the value to set
@@ -548,7 +554,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 500
+         * Default: 3600000
          * Group: scheduler
          * 
          * @param delay the value to set
@@ -953,7 +959,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationAccessKey the value to set
@@ -971,7 +976,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationRequestHostIP the value to set
@@ -1190,8 +1194,9 @@ public interface WeatherEndpointBuilderFactory {
          * org.apache.hc.client5.http.impl.classic.CloseableHttpClient, for
          * example one with an HTTP proxy, for the requests to OpenWeatherMap
          * and to the default geoLocationProvider. By default each endpoint
-         * creates its own client. The endpoint closes the client when it stops,
-         * also a client that is set.
+         * creates its own client, closes it when it stops, and creates a new
+         * one when it is started again. A client that is set is not closed by
+         * the endpoint.
          * 
          * The option is a:
          * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
@@ -1210,8 +1215,9 @@ public interface WeatherEndpointBuilderFactory {
          * org.apache.hc.client5.http.impl.classic.CloseableHttpClient, for
          * example one with an HTTP proxy, for the requests to OpenWeatherMap
          * and to the default geoLocationProvider. By default each endpoint
-         * creates its own client. The endpoint closes the client when it stops,
-         * also a client that is set.
+         * creates its own client, closes it when it stops, and creates a new
+         * one when it is started again. A client that is set is not closed by
+         * the endpoint.
          * 
          * The option will be converted to a
          * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
@@ -1326,7 +1332,9 @@ public interface WeatherEndpointBuilderFactory {
          * of days of the daily forecast, or the number of 3-hour steps with
          * weatherApi Hourly. Only the first number in the value is read, so 7
          * days is the same as 7, and a value with no number, or 0, is ignored.
-         * If empty, the current weather is queried instead of a forecast.
+         * If empty, the current weather is queried instead of a forecast,
+         * except with weatherApi Hourly or Daily, which then get the forecast
+         * with the length that OpenWeatherMap uses by default.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1380,7 +1388,9 @@ public interface WeatherEndpointBuilderFactory {
          * instead of cities, for ids, for lat and lon with cnt, and for a
          * bounding box. When period is set, Hourly gets the 3-hour forecast and
          * any other value, or none, the daily forecast; without period, Hourly
-         * and Daily get the current weather.
+         * gets the 3-hour forecast and Daily the daily forecast, with the
+         * length that OpenWeatherMap uses by default, and any other value, or
+         * none, the current weather.
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -1399,7 +1409,9 @@ public interface WeatherEndpointBuilderFactory {
          * instead of cities, for ids, for lat and lon with cnt, and for a
          * bounding box. When period is set, Hourly gets the 3-hour forecast and
          * any other value, or none, the daily forecast; without period, Hourly
-         * and Daily get the current weather.
+         * gets the 3-hour forecast and Daily the daily forecast, with the
+         * length that OpenWeatherMap uses by default, and any other value, or
+         * none, the current weather.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -1616,7 +1628,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationAccessKey the value to set
@@ -1634,7 +1645,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationRequestHostIP the value to set
@@ -1745,8 +1755,9 @@ public interface WeatherEndpointBuilderFactory {
          * org.apache.hc.client5.http.impl.classic.CloseableHttpClient, for
          * example one with an HTTP proxy, for the requests to OpenWeatherMap
          * and to the default geoLocationProvider. By default each endpoint
-         * creates its own client. The endpoint closes the client when it stops,
-         * also a client that is set.
+         * creates its own client, closes it when it stops, and creates a new
+         * one when it is started again. A client that is set is not closed by
+         * the endpoint.
          * 
          * The option is a:
          * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
@@ -1765,8 +1776,9 @@ public interface WeatherEndpointBuilderFactory {
          * org.apache.hc.client5.http.impl.classic.CloseableHttpClient, for
          * example one with an HTTP proxy, for the requests to OpenWeatherMap
          * and to the default geoLocationProvider. By default each endpoint
-         * creates its own client. The endpoint closes the client when it stops,
-         * also a client that is set.
+         * creates its own client, closes it when it stops, and creates a new
+         * one when it is started again. A client that is set is not closed by
+         * the endpoint.
          * 
          * The option will be converted to a
          * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
@@ -1882,7 +1894,9 @@ public interface WeatherEndpointBuilderFactory {
          * of days of the daily forecast, or the number of 3-hour steps with
          * weatherApi Hourly. Only the first number in the value is read, so 7
          * days is the same as 7, and a value with no number, or 0, is ignored.
-         * If empty, the current weather is queried instead of a forecast.
+         * If empty, the current weather is queried instead of a forecast,
+         * except with weatherApi Hourly or Daily, which then get the forecast
+         * with the length that OpenWeatherMap uses by default.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1936,7 +1950,9 @@ public interface WeatherEndpointBuilderFactory {
          * instead of cities, for ids, for lat and lon with cnt, and for a
          * bounding box. When period is set, Hourly gets the 3-hour forecast and
          * any other value, or none, the daily forecast; without period, Hourly
-         * and Daily get the current weather.
+         * gets the 3-hour forecast and Daily the daily forecast, with the
+         * length that OpenWeatherMap uses by default, and any other value, or
+         * none, the current weather.
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -1955,7 +1971,9 @@ public interface WeatherEndpointBuilderFactory {
          * instead of cities, for ids, for lat and lon with cnt, and for a
          * bounding box. When period is set, Hourly gets the 3-hour forecast and
          * any other value, or none, the daily forecast; without period, Hourly
-         * and Daily get the current weather.
+         * gets the 3-hour forecast and Daily the daily forecast, with the
+         * length that OpenWeatherMap uses by default, and any other value, or
+         * none, the current weather.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
@@ -2172,7 +2190,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationAccessKey the value to set
@@ -2190,7 +2207,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationRequestHostIP the value to set
@@ -2258,8 +2274,9 @@ public interface WeatherEndpointBuilderFactory {
          * org.apache.hc.client5.http.impl.classic.CloseableHttpClient, for
          * example one with an HTTP proxy, for the requests to OpenWeatherMap
          * and to the default geoLocationProvider. By default each endpoint
-         * creates its own client. The endpoint closes the client when it stops,
-         * also a client that is set.
+         * creates its own client, closes it when it stops, and creates a new
+         * one when it is started again. A client that is set is not closed by
+         * the endpoint.
          * 
          * The option is a:
          * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
@@ -2278,8 +2295,9 @@ public interface WeatherEndpointBuilderFactory {
          * org.apache.hc.client5.http.impl.classic.CloseableHttpClient, for
          * example one with an HTTP proxy, for the requests to OpenWeatherMap
          * and to the default geoLocationProvider. By default each endpoint
-         * creates its own client. The endpoint closes the client when it stops,
-         * also a client that is set.
+         * creates its own client, closes it when it stops, and creates a new
+         * one when it is started again. A client that is set is not closed by
+         * the endpoint.
          * 
          * The option will be converted to a
          * <code>org.apache.hc.client5.http.impl.classic.CloseableHttpClient</code> type.
