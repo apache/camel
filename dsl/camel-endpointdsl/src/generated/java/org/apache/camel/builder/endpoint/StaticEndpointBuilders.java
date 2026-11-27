@@ -3192,7 +3192,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Bonita (camel-bonita)
-     * Communicate with a remote Bonita BPM process engine.
+     * Start cases of processes in a remote Bonita engine through its REST API.
      * 
      * Category: workflow
      * Since: 2.19
@@ -3201,7 +3201,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>bonita:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to use
+     * The operation to perform. Only startCase is supported: it starts a case
+     * (an instance) of the process that the processName option names, with the
+     * contract inputs from the message body.
      * There are 1 enums and the value can be one of: startCase
      * 
      * @param path operation
@@ -3212,7 +3214,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Bonita (camel-bonita)
-     * Communicate with a remote Bonita BPM process engine.
+     * Start cases of processes in a remote Bonita engine through its REST API.
      * 
      * Category: workflow
      * Since: 2.19
@@ -3221,7 +3223,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>bonita:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to use
+     * The operation to perform. Only startCase is supported: it starts a case
+     * (an instance) of the process that the processName option names, with the
+     * contract inputs from the message body.
      * There are 1 enums and the value can be one of: startCase
      * 
      * @param componentName to use a custom component name for the endpoint

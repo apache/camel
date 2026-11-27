@@ -2,7 +2,7 @@
 :doctitle: Bonita
 :shortname: bonita
 :artifactid: camel-bonita
-:description: Communicate with a remote Bonita BPM process engine.
+:description: Start cases of processes in a remote Bonita engine through its REST API.
 :since: 2.19
 :supportlevel: Stable
 :tabs-sync-option:
