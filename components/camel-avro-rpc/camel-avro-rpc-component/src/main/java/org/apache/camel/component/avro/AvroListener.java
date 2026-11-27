@@ -49,7 +49,7 @@ public class AvroListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvroListener.class);
 
     private final ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<>();
-    private AvroConsumer defaultConsumer;
+    private volatile AvroConsumer defaultConsumer;
     private final Server server;
     private final AvroTransport transport;
     private final Protocol protocol;
