@@ -56,8 +56,13 @@ public interface JgroupsRaftComponentBuilderFactory {
         /**
          * The JGroups XML configuration of the JChannel that each endpoint
          * creates, as a file, a URL or a classpath resource. If not set, the
-         * raft.xml in the camel-jgroups-raft JAR is used, which lists A as the
-         * only RAFT member. Not used when the raftHandle option is set.
+         * raft.xml in the camel-jgroups-raft JAR is used, and a WARN is logged
+         * when an endpoint starts. That raft.xml is a sample for development
+         * and tests: it uses UDP multicast without authentication or
+         * encryption, and lists A as the only RAFT member. In production, set
+         * your own configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT,
+         * and the members of the cluster in the members attribute of RAFT. Not
+         * used when the raftHandle option is set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

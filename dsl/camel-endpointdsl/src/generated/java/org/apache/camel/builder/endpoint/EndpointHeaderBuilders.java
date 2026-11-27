@@ -297,7 +297,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Avro RPC (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
+     * Call and expose Apache Avro RPC services over HTTP or Netty.
      * 
      * Category: rpc
      * Since: 2.10
@@ -860,7 +860,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Send and receive files to Azure storage file share
+     * Read files from and write files to a file share in Azure Files.
      * 
      * Category: cloud,file
      * Since: 3.22
@@ -900,9 +900,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Azure Key Vault (camel-azure-key-vault)
-     * Manage secrets and keys in Azure Key Vault Service
+     * Create, get, update, delete and purge secrets in Azure Key Vault.
      * 
-     * Category: cloud,cloud
+     * Category: cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
      * 
@@ -2126,8 +2126,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
-     * Interact with IBM watsonx.ai foundation models for text generation, chat,
-     * embeddings, and more.
+     * Generate text, chat, embed, rerank and tokenize text, extract and
+     * classify documents, detect harmful content and forecast time series with
+     * the foundation models and deployments of IBM watsonx.ai.
      * 
      * Category: ai,cloud
      * Since: 4.18
@@ -3963,7 +3964,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
+     * Launch Spring Batch jobs, with the message headers as the job parameters.
      * 
      * Category: workflow
      * Since: 2.10
@@ -4083,8 +4084,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service that integrates various data sources into a
-     * central data warehouse through various integrations.
+     * Send batches of records to the Stitch Import API, which loads them into a
+     * table of the destination data warehouse.
      * 
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
@@ -4137,7 +4138,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Tahu Edge Node / Device (camel-tahu)
-     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT
+     * servers using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -4150,7 +4152,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Tahu Host Application (camel-tahu)
-     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * Receive Sparkplug B messages and metrics from MQTT servers as a Host
+     * Application using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8

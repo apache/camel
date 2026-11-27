@@ -1036,7 +1036,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Avro RPC (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
+     * Call and expose Apache Avro RPC services over HTTP or Netty.
      * 
      * Category: rpc
      * Since: 2.10
@@ -1045,17 +1045,24 @@ public class StaticEndpointBuilders {
      * Syntax: <code>avro:transport:host:port/messageName</code>
      * 
      * Path parameter: transport (required)
-     * Transport to use, can be either http or netty
+     * The transport: http or netty. With http, the consumer runs an Avro HTTP
+     * server on Jetty and the producer sends HTTP POST requests; with netty,
+     * both use the Avro Netty server and transceiver.
      * There are 2 enums and the value can be one of: http, netty
      * 
      * Path parameter: port (required)
-     * Port number to use
+     * The port number. The consumer listens on it, and the producer connects to
+     * it.
      * 
      * Path parameter: host (required)
-     * Hostname to use
+     * The host name or IP address. The consumer binds its server to it, and the
+     * producer connects to it.
      * 
      * Path parameter: messageName
-     * The name of the message to send.
+     * The name of the protocol message to call or serve. The producer calls it
+     * unless the CamelAvroMessageName header is set. A consumer with a message
+     * name serves only that message; a consumer without one serves every
+     * message that no other consumer on the same host and port serves.
      * 
      * @param path transport:host:port/messageName
      * @return the dsl builder
@@ -1065,7 +1072,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Avro RPC (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
+     * Call and expose Apache Avro RPC services over HTTP or Netty.
      * 
      * Category: rpc
      * Since: 2.10
@@ -1074,17 +1081,24 @@ public class StaticEndpointBuilders {
      * Syntax: <code>avro:transport:host:port/messageName</code>
      * 
      * Path parameter: transport (required)
-     * Transport to use, can be either http or netty
+     * The transport: http or netty. With http, the consumer runs an Avro HTTP
+     * server on Jetty and the producer sends HTTP POST requests; with netty,
+     * both use the Avro Netty server and transceiver.
      * There are 2 enums and the value can be one of: http, netty
      * 
      * Path parameter: port (required)
-     * Port number to use
+     * The port number. The consumer listens on it, and the producer connects to
+     * it.
      * 
      * Path parameter: host (required)
-     * Hostname to use
+     * The host name or IP address. The consumer binds its server to it, and the
+     * producer connects to it.
      * 
      * Path parameter: messageName
-     * The name of the message to send.
+     * The name of the protocol message to call or serve. The producer calls it
+     * unless the CamelAvroMessageName header is set. A consumer with a message
+     * name serves only that message; a consumer without one serves every
+     * message that no other consumer on the same host and port serves.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -2852,7 +2866,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Send and receive files to Azure storage file share
+     * Read files from and write files to a file share in Azure Files.
      * 
      * Category: cloud,file
      * Since: 3.22
@@ -2861,10 +2875,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-files:account/share</code>
      * 
      * Path parameter: account (required)
-     * The account to use
+     * The name of the storage account, for example myaccount, or the host name
+     * of its file service, for example myaccount.file.core.windows.net. With a
+     * name alone, the component connects to that name with the
+     * .file.core.windows.net suffix, always over HTTPS.
      * 
      * Path parameter: share (required)
-     * The share to use
+     * The name of the file share in the storage account. A path after the share
+     * name in the endpoint URI is the directory, from the share root, that the
+     * consumer polls and that the producer writes to. Without it, the share
+     * root is used.
      * 
      * Path parameter: port
      * Port of the FTP server
@@ -2880,7 +2900,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Send and receive files to Azure storage file share
+     * Read files from and write files to a file share in Azure Files.
      * 
      * Category: cloud,file
      * Since: 3.22
@@ -2889,10 +2909,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-files:account/share</code>
      * 
      * Path parameter: account (required)
-     * The account to use
+     * The name of the storage account, for example myaccount, or the host name
+     * of its file service, for example myaccount.file.core.windows.net. With a
+     * name alone, the component connects to that name with the
+     * .file.core.windows.net suffix, always over HTTPS.
      * 
      * Path parameter: share (required)
-     * The share to use
+     * The name of the file share in the storage account. A path after the share
+     * name in the endpoint URI is the directory, from the share root, that the
+     * consumer polls and that the producer writes to. Without it, the share
+     * root is used.
      * 
      * Path parameter: port
      * Port of the FTP server
@@ -3002,16 +3028,18 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Key Vault (camel-azure-key-vault)
-     * Manage secrets and keys in Azure Key Vault Service
+     * Create, get, update, delete and purge secrets in Azure Key Vault.
      * 
-     * Category: cloud,cloud
+     * Category: cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
      * 
      * Syntax: <code>azure-key-vault:vaultName</code>
      * 
-     * Path parameter: vaultName
-     * Vault Name to be used
+     * Path parameter: vaultName (required)
+     * The name of the key vault. The endpoint builds the vault URL from it with
+     * the vault.azure.net domain of the Azure public cloud. Not used to connect
+     * when the secretClient option is set.
      * 
      * @param path vaultName
      * @return the dsl builder
@@ -3021,16 +3049,18 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Key Vault (camel-azure-key-vault)
-     * Manage secrets and keys in Azure Key Vault Service
+     * Create, get, update, delete and purge secrets in Azure Key Vault.
      * 
-     * Category: cloud,cloud
+     * Category: cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
      * 
      * Syntax: <code>azure-key-vault:vaultName</code>
      * 
-     * Path parameter: vaultName
-     * Vault Name to be used
+     * Path parameter: vaultName (required)
+     * The name of the key vault. The endpoint builds the vault URL from it with
+     * the vault.azure.net domain of the Azure public cloud. Not used to connect
+     * when the secretClient option is set.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4872,7 +4902,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Data Format (camel-dataformat)
-     * Use a Camel Data Format as a regular Camel Component.
+     * Marshal or unmarshal the message body with a Camel data format, such as
+     * JAXB, CSV or JSON.
      * 
      * Category: core,transformation
      * Since: 2.12
@@ -4881,10 +4912,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dataformat:name:operation</code>
      * 
      * Path parameter: name (required)
-     * Name of data format
+     * The name of the data format, for example jaxb, csv or jackson. The
+     * endpoint gets its own instance of the data format, configured first from
+     * the global camel.dataformat properties of this data format and then from
+     * the other URI parameters of the endpoint. If no data format of this name
+     * can be created, the DataFormat bean of this name in the registry is used.
      * 
      * Path parameter: operation (required)
-     * Operation to use either marshal or unmarshal
+     * Whether the producer marshals the message body into the data format
+     * (marshal) or unmarshals the message body from the data format
+     * (unmarshal), as the marshal and unmarshal EIPs do.
      * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param path name:operation
@@ -4895,7 +4932,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Data Format (camel-dataformat)
-     * Use a Camel Data Format as a regular Camel Component.
+     * Marshal or unmarshal the message body with a Camel data format, such as
+     * JAXB, CSV or JSON.
      * 
      * Category: core,transformation
      * Since: 2.12
@@ -4904,10 +4942,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dataformat:name:operation</code>
      * 
      * Path parameter: name (required)
-     * Name of data format
+     * The name of the data format, for example jaxb, csv or jackson. The
+     * endpoint gets its own instance of the data format, configured first from
+     * the global camel.dataformat properties of this data format and then from
+     * the other URI parameters of the endpoint. If no data format of this name
+     * can be created, the DataFormat bean of this name in the registry is used.
      * 
      * Path parameter: operation (required)
-     * Operation to use either marshal or unmarshal
+     * Whether the producer marshals the message body into the data format
+     * (marshal) or unmarshals the message body from the data format
+     * (unmarshal), as the marshal and unmarshal EIPs do.
      * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -8997,8 +9041,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
-     * Interact with IBM watsonx.ai foundation models for text generation, chat,
-     * embeddings, and more.
+     * Generate text, chat, embed, rerank and tokenize text, extract and
+     * classify documents, detect harmful content and forecast time series with
+     * the foundation models and deployments of IBM watsonx.ai.
      * 
      * Category: ai,cloud
      * Since: 4.18
@@ -9007,7 +9052,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watsonx-ai:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name for the endpoint
+     * A logical name of your choice for the endpoint. It is not sent to
+     * watsonx.ai.
      * 
      * @param path label
      * @return the dsl builder
@@ -9017,8 +9063,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
-     * Interact with IBM watsonx.ai foundation models for text generation, chat,
-     * embeddings, and more.
+     * Generate text, chat, embed, rerank and tokenize text, extract and
+     * classify documents, detect harmful content and forecast time series with
+     * the foundation models and deployments of IBM watsonx.ai.
      * 
      * Category: ai,cloud
      * Since: 4.18
@@ -9027,7 +9074,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watsonx-ai:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name for the endpoint
+     * A logical name of your choice for the endpoint. It is not sent to
+     * watsonx.ai.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -16794,7 +16842,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spiffe:label</code>
      * 
      * Path parameter: label
-     * Logical name of the endpoint
+     * Free text to tell several spiffe endpoints apart, for example spiffe:mint
+     * and spiffe:verify. The component does not use the value.
      * 
      * @param path label
      * @return the dsl builder
@@ -16814,7 +16863,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spiffe:label</code>
      * 
      * Path parameter: label
-     * Logical name of the endpoint
+     * Free text to tell several spiffe endpoints apart, for example spiffe:mint
+     * and spiffe:verify. The component does not use the value.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17032,7 +17082,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
+     * Launch Spring Batch jobs, with the message headers as the job parameters.
      * 
      * Category: workflow
      * Since: 2.10
@@ -17041,7 +17091,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-batch:jobName</code>
      * 
      * Path parameter: jobName (required)
-     * The name of the Spring Batch job located in the registry.
+     * The name of the Spring Batch job to launch. When the endpoint starts, the
+     * job is looked up in the jobRegistry, when one is set, and else in the
+     * Camel registry as a Job bean; the endpoint fails to start when the job is
+     * not found. Not used when jobFromHeader is true.
      * 
      * @param path jobName
      * @return the dsl builder
@@ -17051,7 +17104,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
+     * Launch Spring Batch jobs, with the message headers as the job parameters.
      * 
      * Category: workflow
      * Since: 2.10
@@ -17060,7 +17113,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>spring-batch:jobName</code>
      * 
      * Path parameter: jobName (required)
-     * The name of the Spring Batch job located in the registry.
+     * The name of the Spring Batch job to launch. When the endpoint starts, the
+     * job is looked up in the jobRegistry, when one is set, and else in the
+     * Camel registry as a Job bean; the endpoint fails to start when the job is
+     * not found. Not used when jobFromHeader is true.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17660,8 +17716,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service that integrates various data sources into a
-     * central data warehouse through various integrations.
+     * Send batches of records to the Stitch Import API, which loads them into a
+     * table of the destination data warehouse.
      * 
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
@@ -17670,10 +17726,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stitch:tableName</code>
      * 
      * Path parameter: tableName
-     * The name of the destination table the data is being pushed to. Table
-     * names must be unique in each destination schema, or loading issues will
-     * occur. Note: The number of characters in the table name should be within
-     * the destination's allowed limits or data will rejected.
+     * The name of the destination table that the records are loaded into. The
+     * CamelStitchTableName header overrides it, and it overrides the table_name
+     * of a StitchRequestBody or Map body. Table names must be unique in each
+     * destination schema, and Stitch rejects the data when the name is longer
+     * than the destination allows.
      * 
      * @param path tableName
      * @return the dsl builder
@@ -17683,8 +17740,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service that integrates various data sources into a
-     * central data warehouse through various integrations.
+     * Send batches of records to the Stitch Import API, which loads them into a
+     * table of the destination data warehouse.
      * 
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
@@ -17693,10 +17750,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stitch:tableName</code>
      * 
      * Path parameter: tableName
-     * The name of the destination table the data is being pushed to. Table
-     * names must be unique in each destination schema, or loading issues will
-     * occur. Note: The number of characters in the table name should be within
-     * the destination's allowed limits or data will rejected.
+     * The name of the destination table that the records are loaded into. The
+     * CamelStitchTableName header overrides it, and it overrides the table_name
+     * of a StitchRequestBody or Map body. Table names must be unique in each
+     * destination schema, and Stitch rejects the data when the name is longer
+     * than the destination allows.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17900,7 +17958,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Tahu Edge Node / Device (camel-tahu)
-     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT
+     * servers using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -17909,13 +17968,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tahu-edge:groupId/edgeNode</code>
      * 
      * Path parameter: groupId (required)
-     * ID of the group
+     * The Sparkplug group ID of the Edge Node.
      * 
      * Path parameter: edgeNode (required)
-     * ID of the edge node
+     * The Sparkplug Edge Node ID. With the groupId, it identifies the Edge
+     * Node.
      * 
      * Path parameter: deviceId
-     * ID of this edge node device. Applies to the device endpoint only.
+     * The Sparkplug device ID of a Device of the Edge Node. With it, the
+     * endpoint is a Device endpoint; without it, an Edge Node endpoint.
      * 
      * @param path groupId/edgeNode
      * @return the dsl builder
@@ -17925,7 +17986,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Tahu Edge Node / Device (camel-tahu)
-     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT
+     * servers using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -17934,13 +17996,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tahu-edge:groupId/edgeNode</code>
      * 
      * Path parameter: groupId (required)
-     * ID of the group
+     * The Sparkplug group ID of the Edge Node.
      * 
      * Path parameter: edgeNode (required)
-     * ID of the edge node
+     * The Sparkplug Edge Node ID. With the groupId, it identifies the Edge
+     * Node.
      * 
      * Path parameter: deviceId
-     * ID of this edge node device. Applies to the device endpoint only.
+     * The Sparkplug device ID of a Device of the Edge Node. With it, the
+     * endpoint is a Device endpoint; without it, an Edge Node endpoint.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17952,7 +18016,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Tahu Host Application (camel-tahu)
-     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * Receive Sparkplug B messages and metrics from MQTT servers as a Host
+     * Application using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -17961,7 +18026,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tahu-host:hostId</code>
      * 
      * Path parameter: hostId (required)
-     * ID for the host application
+     * The Sparkplug host ID of the Host Application. An Edge Node that has this
+     * ID in its primaryHostId option waits for this Host Application to be
+     * online.
      * 
      * @param path hostId
      * @return the dsl builder
@@ -17971,7 +18038,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Tahu Host Application (camel-tahu)
-     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * Receive Sparkplug B messages and metrics from MQTT servers as a Host
+     * Application using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -17980,7 +18048,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>tahu-host:hostId</code>
      * 
      * Path parameter: hostId (required)
-     * ID for the host application
+     * The Sparkplug host ID of the Host Application. An Edge Node that has this
+     * ID in its primaryHostId option waits for this Host Application to be
+     * online.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -18243,7 +18313,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>timer:timerName</code>
      * 
      * Path parameter: timerName (required)
-     * The name of the timer
+     * The name of the timer. The consumers with the same timer name and the
+     * same daemon option share one java.util.Timer, whose thread is named after
+     * the timer.
      * 
      * @param path timerName
      * @return the dsl builder
@@ -18262,7 +18334,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>timer:timerName</code>
      * 
      * Path parameter: timerName (required)
-     * The name of the timer
+     * The name of the timer. The consumers with the same timer name and the
+     * same daemon option share one java.util.Timer, whose thread is named after
+     * the timer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

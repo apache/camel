@@ -44,20 +44,33 @@ public final class TahuConstants {
 
     public static final String METRIC_HEADER_PREFIX = "CamelTahuMetric.";
 
-    @Metadata(description = "The Sparkplug message type of the message", javaType = "String",
+    @Metadata(description = "The Sparkplug message type. The consumer sets it on the exchange of each message, but not on"
+                            + " the exchange of a single metric. The producer sets it to NDATA for an Edge Node and to DDATA"
+                            + " for a Device.",
+              javaType = "String",
               enums = "NBIRTH,NDATA,NDEATH,DBIRTH,DDATA,DDEATH")
     public static final String MESSAGE_TYPE = "CamelTahuMessageType";
 
-    @Metadata(description = "The Sparkplug edge node descriptor string source of a message or metric", javaType = "String")
+    @Metadata(description = "The Edge Node or Device of the message or metric, as groupId/edgeNode or"
+                            + " groupId/edgeNode/deviceId. The consumer sets it as a String, and the producer sets the Tahu"
+                            + " EdgeNodeDescriptor of the endpoint, a DeviceDescriptor for a Device.",
+              javaType = "String")
     public static final String EDGE_NODE_DESCRIPTOR = "CamelTahuEdgeNodeDescriptor";
 
-    @Metadata(description = "The timestamp of a Sparkplug message", javaType = "Long")
+    @Metadata(description = "The timestamp of the Sparkplug payload. The consumer sets it in milliseconds since the epoch,"
+                            + " and the producer sets the java.util.Date of the payload it publishes.",
+              javaType = "Long")
     public static final String MESSAGE_TIMESTAMP = "CamelTahuMessageTimestamp";
 
-    @Metadata(description = "The UUID of a Sparkplug message", javaType = "java.util.UUID")
+    @Metadata(description = "The UUID of the Sparkplug payload. The consumer sets it when the payload has a valid UUID. The"
+                            + " producer uses it as the UUID of a payload that it makes from the message, and sets it to the"
+                            + " UUID of the payload it publishes, as a String.",
+              javaType = "java.util.UUID")
     public static final String MESSAGE_UUID = "CamelTahuMessageUUID";
 
-    @Metadata(description = "The sequence number of a Sparkplug message", javaType = "Long")
+    @Metadata(description = "The sequence number of the Sparkplug payload. The consumer sets it when the payload has one,"
+                            + " and the producer only when the payload to publish already has one.",
+              javaType = "Long")
     public static final String MESSAGE_SEQUENCE_NUMBER = "CamelTahuMessageSequenceNumber";
 
     private TahuConstants() {

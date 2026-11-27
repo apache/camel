@@ -91,7 +91,7 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
                         .to("mock:password");
 
                 from("direct:sshCredentialsWithHeaders")
-                        .to("ssh://localhost:" + port + "?timeout=3000")
+                        .to("ssh://localhost:" + port + "?timeout=3000&allowUsernameAndPasswordFromHeaders=true")
                         .to("mock:password");
             }
         };

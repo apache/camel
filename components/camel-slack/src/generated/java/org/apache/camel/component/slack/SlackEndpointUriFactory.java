@@ -57,9 +57,10 @@ public class SlackEndpointUriFactory extends org.apache.camel.support.component.
         props.add("username");
         props.add("webhookUrl");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
+        Set<String> secretProps = new HashSet<>(3);
         secretProps.add("token");
         secretProps.add("username");
+        secretProps.add("webhookUrl");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);

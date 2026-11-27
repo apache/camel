@@ -33,19 +33,35 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     public static final int DEFAULT_HTTPS_PORT = 443;
     public static final String DEFAULT_INTERNET_DOMAIN = "file.core.windows.net";
 
-    @UriParam(label = "common", description = "Shared key (storage account key)", security = "secret")
+    @UriParam(label = "common", security = "secret",
+              description = "The access key of the storage account, for credentialType=SHARED_ACCOUNT_KEY. The component"
+                            + " signs the requests with this key and the account option as the account name, so the endpoint"
+                            + " URI must give the account name, not the host name. A + in the key can stay unencoded in the"
+                            + " endpoint URI.")
     private String sharedKey;
 
-    @UriPath(name = "account", description = "The account to use")
+    @UriPath(name = "account",
+             description = "The name of the storage account, for example myaccount, or the host name of its file service,"
+                           + " for example myaccount.file.core.windows.net. With a name alone, the component connects to"
+                           + " that name with the .file.core.windows.net suffix, always over HTTPS.")
     @Metadata(required = true)
     private String account;
 
-    @UriPath(name = "share", description = "The share to use")
+    @UriPath(name = "share",
+             description = "The name of the file share in the storage account. A path after the share name in the endpoint"
+                           + " URI is the directory, from the share root, that the consumer polls and that the producer"
+                           + " writes to. Without it, the share root is used.")
     @Metadata(required = true)
     private String share;
 
     @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
-              defaultValue = "SHARED_ACCOUNT_KEY", description = "Determines the credential strategy to adopt")
+              defaultValue = "SHARED_ACCOUNT_KEY",
+              description = "How the component authenticates: SHARED_ACCOUNT_KEY with the sharedKey option, AZURE_SAS with"
+                            + " the SAS token options (sv, sig, se and the others), or AZURE_IDENTITY with the"
+                            + " DefaultAzureCredential of the Azure Identity library and the backup intent, which needs the"
+                            + " Storage File Data Privileged Reader or Contributor role. SHARED_KEY_CREDENTIAL is not"
+                            + " supported: with it, or with SHARED_ACCOUNT_KEY and no sharedKey, the requests carry no"
+                            + " credentials.")
     private CredentialType credentialType = SHARED_ACCOUNT_KEY;
 
     public FilesConfiguration() {

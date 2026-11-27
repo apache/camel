@@ -28,4 +28,20 @@ public class BonitaAPIConfigTest {
         assertEquals("http://host:port/bonita", config.getBaseBonitaURI());
     }
 
+    @Test
+    public void testBasePath() {
+        assertEquals("http://host:port/bpm", new BonitaAPIConfig("host", "port", "u", "p", "/bpm/").getBaseBonitaURI());
+        assertEquals("http://host:port/bpm", new BonitaAPIConfig("host", "port", "u", "p", "bpm").getBaseBonitaURI());
+        assertEquals("http://host:port", new BonitaAPIConfig("host", "port", "u", "p", "/").getBaseBonitaURI());
+        assertEquals("http://host:port/bonita", new BonitaAPIConfig("host", "port", "u", "p", null).getBaseBonitaURI());
+    }
+
+    @Test
+    public void testProcessFileUploadBaseURI() {
+        assertEquals("http://host:port/bonita/portal/resource/process/orders/1.0/API/formFileUpload",
+                new BonitaAPIConfig("host", "port", "u", "p").getProcessFileUploadBaseURI("orders", "1.0"));
+        assertEquals("http://host:port/portal/resource/process/orders/1.0/API/formFileUpload",
+                new BonitaAPIConfig("host", "port", "u", "p", "/").getProcessFileUploadBaseURI("orders", "1.0"));
+    }
+
 }

@@ -39,6 +39,7 @@ public class AsteriskComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         AsteriskEndpoint endpoint = new AsteriskEndpoint(uri, this);
+        endpoint.setName(remaining);
 
         setProperties(endpoint, parameters);
 

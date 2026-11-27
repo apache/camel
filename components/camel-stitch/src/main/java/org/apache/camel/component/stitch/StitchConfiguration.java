@@ -30,35 +30,52 @@ import reactor.netty.resources.ConnectionProvider;
 @UriParams
 public class StitchConfiguration implements Cloneable {
 
-    @UriPath
+    @UriPath(description = "The name of the destination table that the records are loaded into. The CamelStitchTableName"
+                           + " header overrides it, and it overrides the table_name of a StitchRequestBody or Map body."
+                           + " Table names must be unique in each destination schema, and Stitch rejects the data when the"
+                           + " name is longer than the destination allows.")
     private String tableName;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The access token of the Stitch Import API, sent as a Bearer token. It is required, also when"
+                            + " stitchClient is set.")
     @Metadata(required = true)
     private String token;
-    @UriParam(label = "producer", defaultValue = "EUROPE")
+    @UriParam(label = "producer", defaultValue = "EUROPE",
+              description = "The region of the Stitch account, which selects the host of the Import API: EUROPE"
+                            + " (api.eu-central-1.stitchdata.com) or NORTH_AMERICA (api.stitchdata.com). Not used when"
+                            + " stitchClient is set.")
     private StitchRegion region = StitchRegion.EUROPE;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The JSON schema that describes the records of the batch; Stitch rejects records that do not"
+                            + " conform to it. The CamelStitchSchema header overrides it, and it overrides the schema of a"
+                            + " StitchRequestBody or Map body.")
     @Metadata(autowired = true)
     private StitchSchema stitchSchema;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The Primary Key fields of the source table, as a comma separated list without spaces. Stitch"
+                            + " uses them to de-duplicate the records when it loads them, and loads the table append-only"
+                            + " when there are none. The CamelStitchKeyNames header overrides it, and the names are added"
+                            + " to the key_names of a StitchRequestBody or Map body.")
     private String keyNames;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "producer,advanced",
+              description = "A custom Reactor Netty HttpClient that sends the requests. The endpoint still sets the host"
+                            + " of the region and the Authorization and Content-Type headers on it, and does not use"
+                            + " connectionProvider. Not used when stitchClient is set.")
     @Metadata(autowired = true)
     private HttpClient httpClient;
-    @UriParam(label = "producer,advanced")
+    @UriParam(label = "producer,advanced",
+              description = "A Reactor Netty ConnectionProvider, for example a pool with a maximum number of connections,"
+                            + " that the endpoint creates its HttpClient with. Not used when httpClient or stitchClient is"
+                            + " set.")
     @Metadata(autowired = true)
     private ConnectionProvider connectionProvider;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "A custom implementation of the org.apache.camel.component.stitch.client.StitchClient"
+                            + " interface that sends the batches. When set, the region, httpClient and connectionProvider"
+                            + " options are not used, and the endpoint does not close the client when it stops.")
     @Metadata(autowired = true)
     private StitchClient stitchClient;
 
-    /**
-     * The name of the destination table the data is being pushed to. Table names must be unique in each destination
-     * schema, or loading issues will occur.
-     *
-     * Note: The number of characters in the table name should be within the destination's allowed limits or data will
-     * rejected.
-     */
     public String getTableName() {
         return tableName;
     }
@@ -67,9 +84,6 @@ public class StitchConfiguration implements Cloneable {
         this.tableName = tableName;
     }
 
-    /**
-     * Stitch access token for the Stitch Import API
-     */
     public String getToken() {
         return token;
     }
@@ -78,9 +92,6 @@ public class StitchConfiguration implements Cloneable {
         this.token = token;
     }
 
-    /**
-     * Stitch account region, e.g: europe
-     */
     public StitchRegion getRegion() {
         return region;
     }
@@ -89,9 +100,6 @@ public class StitchConfiguration implements Cloneable {
         this.region = region;
     }
 
-    /**
-     * A schema that describes the record(s)
-     */
     public StitchSchema getStitchSchema() {
         return stitchSchema;
     }
@@ -100,10 +108,6 @@ public class StitchConfiguration implements Cloneable {
         this.stitchSchema = stitchSchema;
     }
 
-    /**
-     * A collection of comma separated strings representing the Primary Key fields in the source table. Stitch use these
-     * Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner.
-     */
     public String getKeyNames() {
         return keyNames;
     }
@@ -112,9 +116,6 @@ public class StitchConfiguration implements Cloneable {
         this.keyNames = keyNames;
     }
 
-    /**
-     * Reactor Netty HttpClient, you can injected it if you want to have custom HttpClient
-     */
     public HttpClient getHttpClient() {
         return httpClient;
     }
@@ -123,10 +124,6 @@ public class StitchConfiguration implements Cloneable {
         this.httpClient = httpClient;
     }
 
-    /**
-     * ConnectionProvider contain configuration for the HttpClient like Maximum connection limit .. etc, you can inject
-     * this ConnectionProvider and the StitchClient will initialize HttpClient with this ConnectionProvider
-     */
     public ConnectionProvider getConnectionProvider() {
         return connectionProvider;
     }
@@ -135,9 +132,6 @@ public class StitchConfiguration implements Cloneable {
         this.connectionProvider = connectionProvider;
     }
 
-    /**
-     * Set a custom StitchClient that implements org.apache.camel.component.stitch.client.StitchClient interface
-     */
     public StitchClient getStitchClient() {
         return stitchClient;
     }
