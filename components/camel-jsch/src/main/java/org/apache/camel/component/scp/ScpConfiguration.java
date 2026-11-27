@@ -22,18 +22,21 @@ import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SCP configuration
  */
 @UriParams
 public class ScpConfiguration extends RemoteFileConfiguration {
+    private static final Logger LOG = LoggerFactory.getLogger(ScpConfiguration.class);
 
     public static final int DEFAULT_SFTP_PORT = 22;
     public static final String DEFAULT_MOD = "664";
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security")
     @Metadata(supportFileReference = true)
     private String knownHostsFile;
     @UriParam(label = "security", security = "secret")
@@ -42,14 +45,17 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     private byte[] privateKeyBytes;
     @UriParam(label = "security", security = "secret")
     private String privateKeyFilePassphrase;
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security",
               description = "Set the OpenSSH certificate file path for certificate-based authentication.")
     private String certFile;
-    @UriParam(label = "security", security = "secret",
-              description = "Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.")
-    @Metadata(supportFileReference = true)
+    @UriParam(label = "security",
+              description = "Set the OpenSSH certificate (a path on the file system, or with the classpath: prefix a resource"
+                            + " on the classpath) for certificate-based authentication.")
+    @Metadata(supportFileReference = true,
+              deprecationNote = "Use certFile, which loads the certificate in the same way and takes precedence.")
+    @Deprecated
     private String certUri;
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security",
               description = "Set the OpenSSH certificate as a byte array for certificate-based authentication.")
     private byte[] certBytes;
     @UriParam(label = "security",
@@ -61,13 +67,13 @@ public class ScpConfiguration extends RemoteFileConfiguration {
                             + " host key verification and makes the connection vulnerable to man-in-the-middle attacks."
                             + " Use 'yes' in production environments.")
     private String strictHostKeyChecking = "no";
-    @UriParam(defaultValue = DEFAULT_MOD)
+    @UriParam(label = "producer", defaultValue = DEFAULT_MOD)
     private String chmod = DEFAULT_MOD;
     // comma separated list of ciphers.
     // null means default jsch list will be used
     @UriParam(label = "security,advanced")
     private String ciphers;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security")
     private String preferredAuthentications;
 
     public ScpConfiguration() {
@@ -153,13 +159,21 @@ public class ScpConfiguration extends RemoteFileConfiguration {
         this.certFile = certFile;
     }
 
+    /**
+     * @deprecated Use certFile, which loads the certificate in the same way and takes precedence.
+     */
+    @Deprecated
     public String getCertUri() {
         return certUri;
     }
 
     /**
-     * Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.
+     * Set the OpenSSH certificate (a path on the file system, or with the classpath: prefix a resource on the
+     * classpath) for certificate-based authentication.
+     *
+     * @deprecated Use certFile, which loads the certificate in the same way and takes precedence.
      */
+    @Deprecated
     public void setCertUri(String certUri) {
         this.certUri = certUri;
     }
@@ -202,17 +216,15 @@ public class ScpConfiguration extends RemoteFileConfiguration {
      * Allows you to set chmod on the stored file. For example chmod=664.
      */
     public void setChmod(String chmod) {
-        if (chmod.length() == 3) {
-            for (byte c : chmod.getBytes()) {
-                if (c < '0' || c > '7') {
-                    chmod = DEFAULT_MOD;
-                    break;
-                }
-            }
-        } else {
+        boolean valid = chmod.length() == 3;
+        for (int i = 0; valid && i < chmod.length(); i++) {
+            char c = chmod.charAt(i);
+            valid = c >= '0' && c <= '7';
+        }
+        if (!valid) {
+            LOG.warn("The chmod value {} is not three octal digits, such as 644: the files get {}", chmod, DEFAULT_MOD);
             chmod = DEFAULT_MOD;
         }
-        // May be interesting to log the fallback to DEFAULT_MOD for invalid configuration
         this.chmod = chmod;
     }
 

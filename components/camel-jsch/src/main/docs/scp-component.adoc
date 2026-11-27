@@ -78,14 +78,19 @@ scp sends the name of each sub directory and of the file on a protocol line that
 name with a line feed or a NUL character is refused with a `GenericFileOperationFailedException` before anything is
 sent to the remote host. Any other character, such as a carriage return or a tab, is sent as is.
 
-Without a known hosts file (`useUserKnownHostsFile=false` and no `knownHostsFile`), no host is known,
+Without a known hosts file (`useUserKnownHostsFile=false` and no `knownHostsFile`, or the default
+`useUserKnownHostsFile=true` when `.ssh/known_hosts` does not exist in the home directory), no host is known,
 so the option `strictHostKeyChecking` decides: with `yes` the connection fails, with `no` (the default)
 the host key is not checked.
+
+With the `password` option the producer can log in with the `password` and the `keyboard-interactive`
+authentication methods. With `keyboard-interactive`, it answers with the password when the server asks one question
+that is not echoed and contains `password:` (in any case), as a PAM setup does, and cancels any other question.
 
 
 == OpenSSH Certificate Authentication
 
-Camel supports OpenSSH certificate-based authentication for SCP connections, where a user's public key is signed by a Certificate Authority (CA). This is configured using the `certFile`, `certUri`, or `certBytes` parameters alongside the private key:
+Camel supports OpenSSH certificate-based authentication for SCP connections, where a user's public key is signed by a Certificate Authority (CA). This is configured using the `certFile` or `certBytes` parameters (or the deprecated `certUri`) alongside the private key:
 
 [tabs]
 ====

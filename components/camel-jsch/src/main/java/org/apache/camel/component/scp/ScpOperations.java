@@ -19,6 +19,7 @@ package org.apache.camel.component.scp;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -325,6 +326,9 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         ObjectHelper.notNull(config, "ScpConfiguration");
         try {
             final JSch jsch = new JSch();
+            if (endpoint.getComponent() instanceof ScpComponent scp && scp.getJschLogger() != null) {
+                jsch.setInstanceLogger(scp.getJschLogger());
+            }
             // get from configuration
             if (ObjectHelper.isNotEmpty(config.getCiphers())) {
                 LOG.trace("Using ciphers: {}", config.getCiphers());
@@ -373,7 +377,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                     userKnownHostFile = HomeHelper.resolveHomeDir() + "/.ssh/known_hosts";
                     LOG.info("Known host file not configured, using user known host file: {}", userKnownHostFile);
                 }
-                knownHostsFile = userKnownHostFile;
+                if (new File(userKnownHostFile).exists()) {
+                    knownHostsFile = userKnownHostFile;
+                } else {
+                    // as JSch does for a known hosts file that does not exist: no host is known
+                    LOG.debug("The user known host file {} does not exist, so no host is known", userKnownHostFile);
+                }
             }
             // load file as input stream which can then load from classpath etc
             if (ObjectHelper.isNotEmpty(knownHostsFile)) {
@@ -393,6 +402,10 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             session = jsch.getSession(config.getUsername(), config.getHost(), config.getPort());
             session.setTimeout(config.getTimeout());
             session.setUserInfo(new SessionUserInfo(config));
+            if (config.getPassword() != null) {
+                // JSch answers a keyboard-interactive password prompt only with the password of the session
+                session.setPassword(config.getPassword());
+            }
 
             if (ObjectHelper.isNotEmpty(config.getStrictHostKeyChecking())) {
                 LOG.trace("Using StrickHostKeyChecking: {}", config.getStrictHostKeyChecking());

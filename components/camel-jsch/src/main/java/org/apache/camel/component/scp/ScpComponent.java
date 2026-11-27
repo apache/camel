@@ -19,7 +19,6 @@ package org.apache.camel.component.scp;
 import java.net.URI;
 import java.util.Map;
 
-import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Logger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -34,8 +33,9 @@ import org.apache.camel.util.StringHelper;
 @Component("scp")
 public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
-    @Metadata
+    @Metadata(label = "advanced")
     private boolean verboseLogging;
+    private Logger jschLogger;
 
     public ScpComponent() {
     }
@@ -74,11 +74,20 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
         this.verboseLogging = verboseLogging;
     }
 
+    /**
+     * The logger that the JSch instance of each session of the endpoints of this component logs with.
+     */
+    public Logger getJschLogger() {
+        return jschLogger;
+    }
+
     protected void initJsch() {
         // StrictHostKeyChecking is applied per session from ScpConfiguration in ScpOperations.createSession();
         // a global JSch.setConfig("StrictHostKeyChecking", ...) here would always be overridden by that per-session
         // value, so it is intentionally not set to avoid a misleading (and contradictory) global default.
-        JSch.setLogger(new Logger() {
+        // The logger is set on the JSch instance of each session (JSch.setInstanceLogger), not with the static
+        // JSch.setLogger, which would apply to every user of JSch in the JVM.
+        jschLogger = new Logger() {
             @Override
             public boolean isEnabled(int level) {
                 return level == FATAL || level == ERROR ? ScpComponent.this.log.isErrorEnabled()
@@ -103,7 +112,7 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
                     ScpComponent.this.log.debug("[JSCH] {}", message);
                 }
             }
-        });
+        };
     }
 
 }

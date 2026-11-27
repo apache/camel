@@ -45,21 +45,6 @@ public interface ScpEndpointBuilderFactory {
         }
 
         /**
-         * Allows you to set chmod on the stored file. For example chmod=664.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: 664
-         * Group: producer
-         * 
-         * @param chmod the value to set
-         * @return the dsl builder
-         */
-        default ScpEndpointBuilder chmod(String chmod) {
-            doSetProperty("chmod", chmod);
-            return this;
-        }
-        /**
          * Whether or not to disconnect from remote FTP server right after use.
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
@@ -109,6 +94,21 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder checksumFileAlgorithm(String checksumFileAlgorithm) {
             doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
+            return this;
+        }
+        /**
+         * Allows you to set chmod on the stored file. For example chmod=664.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: 664
+         * Group: producer
+         * 
+         * @param chmod the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder chmod(String chmod) {
+            doSetProperty("chmod", chmod);
             return this;
         }
         /**
@@ -324,8 +324,10 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate (loaded from classpath by default) for
-         * certificate-based authentication.
+         * Set the OpenSSH certificate (a path on the file system, or with the
+         * classpath: prefix a resource on the classpath) for certificate-based
+         * authentication. Deprecation note: Use certFile, which loads the
+         * certificate in the same way and takes precedence.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -337,6 +339,7 @@ public interface ScpEndpointBuilderFactory {
          * @param certUri the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default ScpEndpointBuilder certUri(String certUri) {
             doSetProperty("certUri", certUri);
             return this;
