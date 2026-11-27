@@ -201,7 +201,7 @@ or removes its row.
 | camel-grpc | grpc |  |
 | camel-hashicorp-vault | hashicorp-vault |  |
 | camel-hazelcast | hazelcast-instance, hazelcast-list, hazelcast-map, hazelcast-multimap, hazelcast-pncounter, hazelcast-queue, hazelcast-replicatedmap, hazelcast-ringbuffer, hazelcast-seda, hazelcast-set, hazelcast-topic |  |
-| camel-hibernate | hibernate |  |
+| camel-hibernate | hibernate | yes |
 | camel-hivemq | hivemq |  |
 | camel-http | http, https |  |
 | camel-huaweicloud-dms | hwcloud-dms |  |

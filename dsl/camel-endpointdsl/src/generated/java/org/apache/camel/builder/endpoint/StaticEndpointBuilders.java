@@ -8174,8 +8174,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Execute selection and mutation queries and natural-id lookups using
-     * Hibernate ORM.
+     * Run HQL queries, look up, insert and upsert entities, and poll entities
+     * from a relational database with Hibernate ORM.
      * 
      * Category: database
      * Since: 4.24
@@ -8184,7 +8184,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hibernate:entityClassName</code>
      * 
      * Path parameter: entityClassName (required)
-     * Target entity class name
+     * The fully qualified class name of the Hibernate entity. It is the result
+     * type of the selection query and the entity type of the natural-id lookup.
+     * The mutation query and the stateless operations do not use it.
      * 
      * @param path entityClassName
      * @return the dsl builder
@@ -8194,8 +8196,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Execute selection and mutation queries and natural-id lookups using
-     * Hibernate ORM.
+     * Run HQL queries, look up, insert and upsert entities, and poll entities
+     * from a relational database with Hibernate ORM.
      * 
      * Category: database
      * Since: 4.24
@@ -8204,7 +8206,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hibernate:entityClassName</code>
      * 
      * Path parameter: entityClassName (required)
-     * Target entity class name
+     * The fully qualified class name of the Hibernate entity. It is the result
+     * type of the selection query and the entity type of the natural-id lookup.
+     * The mutation query and the stateless operations do not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

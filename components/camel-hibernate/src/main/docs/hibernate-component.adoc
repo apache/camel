@@ -2,7 +2,7 @@
 :doctitle: Hibernate
 :shortname: hibernate
 :artifactid: camel-hibernate
-:description: Execute selection and mutation queries and natural-id lookups using Hibernate ORM.
+:description: Run HQL queries, look up, insert and upsert entities, and poll entities from a relational database with Hibernate ORM.
 :since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
