@@ -17,8 +17,10 @@
 The Azure IoT Hub component provides the capability to send device-to-cloud
 telemetry and to update device-twin reported properties on
 https://azure.microsoft.com/services/iot-hub/[Azure IoT Hub], using the
-Azure IoT device SDK. Device connections are pooled and reused by the
-resolved hub/device/module identity from the connection string.
+Azure IoT device SDK. Device connections are pooled and reused per
+connection string: a message only gets a pooled connection that was opened
+with the same connection string, including its key, so connection strings of
+the same device with different keys get their own connections.
 
 *Prerequisites*
 
