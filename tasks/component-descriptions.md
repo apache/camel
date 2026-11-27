@@ -240,7 +240,7 @@ or removes its row.
 | camel-jpa | jpa |  |
 | camel-jsch | scp | yes |
 | camel-jslt | jslt |  |
-| camel-json-validator | json-validator |  |
+| camel-json-validator | json-validator | yes |
 | camel-jsonata | jsonata | yes |
 | camel-jt400 | jt400 |  |
 | camel-jte | jte |  |

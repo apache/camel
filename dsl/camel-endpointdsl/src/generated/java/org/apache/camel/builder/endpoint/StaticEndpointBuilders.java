@@ -10076,7 +10076,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JSON Schema Validator (camel-json-validator)
-     * Validate JSON payloads using NetworkNT JSON Schema.
+     * Validate the JSON in the message body or in a header against a JSON
+     * Schema, with the NetworkNT JSON Schema Validator.
      * 
      * Category: validation
      * Since: 2.20
@@ -10101,7 +10102,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JSON Schema Validator (camel-json-validator)
-     * Validate JSON payloads using NetworkNT JSON Schema.
+     * Validate the JSON in the message body or in a header against a JSON
+     * Schema, with the NetworkNT JSON Schema Validator.
      * 
      * Category: validation
      * Since: 2.20
