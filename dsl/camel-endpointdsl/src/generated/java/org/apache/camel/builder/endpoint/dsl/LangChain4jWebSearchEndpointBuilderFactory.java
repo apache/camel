@@ -120,7 +120,6 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Required: true
          * Default: 1
          * Group: producer
          * 
@@ -139,7 +138,6 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Required: true
          * Default: 1
          * Group: producer
          * 
@@ -162,7 +160,6 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType</code> type.
          * 
-         * Required: true
          * Default: CONTENT
          * Group: producer
          * 
@@ -185,7 +182,6 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType</code> type.
          * 
-         * Required: true
          * Default: CONTENT
          * Group: producer
          * 
@@ -294,14 +290,14 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
         /**
          * The dev.langchain4j.web.search.WebSearchEngine that runs the search,
          * for example a TavilyWebSearchEngine or a GoogleCustomWebSearchEngine
-         * of the LangChain4j web search engine modules. If not set, the single
-         * instance in the registry is used, and the producer fails to start
-         * when there is none.
+         * of the LangChain4j web search engine modules. It can be set on the
+         * endpoint or on the component. If neither sets it, the single instance
+         * in the registry is used, and the producer fails to start when there
+         * is none.
          * 
          * The option is a:
          * <code>dev.langchain4j.web.search.WebSearchEngine</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param webSearchEngine the value to set
@@ -314,14 +310,14 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
         /**
          * The dev.langchain4j.web.search.WebSearchEngine that runs the search,
          * for example a TavilyWebSearchEngine or a GoogleCustomWebSearchEngine
-         * of the LangChain4j web search engine modules. If not set, the single
-         * instance in the registry is used, and the producer fails to start
-         * when there is none.
+         * of the LangChain4j web search engine modules. It can be set on the
+         * endpoint or on the component. If neither sets it, the single instance
+         * in the registry is used, and the producer fails to start when there
+         * is none.
          * 
          * The option will be converted to a
          * <code>dev.langchain4j.web.search.WebSearchEngine</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param webSearchEngine the value to set

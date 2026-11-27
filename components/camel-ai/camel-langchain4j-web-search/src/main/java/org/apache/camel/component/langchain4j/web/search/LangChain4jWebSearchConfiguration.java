@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.web.search;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import dev.langchain4j.web.search.WebSearchEngine;
@@ -30,14 +31,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class LangChain4jWebSearchConfiguration implements Cloneable {
 
-    @Metadata(required = true, autowired = true)
+    // not required in the catalog: the endpoint, the component or autowiring can give it, and the producer checks it
+    @Metadata(autowired = true)
     @UriParam(description = "The dev.langchain4j.web.search.WebSearchEngine that runs the search, for example a"
                             + " TavilyWebSearchEngine or a GoogleCustomWebSearchEngine of the LangChain4j web search engine"
-                            + " modules. If not set, the single instance in the registry is used, and the producer fails to"
-                            + " start when there is none.")
+                            + " modules. It can be set on the endpoint or on the component. If neither sets it, the single"
+                            + " instance in the registry is used, and the producer fails to start when there is none.")
     private WebSearchEngine webSearchEngine;
 
-    @Metadata(required = true, defaultValue = "CONTENT")
+    @Metadata(defaultValue = "CONTENT")
     @UriParam(description = "What the producer returns for each result: CONTENT its content as a String, or its snippet when"
                             + " the result has no content (as some engines give none), SNIPPET its snippet, or"
                             + " LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT the dev.langchain4j.web.search.WebSearchOrganicResult."
@@ -45,7 +47,7 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
                             + " when there is no result.")
     private LangChain4jWebSearchResultType resultType = LangChain4jWebSearchResultType.CONTENT;
 
-    @Metadata(required = true, defaultValue = "1")
+    @Metadata(defaultValue = "1")
     @UriParam(description = "The number of results that the producer asks the search engine for. With 1 the body is a single"
                             + " result, otherwise a List. An engine can return fewer results and can have its own maximum.")
     private Integer maxResults = 1;
@@ -157,7 +159,13 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
 
     public LangChain4jWebSearchConfiguration copy() {
         try {
-            return (LangChain4jWebSearchConfiguration) super.clone();
+            LangChain4jWebSearchConfiguration copy = (LangChain4jWebSearchConfiguration) super.clone();
+            if (additionalParams != null) {
+                // each endpoint gets its own map: a key bound on an endpoint must not reach the component and the other
+                // endpoints
+                copy.additionalParams = new HashMap<>(additionalParams);
+            }
+            return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
