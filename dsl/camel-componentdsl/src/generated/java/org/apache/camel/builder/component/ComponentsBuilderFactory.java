@@ -3823,7 +3823,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Mustache (camel-mustache)
-     * Transform messages using a Mustache template.
+     * Render a Mustache template with the data of the message and use the text
+     * it writes as the new message body.
      * 
      * Category: transformation
      * Since: 2.12
