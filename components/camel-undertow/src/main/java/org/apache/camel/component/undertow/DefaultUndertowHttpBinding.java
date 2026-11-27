@@ -49,6 +49,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExceptionHelper;
@@ -366,6 +367,16 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
+            if (!HttpHelper.isValidHeaderName(key)) {
+                // a message header can have any name, for example a form field without "=", which the
+                // form parser maps to a header, but it cannot be sent as an HTTP header: HttpString
+                // writes a name with spaces, commas or colons as is
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Skipping header {} in the response, as its name is not a valid HTTP header name",
+                            HttpHelper.sanitizeLog(key));
+                }
+                continue;
+            }
             Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null);
@@ -440,6 +451,16 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         //copy headers from Message to Request
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
+            if (!HttpHelper.isValidHeaderName(key)) {
+                // a message header can have any name, for example a form field without "=", which the
+                // form parser maps to a header, but it cannot be sent as an HTTP header: HttpString
+                // writes a name with spaces, commas or colons as is
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Skipping header {} in the request, as its name is not a valid HTTP header name",
+                            HttpHelper.sanitizeLog(key));
+                }
+                continue;
+            }
             Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null);

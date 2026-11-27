@@ -12022,6 +12022,15 @@ request, the other consumers passed the name on to the servlet container, and ca
 reject with a 400. Headers with a valid name are written as before. A route that needs such a value in the response or
 in the request must set it in a header with a valid name.
 
+=== camel-undertow, camel-vertx-http - a header whose name is not a token
+
+The camel-undertow consumer and producer, and the camel-vertx-http producer, now also leave out a message header whose
+name is not a valid HTTP header name (an RFC 9110 token) when they write the response or the request, and log it at
+DEBUG level, as camel-http-common, camel-netty-http and camel-http do. Before, camel-undertow wrote such a name as it
+is, which a client or server may reject, and camel-vertx-http failed the exchange with an `IllegalArgumentException`
+("a header name cannot contain some prohibited characters") after the route had run. Headers with a valid name are
+written as before.
+
 === camel-pinecone - the pinecone:embeddings transformer leaves the index name unset
 
 The `pinecone:embeddings` data type transformer no longer sets the `CamelPineconeIndexName` header to

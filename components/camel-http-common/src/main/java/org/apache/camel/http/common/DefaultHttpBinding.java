@@ -317,7 +317,9 @@ public class DefaultHttpBinding implements HttpBinding {
                     }
                     for (String param : text.split("&")) {
                         if (param.isEmpty()) {
-                            // an empty field, as in a=1&&b=2, has no name
+                            // an empty field, as in a=1&&b=2, is skipped; a field such as =x is not empty and
+                            // has an empty name, which is kept, as in the WHATWG parser (an HTTP response does
+                            // not write it, as it is not a valid header name)
                             continue;
                         }
                         // a field without = is a name with an empty value, as in the URL-encoded form parser
