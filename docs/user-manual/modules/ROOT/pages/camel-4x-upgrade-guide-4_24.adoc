@@ -2876,7 +2876,9 @@ A Kubernetes cluster view stops when its last user (such as a `master:` consumer
 when the cluster service stops. The stopped view now reports that the pod is no longer the leader and tells its
 listeners. If the leadership of the pod had taken effect, the view also removes the pod from the lease (the `Lease`, or
 the leader key of the group in the `ConfigMap`). Another pod then takes over the leadership on its next check, after the
-retry period.
+retry period. The view also releases the lease when the pod is not leader but the lease may still name it: a request
+of the pod to take an empty lease failed (for example the stop interrupted it) but may have been applied, or the last
+check found the lease naming the pod while the pod was not ready.
 
 Before, the stopped view kept reporting the pod as leader: `CamelClusterService.isLeader` returned `true`, also once the
 view was used again, until its first lookup. The lease kept naming the pod, so no other pod could lead the group until

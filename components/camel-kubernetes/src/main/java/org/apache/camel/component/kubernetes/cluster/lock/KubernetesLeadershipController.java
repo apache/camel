@@ -126,6 +126,7 @@ public class KubernetesLeadershipController implements Service {
             LOG.debug("{} Starting leadership controller...", logPrefix);
             stopDeadlineNanos = null;
             lastLeaseCallFailed = false;
+            emptyLeaseAcquisitionUnconfirmed = false;
             serializedExecutor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                     "CamelKubernetesLeadershipController");
             leaderNotifier = new TimedLeaderNotifier(this.camelContext, this.eventHandler);
@@ -239,10 +240,16 @@ public class KubernetesLeadershipController implements Service {
         }
     }
 
+    /**
+     * Whether the lease may name this pod while it is not leader: a request to take an empty lease may have been
+     * applied although it failed, or the last lookup found the lease naming this pod while it was not ready (not a
+     * valid leader; a valid one becomes leader, see {@link State#BECOMING_LEADER}).
+     */
     private boolean mayNameThisPod() {
         LeaderInfo leaderInfo = this.latestLeaderInfo;
+        String podName = this.lockConfiguration.getPodName();
         return this.emptyLeaseAcquisitionUnconfirmed
-                || leaderInfo != null && this.lockConfiguration.getPodName().equals(leaderInfo.getLeader());
+                || leaderInfo != null && podName.equals(leaderInfo.getLeader()) && !leaderInfo.isValidLeader(podName);
     }
 
     private void doReleaseLeadership() {
