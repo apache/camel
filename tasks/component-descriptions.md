@@ -210,7 +210,7 @@ or removes its row.
 | camel-huaweicloud-iam | hwcloud-iam |  |
 | camel-huaweicloud-imagerecognition | hwcloud-imagerecognition | yes |
 | camel-huaweicloud-obs | hwcloud-obs |  |
-| camel-huaweicloud-smn | hwcloud-smn |  |
+| camel-huaweicloud-smn | hwcloud-smn | yes |
 | camel-huggingface | huggingface | yes |
 | camel-ibm-cos | ibm-cos |  |
 | camel-ibm-secrets-manager | ibm-secrets-manager |  |

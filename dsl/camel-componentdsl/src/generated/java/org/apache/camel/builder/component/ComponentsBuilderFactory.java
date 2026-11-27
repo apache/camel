@@ -2588,8 +2588,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
-     * To broadcast messages and connect cloud services through notifications on
-     * Huawei Cloud
+     * Publish messages to topics of Huawei Cloud Simple Message Notification
+     * (SMN).
      * 
      * Category: cloud,messaging
      * Since: 3.8

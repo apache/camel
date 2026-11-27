@@ -8667,8 +8667,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
-     * To broadcast messages and connect cloud services through notifications on
-     * Huawei Cloud
+     * Publish messages to topics of Huawei Cloud Simple Message Notification
+     * (SMN).
      * 
      * Category: cloud,messaging
      * Since: 3.8
@@ -8677,7 +8677,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-smn:smnService</code>
      * 
      * Path parameter: smnService (required)
-     * Name of SMN service to invoke
+     * The SMN service that the producer calls. Only publishMessageService is
+     * supported.
      * 
      * @param path smnService
      * @return the dsl builder
@@ -8687,8 +8688,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
-     * To broadcast messages and connect cloud services through notifications on
-     * Huawei Cloud
+     * Publish messages to topics of Huawei Cloud Simple Message Notification
+     * (SMN).
      * 
      * Category: cloud,messaging
      * Since: 3.8
@@ -8697,7 +8698,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-smn:smnService</code>
      * 
      * Path parameter: smnService (required)
-     * Name of SMN service to invoke
+     * The SMN service that the producer calls. Only publishMessageService is
+     * supported.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
