@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GrpcConsumerConfigurationTest extends CamelTestSupport {
     @Test
@@ -68,5 +69,14 @@ class GrpcConsumerConfigurationTest extends CamelTestSupport {
                 () -> consumer.receive(
                         "grpc:localhost:8080/org.apache.camel.component.grpc.PingPong?maxRstFramesPerWindow=100"));
         assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+    }
+
+    @Test
+    void googleAuthenticationOnConsumerFailsToStart() {
+        FailedToCreateConsumerException exception = assertThrows(FailedToCreateConsumerException.class,
+                () -> consumer.receive(
+                        "grpc:localhost:0/org.apache.camel.component.grpc.PingPong?authenticationType=GOOGLE", 5000));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertTrue(cause.getMessage().contains("supported only on the producer"), cause.getMessage());
     }
 }

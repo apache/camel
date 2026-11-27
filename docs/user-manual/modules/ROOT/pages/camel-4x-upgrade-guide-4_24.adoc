@@ -12423,6 +12423,13 @@ With `mimeType` `PAGEABLE`, `PRINTABLE` or `RENDERABLE_IMAGE`, the producer now 
 `java.awt.print.Pageable`, `java.awt.print.Printable` or `java.awt.image.renderable.RenderableImage`, as these doc
 flavors need, instead of a stream. With `sendToPrinter=false`, the body is still written to a file as bytes.
 
+=== camel-grpc - a consumer with authenticationType GOOGLE fails to start
+
+A `grpc` consumer with `authenticationType=GOOGLE` now fails to start with an `IllegalArgumentException`. GOOGLE makes
+the producer send the OAuth2 access tokens of a Google service account; the consumer never checked them, so such a
+consumer accepted every call. To authenticate the clients of a consumer, use `authenticationType=JWT` or mutual TLS
+(`negotiationType=TLS`), or remove the option to keep accepting all calls as before.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
