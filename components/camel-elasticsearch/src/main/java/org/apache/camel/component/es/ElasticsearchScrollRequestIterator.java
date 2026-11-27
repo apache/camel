@@ -31,8 +31,12 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<Hit<TDocument>>, Closeable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchScrollRequestIterator.class);
 
     private final SearchRequest searchRequest;
     private final ElasticsearchClient esClient;
@@ -72,6 +76,11 @@ public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<H
             updateCurrentSearchHits();
 
             hasNext = currentSearchHits.hasNext();
+            if (!hasNext) {
+                // the scroll is read to the end: clear it, and release the client it holds with disconnect=true, as a
+                // reader that stops when hasNext() returns false may never close the iterator
+                closeAtEnd();
+            }
         }
 
         return hasNext;
@@ -130,9 +139,21 @@ public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<H
         this.resource = resource;
     }
 
+    private void closeAtEnd() {
+        try {
+            close();
+        } catch (RuntimeException e) {
+            // all the hits were read, the scroll context expires on the node after scrollKeepAliveMs
+            LOG.warn("Could not clear the scroll after its last page", e);
+        }
+    }
+
     @Override
     public void close() {
         if (!closed) {
+            // closed also when the clear-scroll request fails, so that hasNext() sends no further scroll request
+            closed = true;
+            exchange.setProperty(ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT, requestCount);
             try {
                 // scrollId can be null if the initial search returned no scroll id; List.of(null) would NPE
                 if (scrollId != null) {
@@ -142,8 +163,6 @@ public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<H
 
                     esClient.clearScroll(clearScrollRequest);
                 }
-                closed = true;
-                exchange.setProperty(ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT, requestCount);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             } finally {

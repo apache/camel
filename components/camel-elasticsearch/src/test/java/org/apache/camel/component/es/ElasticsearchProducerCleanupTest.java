@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The producer removes the headers it set from the endpoint options, and closes the client it created with
- * disconnect=true, when the request succeeds, when it fails, and when a scroll is read after the exchange.
+ * disconnect=true, when the request succeeds, when it fails, and when a scroll is read to its end or closed.
  */
 class ElasticsearchProducerCleanupTest {
 
@@ -126,7 +126,7 @@ class ElasticsearchProducerCleanupTest {
     }
 
     @Test
-    void aScrollWithDisconnectIsReadToTheEndAndClosesTheClientOnClose() throws Exception {
+    void aScrollWithDisconnectReadToTheEndClosesTheClientWithoutClose() throws Exception {
         ElasticsearchProducer producer
                 = startProducer(uri + "&operation=Search&indexName=idx&useScroll=true&disconnect=true");
         Exchange exchange = producer.getEndpoint().createExchange();
@@ -137,22 +137,49 @@ class ElasticsearchProducerCleanupTest {
         assertNull(exchange.getException());
         ElasticsearchScrollRequestIterator<?> iterator
                 = assertInstanceOf(ElasticsearchScrollRequestIterator.class, exchange.getMessage().getBody());
+        // a reader in its own processor reads until hasNext() is false and never calls close()
         List<String> ids = new ArrayList<>();
-        try (iterator) {
-            while (iterator.hasNext()) {
-                Hit<?> hit = iterator.next();
-                ids.add(hit.id());
-            }
-            assertTrue(createdClients.get(0).isRunning(), "the client was closed before the scroll was closed");
+        while (iterator.hasNext()) {
+            Hit<?> hit = iterator.next();
+            ids.add(hit.id());
+            assertTrue(createdClients.get(0).isRunning(), "the client was closed before the scroll was read");
         }
 
         assertEquals(List.of("1", "2"), ids);
+        assertTrue(iterator.isClosed(), "the scroll read to the end was not closed");
         assertTrue(requests.contains("DELETE /_search/scroll"), "requests sent: " + requests);
         assertEquals(1, createdClients.size());
-        assertFalse(createdClients.get(0).isRunning(), "the client of the scroll was not closed with the scroll");
+        assertFalse(createdClients.get(0).isRunning(), "the client of the scroll was not closed at the end of the scroll");
+        assertFalse(iterator.hasNext());
+        assertEquals(3, exchange.getProperty(ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class));
         // the next exchange creates a new client, the scroll kept the one it read with
         assertNull(producer.getClient());
         assertNoOptionHeaders(exchange);
+        producer.stop();
+    }
+
+    @Test
+    void aScrollWithDisconnectClosedBeforeTheEndClosesTheClient() throws Exception {
+        ElasticsearchProducer producer
+                = startProducer(uri + "&operation=Search&indexName=idx&useScroll=true&disconnect=true");
+        Exchange exchange = producer.getEndpoint().createExchange();
+        exchange.getMessage().setBody(QUERY);
+
+        producer.process(exchange);
+
+        assertNull(exchange.getException());
+        ElasticsearchScrollRequestIterator<?> iterator
+                = assertInstanceOf(ElasticsearchScrollRequestIterator.class, exchange.getMessage().getBody());
+        try (iterator) {
+            assertTrue(iterator.hasNext());
+            assertEquals("1", iterator.next().id());
+            assertTrue(createdClients.get(0).isRunning(), "the client was closed before the scroll was closed");
+        }
+
+        assertTrue(requests.contains("DELETE /_search/scroll"), "requests sent: " + requests);
+        assertEquals(1, createdClients.size());
+        assertFalse(createdClients.get(0).isRunning(), "the client of the scroll was not closed with the scroll");
+        assertNull(producer.getClient());
         producer.stop();
     }
 
