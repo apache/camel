@@ -22,22 +22,24 @@ import org.apache.camel.spi.Metadata;
  * Constants used in Camel AWS Bedrock Agent module SDK v2
  */
 public interface BedrockAgentConstants {
-    @Metadata(description = "The operation we want to perform", javaType = "String", label = "producer")
+    @Metadata(description = "The operation that the producer performs. It replaces the operation option.", javaType = "String",
+              label = "producer")
     String OPERATION = "CamelAwsBedrockAgentOperation";
 
-    @Metadata(description = "The data source Id of the operation; it overrides the dataSourceId option",
+    @Metadata(description = "The ID of the data source for the producer. It replaces the dataSourceId option.",
               javaType = "String", label = "producer")
     String DATASOURCE_ID = "CamelAwsBedrockAgentDataSourceId";
 
-    @Metadata(description = "The knowledge base Id of the operation; it overrides the knowledgeBaseId option",
+    @Metadata(description = "The ID of the knowledge base for the producer. It replaces the knowledgeBaseId option.",
               javaType = "String", label = "producer")
     String KNOWLEDGE_BASE_ID = "CamelAwsBedrockAgentKnowledgeBaseId";
 
-    @Metadata(description = "The id of the ingestion job of the getIngestionJob operation; it overrides the ingestionJobId option",
+    @Metadata(description = "The ID of the ingestion job for getIngestionJob. It replaces the ingestionJobId option.",
               javaType = "String", label = "producer")
     String INGESTION_JOB_ID = "CamelAwsBedrockAgentIngestionJobId";
 
-    @Metadata(description = "The status of the ingestion job, set by the consumer and by the getIngestionJob operation",
+    @Metadata(description = "The status of the ingestion job, such as STARTING, IN_PROGRESS, COMPLETE or FAILED. Set by the"
+                            + " consumer and by getIngestionJob.",
               javaType = "software.amazon.awssdk.services.bedrockagent.model.IngestionJobStatus", label = "common")
     String INGESTION_JOB_STATUS = "CamelAwsBedrockAgentIngestionJobStatus";
 

@@ -284,7 +284,9 @@ public class CreateInvoiceLinkMessage implements TelegramMessage {
         sb.append(", title='").append(title).append('\'');
         sb.append(", description='").append(description).append('\'');
         sb.append(", payload='").append(payload).append('\'');
-        sb.append(", providerToken='").append(providerToken).append('\'');
+        // the provider token is a secret, so it is masked (it is empty for payments in Telegram Stars)
+        sb.append(", providerToken='").append(providerToken != null && !providerToken.isEmpty() ? "xxxxxx" : providerToken)
+                .append('\'');
         sb.append(", currency='").append(currency).append('\'');
         sb.append(", prices=").append(prices);
         sb.append(", subscriptionPeriod=").append(subscriptionPeriod);

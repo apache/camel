@@ -2,7 +2,7 @@
 :doctitle: Data Format
 :shortname: dataformat
 :artifactid: camel-dataformat
-:description: Use a Camel Data Format as a regular Camel Component.
+:description: Marshal or unmarshal the message body with a Camel data format, such as JAXB, CSV or JSON.
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:

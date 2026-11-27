@@ -255,6 +255,12 @@ from("google-firestore://myCollection?realtimeUpdates=true&maxPendingChanges=100
     .to("log:changes");
 ----
 
+When the consumer starts, it waits up to 30 seconds for the first snapshot of the listener. If the listener reports an
+error instead, for example missing permissions or a database that does not exist, the consumer fails to start with that
+error. Firestore does not call a listener again after an error, so an error that comes later goes to the exception
+handler of the consumer (or to the routing error handler with `bridgeErrorHandler=true`), and the route must be
+restarted to listen again.
+
 === Advanced Component Configuration
 
 If you need more control over the `Firestore` client instance configuration, you can create your own instance and refer to it in your Camel google-firestore component configuration:
@@ -1170,7 +1176,7 @@ The component uses the following headers:
 | `CamelGoogleFirestoreQueryOrderBy` | `String` | Field to order results by
 | `CamelGoogleFirestoreQueryOrderDirection` | `Query.Direction` | Order direction (ASCENDING/DESCENDING)
 | `CamelGoogleFirestoreMerge` | `Boolean` | Merge data with existing document
-| `CamelGoogleFirestoreMergeFields` | `List<String>` | Specific fields to merge
+| `CamelGoogleFirestoreMergeFields` | `List<String>` | Specific fields to merge; a dotted name such as `address.city` is a nested field
 |===
 
 === Consumer/Response Headers (Output)

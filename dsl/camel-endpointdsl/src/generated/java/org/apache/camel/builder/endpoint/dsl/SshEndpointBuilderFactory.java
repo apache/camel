@@ -44,10 +44,9 @@ public interface SshEndpointBuilderFactory {
             return (AdvancedSshEndpointConsumerBuilder) this;
         }
         /**
-         * Sets the timeout in milliseconds to wait in establishing the remote
-         * SSH server connection: connecting, authenticating and opening the
-         * channel. It does not limit how long the command runs. Defaults to
-         * 30000 milliseconds.
+         * The time in milliseconds that the component waits for each step of
+         * setting up the session: the connection, the authentication and the
+         * opening of the channel. It does not limit how long the command runs.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -62,10 +61,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait in establishing the remote
-         * SSH server connection: connecting, authenticating and opening the
-         * channel. It does not limit how long the command runs. Defaults to
-         * 30000 milliseconds.
+         * The time in milliseconds that the component waits for each step of
+         * setting up the session: the connection, the authentication and the
+         * opening of the channel. It does not limit how long the command runs.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -80,10 +78,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the command string to send to the remote SSH server during every
-         * poll cycle. Only works with camel-ssh component being used as a
-         * consumer, i.e. from(ssh://...) You may need to end your command with
-         * a newline, and that must be URL encoded %0A.
+         * The command that the consumer runs on the SSH server at each poll.
+         * The consumer needs it, as each poll fails without it. Some servers
+         * need the command to end with a newline, which is written %0A in an
+         * endpoint URI.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -628,9 +626,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path of the certificate to use for Authentication.
-         * Will use ResourceHelperKeyPairProvider to resolve file based
-         * certificate, and depends on keyType setting.
+         * The resource with the private key for public key authentication, in
+         * OpenSSH or PEM format, for example classpath:id_ed25519 or
+         * file:/home/camel/.ssh/id_ed25519. When set, it is used instead of
+         * keyPairProvider, and the password option and the CamelSshPassword
+         * header are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -644,8 +644,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the password to use in loading certResource, if certResource is
-         * an encrypted key.
+         * The passphrase of the private key in certResource, when that key is
+         * encrypted.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -659,8 +659,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported ciphers in their order of
-         * preference.
+         * A comma-separated list of the ciphers that the client proposes, in
+         * order of preference, for example aes256-ctr,aes128-ctr. It replaces
+         * the default list of Apache MINA SSHD. Names that are not known are
+         * skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -674,12 +676,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to a server whose host has no entry
-         * without a marker in the known_hosts resource should fail. When false,
-         * such a server is accepted. A server whose host has entries without a
-         * marker is always rejected when it presents a key that none of them
-         * lists, and a key listed in a matching revoked entry is always
-         * rejected.
+         * Whether to reject a server whose host has no entry without a marker
+         * in knownHostsResource. When false, such a server is accepted and a
+         * warning is logged. A server whose host has such entries is always
+         * rejected when none of them lists the key it presents, and so is a key
+         * listed in a matching entry with the revoked marker. This option has
+         * no effect when knownHostsResource is not set.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -694,12 +696,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to a server whose host has no entry
-         * without a marker in the known_hosts resource should fail. When false,
-         * such a server is accepted. A server whose host has entries without a
-         * marker is always rejected when it presents a key that none of them
-         * lists, and a key listed in a matching revoked entry is always
-         * rejected.
+         * Whether to reject a server whose host has no entry without a marker
+         * in knownHostsResource. When false, such a server is accepted and a
+         * warning is logged. A server whose host has such entries is always
+         * rejected when none of them lists the key it presents, and so is a key
+         * listed in a matching entry with the revoked marker. This option has
+         * no effect when knownHostsResource is not set.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -714,8 +716,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported key exchange algorithms in
-         * their **order** of preference.
+         * A comma-separated list of the key exchange algorithms that the client
+         * proposes, in order of preference, for example
+         * mlkem768x25519-sha256,curve25519-sha256. It replaces the default list
+         * of Apache MINA SSHD, which already proposes the post-quantum hybrid
+         * algorithms. Names that are not known are skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -729,8 +734,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the KeyPairProvider reference to use when connecting using
-         * Certificates to the remote SSH Server.
+         * The org.apache.sshd.common.keyprovider.KeyPairProvider that gives the
+         * key pair for public key authentication. It is not used when
+         * certResource is set, and when it is used, the password option and the
+         * CamelSshPassword header are not.
          * 
          * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
@@ -745,8 +752,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the KeyPairProvider reference to use when connecting using
-         * Certificates to the remote SSH Server.
+         * The org.apache.sshd.common.keyprovider.KeyPairProvider that gives the
+         * key pair for public key authentication. It is not used when
+         * certResource is set, and when it is used, the password option and the
+         * CamelSshPassword header are not.
          * 
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
@@ -761,11 +770,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the key type to pass to the KeyPairProvider as part of
-         * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
-         * first available KeyPair that is loaded. Prior to this, a KeyType of
-         * 'ssh-rsa' was enforced by default.
+         * The key type of the key pair to use from certResource or
+         * keyPairProvider, for example ssh-rsa, ssh-ed25519 or
+         * ecdsa-sha2-nistp256. If not set, the first key pair is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -779,12 +786,13 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path for a known_hosts file used to verify the SSH
-         * server host key. The file uses the OpenSSH known_hosts format, and
-         * its entries are matched against the host and port configured on the
-         * endpoint. A resource that cannot be read, or that has a line that
-         * cannot be read, makes every connection fail. When not set, the client
-         * does not verify the server host key against a known_hosts file.
+         * The resource of a file in the OpenSSH known_hosts format, such as
+         * file:/etc/camel/known_hosts, that the server host key is verified
+         * against. It is read at each connection, and a resource or a line that
+         * cannot be read makes every connection fail. When not set, the server
+         * host key is not verified and any server is accepted, unless
+         * clientBuilder sets a ServerKeyVerifier, which this option replaces
+         * when it is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -798,9 +806,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported message authentication code
-         * algorithms in their **order** of preference. The MAC algorithm is
-         * used for data integrity protection.
+         * A comma-separated list of the message authentication code (MAC)
+         * algorithms that the client proposes, in order of preference, for
+         * example hmac-sha2-512,hmac-sha2-256. It replaces the default list of
+         * Apache MINA SSHD. Names that are not known are skipped with a
+         * warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -814,8 +824,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the password to use in connecting to remote SSH server. Requires
-         * keyPairProvider to be set to null.
+         * The password for password authentication, which is used only when
+         * neither certResource nor keyPairProvider is set. The CamelSshPassword
+         * header replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -829,8 +840,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported signature algorithms in
-         * their order of preference.
+         * A comma-separated list of the signature algorithms that the client
+         * supports, in order of preference, for example
+         * ssh-ed25519,rsa-sha2-512. It replaces the default list of Apache MINA
+         * SSHD. Names that are not known are skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -844,7 +857,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the username to use in logging into the remote SSH server.
+         * The user name to log in with. The CamelSshUsername header replaces it
+         * for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1022,7 +1036,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the authentication timeout in milliseconds.
+         * The time in milliseconds that Apache MINA SSHD allows for the
+         * authentication before it closes the session. If 0 or less, its
+         * default of 2 minutes applies. The timeout option also limits how long
+         * the component waits for the authentication.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1036,7 +1053,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the authentication timeout in milliseconds.
+         * The time in milliseconds that Apache MINA SSHD allows for the
+         * authentication before it closes the session. If 0 or less, its
+         * default of 2 minutes applies. The timeout option also limits how long
+         * the component waits for the authentication.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1050,7 +1070,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds for opening a channel.
+         * Sets a channel open timeout of Apache MINA SSHD that applies only to
+         * SSH agent forwarding, which this component does not use. The timeout
+         * option limits how long the component waits for the channel that runs
+         * the command.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1064,7 +1087,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds for opening a channel.
+         * Sets a channel open timeout of Apache MINA SSHD that applies only to
+         * SSH agent forwarding, which this component does not use. The timeout
+         * option limits how long the component waits for the channel that runs
+         * the command.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1078,8 +1104,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the channel type to pass to the Channel as part of command
-         * execution. Defaults to exec.
+         * The type of SSH channel that runs the command: exec runs it as a
+         * single command, and shell writes it to an interactive shell and reads
+         * the output up to the shellPrompt text. Other values are not
+         * supported.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1094,8 +1122,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Instance of ClientBuilder used by the producer or consumer to create
-         * a new SshClient.
+         * To use a custom org.apache.sshd.client.ClientBuilder to create the
+         * SSH client, for example to set a ServerKeyVerifier. The producer and
+         * the consumer each create a client with it when they start, and the
+         * options of this endpoint that are set are applied over its settings.
          * 
          * The option is a: <code>org.apache.sshd.client.ClientBuilder</code>
          * type.
@@ -1110,8 +1140,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Instance of ClientBuilder used by the producer or consumer to create
-         * a new SshClient.
+         * To use a custom org.apache.sshd.client.ClientBuilder to create the
+         * SSH client, for example to set a ServerKeyVerifier. The producer and
+         * the consumer each create a client with it when they start, and the
+         * options of this endpoint that are set are applied over its settings.
          * 
          * The option will be converted to a
          * <code>org.apache.sshd.client.ClientBuilder</code> type.
@@ -1126,7 +1158,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to use compression, and if so which.
+         * A comma-separated list of the compression algorithms that the client
+         * proposes, in order of preference, for example zlib,none. If not set,
+         * the client uses no compression.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1140,7 +1174,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the socket connection timeout in milliseconds.
+         * The time in milliseconds that the socket connection to the server may
+         * take. If 0 or less, the default of Apache MINA SSHD, 1 minute,
+         * applies. The timeout option also limits how long the component waits
+         * for the connection.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1154,7 +1191,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the socket connection timeout in milliseconds.
+         * The time in milliseconds that the socket connection to the server may
+         * take. If 0 or less, the default of Apache MINA SSHD, 1 minute,
+         * applies. The timeout option also limits how long the component waits
+         * for the connection.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1168,9 +1208,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the heartbeat interval in milliseconds. If positive, the
-         * component will send keep-alive messages to prevent the SSH session
-         * from timing out.
+         * The interval in milliseconds at which the client sends keep-alive
+         * requests to the server while a command runs. If 0 or less, no
+         * keep-alive requests are sent.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1184,9 +1224,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the heartbeat interval in milliseconds. If positive, the
-         * component will send keep-alive messages to prevent the SSH session
-         * from timing out.
+         * The interval in milliseconds at which the client sends keep-alive
+         * requests to the server while a command runs. If 0 or less, no
+         * keep-alive requests are sent.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1200,8 +1240,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the maximum number of keep-alive messages without reply before
-         * the session is terminated.
+         * The number of keep-alive requests without reply after which the
+         * client closes the session, when heartbeatInterval is set. If 0 or
+         * less, the default of Apache MINA SSHD applies.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1215,8 +1256,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the maximum number of keep-alive messages without reply before
-         * the session is terminated.
+         * The number of keep-alive requests without reply after which the
+         * client closes the session, when heartbeatInterval is set. If 0 or
+         * less, the default of Apache MINA SSHD applies.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1230,9 +1272,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait before the SSH session is
-         * closed due to inactivity. The default value is 0, which means no idle
-         * timeout is applied.
+         * The time in milliseconds after which Apache MINA SSHD closes a
+         * session without traffic. The session is open while a command runs. If
+         * 0 or less, the default of Apache MINA SSHD, 10 minutes, applies.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1246,9 +1288,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait before the SSH session is
-         * closed due to inactivity. The default value is 0, which means no idle
-         * timeout is applied.
+         * The time in milliseconds after which Apache MINA SSHD closes a
+         * session without traffic. The session is open while a command runs. If
+         * 0 or less, the default of Apache MINA SSHD, 10 minutes, applies.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1262,8 +1304,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the shellPrompt to be dropped when response is read after
-         * command execution. Required when the channelType is shell.
+         * The text that the shell prompt ends with, which channelType=shell
+         * needs: the endpoint fails to start without it. The component reads
+         * the output of the shell until it ends with this text, before and
+         * after it writes the command, and the message body is the text between
+         * the first and the last line break of that output.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1277,8 +1322,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the sleep period in milliseconds to wait reading response from
-         * shell prompt. Defaults to 100 milliseconds.
+         * The time in milliseconds between two reads of the shell output while
+         * the component waits for the shellPrompt text, with channelType=shell.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1293,8 +1338,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the sleep period in milliseconds to wait reading response from
-         * shell prompt. Defaults to 100 milliseconds.
+         * The time in milliseconds between two reads of the shell output while
+         * the component waits for the shellPrompt text, with channelType=shell.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1321,10 +1366,9 @@ public interface SshEndpointBuilderFactory {
         }
 
         /**
-         * Sets the timeout in milliseconds to wait in establishing the remote
-         * SSH server connection: connecting, authenticating and opening the
-         * channel. It does not limit how long the command runs. Defaults to
-         * 30000 milliseconds.
+         * The time in milliseconds that the component waits for each step of
+         * setting up the session: the connection, the authentication and the
+         * opening of the channel. It does not limit how long the command runs.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1339,10 +1383,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait in establishing the remote
-         * SSH server connection: connecting, authenticating and opening the
-         * channel. It does not limit how long the command runs. Defaults to
-         * 30000 milliseconds.
+         * The time in milliseconds that the component waits for each step of
+         * setting up the session: the connection, the authentication and the
+         * opening of the channel. It does not limit how long the command runs.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1357,9 +1400,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path of the certificate to use for Authentication.
-         * Will use ResourceHelperKeyPairProvider to resolve file based
-         * certificate, and depends on keyType setting.
+         * The resource with the private key for public key authentication, in
+         * OpenSSH or PEM format, for example classpath:id_ed25519 or
+         * file:/home/camel/.ssh/id_ed25519. When set, it is used instead of
+         * keyPairProvider, and the password option and the CamelSshPassword
+         * header are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1373,8 +1418,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the password to use in loading certResource, if certResource is
-         * an encrypted key.
+         * The passphrase of the private key in certResource, when that key is
+         * encrypted.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1388,8 +1433,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported ciphers in their order of
-         * preference.
+         * A comma-separated list of the ciphers that the client proposes, in
+         * order of preference, for example aes256-ctr,aes128-ctr. It replaces
+         * the default list of Apache MINA SSHD. Names that are not known are
+         * skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1403,12 +1450,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to a server whose host has no entry
-         * without a marker in the known_hosts resource should fail. When false,
-         * such a server is accepted. A server whose host has entries without a
-         * marker is always rejected when it presents a key that none of them
-         * lists, and a key listed in a matching revoked entry is always
-         * rejected.
+         * Whether to reject a server whose host has no entry without a marker
+         * in knownHostsResource. When false, such a server is accepted and a
+         * warning is logged. A server whose host has such entries is always
+         * rejected when none of them lists the key it presents, and so is a key
+         * listed in a matching entry with the revoked marker. This option has
+         * no effect when knownHostsResource is not set.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1423,12 +1470,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to a server whose host has no entry
-         * without a marker in the known_hosts resource should fail. When false,
-         * such a server is accepted. A server whose host has entries without a
-         * marker is always rejected when it presents a key that none of them
-         * lists, and a key listed in a matching revoked entry is always
-         * rejected.
+         * Whether to reject a server whose host has no entry without a marker
+         * in knownHostsResource. When false, such a server is accepted and a
+         * warning is logged. A server whose host has such entries is always
+         * rejected when none of them lists the key it presents, and so is a key
+         * listed in a matching entry with the revoked marker. This option has
+         * no effect when knownHostsResource is not set.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1443,8 +1490,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported key exchange algorithms in
-         * their **order** of preference.
+         * A comma-separated list of the key exchange algorithms that the client
+         * proposes, in order of preference, for example
+         * mlkem768x25519-sha256,curve25519-sha256. It replaces the default list
+         * of Apache MINA SSHD, which already proposes the post-quantum hybrid
+         * algorithms. Names that are not known are skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1458,8 +1508,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the KeyPairProvider reference to use when connecting using
-         * Certificates to the remote SSH Server.
+         * The org.apache.sshd.common.keyprovider.KeyPairProvider that gives the
+         * key pair for public key authentication. It is not used when
+         * certResource is set, and when it is used, the password option and the
+         * CamelSshPassword header are not.
          * 
          * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
@@ -1474,8 +1526,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the KeyPairProvider reference to use when connecting using
-         * Certificates to the remote SSH Server.
+         * The org.apache.sshd.common.keyprovider.KeyPairProvider that gives the
+         * key pair for public key authentication. It is not used when
+         * certResource is set, and when it is used, the password option and the
+         * CamelSshPassword header are not.
          * 
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
@@ -1490,11 +1544,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the key type to pass to the KeyPairProvider as part of
-         * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
-         * first available KeyPair that is loaded. Prior to this, a KeyType of
-         * 'ssh-rsa' was enforced by default.
+         * The key type of the key pair to use from certResource or
+         * keyPairProvider, for example ssh-rsa, ssh-ed25519 or
+         * ecdsa-sha2-nistp256. If not set, the first key pair is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1508,12 +1560,13 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path for a known_hosts file used to verify the SSH
-         * server host key. The file uses the OpenSSH known_hosts format, and
-         * its entries are matched against the host and port configured on the
-         * endpoint. A resource that cannot be read, or that has a line that
-         * cannot be read, makes every connection fail. When not set, the client
-         * does not verify the server host key against a known_hosts file.
+         * The resource of a file in the OpenSSH known_hosts format, such as
+         * file:/etc/camel/known_hosts, that the server host key is verified
+         * against. It is read at each connection, and a resource or a line that
+         * cannot be read makes every connection fail. When not set, the server
+         * host key is not verified and any server is accepted, unless
+         * clientBuilder sets a ServerKeyVerifier, which this option replaces
+         * when it is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1527,9 +1580,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported message authentication code
-         * algorithms in their **order** of preference. The MAC algorithm is
-         * used for data integrity protection.
+         * A comma-separated list of the message authentication code (MAC)
+         * algorithms that the client proposes, in order of preference, for
+         * example hmac-sha2-512,hmac-sha2-256. It replaces the default list of
+         * Apache MINA SSHD. Names that are not known are skipped with a
+         * warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1543,8 +1598,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the password to use in connecting to remote SSH server. Requires
-         * keyPairProvider to be set to null.
+         * The password for password authentication, which is used only when
+         * neither certResource nor keyPairProvider is set. The CamelSshPassword
+         * header replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1558,8 +1614,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported signature algorithms in
-         * their order of preference.
+         * A comma-separated list of the signature algorithms that the client
+         * supports, in order of preference, for example
+         * ssh-ed25519,rsa-sha2-512. It replaces the default list of Apache MINA
+         * SSHD. Names that are not known are skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1573,7 +1631,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the username to use in logging into the remote SSH server.
+         * The user name to log in with. The CamelSshUsername header replaces it
+         * for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1643,7 +1702,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the authentication timeout in milliseconds.
+         * The time in milliseconds that Apache MINA SSHD allows for the
+         * authentication before it closes the session. If 0 or less, its
+         * default of 2 minutes applies. The timeout option also limits how long
+         * the component waits for the authentication.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1657,7 +1719,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the authentication timeout in milliseconds.
+         * The time in milliseconds that Apache MINA SSHD allows for the
+         * authentication before it closes the session. If 0 or less, its
+         * default of 2 minutes applies. The timeout option also limits how long
+         * the component waits for the authentication.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1671,7 +1736,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds for opening a channel.
+         * Sets a channel open timeout of Apache MINA SSHD that applies only to
+         * SSH agent forwarding, which this component does not use. The timeout
+         * option limits how long the component waits for the channel that runs
+         * the command.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1685,7 +1753,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds for opening a channel.
+         * Sets a channel open timeout of Apache MINA SSHD that applies only to
+         * SSH agent forwarding, which this component does not use. The timeout
+         * option limits how long the component waits for the channel that runs
+         * the command.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1699,8 +1770,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the channel type to pass to the Channel as part of command
-         * execution. Defaults to exec.
+         * The type of SSH channel that runs the command: exec runs it as a
+         * single command, and shell writes it to an interactive shell and reads
+         * the output up to the shellPrompt text. Other values are not
+         * supported.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1715,8 +1788,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Instance of ClientBuilder used by the producer or consumer to create
-         * a new SshClient.
+         * To use a custom org.apache.sshd.client.ClientBuilder to create the
+         * SSH client, for example to set a ServerKeyVerifier. The producer and
+         * the consumer each create a client with it when they start, and the
+         * options of this endpoint that are set are applied over its settings.
          * 
          * The option is a: <code>org.apache.sshd.client.ClientBuilder</code>
          * type.
@@ -1731,8 +1806,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Instance of ClientBuilder used by the producer or consumer to create
-         * a new SshClient.
+         * To use a custom org.apache.sshd.client.ClientBuilder to create the
+         * SSH client, for example to set a ServerKeyVerifier. The producer and
+         * the consumer each create a client with it when they start, and the
+         * options of this endpoint that are set are applied over its settings.
          * 
          * The option will be converted to a
          * <code>org.apache.sshd.client.ClientBuilder</code> type.
@@ -1747,7 +1824,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to use compression, and if so which.
+         * A comma-separated list of the compression algorithms that the client
+         * proposes, in order of preference, for example zlib,none. If not set,
+         * the client uses no compression.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1761,7 +1840,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the socket connection timeout in milliseconds.
+         * The time in milliseconds that the socket connection to the server may
+         * take. If 0 or less, the default of Apache MINA SSHD, 1 minute,
+         * applies. The timeout option also limits how long the component waits
+         * for the connection.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1775,7 +1857,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the socket connection timeout in milliseconds.
+         * The time in milliseconds that the socket connection to the server may
+         * take. If 0 or less, the default of Apache MINA SSHD, 1 minute,
+         * applies. The timeout option also limits how long the component waits
+         * for the connection.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1789,9 +1874,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the heartbeat interval in milliseconds. If positive, the
-         * component will send keep-alive messages to prevent the SSH session
-         * from timing out.
+         * The interval in milliseconds at which the client sends keep-alive
+         * requests to the server while a command runs. If 0 or less, no
+         * keep-alive requests are sent.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1805,9 +1890,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the heartbeat interval in milliseconds. If positive, the
-         * component will send keep-alive messages to prevent the SSH session
-         * from timing out.
+         * The interval in milliseconds at which the client sends keep-alive
+         * requests to the server while a command runs. If 0 or less, no
+         * keep-alive requests are sent.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1821,8 +1906,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the maximum number of keep-alive messages without reply before
-         * the session is terminated.
+         * The number of keep-alive requests without reply after which the
+         * client closes the session, when heartbeatInterval is set. If 0 or
+         * less, the default of Apache MINA SSHD applies.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1836,8 +1922,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the maximum number of keep-alive messages without reply before
-         * the session is terminated.
+         * The number of keep-alive requests without reply after which the
+         * client closes the session, when heartbeatInterval is set. If 0 or
+         * less, the default of Apache MINA SSHD applies.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1851,9 +1938,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait before the SSH session is
-         * closed due to inactivity. The default value is 0, which means no idle
-         * timeout is applied.
+         * The time in milliseconds after which Apache MINA SSHD closes a
+         * session without traffic. The session is open while a command runs. If
+         * 0 or less, the default of Apache MINA SSHD, 10 minutes, applies.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1867,9 +1954,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait before the SSH session is
-         * closed due to inactivity. The default value is 0, which means no idle
-         * timeout is applied.
+         * The time in milliseconds after which Apache MINA SSHD closes a
+         * session without traffic. The session is open while a command runs. If
+         * 0 or less, the default of Apache MINA SSHD, 10 minutes, applies.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1883,8 +1970,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the shellPrompt to be dropped when response is read after
-         * command execution. Required when the channelType is shell.
+         * The text that the shell prompt ends with, which channelType=shell
+         * needs: the endpoint fails to start without it. The component reads
+         * the output of the shell until it ends with this text, before and
+         * after it writes the command, and the message body is the text between
+         * the first and the last line break of that output.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1898,8 +1988,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the sleep period in milliseconds to wait reading response from
-         * shell prompt. Defaults to 100 milliseconds.
+         * The time in milliseconds between two reads of the shell output while
+         * the component waits for the shellPrompt text, with channelType=shell.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1914,8 +2004,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the sleep period in milliseconds to wait reading response from
-         * shell prompt. Defaults to 100 milliseconds.
+         * The time in milliseconds between two reads of the shell output while
+         * the component waits for the shellPrompt text, with channelType=shell.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1943,10 +2033,9 @@ public interface SshEndpointBuilderFactory {
         }
 
         /**
-         * Sets the timeout in milliseconds to wait in establishing the remote
-         * SSH server connection: connecting, authenticating and opening the
-         * channel. It does not limit how long the command runs. Defaults to
-         * 30000 milliseconds.
+         * The time in milliseconds that the component waits for each step of
+         * setting up the session: the connection, the authentication and the
+         * opening of the channel. It does not limit how long the command runs.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1961,10 +2050,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait in establishing the remote
-         * SSH server connection: connecting, authenticating and opening the
-         * channel. It does not limit how long the command runs. Defaults to
-         * 30000 milliseconds.
+         * The time in milliseconds that the component waits for each step of
+         * setting up the session: the connection, the authentication and the
+         * opening of the channel. It does not limit how long the command runs.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1979,9 +2067,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path of the certificate to use for Authentication.
-         * Will use ResourceHelperKeyPairProvider to resolve file based
-         * certificate, and depends on keyType setting.
+         * The resource with the private key for public key authentication, in
+         * OpenSSH or PEM format, for example classpath:id_ed25519 or
+         * file:/home/camel/.ssh/id_ed25519. When set, it is used instead of
+         * keyPairProvider, and the password option and the CamelSshPassword
+         * header are not used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1995,8 +2085,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the password to use in loading certResource, if certResource is
-         * an encrypted key.
+         * The passphrase of the private key in certResource, when that key is
+         * encrypted.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2010,8 +2100,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported ciphers in their order of
-         * preference.
+         * A comma-separated list of the ciphers that the client proposes, in
+         * order of preference, for example aes256-ctr,aes128-ctr. It replaces
+         * the default list of Apache MINA SSHD. Names that are not known are
+         * skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2025,12 +2117,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to a server whose host has no entry
-         * without a marker in the known_hosts resource should fail. When false,
-         * such a server is accepted. A server whose host has entries without a
-         * marker is always rejected when it presents a key that none of them
-         * lists, and a key listed in a matching revoked entry is always
-         * rejected.
+         * Whether to reject a server whose host has no entry without a marker
+         * in knownHostsResource. When false, such a server is accepted and a
+         * warning is logged. A server whose host has such entries is always
+         * rejected when none of them lists the key it presents, and so is a key
+         * listed in a matching entry with the revoked marker. This option has
+         * no effect when knownHostsResource is not set.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2045,12 +2137,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to a server whose host has no entry
-         * without a marker in the known_hosts resource should fail. When false,
-         * such a server is accepted. A server whose host has entries without a
-         * marker is always rejected when it presents a key that none of them
-         * lists, and a key listed in a matching revoked entry is always
-         * rejected.
+         * Whether to reject a server whose host has no entry without a marker
+         * in knownHostsResource. When false, such a server is accepted and a
+         * warning is logged. A server whose host has such entries is always
+         * rejected when none of them lists the key it presents, and so is a key
+         * listed in a matching entry with the revoked marker. This option has
+         * no effect when knownHostsResource is not set.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2065,8 +2157,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported key exchange algorithms in
-         * their **order** of preference.
+         * A comma-separated list of the key exchange algorithms that the client
+         * proposes, in order of preference, for example
+         * mlkem768x25519-sha256,curve25519-sha256. It replaces the default list
+         * of Apache MINA SSHD, which already proposes the post-quantum hybrid
+         * algorithms. Names that are not known are skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2080,8 +2175,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the KeyPairProvider reference to use when connecting using
-         * Certificates to the remote SSH Server.
+         * The org.apache.sshd.common.keyprovider.KeyPairProvider that gives the
+         * key pair for public key authentication. It is not used when
+         * certResource is set, and when it is used, the password option and the
+         * CamelSshPassword header are not.
          * 
          * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
@@ -2096,8 +2193,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the KeyPairProvider reference to use when connecting using
-         * Certificates to the remote SSH Server.
+         * The org.apache.sshd.common.keyprovider.KeyPairProvider that gives the
+         * key pair for public key authentication. It is not used when
+         * certResource is set, and when it is used, the password option and the
+         * CamelSshPassword header are not.
          * 
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
@@ -2112,11 +2211,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the key type to pass to the KeyPairProvider as part of
-         * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
-         * first available KeyPair that is loaded. Prior to this, a KeyType of
-         * 'ssh-rsa' was enforced by default.
+         * The key type of the key pair to use from certResource or
+         * keyPairProvider, for example ssh-rsa, ssh-ed25519 or
+         * ecdsa-sha2-nistp256. If not set, the first key pair is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2130,12 +2227,13 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path for a known_hosts file used to verify the SSH
-         * server host key. The file uses the OpenSSH known_hosts format, and
-         * its entries are matched against the host and port configured on the
-         * endpoint. A resource that cannot be read, or that has a line that
-         * cannot be read, makes every connection fail. When not set, the client
-         * does not verify the server host key against a known_hosts file.
+         * The resource of a file in the OpenSSH known_hosts format, such as
+         * file:/etc/camel/known_hosts, that the server host key is verified
+         * against. It is read at each connection, and a resource or a line that
+         * cannot be read makes every connection fail. When not set, the server
+         * host key is not verified and any server is accepted, unless
+         * clientBuilder sets a ServerKeyVerifier, which this option replaces
+         * when it is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2149,9 +2247,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported message authentication code
-         * algorithms in their **order** of preference. The MAC algorithm is
-         * used for data integrity protection.
+         * A comma-separated list of the message authentication code (MAC)
+         * algorithms that the client proposes, in order of preference, for
+         * example hmac-sha2-512,hmac-sha2-256. It replaces the default list of
+         * Apache MINA SSHD. Names that are not known are skipped with a
+         * warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2165,8 +2265,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the password to use in connecting to remote SSH server. Requires
-         * keyPairProvider to be set to null.
+         * The password for password authentication, which is used only when
+         * neither certResource nor keyPairProvider is set. The CamelSshPassword
+         * header replaces it for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2180,8 +2281,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of allowed/supported signature algorithms in
-         * their order of preference.
+         * A comma-separated list of the signature algorithms that the client
+         * supports, in order of preference, for example
+         * ssh-ed25519,rsa-sha2-512. It replaces the default list of Apache MINA
+         * SSHD. Names that are not known are skipped with a warning.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2195,7 +2298,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the username to use in logging into the remote SSH server.
+         * The user name to log in with. The CamelSshUsername header replaces it
+         * for the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2222,7 +2326,10 @@ public interface SshEndpointBuilderFactory {
         }
 
         /**
-         * Sets the authentication timeout in milliseconds.
+         * The time in milliseconds that Apache MINA SSHD allows for the
+         * authentication before it closes the session. If 0 or less, its
+         * default of 2 minutes applies. The timeout option also limits how long
+         * the component waits for the authentication.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2236,7 +2343,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the authentication timeout in milliseconds.
+         * The time in milliseconds that Apache MINA SSHD allows for the
+         * authentication before it closes the session. If 0 or less, its
+         * default of 2 minutes applies. The timeout option also limits how long
+         * the component waits for the authentication.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2250,7 +2360,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds for opening a channel.
+         * Sets a channel open timeout of Apache MINA SSHD that applies only to
+         * SSH agent forwarding, which this component does not use. The timeout
+         * option limits how long the component waits for the channel that runs
+         * the command.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2264,7 +2377,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds for opening a channel.
+         * Sets a channel open timeout of Apache MINA SSHD that applies only to
+         * SSH agent forwarding, which this component does not use. The timeout
+         * option limits how long the component waits for the channel that runs
+         * the command.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2278,8 +2394,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the channel type to pass to the Channel as part of command
-         * execution. Defaults to exec.
+         * The type of SSH channel that runs the command: exec runs it as a
+         * single command, and shell writes it to an interactive shell and reads
+         * the output up to the shellPrompt text. Other values are not
+         * supported.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2294,8 +2412,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Instance of ClientBuilder used by the producer or consumer to create
-         * a new SshClient.
+         * To use a custom org.apache.sshd.client.ClientBuilder to create the
+         * SSH client, for example to set a ServerKeyVerifier. The producer and
+         * the consumer each create a client with it when they start, and the
+         * options of this endpoint that are set are applied over its settings.
          * 
          * The option is a: <code>org.apache.sshd.client.ClientBuilder</code>
          * type.
@@ -2310,8 +2430,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Instance of ClientBuilder used by the producer or consumer to create
-         * a new SshClient.
+         * To use a custom org.apache.sshd.client.ClientBuilder to create the
+         * SSH client, for example to set a ServerKeyVerifier. The producer and
+         * the consumer each create a client with it when they start, and the
+         * options of this endpoint that are set are applied over its settings.
          * 
          * The option will be converted to a
          * <code>org.apache.sshd.client.ClientBuilder</code> type.
@@ -2326,7 +2448,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to use compression, and if so which.
+         * A comma-separated list of the compression algorithms that the client
+         * proposes, in order of preference, for example zlib,none. If not set,
+         * the client uses no compression.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2340,7 +2464,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the socket connection timeout in milliseconds.
+         * The time in milliseconds that the socket connection to the server may
+         * take. If 0 or less, the default of Apache MINA SSHD, 1 minute,
+         * applies. The timeout option also limits how long the component waits
+         * for the connection.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2354,7 +2481,10 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the socket connection timeout in milliseconds.
+         * The time in milliseconds that the socket connection to the server may
+         * take. If 0 or less, the default of Apache MINA SSHD, 1 minute,
+         * applies. The timeout option also limits how long the component waits
+         * for the connection.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2368,9 +2498,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the heartbeat interval in milliseconds. If positive, the
-         * component will send keep-alive messages to prevent the SSH session
-         * from timing out.
+         * The interval in milliseconds at which the client sends keep-alive
+         * requests to the server while a command runs. If 0 or less, no
+         * keep-alive requests are sent.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2384,9 +2514,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the heartbeat interval in milliseconds. If positive, the
-         * component will send keep-alive messages to prevent the SSH session
-         * from timing out.
+         * The interval in milliseconds at which the client sends keep-alive
+         * requests to the server while a command runs. If 0 or less, no
+         * keep-alive requests are sent.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2400,8 +2530,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the maximum number of keep-alive messages without reply before
-         * the session is terminated.
+         * The number of keep-alive requests without reply after which the
+         * client closes the session, when heartbeatInterval is set. If 0 or
+         * less, the default of Apache MINA SSHD applies.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2415,8 +2546,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the maximum number of keep-alive messages without reply before
-         * the session is terminated.
+         * The number of keep-alive requests without reply after which the
+         * client closes the session, when heartbeatInterval is set. If 0 or
+         * less, the default of Apache MINA SSHD applies.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2430,9 +2562,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait before the SSH session is
-         * closed due to inactivity. The default value is 0, which means no idle
-         * timeout is applied.
+         * The time in milliseconds after which Apache MINA SSHD closes a
+         * session without traffic. The session is open while a command runs. If
+         * 0 or less, the default of Apache MINA SSHD, 10 minutes, applies.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2446,9 +2578,9 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait before the SSH session is
-         * closed due to inactivity. The default value is 0, which means no idle
-         * timeout is applied.
+         * The time in milliseconds after which Apache MINA SSHD closes a
+         * session without traffic. The session is open while a command runs. If
+         * 0 or less, the default of Apache MINA SSHD, 10 minutes, applies.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2462,8 +2594,11 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the shellPrompt to be dropped when response is read after
-         * command execution. Required when the channelType is shell.
+         * The text that the shell prompt ends with, which channelType=shell
+         * needs: the endpoint fails to start without it. The component reads
+         * the output of the shell until it ends with this text, before and
+         * after it writes the command, and the message body is the text between
+         * the first and the last line break of that output.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2477,8 +2612,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the sleep period in milliseconds to wait reading response from
-         * shell prompt. Defaults to 100 milliseconds.
+         * The time in milliseconds between two reads of the shell output while
+         * the component waits for the shellPrompt text, with channelType=shell.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2493,8 +2628,8 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the sleep period in milliseconds to wait reading response from
-         * shell prompt. Defaults to 100 milliseconds.
+         * The time in milliseconds between two reads of the shell output while
+         * the component waits for the shellPrompt text, with channelType=shell.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2535,10 +2670,12 @@ public interface SshEndpointBuilderFactory {
          * Syntax: <code>ssh:host:port</code>
          * 
          * Path parameter: host (required)
-         * Sets the hostname of the remote SSH server.
+         * The host name or IP address of the SSH server. When the .ssh/config
+         * file in the home directory of the user has an entry for this host,
+         * the client connects to the HostName of that entry.
          * 
          * Path parameter: port
-         * Sets the port number for the remote SSH server.
+         * The port of the SSH server.
          * Default value: 22
          * 
          * @param path host:port
@@ -2558,10 +2695,12 @@ public interface SshEndpointBuilderFactory {
          * Syntax: <code>ssh:host:port</code>
          * 
          * Path parameter: host (required)
-         * Sets the hostname of the remote SSH server.
+         * The host name or IP address of the SSH server. When the .ssh/config
+         * file in the home directory of the user has an entry for this host,
+         * the client connects to the HostName of that entry.
          * 
          * Path parameter: port
-         * Sets the port number for the remote SSH server.
+         * The port of the SSH server.
          * Default value: 22
          * 
          * @param componentName to use a custom component name for the endpoint
@@ -2585,7 +2724,8 @@ public interface SshEndpointBuilderFactory {
         public static final SshHeaderNameBuilder INSTANCE = new SshHeaderNameBuilder();
 
         /**
-         * The user name.
+         * The user name that the producer logs in with, instead of the username
+         * option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2597,7 +2737,9 @@ public interface SshEndpointBuilderFactory {
             return "CamelSshUsername";
         }
         /**
-         * The password.
+         * The password that the producer uses for password authentication,
+         * instead of the password option. It is not used when certResource or
+         * keyPairProvider is set.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2609,8 +2751,7 @@ public interface SshEndpointBuilderFactory {
             return "CamelSshPassword";
         }
         /**
-         * The value of this header is a InputStream with the standard error
-         * stream of the executable.
+         * The standard error of the command, as an InputStream.
          * 
          * The option is a: {@code InputStream} type.
          * 
@@ -2622,9 +2763,10 @@ public interface SshEndpointBuilderFactory {
             return "CamelSshStderr";
         }
         /**
-         * The value of this header is the exit value that is returned, after
-         * the execution. By convention a non-zero status exit value indicates
-         * abnormal termination. Note that the exit value is OS dependent.
+         * The exit status of the command. By convention, a value other than 0
+         * means that the command failed, but the exchange does not fail for it.
+         * With channelType=shell it is usually null, as the shell is still
+         * running when the output is read.
          * 
          * The option is a: {@code Integer} type.
          * 

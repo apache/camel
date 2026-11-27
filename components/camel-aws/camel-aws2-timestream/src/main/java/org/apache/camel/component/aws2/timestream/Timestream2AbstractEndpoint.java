@@ -24,6 +24,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
+/**
+ * Write records to and query the time-series data of Amazon Timestream for LiveAnalytics, and manage its databases,
+ * tables, batch load tasks and scheduled queries.
+ */
 @UriEndpoint(firstVersion = "4.1.0", scheme = "aws2-timestream", title = "AWS Timestream",
              syntax = "aws2-timestream:clientType:label",
              producerOnly = true, category = { Category.CLOUD, Category.DATABASE },

@@ -96,7 +96,8 @@ public interface Aws2RedshiftDataComponentBuilderFactory {
     
         /**
          * The operation that the producer performs. The
-         * CamelAwsRedshiftDataOperation header replaces this option.
+         * CamelAwsRedshiftDataOperation header replaces this option. If neither
+         * is set, the exchange fails.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.redshift.data.RedshiftData2Operations&lt;/code&gt; type.

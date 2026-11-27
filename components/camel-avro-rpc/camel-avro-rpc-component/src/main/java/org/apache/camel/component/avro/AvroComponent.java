@@ -34,7 +34,9 @@ public class AvroComponent extends DefaultComponent {
 
     private final ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<>();
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "A shared configuration that every endpoint copies as its starting point. The options of the"
+                            + " endpoint URI override its values.")
     private AvroConfiguration configuration;
 
     public AvroComponent() {
@@ -118,9 +120,6 @@ public class AvroComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * To use a shared {@link AvroConfiguration} to configure options once
-     */
     public void setConfiguration(AvroConfiguration configuration) {
         this.configuration = configuration;
     }

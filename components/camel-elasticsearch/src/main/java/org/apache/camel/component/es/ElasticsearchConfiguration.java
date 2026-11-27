@@ -82,8 +82,8 @@ public class ElasticsearchConfiguration {
                             + " header replaces this option.")
     private boolean enableDocumentOnlyMode;
     @UriParam(description = "Whether the producer creates the client for each exchange and closes it when the exchange is"
-                            + " done, instead of keeping one client from its start to its stop. Not used when the client"
-                            + " option of the component is set.")
+                            + " done, or with useScroll when the scroll iterator is closed, instead of keeping one client"
+                            + " from its start to its stop. Not used when the client option of the component is set.")
     private boolean disconnect;
     @UriParam(label = "security",
               description = "Whether to connect to the nodes of hostAddresses with HTTPS instead of HTTP. The default"
@@ -120,8 +120,7 @@ public class ElasticsearchConfiguration {
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
     @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY,
               description = "The delay in milliseconds of the read of the nodes that the Sniffer schedules after a failed"
-                            + " request. The component does not register the client listener that reports failures to the"
-                            + " Sniffer, so this option has no effect.")
+                            + " request, when enableSniffer is set.")
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
     @UriParam(label = "advanced", defaultValue = "ObjectNode",
               description = "The class to which the documents in the responses of GetById, MultiGet, Search and MultiSearch"

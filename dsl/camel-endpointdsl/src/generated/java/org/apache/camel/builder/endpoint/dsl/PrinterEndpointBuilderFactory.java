@@ -118,11 +118,13 @@ public interface PrinterEndpointBuilderFactory {
          * DocFlavor.INPUT_STREAM or DocFlavor.URL, and for the mimeType
          * TEXT_HTML or TEXT_PLAIN DocFlavor.CHAR_ARRAY, DocFlavor.READER or
          * DocFlavor.STRING. If not set, DocFlavor.BYTE_ARRAY is used. Together
-         * with mimeType it selects the doc flavor, and a combination that the
-         * component does not know selects DocFlavor.BYTE_ARRAY.AUTOSENSE.
+         * with mimeType it selects the doc flavor, and an unknown value or a
+         * combination that names no doc flavor fails the creation of the
+         * endpoint.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: DocFlavor.BYTE_ARRAY
          * Group: producer
          * 
          * @param flavor the value to set
@@ -179,6 +181,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: AUTOSENSE
          * Group: producer
          * 
          * @param mimeType the value to set

@@ -46,93 +46,192 @@ import tools.jackson.databind.module.SimpleModule;
 
 @UriParams
 public class ServiceNowConfiguration implements Cloneable {
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The user name of the ServiceNow account. The producer sends it with basic authentication, or in "
+                            + "the OAuth password grant when oauthClientId and oauthClientSecret are set.",
+              label = "security", security = "secret")
     @Metadata(required = true)
     private String userName;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The password of the ServiceNow account, used with userName.", label = "security",
+              security = "secret")
     @Metadata(required = true)
     private String password;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The client ID of the OAuth application in ServiceNow. When it and oauthClientSecret are set, "
+                            + "the producer gets an access token from oauthTokenUrl with the password grant of userName and "
+                            + "password, and sends the token instead of basic authentication.",
+              label = "security", security = "secret")
     private String oauthClientId;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The client secret of the OAuth application in ServiceNow, used with oauthClientId.",
+              label = "security", security = "secret")
     private String oauthClientSecret;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The URL of the OAuth token endpoint of ServiceNow. If not set, "
+                            + "https://{instanceName}.service-now.com/oauth_token.do is used.",
+              label = "security", security = "secret")
     private String oauthTokenUrl;
-    @UriParam(label = "security")
+    @UriParam(description = "The base URL of the ServiceNow REST API. If not set, https://{instanceName}.service-now.com/api "
+                            + "is used.",
+              label = "security")
     private String apiUrl;
-    @UriParam(label = "advanced")
+    @UriParam(description = "The version of the REST API, for example v1, which the producer adds to the request path. If "
+                            + "not set, the path has no version and ServiceNow uses the latest one. The "
+                            + "CamelServiceNowApiVersion header replaces this option.",
+              label = "advanced")
     private String apiVersion;
-    @UriParam
+    @UriParam(description = "The REST API that the producer calls when the CamelServiceNowResource header is not set: table, "
+                            + "aggregate, import, attachment, scorecards, misc, service_catalog, service_catalog_items, "
+                            + "service_catalog_cart or service_catalog_categories. The FUJI release supports only table, "
+                            + "aggregate and import.")
     private String resource;
-    @UriParam
+    @UriParam(description = "The name of the table, for example incident, for the table, aggregate and import resources. The "
+                            + "CamelServiceNowTable header replaces this option. The table name also selects the class of the "
+                            + "models, requestModels and responseModels options.")
     private String table;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether ServiceNow leaves out the Table API links of reference fields in the response "
+                            + "(sysparm_exclude_reference_link). The CamelServiceNowExcludeReferenceLink header replaces this "
+                            + "option.",
+              defaultValue = "false")
     private Boolean excludeReferenceLink = false;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether ServiceNow does not generate the system fields, such as sys_updated_on, when a record "
+                            + "is created or changed (sysparm_suppress_auto_sys_field). The "
+                            + "CamelServiceNowSuppressAutoSysField header replaces this option.",
+              defaultValue = "false")
     private Boolean suppressAutoSysField = false;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether a scorecards request returns all scores of a scorecard instead of only the most recent "
+                            + "one (sysparm_include_scores). The CamelServiceNowIncludeScores header replaces this option.",
+              defaultValue = "false")
     private Boolean includeScores = false;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether a scorecards request returns all available aggregates of an indicator, also when an "
+                            + "aggregate is already applied (sysparm_include_aggregates). The CamelServiceNowIncludeAggregates "
+                            + "header replaces this option.",
+              defaultValue = "false")
     private Boolean includeAggregates = false;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether a scorecards request returns all available breakdowns of an indicator "
+                            + "(sysparm_include_available_breakdowns). The CamelServiceNowIncludeAvailableBreakdowns header "
+                            + "replaces this option.",
+              defaultValue = "false")
     private Boolean includeAvailableBreakdowns = false;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether a scorecards request returns all available aggregates of an indicator when no aggregate "
+                            + "is applied (sysparm_include_available_aggregates). The "
+                            + "CamelServiceNowIncludeAvailableAggregates header replaces this option.",
+              defaultValue = "false")
     private Boolean includeAvailableAggregates = false;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether a scorecards request returns the notes of each score, with their text, author and time "
+                            + "(sysparm_include_score_notes). The CamelServiceNowIncludeScoreNotes header replaces this "
+                            + "option.",
+              defaultValue = "false")
     private Boolean includeScoreNotes = false;
-    @UriParam
+    @UriParam(description = "Whether the categories of a catalog (the categories subject of the service_catalog resource) "
+                            + "are only those whose parent is the catalog (sysparm_top_level_only). The "
+                            + "CamelServiceNowTopLevelOnly header replaces this option.")
     private Boolean topLevelOnly;
-    @UriParam
+    @UriParam(description = "Whether a scorecards request returns only the scorecards that are favorites of the user "
+                            + "(sysparm_favorites). The CamelServiceNowFavorites header replaces this option.")
     private Boolean favorites;
-    @UriParam(label = "advanced", defaultValue = "false")
+    @UriParam(description = "Whether the create action of the import resource returns the record that the import inserted "
+                            + "into the target table, which the producer reads with a second request, instead of the import "
+                            + "set result. The CamelServiceNowRetrieveTargetRecord header replaces this option.",
+              label = "advanced", defaultValue = "false")
     private Boolean retrieveTargetRecordOnImport = false;
-    @UriParam
+    @UriParam(description = "Whether a scorecards request returns only the scorecards of key indicators (sysparm_key). The "
+                            + "CamelServiceNowKey header replaces this option.")
     private Boolean key;
-    @UriParam
+    @UriParam(description = "Whether a scorecards request returns only the scorecards that have a target (sysparm_target). "
+                            + "The CamelServiceNowTarget header replaces this option.")
     private Boolean target;
-    @UriParam(defaultValue = "true", enums = "false,true,all")
+    @UriParam(description = "Which scorecards a scorecards request returns by the Display field of their indicator: true for "
+                            + "only those with Display selected, all for any (sysparm_display). The CamelServiceNowDisplay "
+                            + "header replaces this option.",
+              defaultValue = "true", enums = "false,true,all")
     private String display = "true";
-    @UriParam(defaultValue = "10")
+    @UriParam(description = "The maximum number of scorecards that a scorecards request returns per page, at most 100 "
+                            + "(sysparm_per_page). The CamelServiceNowPerPage header replaces this option.",
+              defaultValue = "10")
     private Integer perPage = 10;
-    @UriParam(enums = "value,change,changeperc,gap,gapperc,duedate,name,order,default,group,indicator_group,frequency,target,date,trend,bullet,direction")
+    @UriParam(description = "The value that a scorecards request sorts the scorecards by (sysparm_sortby). If not set, "
+                            + "ServiceNow sorts by value. The CamelServiceNowSortBy header replaces this option.",
+              enums = "value,change,changeperc,gap,gapperc,duedate,name,order,default,group,indicator_group,frequency,target,date,trend,bullet,direction")
     private String sortBy;
-    @UriParam(enums = "asc,desc")
+    @UriParam(description = "The sort direction of a scorecards request, asc or desc (sysparm_sortdir). If not set, "
+                            + "ServiceNow sorts in descending order. The CamelServiceNowSortDir header replaces this option.",
+              enums = "asc,desc")
     private String sortDir;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether ServiceNow leaves out the Link header of the response "
+                            + "(sysparm_suppress_pagination_header), from which the producer sets the "
+                            + "CamelServiceNowOffsetNext, CamelServiceNowOffsetPrev, CamelServiceNowOffsetFirst and "
+                            + "CamelServiceNowOffsetLast headers. The CamelServiceNowSuppressPaginationHeader header replaces "
+                            + "this option.",
+              defaultValue = "false")
     private Boolean suppressPaginationHeader = false;
-    @UriParam(defaultValue = "false", enums = "false,true,all")
+    @UriParam(description = "Whether ServiceNow returns the display values (true), the actual values (false) or both (all) "
+                            + "of the fields (sysparm_display_value). The CamelServiceNowDisplayValue header replaces this "
+                            + "option.",
+              defaultValue = "false", enums = "false,true,all")
     private String displayValue = "false";
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether ServiceNow treats the field values of a create or change as display values instead of "
+                            + "actual values (sysparm_input_display_value). The CamelServiceNowInputDisplayValue header "
+                            + "replaces this option.",
+              defaultValue = "false")
     private Boolean inputDisplayValue = false;
-    @UriParam(prefix = "model.", multiValue = true, description = "Defines both request and response models")
+    @UriParam(description = "The model class per table name, used for both the request and the response. A table with no "
+                            + "class uses a Map. The CamelServiceNowModel header replaces this option.",
+              prefix = "model.", multiValue = true)
     private transient Map<String, Class<?>> models; // field not in use as its a shortcut for both requestModels/responseModels
-    @UriParam(prefix = "request-model.", multiValue = true)
+    @UriParam(description = "The class of the request body per table name. The producer fails when the body is not an "
+                            + "instance of it, and a table with no class uses a Map. The CamelServiceNowRequestModel and "
+                            + "CamelServiceNowModel headers replace this option.",
+              prefix = "request-model.", multiValue = true)
     private Map<String, Class<?>> requestModels;
-    @UriParam(prefix = "response-model.", multiValue = true)
+    @UriParam(description = "The class per table name that the producer converts the result to. A table with no class uses a "
+                            + "Map. The CamelServiceNowResponseModel and CamelServiceNowModel headers replace this option.",
+              prefix = "response-model.", multiValue = true)
     private Map<String, Class<?>> responseModels;
-    @UriParam(label = "advanced")
+    @UriParam(description = "To use a custom Jackson tools.jackson.databind.ObjectMapper, which must be a JsonMapper, to "
+                            + "convert the request and the response. When it is set, the dateFormat, timeFormat and "
+                            + "dateTimeFormat options are not used.",
+              label = "advanced")
     private ObjectMapper mapper;
-    @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
+    @UriParam(description = "The ServiceNow release whose REST APIs the producer calls. FUJI supports the table, aggregate "
+                            + "and import resources, and HELSINKI all resources. GENEVA is not supported.",
+              defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
     private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
-    @UriParam(label = "security")
+    @UriParam(description = "The TLS configuration of the connection to the REST API. If not set and "
+                            + "useGlobalSslContextParameters is enabled on the component, the global SSL context parameters "
+                            + "are used.",
+              label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "advanced")
+    @UriParam(description = "To use a custom Apache CXF org.apache.cxf.transports.http.configuration.HTTPClientPolicy for "
+                            + "the HTTP connection, for example for timeouts. When it is set, the proxyHost and proxyPort "
+                            + "options are not used.",
+              label = "advanced")
     private HTTPClientPolicy httpClientPolicy;
-    @UriParam(label = "advanced")
+    @UriParam(description = "To use a custom Apache CXF org.apache.cxf.configuration.security.ProxyAuthorizationPolicy for "
+                            + "the authentication to the proxy. When it is set, the proxyUserName and proxyPassword options "
+                            + "are not used.",
+              label = "advanced")
     private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
-    @UriParam(label = "proxy")
+    @UriParam(description = "The host name of the HTTP proxy. The proxy is used only when proxyPort is also set and "
+                            + "httpClientPolicy is not set.",
+              label = "proxy")
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(description = "The port of the HTTP proxy, used with proxyHost.", label = "proxy")
     private Integer proxyPort;
-    @UriParam(label = "proxy,security")
+    @UriParam(description = "The user name for basic authentication to the proxy. It is used only when proxyPassword is also "
+                            + "set and proxyAuthorizationPolicy is not set.",
+              label = "proxy,security")
     private String proxyUserName;
-    @UriParam(label = "proxy,security", security = "secret")
+    @UriParam(description = "The password for basic authentication to the proxy, used with proxyUserName.",
+              label = "proxy,security", security = "secret")
     private String proxyPassword;
-    @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_FORMAT)
+    @UriParam(description = "The java.time.format.DateTimeFormatter pattern of the LocalDate fields of the models in the "
+                            + "JSON. It is not used when the mapper option is set.",
+              label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_FORMAT)
     private String dateFormat = ServiceNowConstants.DEFAULT_DATE_FORMAT;
-    @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_TIME_FORMAT)
+    @UriParam(description = "The java.time.format.DateTimeFormatter pattern of the LocalTime fields of the models in the "
+                            + "JSON. It is not used when the mapper option is set.",
+              label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_TIME_FORMAT)
     private String timeFormat = ServiceNowConstants.DEFAULT_TIME_FORMAT;
-    @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_TIME_FORMAT)
+    @UriParam(description = "The java.time.format.DateTimeFormatter pattern of the LocalDateTime fields of the models in the "
+                            + "JSON. It is not used when the mapper option is set.",
+              label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_TIME_FORMAT)
     private String dateTimeFormat = ServiceNowConstants.DEFAULT_DATE_TIME_FORMAT;
 
     public String getUserName() {
@@ -143,9 +242,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return apiUrl;
     }
 
-    /**
-     * The ServiceNow REST API url
-     */
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
     }
@@ -158,16 +254,10 @@ public class ServiceNowConfiguration implements Cloneable {
         return apiVersion;
     }
 
-    /**
-     * The ServiceNow REST API version, default latest
-     */
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
     }
 
-    /**
-     * ServiceNow user account name, MUST be provided
-     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -176,9 +266,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return password;
     }
 
-    /**
-     * ServiceNow account password, MUST be provided
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -187,9 +274,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return oauthClientId;
     }
 
-    /**
-     * OAuth2 ClientID
-     */
     public void setOauthClientId(String oauthClientId) {
         this.oauthClientId = oauthClientId;
     }
@@ -198,9 +282,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return oauthClientSecret;
     }
 
-    /**
-     * OAuth2 ClientSecret
-     */
     public void setOauthClientSecret(String oauthClientSecret) {
         this.oauthClientSecret = oauthClientSecret;
     }
@@ -213,9 +294,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return oauthTokenUrl != null;
     }
 
-    /**
-     * OAuth token Url
-     */
     public void setOauthTokenUrl(String oauthTokenUrl) {
         this.oauthTokenUrl = oauthTokenUrl;
     }
@@ -236,9 +314,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return resource;
     }
 
-    /**
-     * The default resource, can be overridden by header CamelServiceNowResource
-     */
     public void setResource(String resource) {
         this.resource = resource;
     }
@@ -247,9 +322,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return table;
     }
 
-    /**
-     * The default table, can be overridden by header CamelServiceNowTable
-     */
     public void setTable(String table) {
         this.table = table;
     }
@@ -258,9 +330,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return excludeReferenceLink;
     }
 
-    /**
-     * True to exclude Table API links for reference fields (default: false)
-     */
     public void setExcludeReferenceLink(Boolean excludeReferenceLink) {
         this.excludeReferenceLink = excludeReferenceLink;
     }
@@ -269,9 +338,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return suppressAutoSysField;
     }
 
-    /**
-     * True to suppress auto generation of system fields (default: false)
-     */
     public void setSuppressAutoSysField(Boolean suppressAutoSysField) {
         this.suppressAutoSysField = suppressAutoSysField;
     }
@@ -280,10 +346,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return suppressPaginationHeader;
     }
 
-    /**
-     * Set this value to true to remove the Link header from the response. The Link header allows you to request
-     * additional pages of data when the number of records matching your query exceeds the query limit
-     */
     public void setSuppressPaginationHeader(Boolean suppressPaginationHeader) {
         this.suppressPaginationHeader = suppressPaginationHeader;
     }
@@ -292,10 +354,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return includeScores;
     }
 
-    /**
-     * Set this parameter to true to return all scores for a scorecard. If a value is not specified, this parameter
-     * defaults to false and returns only the most recent score value.
-     */
     public void setIncludeScores(Boolean includeScores) {
         this.includeScores = includeScores;
     }
@@ -304,11 +362,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return includeAggregates;
     }
 
-    /**
-     * Set this parameter to true to always return all available aggregates for an indicator, including when an
-     * aggregate has already been applied. If a value is not specified, this parameter defaults to false and returns no
-     * aggregates.
-     */
     public void setIncludeAggregates(Boolean includeAggregates) {
         this.includeAggregates = includeAggregates;
     }
@@ -317,10 +370,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return includeAvailableBreakdowns;
     }
 
-    /**
-     * Set this parameter to true to return all available breakdowns for an indicator. If a value is not specified, this
-     * parameter defaults to false and returns no breakdowns.
-     */
     public void setIncludeAvailableBreakdowns(Boolean includeAvailableBreakdowns) {
         this.includeAvailableBreakdowns = includeAvailableBreakdowns;
     }
@@ -329,10 +378,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return includeAvailableAggregates;
     }
 
-    /**
-     * Set this parameter to true to return all available aggregates for an indicator when no aggregate has been
-     * applied. If a value is not specified, this parameter defaults to false and returns no aggregates.
-     */
     public void setIncludeAvailableAggregates(Boolean includeAvailableAggregates) {
         this.includeAvailableAggregates = includeAvailableAggregates;
     }
@@ -341,10 +386,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return includeScoreNotes;
     }
 
-    /**
-     * Set this parameter to true to return all notes associated with the score. The note element contains the note text
-     * as well as the author and timestamp when the note was added.
-     */
     public void setIncludeScoreNotes(Boolean includeScoreNotes) {
         this.includeScoreNotes = includeScoreNotes;
     }
@@ -353,9 +394,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return favorites;
     }
 
-    /**
-     * Set this parameter to true to return only scorecards that are favorites of the querying user.
-     */
     public void setFavorites(Boolean favorites) {
         this.favorites = favorites;
     }
@@ -364,10 +402,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return retrieveTargetRecordOnImport;
     }
 
-    /**
-     * Set this parameter to true to retrieve the target record when using import set api. The import set result is then
-     * replaced by the target record
-     */
     public void setRetrieveTargetRecordOnImport(Boolean retrieveTargetRecordOnImport) {
         this.retrieveTargetRecordOnImport = retrieveTargetRecordOnImport;
     }
@@ -376,9 +410,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return key;
     }
 
-    /**
-     * Set this parameter to true to return only scorecards for key indicators.
-     */
     public void setKey(Boolean key) {
         this.key = key;
     }
@@ -387,9 +418,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return target;
     }
 
-    /**
-     * Set this parameter to true to return only scorecards that have a target.
-     */
     public void setTarget(Boolean target) {
         this.target = target;
     }
@@ -398,10 +426,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return display;
     }
 
-    /**
-     * Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this
-     * parameter to all to return scorecards with any Display field value. This parameter is true by default.
-     */
     public void setDisplay(String display) {
         this.display = display;
     }
@@ -410,10 +434,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return perPage;
     }
 
-    /**
-     * Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is
-     * 100.
-     */
     public void setPerPage(Integer perPage) {
         this.perPage = perPage;
     }
@@ -422,9 +442,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return sortBy;
     }
 
-    /**
-     * Specify the value to use when sorting results. By default, queries sort records by value.
-     */
     public void setSortBy(String sortBy) {
         this.sortBy = sortBy;
     }
@@ -433,10 +450,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return sortDir;
     }
 
-    /**
-     * Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use
-     * sysparm_sortdir=asc to sort in ascending order.
-     */
     public void setSortDir(String sortDir) {
         this.sortDir = sortDir;
     }
@@ -445,9 +458,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return displayValue;
     }
 
-    /**
-     * Return the display value (true), actual value (false), or both (all) for reference fields (default: false)
-     */
     public void setDisplayValue(String displayValue) {
         this.displayValue = displayValue;
     }
@@ -456,9 +466,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return inputDisplayValue;
     }
 
-    /**
-     * True to set raw value of input fields (default: false)
-     */
     public void setInputDisplayValue(Boolean inputDisplayValue) {
         this.inputDisplayValue = inputDisplayValue;
     }
@@ -467,9 +474,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return requestModels;
     }
 
-    /**
-     * Sets Jackson's ObjectMapper to use for request/reply
-     */
     public void setMapper(ObjectMapper mapper) {
         this.mapper = mapper;
     }
@@ -507,11 +511,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return mapper != null;
     }
 
-    /**
-     * The ServiceNow release to target, default to Helsinki
-     *
-     * See https://docs.servicenow.com
-     */
     public void setRelease(ServiceNowRelease release) {
         this.release = release;
     }
@@ -524,9 +523,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return topLevelOnly;
     }
 
-    /**
-     * Gets only those categories whose parent is a catalog.
-     */
     public void setTopLevelOnly(Boolean topLevelOnly) {
         this.topLevelOnly = topLevelOnly;
     }
@@ -535,9 +531,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return sslContextParameters;
     }
 
-    /**
-     * To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -546,9 +539,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return httpClientPolicy;
     }
 
-    /**
-     * To configure http-client
-     */
     public void setHttpClientPolicy(HTTPClientPolicy httpClientPolicy) {
         this.httpClientPolicy = httpClientPolicy;
     }
@@ -557,9 +547,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return proxyAuthorizationPolicy;
     }
 
-    /**
-     * To configure proxy authentication
-     */
     public void setProxyAuthorizationPolicy(ProxyAuthorizationPolicy proxyAuthorizationPolicy) {
         this.proxyAuthorizationPolicy = proxyAuthorizationPolicy;
     }
@@ -568,9 +555,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return proxyHost;
     }
 
-    /**
-     * The proxy host name
-     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -579,9 +563,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return proxyPort;
     }
 
-    /**
-     * The proxy port number
-     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -590,9 +571,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return proxyUserName;
     }
 
-    /**
-     * Username for proxy authentication
-     */
     public void setProxyUserName(String proxyUserName) {
         this.proxyUserName = proxyUserName;
     }
@@ -601,9 +579,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return proxyPassword;
     }
 
-    /**
-     * Password for proxy authentication
-     */
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
     }
@@ -612,9 +587,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return dateFormat;
     }
 
-    /**
-     * The date format used for Json serialization/deserialization
-     */
     public void setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
     }
@@ -623,9 +595,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return timeFormat;
     }
 
-    /**
-     * The time format used for Json serialization/deserialization
-     */
     public void setTimeFormat(String timeFormat) {
         this.timeFormat = timeFormat;
     }
@@ -634,9 +603,6 @@ public class ServiceNowConfiguration implements Cloneable {
         return dateTimeFormat;
     }
 
-    /**
-     * The date-time format used for Json serialization/deserialization
-     */
     public void setDateTimeFormat(String dateTimeFormat) {
         this.dateTimeFormat = dateTimeFormat;
     }
@@ -663,9 +629,6 @@ public class ServiceNowConfiguration implements Cloneable {
     // Request model
     // *************************************************
 
-    /**
-     * Defines the request model
-     */
     public void setRequestModels(Map<String, Class<?>> models) {
         if (this.requestModels == null) {
             this.requestModels = new HashMap<>();
@@ -705,9 +668,6 @@ public class ServiceNowConfiguration implements Cloneable {
     // Response model
     // *************************************************
 
-    /**
-     * Defines the response model
-     */
     public void setResponseModels(Map<String, Class<?>> models) {
         if (this.responseModels == null) {
             this.responseModels = new HashMap<>();

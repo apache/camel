@@ -55,7 +55,7 @@ public class KeyVaultEndpointUriFactory extends org.apache.camel.support.compone
 
         Map<String, Object> copy = copyParameters(properties);
 
-        uri = buildPathParameter(syntax, uri, "vaultName", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "vaultName", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

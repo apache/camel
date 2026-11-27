@@ -67,19 +67,34 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
 
     private List<BayeuxServer.BayeuxServerListener> serverListeners;
 
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "The password of the keystore that sslKeystore points to, for the cometds server. Not used when"
+                            + " SSL context parameters are configured.")
     private String sslKeyPassword;
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "The password of the private key in the keystore that sslKeystore points to, for the cometds"
+                            + " server. Not used when SSL context parameters are configured.")
     private String sslPassword;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The path of the keystore file with the certificate and private key of the cometds server. Not"
+                            + " used when SSL context parameters are configured.")
     private String sslKeystore;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The CometD SecurityPolicy that decides whether a client may handshake, create a channel,"
+                            + " subscribe to a channel or publish to it. It is set on each CometD server that the component"
+                            + " starts.")
     private SecurityPolicy securityPolicy;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The list of BayeuxServer.Extension that can modify or drop the incoming and outgoing Bayeux"
+                            + " messages. They are added to each CometD server that the component starts.")
     private List<BayeuxServer.Extension> extensions;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The SSL configuration of the cometds server, such as the keystore with its certificate. When"
+                            + " set, sslKeystore, sslPassword and sslKeyPassword are not used.")
     private SSLContextParameters sslContextParameters;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether the cometds server uses the global SSL context parameters of the CamelContext when"
+                            + " sslContextParameters is not set.")
     private boolean useGlobalSslContextParameters;
 
     static class ConnectorRef {
@@ -282,30 +297,18 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         return sslKeystore;
     }
 
-    /**
-     * The password for the keystore when using SSL.
-     */
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
     }
 
-    /**
-     * The password when using SSL.
-     */
     public void setSslPassword(String sslPassword) {
         this.sslPassword = sslPassword;
     }
 
-    /**
-     * The path to the keystore.
-     */
     public void setSslKeystore(String sslKeystore) {
         this.sslKeystore = sslKeystore;
     }
 
-    /**
-     * To use a custom configured SecurityPolicy to control authorization
-     */
     public void setSecurityPolicy(SecurityPolicy securityPolicy) {
         this.securityPolicy = securityPolicy;
     }
@@ -318,9 +321,6 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         return extensions;
     }
 
-    /**
-     * To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests.
-     */
     public void setExtensions(List<BayeuxServer.Extension> extensions) {
         this.extensions = extensions;
     }
@@ -343,9 +343,6 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         return sslContextParameters;
     }
 
-    /**
-     * To configure security using SSLContextParameters
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -355,9 +352,6 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         return this.useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;

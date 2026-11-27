@@ -45,6 +45,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
     private DocFlavor flavor;
     private PrintRequestAttributeSet printRequestAttributeSet;
     private Doc doc;
+    private File outputDirectory = new File("./target");
 
     public PrinterOperations() throws PrintException {
         printService = PrintServiceLookup.lookupDefaultPrintService();
@@ -74,13 +75,17 @@ public class PrinterOperations implements PrinterOperationsInterface {
 
             File file;
             if (mimeType.equalsIgnoreCase("GIF") || mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
-                file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".gif");
+                file = new File(outputDirectory, "PrintOutput_" + UUID.randomUUID() + ".gif");
             } else if (mimeType.equalsIgnoreCase("JPEG")) {
-                file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".jpeg");
+                file = new File(outputDirectory, "PrintOutput_" + UUID.randomUUID() + ".jpeg");
             } else if (mimeType.equalsIgnoreCase("PDF")) {
-                file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".pdf");
+                file = new File(outputDirectory, "PrintOutput_" + UUID.randomUUID() + ".pdf");
             } else {
-                file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".txt");
+                file = new File(outputDirectory, "PrintOutput_" + UUID.randomUUID() + ".txt");
+            }
+            // create the directory when missing, as each exchange failed in a working directory without it
+            if (!outputDirectory.isDirectory() && !outputDirectory.mkdirs() && !outputDirectory.isDirectory()) {
+                throw new PrintException("Cannot create the directory of the target file " + file.getAbsolutePath());
             }
 
             LOG.debug("Writing print job to file: {}", file.getAbsolutePath());
@@ -129,6 +134,18 @@ public class PrinterOperations implements PrinterOperationsInterface {
 
     public void setPrintRequestAttributeSet(PrintRequestAttributeSet printRequestAttributeSet) {
         this.printRequestAttributeSet = printRequestAttributeSet;
+    }
+
+    File getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    /**
+     * The directory that sendToPrinter=false writes the documents to, ./target of the working directory unless a test
+     * changes it.
+     */
+    void setOutputDirectory(File outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
     public Doc getDoc() {

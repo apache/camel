@@ -28,23 +28,37 @@ import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 @UriParams
 public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguration {
 
-    @UriPath(description = "A label for indexing cloudtrail endpoints")
+    @UriPath(description = "A name of your choice that identifies the endpoint, for example trail. The consumer does not"
+                           + " use it: the region, the credentials and the eventSource option select the events.")
     @Metadata(required = true)
     private String label;
-    @UriParam(label = "security", security = "secret", description = "Amazon AWS Access Key")
+    @UriParam(label = "security", security = "secret",
+              description = "The access key ID of the AWS credentials, used together with the secretKey option. The"
+                            + " endpoint requires it, unless cloudTrailClient is set or useDefaultCredentialsProvider,"
+                            + " useProfileCredentialsProvider or useSessionCredentials is true.")
     private String accessKey;
-    @UriParam(label = "security", security = "secret", description = "Amazon AWS Secret Key")
+    @UriParam(label = "security", security = "secret",
+              description = "The secret access key of the AWS credentials, used together with the accessKey option. The"
+                            + " endpoint requires it, unless cloudTrailClient is set or useDefaultCredentialsProvider,"
+                            + " useProfileCredentialsProvider or useSessionCredentials is true.")
     private String secretKey;
 
     @UriParam(label = "security", security = "secret",
-              description = "Amazon AWS Session Token used when the user needs to assume a IAM role")
+              description = "The session token of temporary AWS credentials, for example of an assumed IAM role. It is used"
+                            + " only when useSessionCredentials is true, together with the accessKey and secretKey options."
+                            + " When it is not set, the accessKey and secretKey options are used without a session token.")
     private String sessionToken;
 
     @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
-              description = "The region in which Cloudtrail client needs to work. When using this parameter, the configuration will expect the lowercase name of the "
-                            + "region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()")
+              description = "The AWS region of Amazon CloudTrail, as a region ID such as eu-west-1, which is the value of"
+                            + " Region.EU_WEST_1.id(). The consumer receives the events of this region only. If not set, the"
+                            + " default region provider chain of the AWS SDK is used.")
     private String region;
-    @UriParam(label = "advanced", description = "Amazon Cloudtrail client to use for all requests for this endpoint")
+    @UriParam(label = "advanced",
+              description = "To use a custom software.amazon.awssdk.services.cloudtrail.CloudTrailClient, which is autowired"
+                            + " when the registry has a single one. When this option is set, the credentials, region, proxy,"
+                            + " endpoint override and trustAllCertificates options are not used. The endpoint does not close"
+                            + " a client that is set or autowired.")
     @Metadata(autowired = true)
     private CloudTrailClient cloudTrailClient;
     @UriParam(description = "Maximum number of records that will be fetched in each lookup page. Each poll drains"
@@ -52,48 +66,67 @@ public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguratio
                             + " up to 50.",
               defaultValue = "50")
     private int maxResults = 50;
-    @UriParam(description = "Specify an event source to select events")
+    @UriParam(description = "The event source to receive the events of, which is the AWS service that the request was made"
+                            + " to, for example s3.amazonaws.com. The consumer sends it as the EventSource lookup attribute"
+                            + " of LookupEvents. If not set, the events of all event sources are received.")
     private String eventSource;
     @UriParam(defaultValue = "600000", javaType = "java.time.Duration",
               description = "How far back the consumer looks again, every lookBackInterval, for events that"
                             + " CloudTrail made visible after a newer event (CloudTrail typically delivers an event"
-                            + " within 5 minutes). Events not routed yet are routed. Set to 0 to disable.")
+                            + " within 5 minutes). Events not routed yet are routed. The value is in milliseconds, or a"
+                            + " duration such as 10m. Set to 0 to disable.")
     private long lookBackWindow = 600000;
     @UriParam(defaultValue = "60000", javaType = "java.time.Duration",
               description = "How often the consumer looks up the lookBackWindow again for events that CloudTrail made"
                             + " visible late. A late event is routed at most this long after it became visible. Must"
-                            + " be above 0 unless lookBackWindow is 0.")
+                            + " be above 0 unless lookBackWindow is 0. The value is in milliseconds, or a duration such as"
+                            + " 1m.")
     private long lookBackInterval = 60000;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
-              description = "To define a proxy protocol when instantiating the Cloudtrail client")
+              description = "The protocol that the HTTP client of Amazon CloudTrail uses to connect to the proxy. It is used"
+                            + " only when the proxyHost and proxyPort options are set.")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "proxy", description = "To define a proxy host when instantiating the Cloudtrail client")
+    @UriParam(label = "proxy",
+              description = "The host name of the proxy that the HTTP client of Amazon CloudTrail connects through. The"
+                            + " proxy is used only when the proxyPort option is set too.")
     private String proxyHost;
-    @UriParam(label = "proxy", description = "To define a proxy port when instantiating the Cloudtrail client")
+    @UriParam(label = "proxy",
+              description = "The port of the proxy that the HTTP client of Amazon CloudTrail connects through. The proxy is"
+                            + " used only when the proxyHost option is set too.")
     private Integer proxyPort;
     @UriParam(security = "insecure:ssl", label = "security",
-              description = "If we want to trust all certificates in case of overriding the endpoint")
+              description = "Whether the HTTP client of Amazon CloudTrail trusts every TLS certificate without checking it."
+                            + " It applies to any endpoint, not only to an overridden one, so use it only for testing, for"
+                            + " example against a local emulator.")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false",
-              description = "Set the need for overriding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
+              description = "Whether to send the requests to the URI of the uriEndpointOverride option instead of the"
+                            + " endpoint of the region. It has no effect when uriEndpointOverride is not set.")
     private boolean overrideEndpoint;
-    @UriParam(description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
+    @UriParam(description = "The URI of the endpoint to use instead of the endpoint of the region, for example"
+                            + " http://localhost:4566 for a local emulator. It is used only when overrideEndpoint is true.")
     private String uriEndpointOverride;
     @UriParam(label = "security",
-              description = "Set whether the Cloudtrail client should expect to load credentials through a default credentials provider or to expect"
-                            + " static credentials to be passed in.")
+              description = "Whether to load the credentials with the default credentials provider chain of the AWS SDK,"
+                            + " which looks in system properties, environment variables, the shared credentials and config"
+                            + " files, and the container or instance role. It takes precedence over the other credentials"
+                            + " options.")
     private boolean useDefaultCredentialsProvider;
     @UriParam(label = "security",
-              description = "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
+              description = "Whether to load the credentials from a profile of the AWS shared credentials and config files,"
+                            + " the one of the profileCredentialsName option. It is not used when useDefaultCredentialsProvider"
+                            + " is true, and it takes precedence over the session and static credentials.")
     private boolean useProfileCredentialsProvider;
 
     @UriParam(label = "security",
-              description = "Set whether the CloudTrail client should expect to use Session Credentials. This is useful in situation in which the user"
-                            +
-                            " needs to assume a IAM role for doing operations in CloudTrail.")
+              description = "Whether to use temporary credentials made of the accessKey, secretKey and sessionToken options,"
+                            + " for example those of an assumed IAM role. It is not used when useDefaultCredentialsProvider or"
+                            + " useProfileCredentialsProvider is true.")
     private boolean useSessionCredentials;
     @UriParam(label = "security",
-              description = "If using a profile credentials provider this parameter will set the profile name.")
+              description = "The name of the profile in the AWS shared credentials and config files, used when"
+                            + " useProfileCredentialsProvider is true. If not set, the AWS SDK uses its default profile, which"
+                            + " the AWS_PROFILE environment variable can change.")
     private String profileCredentialsName;
 
     public String getLabel() {

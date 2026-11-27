@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SolrSslContextParametersTest {
 
-    private static final String SOLR_URI = "solr://localhost:8983";
+    private static final String SOLR_URI = "solr://localhost:8983?enableSSL=true";
 
     @Test
     public void configurationPropertyRoundTrip() {

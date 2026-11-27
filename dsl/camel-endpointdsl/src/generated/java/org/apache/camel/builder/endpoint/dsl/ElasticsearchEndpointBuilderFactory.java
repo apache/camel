@@ -81,9 +81,9 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Whether the producer creates the client for each exchange and closes
-         * it when the exchange is done, instead of keeping one client from its
-         * start to its stop. Not used when the client option of the component
-         * is set.
+         * it when the exchange is done, or with useScroll when the scroll
+         * iterator is closed, instead of keeping one client from its start to
+         * its stop. Not used when the client option of the component is set.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -99,9 +99,9 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Whether the producer creates the client for each exchange and closes
-         * it when the exchange is done, instead of keeping one client from its
-         * start to its stop. Not used when the client option of the component
-         * is set.
+         * it when the exchange is done, or with useScroll when the scroll
+         * iterator is closed, instead of keeping one client from its start to
+         * its stop. Not used when the client option of the component is set.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -692,9 +692,7 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The delay in milliseconds of the read of the nodes that the Sniffer
-         * schedules after a failed request. The component does not register the
-         * client listener that reports failures to the Sniffer, so this option
-         * has no effect.
+         * schedules after a failed request, when enableSniffer is set.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -710,9 +708,7 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The delay in milliseconds of the read of the nodes that the Sniffer
-         * schedules after a failed request. The component does not register the
-         * client listener that reports failures to the Sniffer, so this option
-         * has no effect.
+         * schedules after a failed request, when enableSniffer is set.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

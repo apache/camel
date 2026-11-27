@@ -669,11 +669,11 @@ thread is still in messageArrived, CAMEL-27043).
 For camel-zookeeper-master (`-pl components/camel-zookeeper-master`, `ZooKeeperMasterDstTest`) the past fixes are
 `MasterConsumer` of e670025a49a4^ (CAMEL-25315), `MasterRoutePolicy` of 706beec6d5ab^ (CAMEL-26540), 136ffd929263
 (CAMEL-26802) and 28f3170dcc6a (CAMEL-26887) reverted, and the `unregisterAsListener()` of 5ecab86a58ba (CAMEL-26870)
-taken out by hand. Its world has three properties, each adding back a case that the default set leaves out:
-`dst.zookeeper.stopWhileSuspended` (a route stopped while the client is disconnected, CAMEL-27037),
+taken out by hand, and the guard of `startRoute` for a route that is already started (CAMEL-27044, in
+`AbstractCamelContext`). Its world has two properties, each adding back a case that the default set leaves out:
+`dst.zookeeper.stopWhileSuspended` (a route stopped while the client is disconnected, CAMEL-27037) and
 `dst.zookeeper.stopDuringCreate` (a route stopped while the group waits for the answer of a create, or a create made
-after the close interrupted the thread of the group, CAMEL-27037) and `dst.zookeeper.startStartedRoute` (a started
-route of the policy started again, CAMEL-27044).
+after the close interrupted the thread of the group, CAMEL-27037).
 
 == Limits
 
