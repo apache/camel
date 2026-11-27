@@ -24,6 +24,7 @@ import java.util.Map;
 import com.openai.client.OpenAIClient;
 import com.openai.core.ClientOptions;
 import com.openai.core.Timeout;
+import com.openai.credential.BearerTokenCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import tools.jackson.databind.ObjectMapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -269,6 +271,26 @@ class OpenAIClientConfigurationTest extends CamelTestSupport {
                             + "/v1&additionalHeader.OpenAI-Organization=my-org&additionalHeader.api-key=azure-key");
             }
         };
+    }
+
+    /**
+     * When both {@code oauthProfile} and {@code apiKey} are configured, {@code oauthProfile} takes precedence. The
+     * resulting client must use a {@link BearerTokenCredential} (OAuth), not an API-key credential.
+     */
+    @Test
+    void oauthProfileTakesPrecedenceOverApiKey() throws Exception {
+        OpenAIEndpoint endpoint = (OpenAIEndpoint) context()
+                .getEndpoint("openai:chat-completion?apiKey=explicit-key&oauthProfile=prec-test");
+
+        OpenAIClient client = endpoint.createClient();
+        try {
+            ClientOptions options = clientOptions(client);
+            assertThat(options.credential())
+                    .as("oauthProfile must win over an explicit apiKey")
+                    .isInstanceOf(BearerTokenCredential.class);
+        } finally {
+            client.close();
+        }
     }
 
     private OpenAIEndpoint createEndpoint() throws Exception {
