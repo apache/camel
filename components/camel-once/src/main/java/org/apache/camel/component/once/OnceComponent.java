@@ -28,10 +28,17 @@ import org.apache.camel.util.PropertiesHelper;
 @Component("once")
 public class OnceComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced", defaultValue = "1000")
+    @Metadata(label = "advanced", defaultValue = "1000",
+              description = "The default number of milliseconds that an endpoint of this component waits, after its route"
+                            + " has started, before the consumer sends the message. The delay option of the endpoint replaces"
+                            + " it. Use 0 or a negative value to send the message at once.")
     private long delay = 1000;
 
-    @Metadata(label = "advanced", defaultValue = "true")
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether a value of the body, headers, variables or exchangeProperties option that starts with"
+                            + " language:NAME: is evaluated as an expression of the Camel language NAME, for example"
+                            + " language:simple:${camelId}. If false, or if NAME is not a known language, the consumer uses the"
+                            + " value as plain text, including the language:NAME: prefix.")
     private boolean languages = true;
 
     @Override
@@ -86,10 +93,6 @@ public class OnceComponent extends DefaultComponent {
         return delay;
     }
 
-    /**
-     * The number of milliseconds to wait before triggering. Use 0 or negative to fire as soon as possible. The default
-     * value is 1000.
-     */
     public void setDelay(long delay) {
         this.delay = delay;
     }
@@ -98,9 +101,6 @@ public class OnceComponent extends DefaultComponent {
         return languages;
     }
 
-    /**
-     * Whether Camel languages are supported such as simple,groovy.
-     */
     public void setLanguages(boolean languages) {
         this.languages = languages;
     }

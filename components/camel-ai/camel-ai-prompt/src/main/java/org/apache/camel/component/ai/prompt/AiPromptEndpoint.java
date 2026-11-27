@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import static org.apache.camel.component.ai.prompt.AiPrompt.SCHEME;
 
 /**
- * Consumer endpoint that registers a Camel route as an MCP prompt.
+ * Expose a Camel route as a prompt that MCP clients list and get through the Camel MCP server.
  *
  * @since 4.24
  */
@@ -56,7 +56,9 @@ import static org.apache.camel.component.ai.prompt.AiPrompt.SCHEME;
 public class AiPromptEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
-    @UriPath(description = "The prompt name advertised to MCP clients.")
+    @UriPath(description = "The name of the prompt, which MCP clients see in prompts/list and pass to prompts/get. It"
+                           + " must not contain a slash. A route whose prompt name is already registered under one of"
+                           + " its tags, or in the pool of prompts without tags, fails to start.")
     private final String promptName;
 
     @UriParam(description = "Prompt configuration including tags, description, title and argument definitions.")

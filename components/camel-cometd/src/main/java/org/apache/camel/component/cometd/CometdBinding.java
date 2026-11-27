@@ -50,9 +50,12 @@ import static org.cometd.bayeux.Message.DATA_FIELD;
 public class CometdBinding {
 
     public static final String HEADERS_FIELD = "CamelHeaders";
-    @Metadata(description = "The clientId of the session", javaType = "String")
+    @Metadata(description = "The id of the CometD session of the client that published the message, set by the consumer.",
+              javaType = "String")
     public static final String COMETD_CLIENT_ID_HEADER_NAME = "CometdClientId";
-    @Metadata(description = "The subscription", javaType = "String")
+    @Metadata(description = "The subscription field of the received Bayeux message, set by the consumer when the message has"
+                            + " this field.",
+              javaType = "String")
     public static final String COMETD_SUBSCRIPTION_HEADER_NAME = "subscription";
     public static final String COMETD_SESSION_ATTR_HEADER_NAME = "CometdSessionAttr";
 

@@ -2,7 +2,7 @@
 :doctitle: JOLT
 :shortname: jolt
 :artifactid: camel-jolt
-:description: JSON to JSON transformation using JOLT.
+:description: Transform JSON to JSON with a JOLT specification.
 :since: 2.16
 :supportlevel: Stable
 :tabs-sync-option:

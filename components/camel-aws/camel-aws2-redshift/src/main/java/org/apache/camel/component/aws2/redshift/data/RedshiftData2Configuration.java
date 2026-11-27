@@ -28,53 +28,88 @@ import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
 @UriParams
 public class RedshiftData2Configuration implements Cloneable, AwsCommonConfiguration {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A logical name of the endpoint, which you choose freely. The producer does not use it.")
     @Metadata(required = true)
     private String label;
-    @UriParam
+    @UriParam(description = "The operation that the producer performs. The CamelAwsRedshiftDataOperation header replaces this"
+                            + " option.")
     @Metadata(required = true)
     private RedshiftData2Operations operation;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The access key ID of the AWS credentials. The client uses it with secretKey as static credentials,"
+                            + " or with secretKey and sessionToken when useSessionCredentials is true.")
     private String accessKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The secret access key of the AWS credentials, which the client uses together with accessKey.")
     private String secretKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The session token of temporary AWS credentials, for example from assuming an IAM role. The client"
+                            + " uses it only when useSessionCredentials is true, together with accessKey and secretKey.")
     private String sessionToken;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
+    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
+              description = "The AWS region of the Redshift Data API, as a lowercase region ID such as eu-west-1, which is the"
+                            + " value of Region.EU_WEST_1.id(). If not set, the AWS SDK takes the region from its default region"
+                            + " provider chain, such as the aws.region system property or the AWS_REGION environment variable.")
     private String region;
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "The protocol that the client uses to connect to the proxy. It is used only when proxyHost and"
+                            + " proxyPort are set.")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy",
+              description = "The host name of the proxy that the client sends its requests through. The proxy is used only when"
+                            + " proxyPort is set as well.")
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy",
+              description = "The port of the proxy that the client sends its requests through. The proxy is used only when"
+                            + " proxyHost is set as well.")
     private Integer proxyPort;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom software.amazon.awssdk.services.redshiftdata.RedshiftDataClient. When this option is"
+                            + " set or autowired, the endpoint does not build a client of its own, so the credentials, region,"
+                            + " proxy and endpoint override options are not used. The endpoint does not close a client that is"
+                            + " set or autowired.")
     @Metadata(autowired = true)
     private RedshiftDataClient awsRedshiftDataClient;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the message body is the request of the AWS SDK for the operation, such as an"
+                            + " ExecuteStatementRequest for executeStatement, which the producer sends as it is. If true, the"
+                            + " headers are not used and a body of another type fails the exchange.")
     private boolean pojoRequest;
-    @UriParam(security = "insecure:ssl", defaultValue = "false")
+    @UriParam(security = "insecure:ssl", defaultValue = "false",
+              description = "Whether the HTTP client trusts all TLS certificates without validating them. It applies to every"
+                            + " connection of the client, also when the endpoint is not overridden.")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the client sends its requests to the URI of uriEndpointOverride instead of the endpoint of"
+                            + " the AWS region. Without uriEndpointOverride this option has no effect.")
     private boolean overrideEndpoint;
-    @UriParam
+    @UriParam(description = "The URI that the client sends its requests to, for example http://localhost:4566 for a local"
+                            + " emulator. It is used only when overrideEndpoint is true.")
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the client loads the credentials with the default credentials provider chain of the AWS"
+                            + " SDK, which looks in system properties, environment variables, the profile files, and the"
+                            + " container and instance metadata. It takes precedence over the other credentials options.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the client loads the credentials from a profile of the AWS config and credentials files,"
+                            + " the one that profileCredentialsName names. It takes precedence over useSessionCredentials,"
+                            + " accessKey and secretKey, but not over useDefaultCredentialsProvider.")
     private boolean useProfileCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether the client uses temporary session credentials made of accessKey, secretKey and"
+                            + " sessionToken, for example after assuming an IAM role. If sessionToken is not set, the client"
+                            + " uses accessKey and secretKey as static credentials.")
     private boolean useSessionCredentials;
-    @UriParam
+    @UriParam(description = "The name of the profile that the client loads when useProfileCredentialsProvider is true. If not"
+                            + " set, the AWS SDK uses the profile that the AWS_PROFILE environment variable or the aws.profile"
+                            + " system property names, or else the profile named default.")
     private String profileCredentialsName;
 
     public RedshiftDataClient getAwsRedshiftDataClient() {
         return awsRedshiftDataClient;
     }
 
-    /**
-     * To use an existing configured AwsRedshiftDataClient client
-     */
     public void setAwsRedshiftDataClient(RedshiftDataClient awsRedshiftDataClient) {
         this.awsRedshiftDataClient = awsRedshiftDataClient;
     }
@@ -83,9 +118,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return accessKey;
     }
 
-    /**
-     * Amazon AWS Access Key
-     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -94,9 +126,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return secretKey;
     }
 
-    /**
-     * Amazon AWS Secret Key
-     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -105,9 +134,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return sessionToken;
     }
 
-    /**
-     * Amazon AWS Session Token used when the user needs to assume an IAM role
-     */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
     }
@@ -116,10 +142,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return region;
     }
 
-    /**
-     * The region in which RedshiftData client needs to work. When using this parameter, the configuration will expect
-     * the lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
-     */
     public void setRegion(String region) {
         this.region = region;
     }
@@ -128,10 +150,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return operation;
     }
 
-    /**
-     * The operation to perform. It can be batchExecuteStatement, cancelStatement, describeStatement, describeTable,
-     * executeStatement, getStatementResult, listDatabases, listSchemas, listStatements or listTables
-     */
     public void setOperation(RedshiftData2Operations operation) {
         this.operation = operation;
     }
@@ -140,9 +158,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return proxyProtocol;
     }
 
-    /**
-     * To define a proxy protocol when instantiating the RedshiftData client
-     */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
@@ -151,9 +166,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return proxyHost;
     }
 
-    /**
-     * To define a proxy host when instantiating the RedshiftData client
-     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -162,9 +174,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return proxyPort;
     }
 
-    /**
-     * To define a proxy port when instantiating the RedshiftData client
-     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -173,9 +182,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return pojoRequest;
     }
 
-    /**
-     * If we want to use a POJO request as body or not
-     */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }
@@ -184,9 +190,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return trustAllCertificates;
     }
 
-    /**
-     * If we want to trust all certificates in case of overriding the endpoint
-     */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
@@ -195,10 +198,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return overrideEndpoint;
     }
 
-    /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the
-     * uriEndpointOverride option
-     */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
     }
@@ -207,17 +206,10 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return uriEndpointOverride;
     }
 
-    /**
-     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
-     */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
-    /**
-     * Set whether the RedshiftData client should expect to load credentials through a default credentials provider or
-     * to expect static credentials to be passed in.
-     */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
@@ -230,9 +222,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return useProfileCredentialsProvider;
     }
 
-    /**
-     * Set whether the RedshiftData client should expect to load credentials through a profile credentials provider.
-     */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
     }
@@ -241,10 +230,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return useSessionCredentials;
     }
 
-    /**
-     * Set whether the Redshift client should expect to use Session Credentials. This is useful in a situation in which
-     * the user needs to assume an IAM role for doing operations in Redshift.
-     */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
     }
@@ -253,9 +238,6 @@ public class RedshiftData2Configuration implements Cloneable, AwsCommonConfigura
         return profileCredentialsName;
     }
 
-    /**
-     * If using a profile credentials provider, this parameter will set the profile name
-     */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }

@@ -36,10 +36,15 @@ public final class VertxMqttConstants {
     @Metadata(label = "consumer", description = "The quality of service the message was delivered with: 0, 1 or 2.",
               javaType = "Integer")
     public static final String QOS = "CamelVertxMqttQos";
-    @Metadata(label = "consumer", description = "Whether the broker delivered a retained message.",
+    @Metadata(label = "consumer",
+              description = "Whether the retain flag of the message is set: the broker sets it on a retained message that"
+                            + " it kept for the topic and sends when the subscription is made.",
               javaType = "Boolean")
     public static final String RETAINED = "CamelVertxMqttRetained";
-    @Metadata(label = "consumer", description = "Whether the broker delivers the message again.", javaType = "Boolean")
+    @Metadata(label = "consumer",
+              description = "Whether the DUP flag of the message is set: the broker may have delivered this message of"
+                            + " quality of service 1 or 2 before.",
+              javaType = "Boolean")
     public static final String DUPLICATE = "CamelVertxMqttDuplicate";
     @Metadata(label = "consumer", description = "The packet identifier of a message of quality of service 1 or 2.",
               javaType = "Integer")
@@ -55,8 +60,8 @@ public final class VertxMqttConstants {
               description = "Whether to publish the message as retained, instead of the retained option of the endpoint.",
               javaType = "Boolean")
     public static final String OVERRIDE_RETAINED = "CamelVertxMqttOverrideRetained";
-    @Metadata(description = "MQTT 5 only. The user properties of the message, in their order and with keys that occur"
-                            + " more than once. The producer also takes a Map.",
+    @Metadata(description = "MQTT 5 only. The user properties of the message, as a List of Map.Entry that keeps their"
+                            + " order and the keys that occur more than once. The producer also takes a Map.",
               javaType = "java.util.List<java.util.Map.Entry<String, String>>")
     public static final String USER_PROPERTIES = "CamelVertxMqttUserProperties";
     @Metadata(description = "MQTT 5 only. The content type of the message.", javaType = "String")

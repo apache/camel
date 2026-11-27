@@ -2,7 +2,7 @@
 :doctitle: Solr
 :shortname: solr
 :artifactid: camel-solr
-:description: Perform operations against Apache Lucene Solr.
+:description: Index, search and delete documents in Apache Solr.
 :since: 4.8
 :supportlevel: Stable
 :tabs-sync-option:

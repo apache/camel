@@ -33,27 +33,47 @@ import org.apache.solr.client.solrj.SolrClient;
 @Component("solr")
 public class SolrComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use a custom org.apache.solr.client.solrj.SolrClient for all the endpoints, instead of a client"
+                            + " that Camel creates for each endpoint. The solrClient option of an endpoint replaces it. Camel"
+                            + " does not close a client that is set or autowired.")
     private SolrClient solrClient;
-    @Metadata
+    @Metadata(description = "The host name of the Solr server, for the endpoints that set their host to default. If not set,"
+                            + " these endpoints use localhost.")
     private String host;
-    @Metadata
+    @Metadata(description = "The port of the Solr server, for the endpoints that set no port. If not set, these endpoints use"
+                            + " 8983.")
     private int port;
-    @Metadata
+    @Metadata(description = "The name of the collection, for the endpoints that set no collection.")
     private String defaultCollection;
-    @Metadata(defaultValue = "" + SolrConstants.DEFAULT_REQUEST_TIMEOUT)
+    @Metadata(defaultValue = "" + SolrConstants.DEFAULT_REQUEST_TIMEOUT,
+              description = "The time in milliseconds that the clients that Camel creates wait for the response to a request."
+                            + " The requestTimeout option of an endpoint replaces it.")
     private long requestTimeout = SolrConstants.DEFAULT_REQUEST_TIMEOUT;
-    @Metadata(defaultValue = "" + SolrConstants.DEFAULT_CONNECT_TIMEOUT)
+    @Metadata(defaultValue = "" + SolrConstants.DEFAULT_CONNECT_TIMEOUT,
+              description = "The time in milliseconds that the clients that Camel creates wait to connect to Solr. The"
+                            + " connectionTimeout option of an endpoint replaces it.")
     private long connectionTimeout = SolrConstants.DEFAULT_CONNECT_TIMEOUT;
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "The user name for HTTP basic authentication with Solr, for all the endpoints. The username option"
+                            + " of an endpoint replaces it.")
     private String username;
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "The password for HTTP basic authentication with Solr, for all the endpoints. The password option"
+                            + " of an endpoint replaces it.")
     private String password;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "Whether the clients that Camel creates connect to Solr with HTTPS instead of HTTP. The enableSSL"
+                            + " option of an endpoint replaces it.")
     private boolean enableSSL;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The TLS configuration (key store, trust store, protocols, cipher suites, named groups) of the"
+                            + " clients that Camel creates, for all the endpoints. The sslContextParameters option of an endpoint"
+                            + " replaces it.")
     private SSLContextParameters sslContextParameters;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether the endpoints use the global SSL context parameters of the CamelContext when neither the"
+                            + " component nor the endpoint sets the sslContextParameters option.")
     private boolean useGlobalSslContextParameters;
 
     public SolrComponent() {
@@ -95,10 +115,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         return endpoint;
     }
 
-    /**
-     * To use an existing configured solr client, instead of creating a client per endpoint. This allows customizing the
-     * client with specific advanced settings.
-     */
     public SolrClient getSolrClient() {
         return solrClient;
     }
@@ -107,9 +123,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         this.solrClient = solrClient;
     }
 
-    /**
-     * The solr instance host name
-     */
     public String getHost() {
         return host;
     }
@@ -118,9 +131,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         this.host = host;
     }
 
-    /**
-     * The solr instance port number
-     */
     public int getPort() {
         return port;
     }
@@ -129,9 +139,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         this.port = port;
     }
 
-    /**
-     * Solr default collection name
-     */
     public String getDefaultCollection() {
         return defaultCollection;
     }
@@ -140,9 +147,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         this.defaultCollection = defaultCollection;
     }
 
-    /**
-     * The timeout in ms to wait before the socket will time out.
-     */
     public long getRequestTimeout() {
         return requestTimeout;
     }
@@ -151,9 +155,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         this.requestTimeout = requestTimeout;
     }
 
-    /**
-     * The time in ms to wait before connection will time out.
-     */
     public long getConnectionTimeout() {
         return connectionTimeout;
     }
@@ -162,9 +163,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         this.connectionTimeout = connectionTimeout;
     }
 
-    /**
-     * Basic authenticate user
-     */
     public String getUsername() {
         return username;
     }
@@ -173,9 +171,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         this.username = username;
     }
 
-    /**
-     * Password for authenticating
-     */
     public String getPassword() {
         return password;
     }
@@ -184,9 +179,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         this.password = password;
     }
 
-    /**
-     * Enable SSL
-     */
     public boolean isEnableSSL() {
         return enableSSL;
     }
@@ -199,10 +191,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         return sslContextParameters;
     }
 
-    /**
-     * To configure security using SSLContextParameters. When configured, this takes precedence over the
-     * {@code certificatePath} option.
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -212,9 +200,6 @@ public class SolrComponent extends DefaultComponent implements SSLContextParamet
         return useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
