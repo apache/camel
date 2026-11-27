@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.security.GeneralSecurityException;
+
 public enum PQCKeyEncapsulationAlgorithms {
 
     // Standardized and implemented
@@ -51,7 +53,7 @@ public enum PQCKeyEncapsulationAlgorithms {
     public String getBcProvider(String serviceType) {
         try {
             return BouncyCastleSupport.getProviderName(serviceType, algorithm);
-        } catch (java.security.GeneralSecurityException e) {
+        } catch (GeneralSecurityException e) {
             throw new IllegalStateException("No Bouncy Castle provider for " + serviceType + "/" + algorithm, e);
         }
     }

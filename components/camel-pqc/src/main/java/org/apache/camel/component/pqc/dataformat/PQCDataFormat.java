@@ -25,7 +25,9 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Set;
@@ -340,11 +342,12 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Runs a KEM encapsulation. An explicitly supplied KeyGenerator remains supported; otherwise the configured
-     * provider is resolved for the standard Java 21 KEM service first and the legacy KeyGenerator service second.
+     * Runs a KEM encapsulation. An explicitly supplied KeyGenerator remains supported; otherwise the selected
+     * provider's KeyGenerator service is preferred for Bouncy Castle 1.86 interoperability, with the standard Java 21
+     * KEM service used only when that provider does not advertise KeyGenerator.
      */
     private BouncyCastleKemSupport.EncapsulationResult encapsulateKem(
-            String kemAlgorithm, java.security.PublicKey publicKey, String symmetricAlgorithm)
+            String kemAlgorithm, PublicKey publicKey, String symmetricAlgorithm)
             throws Exception {
         if (keyGenerator != null) {
             synchronized (PQCKemLocks.lockFor(keyGenerator, publicKey)) {
@@ -360,7 +363,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     /** Runs a KEM decapsulation, preserving the configured custom KeyGenerator path. */
     private SecretKey decapsulateKem(
-            String kemAlgorithm, java.security.PrivateKey privateKey, byte[] encapsulation, String symmetricAlgorithm)
+            String kemAlgorithm, PrivateKey privateKey, byte[] encapsulation, String symmetricAlgorithm)
             throws Exception {
         if (keyGenerator != null) {
             synchronized (PQCKemLocks.lockFor(keyGenerator, privateKey)) {
@@ -376,8 +379,9 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Resolves the configured provider without assuming that it also implements KeyGenerator. A provider with a
-     * standard KEM service is sufficient; BIKE/SABER and older providers fall back to KeyGenerator.
+     * Resolves the configured provider, preferring KeyGenerator when it is available so BC 1.86 uses the same
+     * encapsulation/derivation path as Camel 4.22 and explicitly configured generators. Providers that expose only the
+     * standard JDK KEM service remain supported as a fallback.
      */
     private Provider resolveKemProvider(String kemAlgorithm) throws GeneralSecurityException {
         PQCKeyEncapsulationAlgorithms algorithm = PQCKeyEncapsulationAlgorithms.valueOf(kemAlgorithm);
@@ -396,11 +400,10 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
             return selected;
         }
 
-        BouncyCastleSupport.ensureProviders();
         try {
-            return BouncyCastleSupport.getProvider("KEM", jceAlgorithm);
-        } catch (NoSuchAlgorithmException noStandardKem) {
             return BouncyCastleSupport.getProvider("KeyGenerator", jceAlgorithm);
+        } catch (NoSuchAlgorithmException noKeyGenerator) {
+            return BouncyCastleSupport.getProvider("KEM", jceAlgorithm);
         }
     }
 

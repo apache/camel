@@ -40,6 +40,7 @@ concurrency:
 
 jobs:
   compatibility:
+    if: github.event_name != 'schedule' || github.repository == 'apache/camel'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -54,4 +55,4 @@ jobs:
       - name: Enforce camel-pqc Bouncy Castle production import boundary
         run: python3 etc/scripts/check-camel-pqc-bouncycastle-imports.py
       - name: Run camel-pqc Bouncy Castle compatibility matrix
-        run: python3 etc/scripts/camel-pqc-bouncycastle-compatibility.py
+        run: python3 etc/scripts/camel-pqc-bouncycastle-compatibility.py ${{ github.event_name == 'pull_request' && '--skip-latest' || '' }}

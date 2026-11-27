@@ -36,6 +36,7 @@ import java.util.Base64;
 import java.util.Properties;
 
 import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 import org.apache.camel.component.pqc.crypto.kem.PQCDefaultHQCMaterial;
 import org.apache.camel.component.pqc.crypto.kem.PQCDefaultMLKEMMaterial;
@@ -179,6 +180,45 @@ class PQCBCVersionBehaviorTest {
     }
 
     @Test
+    void providerBasedOperationsPreserveKeyGeneratorInteroperabilityWhenBothServicesExist() throws Exception {
+        int exercised = 0;
+        for (PQCKeyEncapsulationAlgorithms algorithm : new PQCKeyEncapsulationAlgorithms[] {
+                PQCKeyEncapsulationAlgorithms.HQC,
+                PQCKeyEncapsulationAlgorithms.NTRU,
+                PQCKeyEncapsulationAlgorithms.NTRULPRime,
+                PQCKeyEncapsulationAlgorithms.SNTRUPrime }) {
+            String providerName = algorithm.getBcProvider("KeyGenerator");
+            Provider provider = Security.getProvider(providerName);
+            assertNotNull(provider, "KEM provider must be registered: " + providerName);
+            String jceAlgorithm = algorithm.getAlgorithm();
+            if (provider.getService("KEM", jceAlgorithm) == null
+                    || provider.getService("KeyGenerator", jceAlgorithm) == null) {
+                continue;
+            }
+
+            KeyPair pair = keyPairFor(algorithm);
+
+            // A legacy KeyGenerator sender must interoperate with the provider-based API used by PQCDataFormat
+            // when the provider advertises both services. BC 1.86 can derive different keys through the two APIs.
+            Encapsulation legacyEncapsulation = encapsulate(algorithm, pair);
+            SecretKey providerExtracted = BouncyCastleKemSupport.decapsulate(
+                    jceAlgorithm, provider, pair.getPrivate(), legacyEncapsulation.ciphertext(),
+                    "AES", 256, SecureRandomHelper.getSecureRandom());
+            assertArrayEquals(legacyEncapsulation.secret(), providerExtracted.getEncoded(),
+                    algorithm + " provider-based extraction must interoperate with a KeyGenerator sender");
+
+            BouncyCastleKemSupport.EncapsulationResult providerEncapsulation = BouncyCastleKemSupport.encapsulate(
+                    jceAlgorithm, provider, pair.getPublic(), "AES", 256, SecureRandomHelper.getSecureRandom());
+            byte[] legacyExtracted = decapsulate(algorithm, pair, providerEncapsulation.encapsulation());
+            assertArrayEquals(providerEncapsulation.secretKey().getEncoded(), legacyExtracted,
+                    algorithm + " KeyGenerator extraction must interoperate with a provider-based sender");
+            exercised++;
+        }
+        assertTrue(exercised > 0,
+                "At least one BC provider must expose both KEM and KeyGenerator for the regression algorithms");
+    }
+
+    @Test
     void ntruFamilyKdfBehaviorMatchesTheRuntimeVersion() throws Exception {
         for (PQCKeyEncapsulationAlgorithms algorithm : new PQCKeyEncapsulationAlgorithms[] {
                 PQCKeyEncapsulationAlgorithms.NTRU,
@@ -244,6 +284,7 @@ class PQCBCVersionBehaviorTest {
 
     private static KeyPair keyPairFor(PQCKeyEncapsulationAlgorithms algorithm) throws Exception {
         return switch (algorithm) {
+            case HQC -> PQCDefaultHQCMaterial.getKeyPair();
             case NTRU -> PQCDefaultNTRUMaterial.getKeyPair();
             case NTRULPRime -> PQCDefaultNTRULPRimeMaterial.getKeyPair();
             case SNTRUPrime -> PQCDefaultSNTRUPrimeMaterial.getKeyPair();

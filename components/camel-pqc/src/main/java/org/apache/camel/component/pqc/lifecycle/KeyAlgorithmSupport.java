@@ -25,16 +25,12 @@ import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCParameterSpecResolver;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Shared key-generation support for the {@link KeyLifecycleManager} implementations: resolves the JCE algorithm name,
  * the BouncyCastle provider and the default parameter set for a PQC algorithm, and generates key pairs from them.
  */
 public final class KeyAlgorithmSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KeyAlgorithmSupport.class);
 
     /**
      * Fallback key size, used only when an algorithm has no default parameter set. For PQC algorithms the key size is
@@ -159,7 +155,6 @@ public final class KeyAlgorithmSupport {
                     return null;
             }
         } catch (Exception e) {
-            LOG.error("Failed to create default parameter spec for algorithm: {}", algorithm, e);
             throw new IllegalStateException(
                     "Failed to resolve the configured Bouncy Castle default parameter set for " + algorithm, e);
         }

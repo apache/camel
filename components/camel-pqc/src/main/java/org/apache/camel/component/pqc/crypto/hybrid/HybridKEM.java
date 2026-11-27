@@ -32,7 +32,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.component.pqc.BouncyCastleKemSupport;
 import org.apache.camel.component.pqc.PQCAlgorithmId;
-import org.apache.camel.component.pqc.PQCKemLocks;
 import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
 
@@ -48,8 +47,9 @@ import org.apache.camel.util.SecureRandomHelper;
  * The shared secrets from both algorithms are combined using HKDF to produce the final shared secret.
  * <p>
  * The {@link KeyAgreement} and {@link KeyGenerator} passed in may be shared by concurrent callers. Both keep state from
- * their {@code init()} call to the call that returns the result and are not thread-safe, so each of those sequences
- * runs while holding the instance's monitor.
+ * their {@code init()} call to the call that returns the result and are not thread-safe. Classical key-agreement
+ * sequences are synchronized on the supplied instance; PQC KEM sequences delegate synchronization to
+ * {@link BouncyCastleKemSupport}.
  * <p>
  * <strong>Wire format v2</strong> (default since Camel 4.24):
  *
@@ -136,10 +136,8 @@ public final class HybridKEM {
 
         // Perform PQC KEM encapsulation
         BouncyCastleKemSupport.EncapsulationResult pqcResult;
-        synchronized (PQCKemLocks.lockFor(pqcKemGenerator, pqcPublicKey)) {
-            pqcResult = BouncyCastleKemSupport.encapsulate(
-                    pqcKemGenerator, pqcPublicKey, symmetricAlgorithm, keyLength, SecureRandomHelper.getSecureRandom());
-        }
+        pqcResult = BouncyCastleKemSupport.encapsulate(
+                pqcKemGenerator, pqcPublicKey, symmetricAlgorithm, keyLength, SecureRandomHelper.getSecureRandom());
         byte[] pqcSharedSecret = pqcResult.secretKey().getEncoded();
         byte[] pqcEncapsulation = pqcResult.encapsulation();
 
@@ -220,11 +218,9 @@ public final class HybridKEM {
 
         // Perform PQC KEM extraction
         SecretKey pqcResult;
-        synchronized (PQCKemLocks.lockFor(pqcKemGenerator, pqcPrivateKey)) {
-            pqcResult = BouncyCastleKemSupport.decapsulate(
-                    pqcKemGenerator, pqcPrivateKey, components.pqcEncapsulation(), symmetricAlgorithm, keyLength,
-                    SecureRandomHelper.getSecureRandom());
-        }
+        pqcResult = BouncyCastleKemSupport.decapsulate(
+                pqcKemGenerator, pqcPrivateKey, components.pqcEncapsulation(), symmetricAlgorithm, keyLength,
+                SecureRandomHelper.getSecureRandom());
         byte[] pqcSharedSecret = pqcResult.getEncoded();
 
         // Combine shared secrets using HKDF

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.pqc.dataformat;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,8 +79,8 @@ class PQCDataFormatProviderTest {
         dataFormat.setProvider(metadataProvider.getName());
         try {
             RuntimeCamelException failure = assertThrows(RuntimeCamelException.class, dataFormat::start);
-            java.security.NoSuchAlgorithmException cause = assertInstanceOf(
-                    java.security.NoSuchAlgorithmException.class, failure.getCause());
+            NoSuchAlgorithmException cause = assertInstanceOf(
+                    NoSuchAlgorithmException.class, failure.getCause());
             assertTrue(cause.getMessage().contains("advertises neither KEM nor KeyGenerator"),
                     "The startup failure should explain that the configured provider lacks both KEM services");
         } finally {
@@ -95,7 +97,7 @@ class PQCDataFormatProviderTest {
         DelegatingProvider(String name, List<Provider.Service> services) {
             super(name, "1.0", "Test-only provider metadata facade; never used for cryptographic execution");
             for (Provider.Service service : services) {
-                Map<String, String> attributes = new java.util.HashMap<>();
+                Map<String, String> attributes = new HashMap<>();
                 for (String attribute : List.of(
                         "SupportedModes", "SupportedPaddings", "SupportedKeyFormats", "SupportedKeyClasses")) {
                     String value = service.getAttribute(attribute);

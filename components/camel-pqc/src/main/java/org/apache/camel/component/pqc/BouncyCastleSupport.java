@@ -86,9 +86,16 @@ public final class BouncyCastleSupport {
     public static Provider getProvider(String serviceType, String algorithm) throws GeneralSecurityException {
         Objects.requireNonNull(serviceType, "serviceType");
         Objects.requireNonNull(algorithm, "algorithm");
-        ensureProviders();
-
         Provider provider = findProvider(serviceType, algorithm,
+                Security.getProvider(BC_NAME), Security.getProvider(BCPQC_NAME));
+        if (provider != null) {
+            return provider;
+        }
+
+        // Do not register either provider as a side effect when an embedding runtime has already installed
+        // the provider that supplies this exact JCA service. Install missing providers only when needed.
+        ensureProviders();
+        provider = findProvider(serviceType, algorithm,
                 Security.getProvider(BC_NAME), Security.getProvider(BCPQC_NAME));
         if (provider != null) {
             return provider;
@@ -109,11 +116,11 @@ public final class BouncyCastleSupport {
         return getProvider(serviceType, algorithm).getName();
     }
 
-    /** Package-visible seam used to test service-specific selection without global provider mutation. */
     /**
-     * Cipher providers advertise base algorithms (for example AES), not complete transformations (for example
-     * AES/GCM/NoPadding). JCA applies the mode and padding when Cipher.getInstance receives the full transformation, so
-     * provider discovery must check only the base algorithm.
+     * Package-visible seam used to test service-specific selection without global provider mutation. Cipher providers
+     * advertise base algorithms (for example AES), not complete transformations (for example AES/GCM/NoPadding). JCA
+     * applies the mode and padding when Cipher.getInstance receives the full transformation, so provider discovery must
+     * check only the base algorithm.
      */
     static String serviceLookupAlgorithm(String serviceType, String algorithm) {
         if ("Cipher".equalsIgnoreCase(serviceType)) {

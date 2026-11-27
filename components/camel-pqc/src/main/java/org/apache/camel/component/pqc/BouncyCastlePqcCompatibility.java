@@ -18,11 +18,15 @@ package org.apache.camel.component.pqc;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Isolates the LMS/HSS and XMSS/XMSSMT JCA API package changes between Bouncy Castle releases.
@@ -37,9 +41,9 @@ import java.security.spec.AlgorithmParameterSpec;
  * <p>
  * Reflection is deliberately limited to this compatibility boundary. Runtime BC classes are resolved with the
  * application context class loader first, then the component class loader, so a platform BOM can supply the runtime
- * implementation. The adapter does not retain resolved BC classes in global caches. Stateful-key accessors use
- * {@link ClassValue} so their lifetime follows the key class. Callers use ordinary {@link AlgorithmParameterSpec} and
- * {@link PrivateKey} types.
+ * implementation. Parameter-spec classes are resolved on demand without global caching. Stateful-key accessors are
+ * cached via {@link ClassValue}, with entries following the lifetime of the associated key implementation class.
+ * Callers use ordinary {@link AlgorithmParameterSpec} and {@link PrivateKey} types.
  * </p>
  */
 public final class BouncyCastlePqcCompatibility {
@@ -288,7 +292,7 @@ public final class BouncyCastlePqcCompatibility {
     private static Method resolveSpecNameResolver(Class<?> specType) throws GeneralSecurityException {
         try {
             Method resolved = specType.getMethod("fromName", String.class);
-            if (!java.lang.reflect.Modifier.isStatic(resolved.getModifiers())) {
+            if (!Modifier.isStatic(resolved.getModifiers())) {
                 throw new GeneralSecurityException(
                         "Bouncy Castle parameter resolver " + specType.getName() + ".fromName(String) is not static");
             }
@@ -328,8 +332,8 @@ public final class BouncyCastlePqcCompatibility {
             throw new IllegalArgumentException("Bouncy Castle LMS parameter field name must be non-blank");
         }
         try {
-            java.lang.reflect.Field field = parameterType.getField(fieldName);
-            if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+            Field field = parameterType.getField(fieldName);
+            if (!Modifier.isStatic(field.getModifiers())) {
                 throw new GeneralSecurityException(
                         "Bouncy Castle LMS parameter " + parameterType.getName() + "." + fieldName + " is not static");
             }
@@ -371,14 +375,14 @@ public final class BouncyCastlePqcCompatibility {
 
     static ClassLoader[] compatibilityClassLoaders(
             ClassLoader providerLoader, ClassLoader contextLoader, ClassLoader componentLoader) {
-        java.util.ArrayList<ClassLoader> result = new java.util.ArrayList<>(3);
+        ArrayList<ClassLoader> result = new ArrayList<>(3);
         addLoader(result, providerLoader);
         addLoader(result, contextLoader);
         addLoader(result, componentLoader);
         return result.toArray(new ClassLoader[0]);
     }
 
-    private static void addLoader(java.util.List<ClassLoader> loaders, ClassLoader candidate) {
+    private static void addLoader(List<ClassLoader> loaders, ClassLoader candidate) {
         if (candidate != null && !loaders.contains(candidate)) {
             loaders.add(candidate);
         }

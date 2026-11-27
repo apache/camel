@@ -167,6 +167,33 @@ Bouncy Castle deprecated Classic McEliece, as it is now believed to be unsafe to
 release. The `CMCE` key encapsulation algorithm of the `pqc` component and the `pqc` data format is deprecated too, and
 an endpoint or a data format that uses it logs a WARN at startup. Use `MLKEM` instead.
 
+==== camel-pqc - default-material accessors and provider resolution
+
+The `PQCDefault*Material` helper classes now initialize their default cryptographic material lazily. Their backing
+fields (`keyPair`, `signer`, `keyGenerator` and `generator`) are private. Application code that accessed those fields
+directly must migrate to the corresponding accessors, for example `getKeyPair()`, `getSigner()`,
+`getKeyGenerator()` and `getGenerator()`. Hybrid material holders expose the specific accessors for their classical and
+PQC material, such as `getClassicalKeyPair()`, `getClassicalKeyAgreement()`, `getPqcKeyPair()`,
+`getPqcKeyGenerator()` and `getMaterial()`.
+
+The no-argument `PQCKeyEncapsulationAlgorithms.getBcProvider()` and
+`PQCSignatureAlgorithms.getBcProvider()` methods are deprecated. Use `getBcProvider(serviceType)` with the JCA
+service being requested (`KeyPairGenerator`, `Signature`, `KeyGenerator`, `KeyFactory`, and so on). Provider selection
+is now service-specific and can return `BC` where older code expected `BCPQC`; applications must not hard-code the
+provider name for a PQC algorithm.
+
+For a recognized algorithm, `KeyAlgorithmSupport.getDefaultParameterSpec()` now throws an `IllegalStateException`
+when the runtime cannot resolve that algorithm's configured default parameter set. Previously such a failure could be
+reported as a missing default (`null`) and lead to a fallback key size. Unknown algorithm names still return `null`.
+Applications should allow a parameter-resolution failure to stop key generation rather than silently use a different
+key size or parameter set.
+
+The producer body metadata for KEM operations now declares the standard `javax.crypto.SecretKey` type instead of a
+Bouncy Castle-specific carrier type. Applications should accept the JCA `SecretKey` interface; the runtime may still
+return Bouncy Castle's encapsulation-carrying implementation when that provider class is available. This change does
+not deprecate or remove the experimental KEM algorithm entries (including SABER and the NTRU family); any decision to
+deprecate or move those algorithms is separate from this upgrade.
+
 ==== camel-pqc - Hybrid wire format v2 is now the default
 
 The hybrid signature and hybrid KEM utilities now produce **wire format v2** by default.

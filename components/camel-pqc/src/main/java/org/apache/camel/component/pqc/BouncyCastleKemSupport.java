@@ -36,12 +36,12 @@ import javax.crypto.SecretKey;
  * The single compatibility boundary for PQC KEM operations.
  *
  * <p>
- * On Java 21+, overloads that receive an algorithm and provider use the standard {@link KEM} API when that provider
- * advertises a {@code KEM} service. Bouncy Castle 1.86 and 1.87 expose standard KEM services for ML-KEM, HQC, CMCE,
- * FrodoKEM, NTRU, NTRU LPRime and SNTRU Prime. Algorithms without a JDK KEM service (notably BIKE and SABER) use the
- * provider's established {@link KeyGenerator} / KEM parameter-spec API. When a caller supplies a {@link KeyGenerator}
- * instance, this class always uses that exact instance; it never silently substitutes the JDK KEM service. This
- * preserves configured Camel generators and their locking/instrumentation behavior.
+ * On Java 21+, overloads that receive an algorithm and provider prefer the provider's {@link KeyGenerator} service when
+ * it is available. This retains the established {@code KEMGenerateSpec}/{@code KEMExtractSpec} behavior on Bouncy
+ * Castle 1.86, where the standard {@link KEM} service can derive different keys for some algorithms. The standard
+ * {@link KEM} API is used only when the selected provider does not advertise a {@link KeyGenerator} service. When a
+ * caller supplies a {@link KeyGenerator} instance, this class always uses that exact instance; it never silently
+ * substitutes another service. This preserves configured Camel generators and their locking/instrumentation behavior.
  * </p>
  *
  * <p>
@@ -87,8 +87,9 @@ public final class BouncyCastleKemSupport {
     }
 
     /**
-     * Performs encapsulation with an explicitly selected provider. This overload also supports providers which expose
-     * only the standard JDK KEM service and do not implement a KeyGenerator service for the same algorithm.
+     * Performs encapsulation with an explicitly selected provider. The provider's KeyGenerator service is preferred
+     * when present for Bouncy Castle 1.86 interoperability; the standard JDK KEM service is used only when no
+     * KeyGenerator service is advertised.
      */
     public static EncapsulationResult encapsulate(
             String algorithm,
@@ -104,20 +105,25 @@ public final class BouncyCastleKemSupport {
         Objects.requireNonNull(symmetricAlgorithm, "symmetricAlgorithm");
         validateKeyLength(keyLength);
 
-        if (hasService(provider, KEM_SERVICE, algorithm)) {
-            return encapsulateWithJdkKem(algorithm, provider, publicKey, symmetricAlgorithm, keyLength, random);
-        }
-
-        try {
-            KeyGenerator generator = KeyGenerator.getInstance(algorithm, provider);
+        if (hasService(provider, KEY_GENERATOR_SERVICE, algorithm)) {
+            KeyGenerator generator;
+            try {
+                generator = KeyGenerator.getInstance(algorithm, provider);
+            } catch (GeneralSecurityException e) {
+                throw invalidParameter("Provider '" + provider.getName()
+                                       + "' advertises but cannot create KeyGenerator for '" + algorithm + "'",
+                        e);
+            }
             synchronized (PQCKemLocks.lockFor(generator, publicKey)) {
                 return encapsulateWithKeyGenerator(generator, publicKey, symmetricAlgorithm, keyLength, random);
             }
-        } catch (GeneralSecurityException e) {
-            throw invalidParameter("Provider '" + provider.getName()
-                                   + "' exposes neither a usable KEM nor KeyGenerator service for '" + algorithm + "'",
-                    e);
         }
+        if (hasService(provider, KEM_SERVICE, algorithm)) {
+            return encapsulateWithJdkKem(algorithm, provider, publicKey, symmetricAlgorithm, keyLength, random);
+        }
+        throw invalidParameter("Provider '" + provider.getName()
+                               + "' exposes neither a usable KeyGenerator nor KEM service for '" + algorithm + "'",
+                new GeneralSecurityException("No matching KEM service"));
     }
 
     /** Performs decapsulation with the explicitly supplied KeyGenerator instance. */
@@ -143,7 +149,11 @@ public final class BouncyCastleKemSupport {
         }
     }
 
-    /** Performs decapsulation with an explicitly selected provider. */
+    /**
+     * Performs decapsulation with an explicitly selected provider. The provider's KeyGenerator service is preferred
+     * when present for Bouncy Castle 1.86 interoperability; the standard JDK KEM service is used only when no
+     * KeyGenerator service is advertised.
+     */
     public static SecretKey decapsulate(
             String algorithm,
             Provider provider,
@@ -160,22 +170,27 @@ public final class BouncyCastleKemSupport {
         Objects.requireNonNull(symmetricAlgorithm, "symmetricAlgorithm");
         validateKeyLength(keyLength);
 
-        if (hasService(provider, KEM_SERVICE, algorithm)) {
-            return decapsulateWithJdkKem(algorithm, provider, privateKey, encapsulation,
-                    symmetricAlgorithm, keyLength, random);
-        }
-
-        try {
-            KeyGenerator generator = KeyGenerator.getInstance(algorithm, provider);
+        if (hasService(provider, KEY_GENERATOR_SERVICE, algorithm)) {
+            KeyGenerator generator;
+            try {
+                generator = KeyGenerator.getInstance(algorithm, provider);
+            } catch (GeneralSecurityException e) {
+                throw invalidParameter("Provider '" + provider.getName()
+                                       + "' advertises but cannot create KeyGenerator for '" + algorithm + "'",
+                        e);
+            }
             synchronized (PQCKemLocks.lockFor(generator, privateKey)) {
                 return decapsulateWithKeyGenerator(generator, privateKey, encapsulation,
                         symmetricAlgorithm, keyLength, random);
             }
-        } catch (GeneralSecurityException e) {
-            throw invalidParameter("Provider '" + provider.getName()
-                                   + "' exposes neither a usable KEM nor KeyGenerator service for '" + algorithm + "'",
-                    e);
         }
+        if (hasService(provider, KEM_SERVICE, algorithm)) {
+            return decapsulateWithJdkKem(algorithm, provider, privateKey, encapsulation,
+                    symmetricAlgorithm, keyLength, random);
+        }
+        throw invalidParameter("Provider '" + provider.getName()
+                               + "' exposes neither a usable KeyGenerator nor KEM service for '" + algorithm + "'",
+                new GeneralSecurityException("No matching KEM service"));
     }
 
     /** Returns a defensive copy of the encapsulation carried by a generated SecretKey body. */

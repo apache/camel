@@ -23,12 +23,14 @@ import java.security.KeyPairGenerator;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +55,7 @@ class BouncyCastleKemSupportTest {
     }
 
     @Test
-    void usesTheStandardJdkKemApiAndPreservesTheSecretKeyCarrierContract() throws Exception {
+    void preservesTheSecretKeyCarrierContractForProviderSelectedKemOperations() throws Exception {
         Provider provider = BouncyCastleSupport.getProvider("KEM", "ML-KEM");
         assertNotNull(provider.getService("KEM", "ML-KEM"));
         KeyPair keyPair = mlKemKeyPair();
@@ -153,7 +155,7 @@ class BouncyCastleKemSupportTest {
 
     @Test
     void explicitlyInjectedKeyGeneratorIsUsedEvenWhenProviderOffersStandardJdkKem() throws Exception {
-        Provider provider = java.util.Arrays.stream(Security.getProviders())
+        Provider provider = Arrays.stream(Security.getProviders())
                 .filter(candidate -> "BC".equals(candidate.getName()) || "BCPQC".equals(candidate.getName()))
                 .filter(candidate -> candidate.getService("KEM", "ML-KEM") != null
                         && candidate.getService("KeyGenerator", "ML-KEM") != null)
@@ -189,10 +191,10 @@ class BouncyCastleKemSupportTest {
         // Use the real signed BC provider. Exercise the legacy KeyGenerator path only on BC versions
         // where SABER has not gained a standard JDK KEM service.
         Provider provider = BouncyCastleSupport.getProvider("KeyGenerator", "SABER");
-        org.junit.jupiter.api.Assumptions.assumeTrue(
+        Assumptions.assumeTrue(
                 provider.getService("KeyGenerator", "SABER") != null,
                 "The selected BC version no longer exposes legacy SABER KeyGenerator");
-        org.junit.jupiter.api.Assumptions.assumeTrue(
+        Assumptions.assumeTrue(
                 provider.getService("KEM", "SABER") == null,
                 "SABER now exposes the standard KEM service; its standard API is tested separately");
         return provider;

@@ -833,14 +833,12 @@ public class PQCProducer extends DefaultProducer {
 
         KeyGenerator generator = keyGeneratorForExchange();
         BouncyCastleKemSupport.EncapsulationResult secEnc1;
-        synchronized (PQCKemLocks.lockFor(generator, keyPair.getPublic())) {
-            secEnc1 = BouncyCastleKemSupport.encapsulate(
-                    generator,
-                    keyPair.getPublic(),
-                    PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
-                    getEndpoint().getConfiguration().getSymmetricKeyLength(),
-                    SecureRandomHelper.getSecureRandom());
-        }
+        secEnc1 = BouncyCastleKemSupport.encapsulate(
+                generator,
+                keyPair.getPublic(),
+                PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
+                getEndpoint().getConfiguration().getSymmetricKeyLength(),
+                SecureRandomHelper.getSecureRandom());
 
         exchange.getMessage().setBody(secEnc1.secretKey(), SecretKey.class);
     }
@@ -857,15 +855,13 @@ public class PQCProducer extends DefaultProducer {
 
         KeyGenerator generator = keyGeneratorForExchange();
         SecretKey secEnc2;
-        synchronized (PQCKemLocks.lockFor(generator, keyPair.getPrivate())) {
-            secEnc2 = BouncyCastleKemSupport.decapsulate(
-                    generator,
-                    keyPair.getPrivate(),
-                    BouncyCastleKemSupport.getEncapsulation(payload),
-                    PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
-                    getEndpoint().getConfiguration().getSymmetricKeyLength(),
-                    SecureRandomHelper.getSecureRandom());
-        }
+        secEnc2 = BouncyCastleKemSupport.decapsulate(
+                generator,
+                keyPair.getPrivate(),
+                BouncyCastleKemSupport.getEncapsulation(payload),
+                PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
+                getEndpoint().getConfiguration().getSymmetricKeyLength(),
+                SecureRandomHelper.getSecureRandom());
 
         exchange.getMessage().setBody(secEnc2, SecretKey.class);
     }

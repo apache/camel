@@ -116,7 +116,7 @@ def mvn(version: str, *arguments: str) -> list[str]:
 def bootstrap_dependencies() -> None:
     # Mirrors Camel's own quick dependency build used by its component-test workflow.
     command = command_prefix() + [
-        "-B", "-ntp", "-DskipTests", "-Dquickly", "-pl", MODULE, "-am", "install"
+        "-B", "-ntp", "-DskipTests", "-Dquickly", "-pl", "buildingtools," + MODULE, "-am", "install"
     ]
     run(command)
 
@@ -173,6 +173,10 @@ def main() -> int:
         "--latest", help="override Maven Central latest stable version (for offline/reproducible runs)"
     )
     parser.add_argument(
+        "--skip-latest", action="store_true",
+        help="skip the moving Maven Central latest version (for pull-request CI); minimum and pinned versions still run",
+    )
+    parser.add_argument(
         "--skip-dependency-bootstrap", action="store_true",
         help="skip Camel's quick -am dependency install when those snapshots are already installed",
     )
@@ -181,22 +185,31 @@ def main() -> int:
         help="run same-runtime clean test for each version, but skip cross-version vector checks",
     )
     args = parser.parse_args()
+    if args.skip_latest and args.latest:
+        parser.error("--latest cannot be combined with --skip-latest")
 
     if not (ROOT / "pom.xml").is_file() or not (ROOT / f"{MODULE}/pom.xml").is_file():
         parser.error("run from the top-level Camel Git repository")
 
     minimum = MINIMUM_TESTED
     pinned = read_pinned_version()
-    latest = args.latest or read_latest_stable_version()
-    version_tuple(latest)
-    if version_tuple(latest) < version_tuple(minimum):
-        raise RuntimeError(f"Maven Central latest {latest} is below tested minimum {minimum}")
     if version_tuple(pinned) < version_tuple(minimum):
         raise RuntimeError(f"Camel pinned version {pinned} is below tested baseline {minimum}")
 
-    versions = sorted({minimum, pinned, latest}, key=version_tuple)
+    versions_to_check = {minimum, pinned}
+    if args.skip_latest:
+        latest_label = "not queried (pull-request run)"
+    else:
+        latest = args.latest or read_latest_stable_version()
+        version_tuple(latest)
+        if version_tuple(latest) < version_tuple(minimum):
+            raise RuntimeError(f"Maven Central latest {latest} is below tested minimum {minimum}")
+        versions_to_check.add(latest)
+        latest_label = latest
+
+    versions = sorted(versions_to_check, key=version_tuple)
     print(f"camel-pqc Bouncy Castle compatibility versions: {', '.join(versions)}", flush=True)
-    print(f"Minimum tested: {minimum}; Camel pinned: {pinned}; Maven Central latest: {latest}", flush=True)
+    print(f"Minimum tested: {minimum}; Camel pinned: {pinned}; Maven Central latest: {latest_label}", flush=True)
 
     if not args.skip_dependency_bootstrap:
         bootstrap_dependencies()

@@ -35,21 +35,26 @@ final class Hkdf {
 
     static byte[] derive(String algorithm, byte[] inputKeyMaterial, byte[] info, int outputLength)
             throws GeneralSecurityException {
-        String macAlgorithm = switch (algorithm) {
-            case "HKDF-SHA256" -> "HmacSHA256";
-            case "HKDF-SHA384" -> "HmacSHA384";
-            case "HKDF-SHA512" -> "HmacSHA512";
+        String macAlgorithm;
+        int hashLength;
+        switch (algorithm) {
+            case "HKDF-SHA256" -> {
+                macAlgorithm = "HmacSHA256";
+                hashLength = 32;
+            }
+            case "HKDF-SHA384" -> {
+                macAlgorithm = "HmacSHA384";
+                hashLength = 48;
+            }
+            case "HKDF-SHA512" -> {
+                macAlgorithm = "HmacSHA512";
+                hashLength = 64;
+            }
             // Do not silently fall back: both sides must agree on the KDF.
             default -> throw new IllegalArgumentException(
                     "Unsupported hybrid KDF algorithm: " + algorithm
                                                           + ". Supported values are HKDF-SHA256, HKDF-SHA384 and HKDF-SHA512");
-        };
-        int hashLength = switch (algorithm) {
-            case "HKDF-SHA256" -> 32;
-            case "HKDF-SHA384" -> 48;
-            case "HKDF-SHA512" -> 64;
-            default -> throw new IllegalArgumentException("Unsupported hybrid KDF algorithm: " + algorithm);
-        };
+        }
         if (inputKeyMaterial == null || info == null) {
             throw new IllegalArgumentException("HKDF input key material and info must be non-null");
         }

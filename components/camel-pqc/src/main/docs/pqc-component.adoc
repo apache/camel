@@ -200,12 +200,12 @@ not automatically change Camel's pinned dependency or by itself constitute a sup
 
 === KEM API boundary
 
-On the Java 21 baseline, `camel-pqc` prefers the standard `javax.crypto.KEM` API whenever the selected provider advertises
-that service. The standard `KEM.Encapsulated` result carries both the `SecretKey` and its encapsulation, so Camel does not
-need to couple its main KEM flow to a Bouncy Castle carrier type. Bouncy Castle 1.86 and 1.87 expose standard KEM
-services for ML-KEM, HQC, CMCE, FrodoKEM, NTRU, NTRU LPRime and SNTRU Prime. Algorithms without a provider KEM service,
-including BIKE and SABER in the tested baseline, retain the legacy `KeyGenerator` path and its Bouncy Castle parameter
-specifications.
+On the Java 21 baseline, `camel-pqc` prefers a provider's `KeyGenerator` service when both `KeyGenerator` and
+`KEM` are advertised. This preserves the established `KEMGenerateSpec` / `KEMExtractSpec` derivation behavior on
+Bouncy Castle 1.86 and keeps the data format interoperable with applications that explicitly configure a
+`KeyGenerator`. The standard `javax.crypto.KEM` API is used when the selected provider does not advertise a
+`KeyGenerator` service; this supports KEM-only JCA providers. The standard `KEM.Encapsulated` result carries both the
+`SecretKey` and its encapsulation. Algorithms without either service fail with a provider-specific diagnostic.
 
 `BouncyCastleKemSupport` is the only compatibility boundary for that fallback. It resolves BC parameter specifications
 from the selected provider's class loader and preserves the existing `SecretKeyWithEncapsulation` runtime carrier when
