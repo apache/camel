@@ -32,7 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interact with <a href="http://www.servicenow.com/">ServiceNow</a> via its REST API.
+ * Query and change records, attachments, import sets and service catalog items of a ServiceNow instance through its
+ * REST API.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName",
              producerOnly = true, category = { Category.API, Category.CLOUD, Category.MANAGEMENT },
@@ -57,7 +58,9 @@ import org.slf4j.LoggerFactory;
 public class ServiceNowEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 
-    @UriPath(description = "The ServiceNow instance name")
+    @UriPath(description = "The name of the ServiceNow instance, the first part of its host name "
+                           + "{instanceName}.service-now.com. The producer builds the default apiUrl and oauthTokenUrl from "
+                           + "it.")
     @Metadata(required = true)
     private final String instanceName;
 

@@ -51,7 +51,6 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "common",
               description = "The URI of the Azure Cosmos DB account, for example https://myaccount.documents.azure.com:443/."
                             + " Required unless the cosmosAsyncClient option is set, which replaces it.")
-    @Metadata(required = true)
     private String databaseEndpoint;
     @UriParam(label = "common",
               description = "The partition key path of a container that the component creates, for example /myPartitionKey."
@@ -67,7 +66,7 @@ public class CosmosDbConfiguration implements Cloneable {
                             + " options are not used. The endpoint does not close a client that is set or autowired.")
     @Metadata(autowired = true)
     private CosmosAsyncClient cosmosAsyncClient;
-    @UriParam(label = "common", defaultValue = "SESSION",
+    @UriParam(label = "common", defaultValue = "Session",
               description = "The default consistency level of the requests of the client. It must be the same as or weaker"
                             + " than the default consistency level of the account. From the strongest to the weakest: Strong,"
                             + " BoundedStaleness, Session, ConsistentPrefix and Eventual.")
@@ -78,8 +77,10 @@ public class CosmosDbConfiguration implements Cloneable {
                             + " available region of this list.")
     private String preferredRegions;
     @UriParam(label = "common", defaultValue = "false",
-              description = "Whether to enable client telemetry. This has no effect: the azure-cosmos SDK ignores this flag,"
-                            + " as it can no longer send client telemetry to the service.")
+              description = "Whether to enable client telemetry.")
+    @Metadata(deprecationNote = "Has no effect: the azure-cosmos SDK ignores this flag, as it can no longer send client"
+                                + " telemetry to the service.")
+    @Deprecated
     private boolean clientTelemetryEnabled;
     @UriParam(label = "common", defaultValue = "false",
               description = "Whether the client shares its connections in Direct mode with the other clients of the JVM that"
@@ -114,7 +115,7 @@ public class CosmosDbConfiguration implements Cloneable {
                             + " operation on items except deleteItem. The CamelAzureCosmosDbCreateContainerIfNotExist header"
                             + " replaces it for the producer.")
     private boolean createContainerIfNotExists;
-    @UriParam(label = "common, advanced",
+    @UriParam(label = "producer,advanced",
               description = "The com.azure.cosmos.models.IndexingPolicy of a container that the producer creates, with"
                             + " createContainer or because createContainerIfNotExists is true. If not set, the container gets"
                             + " the default indexing policy of Cosmos DB. The CamelAzureCosmosDbIndexingPolicy header replaces"
@@ -319,10 +320,16 @@ public class CosmosDbConfiguration implements Cloneable {
         this.preferredRegions = preferredRegions;
     }
 
+    /**
+     * @deprecated Has no effect: the azure-cosmos SDK ignores this flag, as it can no longer send client telemetry to
+     *             the service.
+     */
+    @Deprecated
     public boolean isClientTelemetryEnabled() {
         return clientTelemetryEnabled;
     }
 
+    @Deprecated
     public void setClientTelemetryEnabled(boolean clientTelemetryEnabled) {
         this.clientTelemetryEnabled = clientTelemetryEnabled;
     }

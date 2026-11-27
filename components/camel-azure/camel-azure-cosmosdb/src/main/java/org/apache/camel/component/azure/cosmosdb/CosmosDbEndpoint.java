@@ -39,7 +39,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.10.0", scheme = "azure-cosmosdb", title = "Azure CosmosDB",
              syntax = "azure-cosmosdb:databaseName/containerName", category = {
-                     Category.CLOUD, Category.DATABASE })
+                     Category.CLOUD, Category.DATABASE },
+             headersClass = CosmosDbConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.util.Map<String, Object>>",
                                    description = "The items of one batch of the change feed: a List with a Map per item"
                                                  + " created or changed, with the system fields of Cosmos DB such as _etag and"

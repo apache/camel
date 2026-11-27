@@ -66,7 +66,7 @@ public class RedshiftData2EndpointUriFactory extends org.apache.camel.support.co
 
         Map<String, Object> copy = copyParameters(properties);
 
-        uri = buildPathParameter(syntax, uri, "label", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "label", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

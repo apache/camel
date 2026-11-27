@@ -35,6 +35,9 @@ public interface XmppConstants {
 
     String STANZA_ID = "CamelXmppStanzaID";
     String TO = "CamelXmppTo";
-    @Metadata(label = "consumer", description = "The XMPP message", javaType = "org.jivesoftware.smack.packet.Message")
+    @Metadata(label = "consumer",
+              description = "The received Smack message, set by the consumer when the doc option is true. The pubsub producer"
+                            + " sets it to the PubSub packet that it sends.",
+              javaType = "org.jivesoftware.smack.packet.Message")
     String DOC_HEADER = "CamelXmppDoc";
 }

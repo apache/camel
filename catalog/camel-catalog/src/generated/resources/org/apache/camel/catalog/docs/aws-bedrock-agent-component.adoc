@@ -2,7 +2,7 @@
 :doctitle: AWS Bedrock Agent
 :shortname: aws-bedrock-agent
 :artifactid: camel-aws-bedrock
-:description: Operate on AWS Bedrock through its Agent.
+:description: Start and list the ingestion jobs that sync a data source into an Amazon Bedrock knowledge base, and poll the status of one.
 :since: 4.5
 :supportlevel: Stable
 :tabs-sync-option:
@@ -137,5 +137,3 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-

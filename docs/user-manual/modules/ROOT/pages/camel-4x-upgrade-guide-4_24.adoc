@@ -1242,6 +1242,16 @@ Also, when the value of an entry expires (TTL) Cassandra can leave the row behin
 entry stored with a TTL that replaces an existing entry or that is stored by `replace`. Such a row is now considered
 absent: `contains`, `keys` and `size` no longer report it, and `putIfAbsent` can store a value for it.
 
+=== camel-cassandraql - an unknown name in extraTypeCodecs fails the start of the endpoint
+
+An unknown name in the `extraTypeCodecs` option of a `cql` endpoint, for example a typo such as `BLOB_TO_ARAY`, now
+fails the start of the endpoint with an `IllegalArgumentException` that lists the possible names. Before, the name was
+ignored, no codec was registered, and the error came only later, when a row was read or written. Empty names, as after
+a trailing comma, are still ignored.
+
+The `clusterName` option is deprecated. It has had no effect since Camel 3.5, when the component moved to the Cassandra
+Java Driver 4.x: the component does not pass it to the driver, whose session builder has no cluster name setting.
+
 === camel-mongodb - the change streams consumer stores the post batch resume token
 
 While no change of its collection arrives, the change streams consumer now takes the post batch resume token of the
@@ -4017,6 +4027,17 @@ default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ 
 and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
 Set `confirm=disabled` to send without waiting, as before.
 
+=== camel-spring-redis - ZREMRANGEBYSCORE takes the score range from CamelRedis.Min and CamelRedis.Max
+
+The `ZREMRANGEBYSCORE` command now reads the score range from the `CamelRedis.Min` and `CamelRedis.Max` headers, as a
+`Double`, as `ZCOUNT`, `ZRANGEBYSCORE` and `ZREVRANGEBYSCORE` do. Before, it read the `CamelRedis.Start` and
+`CamelRedis.End` headers as a `Long`, so a fractional score could not be given, and a route that set `CamelRedis.Min`
+and `CamelRedis.Max` failed with a `NullPointerException`. When `CamelRedis.Min` or `CamelRedis.Max` is not set,
+`CamelRedis.Start` or `CamelRedis.End` is used, so existing routes keep working.
+
+In the Endpoint DSL, `channels` is now an option of the consumer builders only, and `redisTemplate` of the producer
+builders only, as the producer does not use `channels` and the consumer does not use `redisTemplate`.
+
 === camel-stream - a scanning consumer keeps going after the stream cannot be opened or read
 
 A `stream` consumer with `scanStream=true` no longer ends its reading thread when the stream cannot be opened (for
@@ -4106,6 +4127,22 @@ Its readiness health check (`consumer:<routeId>`, with the consumer health check
 the initial state (`camel.health.initial-state`, DOWN by default) while the first attempt to start runs, and DOWN while
 the change feed processor cannot start, with the failure of the last attempt; before, it was UP. To leave
 the check out, as before, set `camel.health.exclude-pattern=consumer:<routeId>`.
+
+=== camel-azure-cosmosdb - the CamelAzureCosmosDbRecourseId header is renamed to CamelAzureCosmosDbResourceId
+
+The header that the producer sets to the resource id of a database or container is renamed from
+`CamelAzureCosmosDbRecourseId` to `CamelAzureCosmosDbResourceId`. Code that uses the Java constant
+`CosmosDbConstants.RESOURCE_ID` is not affected. Routes that use the header name as text, for example in XML or YAML
+routes or in a Simple expression, must use the new name.
+
+The headers of the component are now in the catalog and the Endpoint DSL, with the method `azureCosmosDbResourceId()`
+for the renamed header. Other changes:
+
+* A `com.azure.cosmos.models.PartitionKey` in the `CamelAzureCosmosDbItemPartitionKey` header is used as it is, for
+  example for a partition key value that is a number. Before, it was converted to its JSON text, which then was used
+  as a String partition key value. Other header values are still converted to a String.
+* The `clientTelemetryEnabled` option is deprecated, as the azure-cosmos SDK ignores it.
+* In the Endpoint DSL, `indexingPolicy` is now an option of the producer builders only, as the consumer does not use it.
 
 === camel-vertx-websocket - a consumeAsClient consumer routes the messages in the order they are received
 
@@ -10087,6 +10124,13 @@ With `contentCache=false`, the template is now read and compiled for each exchan
 Previously it was compiled once, and only the JMX operation `clearContentCache` read it again. The default,
 `contentCache=true`, is unchanged.
 
+=== camel-mustache - startDelimiter or endDelimiter set alone is used
+
+A `mustache` endpoint that sets only one of `startDelimiter` and `endDelimiter` now compiles its templates with that
+delimiter, and the default (`{{` or `}}`) for the other one. Before, the option was ignored unless both were set. When
+delimiters other than the defaults are set but the `mustacheFactory` of the component is not a
+`DefaultMustacheFactory`, which cannot apply them, the endpoint logs a WARN.
+
 === camel-clickhouse - the database and table headers need the allowDatabaseAndTableFromHeaders option
 
 The `CamelClickHouseDatabase` and `CamelClickHouseTable` headers took the place of the database and the table of the
@@ -10573,6 +10617,22 @@ is known, and `strictHostKeyChecking` decides whether to connect.
 The `aws-cloudtrail:application-cloudevents` data type now sets the content type `application/json`, as the body is
 the JSON of the event. It was `text/plain`.
 
+=== camel-aws2-redshift - listStatements filters, batch parameters and new headers
+
+In header mode, `listStatements` now passes the `CamelAwsRedshiftDataClusterIdentifier`,
+`CamelAwsRedshiftDataWorkGroupName` and `CamelAwsRedshiftDataDatabase` headers to the request as filters, as the other
+operations do, and `batchExecuteStatement` now passes the `CamelAwsRedshiftDataSqlParameterList` header as the
+parameters of its statements. Before, these operations ignored those headers. Remove the headers before such a step
+if a route sets them for another step.
+
+The new `CamelAwsRedshiftDataNextToken` header asks the list operations, `describeTable` and `getStatementResult` for
+the next page (the `nextToken` of the previous response). New headers set the `WaitTimeSeconds`, `ResultFormat`,
+`SessionId` and `SessionKeepAliveSeconds` of `executeStatement` and `batchExecuteStatement`, the `ExecutionMode` of
+`batchExecuteStatement` and the `WaitTimeSeconds` of `getStatementResult`.
+
+An exchange without the `CamelAwsRedshiftDataOperation` header and without the `operation` option now fails with an
+`IllegalArgumentException` that says so, instead of a `NullPointerException`.
+
 === camel-python - a script gives the Java value of its result
 
 The `python` language (Jython) now gives the Java value of what a script returns, instead of its Python text from
@@ -10672,6 +10732,15 @@ exception as before.
 Commons Codec 1.23.0 changed how a `quoted-printable` part is decoded. The line breaks (CRLF) that a partner writes into
 the part are now kept in the decoded payload, as RFC 2045 says. Before, every CR and LF was dropped. A soft line break
 written as `=CR` without the LF is now rejected with a `DecoderException`. Messages that Camel encodes are not affected.
+
+=== camel-event - backpressurePolicy=Fail reports a full queue to the exception handler of the consumer
+
+With `async=true` and `backpressurePolicy=Fail`, an event that did not fit in the full queue was thrown as an
+`IllegalStateException` to Camel, which logged it at WARN level and ignored it. The consumer now drops the event and
+passes the `IllegalStateException` to its exception handler. By default it is still logged at WARN level. With
+`bridgeErrorHandler=true` the error handler of the route handles it, and a custom `exceptionHandler` gets it. Code that
+calls `ManagementStrategy.notify()` itself no longer gets the exception. The events fired while a full queue is
+reported, such as those of the exchange that `bridgeErrorHandler` routes, are dropped without a report of their own.
 
 === camel-file-watch - CamelFileLastModified is the last modified time of the file
 
@@ -11848,6 +11917,19 @@ Both are now deprecated with a note that says so. Remove `retentionPolicy` from 
 header: they are silently ignored. To control how long the data is kept, set the retention period on the bucket the
 endpoint writes to.
 
+=== camel-influxdb2 - a ping endpoint does not look up or create the organization and the bucket
+
+An `influxdb2` endpoint with `operation=PING` no longer looks up, or creates, the organization of the `org` option and
+the bucket of the `bucket` option when it starts. A ping uses neither, so such an endpoint now starts without them and
+does not call InfluxDB at startup. Before, it failed to start without an `org`, unless `autoCreateOrg` and
+`autoCreateBucket` were both false. Create the organization and the bucket with an `INSERT` endpoint, or in InfluxDB,
+if a route relied on a ping endpoint to create them.
+
+The `org` and `bucket` options are no longer marked as required. An `INSERT` endpoint still needs them when it creates
+a missing organization or bucket at startup, which it does by default. Leave them out of an `INSERT` endpoint only with
+`autoCreateOrg` and `autoCreateBucket` set to false, and name the organization and the bucket of each write with the
+`CamelInfluxDB2Org` and `CamelInfluxDB2Bucket` headers.
+
 === camel-language - the CamelLanguageScript header is used once and removed
 
 With `allowTemplateFromHeader=true`, a script from the `CamelLanguageScript` header is now used for that message only.
@@ -12199,6 +12281,20 @@ that reads objects from one bucket and uploads them to another now keeps the sto
 before the objects got the default of the destination bucket. To keep the previous behaviour, remove the header before
 the upload, for example with `removeHeader("CamelGoogleCloudStorageStorageClass")`.
 
+=== camel-google-firestore - realtime listener errors and nested merge fields
+
+A consumer with `realtimeUpdates=true` now fails to start when the first event of the snapshot listener is an error,
+for example missing permissions or a database that does not exist. Before, the error was only logged, the start waited
+30 seconds, and the route ran with a listener that Firestore had already closed. An error that comes after the start
+now goes to the exception handler of the consumer (or the routing error handler with `bridgeErrorHandler=true`)
+instead of only being logged at ERROR level.
+
+A name in the `CamelGoogleFirestoreMergeFields` header is now a dot-separated field path, as for `updateDocument`:
+`address.city` merges the field `city` of the map `address`. Before, it was taken as one top-level field named
+`address.city`. To merge a top-level field whose name contains a dot, put a `com.google.cloud.firestore.FieldPath`
+(`FieldPath.of("address.city")`) in the list instead of the String. A name that is not a valid dot-separated path,
+because it contains `~`, `*`, `/`, `[` or `]` or has an empty segment (as in `a..b`), is still one top-level field.
+
 === camel-http-common, camel-netty-http, camel-http - a form field without =, and a header whose name is not a token
 
 A consumer that maps the fields of an `application/x-www-form-urlencoded` request to headers (camel-servlet,
@@ -12310,6 +12406,22 @@ fails with HTTP 401: use `weatherApi=Hourly`, or leave `weatherApi` unset for th
 
 A `weather` endpoint no longer closes an `httpClient` that is set on it when it stops; it closes only the client it
 created itself, and creates a new one when it is started again.
+
+=== camel-printer - an unknown flavor or mimeType fails the endpoint
+
+An `lpr` endpoint now fails to be created when the `flavor` or the `mimeType` option has a value the component does not
+know, or when the two together name no doc flavor, such as the default `flavor` `DocFlavor.BYTE_ARRAY` with
+`mimeType=TEXT_PLAIN` (`TEXT_PLAIN` and `TEXT_HTML` need `DocFlavor.CHAR_ARRAY`, `DocFlavor.READER` or
+`DocFlavor.STRING`). Before, such an endpoint printed with the doc flavor `DocFlavor.BYTE_ARRAY.AUTOSENSE` without an
+error. Use a `mimeType` with a charset, such as `TEXT_PLAIN_UTF_8`, or remove the `flavor` and `mimeType` options to
+keep printing as before.
+
+`mimeType=TEXT_HTML_UTF_8` and `mimeType=TEXT_HTML` now select the `text/html` doc flavor; they selected the
+`text/plain` doc flavor before.
+
+With `mimeType` `PAGEABLE`, `PRINTABLE` or `RENDERABLE_IMAGE`, the producer now prints the body as a
+`java.awt.print.Pageable`, `java.awt.print.Printable` or `java.awt.image.renderable.RenderableImage`, as these doc
+flavors need, instead of a stream. With `sendToPrinter=false`, the body is still written to a file as bytes.
 
 === Kamelets - removed Kamelets
 
