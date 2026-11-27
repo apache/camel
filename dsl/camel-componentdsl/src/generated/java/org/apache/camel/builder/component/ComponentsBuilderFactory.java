@@ -289,7 +289,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Asterisk (camel-asterisk)
-     * Interact with Asterisk PBX Server (VoIP).
+     * Receive events from an Asterisk PBX server and send actions to it over
+     * the Asterisk Manager Interface (AMI).
      * 
      * Category: mobile
      * Since: 2.18

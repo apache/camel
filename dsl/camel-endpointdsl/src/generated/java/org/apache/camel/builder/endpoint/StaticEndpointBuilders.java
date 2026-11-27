@@ -882,7 +882,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Asterisk (camel-asterisk)
-     * Interact with Asterisk PBX Server (VoIP).
+     * Receive events from an Asterisk PBX server and send actions to it over
+     * the Asterisk Manager Interface (AMI).
      * 
      * Category: mobile
      * Since: 2.18
@@ -891,7 +892,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>asterisk:name</code>
      * 
      * Path parameter: name (required)
-     * Name of component
+     * A logical name of the endpoint, for example the name of the Asterisk
+     * server. The component does not use it to connect.
      * 
      * @param path name
      * @return the dsl builder
@@ -901,7 +903,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Asterisk (camel-asterisk)
-     * Interact with Asterisk PBX Server (VoIP).
+     * Receive events from an Asterisk PBX server and send actions to it over
+     * the Asterisk Manager Interface (AMI).
      * 
      * Category: mobile
      * Since: 2.18
@@ -910,7 +913,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>asterisk:name</code>
      * 
      * Path parameter: name (required)
-     * Name of component
+     * A logical name of the endpoint, for example the name of the Asterisk
+     * server. The component does not use it to connect.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
