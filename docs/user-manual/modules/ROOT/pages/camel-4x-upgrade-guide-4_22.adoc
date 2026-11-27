@@ -64,6 +64,15 @@ expires; the endpoint fails to start when the profile gives no token. The identi
 that watsonx.data accepts. `apiKey` is no longer marked as required in the catalog, as `oauthProfile` can take its
 place; an endpoint with neither still fails to start.
 
+=== camel-azure-eventgrid, camel-azure-servicebus, camel-azure-eventhubs - a DefaultAzureCredential set as tokenCredential is used
+
+With `credentialType` `AZURE_IDENTITY`, which these components also choose when the `tokenCredential` option is a
+`DefaultAzureCredential`, the clients now authenticate with the configured `tokenCredential` instance. Before, they
+built a new `DefaultAzureCredential` with the default settings, so a credential built with
+`managedIdentityClientId(...)`, `tenantId(...)` or other settings was not used. Without `tokenCredential`,
+`AZURE_IDENTITY` still builds a new `DefaultAzureCredential`. In camel-azure-eventgrid, an explicit `credentialType`
+`TOKEN_CREDENTIAL` or `AZURE_IDENTITY` is no longer replaced when `tokenCredential` is set.
+
 == Upgrading from 4.22.2 to 4.22.3
 
 === Undertow servlet implementation
