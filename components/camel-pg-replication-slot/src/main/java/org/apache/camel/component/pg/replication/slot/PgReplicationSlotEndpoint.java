@@ -126,8 +126,10 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
                             + " directory of the user, if it exists.",
               label = "security")
     private String sslCert;
-    @UriParam(description = "The file of the private key of the client certificate: PKCS-8 in DER format, or a PKCS-12 file"
-                            + " (.p12 or .pfx) that holds the certificate and the key, as the PostgreSQL JDBC driver expects."
+    @UriParam(description = "The file of the private key of the client certificate. The PostgreSQL JDBC driver accepts"
+                            + " PKCS-8 in DER format, PKCS-8 in PEM format (a .pem file, or a file that starts with"
+                            + " -----BEGIN PRIVATE KEY-----), or a PKCS-12 file (.p12 or .pfx) that holds the certificate"
+                            + " and the key."
                             + " When not set, the driver reads postgresql.pk8 in the .postgresql folder of the home directory"
                             + " of the user, if it exists.",
               label = "security")

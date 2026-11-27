@@ -71,8 +71,9 @@ pg-replication-slot:db.example.com:5432/mydb/myslot:test_decoding?user=replicato
 ----
 
 For a server that checks client certificates, set `sslCert` and `sslKey` (and `sslPassword` when the key has a
-password). The PostgreSQL JDBC driver expects the key in PKCS-8 DER format, or a PKCS-12 file (`.p12` or `.pfx`) that
-holds the certificate and the key.
+password). The PostgreSQL JDBC driver accepts the key as PKCS-8 in DER format, as PKCS-8 in PEM format (a `.pem` file,
+or a file that starts with `-----BEGIN PRIVATE KEY-----`), or as a PKCS-12 file (`.p12` or `.pfx`) that holds the
+certificate and the key.
 
 == Examples
 
