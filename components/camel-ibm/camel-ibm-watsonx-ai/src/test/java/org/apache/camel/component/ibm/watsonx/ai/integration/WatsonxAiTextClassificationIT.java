@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.ibm.watsonx.ai.textprocessing.textclassification.TextClassificationResponse;
 import org.apache.camel.EndpointInject;
@@ -38,6 +41,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -267,6 +271,11 @@ public class WatsonxAiTextClassificationIT extends WatsonxAiTestSupport {
                 originalFileName, documentClassified, documentType);
     }
 
+    private static boolean isFinished(Exchange exchange) {
+        String status = exchange.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS, String.class);
+        return "completed".equals(status) || "failed".equals(status);
+    }
+
     @Test
     public void testUploadAndFetchClassification() throws Exception {
         // Step 1: Upload and start classification
@@ -280,42 +289,30 @@ public class WatsonxAiTextClassificationIT extends WatsonxAiTestSupport {
         LOG.info("Classification started - ID: {}", classificationId);
 
         // Step 2: Poll for completion
-        String status = startExchange.getIn().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS, String.class);
-        int maxAttempts = 30;
-        int attempt = 0;
-
-        while (!"completed".equals(status) && !"failed".equals(status) && attempt < maxAttempts) {
-            Thread.sleep(2000); // Wait 2 seconds between polls
-            attempt++;
-
-            mockResult.reset();
-            mockResult.expectedMessageCount(1);
-
-            template.sendBodyAndHeader("direct:fetchClassification", null,
-                    WatsonxAiConstants.CLASSIFICATION_ID, classificationId);
-
-            mockResult.assertIsSatisfied();
-
-            Exchange fetchExchange = mockResult.getExchanges().get(0);
-            status = fetchExchange.getIn().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS, String.class);
-
-            LOG.info("Poll attempt {} - Status: {}", attempt, status);
-
-            if ("completed".equals(status)) {
-                Boolean documentClassified = fetchExchange.getIn()
-                        .getHeader(WatsonxAiConstants.DOCUMENT_CLASSIFIED, Boolean.class);
-                String documentType = fetchExchange.getIn()
-                        .getHeader(WatsonxAiConstants.CLASSIFICATION_RESULT, String.class);
-
-                LOG.info("Classification completed - Classified: {}, Type: {}", documentClassified, documentType);
-            } else if ("failed".equals(status)) {
-                String errorCode = fetchExchange.getIn()
-                        .getHeader(WatsonxAiConstants.ERROR_CODE, String.class);
-                String errorMessage = fetchExchange.getIn()
-                        .getHeader(WatsonxAiConstants.ERROR_MESSAGE, String.class);
-
-                LOG.error("Classification failed - Code: {}, Message: {}", errorCode, errorMessage);
+        // up to 60 seconds, as the loop of 30 polls every 2 seconds did; each poll checks the status that its fetch gives
+        AtomicReference<Exchange> last = new AtomicReference<>(startExchange);
+        await().atMost(60, TimeUnit.SECONDS).pollInterval(2, TimeUnit.SECONDS).until(() -> {
+            if (!isFinished(last.get())) {
+                Exchange fetched = template.send("direct:fetchClassification",
+                        e -> e.getIn().setHeader(WatsonxAiConstants.CLASSIFICATION_ID, classificationId));
+                assertNull(fetched.getException(), () -> "Fetch failed: " + fetched.getException());
+                last.set(fetched);
+                LOG.info("Poll - Status: {}",
+                        fetched.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS, String.class));
             }
+            return isFinished(last.get());
+        });
+
+        Exchange fetchExchange = last.get();
+        String status = fetchExchange.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS, String.class);
+        if ("completed".equals(status)) {
+            LOG.info("Classification completed - Classified: {}, Type: {}",
+                    fetchExchange.getMessage().getHeader(WatsonxAiConstants.DOCUMENT_CLASSIFIED, Boolean.class),
+                    fetchExchange.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_RESULT, String.class));
+        } else {
+            LOG.error("Classification failed - Code: {}, Message: {}",
+                    fetchExchange.getMessage().getHeader(WatsonxAiConstants.ERROR_CODE, String.class),
+                    fetchExchange.getMessage().getHeader(WatsonxAiConstants.ERROR_MESSAGE, String.class));
         }
 
         assertTrue("completed".equals(status) || "failed".equals(status),
@@ -324,6 +321,33 @@ public class WatsonxAiTextClassificationIT extends WatsonxAiTestSupport {
         // Log final result
         if ("failed".equals(status)) {
             LOG.warn("Classification ended with status 'failed'. Check error details above.");
+        }
+    }
+
+    @Test
+    public void testClassifyAndFetchFileInCosWithParameters() throws Exception {
+        String fileName = "camel-classify-" + UUID.randomUUID() + ".pdf";
+        Exchange upload = template.send(buildTextClassificationEndpointUri("textClassificationUploadFile"), exchange -> {
+            exchange.getIn().setBody(Files.readAllBytes(testFile.toPath()));
+            exchange.getIn().setHeader(WatsonxAiConstants.FILE_NAME, fileName);
+        });
+        assertNull(upload.getException());
+        try {
+            Exchange classification = template.send(buildTextClassificationEndpointUri("textClassificationAndFetch")
+                                                    + "&classificationMode=exact&ocrMode=auto&documentLanguages=en"
+                                                    + "&processingTimeout=120000",
+                    exchange -> exchange.getIn().setBody(fileName));
+            assertNull(classification.getException(), () -> "Failed: " + classification.getException());
+            LOG.info("Classification of {}: {} status={} type={}", fileName, classification.getMessage().getBody(),
+                    classification.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS),
+                    classification.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_RESULT));
+            assertEquals("completed",
+                    classification.getMessage().getHeader(WatsonxAiConstants.CLASSIFICATION_STATUS, String.class));
+        } finally {
+            template.send(buildTextClassificationEndpointUri("textClassificationDeleteFile"), exchange -> {
+                exchange.getIn().setHeader(WatsonxAiConstants.BUCKET_NAME, documentBucket);
+                exchange.getIn().setBody(fileName);
+            });
         }
     }
 

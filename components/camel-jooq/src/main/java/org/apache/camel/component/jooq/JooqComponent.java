@@ -27,7 +27,8 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("jooq")
 public class JooqComponent extends HealthCheckComponent {
 
-    @Metadata(description = "Component configuration (database connection, database entity type, etc.)")
+    @Metadata(description = "The shared configuration of the endpoints. Each endpoint starts from a copy of it, and the"
+                            + " options in the endpoint URI override the copied values.")
     private JooqConfiguration configuration;
 
     @Override

@@ -2,7 +2,7 @@
 :doctitle: DNS
 :shortname: dns
 :artifactid: camel-dns
-:description: Perform DNS queries using DNSJava.
+:description: Query DNS records and resolve host names to IP addresses, using the dnsjava library.
 :since: 2.7
 :supportlevel: Stable
 :tabs-sync-option:

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -36,33 +37,30 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
     public static final String CONTEXT = "/mycontext";
     protected String contextUrl;
-    @RegisterExtension
-    AvailablePortFinder.Port portHolder = AvailablePortFinder.find();
     protected int port;
     protected DeploymentManager manager;
     protected Undertow server;
 
     @Override
     public void setupResources() throws Exception {
-        port = portHolder.getPort();
         DeploymentInfo servletBuilder = getDeploymentInfo();
         manager = Servlets.newContainer().addDeployment(servletBuilder);
         manager.deploy();
         PathHandler path = Handlers.path(Handlers.redirect(CONTEXT))
                 .addPrefixPath(CONTEXT, manager.start());
-        server = Undertow.builder().addHttpListener(port, "localhost")
+        // let the OS pick a free port when binding, and read it back, to avoid a race with other tests
+        server = Undertow.builder().addHttpListener(0, "localhost")
                 .setHandler(path).build();
         server.start();
+        port = ((InetSocketAddress) server.getListenerInfo().get(0).getAddress()).getPort();
         contextUrl = "http://localhost:" + port + CONTEXT;
 
         testConfiguration().withAutoStartContext(true);

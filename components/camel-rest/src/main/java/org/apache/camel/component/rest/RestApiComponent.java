@@ -29,7 +29,10 @@ import org.apache.camel.support.DefaultComponent;
 @Component("rest-api")
 public class RestApiComponent extends DefaultComponent {
 
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer",
+              description = "The name of the Camel component that serves the API documents, such as platform-http, servlet"
+                            + " or jetty. The consumerComponentName option of an endpoint replaces it. If neither is set,"
+                            + " the component of the rest configuration is used.")
     private String consumerComponentName;
 
     public RestApiComponent() {
@@ -56,12 +59,6 @@ public class RestApiComponent extends DefaultComponent {
         return consumerComponentName;
     }
 
-    /**
-     * The Camel Rest API component to use for the consumer REST transport, such as jetty, servlet, undertow. If no
-     * component has been explicitly configured, then Camel will lookup if there is a Camel component that integrates
-     * with the Rest DSL, or if a org.apache.camel.spi.RestApiConsumerFactory is registered in the registry. If either
-     * one is found, then that is being used.
-     */
     public void setConsumerComponentName(String consumerComponentName) {
         this.consumerComponentName = consumerComponentName;
     }

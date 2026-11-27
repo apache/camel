@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Perform operations on the Milvus Vector Database.
+ * Create collections and indexes, and insert, upsert, delete, search and query entities in the Milvus vector database.
  */
 @UriEndpoint(
              firstVersion = "4.5.0",
@@ -96,7 +96,9 @@ import org.apache.camel.support.DefaultEndpoint;
 public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)
-    @UriPath(description = "The collection Name")
+    @UriPath(description = "The name of the collection that the producer loads into memory before SEARCH, QUERY and DELETE."
+                           + " The request in the message body names the collection that the action works on, so it must"
+                           + " name the same collection.")
     private final String collection;
 
     @UriParam

@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.ecs.EcsClient;
 
 /**
- * Manage AWS ECS cluster instances.
+ * Create, describe, list and delete clusters of AWS Elastic Container Service (ECS).
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ecs", title = "AWS Elastic Container Service (ECS)",
              syntax = "aws2-ecs:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },

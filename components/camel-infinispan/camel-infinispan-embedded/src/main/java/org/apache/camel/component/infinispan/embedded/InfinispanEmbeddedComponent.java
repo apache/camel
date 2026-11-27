@@ -29,7 +29,8 @@ import org.apache.camel.support.service.ServiceHelper;
 public class InfinispanEmbeddedComponent extends InfinispanComponent {
     public static final String SCHEME = "infinispan-embedded";
 
-    @Metadata(description = "Component configuration")
+    @Metadata(description = "The configuration of the component, which each endpoint copies and then changes with its own"
+                            + " options. The cache manager of the component uses only this configuration.")
     private InfinispanEmbeddedConfiguration configuration = new InfinispanEmbeddedConfiguration();
 
     private InfinispanEmbeddedManager manager;

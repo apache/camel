@@ -33,6 +33,10 @@ import org.apache.camel.support.DefaultEndpoint;
 
 import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHEME;
 
+/**
+ * Send a message to an AI agent of LangChain4j, which can call Camel routes and MCP servers as tools, and return its
+ * answer.
+ */
 @UriEndpoint(firstVersion = "4.14.0", scheme = SCHEME,
              title = "LangChain4j Agent",
              syntax = "langchain4j-agent:agentId",
@@ -52,7 +56,8 @@ import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHE
                                                  + " reason, the sources and the tool executions are in headers"))
 public class LangChain4jAgentEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
-    @UriPath(description = "The Agent id")
+    @UriPath(description = "The id of the agent. When none of agent, agentFactory, agentConfiguration and provider is"
+                           + " set, the producer looks up the bean of type Agent with this name in the registry.")
     private final String agentId;
 
     @UriParam

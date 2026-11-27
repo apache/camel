@@ -2,7 +2,7 @@
 :doctitle: File Watch
 :shortname: file-watch
 :artifactid: camel-file-watch
-:description: Get notified about file events in a directory using java.nio.file.WatchService.
+:description: Receive an event when a file or directory is created, modified or deleted in a directory of the file system.
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:

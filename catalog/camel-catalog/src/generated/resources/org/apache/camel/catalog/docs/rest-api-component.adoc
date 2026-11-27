@@ -2,7 +2,7 @@
 :doctitle: REST API
 :shortname: rest-api
 :artifactid: camel-rest
-:description: Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
+:description: Expose the OpenAPI document of the REST services that are defined with the Rest DSL.
 :since: 2.16
 :supportlevel: Stable
 :tabs-sync-option:
