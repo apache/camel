@@ -39,11 +39,21 @@ public class EventGridConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private AzureKeyCredential azureKeyCredential;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret",
+              description = "The com.azure.core.credential.TokenCredential that authenticates the producer with Microsoft"
+                            + " Entra ID, such as a DefaultAzureCredential built with a managed identity client id or a"
+                            + " tenant id; this instance is used as it is, also with credentialType AZURE_IDENTITY. When it"
+                            + " is set, the accessKey and azureKeyCredential options are not used.")
     @Metadata(autowired = true)
     private TokenCredential tokenCredential;
 
-    @UriParam(label = "security", enums = "ACCESS_KEY,AZURE_IDENTITY,TOKEN_CREDENTIAL", defaultValue = "ACCESS_KEY")
+    @UriParam(label = "security", enums = "ACCESS_KEY,AZURE_IDENTITY,TOKEN_CREDENTIAL", defaultValue = "ACCESS_KEY",
+              description = "How the producer authenticates: ACCESS_KEY with the azureKeyCredential or accessKey option,"
+                            + " TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY with a"
+                            + " DefaultAzureCredential of the Azure Identity library (the tokenCredential option when it is"
+                            + " set, otherwise a new one). With tokenCredential set and this option left at ACCESS_KEY,"
+                            + " Camel uses AZURE_IDENTITY for a DefaultAzureCredential and TOKEN_CREDENTIAL for any other"
+                            + " credential. With only accessKey or azureKeyCredential set, Camel uses ACCESS_KEY.")
     private CredentialType credentialType = CredentialType.ACCESS_KEY;
 
     @UriParam(label = "producer")
