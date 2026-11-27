@@ -173,7 +173,7 @@ or removes its row.
 | camel-exec | exec |  |
 | camel-fhir | fhir |  |
 | camel-file | file |  |
-| camel-file-watch | file-watch |  |
+| camel-file-watch | file-watch | yes |
 | camel-flatpack | flatpack |  |
 | camel-flink | flink |  |
 | camel-flowable | flowable |  |

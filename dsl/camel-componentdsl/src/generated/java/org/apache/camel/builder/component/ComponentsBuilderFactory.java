@@ -1846,8 +1846,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * File Watch (camel-file-watch)
-     * Get notified about file events in a directory using
-     * java.nio.file.WatchService.
+     * Receive an event when a file or directory is created, modified or deleted
+     * in a directory of the file system.
      * 
      * Category: file
      * Since: 3.0
