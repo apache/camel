@@ -4588,7 +4588,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Scheduler (camel-scheduler)
-     * Generate messages in specified intervals using
+     * Generate messages on a schedule, by default at a fixed delay using a
      * java.util.concurrent.ScheduledExecutorService.
      * 
      * Category: core,scheduling

@@ -327,7 +327,7 @@ or removes its row.
 | camel-salesforce | salesforce |  |
 | camel-sap-netweaver | sap-netweaver |  |
 | camel-saxon | xquery |  |
-| camel-scheduler | scheduler |  |
+| camel-scheduler | scheduler | yes |
 | camel-schematron | schematron |  |
 | camel-seda | seda |  |
 | camel-servicenow | servicenow |  |
