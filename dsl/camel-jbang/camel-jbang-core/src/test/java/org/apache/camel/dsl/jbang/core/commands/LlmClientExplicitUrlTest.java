@@ -164,10 +164,16 @@ class LlmClientExplicitUrlTest {
      * CAMEL-27514: when {@code --api-type=openai} is set explicitly, detection goes through
      * {@code isEndpointReachable()} rather than {@code tryExplicitUrl()}. The same normalisation must apply: a URL
      * ending with {@code /v1} or {@code /v1/} must not produce a double {@code /v1/v1/models} probe.
+     * <p>
+     * {@code /api/tags} is overridden to 404 so that the Ollama probe fails and the assertions confirm that detection
+     * succeeds via the {@code /v1/models} probe, not via a coincidental Ollama hit.
      */
     @Test
     void withApiTypeOpenAiAndV1UrlVariants() throws Exception {
         try (FakeLlmServer server = new FakeLlmServer("unused")) {
+            // Fail the Ollama /api/tags probe so the assertions exercise the /v1/models OpenAI probe.
+            server.reply("/api/tags", 404, "");
+
             // Plain base URL — sanity check that the path still works without a /v1 suffix.
             LlmClient base = LlmClient.create().withApiType(ApiType.openai).withUrl(server.url());
             assertThat(base.detectEndpoint()).isTrue();

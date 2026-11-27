@@ -2652,13 +2652,19 @@ public class LlmClient {
         // that already ends with /v1 or /v1/.
         // The API key is forwarded only on the /v1/models probe (OpenAI-compatible) to avoid leaking credentials
         // onto the Ollama /api/tags or root probes.
+        // The Bearer header is sent only when the api type is null (auto-detect) or explicitly openai; for
+        // anthropic or ollama the probe goes unauthenticated because those APIs use different auth schemes.
+        // The Ollama /api/tags probe uses the original endpoint (minus trailing slash): stripping /v1
+        // for the OpenAI probe must not widen the Ollama probe scope (e.g. --api-type=ollama
+        // --url http://host:11434/v1 must probe /v1/api/tags, not /api/tags, so it correctly fails
+        // rather than incorrectly detecting an Ollama server and then failing on /v1/api/generate later).
+        String base = stripTrailingSlash(endpoint);
         String openAiModelsUrl = normalizeOpenAiModelsUrl(endpoint);
-        // Derive the base URL for Ollama and root probes (strip /v1/models suffix added above).
-        String base = openAiModelsUrl.endsWith("/v1/models")
-                ? openAiModelsUrl.substring(0, openAiModelsUrl.length() - "/v1/models".length())
-                : endpoint;
+        Map<String, String> openAiHeaders = (apiType == null || apiType == ApiType.openai)
+                ? buildOpenAiAuthHeaders(resolveApiKey())
+                : Map.of();
         return tryHealthCheck(base + "/api/tags", Map.of(), false)
-                || tryHealthCheck(openAiModelsUrl, buildOpenAiAuthHeaders(resolveApiKey()), false)
+                || tryHealthCheck(openAiModelsUrl, openAiHeaders, false)
                 || tryHealthCheck(endpoint, Map.of(), false);
     }
 
