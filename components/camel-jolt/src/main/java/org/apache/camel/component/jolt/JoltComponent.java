@@ -28,11 +28,21 @@ import org.apache.camel.support.ResourceHelper;
 @Component("jolt")
 public class JoltComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    @Metadata(defaultValue = "true",
+              description = "Whether the endpoints keep the content of their spec resource in memory after the first read."
+                            + " It is the default of the contentCache option of each endpoint. Each endpoint builds its JOLT"
+                            + " transform from the spec once, at the first exchange, and keeps it, so false does not make it"
+                            + " read a changed spec again.")
     private boolean contentCache = true;
-    @Metadata
+    @Metadata(description = "Whether the endpoints read the CamelJoltResourceUri and CamelJoltContext headers. It is the"
+                            + " default of the allowTemplateFromHeader option of each endpoint. Enable it only when the headers"
+                            + " come from a trusted source.")
     private boolean allowTemplateFromHeader;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "A JOLT Transform that all endpoints of the component use in place of the transform that they"
+                            + " build from their spec. When set, the endpoints do not read their spec resource, and"
+                            + " transformDsl and the CamelJoltResourceUri header have no effect. To use the CamelJoltContext"
+                            + " header, it must also be a ContextualTransform, such as a Chainr.")
     private Transform transform;
 
     public JoltComponent() {
@@ -61,9 +71,6 @@ public class JoltComponent extends DefaultComponent {
         return contentCache;
     }
 
-    /**
-     * Sets whether to use resource content cache or not
-     */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
     }
@@ -72,9 +79,6 @@ public class JoltComponent extends DefaultComponent {
         return transform;
     }
 
-    /**
-     * Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
-     */
     public void setTransform(Transform transform) {
         this.transform = transform;
     }
@@ -83,12 +87,6 @@ public class JoltComponent extends DefaultComponent {
         return allowTemplateFromHeader;
     }
 
-    /**
-     * Whether to allow to use resource template from header or not (default false).
-     * <p>
-     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
-     * security vulnerability if the header is coming from a malicious user, so use this with care.
-     */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }

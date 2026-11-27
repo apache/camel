@@ -27,10 +27,17 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("slack")
 public class SlackComponent extends HealthCheckComponent {
 
-    @Metadata(label = "webhook")
+    @Metadata(label = "webhook",
+              description = "The URL of a Slack incoming webhook, such as https://hooks.slack.com/services/..., that the"
+                            + " producers post the message to as JSON. Endpoints use it unless they set their own"
+                            + " webhookUrl, and only when no token is set.")
     private String webhookUrl;
 
-    @Metadata(label = "token")
+    @Metadata(label = "token",
+              description = "The OAuth token of a Slack app, a bot token (xoxb-) or a user token (xoxp-), that endpoints"
+                            + " use unless they set their own token. The producer needs the chat:write scope, the consumer"
+                            + " the history and read scopes of its conversationType, such as channels:history and"
+                            + " channels:read.")
     private String token;
 
     public SlackComponent() {
@@ -52,9 +59,6 @@ public class SlackComponent extends HealthCheckComponent {
         return webhookUrl;
     }
 
-    /**
-     * The incoming webhook URL
-     */
     public void setWebhookUrl(String webhookUrl) {
         this.webhookUrl = webhookUrl;
     }
@@ -63,10 +67,6 @@ public class SlackComponent extends HealthCheckComponent {
         return token;
     }
 
-    /**
-     * The token to access Slack. This app needs to have channels:history, groups:history, im:history, mpim:history,
-     * channels:read, groups:read, im:read and mpim:read permissions. The User OAuth Token is the kind of token needed.
-     */
     public void setToken(String token) {
         this.token = token;
     }

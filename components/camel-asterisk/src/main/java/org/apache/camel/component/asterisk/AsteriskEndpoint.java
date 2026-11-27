@@ -69,9 +69,14 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
     private String name;
 
     @UriParam(description = "The host name or IP address of the Asterisk server. The consumer and the producer connect to"
-                            + " the Asterisk Manager Interface (AMI) of this host on port 5038, which cannot be changed.")
+                            + " the Asterisk Manager Interface (AMI) of this host on the port of the port option.")
     @Metadata(required = true)
     private String hostname;
+
+    @UriParam(defaultValue = "5038",
+              description = "The port of the Asterisk Manager Interface (AMI) of the Asterisk server, as set in the"
+                            + " manager.conf file of the server.")
+    private int port = AsteriskConnection.DEFAULT_PORT;
 
     @UriParam(label = "producer",
               description = "The AMI action that the producer sends for each message: QUEUE_STATUS for the status of the queues"
@@ -81,13 +86,13 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
                             + " producer fails the message.")
     private AsteriskAction action;
 
-    @UriParam(security = "secret",
+    @UriParam(label = "security", security = "secret",
               description = "The name of the AMI user, as defined in the manager.conf file of the Asterisk server. The consumer"
                             + " and the producer each log in with it when they start.")
     @Metadata(required = true)
     private String username;
 
-    @UriParam(security = "secret",
+    @UriParam(label = "security", security = "secret",
               description = "The secret of the AMI user, as defined in the manager.conf file of the Asterisk server.")
     @Metadata(required = true)
     private String password;
@@ -95,8 +100,9 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
     @UriParam(label = "security", defaultValue = "false",
               description = "Whether to connect to the Asterisk Manager Interface (AMI) over TLS instead of plain TCP, so that"
                             + " the username, the password, the actions and the events are not sent in clear text. The"
-                            + " Asterisk server must accept AMI over TLS on the port that the component connects to"
-                            + " (tlsenable and tlsbindaddr in the manager.conf file). The certificate of the server is"
+                            + " Asterisk server must accept AMI over TLS (tlsenable and tlsbindaddr in the manager.conf"
+                            + " file), and the port option must be set to its TLS port, usually 5039, as the default port"
+                            + " 5038 is the one of plain TCP. The certificate of the server is"
                             + " checked with the default SSL socket factory and trust store of the JVM"
                             + " (javax.net.ssl.trustStore). The host name of the server is not checked against the"
                             + " certificate, and a custom SSLContext is not supported, as asterisk-java does not offer it.")
@@ -181,6 +187,14 @@ public class AsteriskEndpoint extends DefaultEndpoint implements EndpointService
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public String getName() {

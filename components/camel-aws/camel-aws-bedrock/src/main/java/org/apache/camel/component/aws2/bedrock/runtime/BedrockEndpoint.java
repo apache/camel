@@ -37,7 +37,8 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 /**
- * Invoke Model of AWS Bedrock service.
+ * Invoke Amazon Bedrock foundation models with the InvokeModel and Converse APIs, and check content with Bedrock
+ * guardrails.
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock", title = "AWS Bedrock",
              syntax = "aws-bedrock:label", producerOnly = true, category = { Category.AI, Category.CLOUD },

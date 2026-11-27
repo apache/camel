@@ -25,7 +25,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.StringHelper;
 import org.apache.sshd.client.ClientBuilder;
-import org.apache.sshd.client.SshClient;
 import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 
@@ -33,75 +32,132 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
 public class SshConfiguration implements Cloneable {
     public static final int DEFAULT_SSH_PORT = 22;
 
-    @UriPath
+    @UriPath(description = "The host name or IP address of the SSH server. When the .ssh/config file in the home"
+                           + " directory of the user has an entry for this host, the client connects to the HostName of"
+                           + " that entry.")
     @Metadata(required = true)
     private String host;
-    @UriPath(defaultValue = "" + DEFAULT_SSH_PORT)
+    @UriPath(defaultValue = "" + DEFAULT_SSH_PORT, description = "The port of the SSH server.")
     private int port = DEFAULT_SSH_PORT;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The user name to log in with. The CamelSshUsername header replaces it for the producer.")
     private String username;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The password for password authentication, which is used only when neither certResource nor"
+                            + " keyPairProvider is set. The CamelSshPassword header replaces it for the producer.")
     private String password;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The command that the consumer runs on the SSH server at each poll. The consumer needs it, as"
+                            + " each poll fails without it. Some servers need the command to end with a newline, which is"
+                            + " written %0A in an endpoint URI.")
     private String pollCommand;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The org.apache.sshd.common.keyprovider.KeyPairProvider that gives the key pair for public key"
+                            + " authentication. It is not used when certResource is set, and when it is used, the password"
+                            + " option and the CamelSshPassword header are not.")
     private KeyPairProvider keyPairProvider;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The key type of the key pair to use from certResource or keyPairProvider, for example ssh-rsa,"
+                            + " ssh-ed25519 or ecdsa-sha2-nistp256. If not set, the first key pair is used.")
     private String keyType;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The resource with the private key for public key authentication, in OpenSSH or PEM format, for"
+                            + " example classpath:id_ed25519 or file:/home/camel/.ssh/id_ed25519. When set, it is used instead"
+                            + " of keyPairProvider, and the password option and the CamelSshPassword header are not used.")
     private String certResource;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The passphrase of the private key in certResource, when that key is encrypted.")
     private String certResourcePassword;
-    @UriParam(defaultValue = "30000")
+    @UriParam(defaultValue = "30000",
+              description = "The time in milliseconds that the component waits for each step of setting up the session:"
+                            + " the connection, the authentication and the opening of the channel. It does not limit how long"
+                            + " the command runs.")
     private long timeout = 30000;
     @UriParam(label = "security", security = "insecure:ssl",
-              description = "Sets the resource path for a known_hosts file used to verify the SSH server host key."
-                            + " The file uses the OpenSSH known_hosts format, and its entries are matched against the"
-                            + " host and port configured on the endpoint. A resource that cannot be read, or that has a"
-                            + " line that cannot be read, makes every connection fail."
-                            + " When not set, the client does not verify the server host key against a known_hosts file.")
+              description = "The resource of a file in the OpenSSH known_hosts format, such as file:/etc/camel/known_hosts,"
+                            + " that the server host key is verified against. It is read at each connection, and a resource"
+                            + " or a line that cannot be read makes every connection fail. When not set, the server host key"
+                            + " is not verified and any server is accepted, unless clientBuilder sets a ServerKeyVerifier,"
+                            + " which this option replaces when it is set.")
     private String knownHostsResource;
     @UriParam(label = "security", defaultValue = "false", security = "insecure:ssl", insecureValue = "false",
-              description = "Specifies whether a connection to a server whose host has no entry without a marker in"
-                            + " the known_hosts resource should fail. When false, such a server is accepted. A server"
-                            + " whose host has entries without a marker is always rejected when it presents a key that"
-                            + " none of them lists, and a key listed in a matching @revoked entry is always rejected.")
+              description = "Whether to reject a server whose host has no entry without a marker in knownHostsResource. When"
+                            + " false, such a server is accepted and a warning is logged. A server whose host has such entries"
+                            + " is always rejected when none of them lists the key it presents, and so is a key listed in a"
+                            + " matching entry with the revoked marker. This option has no effect when knownHostsResource is not set.")
     private boolean failOnUnknownHost;
-    @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC)
+    @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC,
+              description = "The type of SSH channel that runs the command: exec runs it as a single command, and shell writes"
+                            + " it to an interactive shell and reads the output up to the shellPrompt text. Other values are"
+                            + " not supported.")
     private String channelType = Channel.CHANNEL_EXEC;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The text that the shell prompt ends with, which channelType=shell needs: the endpoint fails to"
+                            + " start without it. The component reads the output of the shell until it ends with this text,"
+                            + " before and after it writes the command, and the message body is the text between the first"
+                            + " and the last line break of that output.")
     private String shellPrompt;
-    @UriParam(label = "advanced", defaultValue = "100")
+    @UriParam(label = "advanced", defaultValue = "100",
+              description = "The time in milliseconds between two reads of the shell output while the component waits for the"
+                            + " shellPrompt text, with channelType=shell.")
     private long sleepForShellPrompt = 100;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "A comma-separated list of the key exchange algorithms that the client proposes, in order of"
+                            + " preference, for example mlkem768x25519-sha256,curve25519-sha256. It replaces the default list"
+                            + " of Apache MINA SSHD, which already proposes the post-quantum hybrid algorithms. Names that are"
+                            + " not known are skipped with a warning.")
     private String kex;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "A comma-separated list of the ciphers that the client proposes, in order of preference, for"
+                            + " example aes256-ctr,aes128-ctr. It replaces the default list of Apache MINA SSHD."
+                            + " Names that are not known are skipped with a warning.")
     private String ciphers;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "A comma-separated list of the message authentication code (MAC) algorithms that the client"
+                            + " proposes, in order of preference, for example hmac-sha2-512,hmac-sha2-256. It"
+                            + " replaces the default list of Apache MINA SSHD. Names that are not known are skipped with a"
+                            + " warning.")
     private String macs;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "A comma-separated list of the signature algorithms that the client supports, in order of"
+                            + " preference, for example ssh-ed25519,rsa-sha2-512. It replaces the default list of Apache MINA"
+                            + " SSHD. Names that are not known are skipped with a warning.")
     private String signatures;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "A comma-separated list of the compression algorithms that the client proposes, in order of"
+                            + " preference, for example zlib,none. If not set, the client uses no compression.")
     private String compressions;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The time in milliseconds after which Apache MINA SSHD closes a session without traffic. The"
+                            + " session is open while a command runs. If 0 or less, the default of Apache MINA SSHD, 10"
+                            + " minutes, applies.")
     private long idleTimeout;
     @UriParam(label = "advanced",
-              description = "Sets the heartbeat interval in milliseconds."
-                            + " If positive, the component will send keep-alive messages to prevent the SSH session from timing out.")
+              description = "The interval in milliseconds at which the client sends keep-alive requests to the server while a"
+                            + " command runs. If 0 or less, no keep-alive requests are sent.")
     private long heartbeatInterval;
     @UriParam(label = "advanced",
-              description = "Sets the maximum number of keep-alive messages without reply before the session is terminated.")
+              description = "The number of keep-alive requests without reply after which the client closes the session, when"
+                            + " heartbeatInterval is set. If 0 or less, the default of Apache MINA SSHD applies.")
     private int heartbeatReplyMaxWait;
     @UriParam(label = "advanced",
-              description = "Sets the authentication timeout in milliseconds.")
+              description = "The time in milliseconds that Apache MINA SSHD allows for the authentication before it closes the"
+                            + " session. If 0 or less, its default of 2 minutes applies. The timeout option also limits how"
+                            + " long the component waits for the authentication.")
     private long authTimeout;
     @UriParam(label = "advanced",
-              description = "Sets the socket connection timeout in milliseconds.")
+              description = "The time in milliseconds that the socket connection to the server may take. If 0 or less, the"
+                            + " default of Apache MINA SSHD, 1 minute, applies. The timeout option also limits how long the"
+                            + " component waits for the connection.")
     private long connectTimeout;
     @UriParam(label = "advanced",
-              description = "Sets the timeout in milliseconds for opening a channel.")
+              description = "Sets a channel open timeout of Apache MINA SSHD that applies only to SSH agent forwarding,"
+                            + " which this component does not use. The timeout option limits how long the component waits"
+                            + " for the channel that runs the command.")
     private long channelOpenTimeout;
-    @UriParam
+    @UriParam(description = "To use a custom org.apache.sshd.client.ClientBuilder to create the SSH client, for example to"
+                            + " set a ServerKeyVerifier. The producer and the consumer each create a client with it when they"
+                            + " start, and the options of this endpoint that are set are applied over its settings.")
     @Metadata(label = "advanced", autowired = true)
     private ClientBuilder clientBuilder;
 
@@ -151,11 +207,6 @@ public class SshConfiguration implements Cloneable {
         return username;
     }
 
-    /**
-     * Sets the username to use in logging into the remote SSH server.
-     *
-     * @param username String representing login username.
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -164,11 +215,6 @@ public class SshConfiguration implements Cloneable {
         return host;
     }
 
-    /**
-     * Sets the hostname of the remote SSH server.
-     *
-     * @param host String representing hostname of SSH server.
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -177,11 +223,6 @@ public class SshConfiguration implements Cloneable {
         return port;
     }
 
-    /**
-     * Sets the port number for the remote SSH server.
-     *
-     * @param port int representing port number on remote host. Defaults to 22.
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -190,11 +231,6 @@ public class SshConfiguration implements Cloneable {
         return password;
     }
 
-    /**
-     * Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null.
-     *
-     * @param password String representing password for username at remote host.
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -203,13 +239,6 @@ public class SshConfiguration implements Cloneable {
         return pollCommand;
     }
 
-    /**
-     * Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh
-     * component being used as a consumer, i.e. from("ssh://...") You may need to end your command with a newline, and
-     * that must be URL encoded %0A
-     *
-     * @param pollCommand String representing the command to send.
-     */
     public void setPollCommand(String pollCommand) {
         this.pollCommand = pollCommand;
     }
@@ -218,14 +247,6 @@ public class SshConfiguration implements Cloneable {
         return keyPairProvider;
     }
 
-    /**
-     * Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server.
-     *
-     * @param keyPairProvider KeyPairProvider reference to use in authenticating. If set to 'null', then will attempt to
-     *                        connect using username/password settings.
-     *
-     * @see                   KeyPairProvider
-     */
     public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
         this.keyPairProvider = keyPairProvider;
     }
@@ -234,15 +255,6 @@ public class SshConfiguration implements Cloneable {
         return keyType;
     }
 
-    /**
-     * Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be
-     * passed this value. From Camel 3.0.0 / 2.25.0, by default Camel will select the first available KeyPair that is
-     * loaded. Prior to this, a KeyType of 'ssh-rsa' was enforced by default.
-     *
-     * @param keyType String defining the type of KeyPair to use for authentication.
-     *
-     * @see           KeyPairProvider
-     */
     public void setKeyType(String keyType) {
         this.keyType = keyType;
     }
@@ -251,13 +263,6 @@ public class SshConfiguration implements Cloneable {
         return timeout;
     }
 
-    /**
-     * Sets the timeout in milliseconds to wait in establishing the remote SSH server connection: connecting,
-     * authenticating and opening the channel. It does not limit how long the command runs. Defaults to 30000
-     * milliseconds.
-     *
-     * @param timeout long milliseconds to wait.
-     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
@@ -266,12 +271,6 @@ public class SshConfiguration implements Cloneable {
         return certResource;
     }
 
-    /**
-     * Sets the resource path of the certificate to use for Authentication. Will use
-     * {@link ResourceHelperKeyPairProvider} to resolve file based certificate, and depends on keyType setting.
-     *
-     * @param certResource String file, classpath, or http url for the certificate
-     */
     public void setCertResource(String certResource) {
         this.certResource = certResource;
     }
@@ -280,11 +279,6 @@ public class SshConfiguration implements Cloneable {
         return certResourcePassword;
     }
 
-    /**
-     * Sets the password to use in loading certResource, if certResource is an encrypted key.
-     *
-     * @param certResourcePassword String representing password use to load the certResource key
-     */
     public void setCertResourcePassword(String certResourcePassword) {
         this.certResourcePassword = certResourcePassword;
     }
@@ -293,11 +287,6 @@ public class SshConfiguration implements Cloneable {
         return knownHostsResource;
     }
 
-    /**
-     * Sets the resource path for a known_hosts file
-     *
-     * @param knownHostsResource String file, classpath, or http url for the certificate
-     */
     public void setKnownHostsResource(String knownHostsResource) {
         this.knownHostsResource = knownHostsResource;
     }
@@ -306,14 +295,6 @@ public class SshConfiguration implements Cloneable {
         return failOnUnknownHost;
     }
 
-    /**
-     * Specifies whether a connection to a server whose host has no entry without a marker in the known_hosts resource
-     * should fail or not. This value is only checked when the property knownHostsResource is set. A server whose host
-     * has entries without a marker is always rejected when it presents a key that none of them lists, and a key listed
-     * in a matching @revoked entry is always rejected.
-     *
-     * @param failOnUnknownHost boolean flag, whether a connection to an unknown host should fail
-     */
     public void setFailOnUnknownHost(boolean failOnUnknownHost) {
         this.failOnUnknownHost = failOnUnknownHost;
     }
@@ -322,13 +303,6 @@ public class SshConfiguration implements Cloneable {
         return channelType;
     }
 
-    /**
-     * Sets the channel type to pass to the Channel as part of command execution. Defaults to "exec".
-     *
-     * @param channelType String defining the type of Channel to use for command execution.
-     *
-     * @see               org.apache.sshd.common.channel.Channel
-     */
     public void setChannelType(String channelType) {
         this.channelType = channelType;
     }
@@ -337,13 +311,6 @@ public class SshConfiguration implements Cloneable {
         return shellPrompt;
     }
 
-    /**
-     * Sets the shellPrompt to be dropped when response is read after command execution. Required when the channelType
-     * is shell.
-     *
-     * @param shellPrompt String defining ending string of command line which has to be dropped when response is read
-     *                    after command execution.
-     */
     public void setShellPrompt(String shellPrompt) {
         this.shellPrompt = shellPrompt;
     }
@@ -352,11 +319,6 @@ public class SshConfiguration implements Cloneable {
         return sleepForShellPrompt;
     }
 
-    /**
-     * Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds.
-     *
-     * @param sleepForShellPrompt long milliseconds to wait.
-     */
     public void setSleepForShellPrompt(long sleepForShellPrompt) {
         this.sleepForShellPrompt = sleepForShellPrompt;
     }
@@ -365,11 +327,6 @@ public class SshConfiguration implements Cloneable {
         return kex;
     }
 
-    /**
-     * Comma-separated list of allowed/supported key exchange algorithms in their **order** of preference.
-     *
-     * @param kex
-     */
     public void setKex(String kex) {
         this.kex = kex;
     }
@@ -378,11 +335,6 @@ public class SshConfiguration implements Cloneable {
         return ciphers;
     }
 
-    /**
-     * Comma-separated list of allowed/supported ciphers in their order of preference.
-     *
-     * @param ciphers
-     */
     public void setCiphers(String ciphers) {
         this.ciphers = ciphers;
     }
@@ -391,12 +343,6 @@ public class SshConfiguration implements Cloneable {
         return macs;
     }
 
-    /**
-     * Comma-separated list of allowed/supported message authentication code algorithms in their **order** of
-     * preference. The MAC algorithm is used for data integrity protection.
-     *
-     * @param macs
-     */
     public void setMacs(String macs) {
         this.macs = macs;
     }
@@ -405,11 +351,6 @@ public class SshConfiguration implements Cloneable {
         return signatures;
     }
 
-    /**
-     * Comma-separated list of allowed/supported signature algorithms in their order of preference.
-     *
-     * @param signatures
-     */
     public void setSignatures(String signatures) {
         this.signatures = signatures;
     }
@@ -418,11 +359,6 @@ public class SshConfiguration implements Cloneable {
         return compressions;
     }
 
-    /**
-     * Whether to use compression, and if so which.
-     *
-     * @param compressions
-     */
     public void setCompressions(String compressions) {
         this.compressions = compressions;
     }
@@ -431,12 +367,6 @@ public class SshConfiguration implements Cloneable {
         return idleTimeout;
     }
 
-    /**
-     * Sets the timeout in milliseconds to wait before the SSH session is closed due to inactivity. The default value is
-     * 0, which means no idle timeout is applied.
-     *
-     * @param idleTimeout long milliseconds to wait before the session is closed due to inactivity.
-     */
     public void setIdleTimeout(long idleTimeout) {
         this.idleTimeout = idleTimeout;
     }
@@ -445,12 +375,6 @@ public class SshConfiguration implements Cloneable {
         return heartbeatInterval;
     }
 
-    /**
-     * Sets the heartbeat interval in milliseconds. If positive, the component will send keep-alive messages to prevent
-     * the SSH session from timing out.
-     *
-     * @param heartbeatInterval long milliseconds between heartbeat messages.
-     */
     public void setHeartbeatInterval(long heartbeatInterval) {
         this.heartbeatInterval = heartbeatInterval;
     }
@@ -459,11 +383,6 @@ public class SshConfiguration implements Cloneable {
         return heartbeatReplyMaxWait;
     }
 
-    /**
-     * Sets the maximum number of keep-alive messages without reply before the session is terminated.
-     *
-     * @param heartbeatReplyMaxWait int maximum number of heartbeat messages without reply.
-     */
     public void setHeartbeatReplyMaxWait(int heartbeatReplyMaxWait) {
         this.heartbeatReplyMaxWait = heartbeatReplyMaxWait;
     }
@@ -472,11 +391,6 @@ public class SshConfiguration implements Cloneable {
         return authTimeout;
     }
 
-    /**
-     * Sets the authentication timeout in milliseconds.
-     *
-     * @param authTimeout long milliseconds to wait for authentication.
-     */
     public void setAuthTimeout(long authTimeout) {
         this.authTimeout = authTimeout;
     }
@@ -485,11 +399,6 @@ public class SshConfiguration implements Cloneable {
         return connectTimeout;
     }
 
-    /**
-     * Sets the socket connection timeout in milliseconds.
-     *
-     * @param connectTimeout long milliseconds to wait for the socket connection.
-     */
     public void setConnectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
@@ -498,11 +407,6 @@ public class SshConfiguration implements Cloneable {
         return channelOpenTimeout;
     }
 
-    /**
-     * Sets the timeout in milliseconds for opening a channel.
-     *
-     * @param channelOpenTimeout long milliseconds to wait for opening a channel.
-     */
     public void setChannelOpenTimeout(long channelOpenTimeout) {
         this.channelOpenTimeout = channelOpenTimeout;
     }
@@ -511,11 +415,6 @@ public class SshConfiguration implements Cloneable {
         return clientBuilder;
     }
 
-    /**
-     * Instance of {@link ClientBuilder} used by the producer or consumer to create a new {@link SshClient}
-     *
-     * @param clientBuilder the {@link ClientBuilder} instance
-     */
     public void setClientBuilder(ClientBuilder clientBuilder) {
         this.clientBuilder = clientBuilder;
     }

@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interact with MongoDB GridFS.
+ * Store, read and remove files in a MongoDB GridFS bucket, and receive the files that are uploaded to it.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS",
              syntax = "mongodb-gridfs:connectionBean", category = { Category.DATABASE, Category.FILE },
@@ -82,35 +82,65 @@ public class GridFsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
 
-    @UriPath
+    @UriPath(description = "The name of the com.mongodb.client.MongoClient bean in the registry that connects to MongoDB."
+                           + " The endpoint closes this client when it shuts down.")
     @Metadata(required = true)
     private String connectionBean;
-    @UriParam(endpointIdentity = true)
+    @UriParam(endpointIdentity = true,
+              description = "The name of the MongoDB database that holds the GridFS bucket, and the collection of the"
+                            + " persistent timestamp of the consumer.")
     @Metadata(required = true)
     private String database;
-    @UriParam(defaultValue = "fs")
+    @UriParam(defaultValue = "fs",
+              description = "The name of the GridFS bucket. GridFS stores the files of the bucket in the two collections"
+                            + " named after it with the suffixes .files and .chunks, such as fs.files and fs.chunks.")
     private String bucket;
-    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
+    @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY",
+              description = "The write concern for the writes of the endpoint, as the name of a constant of"
+                            + " com.mongodb.WriteConcern. If not set, the write concern of the MongoClient is used.")
     private WriteConcern writeConcern;
-    @UriParam
+    @UriParam(description = "The read preference for the reads of the endpoint, as a name that"
+                            + " com.mongodb.ReadPreference.valueOf(String) accepts, such as primary, secondary or nearest. If"
+                            + " not set, the read preference of the MongoClient is used.")
     private ReadPreference readPreference;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The operation that the producer performs: create (the default), remove, findOne, listAll or"
+                            + " count. If this option is not set, the CamelGridFsOperation header chooses the operation; the"
+                            + " header does not replace this option.")
     private String operation;
 
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "A query document in JSON that the consumer combines with the query of the queryStrategy"
+                            + " option, to route only the matching files. Its fields are those of the document of a file in"
+                            + " the bucket, such as filename or metadata.type.")
     private String query;
-    @UriParam(label = "consumer", defaultValue = "1000", javaType = "java.time.Duration")
+    @UriParam(label = "consumer", defaultValue = "1000", javaType = "java.time.Duration",
+              description = "The time in milliseconds from the start of the consumer to its first poll.")
     private long initialDelay = 1000;
-    @UriParam(label = "consumer", defaultValue = "500", javaType = "java.time.Duration")
+    @UriParam(label = "consumer", defaultValue = "500", javaType = "java.time.Duration",
+              description = "The time in milliseconds from the end of one poll to the start of the next poll.")
     private long delay = 500;
-    @UriParam(label = "consumer", defaultValue = "TimeStamp")
+    @UriParam(label = "consumer", defaultValue = "TimeStamp",
+              description = "How the consumer finds the new files. TimeStamp routes the files uploaded after the consumer"
+                            + " started or after the last file it routed, and PersistentTimestamp stores that timestamp in"
+                            + " MongoDB, so that it survives a restart. FileAttribute routes the files that do not have the"
+                            + " field of the fileAttributeName option, and the strategies ending in AndFileAttribute require"
+                            + " both.")
     private QueryStrategy queryStrategy = QueryStrategy.TimeStamp;
-    @UriParam(label = "consumer", defaultValue = "camel-timestamps")
+    @UriParam(label = "consumer", defaultValue = "camel-timestamps",
+              description = "The name of the collection in the database that stores the timestamp of the"
+                            + " PersistentTimestamp and PersistentTimestampAndFileAttribute strategies.")
     private String persistentTSCollection = "camel-timestamps";
-    @UriParam(label = "consumer", defaultValue = "camel-timestamp")
+    @UriParam(label = "consumer", defaultValue = "camel-timestamp",
+              description = "The value of the id field of the document that stores the timestamp in the collection of the"
+                            + " persistentTSCollection option. Consumers that keep separate timestamps need different"
+                            + " values.")
     private String persistentTSObject = "camel-timestamp";
-    @UriParam(label = "consumer", defaultValue = "camel-processed")
+    @UriParam(label = "consumer", defaultValue = "camel-processed",
+              description = "The name of the field that the strategies with a file attribute set in the document of a file:"
+                            + " processing while the file is routed, and done after it. The consumer removes the field when"
+                            + " the exchange fails, so that the next poll offers the file again.")
     private String fileAttributeName = "camel-processed";
 
     private MongoClient mongoConnection;
@@ -191,9 +221,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return connectionBean;
     }
 
-    /**
-     * Name of {@link com.mongodb.client.MongoClient} to use.
-     */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
     }
@@ -219,18 +246,10 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return database;
     }
 
-    /**
-     * Sets the name of the MongoDB database to target
-     *
-     * @param database name of the MongoDB database
-     */
     public void setDatabase(String database) {
         this.database = database;
     }
 
-    /**
-     * Sets the name of the GridFS bucket within the database. Default is fs.
-     */
     public String getBucket() {
         return bucket;
     }
@@ -243,10 +262,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return query;
     }
 
-    /**
-     * Additional query parameters (in JSON) that are used to configure the query used for finding files in the
-     * GridFsConsumer
-     */
     public void setQuery(String query) {
         this.query = query;
     }
@@ -255,9 +270,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return delay;
     }
 
-    /**
-     * Sets the delay between polls within the Consumer. Default is 500ms
-     */
     public void setDelay(long delay) {
         this.delay = delay;
     }
@@ -266,23 +278,14 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return initialDelay;
     }
 
-    /**
-     * Sets the initialDelay before the consumer will start polling. Default is 1000ms
-     */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
     }
 
-    /**
-     * Sets the QueryStrategy that is used for polling for new files. Default is Timestamp
-     */
     public void setQueryStrategy(String s) {
         queryStrategy = QueryStrategy.valueOf(s);
     }
 
-    /**
-     * Sets the QueryStrategy that is used for polling for new files. Default is Timestamp
-     */
     public void setQueryStrategy(QueryStrategy queryStrategy) {
         this.queryStrategy = queryStrategy;
     }
@@ -291,10 +294,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return queryStrategy;
     }
 
-    /**
-     * If the QueryType uses a persistent timestamp, this sets the name of the collection within the DB to store the
-     * timestamp.
-     */
     public void setPersistentTSCollection(String s) {
         persistentTSCollection = s;
     }
@@ -303,10 +302,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return persistentTSCollection;
     }
 
-    /**
-     * If the QueryType uses a persistent timestamp, this is the ID of the object in the collection to store the
-     * timestamp.
-     */
     public void setPersistentTSObject(String id) {
         persistentTSObject = id;
     }
@@ -315,10 +310,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return persistentTSObject;
     }
 
-    /**
-     * If the QueryType uses a FileAttribute, this sets the name of the attribute that is used. Default is
-     * "camel-processed".
-     */
     public void setFileAttributeName(String f) {
         fileAttributeName = f;
     }
@@ -327,28 +318,10 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return fileAttributeName;
     }
 
-    /**
-     * Set the {@link WriteConcern} for write operations on MongoDB using the standard ones. Resolved from the fields of
-     * the WriteConcern class by calling the {@link WriteConcern#valueOf(String)} method.
-     *
-     * @param writeConcern the standard name of the WriteConcern
-     * @see                <a href=
-     *                     "http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html#valueOf(java.lang.String)">possible
-     *                     options</a>
-     */
     public void setWriteConcern(String writeConcern) {
         this.writeConcern = WriteConcern.valueOf(writeConcern);
     }
 
-    /**
-     * Set the {@link WriteConcern} for write operations on MongoDB using the standard ones. Resolved from the fields of
-     * the WriteConcern class by calling the {@link WriteConcern#valueOf(String)} method.
-     *
-     * @param writeConcern the standard name of the WriteConcern
-     * @see                <a href=
-     *                     "http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html#valueOf(java.lang.String)">possible
-     *                     options</a>
-     */
     public void setWriteConcern(WriteConcern writeConcern) {
         this.writeConcern = writeConcern;
     }
@@ -357,30 +330,10 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return writeConcern;
     }
 
-    /**
-     * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection
-     * will be overridden by this setting.
-     * <p/>
-     * The {@link com.mongodb.ReadPreference#valueOf(String)} utility method is used to resolve the passed
-     * {@code readPreference} value. Some examples for the possible values are {@code nearest}, {@code primary} or
-     * {@code secondary} etc.
-     *
-     * @param readPreference the name of the read preference to set
-     */
     public void setReadPreference(String readPreference) {
         this.readPreference = ReadPreference.valueOf(readPreference);
     }
 
-    /**
-     * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection
-     * will be overridden by this setting.
-     * <p/>
-     * The {@link com.mongodb.ReadPreference#valueOf(String)} utility method is used to resolve the passed
-     * {@code readPreference} value. Some examples for the possible values are {@code nearest}, {@code primary} or
-     * {@code secondary} etc.
-     *
-     * @param readPreference the name of the read preference to set
-     */
     public void setReadPreference(ReadPreference readPreference) {
         this.readPreference = readPreference;
     }
@@ -389,9 +342,6 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return readPreference;
     }
 
-    /**
-     * Sets the operation this endpoint will execute against GridFs.
-     */
     public void setOperation(String operation) {
         this.operation = operation;
     }

@@ -33,7 +33,8 @@ public class AsteriskConsumer extends DefaultConsumer {
         super(endpoint, processor);
 
         this.connection = new AsteriskConnection(
-                endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword(), endpoint.isSsl());
+                endpoint.getHostname(), endpoint.getPort(), endpoint.getUsername(), endpoint.getPassword(),
+                endpoint.isSsl());
         this.listener = new EventListener();
     }
 

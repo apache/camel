@@ -26,12 +26,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * Represents the component that manages {@link MustacheEndpoint}. URI pattern:
- * {@code mustache://template_name.mustache} Supports parameters:
- * <ul>
- * <li>encoding: default platform one</li>
- * <li>startDelimiter: default "{{"</li>
- * <li>endDelimiter: default "}}"</li></li>
+ * The Mustache component, which creates {@link MustacheEndpoint} instances.
  */
 @Component("mustache")
 public class MustacheComponent extends DefaultComponent {

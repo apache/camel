@@ -29,34 +29,56 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class CyberArkVaultConfiguration implements Cloneable {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "The default ID of the secret, which is the ID of a Conjur variable, for example db/password. The"
+                           + " producer uses it when the secretId option is not set, and the CamelCyberArkVaultSecretId header"
+                           + " replaces both.")
     @Metadata(required = true)
     private String label;
 
-    @UriParam(description = "The secret ID to retrieve from CyberArk Conjur")
+    @UriParam(description = "The ID of the secret, which is the ID of a Conjur variable, for example db/password. If not set on"
+                            + " the endpoint, the value of the URI path is used. The CamelCyberArkVaultSecretId header replaces"
+                            + " this option.")
     private String secretId;
 
-    @UriParam(defaultValue = "getSecret")
+    @UriParam(description = "The operation that the producer performs. getSecret reads the value of the secret into the message"
+                            + " body. createSecret stores the message body, or the CamelCyberArkVaultSecretValue header, as a new"
+                            + " value of a variable that is declared in Conjur policy. The CamelCyberArkVaultOperation header"
+                            + " replaces this option.",
+              defaultValue = "getSecret")
     private CyberArkVaultOperations operation = CyberArkVaultOperations.getSecret;
 
-    @UriParam
+    @UriParam(description = "The base URL of the Conjur server, for example https://conjur.example.com. The component appends"
+                            + " the paths of the Conjur REST API, such as /authn and /secrets, to it. Not used when the"
+                            + " conjurClient option is set.")
     @Metadata(required = true)
     private String url;
 
-    @UriParam
+    @UriParam(description = "The Conjur organization account, which is part of the path of every request to the Conjur REST"
+                            + " API. Not used when the conjurClient option is set.")
     @Metadata(required = true)
     private String account;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The login of the Conjur user or host to authenticate as, for example admin or host/myapp. It is"
+                            + " used together with the apiKey option or the password option.",
+              label = "security", security = "secret")
     private String username;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The password of the Conjur user, used with the username option when neither authToken nor"
+                            + " apiKey is set. The component sends it in the Conjur authenticate request, in place of an API"
+                            + " key.",
+              label = "security", security = "secret")
     private String password;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The API key of the Conjur user or host given by the username option. The component exchanges it"
+                            + " for an access token, and again when Conjur rejects the token. Used when the authToken option is"
+                            + " not set.",
+              label = "security", security = "secret")
     private String apiKey;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "A Conjur access token, as returned by the Conjur authenticate request, which the component sends"
+                            + " Base64-encoded in the Authorization header. It takes precedence over apiKey and password. The"
+                            + " component cannot renew it, so the requests fail once the token has expired.",
+              label = "security", security = "secret")
     private String authToken;
 
     @UriParam(label = "security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
@@ -65,16 +87,14 @@ public class CyberArkVaultConfiguration implements Cloneable {
     @UriParam(label = "security")
     private String certificatePath;
 
-    @UriParam
+    @UriParam(description = "To use a custom ConjurClient, for example #myClient from the registry. When set, the url, account,"
+                            + " credential and SSL options are not used, and the endpoint does not close the client.")
     private ConjurClient conjurClient;
 
     public String getLabel() {
         return label;
     }
 
-    /**
-     * Logical name
-     */
     public void setLabel(String label) {
         this.label = label;
     }
@@ -83,9 +103,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return secretId;
     }
 
-    /**
-     * The secret ID to retrieve from CyberArk Conjur
-     */
     public void setSecretId(String secretId) {
         this.secretId = secretId;
     }
@@ -94,9 +111,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return operation;
     }
 
-    /**
-     * The operation to perform. It can be getSecret or createSecret
-     */
     public void setOperation(CyberArkVaultOperations operation) {
         this.operation = operation;
     }
@@ -105,9 +119,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return url;
     }
 
-    /**
-     * The CyberArk Conjur instance URL
-     */
     public void setUrl(String url) {
         this.url = url;
     }
@@ -116,9 +127,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return account;
     }
 
-    /**
-     * The CyberArk Conjur account name
-     */
     public void setAccount(String account) {
         this.account = account;
     }
@@ -127,9 +135,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return username;
     }
 
-    /**
-     * The username for authentication with CyberArk Conjur
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -138,9 +143,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return password;
     }
 
-    /**
-     * The password for authentication with CyberArk Conjur
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -149,9 +151,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return apiKey;
     }
 
-    /**
-     * The API key for authentication with CyberArk Conjur
-     */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
@@ -160,9 +159,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return authToken;
     }
 
-    /**
-     * Pre-authenticated token to use for CyberArk Conjur
-     */
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
@@ -197,9 +193,6 @@ public class CyberArkVaultConfiguration implements Cloneable {
         return conjurClient;
     }
 
-    /**
-     * Reference to a ConjurClient instance in the registry
-     */
     public void setConjurClient(ConjurClient conjurClient) {
         this.conjurClient = conjurClient;
     }

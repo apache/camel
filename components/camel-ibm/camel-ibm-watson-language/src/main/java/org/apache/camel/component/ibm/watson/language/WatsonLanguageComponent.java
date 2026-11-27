@@ -27,7 +27,8 @@ import org.apache.camel.support.HealthCheckComponent;
 @Deprecated(since = "4.24")
 public class WatsonLanguageComponent extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration shared by the endpoints. Each endpoint starts from a copy of it, and its"
+                            + " endpoint options replace single values.")
     private WatsonLanguageConfiguration configuration = new WatsonLanguageConfiguration();
 
     public WatsonLanguageComponent() {
@@ -47,9 +48,6 @@ public class WatsonLanguageComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(WatsonLanguageConfiguration configuration) {
         this.configuration = configuration;
     }

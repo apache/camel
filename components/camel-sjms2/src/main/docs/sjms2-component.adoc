@@ -2,7 +2,7 @@
 :doctitle: Simple JMS2
 :shortname: sjms2
 :artifactid: camel-sjms2
-:description: Send and receive messages to/from a JMS Queue or Topic using plain JMS 2.x API.
+:description: Send messages to and receive messages from a JMS queue or topic using the plain JMS 2.x API, without Spring JMS.
 :since: 2.19
 :supportlevel: Stable
 :tabs-sync-option:

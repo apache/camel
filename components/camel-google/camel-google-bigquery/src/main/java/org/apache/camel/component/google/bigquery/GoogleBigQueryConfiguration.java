@@ -26,27 +26,38 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleBigQueryConfiguration implements Cloneable, GoogleCommonConfiguration {
 
-    @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
+    @UriParam(description = "The org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory that provides the"
+                            + " BigQuery client. If not set, the connectionFactory of the component is used, and if that is not"
+                            + " set either, the endpoint creates one from the serviceAccountKey and projectId options. With a"
+                            + " factory that is set, the rows go to the dataset in the default project of its client.")
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
 
-    @UriParam(description = "Field name to use as insert id")
+    @UriParam(description = "The name of the field of each row whose value is the insert ID of the row, which BigQuery uses to"
+                            + " drop duplicate rows on a best-effort basis. It applies to a Map body and to each Map of a List"
+                            + " body. When set, the CamelGoogleBigQueryInsertId header is not used.")
     private String useAsInsertId;
 
-    @UriPath(label = "common", description = "Google Cloud Project Id")
+    @UriPath(label = "common", description = "The ID of the Google Cloud project of the dataset. The endpoint sets it as the"
+                                             + " project of the BigQuery client that it creates.")
     @Metadata(required = true)
     private String projectId;
 
-    @UriPath(label = "common", description = "BigQuery Dataset Id")
+    @UriPath(label = "common", description = "The ID of the BigQuery dataset that holds the table.")
     @Metadata(required = true)
     private String datasetId;
 
-    @UriPath(label = "common", description = "BigQuery table id")
+    @UriPath(label = "common",
+             description = "The ID of the table to insert the rows into. The CamelGoogleBigQueryTableId header"
+                           + " replaces it. If neither is set, the exchange fails.")
     @Metadata(required = false)
     private String tableId;
 
     @UriParam(label = "security",
-              description = "Service account key in json format to authenticate an application as a service account to google cloud platform")
+              description = "The location of the JSON key file of the service account to authenticate with Google Cloud, such"
+                            + " as a classpath:, file: or https: resource, or base64: followed by the Base64 encoded content of"
+                            + " the file. If not set, Application Default Credentials are used. It is not used when a"
+                            + " connectionFactory is set.")
     @Metadata(required = false)
     private String serviceAccountKey;
 
@@ -64,9 +75,6 @@ public class GoogleBigQueryConfiguration implements Cloneable, GoogleCommonConfi
         }
     }
 
-    /**
-     * ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used.
-     */
     public GoogleBigQueryConnectionFactory getConnectionFactory() {
         return connectionFactory;
     }
