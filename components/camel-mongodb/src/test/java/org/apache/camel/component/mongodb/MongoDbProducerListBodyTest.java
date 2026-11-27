@@ -62,9 +62,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * The update, findOneAndUpdate and aggregate operations read a byte[] body, such as JSON text from a Kafka consumer or
- * a file, as they read the same text as a String: a JSON array of the criteria and the update, the update when the
- * criteria are in a header, or the pipeline.
+ * The update, findOneAndUpdate and aggregate operations read a byte[], InputStream, StreamCache or File body, such as
+ * JSON text from a Kafka, HTTP or file consumer, as they read the same text as a String: a JSON array of the criteria
+ * and the update, the update when the criteria are in a header, or the pipeline or a single stage.
  */
 class MongoDbProducerListBodyTest extends CamelTestSupport {
 
