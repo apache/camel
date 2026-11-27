@@ -169,6 +169,26 @@ class DeviceClientPoolTest {
     }
 
     @Test
+    void testHttpsClientIsKeptApartAndRemovedByDeviceId() throws Exception {
+        DeviceClient https = mock(DeviceClient.class);
+        DeviceClient mqtt = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> protocol == IotHubClientProtocol.HTTPS ? https : mqtt);
+
+        assertSame(https, pool.getOrCreate("d", CS, IotHubClientProtocol.HTTPS));
+        assertSame(mqtt, pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT));
+        assertSame(mqtt, pool.getOrCreate("d", CS, IotHubClientProtocol.AMQPS));
+        assertEquals(2, pool.getActiveClientCount());
+
+        pool.remove("d");
+        pool.remove("d");
+
+        assertEquals(0, pool.getActiveClientCount());
+        verify(https, times(1)).close();
+        verify(mqtt, times(1)).close();
+    }
+
+    @Test
     void testShutdownClosesAllAndBlocksCreation() throws Exception {
         DeviceClient client = mock(DeviceClient.class);
         DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
