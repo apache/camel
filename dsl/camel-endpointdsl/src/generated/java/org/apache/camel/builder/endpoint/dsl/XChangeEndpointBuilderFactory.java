@@ -84,7 +84,8 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * The currency pair, such as BTC/USDT, for the ticker and
          * currencyPairMetaData methods when neither the CurrencyPair header nor
-         * the message body gives one.
+         * the message body gives one. A currency that XChange does not know
+         * fails the creation of the endpoint.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -167,6 +168,39 @@ public interface XChangeEndpointBuilderFactory {
          */
         default XChangeEndpointBuilder service(String service) {
             doSetProperty("service", service);
+            return this;
+        }
+        /**
+         * The API key of the account at the exchange, for the account service.
+         * If not set, the exchange module of XChange decides, for example the
+         * one of Binance reads it from the file binance-secret.keys.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default XChangeEndpointBuilder apiKey(String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+        /**
+         * The secret key of the account at the exchange, for the account
+         * service. If not set, the exchange module of XChange decides, for
+         * example the one of Binance reads it from the file
+         * binance-secret.keys.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
+         */
+        default XChangeEndpointBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }

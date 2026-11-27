@@ -312,6 +312,24 @@ from("direct:start")
   .to("rest:get:hello/{me}");
 ----
 
+The parameters of the endpoint URI that are not options of the rest endpoint are sent as query parameters of
+the request, except the options of the component that sends the request. For example, with http as the producer
+component, the following route calls `+http://myserver:8080/foo/hello/{me}?page=2+`, and logs in with the
+`authUsername` and `authPassword` options of the http component.
+This is the same whether the producer component is set with the `producerComponentName` option, with the
+`producerComponent` of the rest configuration, or is detected automatically.
+To send a query parameter that has the same name as an option of the producer component, set it in the
+`queryParameters` option.
+
+._Java-only: Java programmatic REST configuration API_
+[source,java]
+----
+restConfiguration().host("myserver:8080/foo").producerComponent("http");
+
+from("direct:start")
+  .to("rest:get:hello/{me}?page=2&authUsername=scott&authPassword=RAW(tiger)");
+----
+
 
 === Rest producer binding
 

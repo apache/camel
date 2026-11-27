@@ -170,11 +170,12 @@ public interface MustacheEndpointBuilderFactory {
             return this;
         }
         /**
-         * The characters that end a tag in the template, in place of }}. Only
-         * applied when startDelimiter is set too and the mustacheFactory of the
-         * component is a com.github.mustachejava.DefaultMustacheFactory, which
-         * it is by default. Also applied to the template of the
-         * CamelMustacheTemplate header.
+         * The characters that end a tag in the template, in place of }}. It can
+         * be set without startDelimiter, which then stays {{. Only applied when
+         * the mustacheFactory of the component is a
+         * com.github.mustachejava.DefaultMustacheFactory, which it is by
+         * default; with another factory the endpoint logs a WARN. Also applied
+         * to the template of the CamelMustacheTemplate header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -189,11 +190,12 @@ public interface MustacheEndpointBuilderFactory {
             return this;
         }
         /**
-         * The characters that start a tag in the template, in place of {{. Only
-         * applied when endDelimiter is set too and the mustacheFactory of the
-         * component is a com.github.mustachejava.DefaultMustacheFactory, which
-         * it is by default. Also applied to the template of the
-         * CamelMustacheTemplate header.
+         * The characters that start a tag in the template, in place of {{. It
+         * can be set without endDelimiter, which then stays }}. Only applied
+         * when the mustacheFactory of the component is a
+         * com.github.mustachejava.DefaultMustacheFactory, which it is by
+         * default; with another factory the endpoint logs a WARN. Also applied
+         * to the template of the CamelMustacheTemplate header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

@@ -21,7 +21,9 @@ import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the usage of defaults in the component configuration
@@ -72,6 +74,18 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("telegram:bots/token/s");
         });
+    }
+
+    @Test
+    public void testWrongTypeDoesNotShowTheAuthorizationToken() {
+        TelegramComponent component = (TelegramComponent) context().getComponent("telegram");
+        component.setAuthorizationToken(null);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("telegram:channels?authorizationToken=secret-bot-token");
+        });
+        assertFalse(e.getMessage().contains("secret-bot-token"), e.getMessage());
+        assertTrue(e.getMessage().contains("authorizationToken=xxxxxx"), e.getMessage());
     }
 
     @Test

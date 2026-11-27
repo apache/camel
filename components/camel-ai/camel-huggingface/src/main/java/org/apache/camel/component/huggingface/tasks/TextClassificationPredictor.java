@@ -93,7 +93,8 @@ public class TextClassificationPredictor extends AbstractTaskPredictor {
 
     @Override
     protected String getPythonScript() {
-        return loadPythonScript("text_classification.py", config.getModelId(), config.getRevision(), config.getDevice(),
+        return loadPythonScript("text_classification.py", pythonString(config.getModelId()), pythonString(config.getRevision()),
+                pythonString(config.getDevice()),
                 config.getTopK());
     }
 
