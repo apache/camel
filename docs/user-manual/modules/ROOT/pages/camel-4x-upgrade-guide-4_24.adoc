@@ -4027,6 +4027,17 @@ default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ 
 and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
 Set `confirm=disabled` to send without waiting, as before.
 
+=== camel-spring-redis - ZREMRANGEBYSCORE takes the score range from CamelRedis.Min and CamelRedis.Max
+
+The `ZREMRANGEBYSCORE` command now reads the score range from the `CamelRedis.Min` and `CamelRedis.Max` headers, as a
+`Double`, as `ZCOUNT`, `ZRANGEBYSCORE` and `ZREVRANGEBYSCORE` do. Before, it read the `CamelRedis.Start` and
+`CamelRedis.End` headers as a `Long`, so a fractional score could not be given, and a route that set `CamelRedis.Min`
+and `CamelRedis.Max` failed with a `NullPointerException`. When `CamelRedis.Min` or `CamelRedis.Max` is not set,
+`CamelRedis.Start` or `CamelRedis.End` is used, so existing routes keep working.
+
+In the Endpoint DSL, `channels` is now an option of the consumer builders only, and `redisTemplate` of the producer
+builders only, as the producer does not use `channels` and the consumer does not use `redisTemplate`.
+
 === camel-stream - a scanning consumer keeps going after the stream cannot be opened or read
 
 A `stream` consumer with `scanStream=true` no longer ends its reading thread when the stream cannot be opened (for
