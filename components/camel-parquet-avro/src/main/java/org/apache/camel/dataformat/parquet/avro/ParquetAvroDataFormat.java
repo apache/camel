@@ -20,6 +20,8 @@ import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.avro.AvroRuntimeException;
@@ -51,9 +53,10 @@ import static org.apache.parquet.hadoop.ParquetFileWriter.Mode.OVERWRITE;
 import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
 
 @Dataformat("parquetAvro")
-@BodyTypes(marshalIn = @BodyType(value = Carrier.LIST,
-                                 description = "A List of Avro GenericRecords, or of objects of the class unmarshalType names."
-                                               + " A single record fails, and so does an empty List without unmarshalType"),
+@BodyTypes(marshalIn = @BodyType(value = { Carrier.LIST, Carrier.ITERATOR, Carrier.POJO },
+                                 description = "The records: a List, another Collection, an array or an Iterator of Avro"
+                                               + " GenericRecords, or of objects of the class unmarshalType names, or a"
+                                               + " single such record. An empty body fails without unmarshalType"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
                                   description = "The Parquet file in the stream cache, or a byte array when stream caching is"
                                                 + " off"),
@@ -92,7 +95,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
                 DEFAULT_UUID_GENERATOR.generateUuid(),
                 parquetOutput);
 
-        List<?> list = (List<?>) graph;
+        List<Object> records = toRecords(graph);
 
         Schema schema = null;
         GenericData model = null;
@@ -105,7 +108,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
             }
         }
         if (schema == null) {
-            schema = GenericContainer.class.cast(list.get(0)).getSchema();
+            schema = GenericContainer.class.cast(records.get(0)).getSchema();
             model = GenericData.get();
         }
 
@@ -116,10 +119,28 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
                 .withCompressionCodec(compressionCodecName)
                 .withWriteMode(OVERWRITE)
                 .build()) {
-            for (Object grapElem : list) {
+            for (Object grapElem : records) {
                 writer.write(grapElem);
             }
         }
+    }
+
+    /**
+     * The records to write: the elements of an Iterable (such as a List or another Collection), of an array or of an
+     * Iterator, or the body itself as a single record.
+     */
+    private static List<Object> toRecords(Object graph) {
+        List<Object> records = new ArrayList<>();
+        if (graph instanceof Iterable<?> iterable) {
+            iterable.forEach(records::add);
+        } else if (graph instanceof Object[] array) {
+            Collections.addAll(records, array);
+        } else if (graph instanceof Iterator<?> iterator) {
+            iterator.forEachRemaining(records::add);
+        } else if (graph != null) {
+            records.add(graph);
+        }
+        return records;
     }
 
     @Override
