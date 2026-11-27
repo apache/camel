@@ -39,12 +39,20 @@ final class DelayedReadLockReleaseTasks {
     private final Set<Task> pending = ConcurrentHashMap.newKeySet();
 
     /**
-     * Schedules the release task to run after the delay.
+     * Schedules the release task to run after the delay. When the thread pool does not accept it, the exception is
+     * thrown and the task is not kept for the stop.
      */
     void schedule(ScheduledExecutorService executorService, Runnable release, long delay) {
         Task task = new Task(release);
         pending.add(task);
-        task.future = executorService.schedule(task, delay, TimeUnit.MILLISECONDS);
+        try {
+            task.future = executorService.schedule(task, delay, TimeUnit.MILLISECONDS);
+        } catch (RuntimeException e) {
+            // not scheduled (the queue of the pool is full, or a pool of your own rejects it): do not keep it, with its
+            // exchange, until the stop
+            pending.remove(task);
+            throw e;
+        }
     }
 
     /**
