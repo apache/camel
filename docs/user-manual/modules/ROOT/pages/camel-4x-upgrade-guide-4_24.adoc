@@ -656,7 +656,7 @@ all `https://` addresses.
 A route that called an `https://` address of a server that only speaks plain HTTP now fails; use an `http://` address
 for such a server. An `http://` address with `sslContextParameters` is not changed.
 
-=== camel-vertx, camel-platform-http-vertx, camel-kafka, camel-thrift - the named groups of sslContextParameters
+=== camel-platform-http-vertx, camel-vertx-http, camel-vertx-websocket, camel-vertx-mqtt, camel-apicurio-registry, camel-kafka, camel-thrift - the named groups of sslContextParameters
 
 The Vert.x components (`camel-platform-http-vertx`, `camel-vertx-http`, `camel-vertx-websocket` and
 `camel-vertx-mqtt`) and `camel-apicurio-registry` now apply the `namedGroups` (or `namedGroupsFilter`) of
