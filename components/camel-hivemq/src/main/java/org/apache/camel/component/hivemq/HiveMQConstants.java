@@ -20,16 +20,27 @@ import org.apache.camel.spi.Metadata;
 
 public final class HiveMQConstants {
 
-    @Metadata(description = "The topic to publish/subscribe to.", javaType = "String")
+    @Metadata(description = "The topic of the received message, set by the consumer. With a wildcard subscription it is"
+                            + " the actual topic name. The producer does not read this header: use CamelHiveMQOverrideTopic"
+                            + " to publish to another topic.",
+              javaType = "String")
     public static final String MQTT_TOPIC = "CamelHiveMQTopic";
 
-    @Metadata(description = "The QoS level of the message.", javaType = "com.hivemq.client.mqtt.datatypes.MqttQos")
+    @Metadata(description = "The QoS level of the message. The consumer sets the QoS that the message was delivered with,"
+                            + " and the producer publishes with this value instead of the qos option.",
+              javaType = "com.hivemq.client.mqtt.datatypes.MqttQos")
     public static final String MQTT_QOS = "CamelHiveMQQos";
 
-    @Metadata(description = "Whether the message should be retained.", javaType = "Boolean")
+    @Metadata(description = "Whether the retain flag of the message is set. The consumer sets it, true for a retained"
+                            + " message that the broker sends for a new subscription, and the producer publishes with this"
+                            + " value instead of the retained option.",
+              javaType = "Boolean")
     public static final String MQTT_RETAINED = "CamelHiveMQRetained";
 
-    @Metadata(description = "Header to dynamically override the target topic for publishing.", javaType = "String")
+    @Metadata(description = "The topic that the producer publishes to instead of the topic of the endpoint. toD sets it to"
+                            + " the topic of its URI and removes it after the send, but keeps a header that is already set,"
+                            + " which then replaces the topic of the toD URI.",
+              javaType = "String")
     public static final String OVERRIDE_TOPIC = "CamelHiveMQOverrideTopic";
 
     public static final String DEFAULT_HOST = "localhost";

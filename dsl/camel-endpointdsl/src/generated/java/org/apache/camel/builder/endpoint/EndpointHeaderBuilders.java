@@ -1988,7 +1988,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * HiveMQ (camel-hivemq)
-     * Camel HiveMQ MQTT Client support
+     * Send messages to and receive messages from an MQTT broker with the HiveMQ
+     * MQTT Client.
      * 
      * Category: messaging,iot
      * Since: 4.23

@@ -8268,7 +8268,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * HiveMQ (camel-hivemq)
-     * Camel HiveMQ MQTT Client support
+     * Send messages to and receive messages from an MQTT broker with the HiveMQ
+     * MQTT Client.
      * 
      * Category: messaging,iot
      * Since: 4.23
@@ -8277,7 +8278,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hivemq:topic</code>
      * 
      * Path parameter: topic (required)
-     * The MQTT topic name or pattern to subscribe to or publish on.
+     * The MQTT topic. The consumer subscribes to it as a topic filter, which
+     * can contain the wildcards + and #. The producer publishes to it as a
+     * topic name without wildcards, and the CamelHiveMQOverrideTopic header
+     * replaces it.
      * 
      * @param path topic
      * @return the dsl builder
@@ -8287,7 +8291,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * HiveMQ (camel-hivemq)
-     * Camel HiveMQ MQTT Client support
+     * Send messages to and receive messages from an MQTT broker with the HiveMQ
+     * MQTT Client.
      * 
      * Category: messaging,iot
      * Since: 4.23
@@ -8296,7 +8301,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hivemq:topic</code>
      * 
      * Path parameter: topic (required)
-     * The MQTT topic name or pattern to subscribe to or publish on.
+     * The MQTT topic. The consumer subscribes to it as a topic filter, which
+     * can contain the wildcards + and #. The producer publishes to it as a
+     * topic name without wildcards, and the CamelHiveMQOverrideTopic header
+     * replaces it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
