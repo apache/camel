@@ -88,7 +88,7 @@ or removes its row.
 | camel-aws2-ecs | aws2-ecs | yes |
 | camel-aws2-eks | aws2-eks |  |
 | camel-aws2-eventbridge | aws2-eventbridge |  |
-| camel-aws2-iam | aws2-iam |  |
+| camel-aws2-iam | aws2-iam | yes |
 | camel-aws2-kinesis | aws2-kinesis, aws2-kinesis-firehose |  |
 | camel-aws2-kms | aws2-kms |  |
 | camel-aws2-lambda | aws2-lambda |  |

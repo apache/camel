@@ -1786,7 +1786,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances.
+     * Manage users, groups, roles, managed policies, access keys and instance
+     * profiles in AWS Identity and Access Management (IAM).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1795,7 +1796,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-iam:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to IAM.
      * 
      * @param path label
      * @return the dsl builder
@@ -1805,7 +1807,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances.
+     * Manage users, groups, roles, managed policies, access keys and instance
+     * profiles in AWS Identity and Access Management (IAM).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1814,7 +1817,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-iam:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to IAM.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

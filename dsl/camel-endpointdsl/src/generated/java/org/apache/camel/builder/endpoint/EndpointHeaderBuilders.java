@@ -534,7 +534,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances.
+     * Manage users, groups, roles, managed policies, access keys and instance
+     * profiles in AWS Identity and Access Management (IAM).
      * 
      * Category: cloud,management
      * Since: 3.1
