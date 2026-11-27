@@ -194,11 +194,31 @@ from("thrift://0.0.0.0:1101/org.apache.camel.component.thrift.generated.Calculat
     .to("direct:thrift-service");
 ----
 
-The producer creates its TLS connection with the Thrift `TSSLTransportFactory`, from the secure socket protocol, the
-cipher suites and the trust store of `sslParameters` only. The named groups and the signature schemes are not applied
-by the producer, and a `WARN` is logged when they are configured. The producer uses the named groups of the JVM, also
-for the post-quantum preference that `SSLContextParameters` applies elsewhere. See _Components with their own TLS
-stack_ in the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility].
+The producer builds its TLS connection from the full SSL context of `sslParameters`, the same as the consumer. All
+SSL settings apply: the key managers (client certificate for mTLS), trust managers, protocols, cipher suites, named
+groups, signature schemes and the post-quantum preference. Without trust managers, the JVM default trust store is used.
+Hostname verification is enabled by default: the server certificate must match the host name of the URI.
+
+For mTLS (the producer sends a client certificate), configure the key managers of `sslParameters` with the client
+certificate and key, and the trust managers with the CA that signed the server certificate, and add
+`synchronous=true`:
+
+[source,java]
+----
+KeyManagersParameters keyManagers = new KeyManagersParameters();
+keyManagers.setKeyStore(keyStore);
+keyManagers.setKeyPassword("keyPassword");
+
+TrustManagersParameters trustManagers = new TrustManagersParameters();
+trustManagers.setKeyStore(trustStore);
+
+SSLContextParameters sslParameters = new SSLContextParameters();
+sslParameters.setKeyManagers(keyManagers);
+sslParameters.setTrustManagers(trustManagers);
+context.getRegistry().bind("sslParams", sslParameters);
+
+to("thrift://server:9090/org.example.Calculator?negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
+----
 
 == Errors sent to the client
 

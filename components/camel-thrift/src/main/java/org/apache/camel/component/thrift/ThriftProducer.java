@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocket;
 
 import org.apache.camel.AsyncCallback;
@@ -33,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.TAsyncClientManager;
@@ -315,11 +317,19 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
                 throw new TTransportException(
                         "Unable to open SSL connection to " + configuration.getHost() + ":" + configuration.getPort(), e);
             }
-            if (configuration.getClientTimeout() > 0) {
-                sslSocket.setSoTimeout(configuration.getClientTimeout());
+            // Apply hostname verification, as TSSLTransportFactory does since libthrift 0.23.0.
+            SSLParameters socketParameters = sslSocket.getSSLParameters();
+            socketParameters.setEndpointIdentificationAlgorithm("HTTPS");
+            sslSocket.setSSLParameters(socketParameters);
+            try {
+                if (configuration.getClientTimeout() > 0) {
+                    sslSocket.setSoTimeout(configuration.getClientTimeout());
+                }
+                syncTransport = new TSocket(sslSocket);
+            } catch (IOException | TTransportException e) {
+                IOHelper.close(sslSocket);
+                throw e;
             }
-
-            syncTransport = new TSocket(sslSocket);
         } else {
             throw new IllegalArgumentException("No connection properties (host, port) specified");
         }
