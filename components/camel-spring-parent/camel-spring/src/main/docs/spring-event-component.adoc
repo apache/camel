@@ -2,7 +2,7 @@
 :doctitle: Spring Event
 :shortname: spring-event
 :artifactid: camel-spring
-:description: Listen for Spring Application Events.
+:description: Publish and receive the Spring ApplicationEvents of the Spring ApplicationContext.
 :since: 1.4
 :supportlevel: Stable
 :tabs-sync-option:
@@ -71,5 +71,3 @@ otherwise a `CamelEvent` that holds the exchange:
         - to:
             uri: spring-event:default
 ----
-
-
