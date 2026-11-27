@@ -1463,7 +1463,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Data Format (camel-dataformat)
-     * Use a Camel Data Format as a regular Camel Component.
+     * Marshal or unmarshal the message body with a Camel data format, such as
+     * JAXB, CSV or JSON.
      * 
      * Category: core,transformation
      * Since: 2.12

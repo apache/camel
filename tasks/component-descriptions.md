@@ -146,7 +146,7 @@ or removes its row.
 | camel-cxf-soap | cxf | yes |
 | camel-cyberark-vault | cyberark-vault | yes |
 | camel-dapr | dapr |  |
-| camel-dataformat | dataformat |  |
+| camel-dataformat | dataformat | yes |
 | camel-dataset | dataset, dataset-test |  |
 | camel-debezium-db2 | debezium-db2 | yes |
 | camel-debezium-mongodb | debezium-mongodb |  |

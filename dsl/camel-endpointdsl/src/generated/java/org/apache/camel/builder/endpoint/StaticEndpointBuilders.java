@@ -4872,7 +4872,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Data Format (camel-dataformat)
-     * Use a Camel Data Format as a regular Camel Component.
+     * Marshal or unmarshal the message body with a Camel data format, such as
+     * JAXB, CSV or JSON.
      * 
      * Category: core,transformation
      * Since: 2.12
@@ -4881,10 +4882,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dataformat:name:operation</code>
      * 
      * Path parameter: name (required)
-     * Name of data format
+     * The name of the data format, for example jaxb, csv or jackson. The
+     * endpoint gets its own instance of the data format, configured first from
+     * the global camel.dataformat properties of this data format and then from
+     * the other URI parameters of the endpoint. If no data format of this name
+     * can be created, the DataFormat bean of this name in the registry is used.
      * 
      * Path parameter: operation (required)
-     * Operation to use either marshal or unmarshal
+     * Whether the producer marshals the message body into the data format
+     * (marshal) or unmarshals the message body from the data format
+     * (unmarshal), as the marshal and unmarshal EIPs do.
      * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param path name:operation
@@ -4895,7 +4902,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Data Format (camel-dataformat)
-     * Use a Camel Data Format as a regular Camel Component.
+     * Marshal or unmarshal the message body with a Camel data format, such as
+     * JAXB, CSV or JSON.
      * 
      * Category: core,transformation
      * Since: 2.12
@@ -4904,10 +4912,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dataformat:name:operation</code>
      * 
      * Path parameter: name (required)
-     * Name of data format
+     * The name of the data format, for example jaxb, csv or jackson. The
+     * endpoint gets its own instance of the data format, configured first from
+     * the global camel.dataformat properties of this data format and then from
+     * the other URI parameters of the endpoint. If no data format of this name
+     * can be created, the DataFormat bean of this name in the registry is used.
      * 
      * Path parameter: operation (required)
-     * Operation to use either marshal or unmarshal
+     * Whether the producer marshals the message body into the data format
+     * (marshal) or unmarshals the message body from the data format
+     * (unmarshal), as the marshal and unmarshal EIPs do.
      * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param componentName to use a custom component name for the endpoint
