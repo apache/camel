@@ -71,7 +71,7 @@ public class SmppConsumer extends DefaultConsumer {
     // the reconnect task that the thread which reported the lost session waits for, so that a stop can release it
     private volatile BackgroundTask reconnectTask;
     // set by the loss of the session in use before it tries reconnectLock, and looked at again by the thread that holds
-    // when it is done: a session lost while another thread holds the lock is reconnected too
+    // it when it is done: a session lost while another thread holds the lock is reconnected too
     private final AtomicBoolean reconnectRequested = new AtomicBoolean();
     // the session and the generation are changed together under this lock, so that a reconnect attempt, a lost
     // session and a stop do not replace or close each other's session
@@ -281,22 +281,27 @@ public class SmppConsumer extends DefaultConsumer {
             return false;
         }
 
+        boolean lost;
         synchronized (sessionLock) {
-            if (startGeneration == generation.get() && !isSessionLost(newSession)) {
+            // a start that began after the request of this attempt can have set its own session meanwhile, in the same
+            // generation: that session is kept, as replacing it would leave it bound and never closed
+            boolean needed = startGeneration == generation.get() && isSessionClosed(session);
+            if (needed && !isSessionLost(newSession)) {
                 session = newSession;
                 LOG.info("Reconnected to {}", getEndpoint().getConnectionString());
                 return true;
             }
+            lost = needed;
         }
         newSession.removeSessionStateListener(this.internalSessionStateListener);
         newSession.unbindAndClose();
-        if (startGeneration != generation.get()) {
-            // the consumer was stopped while this attempt connected: the new session belongs to no start
-            return true;
+        if (lost) {
+            // the SMSC dropped the new session before it was set, and its loss asked for no reconnect: try again
+            LOG.warn("Failed to reconnect to {}: the new session was lost", getEndpoint().getConnectionString());
+            return false;
         }
-        // the SMSC dropped the new session before it was set, and its loss asked for no reconnect: try again
-        LOG.warn("Failed to reconnect to {}: the new session was lost", getEndpoint().getConnectionString());
-        return false;
+        // the consumer was stopped while this attempt connected, or has a session again: the new one is not needed
+        return true;
     }
 
     private void reconnect() {

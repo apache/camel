@@ -72,7 +72,7 @@ public class SmppProducer extends DefaultProducer {
     // held by the thread that runs the reconnect task; connectLock is held only while a session is created and set
     private final ReentrantLock reconnectLock = new ReentrantLock();
     // set by the loss of the session in use before it tries reconnectLock, and looked at again by the thread that holds
-    // when it is done: a session lost while another thread holds the lock is reconnected too
+    // it when it is done: a session lost while another thread holds the lock is reconnected too
     private final AtomicBoolean reconnectRequested = new AtomicBoolean();
     // the session and the generation are changed together under this lock, so that a reconnect attempt, a lost
     // session and a stop do not replace or close each other's session
@@ -212,12 +212,14 @@ public class SmppProducer extends DefaultProducer {
             }
         }
 
+        // one read of the field: the listener can clear it on another thread when the session is lost
+        SMPPSession current = this.session;
         // only possible by trying to reconnect
-        if (this.session == null) {
+        if (current == null) {
             throw new IOException("Lost connection to " + getEndpoint().getConnectionString() + " and yet not reconnected");
         }
 
-        SmppCommand command = getEndpoint().getBinding().createSmppCommand(session, exchange);
+        SmppCommand command = getEndpoint().getBinding().createSmppCommand(current, exchange);
         command.execute(exchange);
     }
 

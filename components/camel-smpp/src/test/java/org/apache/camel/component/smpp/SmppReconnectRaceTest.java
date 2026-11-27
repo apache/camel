@@ -81,6 +81,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * A lost session is always reconnected, also when it is lost while another reconnect still holds the reconnect lock,
@@ -259,6 +260,56 @@ class SmppReconnectRaceTest extends CamelTestSupport {
             worksOnSession3.run();
         } finally {
             service.stop();
+        }
+    }
+
+    /**
+     * The reconnect attempt has bound session 2, and a start sets its session 3 before the attempt sets session 2, in
+     * the generation of the attempt: a stop and a start that run between the reconnect request and the generation that
+     * the attempt reads give this, a window the test cannot open from the outside, so the hook runs the start in place.
+     * The attempt keeps session 3 and closes session 2, which would otherwise replace session 3 and leave it bound.
+     */
+    @Test
+    void consumerReconnectAttemptKeepsTheSessionThatAStartSetMeanwhile() throws Exception {
+        SmppEndpoint endpoint = context.getEndpoint(uri(""), SmppEndpoint.class);
+        AtomicReference<Runnable> afterBind = new AtomicReference<>();
+        SmppConsumer consumer = new SmppConsumer(endpoint, endpoint.getConfiguration(), this::receive) {
+            @Override
+            SMPPSession createSMPPSession() {
+                return new HookedSession(afterBind);
+            }
+        };
+        List<SMPPSession> sessions = new CopyOnWriteArrayList<>();
+        endpoint.getConfiguration().setSessionStateListener((newState, oldState, source) -> {
+            if (newState.isBound() && !sessions.contains(source)) {
+                sessions.add((SMPPSession) source);
+            }
+        });
+        try {
+            consumer.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> serverSessions.size() == 1);
+
+            // runs on the reconnect thread, once connectAndBind of session 2 returned
+            afterBind.set(() -> {
+                try {
+                    consumer.doStart();
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            });
+            serverSessions.get(0).close();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> afterBind.get() == null);
+            await().atMost(10, TimeUnit.SECONDS).until(() -> threadsIn("tryCreateSession") == 0);
+
+            assertEquals(3, sessions.size());
+            assertFalse(sessions.get(1).getSessionState().isBound(), "the session of the reconnect attempt is closed");
+            assertDelivered(serverSessions.get(2));
+        } finally {
+            consumer.stop();
+        }
+        // the stop closed the session in use, which is session 3: no session is left bound
+        for (SMPPSession session : sessions) {
+            assertFalse(session.getSessionState().isBound(), "no session is left bound after the stop");
         }
     }
 
