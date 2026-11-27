@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -506,17 +507,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, ProducerConfig.TRANSACTIONAL_ID_CONFIG, getTransactionalId());
         addPropertyIfNotEmpty(props, "schema.registry.url", getSchemaRegistryURL());
 
-        // SSL
+        // SSL (the sslContextParameters are applied before the other SSL endpoint options)
+        String protocol = resolveSecurityProtocol();
         if (sslContextParameters != null) {
             applySslConfigurationFromContext(props, sslContextParameters);
-        } else {
-            applyProducerSslConfiguration(props);
         }
+        applyProducerSslConfiguration(props, protocol);
 
-        addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
+        addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, protocol);
 
         // SASL
-        if (isSasl(securityProtocol)) {
+        if (isSasl(protocol)) {
             applySaslConfiguration(props);
         }
 
@@ -538,19 +539,48 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, SaslConfigs.SASL_JAAS_CONFIG, getSaslJaasConfig());
     }
 
-    private void applyProducerSslConfiguration(Properties props) {
-        if (securityProtocol.equals(SecurityProtocol.SSL.name()) || securityProtocol.equals(SecurityProtocol.SASL_SSL.name())) {
-            addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getSecurityProtocol());
+    /**
+     * The security protocol to use, which is SSL when sslContextParameters are configured and the security protocol is
+     * the default (PLAINTEXT).
+     */
+    private String resolveSecurityProtocol() {
+        if (sslContextParameters != null && SecurityProtocol.PLAINTEXT.name().equals(securityProtocol)) {
+            return SecurityProtocol.SSL.name();
+        }
+        return securityProtocol;
+    }
+
+    /**
+     * Adds the SSL option, unless the option is its default value and the value has already been configured from the
+     * sslContextParameters (which are applied before the SSL endpoint options).
+     */
+    private void addSslOption(Properties props, String key, String value, String defaultValue, boolean upperCase) {
+        if (sslContextParameters != null && Objects.equals(value, defaultValue) && props.containsKey(key)) {
+            return;
+        }
+        if (upperCase) {
+            addUpperCasePropertyIfNotEmpty(props, key, value);
+        } else {
+            addPropertyIfNotEmpty(props, key, value);
+        }
+    }
+
+    private void applyProducerSslConfiguration(Properties props, String protocol) {
+        if (protocol.equals(SecurityProtocol.SSL.name()) || protocol.equals(SecurityProtocol.SASL_SSL.name())) {
+            addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, protocol);
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getSslKeystoreLocation());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getSslKeystorePassword());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getSslTruststoreLocation());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, getSslTruststorePassword());
-            addPropertyIfNotEmpty(props, SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, getSslEnabledProtocols());
-            addUpperCasePropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, getSslKeystoreType());
-            addPropertyIfNotEmpty(props, SslConfigs.SSL_PROTOCOL_CONFIG, getSslProtocol());
+            addSslOption(props, SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, getSslEnabledProtocols(),
+                    SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS, false);
+            addSslOption(props, SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, getSslKeystoreType(), SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE,
+                    true);
+            addSslOption(props, SslConfigs.SSL_PROTOCOL_CONFIG, getSslProtocol(), SslConfigs.DEFAULT_SSL_PROTOCOL, false);
             addPropertyIfNotEmpty(props, SslConfigs.SSL_PROVIDER_CONFIG, getSslProvider());
-            addUpperCasePropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, getSslTruststoreType());
+            addSslOption(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, getSslTruststoreType(),
+                    SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE, true);
             addPropertyIfNotEmpty(props, SslConfigs.SSL_CIPHER_SUITES_CONFIG, getSslCipherSuites());
             String algo = getSslEndpointAlgorithm();
             if (algo != null && !algo.equals("none") && !algo.equals("false")) {
@@ -558,8 +588,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
             } else {
                 props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
             }
-            addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, getSslKeymanagerAlgorithm());
-            addPropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, getSslTrustmanagerAlgorithm());
+            addSslOption(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, getSslKeymanagerAlgorithm(), "SunX509", false);
+            addSslOption(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, getSslTrustmanagerAlgorithm(), "PKIX", false);
         }
     }
 
@@ -609,18 +639,18 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, "schema.registry.url", getSchemaRegistryURL());
         addPropertyIfNotFalse(props, "specific.avro.reader", isSpecificAvroReader());
 
-        // SSL
+        // SSL (the sslContextParameters are applied before the other SSL endpoint options)
+        String protocol = resolveSecurityProtocol();
         if (sslContextParameters != null) {
             applySslConfigurationFromContext(props, sslContextParameters);
-        } else {
-            applySslConsumerConfigurationFromOptions(props);
         }
+        applySslConsumerConfigurationFromOptions(props, protocol);
 
         // Security protocol
-        addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
+        addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, protocol);
 
         // SASL
-        if (isSasl(securityProtocol)) {
+        if (isSasl(protocol)) {
             applySaslConfiguration(props);
         }
 
@@ -635,8 +665,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
                 || securityProtocol.equals(SecurityProtocol.SASL_SSL.name());
     }
 
-    private void applySslConsumerConfigurationFromOptions(Properties props) {
-        if (securityProtocol.equals(SecurityProtocol.SSL.name()) || securityProtocol.equals(SecurityProtocol.SASL_SSL.name())) {
+    private void applySslConsumerConfigurationFromOptions(Properties props, String protocol) {
+        if (protocol.equals(SecurityProtocol.SSL.name()) || protocol.equals(SecurityProtocol.SASL_SSL.name())) {
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getSslKeystoreLocation());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getSslKeystorePassword());
@@ -649,13 +679,16 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
             } else {
                 props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
             }
-            addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, getSslKeymanagerAlgorithm());
-            addPropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, getSslTrustmanagerAlgorithm());
-            addPropertyIfNotEmpty(props, SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, getSslEnabledProtocols());
-            addUpperCasePropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, getSslKeystoreType());
-            addPropertyIfNotEmpty(props, SslConfigs.SSL_PROTOCOL_CONFIG, getSslProtocol());
+            addSslOption(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, getSslKeymanagerAlgorithm(), "SunX509", false);
+            addSslOption(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, getSslTrustmanagerAlgorithm(), "PKIX", false);
+            addSslOption(props, SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, getSslEnabledProtocols(),
+                    SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS, false);
+            addSslOption(props, SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, getSslKeystoreType(), SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE,
+                    true);
+            addSslOption(props, SslConfigs.SSL_PROTOCOL_CONFIG, getSslProtocol(), SslConfigs.DEFAULT_SSL_PROTOCOL, false);
             addPropertyIfNotEmpty(props, SslConfigs.SSL_PROVIDER_CONFIG, getSslProvider());
-            addUpperCasePropertyIfNotEmpty(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, getSslTruststoreType());
+            addSslOption(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, getSslTruststoreType(),
+                    SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE, true);
         }
     }
 
