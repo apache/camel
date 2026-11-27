@@ -12509,8 +12509,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -12519,7 +12518,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-browse:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
+     * The endpoint URL of the OPC UA server, for example
+     * opc.tcp://localhost:4840/path. It can hold a user name and password in
+     * its user info part. The username and password options take precedence
+     * over them.
      * 
      * @param path endpointUri
      * @return the dsl builder
@@ -12529,8 +12531,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -12539,7 +12540,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-browse:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
+     * The endpoint URL of the OPC UA server, for example
+     * opc.tcp://localhost:4840/path. It can hold a user name and password in
+     * its user info part. The username and password options take precedence
+     * over them.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12551,8 +12555,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19
@@ -12561,7 +12565,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-client:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
+     * The endpoint URL of the OPC UA server, for example
+     * opc.tcp://localhost:4840/path. It can hold a user name and password in
+     * its user info part. The username and password options take precedence
+     * over them.
      * 
      * @param path endpointUri
      * @return the dsl builder
@@ -12571,8 +12578,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19
@@ -12581,7 +12588,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-client:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
+     * The endpoint URL of the OPC UA server, for example
+     * opc.tcp://localhost:4840/path. It can hold a user name and password in
+     * its user info part. The username and password options take precedence
+     * over them.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12593,7 +12603,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Server (camel-milo)
-     * Make telemetry data available as an OPC UA server.
+     * Expose values as variable nodes of an embedded OPC UA server, which OPC
+     * UA clients can read and write.
      * 
      * Category: iot
      * Since: 2.19
@@ -12602,7 +12613,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-server:itemId</code>
      * 
      * Path parameter: itemId (required)
-     * ID of the item
+     * The ID of the item: the string node ID of a variable node in the
+     * namespace of the namespaceUri option. A client addresses the item myItem
+     * in the default namespace as nsu=urn:org:apache:camel;s=myItem. The
+     * consumer receives the values that clients write to the node, and the
+     * producer sets its value.
      * 
      * @param path itemId
      * @return the dsl builder
@@ -12612,7 +12627,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Server (camel-milo)
-     * Make telemetry data available as an OPC UA server.
+     * Expose values as variable nodes of an embedded OPC UA server, which OPC
+     * UA clients can read and write.
      * 
      * Category: iot
      * Since: 2.19
@@ -12621,7 +12637,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-server:itemId</code>
      * 
      * Path parameter: itemId (required)
-     * ID of the item
+     * The ID of the item: the string node ID of a variable node in the
+     * namespace of the namespaceUri option. A client addresses the item myItem
+     * in the default namespace as nsu=urn:org:apache:camel;s=myItem. The
+     * consumer receives the values that clients write to the node, and the
+     * producer sets its value.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

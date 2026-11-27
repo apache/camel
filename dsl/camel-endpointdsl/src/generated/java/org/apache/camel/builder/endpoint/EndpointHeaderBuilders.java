@@ -2946,8 +2946,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -2960,8 +2959,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19

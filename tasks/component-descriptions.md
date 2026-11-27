@@ -269,7 +269,7 @@ or removes its row.
 | camel-master | master |  |
 | camel-metrics | metrics | yes |
 | camel-micrometer | micrometer |  |
-| camel-milo | milo-browse, milo-client, milo-server |  |
+| camel-milo | milo-browse, milo-client, milo-server | yes |
 | camel-milvus | milvus | yes |
 | camel-mina | mina |  |
 | camel-mina-sftp | mina-sftp |  |

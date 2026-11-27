@@ -85,39 +85,71 @@ public class MiloServerComponent extends DefaultComponent {
     private OpcUaServer server;
     private CamelNamespace namespace;
 
-    @Metadata
+    @Metadata(description = "The TCP port that the server listens on.")
     private int port;
-    @Metadata
+    @Metadata(description = "A comma-separated list of the local addresses that the server binds to. If not set, it binds to"
+                            + " localhost. For each address, the server has endpoints for the host name of the machine and"
+                            + " for the host names of that address.")
     private List<String> bindAddresses;
-    @Metadata(defaultValue = "" + DEFAULT_NAMESPACE_URI)
+    @Metadata(defaultValue = "" + DEFAULT_NAMESPACE_URI,
+              description = "The URI of the namespace that holds the items of the milo-server endpoints. A client addresses an"
+                            + " item with this URI and the item ID, for example nsu=urn:org:apache:camel;s=myItem.")
     private String namespaceUri = DEFAULT_NAMESPACE_URI;
-    @Metadata
+    @Metadata(description = "The product URI of the server. If not set, urn:org:apache:camel:milo is used.")
     private String productUri;
-    @Metadata
+    @Metadata(description = "The application URI of the server. If not set, urn:org:apache:camel:milo:server is used.")
     private String applicationUri;
-    @Metadata
+    @Metadata(description = "The application name of the server. If not set, Apache Camel Milo Server is used.")
     private String applicationName;
-    @Metadata
+    @Metadata(description = "The path of the endpoint URLs of the server, after the host and the port. It does not need to"
+                            + " start with a slash. The discovery endpoint always has the path /discovery.")
     private String path;
-    @Metadata
+    @Metadata(description = "The build information of the server, as an"
+                            + " org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo, which clients can read from the"
+                            + " Server object.")
     private BuildInfo buildInfo;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "Whether the endpoints of the server offer the Anonymous user token policy, for clients that"
+                            + " connect without a user name.")
     private Boolean enableAnonymousAuthentication;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "To use a custom org.eclipse.milo.opcua.stack.core.security.CertificateManager that holds the"
+                            + " certificate and the key pair of the server. Not used when certificateValidator or"
+                            + " defaultCertificateValidator is set.")
     private CertificateManager certificateManager;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "A comma-separated list of the security policies of the endpoints of the server, as URIs or as"
+                            + " names of org.eclipse.milo.opcua.stack.core.security.SecurityPolicy. They are added to the"
+                            + " securityPolicies option. Only None and Basic256Sha256 create endpoints.")
     private String securityPoliciesById;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The security policies of the endpoints of the server, as a Set of"
+                            + " org.eclipse.milo.opcua.stack.core.security.SecurityPolicy. Only None and Basic256Sha256"
+                            + " create endpoints, Basic256Sha256 with the security mode SignAndEncrypt. If neither this"
+                            + " option nor securityPoliciesById is set, the endpoints use None.")
     private Set<SecurityPolicy> securityPolicies;
-    @Metadata(label = "security", security = "secret")
+    @Metadata(label = "security", security = "secret",
+              description = "The users that the server accepts, as comma-separated user:password pairs, for example"
+                            + " user1:pwd1,user2:pwd2. The user names and passwords are URL decoded: URL encode a comma, a percent"
+                            + " sign or a plus sign in them, and a colon in a user name.")
     private String userAuthenticationCredentials;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The security policy of the UserName user token policy, which the client uses to encrypt the"
+                            + " password, as a name of org.eclipse.milo.opcua.stack.core.security.SecurityPolicy. If not set,"
+                            + " Basic256Sha256 is used. Only used when userAuthenticationCredentials is set.")
     private String usernameSecurityPolicyUri = OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME.getSecurityPolicyUri();
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The directory of a file based trust list for the certificates of the OPC UA clients, in the"
+                            + " layout used by Eclipse Milo: trusted certificates in trusted/certs, their CRLs in"
+                            + " trusted/crl, certificates of issuing CAs in issuer/certs and their CRLs in issuer/crl."
+                            + " Rejected certificates are put in rejected/certs. The directories are created if they do not"
+                            + " exist.")
     private String defaultCertificateValidator;
     @Metadata(label = "security")
     private CertificateValidator certificateValidator;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "The certificate of the server, as a java.security.cert.X509Certificate, which the endpoints of"
+                            + " the server announce.")
     private X509Certificate certificate;
 
     // FIXME - extract CertificateQuarantine
@@ -472,9 +504,6 @@ public class MiloServerComponent extends DefaultComponent {
         }
     }
 
-    /**
-     * Server certificate
-     */
     public void setCertificate(X509Certificate certificate) {
         this.certificate = certificate;
     }
@@ -498,55 +527,34 @@ public class MiloServerComponent extends DefaultComponent {
         return this.securityPolicies;
     }
 
-    /**
-     * The URI of the namespace, defaults to <code>urn:org:apache:camel</code>
-     */
     public void setNamespaceUri(final String namespaceUri) {
         this.namespaceUri = namespaceUri;
     }
 
-    /**
-     * The application name
-     */
     public void setApplicationName(final String applicationName) {
         Objects.requireNonNull(applicationName);
         this.applicationName = applicationName;
     }
 
-    /**
-     * The path to be appended to the end of the endpoint url. (doesn't need to start with '/')
-     */
     public void setPath(final String path) {
         Objects.requireNonNull(path);
         this.path = path;
     }
 
-    /**
-     * The application URI
-     */
     public void setApplicationUri(final String applicationUri) {
         Objects.requireNonNull(applicationUri);
         this.applicationUri = applicationUri;
     }
 
-    /**
-     * The product URI
-     */
     public void setProductUri(final String productUri) {
         Objects.requireNonNull(productUri);
         this.productUri = productUri;
     }
 
-    /**
-     * The TCP port the server binds to
-     */
     public void setPort(final int port) {
         this.port = port;
     }
 
-    /**
-     * Security policies
-     */
     public void setSecurityPolicies(final Set<SecurityPolicy> securityPolicies) {
         if (securityPolicies == null || securityPolicies.isEmpty()) {
             this.securityPolicies = EnumSet.noneOf(SecurityPolicy.class);
@@ -557,9 +565,6 @@ public class MiloServerComponent extends DefaultComponent {
         this.securityPoliciesById = null;
     }
 
-    /**
-     * Security policies by URI or name. Multiple policies can be separated by comma.
-     */
     public void setSecurityPoliciesById(String securityPoliciesById) {
         this.securityPoliciesById = securityPoliciesById;
     }
@@ -568,9 +573,6 @@ public class MiloServerComponent extends DefaultComponent {
         return securityPoliciesById;
     }
 
-    /**
-     * Set user password combinations in the form of "user1:pwd1,user2:pwd2" Usernames and passwords will be URL decoded
-     */
     public void setUserAuthenticationCredentials(final String userAuthenticationCredentials) {
         this.userAuthenticationCredentials = userAuthenticationCredentials;
     }
@@ -579,30 +581,18 @@ public class MiloServerComponent extends DefaultComponent {
         return userAuthenticationCredentials;
     }
 
-    /**
-     * Enable anonymous authentication, disabled by default
-     */
     public void setEnableAnonymousAuthentication(final boolean enableAnonymousAuthentication) {
         this.enableAnonymousAuthentication = enableAnonymousAuthentication;
     }
 
-    /**
-     * Set the {@link UserTokenPolicy} used when
-     */
     public void setUsernameSecurityPolicyUri(final SecurityPolicy usernameSecurityPolicy) {
         this.usernameSecurityPolicyUri = usernameSecurityPolicy.getUri();
     }
 
-    /**
-     * Set the {@link UserTokenPolicy} used when
-     */
     public void setUsernameSecurityPolicyUri(String usernameSecurityPolicyUri) {
         this.usernameSecurityPolicyUri = usernameSecurityPolicyUri;
     }
 
-    /**
-     * Set the addresses of the local addresses the server should bind to
-     */
     public void setBindAddresses(final String bindAddresses) {
         if (bindAddresses != null) {
             this.bindAddresses = Arrays.asList(bindAddresses.split(","));
@@ -611,16 +601,10 @@ public class MiloServerComponent extends DefaultComponent {
         }
     }
 
-    /**
-     * Server build info
-     */
     public void setBuildInfo(final BuildInfo buildInfo) {
         this.buildInfo = buildInfo;
     }
 
-    /**
-     * Server certificate manager
-     */
     public void setCertificateManager(final CertificateManager certificateManager) {
         this.certificateManager
                 = certificateManager != null ? certificateManager : new DefaultCertificateManager(this.certificateQuarantine);
@@ -633,9 +617,6 @@ public class MiloServerComponent extends DefaultComponent {
         this.certificateValidator = certificateValidator;
     }
 
-    /**
-     * Validator for client certificates using default file based approach
-     */
     public void setDefaultCertificateValidator(final String defaultCertificateValidator) {
         this.defaultCertificateValidator = defaultCertificateValidator;
         try {

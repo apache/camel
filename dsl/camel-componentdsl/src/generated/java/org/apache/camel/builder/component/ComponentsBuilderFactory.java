@@ -3694,8 +3694,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -3708,8 +3707,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19
@@ -3722,7 +3721,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Server (camel-milo)
-     * Make telemetry data available as an OPC UA server.
+     * Expose values as variable nodes of an embedded OPC UA server, which OPC
+     * UA clients can read and write.
      * 
      * Category: iot
      * Since: 2.19
