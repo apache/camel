@@ -399,7 +399,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Security Hub (camel-aws-security-hub)
-     * Manage and interact with AWS Security Hub for security findings.
+     * Import, query and update security findings in AWS Security Hub.
      * 
      * Category: cloud,security
      * Since: 4.18

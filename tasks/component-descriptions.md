@@ -79,7 +79,7 @@ or removes its row.
 | camel-aws-config | aws-config |  |
 | camel-aws-parameter-store | aws-parameter-store |  |
 | camel-aws-secrets-manager | aws-secrets-manager |  |
-| camel-aws-security-hub | aws-security-hub |  |
+| camel-aws-security-hub | aws-security-hub | yes |
 | camel-aws2-athena | aws2-athena |  |
 | camel-aws2-comprehend | aws2-comprehend |  |
 | camel-aws2-cw | aws2-cw |  |
