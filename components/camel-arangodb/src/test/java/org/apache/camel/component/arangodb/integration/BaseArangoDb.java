@@ -30,6 +30,7 @@ import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -60,6 +61,15 @@ public abstract class BaseArangoDb implements ConfigurableRoute, CamelTestSuppor
     @BeforeEach
     void beforeEach() {
         this.template = getCamelContextExtension().getProducerTemplate();
+    }
+
+    @AfterEach
+    void shutdownClient() {
+        // the endpoints do not shut down the client bound to the registry, and it is not Closeable
+        if (arangoDb != null) {
+            arangoDb.shutdown();
+            arangoDb = null;
+        }
     }
 
     @ContextFixture

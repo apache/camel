@@ -55,6 +55,8 @@ class ArangoDbProducerTest extends CamelTestSupport {
     private static final String DOCUMENT_API = "/_db/testDb/_api/document/coll";
 
     private final List<String> requests = new CopyOnWriteArrayList<>();
+    // the endpoints no longer shut down a client from the registry, and ArangoDB is not Closeable: the test does it
+    private final List<ArangoDB> clients = new CopyOnWriteArrayList<>();
     private HttpServer server;
 
     @Override
@@ -67,10 +69,16 @@ class ArangoDbProducerTest extends CamelTestSupport {
 
     @Override
     protected void cleanupResources() throws Exception {
-        if (server != null) {
-            server.stop(0);
+        try {
+            super.cleanupResources();
+        } finally {
+            // each client has a Vert.x instance of its own, with its threads
+            clients.forEach(ArangoDB::shutdown);
+            clients.clear();
+            if (server != null) {
+                server.stop(0);
+            }
         }
-        super.cleanupResources();
     }
 
     @Override
@@ -241,10 +249,12 @@ class ArangoDbProducerTest extends CamelTestSupport {
 
     private ArangoDB newClient() {
         // HTTP/1.1, which the JDK HTTP server speaks
-        return new ArangoDB.Builder()
+        ArangoDB client = new ArangoDB.Builder()
                 .host("localhost", server.getAddress().getPort())
                 .protocol(Protocol.HTTP_JSON)
                 .build();
+        clients.add(client);
+        return client;
     }
 
     private void reply(HttpExchange http) throws IOException {
