@@ -6577,7 +6577,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Git (camel-git)
-     * Perform operations on git repositories.
+     * Run git operations, such as clone, commit, push and pull, on a local
+     * repository with JGit, and receive its commits, branches and tags.
      * 
      * Category: file
      * Since: 2.16
@@ -6586,7 +6587,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>git:localPath</code>
      * 
      * Path parameter: localPath (required)
-     * Local repository path
+     * The path of the working tree of the local repository, the directory that
+     * holds the .git directory. The clone operation creates the repository
+     * there and fails if the directory exists, and init creates it there.
      * 
      * @param path localPath
      * @return the dsl builder
@@ -6596,7 +6599,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Git (camel-git)
-     * Perform operations on git repositories.
+     * Run git operations, such as clone, commit, push and pull, on a local
+     * repository with JGit, and receive its commits, branches and tags.
      * 
      * Category: file
      * Since: 2.16
@@ -6605,7 +6609,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>git:localPath</code>
      * 
      * Path parameter: localPath (required)
-     * Local repository path
+     * The path of the working tree of the local repository, the directory that
+     * holds the .git directory. The clone operation creates the repository
+     * there and fails if the directory exists, and init creates it there.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

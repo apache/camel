@@ -181,7 +181,7 @@ or removes its row.
 | camel-freemarker | freemarker |  |
 | camel-ftp | ftp, ftps, sftp |  |
 | camel-geocoder | geocoder | yes |
-| camel-git | git |  |
+| camel-git | git | yes |
 | camel-github2 | github2 |  |
 | camel-google-bigquery | google-bigquery, google-bigquery-sql |  |
 | camel-google-calendar | google-calendar, google-calendar-stream |  |

@@ -1979,7 +1979,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Git (camel-git)
-     * Perform operations on git repositories.
+     * Run git operations, such as clone, commit, push and pull, on a local
+     * repository with JGit, and receive its commits, branches and tags.
      * 
      * Category: file
      * Since: 2.16
