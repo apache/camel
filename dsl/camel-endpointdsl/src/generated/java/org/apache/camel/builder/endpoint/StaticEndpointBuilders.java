@@ -1990,7 +1990,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances.
+     * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1999,7 +1999,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-mq:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to Amazon MQ.
      * 
      * @param path label
      * @return the dsl builder
@@ -2009,7 +2010,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances.
+     * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -2018,7 +2019,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-mq:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of your choice for the endpoint. The producer does not
+     * send it to Amazon MQ.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

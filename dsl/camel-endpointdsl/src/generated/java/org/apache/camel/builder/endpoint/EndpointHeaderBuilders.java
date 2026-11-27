@@ -600,7 +600,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances.
+     * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
      * 
      * Category: cloud,management
      * Since: 3.1

@@ -92,7 +92,7 @@ or removes its row.
 | camel-aws2-kinesis | aws2-kinesis, aws2-kinesis-firehose |  |
 | camel-aws2-kms | aws2-kms |  |
 | camel-aws2-lambda | aws2-lambda |  |
-| camel-aws2-mq | aws2-mq |  |
+| camel-aws2-mq | aws2-mq | yes |
 | camel-aws2-msk | aws2-msk |  |
 | camel-aws2-polly | aws2-polly |  |
 | camel-aws2-redshift | aws2-redshift-data | yes |
