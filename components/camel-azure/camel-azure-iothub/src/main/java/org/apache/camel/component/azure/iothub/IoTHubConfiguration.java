@@ -48,8 +48,15 @@ public class IoTHubConfiguration implements Cloneable {
               description = "Content type applied to telemetry messages.")
     private String contentType = "application/json";
 
+    @UriParam(label = "producer", defaultValue = "UTF-8",
+              description = "Content encoding applied to telemetry messages. Set it to an empty value to send telemetry"
+                            + " without a content encoding, for example for a binary body such as Avro or Protobuf.")
+    private String contentEncoding = "UTF-8";
+
     @UriParam(label = "producer", defaultValue = "10s",
-              description = "Timeout for telemetry sends and twin reported-property updates.")
+              description = "Timeout for telemetry sends, twin reported-property updates, and the subscription to"
+                            + " desired properties when a device client is created. Opening the device client uses the"
+                            + " retry policy of the Azure IoT SDK and is not limited by this timeout.")
     private Duration sendTimeout = Duration.ofSeconds(10);
 
     public String getDeviceId() {
@@ -90,6 +97,14 @@ public class IoTHubConfiguration implements Cloneable {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public String getContentEncoding() {
+        return contentEncoding;
+    }
+
+    public void setContentEncoding(String contentEncoding) {
+        this.contentEncoding = contentEncoding;
     }
 
     public Duration getSendTimeout() {

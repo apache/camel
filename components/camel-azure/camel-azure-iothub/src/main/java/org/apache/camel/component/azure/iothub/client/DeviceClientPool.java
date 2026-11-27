@@ -37,6 +37,7 @@ import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeReason;
 import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
+import com.microsoft.azure.sdk.iot.device.twin.DesiredPropertiesCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,6 +183,12 @@ public class DeviceClientPool {
 
     // package-private for test hooks only
     DeviceClient getOrCreate(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return getOrCreate(deviceId, connectionString, protocol, null);
+    }
+
+    // package-private for test hooks only
+    DeviceClient getOrCreate(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
@@ -203,7 +210,7 @@ public class DeviceClientPool {
                     createdFuture.complete(rechecked.client);
                     return rechecked.client;
                 }
-                DeviceClient client = createClient(deviceId, connectionString, protocol);
+                DeviceClient client = createClient(deviceId, connectionString, protocol, subscribeTimeout);
                 // read the clock after open: opening can take longer than the idle timeout on a slow hub
                 PooledClient pooled = new PooledClient(client, nowMillis());
                 PooledClient previous = pool.putIfAbsent(poolKey, pooled);
@@ -252,6 +259,15 @@ public class DeviceClientPool {
     }
 
     public Lease acquire(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return acquire(deviceId, connectionString, protocol, null);
+    }
+
+    /**
+     * @param subscribeTimeout the timeout of the subscription to desired properties when the device client is created,
+     *                         or null for the default of the Azure IoT SDK
+     */
+    public Lease acquire(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
@@ -279,7 +295,7 @@ public class DeviceClientPool {
                 continue;
             }
 
-            DeviceClient client = getOrCreate(deviceId, connectionString, protocol);
+            DeviceClient client = getOrCreate(deviceId, connectionString, protocol, subscribeTimeout);
             final long afterCreate = nowMillis();
             AtomicReference<PooledClient> acquired = new AtomicReference<>();
             pool.computeIfPresent(poolKey, (key, pooled) -> {
@@ -302,6 +318,11 @@ public class DeviceClientPool {
 
     public Lease lease(String deviceId, String connectionString, IotHubClientProtocol protocol) {
         return acquire(deviceId, connectionString, protocol);
+    }
+
+    public Lease lease(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
+        return acquire(deviceId, connectionString, protocol, subscribeTimeout);
     }
 
     private boolean isCreationInProgress(String poolKey) {
@@ -426,7 +447,8 @@ public class DeviceClientPool {
         return !identity.isEmpty() ? identity.toString() : deviceId;
     }
 
-    private DeviceClient createClient(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+    private DeviceClient createClient(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         try {
             DeviceClient client = deviceClientFactory.create(connectionString, protocol);
             if (shuttingDown.get()) {
@@ -441,8 +463,17 @@ public class DeviceClientPool {
             try {
                 // Avoid duplicate desired-property subscriptions: subscribe only if not already subscribed.
                 // The Azure DeviceClient does not expose a way to check, so we rely on only subscribing once per client creation.
-                client.subscribeToDesiredProperties((twinUpdate, ctx) -> {
-                }, null);
+                // the Azure IoT SDK supports twin operations, such as this subscription, only over MQTT and AMQPS:
+                // over HTTPS it throws UnsupportedOperationException, which failed every send, also of telemetry
+                if (protocol != IotHubClientProtocol.HTTPS) {
+                    DesiredPropertiesCallback callback = (twinUpdate, ctx) -> {
+                    };
+                    if (subscribeTimeout != null) {
+                        client.subscribeToDesiredProperties(callback, null, Math.toIntExact(subscribeTimeout.toMillis()));
+                    } else {
+                        client.subscribeToDesiredProperties(callback, null);
+                    }
+                }
                 client.setConnectionStatusChangeCallback(context -> {
                     if (context == null) {
                         return;

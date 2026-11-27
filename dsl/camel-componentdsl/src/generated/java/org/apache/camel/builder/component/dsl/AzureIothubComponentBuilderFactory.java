@@ -68,6 +68,25 @@ public interface AzureIothubComponentBuilderFactory {
     
         
         /**
+         * Content encoding applied to telemetry messages. Set it to an empty
+         * value to send telemetry without a content encoding, for example for a
+         * binary body such as Avro or Protobuf.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: UTF-8
+         * Group: producer
+         * 
+         * @param contentEncoding the value to set
+         * @return the dsl builder
+         */
+        default AzureIothubComponentBuilder contentEncoding(java.lang.String contentEncoding) {
+            doSetProperty("contentEncoding", contentEncoding);
+            return this;
+        }
+    
+        
+        /**
          * Content type applied to telemetry messages.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -147,7 +166,10 @@ public interface AzureIothubComponentBuilderFactory {
     
         
         /**
-         * Timeout for telemetry sends and twin reported-property updates.
+         * Timeout for telemetry sends, twin reported-property updates, and the
+         * subscription to desired properties when a device client is created.
+         * Opening the device client uses the retry policy of the Azure IoT SDK
+         * and is not limited by this timeout.
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
@@ -255,6 +277,7 @@ public interface AzureIothubComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((IoTHubComponent) component).setConfiguration((org.apache.camel.component.azure.iothub.IoTHubConfiguration) value); return true;
+            case "contentEncoding": getOrCreateConfiguration((IoTHubComponent) component).setContentEncoding((java.lang.String) value); return true;
             case "contentType": getOrCreateConfiguration((IoTHubComponent) component).setContentType((java.lang.String) value); return true;
             case "deliveryMode": getOrCreateConfiguration((IoTHubComponent) component).setDeliveryMode((org.apache.camel.component.azure.iothub.IoTHubDeliveryMode) value); return true;
             case "lazyStartProducer": ((IoTHubComponent) component).setLazyStartProducer((boolean) value); return true;

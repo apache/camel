@@ -45,6 +45,23 @@ public interface IoTHubEndpointBuilderFactory {
         }
 
         /**
+         * Content encoding applied to telemetry messages. Set it to an empty
+         * value to send telemetry without a content encoding, for example for a
+         * binary body such as Avro or Protobuf.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: UTF-8
+         * Group: producer
+         * 
+         * @param contentEncoding the value to set
+         * @return the dsl builder
+         */
+        default IoTHubEndpointBuilder contentEncoding(String contentEncoding) {
+            doSetProperty("contentEncoding", contentEncoding);
+            return this;
+        }
+        /**
          * Content type applied to telemetry messages.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -128,7 +145,10 @@ public interface IoTHubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout for telemetry sends and twin reported-property updates.
+         * Timeout for telemetry sends, twin reported-property updates, and the
+         * subscription to desired properties when a device client is created.
+         * Opening the device client uses the retry policy of the Azure IoT SDK
+         * and is not limited by this timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -143,7 +163,10 @@ public interface IoTHubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout for telemetry sends and twin reported-property updates.
+         * Timeout for telemetry sends, twin reported-property updates, and the
+         * subscription to desired properties when a device client is created.
+         * Opening the device client uses the retry policy of the Azure IoT SDK
+         * and is not limited by this timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
