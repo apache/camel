@@ -386,7 +386,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS CloudTrail (camel-aws-cloudtrail)
-     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
+     * Receive the management events of an AWS account from Amazon CloudTrail.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19

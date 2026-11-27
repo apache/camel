@@ -1232,7 +1232,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS CloudTrail (camel-aws-cloudtrail)
-     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
+     * Receive the management events of an AWS account from Amazon CloudTrail.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -1241,7 +1241,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws-cloudtrail:label</code>
      * 
      * Path parameter: label (required)
-     * A label for indexing cloudtrail endpoints
+     * A name of your choice that identifies the endpoint, for example trail.
+     * The consumer does not use it: the region, the credentials and the
+     * eventSource option select the events.
      * 
      * @param path label
      * @return the dsl builder
@@ -1251,7 +1253,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS CloudTrail (camel-aws-cloudtrail)
-     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
+     * Receive the management events of an AWS account from Amazon CloudTrail.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -1260,7 +1262,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws-cloudtrail:label</code>
      * 
      * Path parameter: label (required)
-     * A label for indexing cloudtrail endpoints
+     * A name of your choice that identifies the endpoint, for example trail.
+     * The consumer does not use it: the region, the credentials and the
+     * eventSource option select the events.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

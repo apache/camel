@@ -75,7 +75,7 @@ or removes its row.
 | camel-atom | atom |  |
 | camel-avro-rpc | avro |  |
 | camel-aws-bedrock | aws-bedrock, aws-bedrock-agent, aws-bedrock-agent-runtime | yes |
-| camel-aws-cloudtrail | aws-cloudtrail |  |
+| camel-aws-cloudtrail | aws-cloudtrail | yes |
 | camel-aws-config | aws-config |  |
 | camel-aws-parameter-store | aws-parameter-store |  |
 | camel-aws-secrets-manager | aws-secrets-manager |  |
