@@ -149,7 +149,7 @@ YAML::
 |provider
 |String
 |null
-|JCE security provider. When omitted, the component selects the Bouncy Castle provider that advertises the selected KEM service and algorithm (BC or BCPQC).
+|JCE security provider. When omitted, the component prefers a Bouncy Castle provider that advertises the selected KeyGenerator service and algorithm (BC or BCPQC), falling back to a provider that advertises the standard KEM service when no KeyGenerator is available.
 
 |keyGenerator
 |KeyGenerator
