@@ -6031,8 +6031,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * File Watch (camel-file-watch)
-     * Get notified about file events in a directory using
-     * java.nio.file.WatchService.
+     * Receive an event when a file or directory is created, modified or deleted
+     * in a directory of the file system.
      * 
      * Category: file
      * Since: 3.0
@@ -6041,7 +6041,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>file-watch:path</code>
      * 
      * Path parameter: path (required)
-     * Path of directory to consume events from.
+     * The directory to watch, as an absolute path or a path relative to the
+     * working directory of the JVM. The consumer fails to start when the path
+     * is not a directory, or when it does not exist and autoCreate is false.
      * 
      * @param path path
      * @return the dsl builder
@@ -6051,8 +6053,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * File Watch (camel-file-watch)
-     * Get notified about file events in a directory using
-     * java.nio.file.WatchService.
+     * Receive an event when a file or directory is created, modified or deleted
+     * in a directory of the file system.
      * 
      * Category: file
      * Since: 3.0
@@ -6061,7 +6063,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>file-watch:path</code>
      * 
      * Path parameter: path (required)
-     * Path of directory to consume events from.
+     * The directory to watch, as an absolute path or a path relative to the
+     * working directory of the JVM. The consumer fails to start when the path
+     * is not a directory, or when it does not exist and autoCreate is false.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
