@@ -305,15 +305,21 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 // the leadership went away, or this consumer was stopped (and maybe started again), while the
                 // consumer was starting. This attempt is no longer the current one, so stop what it started instead
                 // of publishing it over the consumer of a newer attempt. Only the consumer: the endpoint is shared
-                // with that newer consumer, and onLeadershipLost and doStop stop it. And only stop it, not shut it
-                // down: a shutdown cannot be undone, and it would also shut down the processor of the route, which
-                // a newer consumer uses
+                // with that newer consumer, and onLeadershipLost and doStop stop it. And only stop it
+                // (stopService, not stopAndShutdownServices): a shutdown calls DefaultConsumer.doShutdown, which
+                // shuts down the processor of the route, and that cannot be undone, so a newer consumer that uses
+                // the same processor would be broken
                 LOG.info("Leadership lost or consumer stopped while the delegated consumer was starting. Stopping it: {}",
                         delegatedEndpoint);
                 ServiceHelper.stopService(consumer);
                 if (delegatedConsumer != null) {
-                    // stopping a consumer also stops its processor, the processor of the route, which the
-                    // running delegated consumer uses too
+                    // stopping a consumer also stops its processor, the processor of the route, which the running
+                    // delegated consumer uses too, so it is started again. Until then, a message of the running
+                    // consumer that reaches a stopped processor fails (a SendProcessor that is not started fails
+                    // the exchange). This only happens when an attempt of an earlier lifecycle outlived the wait of
+                    // doStop (shutdownGraceful, bounded by the shutdown await termination of the executor service
+                    // manager) and the attempt of the restarted consumer started first. It is kept: the stale
+                    // consumer has to stop, and a DefaultConsumer always stops its processor
                     ServiceHelper.startService(processor);
                 }
                 attempt.set(null);
