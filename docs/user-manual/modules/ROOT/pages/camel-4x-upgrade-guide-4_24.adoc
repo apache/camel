@@ -12464,6 +12464,16 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-slack - webhookUrl is a secret option
+
+The `webhookUrl` option of the endpoint and the component, and the `token` option of the component, are now secret
+options. The URL of a Slack incoming webhook lets anyone who has it post to the channel. It is now shown as `xxxxxx` in
+the endpoint URI in logs, in the dev consoles and in tooling, like the `token`. In the documentation and tooling these
+options are now in the `security` group.
+
+The `camel.security.secretPolicy` check now also reports `webhookUrl` (such as
+`camel.component.slack.webhookUrl`) when it is configured as plain text: a warning by default, and the startup fails
+with `camel.main.profile=prod`. Configure it with a property placeholder or a vault reference instead.
 === camel-rest - the options of the producer component are not sent as query parameters
 
 A `rest` producer sends the parameters of its endpoint URI that are not `rest` options as query parameters of the
