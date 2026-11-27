@@ -17,6 +17,7 @@
 package org.apache.camel.component.printer;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import javax.print.DocFlavor;
@@ -33,6 +34,15 @@ import org.apache.camel.util.URISupport;
 
 @UriParams
 public class PrinterConfiguration {
+
+    private static final List<String> FLAVORS = List.of(
+            "DocFlavor.BYTE_ARRAY", "DocFlavor.INPUT_STREAM", "DocFlavor.URL", "DocFlavor.CHAR_ARRAY", "DocFlavor.READER",
+            "DocFlavor.STRING");
+    private static final String MIME_TYPES = "AUTOSENSE, GIF, JPEG, PDF, PCL, POSTSCRIPT, TEXT_HTML_HOST, TEXT_HTML_US_ASCII,"
+                                             + " TEXT_HTML_UTF_16, TEXT_HTML_UTF_16LE, TEXT_HTML_UTF_16BE, TEXT_HTML_UTF_8,"
+                                             + " TEXT_PLAIN_HOST, TEXT_PLAIN_US_ASCII, TEXT_PLAIN_UTF_16, TEXT_PLAIN_UTF_16LE,"
+                                             + " TEXT_PLAIN_UTF_16BE, TEXT_PLAIN_UTF_8, TEXT_HTML, TEXT_PLAIN, PAGEABLE,"
+                                             + " PRINTABLE, RENDERABLE_IMAGE";
     private URI uri;
     private MediaSizeName mediaSizeName;
     private Sides internalSides;
@@ -49,12 +59,12 @@ public class PrinterConfiguration {
     private String printerPrefix;
     @UriParam(defaultValue = "1")
     private int copies = 1;
-    @UriParam
-    private String flavor;
+    @UriParam(defaultValue = "DocFlavor.BYTE_ARRAY")
+    private String flavor = "DocFlavor.BYTE_ARRAY";
     @UriParam
     private DocFlavor docFlavor;
-    @UriParam
-    private String mimeType;
+    @UriParam(defaultValue = "AUTOSENSE")
+    private String mimeType = "AUTOSENSE";
     @UriParam(defaultValue = "na-letter")
     private String mediaSize;
     @UriParam(defaultValue = "one-sided", enums = "one-sided,duplex,tumble,two-sided-short-edge,two-sided-long-edge")
@@ -91,8 +101,13 @@ public class PrinterConfiguration {
         setPrintername(path);
 
         Map<String, Object> printSettings = URISupport.parseParameters(uri);
-        setFlavor((String) printSettings.get("flavor"));
-        setMimeType((String) printSettings.get("mimeType"));
+        // keep the defaults when not set, as the producer reads the mime type for the file of sendToPrinter=false
+        if (printSettings.containsKey("flavor")) {
+            setFlavor((String) printSettings.get("flavor"));
+        }
+        if (printSettings.containsKey("mimeType")) {
+            setMimeType((String) printSettings.get("mimeType"));
+        }
         setDocFlavor(assignDocFlavor(flavor, mimeType));
 
         setPrinterPrefix((String) printSettings.get("printerPrefix"));
@@ -126,7 +141,12 @@ public class PrinterConfiguration {
             flavor = "DocFlavor.BYTE_ARRAY";
         }
 
-        DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        if (FLAVORS.stream().noneMatch(flavor::equalsIgnoreCase)) {
+            throw new IllegalArgumentException(
+                    "Unknown flavor: " + flavor + ". Use one of " + String.join(", ", FLAVORS) + ".");
+        }
+
+        DocFlavor d;
         DocFlavorAssigner docFlavorAssigner = new DocFlavorAssigner();
         if (mimeType.equalsIgnoreCase("AUTOSENSE")) {
             d = docFlavorAssigner.forMimeTypeAUTOSENSE(flavor);
@@ -174,6 +194,16 @@ public class PrinterConfiguration {
             d = docFlavorAssigner.forMimeTypePRINTABLE();
         } else if (mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
             d = docFlavorAssigner.forMimeTypeRENDERABLEIMAGE();
+        } else {
+            throw new IllegalArgumentException("Unknown mimeType: " + mimeType + ". Use one of " + MIME_TYPES + ".");
+        }
+        if (d == null) {
+            // fail rather than printing with a doc flavor the user did not ask for
+            throw new IllegalArgumentException(
+                    "The flavor " + flavor + " has no doc flavor for the mimeType " + mimeType
+                                               + ". TEXT_HTML and TEXT_PLAIN need DocFlavor.CHAR_ARRAY, DocFlavor.READER or"
+                                               + " DocFlavor.STRING, and the other mime types DocFlavor.BYTE_ARRAY,"
+                                               + " DocFlavor.INPUT_STREAM or DocFlavor.URL.");
         }
 
         return d;

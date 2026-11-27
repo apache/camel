@@ -108,6 +108,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: DocFlavor.BYTE_ARRAY
          * Group: producer
          * 
          * @param flavor the value to set
@@ -155,6 +156,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: AUTOSENSE
          * Group: producer
          * 
          * @param mimeType the value to set

@@ -12187,6 +12187,22 @@ response now leaves out that header and logs it at DEBUG level, instead of faili
 the route has already run. Headers with a valid name are written as before. A route that needs such a value in the
 response must set it in a header with a valid name.
 
+=== camel-printer - an unknown flavor or mimeType fails the endpoint
+
+An `lpr` endpoint now fails to be created when the `flavor` or the `mimeType` option has a value the component does not
+know, or when the two together name no doc flavor, such as the default `flavor` `DocFlavor.BYTE_ARRAY` with
+`mimeType=TEXT_PLAIN` (`TEXT_PLAIN` and `TEXT_HTML` need `DocFlavor.CHAR_ARRAY`, `DocFlavor.READER` or
+`DocFlavor.STRING`). Before, such an endpoint printed with the doc flavor `DocFlavor.BYTE_ARRAY.AUTOSENSE` without an
+error. Use a `mimeType` with a charset, such as `TEXT_PLAIN_UTF_8`, or remove the `flavor` and `mimeType` options to
+keep printing as before.
+
+`mimeType=TEXT_HTML_UTF_8` and `mimeType=TEXT_HTML` now select the `text/html` doc flavor; they selected the
+`text/plain` doc flavor before.
+
+With `mimeType` `PAGEABLE`, `PRINTABLE` or `RENDERABLE_IMAGE`, the producer now prints the body as a
+`java.awt.print.Pageable`, `java.awt.print.Printable` or `java.awt.image.renderable.RenderableImage`, as these doc
+flavors need, instead of a stream. With `sendToPrinter=false`, the body is still written to a file as bytes.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
