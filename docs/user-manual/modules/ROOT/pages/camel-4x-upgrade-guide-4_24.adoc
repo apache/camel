@@ -10087,6 +10087,13 @@ With `contentCache=false`, the template is now read and compiled for each exchan
 Previously it was compiled once, and only the JMX operation `clearContentCache` read it again. The default,
 `contentCache=true`, is unchanged.
 
+=== camel-mustache - startDelimiter or endDelimiter set alone is used
+
+A `mustache` endpoint that sets only one of `startDelimiter` and `endDelimiter` now compiles its templates with that
+delimiter, and the default (`{{` or `}}`) for the other one. Before, the option was ignored unless both were set. When
+delimiters other than the defaults are set but the `mustacheFactory` of the component is not a
+`DefaultMustacheFactory`, which cannot apply them, the endpoint logs a WARN.
+
 === camel-clickhouse - the database and table headers need the allowDatabaseAndTableFromHeaders option
 
 The `CamelClickHouseDatabase` and `CamelClickHouseTable` headers took the place of the database and the table of the
