@@ -605,6 +605,91 @@ public interface PgReplicationSlotEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * The file of the client certificate (PEM) for a server that checks
+         * client certificates. When not set, the PostgreSQL JDBC driver reads
+         * postgresql.crt in the .postgresql folder of the home directory of the
+         * user, if it exists.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslCert the value to set
+         * @return the dsl builder
+         */
+        default PgReplicationSlotEndpointBuilder sslCert(String sslCert) {
+            doSetProperty("sslCert", sslCert);
+            return this;
+        }
+        /**
+         * The file of the private key of the client certificate: PKCS-8 in DER
+         * format, or a PKCS-12 file (.p12 or .pfx) that holds the certificate
+         * and the key, as the PostgreSQL JDBC driver expects. When not set, the
+         * driver reads postgresql.pk8 in the .postgresql folder of the home
+         * directory of the user, if it exists.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKey the value to set
+         * @return the dsl builder
+         */
+        default PgReplicationSlotEndpointBuilder sslKey(String sslKey) {
+            doSetProperty("sslKey", sslKey);
+            return this;
+        }
+        /**
+         * The SSL mode of the connection to the PostgreSQL server: disable,
+         * allow, prefer, require, verify-ca or verify-full. When not set, the
+         * default of the PostgreSQL JDBC driver applies, which is prefer: TLS
+         * when the server offers it, without checking the server certificate,
+         * and a plain connection otherwise. Use verify-full to require TLS and
+         * check both the certificate and the host name of the server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslMode the value to set
+         * @return the dsl builder
+         */
+        default PgReplicationSlotEndpointBuilder sslMode(String sslMode) {
+            doSetProperty("sslMode", sslMode);
+            return this;
+        }
+        /**
+         * The password of the private key in sslKey.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslPassword the value to set
+         * @return the dsl builder
+         */
+        default PgReplicationSlotEndpointBuilder sslPassword(String sslPassword) {
+            doSetProperty("sslPassword", sslPassword);
+            return this;
+        }
+        /**
+         * The file of the root certificates (PEM) that the server certificate
+         * is checked against with sslMode verify-ca or verify-full. When not
+         * set, the PostgreSQL JDBC driver reads root.crt in the .postgresql
+         * folder of the home directory of the user.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslRootCert the value to set
+         * @return the dsl builder
+         */
+        default PgReplicationSlotEndpointBuilder sslRootCert(String sslRootCert) {
+            doSetProperty("sslRootCert", sslRootCert);
+            return this;
+        }
     }
 
     /**

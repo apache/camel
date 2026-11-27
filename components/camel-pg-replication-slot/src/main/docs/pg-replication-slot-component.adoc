@@ -58,6 +58,22 @@ instead of `INSERT`, etc). This will make sure repeated messages won't affect yo
 The log sequence number (LSN) of a message is in the `CamelPgReplicationSlotLsn` header. It is not unique: several
 messages can have the same LSN, for example the `BEGIN` and the first change of a transaction with `test_decoding`.
 
+=== TLS
+
+The `sslMode` option sets how the connection uses TLS. When it is not set, the default of the PostgreSQL JDBC driver
+applies, which is `prefer`: TLS when the server offers it, without checking the server certificate, and a plain
+connection otherwise. To require TLS and check the server, use `verify-full` (certificate and host name) or
+`verify-ca` (certificate only), with the root certificates of the server in `sslRootCert`:
+
+[source,text]
+----
+pg-replication-slot:db.example.com:5432/mydb/myslot:test_decoding?user=replicator&password=RAW(secret)&sslMode=verify-full&sslRootCert=/etc/certs/root.crt
+----
+
+For a server that checks client certificates, set `sslCert` and `sslKey` (and `sslPassword` when the key has a
+password). The PostgreSQL JDBC driver expects the key in PKCS-8 DER format, or a PKCS-12 file (`.p12` or `.pfx`) that
+holds the certificate and the key.
+
 == Examples
 
 .Example route
