@@ -116,8 +116,9 @@ public class GrpcConfiguration {
 
     @UriParam(label = "security",
               description = "The location of the trusted certificates in PEM format that verify the certificate of the other"
-                            + " side: of the server for the producer, of the clients for the consumer. If not set, the producer"
-                            + " verifies the server with the default trust store of the JVM.")
+                            + " side: of the server for the producer, of the clients for the consumer. For the consumer, these"
+                            + " are the CA certificates whose client certificates the consumer accepts, required with TLS. If"
+                            + " not set, the producer verifies the server with the default trust store of the JVM.")
     @Metadata(supportFileReference = true)
     private String trustCertCollectionResource;
 

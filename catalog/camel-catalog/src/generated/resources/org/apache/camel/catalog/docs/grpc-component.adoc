@@ -61,7 +61,7 @@ To enable these features, the following component properties combinations must b
 |||keyCertChainResource||Required on a consumer. Optional on a producer: only for mutual TLS, together with keyResource
 |||keyResource||Required on a consumer. Optional on a producer: only for mutual TLS, together with keyCertChainResource
 |||keyPassword||Optional
-|||trustCertCollectionResource||Optional. When not set, a producer verifies the server with the default trust store of the JVM
+|||trustCertCollectionResource||Required on a consumer: the CA certificates whose client certificates the consumer accepts. Optional on a producer: when not set, a producer verifies the server with the default trust store of the JVM
 |2|*Token-based authentication with Google API*|authenticationType|GOOGLE|Required
 |||negotiationType|TLS|Required
 |||serviceAccountResource||Required

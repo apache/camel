@@ -119,6 +119,12 @@ public class GrpcConsumer extends DefaultConsumer {
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
+            if (ObjectHelper.isEmpty(configuration.getTrustCertCollectionResource())) {
+                // without trusted certificates, Netty verifies the clients with the default trust store of the JVM
+                throw new IllegalArgumentException(
+                        "trustCertCollectionResource must be set with negotiationType TLS: it names the CA certificates"
+                                                   + " whose client certificates the consumer accepts");
+            }
 
             SslContextBuilder sslContextBuilder
                     = SslContextBuilder
@@ -128,13 +134,9 @@ public class GrpcConsumer extends DefaultConsumer {
                                     ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
                                             configuration.getKeyResource()),
                                     configuration.getKeyPassword())
-                            .clientAuth(ClientAuth.REQUIRE);
-
-            if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
-                sslContextBuilder
-                        = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                configuration.getTrustCertCollectionResource()));
-            }
+                            .clientAuth(ClientAuth.REQUIRE)
+                            .trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
+                                    configuration.getTrustCertCollectionResource()));
 
             serverBuilder = serverBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());
         }

@@ -12423,6 +12423,14 @@ With `mimeType` `PAGEABLE`, `PRINTABLE` or `RENDERABLE_IMAGE`, the producer now 
 `java.awt.print.Pageable`, `java.awt.print.Printable` or `java.awt.image.renderable.RenderableImage`, as these doc
 flavors need, instead of a stream. With `sendToPrinter=false`, the body is still written to a file as bytes.
 
+=== camel-grpc - a TLS consumer requires trustCertCollectionResource
+
+A `grpc` consumer with `negotiationType=TLS` now fails to start with an `IllegalArgumentException` when
+`trustCertCollectionResource` is not set. The consumer requires a certificate from each client, and without this option
+it accepted a client certificate issued by any CA in the default trust store of the JVM (`cacerts`, or
+`javax.net.ssl.trustStore`). Set `trustCertCollectionResource` to the CA certificates (PEM) whose client certificates
+the consumer accepts.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
