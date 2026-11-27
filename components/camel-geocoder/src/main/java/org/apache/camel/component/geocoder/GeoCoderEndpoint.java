@@ -99,10 +99,11 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
               description = "The port of the HTTP proxy for the requests to Google. The proxy is used only when proxyHost is"
                             + " also set.")
     private Integer proxyPort;
-    @UriParam(label = "proxy",
-              description = "The authentication method for the proxy, Basic or Digest. When it is set, the producer"
-                            + " authenticates to the proxy with proxyAuthUsername and proxyAuthPassword. Another value fails"
-                            + " when the producer starts.")
+    @UriParam(label = "proxy", enums = "Basic",
+              description = "The authentication method for the proxy. Only Basic is supported: when it is set, the producer"
+                            + " authenticates to the proxy with proxyAuthUsername and proxyAuthPassword, which are sent Base64"
+                            + " encoded in the Proxy-Authorization header. Another value, such as Digest, fails when the"
+                            + " producer starts.")
     private String proxyAuthMethod;
     @UriParam(label = "proxy", description = "The user name for the proxy authentication, used when proxyAuthMethod is set.")
     private String proxyAuthUsername;
@@ -111,11 +112,11 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
     private String proxyAuthPassword;
     @UriParam(label = "proxy",
               description = "The domain for NTLM proxy authentication. The component does not use this option, as"
-                            + " proxyAuthMethod accepts only Basic and Digest.")
+                            + " proxyAuthMethod accepts only Basic.")
     private String proxyAuthDomain;
     @UriParam(label = "proxy",
               description = "The host for NTLM proxy authentication. The component does not use this option, as"
-                            + " proxyAuthMethod accepts only Basic and Digest.")
+                            + " proxyAuthMethod accepts only Basic.")
     private String proxyAuthHost;
     @UriParam(displayName = "GeoCoding Type",
               description = "The geocoding service: GOOGLE for the Google Geocoding API, or NOMINATIM for the Nominatim"
@@ -317,13 +318,12 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
     }
 
     private GeoApiContext.Builder configureProxyAuth(GeoApiContext.Builder builder) {
-        AuthenticationMethod auth = getCamelContext().getTypeConverter().convertTo(AuthenticationMethod.class, proxyAuthMethod);
-        if (auth == AuthenticationMethod.Basic || auth == AuthenticationMethod.Digest) {
-            builder = builder.proxyAuthentication(proxyAuthUsername, proxyAuthPassword);
-        } else {
-            throw new IllegalArgumentException("Unknown proxyAuthMethod " + proxyAuthMethod);
+        // the Google client always answers the proxy with Basic credentials, so only Basic is accepted
+        if (!AuthenticationMethod.Basic.name().equalsIgnoreCase(proxyAuthMethod)) {
+            throw new IllegalArgumentException(
+                    "Unsupported proxyAuthMethod " + proxyAuthMethod + ": only Basic proxy authentication is supported");
         }
-        return builder;
+        return builder.proxyAuthentication(proxyAuthUsername, proxyAuthPassword);
     }
 
     private Proxy createProxy() {

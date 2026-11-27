@@ -12464,6 +12464,14 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-geocoder - proxyAuthMethod accepts only Basic
+
+The Google client of the `geocoder` producer authenticates to the proxy only with Basic authentication. Before,
+`proxyAuthMethod=Digest` was accepted, but the producer still sent the user name and password as Basic credentials,
+Base64 encoded in clear text in the `Proxy-Authorization` header. Now any `proxyAuthMethod` other than `Basic`, such as
+`Digest`, fails when the producer starts with an `IllegalArgumentException`. Use `proxyAuthMethod=Basic` (over a
+connection to the proxy you trust), or leave `proxyAuthMethod` out for a proxy without authentication. The constant
+`AuthenticationMethod.Digest` is deprecated.
 === camel-weather - the consumer polls once an hour, and weatherApi Hourly and Daily query the forecast
 
 A `weather` consumer without a `delay` option now polls once an hour, as its documentation says. The default delay of
