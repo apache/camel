@@ -2476,8 +2476,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hugging Face (camel-huggingface)
-     * Integration with Hugging Face's Model Hub by using the Deep Java Library
-     * (DJL) Python bridge
+     * Run Hugging Face models for tasks such as text classification,
+     * summarization, chat and speech recognition, in a Python process of Deep
+     * Java Library (DJL).
      * 
      * Category: ai
      * Since: 4.19

@@ -8196,8 +8196,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hugging Face (camel-huggingface)
-     * Integration with Hugging Face's Model Hub by using the Deep Java Library
-     * (DJL) Python bridge
+     * Run Hugging Face models for tasks such as text classification,
+     * summarization, chat and speech recognition, in a Python process of Deep
+     * Java Library (DJL).
      * 
      * Category: ai
      * Since: 4.19
@@ -8206,8 +8207,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>huggingface:task</code>
      * 
      * Path parameter: task (required)
-     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION). CUSTOM, or
-     * any other name, runs the predictor bean given by predictorBean.
+     * The task to run, such as text-classification or chat. The name is case
+     * insensitive, and a dash equals an underscore. CUSTOM, or any other name,
+     * needs the predictorBean option, whose bean then runs the task.
      * There are 11 enums and the value can be one of: TEXT_CLASSIFICATION,
      * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
      * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
@@ -8221,8 +8223,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hugging Face (camel-huggingface)
-     * Integration with Hugging Face's Model Hub by using the Deep Java Library
-     * (DJL) Python bridge
+     * Run Hugging Face models for tasks such as text classification,
+     * summarization, chat and speech recognition, in a Python process of Deep
+     * Java Library (DJL).
      * 
      * Category: ai
      * Since: 4.19
@@ -8231,8 +8234,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>huggingface:task</code>
      * 
      * Path parameter: task (required)
-     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION). CUSTOM, or
-     * any other name, runs the predictor bean given by predictorBean.
+     * The task to run, such as text-classification or chat. The name is case
+     * insensitive, and a dash equals an underscore. CUSTOM, or any other name,
+     * needs the predictorBean option, whose bean then runs the task.
      * There are 11 enums and the value can be one of: TEXT_CLASSIFICATION,
      * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
      * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,

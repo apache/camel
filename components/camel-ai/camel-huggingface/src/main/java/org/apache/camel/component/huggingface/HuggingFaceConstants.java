@@ -20,7 +20,10 @@ import org.apache.camel.spi.Metadata;
 
 public interface HuggingFaceConstants {
 
-    @Metadata(description = "The output from the model", javaType = "String")
+    @Metadata(description = "The result of the task, which the producer sets. It is the raw JSON for text-classification,"
+                            + " sentence-embeddings and zero-shot-classification with autoSelect=false, the PNG bytes for"
+                            + " text-to-image, the DJL Audio for text-to-speech, and else the same text as the body.",
+              javaType = "String")
     String OUTPUT = "CamelHuggingFaceOutput";
 
     @Metadata(label = "producer",

@@ -29,6 +29,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
+/**
+ * Run Hugging Face models for tasks such as text classification, summarization, chat and speech recognition, in a
+ * Python process of Deep Java Library (DJL).
+ */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "huggingface", title = "Hugging Face",
              syntax = "huggingface:task", producerOnly = true, category = { Category.AI },
              headersClass = HuggingFaceConstants.class)
