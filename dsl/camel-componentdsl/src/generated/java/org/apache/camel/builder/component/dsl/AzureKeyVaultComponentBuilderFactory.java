@@ -50,6 +50,46 @@ public interface AzureKeyVaultComponentBuilderFactory {
      */
     interface AzureKeyVaultComponentBuilder extends ComponentBuilder<KeyVaultComponent> {
     
+        /**
+         * The configuration that each endpoint of the component starts from, as
+         * a copy. The options of the endpoint replace its values.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.key.vault.KeyVaultConfiguration&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default AzureKeyVaultComponentBuilder configuration(org.apache.camel.component.azure.key.vault.KeyVaultConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        
+        /**
+         * How the endpoint authenticates when it creates the SecretClient.
+         * CLIENT_SECRET uses the clientId, clientSecret and tenantId options.
+         * AZURE_IDENTITY uses the DefaultAzureCredential of the Azure Identity
+         * library, which tries environment variables, workload identity,
+         * managed identity and developer tools such as the Azure CLI. Not used
+         * when the secretClient option is set.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.common.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: CLIENT_SECRET
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default AzureKeyVaultComponentBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+    
         
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -77,6 +117,46 @@ public interface AzureKeyVaultComponentBuilderFactory {
     
         
         /**
+         * The operation that the producer performs. The
+         * CamelAzureKeyVaultProducerOperation header replaces this option.
+         * Every operation except updateSecretProperties takes the name of the
+         * secret from the CamelAzureKeyVaultSecretName header.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.key.vault.KeyVaultOperation&lt;/code&gt; type.
+         * 
+         * Default: createSecret
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default AzureKeyVaultComponentBuilder operation(org.apache.camel.component.azure.key.vault.KeyVaultOperation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+    
+        /**
+         * To use a custom com.azure.security.keyvault.secrets.SecretClient.
+         * When this option is set, the client decides the vault and the
+         * credentials, and the vaultName, credentialType, clientId,
+         * clientSecret and tenantId options are not used to connect.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param secretClient the value to set
+         * @return the dsl builder
+         */
+        default AzureKeyVaultComponentBuilder secretClient(com.azure.security.keyvault.secrets.SecretClient secretClient) {
+            doSetProperty("secretClient", secretClient);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -96,6 +176,60 @@ public interface AzureKeyVaultComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * The client ID (application ID) of the Microsoft Entra application for
+         * the CLIENT_SECRET credential type. Required for CLIENT_SECRET, the
+         * default, unless the secretClient option is set. Not used for
+         * AZURE_IDENTITY.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
+         */
+        default AzureKeyVaultComponentBuilder clientId(java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+    
+        /**
+         * The client secret of the Microsoft Entra application for the
+         * CLIENT_SECRET credential type. Required for CLIENT_SECRET, the
+         * default, unless the secretClient option is set. Not used for
+         * AZURE_IDENTITY.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
+         */
+        default AzureKeyVaultComponentBuilder clientSecret(java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+    
+        /**
+         * The ID of the Microsoft Entra tenant (directory) of the application
+         * for the CLIENT_SECRET credential type. Required for CLIENT_SECRET,
+         * the default, unless the secretClient option is set. Not used for
+         * AZURE_IDENTITY.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param tenantId the value to set
+         * @return the dsl builder
+         */
+        default AzureKeyVaultComponentBuilder tenantId(java.lang.String tenantId) {
+            doSetProperty("tenantId", tenantId);
+            return this;
+        }
     }
 
     class AzureKeyVaultComponentBuilderImpl
@@ -105,14 +239,27 @@ public interface AzureKeyVaultComponentBuilderFactory {
         protected KeyVaultComponent buildConcreteComponent() {
             return new KeyVaultComponent();
         }
+        private org.apache.camel.component.azure.key.vault.KeyVaultConfiguration getOrCreateConfiguration(KeyVaultComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.azure.key.vault.KeyVaultConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((KeyVaultComponent) component).setConfiguration((org.apache.camel.component.azure.key.vault.KeyVaultConfiguration) value); return true;
+            case "credentialType": getOrCreateConfiguration((KeyVaultComponent) component).setCredentialType((org.apache.camel.component.azure.common.CredentialType) value); return true;
             case "lazyStartProducer": ((KeyVaultComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((KeyVaultComponent) component).setOperation((org.apache.camel.component.azure.key.vault.KeyVaultOperation) value); return true;
+            case "secretClient": getOrCreateConfiguration((KeyVaultComponent) component).setSecretClient((com.azure.security.keyvault.secrets.SecretClient) value); return true;
             case "autowiredEnabled": ((KeyVaultComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "clientId": getOrCreateConfiguration((KeyVaultComponent) component).setClientId((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((KeyVaultComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "tenantId": getOrCreateConfiguration((KeyVaultComponent) component).setTenantId((java.lang.String) value); return true;
             default: return false;
             }
         }

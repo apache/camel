@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -56,6 +57,9 @@ import org.slf4j.LoggerFactory;
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);
+
+    private static final List<String> SSL_MODES
+            = List.of("disable", "allow", "prefer", "require", "verify-ca", "verify-full");
 
     private static final Pattern URI_PATTERN = Pattern.compile(
             "^pg-replication-slot:(//)?(?<host>[^:]*):?(?<port>\\d*)?/(?<database>\\w+)/(?<slot>\\w+):(?<plugin>\\w+).*$");
@@ -105,6 +109,33 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
                             + " while the route is stopped.",
               label = "advanced", defaultValue = "true")
     private Boolean autoCreateSlot = true;
+    @UriParam(description = "The SSL mode of the connection to the PostgreSQL server: disable, allow, prefer, require,"
+                            + " verify-ca or verify-full. When not set, the default of the PostgreSQL JDBC driver applies,"
+                            + " which is prefer: TLS when the server offers it, without checking the server certificate, and"
+                            + " a plain connection otherwise. Use verify-full to require TLS and check both the certificate"
+                            + " and the host name of the server.",
+              label = "security", enums = "disable,allow,prefer,require,verify-ca,verify-full")
+    private String sslMode;
+    @UriParam(description = "The file of the root certificates (PEM) that the server certificate is checked against with"
+                            + " sslMode verify-ca or verify-full. When not set, the PostgreSQL JDBC driver reads"
+                            + " root.crt in the .postgresql folder of the home directory of the user.",
+              label = "security")
+    private String sslRootCert;
+    @UriParam(description = "The file of the client certificate (PEM) for a server that checks client certificates. When"
+                            + " not set, the PostgreSQL JDBC driver reads postgresql.crt in the .postgresql folder of the home"
+                            + " directory of the user, if it exists.",
+              label = "security")
+    private String sslCert;
+    @UriParam(description = "The file of the private key of the client certificate. The PostgreSQL JDBC driver accepts"
+                            + " PKCS-8 in DER format, PKCS-8 in PEM format (a .pem file, or a file that starts with"
+                            + " -----BEGIN PRIVATE KEY-----), or a PKCS-12 file (.p12 or .pfx) that holds the certificate"
+                            + " and the key."
+                            + " When not set, the driver reads postgresql.pk8 in the .postgresql folder of the home directory"
+                            + " of the user, if it exists.",
+              label = "security")
+    private String sslKey;
+    @UriParam(description = "The password of the private key in sslKey.", label = "security", security = "secret")
+    private String sslPassword;
 
     public PgReplicationSlotEndpoint(String uri, Component component) {
         super(uri, component);
@@ -127,6 +158,15 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
      * Creates a new PostgreSQL JDBC connection that's setup for replication.
      */
     Connection newDbConnection() throws SQLException {
+        return DriverManager.getConnection(
+                String.format("jdbc:postgresql://%s:%d/%s", this.getHost(), this.getPort(), this.getDatabase()),
+                createConnectionProperties());
+    }
+
+    /**
+     * The properties of the JDBC connection.
+     */
+    Properties createConnectionProperties() {
         Properties props = new Properties();
 
         PGProperty.USER.set(props, this.getUser());
@@ -136,9 +176,34 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         PGProperty.PREFER_QUERY_MODE.set(props, "simple");
         PGProperty.TCP_KEEP_ALIVE.set(props, true);
 
-        return DriverManager.getConnection(
-                String.format("jdbc:postgresql://%s:%d/%s", this.getHost(), this.getPort(), this.getDatabase()),
-                props);
+        // TLS: only the options that are set, so the defaults of the driver apply otherwise
+        if (sslMode != null) {
+            PGProperty.SSL_MODE.set(props, sslMode);
+        }
+        if (sslRootCert != null) {
+            PGProperty.SSL_ROOT_CERT.set(props, sslRootCert);
+        }
+        if (sslCert != null) {
+            PGProperty.SSL_CERT.set(props, sslCert);
+        }
+        if (sslKey != null) {
+            PGProperty.SSL_KEY.set(props, sslKey);
+        }
+        if (sslPassword != null) {
+            PGProperty.SSL_PASSWORD.set(props, sslPassword);
+        }
+
+        return props;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (sslMode != null && !SSL_MODES.contains(sslMode)) {
+            throw new IllegalArgumentException(
+                    "Invalid sslMode: " + sslMode + ". Use one of: " + String.join(", ", SSL_MODES));
+        }
     }
 
     /**
@@ -246,5 +311,45 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     public void setAutoCreateSlot(Boolean autoCreateSlot) {
         this.autoCreateSlot = autoCreateSlot;
+    }
+
+    public String getSslMode() {
+        return sslMode;
+    }
+
+    public void setSslMode(String sslMode) {
+        this.sslMode = sslMode;
+    }
+
+    public String getSslRootCert() {
+        return sslRootCert;
+    }
+
+    public void setSslRootCert(String sslRootCert) {
+        this.sslRootCert = sslRootCert;
+    }
+
+    public String getSslCert() {
+        return sslCert;
+    }
+
+    public void setSslCert(String sslCert) {
+        this.sslCert = sslCert;
+    }
+
+    public String getSslKey() {
+        return sslKey;
+    }
+
+    public void setSslKey(String sslKey) {
+        this.sslKey = sslKey;
+    }
+
+    public String getSslPassword() {
+        return sslPassword;
+    }
+
+    public void setSslPassword(String sslPassword) {
+        this.sslPassword = sslPassword;
     }
 }
