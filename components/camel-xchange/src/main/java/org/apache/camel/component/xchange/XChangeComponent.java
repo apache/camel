@@ -32,6 +32,8 @@ import org.knowm.xchange.utils.Assert;
 public class XChangeComponent extends DefaultComponent {
 
     private final Map<String, XChange> xchanges = new ConcurrentHashMap<>();
+    // the exchanges created with the API keys of an endpoint, one per exchange name and keys
+    private final Map<Credentials, XChange> xchangesWithKeys = new ConcurrentHashMap<>();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -53,9 +55,12 @@ public class XChangeComponent extends DefaultComponent {
         }
 
         // after configuring endpoint then get or create xchange instance
-        XChange xchange = getOrCreateXChange(remaining);
+        XChange xchange = getOrCreateXChange(remaining, configuration.getApiKey(), configuration.getSecretKey());
         endpoint.setXchange(xchange);
 
+        // parse the currency pair once, after the exchange is created, as it may register the currencies it trades:
+        // like the currency option, a currency that XChange does not know fails here, not with each message
+        configuration.getAsCurrencyPair();
         return endpoint;
     }
 
@@ -71,18 +76,41 @@ public class XChangeComponent extends DefaultComponent {
     protected void doShutdown() throws Exception {
         super.doShutdown();
         xchanges.clear();
+        xchangesWithKeys.clear();
     }
 
     protected Exchange createExchange(Class<? extends Exchange> exchangeClass) {
         return ExchangeFactory.INSTANCE.createExchange(exchangeClass);
     }
 
-    private XChange getOrCreateXChange(String name) {
-        return xchanges.computeIfAbsent(name, xc -> {
-            Class<? extends Exchange> exchangeClass = XChangeHelper.loadXChangeClass(getCamelContext(), name);
-            Assert.notNull(exchangeClass, "XChange not supported: " + name);
-            return new XChange(createExchange(exchangeClass));
-        });
+    /**
+     * Creates the exchange with the default specification of its XChange module and the given API keys, which are only
+     * set when not null.
+     */
+    protected Exchange createExchange(Class<? extends Exchange> exchangeClass, String apiKey, String secretKey) {
+        return ExchangeFactory.INSTANCE.createExchange(exchangeClass, apiKey, secretKey);
+    }
+
+    private XChange getOrCreateXChange(String name, String apiKey, String secretKey) {
+        if (apiKey == null && secretKey == null) {
+            return xchanges.computeIfAbsent(name, xc -> new XChange(createExchange(loadExchangeClass(name))));
+        }
+        return xchangesWithKeys.computeIfAbsent(new Credentials(name, apiKey, secretKey),
+                c -> new XChange(createExchange(loadExchangeClass(name), apiKey, secretKey)));
+    }
+
+    private Class<? extends Exchange> loadExchangeClass(String name) {
+        Class<? extends Exchange> exchangeClass = XChangeHelper.loadXChangeClass(getCamelContext(), name);
+        Assert.notNull(exchangeClass, "XChange not supported: " + name);
+        return exchangeClass;
+    }
+
+    private record Credentials(String name, String apiKey, String secretKey) {
+        @Override
+        public String toString() {
+            // never show the keys
+            return name;
+        }
     }
 
 }

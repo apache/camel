@@ -136,9 +136,10 @@ public class ChatPredictor extends AbstractTaskPredictor {
     protected String getPythonScript() {
         String doSample = config.getTemperature() > 0 ? "True" : "False";
         float temperature = config.getTemperature() > 0 ? config.getTemperature() : 1.0f;
-        // The token is applied centrally as the HF_TOKEN environment variable in
-        // AbstractTaskPredictor.withAuthToken, so no per-task token clause is needed here.
-        return loadPythonScript("chat.py", config.getModelId(), config.getRevision(), config.getDevice(),
+        // The token is given to the Python process as the HF_TOKEN environment variable by
+        // AbstractTaskPredictor.modelOptions, so no per-task token clause is needed here.
+        return loadPythonScript("chat.py", pythonString(config.getModelId()), pythonString(config.getRevision()),
+                pythonString(config.getDevice()),
                 config.getMaxTokens(), doSample, temperature);
     }
 

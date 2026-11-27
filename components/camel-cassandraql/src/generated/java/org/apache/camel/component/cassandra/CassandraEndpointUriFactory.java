@@ -24,13 +24,14 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(36);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
         props.add("beanRef");
         props.add("bridgeErrorHandler");
         props.add("clusterName");
+        props.add("consistencyLevel");
         props.add("cql");
         props.add("datacenter");
         props.add("delay");

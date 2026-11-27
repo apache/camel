@@ -34,11 +34,22 @@ public class MilvusComponentConfigurer extends PropertyConfigurerSupport impleme
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, org.apache.camel.component.milvus.MilvusAction.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "capempath":
+        case "caPemPath": getOrCreateConfiguration(target).setCaPemPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientkeypath":
+        case "clientKeyPath": getOrCreateConfiguration(target).setClientKeyPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientpempath":
+        case "clientPemPath": getOrCreateConfiguration(target).setClientPemPath(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.milvus.MilvusConfiguration.class, value)); return true;
         case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "port": getOrCreateConfiguration(target).setPort(property(camelContext, int.class, value)); return true;
+        case "secure": getOrCreateConfiguration(target).setSecure(property(camelContext, boolean.class, value)); return true;
+        case "servername":
+        case "serverName": getOrCreateConfiguration(target).setServerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverpempath":
+        case "serverPemPath": getOrCreateConfiguration(target).setServerPemPath(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, long.class, value)); return true;
         case "token": getOrCreateConfiguration(target).setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -51,11 +62,22 @@ public class MilvusComponentConfigurer extends PropertyConfigurerSupport impleme
         case "action": return org.apache.camel.component.milvus.MilvusAction.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "capempath":
+        case "caPemPath": return java.lang.String.class;
+        case "clientkeypath":
+        case "clientKeyPath": return java.lang.String.class;
+        case "clientpempath":
+        case "clientPemPath": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.milvus.MilvusConfiguration.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "port": return int.class;
+        case "secure": return boolean.class;
+        case "servername":
+        case "serverName": return java.lang.String.class;
+        case "serverpempath":
+        case "serverPemPath": return java.lang.String.class;
         case "timeout": return long.class;
         case "token": return java.lang.String.class;
         default: return null;
@@ -69,11 +91,22 @@ public class MilvusComponentConfigurer extends PropertyConfigurerSupport impleme
         case "action": return getOrCreateConfiguration(target).getAction();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "capempath":
+        case "caPemPath": return getOrCreateConfiguration(target).getCaPemPath();
+        case "clientkeypath":
+        case "clientKeyPath": return getOrCreateConfiguration(target).getClientKeyPath();
+        case "clientpempath":
+        case "clientPemPath": return getOrCreateConfiguration(target).getClientPemPath();
         case "configuration": return target.getConfiguration();
         case "host": return getOrCreateConfiguration(target).getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "port": return getOrCreateConfiguration(target).getPort();
+        case "secure": return getOrCreateConfiguration(target).isSecure();
+        case "servername":
+        case "serverName": return getOrCreateConfiguration(target).getServerName();
+        case "serverpempath":
+        case "serverPemPath": return getOrCreateConfiguration(target).getServerPemPath();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();
         case "token": return getOrCreateConfiguration(target).getToken();
         default: return null;

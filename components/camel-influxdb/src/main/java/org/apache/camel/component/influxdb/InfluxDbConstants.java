@@ -21,12 +21,17 @@ import org.apache.camel.spi.Metadata;
 public final class InfluxDbConstants {
 
     public static final String MEASUREMENT_NAME = "camelInfluxDB.MeasurementName";
-    @Metadata(description = "The string that defines the retention policy to the data created by the endpoint",
+    @Metadata(description = "The name of the retention policy to write a single point to. It replaces the retentionPolicy"
+                            + " option; an empty value is ignored. It is not used for a BatchPoints body.",
               javaType = "String")
     public static final String RETENTION_POLICY_HEADER = "camelInfluxDB.RetentionPolicy";
-    @Metadata(description = "The name of the database where the time series will be stored", javaType = "String")
+    @Metadata(description = "The name of the database to write a single point to or to run the query on. It replaces the"
+                            + " databaseName option; an empty value is ignored. It is not used for a BatchPoints body.",
+              javaType = "String")
     public static final String DBNAME_HEADER = "camelInfluxDB.databaseName";
-    @Metadata(description = "Define the query in case of operation query", javaType = "String")
+    @Metadata(description = "The InfluxQL query that the query operation runs. It replaces the query option; an empty value"
+                            + " is ignored.",
+              javaType = "String")
     public static final String INFLUXDB_QUERY = "camelInfluxDB.query";
 
     private InfluxDbConstants() {

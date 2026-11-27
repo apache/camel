@@ -271,6 +271,9 @@ spring beans.
 Since we have specified multipleConsumers=true on the Disruptor foo
 endpoint, we can have those two or more consumers receive their own copy
 of the message as a kind of _publish/subscriber_ style messaging.
+The message is completed once all consumers are done with it (as with SEDA): if a consumer fails, its failure is
+copied back to the message (the results of the consumers are not aggregated), so a producer waiting for the reply
+gets the failure, and the on completions of the caller run, only when all consumers are done.
 As the beans are part of a unit test, they simply send the message to a mock endpoint,
 but notice how we can use _@Consume_ to consume from the Disruptor.
 

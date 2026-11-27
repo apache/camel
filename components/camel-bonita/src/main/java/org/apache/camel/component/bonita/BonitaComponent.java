@@ -20,12 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.bonita.util.BonitaOperation;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("bonita")
-public class BonitaComponent extends DefaultComponent {
+public class BonitaComponent extends DefaultComponent implements SSLContextParametersAware {
+
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Enable usage of global SSL context parameters, for the endpoints with the https protocol that"
+                            + " have no sslContextParameters of their own.")
+    private boolean useGlobalSslContextParameters;
 
     public BonitaComponent() {
     }
@@ -46,6 +53,19 @@ public class BonitaComponent extends DefaultComponent {
 
         BonitaEndpoint endpoint = new BonitaEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
         return endpoint;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

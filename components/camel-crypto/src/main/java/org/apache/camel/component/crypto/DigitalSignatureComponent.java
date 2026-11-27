@@ -30,7 +30,9 @@ import org.apache.camel.util.ObjectHelper;
 @Component("crypto")
 public class DigitalSignatureComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The configuration with the default options of all endpoints. Each endpoint gets a copy of it,"
+                            + " and the options of the endpoint change only that copy.")
     private DigitalSignatureConfiguration configuration = new DigitalSignatureConfiguration();
 
     public DigitalSignatureComponent() {
@@ -64,9 +66,6 @@ public class DigitalSignatureComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * To use the shared DigitalSignatureConfiguration as configuration
-     */
     public void setConfiguration(DigitalSignatureConfiguration configuration) {
         this.configuration = configuration;
     }

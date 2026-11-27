@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.apache.camel.component.infinispan.InfinispanConstants;
@@ -42,6 +43,20 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryVisitedEvent;
 import org.infinispan.notifications.cachelistener.event.Event;
 
 public abstract class InfinispanEmbeddedEventListener extends InfinispanEventListener<Event.Type> {
+    /**
+     * The event types this listener has a callback for. Infinispan does not deliver the other event types to it.
+     */
+    static final Set<Event.Type> RECEIVED_EVENT_TYPES = Collections.unmodifiableSet(EnumSet.of(
+            Event.Type.CACHE_ENTRY_ACTIVATED,
+            Event.Type.CACHE_ENTRY_CREATED,
+            Event.Type.CACHE_ENTRY_EXPIRED,
+            Event.Type.CACHE_ENTRY_INVALIDATED,
+            Event.Type.CACHE_ENTRY_LOADED,
+            Event.Type.CACHE_ENTRY_MODIFIED,
+            Event.Type.CACHE_ENTRY_PASSIVATED,
+            Event.Type.CACHE_ENTRY_REMOVED,
+            Event.Type.CACHE_ENTRY_VISITED));
+
     protected InfinispanEmbeddedEventListener() {
         super(Collections.emptySet());
     }

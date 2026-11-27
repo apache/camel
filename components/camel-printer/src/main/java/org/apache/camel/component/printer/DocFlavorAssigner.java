@@ -19,7 +19,8 @@ package org.apache.camel.component.printer;
 import javax.print.DocFlavor;
 
 public class DocFlavorAssigner {
-    private DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+    // null when the flavor has no doc flavor for the mime type
+    private DocFlavor d;
 
     public DocFlavor forMimeTypeAUTOSENSE(String flavor) {
         if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
@@ -204,7 +205,7 @@ public class DocFlavorAssigner {
     }
 
     public DocFlavor forMimeTypeUTF8(String flavor, String mimeType) {
-        if (mimeType.equalsIgnoreCase("TEXT_HTML_UTF_16BE")) {
+        if (mimeType.equalsIgnoreCase("TEXT_HTML_UTF_8")) {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
                 d = DocFlavor.BYTE_ARRAY.TEXT_HTML_UTF_8;
             } else if (flavor.equalsIgnoreCase("DocFlavor.INPUT_STREAM")) {
@@ -226,7 +227,7 @@ public class DocFlavorAssigner {
     }
 
     public DocFlavor forMimeTypeBasic(String flavor, String mimeType) {
-        if (mimeType.equalsIgnoreCase("TEXT_HTML_UTF_16BE")) {
+        if (mimeType.equalsIgnoreCase("TEXT_HTML")) {
             if (flavor.equalsIgnoreCase("DocFlavor.CHAR_ARRAY")) {
                 d = DocFlavor.CHAR_ARRAY.TEXT_HTML;
             } else if (flavor.equalsIgnoreCase("DocFlavor.READER")) {

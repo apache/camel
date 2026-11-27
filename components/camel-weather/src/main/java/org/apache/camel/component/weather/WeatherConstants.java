@@ -29,7 +29,7 @@ public final class WeatherConstants {
               javaType = "String")
     public static final String WEATHER_LOCATION = "CamelWeatherLocation";
     @Metadata(description = "The URL of the request that the consumer or the producer sent to OpenWeatherMap,"
-                            + " with its query parameters.",
+                            + " with its query parameters. The value of the APPID parameter is masked as xxxxxx.",
               javaType = "String")
     public static final String WEATHER_QUERY = "CamelWeatherQuery";
 

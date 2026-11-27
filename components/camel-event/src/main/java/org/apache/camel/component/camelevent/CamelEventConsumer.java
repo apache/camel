@@ -50,6 +50,9 @@ public class CamelEventConsumer extends DefaultConsumer {
     private ScheduledExecutorService batchScheduler;
     private final List<CamelEvent> batchBuffer = new ArrayList<>();
     private final ReentrantLock batchBufferLock = new ReentrantLock();
+    // set while this thread reports a full queue (backpressurePolicy=Fail): the events fired by the report itself, such
+    // as those of the exchange that bridgeErrorHandler creates, are dropped and not reported again
+    private final ThreadLocal<Boolean> reportingFullQueue = new ThreadLocal<>();
 
     public CamelEventConsumer(CamelEventEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -209,6 +212,7 @@ public class CamelEventConsumer extends DefaultConsumer {
      * Configures the event notifier to enable only the event categories that are needed based on the subscribed event
      * types.
      */
+    @SuppressWarnings("deprecation") // the deprecated ExchangeAsyncProcessingStarted type can still be subscribed to
     private void configureEventNotifier() {
         Set<CamelEvent.Type> types = getEndpoint().getEventTypes();
         if (types == null || types.isEmpty()) {
@@ -299,6 +303,14 @@ public class CamelEventConsumer extends DefaultConsumer {
                     eventNotifier.setIgnoreExchangeSentEvents(false);
                     // ExchangeSending must also be enabled for the framework to generate ExchangeSent events
                     eventNotifier.setIgnoreExchangeSendingEvents(false);
+                    break;
+                case ExchangeAsyncProcessingStarted:
+                    // deprecated, and ignored by default by EventNotifierSupport: only an endpoint that names the type
+                    // gets these events, a wildcard such as Exchange* does not turn them on
+                    if (getEndpoint().getNamedEventTypes().contains(type)) {
+                        eventNotifier.setIgnoreExchangeEvents(false);
+                        eventNotifier.setIgnoreExchangeAsyncProcessingStartedEvents(false);
+                    }
                     break;
                 case StepStarted:
                 case StepCompleted:
@@ -438,11 +450,32 @@ public class CamelEventConsumer extends DefaultConsumer {
                 break;
             case Fail:
                 if (!eventQueue.offer(event)) {
-                    throw new IllegalStateException(
-                            "Event queue full (capacity: " + getEndpoint().getAsyncQueueSize()
-                                                    + "), cannot enqueue event: " + event.getType());
+                    reportFullQueue(event);
                 }
                 break;
+        }
+    }
+
+    /**
+     * Reports an event that does not fit in the full queue to the exception handler of this consumer, as Camel ignores
+     * (and logs) an exception that an event notifier throws. With bridgeErrorHandler=true the report is an exchange
+     * routed to the error handler of the route, which fires events of its own in this thread. Those that do not fit in
+     * the queue either are dropped without a report: reporting them would fire more events, without end while the queue
+     * stays full.
+     */
+    private void reportFullQueue(CamelEvent event) {
+        if (reportingFullQueue.get() != null) {
+            LOG.debug("Event queue full, dropping event fired while reporting a full queue: {}", event.getType());
+            return;
+        }
+        reportingFullQueue.set(Boolean.TRUE);
+        try {
+            handleException("The event is not processed",
+                    new IllegalStateException(
+                            "Event queue full (capacity: " + getEndpoint().getAsyncQueueSize()
+                                              + "), cannot enqueue event: " + event.getType()));
+        } finally {
+            reportingFullQueue.remove();
         }
     }
 

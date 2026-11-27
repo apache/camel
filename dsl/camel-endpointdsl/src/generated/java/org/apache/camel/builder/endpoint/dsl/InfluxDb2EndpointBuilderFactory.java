@@ -49,7 +49,8 @@ public interface InfluxDb2EndpointBuilderFactory {
          * starts, and creates it in the organization of the org option when it
          * does not exist. If autoCreateOrg is false and that organization does
          * not exist, the endpoint fails to start. A bucket that the
-         * CamelInfluxDB2Bucket header names is not created.
+         * CamelInfluxDB2Bucket header names is not created. Not used by the
+         * PING operation.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -68,7 +69,8 @@ public interface InfluxDb2EndpointBuilderFactory {
          * starts, and creates it in the organization of the org option when it
          * does not exist. If autoCreateOrg is false and that organization does
          * not exist, the endpoint fails to start. A bucket that the
-         * CamelInfluxDB2Bucket header names is not created.
+         * CamelInfluxDB2Bucket header names is not created. Not used by the
+         * PING operation.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -85,7 +87,8 @@ public interface InfluxDb2EndpointBuilderFactory {
         /**
          * Whether the endpoint looks up the organization of the org option when
          * it starts, and creates it when it does not exist. An organization
-         * that the CamelInfluxDB2Org header names is not created.
+         * that the CamelInfluxDB2Org header names is not created. Not used by
+         * the PING operation.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -102,7 +105,8 @@ public interface InfluxDb2EndpointBuilderFactory {
         /**
          * Whether the endpoint looks up the organization of the org option when
          * it starts, and creates it when it does not exist. An organization
-         * that the CamelInfluxDB2Org header names is not created.
+         * that the CamelInfluxDB2Org header names is not created. Not used by
+         * the PING operation.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -118,12 +122,13 @@ public interface InfluxDb2EndpointBuilderFactory {
         }
         /**
          * The name of the bucket to write to. The CamelInfluxDB2Bucket header
-         * replaces this option for a write. The autoCreateBucket option uses
-         * this bucket when the endpoint starts.
+         * replaces this option for a write, so the option can be left out when
+         * autoCreateBucket is false. The autoCreateBucket option uses this
+         * bucket when the endpoint starts, and the endpoint fails to start
+         * without it. Not used by the PING operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param bucket the value to set
@@ -173,13 +178,15 @@ public interface InfluxDb2EndpointBuilderFactory {
         }
         /**
          * The name of the organization to write to. The CamelInfluxDB2Org
-         * header replaces this option for a write. The autoCreateOrg and
-         * autoCreateBucket options use this organization when the endpoint
-         * starts.
+         * header replaces this option for a write, so the option can be left
+         * out when autoCreateOrg and autoCreateBucket are false. The
+         * autoCreateOrg and autoCreateBucket options use this organization when
+         * the endpoint starts: with autoCreateOrg, or with autoCreateBucket and
+         * a bucket that does not exist yet, the endpoint fails to start without
+         * it. Not used by the PING operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param org the value to set

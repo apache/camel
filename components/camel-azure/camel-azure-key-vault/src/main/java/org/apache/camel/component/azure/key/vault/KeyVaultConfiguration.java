@@ -29,26 +29,43 @@ import static org.apache.camel.component.azure.common.CredentialType.CLIENT_SECR
 @UriParams
 public class KeyVaultConfiguration implements Cloneable {
 
-    @UriPath
+    @UriPath(description = "The name of the key vault. The endpoint builds the vault URL from it with the vault.azure.net"
+                           + " domain of the Azure public cloud. Not used to connect when the secretClient option is set.")
+    @Metadata(required = true)
     private String vaultName;
-    @UriParam
+    @UriParam(description = "To use a custom com.azure.security.keyvault.secrets.SecretClient. When this option is set, the"
+                            + " client decides the vault and the credentials, and the vaultName, credentialType, clientId,"
+                            + " clientSecret and tenantId options are not used to connect.")
     @Metadata(autowired = true)
     private SecretClient secretClient;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The client ID (application ID) of the Microsoft Entra application for the CLIENT_SECRET credential"
+                            + " type. Required for CLIENT_SECRET, the default, unless the secretClient option is set. Not used"
+                            + " for AZURE_IDENTITY.")
     private String clientId;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The client secret of the Microsoft Entra application for the CLIENT_SECRET credential type."
+                            + " Required for CLIENT_SECRET, the default, unless the secretClient option is set. Not used for"
+                            + " AZURE_IDENTITY.")
     private String clientSecret;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The ID of the Microsoft Entra tenant (directory) of the application for the CLIENT_SECRET"
+                            + " credential type. Required for CLIENT_SECRET, the default, unless the secretClient option is"
+                            + " set. Not used for AZURE_IDENTITY.")
     private String tenantId;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", defaultValue = "createSecret",
+              description = "The operation that the producer performs. The CamelAzureKeyVaultProducerOperation header"
+                            + " replaces this option. Every operation except updateSecretProperties takes the name of the"
+                            + " secret from the CamelAzureKeyVaultSecretName header.")
     private KeyVaultOperation operation = KeyVaultOperation.createSecret;
     @UriParam(label = "common", enums = "CLIENT_SECRET,AZURE_IDENTITY",
-              defaultValue = "CLIENT_SECRET")
+              defaultValue = "CLIENT_SECRET",
+              description = "How the endpoint authenticates when it creates the SecretClient. CLIENT_SECRET uses the clientId,"
+                            + " clientSecret and tenantId options. AZURE_IDENTITY uses the DefaultAzureCredential of the Azure"
+                            + " Identity library, which tries environment variables, workload identity, managed identity and"
+                            + " developer tools such as the Azure CLI. Not used when the secretClient option is set.")
     private CredentialType credentialType = CLIENT_SECRET;
 
-    /**
-     * Instance of Secret client
-     */
     public SecretClient getSecretClient() {
         return secretClient;
     }
@@ -57,9 +74,6 @@ public class KeyVaultConfiguration implements Cloneable {
         this.secretClient = secretClient;
     }
 
-    /**
-     * Vault Name to be used
-     */
     public String getVaultName() {
         return vaultName;
     }
@@ -68,9 +82,6 @@ public class KeyVaultConfiguration implements Cloneable {
         this.vaultName = vaultName;
     }
 
-    /**
-     * Client Id to be used
-     */
     public String getClientId() {
         return clientId;
     }
@@ -79,9 +90,6 @@ public class KeyVaultConfiguration implements Cloneable {
         this.clientId = clientId;
     }
 
-    /**
-     * Client Secret to be used
-     */
     public String getClientSecret() {
         return clientSecret;
     }
@@ -90,9 +98,6 @@ public class KeyVaultConfiguration implements Cloneable {
         this.clientSecret = clientSecret;
     }
 
-    /**
-     * Tenant Id to be used
-     */
     public String getTenantId() {
         return tenantId;
     }
@@ -101,9 +106,6 @@ public class KeyVaultConfiguration implements Cloneable {
         this.tenantId = tenantId;
     }
 
-    /**
-     * Operation to be performed
-     */
     public KeyVaultOperation getOperation() {
         return operation;
     }
@@ -116,9 +118,6 @@ public class KeyVaultConfiguration implements Cloneable {
         return credentialType;
     }
 
-    /**
-     * Determines the credential strategy to adopt
-     */
     public void setCredentialType(CredentialType credentialType) {
         this.credentialType = credentialType;
     }

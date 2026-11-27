@@ -24,30 +24,46 @@ import org.apache.camel.spi.Metadata;
 @Deprecated(since = "4.24")
 public interface WatsonLanguageConstants {
 
-    @Metadata(description = "The operation to perform", javaType = "String")
+    @Metadata(description = "The operation to perform, analyzeText or analyzeUrl. It replaces the operation option.",
+              javaType = "String")
     String OPERATION = "CamelIBMWatsonLanguageOperation";
 
     // Natural Language Understanding headers
-    @Metadata(description = "The text to analyze", javaType = "String")
+    @Metadata(description = "The text to analyze for analyzeText. If not set, the producer analyzes the message body.",
+              javaType = "String")
     String TEXT = "CamelIBMWatsonLanguageText";
-    @Metadata(description = "The URL to analyze", javaType = "String")
+    @Metadata(description = "The URL of the web page to analyze for analyzeUrl, which the service retrieves. If not set, the"
+                            + " producer reads the URL from the message body.",
+              javaType = "String")
     String URL = "CamelIBMWatsonLanguageUrl";
-    @Metadata(description = "Enable sentiment analysis", javaType = "Boolean")
+    @Metadata(description = "Whether to request the sentiment of the document. It replaces the analyzeSentiment option.",
+              javaType = "Boolean")
     String ANALYZE_SENTIMENT = "CamelIBMWatsonLanguageAnalyzeSentiment";
-    @Metadata(description = "Enable emotion analysis", javaType = "Boolean")
+    @Metadata(description = "Whether to request the emotions of the document. It replaces the analyzeEmotion option.",
+              javaType = "Boolean")
     String ANALYZE_EMOTION = "CamelIBMWatsonLanguageAnalyzeEmotion";
-    @Metadata(description = "Enable entity extraction", javaType = "Boolean")
+    @Metadata(description = "Whether to request the entities of the content. It replaces the analyzeEntities option.",
+              javaType = "Boolean")
     String ANALYZE_ENTITIES = "CamelIBMWatsonLanguageAnalyzeEntities";
-    @Metadata(description = "Enable keyword extraction", javaType = "Boolean")
+    @Metadata(description = "Whether to request the keywords of the content. It replaces the analyzeKeywords option.",
+              javaType = "Boolean")
     String ANALYZE_KEYWORDS = "CamelIBMWatsonLanguageAnalyzeKeywords";
-    @Metadata(description = "Enable concept extraction", javaType = "Boolean")
+    @Metadata(description = "Whether to request the concepts of the content. It replaces the analyzeConcepts option.",
+              javaType = "Boolean")
     String ANALYZE_CONCEPTS = "CamelIBMWatsonLanguageAnalyzeConcepts";
-    @Metadata(description = "Enable category classification", javaType = "Boolean")
+    @Metadata(description = "Whether to request the categories of the content. It replaces the analyzeCategories option.",
+              javaType = "Boolean")
     String ANALYZE_CATEGORIES = "CamelIBMWatsonLanguageAnalyzeCategories";
-    @Metadata(description = "The language of the text", javaType = "String")
+    @Metadata(description = "The ISO 639-1 code of the language that the service detected and used for the analysis, for"
+                            + " example en. The producer sets it after each analysis.",
+              javaType = "String")
     String LANGUAGE = "CamelIBMWatsonLanguageLanguage";
-    @Metadata(description = "The sentiment score", javaType = "Double")
+    @Metadata(description = "The sentiment score of the whole document, from -1 (negative) to 1 (positive). The producer"
+                            + " sets it when sentiment is requested.",
+              javaType = "Double")
     String SENTIMENT_SCORE = "CamelIBMWatsonLanguageSentimentScore";
-    @Metadata(description = "The sentiment label (positive, negative, neutral)", javaType = "String")
+    @Metadata(description = "The sentiment label of the whole document: positive, neutral or negative. The producer sets it"
+                            + " when sentiment is requested.",
+              javaType = "String")
     String SENTIMENT_LABEL = "CamelIBMWatsonLanguageSentimentLabel";
 }

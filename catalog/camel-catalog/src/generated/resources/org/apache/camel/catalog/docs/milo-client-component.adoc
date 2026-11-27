@@ -2,7 +2,7 @@
 :doctitle: OPC UA Client
 :shortname: milo-client
 :artifactid: camel-milo
-:description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
+:description: Read, write and monitor the values of nodes, and call methods, on an OPC UA server.
 :since: 2.19
 :supportlevel: Stable
 :tabs-sync-option:

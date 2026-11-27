@@ -36,6 +36,8 @@ public class IoTHubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.iothub.IoTHubConfiguration.class, value)); return true;
         case "connectionstring":
         case "connectionString": getOrCreateConfiguration(target).setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentencoding":
+        case "contentEncoding": getOrCreateConfiguration(target).setContentEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttype":
         case "contentType": getOrCreateConfiguration(target).setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "deliverymode":
@@ -61,6 +63,8 @@ public class IoTHubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": return org.apache.camel.component.azure.iothub.IoTHubConfiguration.class;
         case "connectionstring":
         case "connectionString": return java.lang.String.class;
+        case "contentencoding":
+        case "contentEncoding": return java.lang.String.class;
         case "contenttype":
         case "contentType": return java.lang.String.class;
         case "deliverymode":
@@ -87,6 +91,8 @@ public class IoTHubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": return target.getConfiguration();
         case "connectionstring":
         case "connectionString": return getOrCreateConfiguration(target).getConnectionString();
+        case "contentencoding":
+        case "contentEncoding": return getOrCreateConfiguration(target).getContentEncoding();
         case "contenttype":
         case "contentType": return getOrCreateConfiguration(target).getContentType();
         case "deliverymode":
