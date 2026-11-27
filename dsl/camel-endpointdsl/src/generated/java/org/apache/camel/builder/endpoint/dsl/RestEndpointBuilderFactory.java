@@ -493,8 +493,8 @@ public interface RestEndpointBuilderFactory {
          * {name} is filled with the header or the exchange variable of that
          * name, and a parameter with the value {name?} is left out when neither
          * is set. The endpoint also adds the parameters of its URI that it does
-         * not know, except the options of the component that
-         * producerComponentName names.
+         * not know, except the options of the component that sends the HTTP
+         * request.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

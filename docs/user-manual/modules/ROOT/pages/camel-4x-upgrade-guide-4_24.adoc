@@ -12297,6 +12297,18 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-rest - the options of the producer component are not sent as query parameters
+
+A `rest` producer sends the parameters of its endpoint URI that are not `rest` options as query parameters of the
+request, except the options of the component that sends the request (such as `authUsername` and `authPassword` of
+`http`). These options are now left out of the query parameters also when the producer component is set with the
+`producerComponent` of the rest configuration, or is detected automatically. Before, they were left out only when the
+`producerComponentName` option was set on the endpoint or on the `rest` component: otherwise they were applied to the
+producer and also sent in the query string of the request URL.
+
+A query parameter that has the same name as an option of the producer component must be set in the `queryParameters`
+option.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
