@@ -2,7 +2,7 @@
 :doctitle: JGroups raft
 :shortname: jgroups-raft
 :artifactid: camel-jgroups-raft
-:description: Exchange messages with JGroups-raft clusters.
+:description: Append data to the replicated log of a JGroups-raft cluster, and receive the leader and follower role changes of the local member.
 :since: 2.24
 :supportlevel: Stable
 :tabs-sync-option:

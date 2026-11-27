@@ -41,6 +41,7 @@ import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeReason;
 import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
+import com.microsoft.azure.sdk.iot.device.twin.DesiredPropertiesCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +59,17 @@ import org.slf4j.LoggerFactory;
  * callback, and disconnected clients are retired automatically; any in-use client is closed only when the final lease
  * is released. Callers may also remove a client from the pool explicitly during cleanup.
  * </p>
+ *
+ * <p>
+ * A client over HTTPS is kept apart from the client over MQTT or AMQPS of the same device, as it cannot do twin
+ * operations. MQTT and AMQPS endpoints of a device share one client, as IoT Hub allows only one MQTT or AMQP connection
+ * per device.
+ * </p>
  */
 public class DeviceClientPool {
+
+    // the suffix of a client over HTTPS in the log text of its pool key; ':' separates the parts of the identity
+    private static final String HTTPS_KEY_SUFFIX = "|HTTPS";
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceClientPool.class);
 
@@ -189,11 +199,17 @@ public class DeviceClientPool {
 
     // package-private for test hooks only
     DeviceClient getOrCreate(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return getOrCreate(deviceId, connectionString, protocol, null);
+    }
+
+    // package-private for test hooks only
+    DeviceClient getOrCreate(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
 
-        PoolKey poolKey = resolvePoolKey(deviceId, connectionString);
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         PooledClient existing = pool.get(poolKey);
         if (existing != null) {
@@ -210,7 +226,7 @@ public class DeviceClientPool {
                     createdFuture.complete(rechecked.client);
                     return rechecked.client;
                 }
-                DeviceClient client = createClient(deviceId, connectionString, protocol);
+                DeviceClient client = createClient(deviceId, connectionString, protocol, subscribeTimeout);
                 // read the clock after open: opening can take longer than the idle timeout on a slow hub
                 PooledClient pooled = new PooledClient(client, nowMillis());
                 PooledClient previous = pool.putIfAbsent(poolKey, pooled);
@@ -259,11 +275,20 @@ public class DeviceClientPool {
     }
 
     public Lease acquire(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return acquire(deviceId, connectionString, protocol, null);
+    }
+
+    /**
+     * @param subscribeTimeout the timeout of the subscription to desired properties when the device client is created,
+     *                         or null for the default of the Azure IoT SDK
+     */
+    public Lease acquire(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
 
-        PoolKey poolKey = resolvePoolKey(deviceId, connectionString);
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         for (;;) {
             // read the clock on every attempt: getOrCreate below can block for a whole open of the client
@@ -286,7 +311,7 @@ public class DeviceClientPool {
                 continue;
             }
 
-            DeviceClient client = getOrCreate(deviceId, connectionString, protocol);
+            DeviceClient client = getOrCreate(deviceId, connectionString, protocol, subscribeTimeout);
             final long afterCreate = nowMillis();
             AtomicReference<PooledClient> acquired = new AtomicReference<>();
             pool.computeIfPresent(poolKey, (key, pooled) -> {
@@ -311,6 +336,11 @@ public class DeviceClientPool {
         return acquire(deviceId, connectionString, protocol);
     }
 
+    public Lease lease(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
+        return acquire(deviceId, connectionString, protocol, subscribeTimeout);
+    }
+
     private boolean isCreationInProgress(PoolKey poolKey) {
         return creationFutures.containsKey(poolKey);
     }
@@ -328,7 +358,8 @@ public class DeviceClientPool {
     }
 
     void remove(String deviceId, String connectionString) {
-        removePoolEntry(resolvePoolKey(deviceId, connectionString));
+        removePoolEntry(resolvePoolKey(deviceId, connectionString, false));
+        removePoolEntry(resolvePoolKey(deviceId, connectionString, true));
     }
 
     void remove(String deviceId) {
@@ -360,11 +391,13 @@ public class DeviceClientPool {
     }
 
     /**
-     * The key of a pooled client: the hub, device and module of the connection string, and a SHA-256 hash of the whole
-     * connection string, so the credential (SharedAccessKey, SharedAccessSignature, ...) is part of the key without the
-     * key holding it. {@link #toString()} leaves the hash out, as it is used in log messages.
+     * The key of a pooled client: the hub, device and module of the connection string, whether the client is over
+     * HTTPS, and a SHA-256 hash of the whole connection string, so the credential (SharedAccessKey,
+     * SharedAccessSignature, ...) is part of the key without the key holding it. A client over HTTPS is kept apart from
+     * the client over MQTT or AMQPS of the same device, as it cannot do twin operations. {@link #toString()} leaves the
+     * hash out, as it is used in log messages.
      */
-    private record PoolKey(String hostName, String deviceId, String moduleId, String connectionStringHash) {
+    private record PoolKey(String hostName, String deviceId, String moduleId, boolean https, String connectionStringHash) {
 
         boolean matchesDeviceId(String id) {
             return deviceId != null && deviceId.equals(id);
@@ -388,11 +421,18 @@ public class DeviceClientPool {
                 }
                 sb.append(moduleId);
             }
+            if (https) {
+                sb.append(HTTPS_KEY_SUFFIX);
+            }
             return sb.toString();
         }
     }
 
-    private static PoolKey resolvePoolKey(String deviceId, String connectionString) {
+    private static PoolKey resolvePoolKey(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return resolvePoolKey(deviceId, connectionString, protocol == IotHubClientProtocol.HTTPS);
+    }
+
+    private static PoolKey resolvePoolKey(String deviceId, String connectionString, boolean https) {
         String[] items = connectionString == null ? new String[0] : connectionString.split(";");
         String hostName = null;
         String csDeviceId = null;
@@ -431,6 +471,7 @@ public class DeviceClientPool {
                 hostName != null && !hostName.isBlank() ? hostName : null,
                 device,
                 moduleId != null && !moduleId.isBlank() ? moduleId : null,
+                https,
                 sha256(connectionString));
     }
 
@@ -445,7 +486,8 @@ public class DeviceClientPool {
         }
     }
 
-    private DeviceClient createClient(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+    private DeviceClient createClient(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         try {
             DeviceClient client = deviceClientFactory.create(connectionString, protocol);
             if (shuttingDown.get()) {
@@ -460,13 +502,22 @@ public class DeviceClientPool {
             try {
                 // Avoid duplicate desired-property subscriptions: subscribe only if not already subscribed.
                 // The Azure DeviceClient does not expose a way to check, so we rely on only subscribing once per client creation.
-                client.subscribeToDesiredProperties((twinUpdate, ctx) -> {
-                }, null);
+                // the Azure IoT SDK supports twin operations, such as this subscription, only over MQTT and AMQPS:
+                // over HTTPS it throws UnsupportedOperationException, which failed every send, also of telemetry
+                if (protocol != IotHubClientProtocol.HTTPS) {
+                    DesiredPropertiesCallback callback = (twinUpdate, ctx) -> {
+                    };
+                    if (subscribeTimeout != null) {
+                        client.subscribeToDesiredProperties(callback, null, Math.toIntExact(subscribeTimeout.toMillis()));
+                    } else {
+                        client.subscribeToDesiredProperties(callback, null);
+                    }
+                }
                 client.setConnectionStatusChangeCallback(context -> {
                     if (context == null) {
                         return;
                     }
-                    evictDisconnectedClient(deviceId, connectionString, client, context);
+                    evictDisconnectedClient(deviceId, connectionString, protocol, client, context);
                 }, null);
             } catch (Exception e) {
                 closeQuietly(deviceId, client, "subscription setup");
@@ -485,7 +536,7 @@ public class DeviceClientPool {
     }
 
     private void evictDisconnectedClient(
-            String deviceId, String connectionString, DeviceClient client,
+            String deviceId, String connectionString, IotHubClientProtocol protocol, DeviceClient client,
             ConnectionStatusChangeContext context) {
         if (context == null || shuttingDown.get()) {
             return;
@@ -497,7 +548,7 @@ public class DeviceClientPool {
             return;
         }
 
-        PoolKey poolKey = resolvePoolKey(deviceId, connectionString);
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         AtomicReference<PooledClient> removed = new AtomicReference<>();
         pool.computeIfPresent(poolKey, (key, pooled) -> {

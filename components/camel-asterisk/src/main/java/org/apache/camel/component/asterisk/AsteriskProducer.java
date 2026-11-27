@@ -37,7 +37,8 @@ public class AsteriskProducer extends DefaultProducer {
     private final AsteriskConnection connection;
 
     public AsteriskProducer(AsteriskEndpoint endpoint) {
-        this(endpoint, new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword()));
+        this(endpoint, new AsteriskConnection(
+                endpoint.getHostname(), endpoint.getPort(), endpoint.getUsername(), endpoint.getPassword()));
     }
 
     AsteriskProducer(AsteriskEndpoint endpoint, AsteriskConnection connection) {
@@ -49,7 +50,9 @@ public class AsteriskProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        connection.login();
+        // the producer has no event listener, so Asterisk does not need to send it the events of the PBX. The events
+        // that answer an action, such as the ones of QUEUE_STATUS, are sent whatever the event mask is.
+        connection.login("off");
 
         super.doStart();
     }

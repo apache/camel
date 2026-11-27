@@ -33,9 +33,13 @@ import org.infinispan.commons.api.query.ContinuousQueryListener;
 import org.infinispan.commons.api.query.Query;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.notifications.cachelistener.event.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InfinispanEmbeddedConsumer
         extends InfinispanConsumer<EmbeddedCacheManager, InfinispanEmbeddedManager, InfinispanEmbeddedConfiguration> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanEmbeddedConsumer.class);
 
     private Service handler;
 
@@ -126,8 +130,19 @@ public class InfinispanEmbeddedConsumer
                 if (configuration.getEventTypes() != null) {
                     String eventTypes = configuration.getEventTypes();
                     for (String event : eventTypes.split(",")) {
-                        events.add(Event.Type.valueOf(event));
+                        String name = event.trim();
+                        if (!name.isEmpty()) {
+                            events.add(Event.Type.valueOf(name));
+                        }
                     }
+                }
+                Set<Event.Type> notReceived = EnumSet.noneOf(Event.Type.class);
+                notReceived.addAll(events);
+                notReceived.removeAll(InfinispanEmbeddedEventListener.RECEIVED_EVENT_TYPES);
+                if (!notReceived.isEmpty()) {
+                    LOG.warn("The consumer of cache {} never receives the event types {} of the eventTypes option: its"
+                             + " listener only receives {}. Use a customListener for other event types.",
+                            cache.getName(), notReceived, InfinispanEmbeddedEventListener.RECEIVED_EVENT_TYPES);
                 }
 
                 if (configuration.isClusteredListener()) {

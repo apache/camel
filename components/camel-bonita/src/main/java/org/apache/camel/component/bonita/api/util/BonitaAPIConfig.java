@@ -18,10 +18,13 @@ package org.apache.camel.component.bonita.api.util;
 
 public class BonitaAPIConfig {
 
+    public static final String DEFAULT_BASE_PATH = "/bonita";
+
     private String hostname;
     private String port;
     private String username;
     private String password;
+    private String basePath = DEFAULT_BASE_PATH;
 
     public BonitaAPIConfig(String hostname, String port, String username, String password) {
         this.hostname = hostname;
@@ -30,12 +33,44 @@ public class BonitaAPIConfig {
         this.password = password;
     }
 
+    /**
+     * @param basePath the context path of the Bonita web application, such as /bonita; null means /bonita
+     */
+    public BonitaAPIConfig(String hostname, String port, String username, String password, String basePath) {
+        this(hostname, port, username, password);
+        setBasePath(basePath);
+    }
+
     public String getBaseBonitaURI() {
-        return "http://" + hostname + ":" + port + "/bonita";
+        return "http://" + hostname + ":" + port + basePath;
+    }
+
+    public String getBasePath() {
+        return basePath;
+    }
+
+    /**
+     * The context path of the Bonita web application. A missing leading slash is added and a trailing slash removed, so
+     * that the paths of the REST API can be appended; an empty path or / is the root of the server, and null is
+     * /bonita.
+     */
+    public void setBasePath(String basePath) {
+        if (basePath == null) {
+            this.basePath = DEFAULT_BASE_PATH;
+            return;
+        }
+        String path = basePath.trim();
+        while (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        if (!path.isEmpty() && !path.startsWith("/")) {
+            path = "/" + path;
+        }
+        this.basePath = path;
     }
 
     public String getProcessFileUploadBaseURI(String processName, String processVersion) {
-        return getBaseBonitaURI() + "portal/resource/process/" + processName + "/" + processVersion
+        return getBaseBonitaURI() + "/portal/resource/process/" + processName + "/" + processVersion
                + "/API/formFileUpload";
     }
 

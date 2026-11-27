@@ -66,7 +66,7 @@ or removes its row.
 | camel-alibaba-ots | alibaba-ots | yes |
 | camel-alibaba-sls | alibaba-sls | yes |
 | camel-alibaba-sms | alibaba-sms | yes |
-| camel-amqp | amqp |  |
+| camel-amqp | amqp | yes |
 | camel-apicurio-registry | apicurio-registry |  |
 | camel-arangodb | arangodb | yes |
 | camel-as2 | as2 |  |
@@ -74,8 +74,8 @@ or removes its row.
 | camel-atmosphere-websocket | atmosphere-websocket |  |
 | camel-atom | atom |  |
 | camel-avro-rpc | avro |  |
-| camel-aws-bedrock | aws-bedrock, aws-bedrock-agent, aws-bedrock-agent-runtime |  |
-| camel-aws-cloudtrail | aws-cloudtrail |  |
+| camel-aws-bedrock | aws-bedrock, aws-bedrock-agent, aws-bedrock-agent-runtime | yes |
+| camel-aws-cloudtrail | aws-cloudtrail | yes |
 | camel-aws-config | aws-config |  |
 | camel-aws-parameter-store | aws-parameter-store |  |
 | camel-aws-secrets-manager | aws-secrets-manager |  |
@@ -100,13 +100,13 @@ or removes its row.
 | camel-aws2-s3 | aws2-s3 |  |
 | camel-aws2-s3-vectors | aws2-s3-vectors |  |
 | camel-aws2-ses | aws2-ses |  |
-| camel-aws2-sns | aws2-sns |  |
+| camel-aws2-sns | aws2-sns | yes |
 | camel-aws2-sqs | aws2-sqs |  |
 | camel-aws2-step-functions | aws2-step-functions | yes |
 | camel-aws2-sts | aws2-sts |  |
 | camel-aws2-textract | aws2-textract |  |
-| camel-aws2-timestream | aws2-timestream |  |
-| camel-aws2-transcribe | aws2-transcribe |  |
+| camel-aws2-timestream | aws2-timestream | yes |
+| camel-aws2-transcribe | aws2-transcribe | yes |
 | camel-aws2-translate | aws2-translate |  |
 | camel-azure-cosmosdb | azure-cosmosdb | yes |
 | camel-azure-eventgrid | azure-eventgrid |  |
@@ -135,20 +135,20 @@ or removes its row.
 | camel-clickup | clickup |  |
 | camel-cm-sms | cm-sms |  |
 | camel-coap | coap, coap+tcp, coaps, coaps+tcp |  |
-| camel-cometd | cometd, cometds |  |
-| camel-consul | consul |  |
+| camel-cometd | cometd, cometds | yes |
+| camel-consul | consul | yes |
 | camel-controlbus | controlbus |  |
 | camel-couchbase | couchbase |  |
 | camel-couchdb | couchdb |  |
 | camel-cron | cron | yes |
-| camel-crypto | crypto |  |
+| camel-crypto | crypto | yes |
 | camel-cxf-rest | cxfrs | yes |
 | camel-cxf-soap | cxf | yes |
-| camel-cyberark-vault | cyberark-vault |  |
+| camel-cyberark-vault | cyberark-vault | yes |
 | camel-dapr | dapr |  |
 | camel-dataformat | dataformat |  |
 | camel-dataset | dataset, dataset-test |  |
-| camel-debezium-db2 | debezium-db2 |  |
+| camel-debezium-db2 | debezium-db2 | yes |
 | camel-debezium-mongodb | debezium-mongodb |  |
 | camel-debezium-mysql | debezium-mysql |  |
 | camel-debezium-oracle | debezium-oracle |  |
@@ -183,26 +183,26 @@ or removes its row.
 | camel-geocoder | geocoder | yes |
 | camel-git | git | yes |
 | camel-github2 | github2 |  |
-| camel-google-bigquery | google-bigquery, google-bigquery-sql |  |
+| camel-google-bigquery | google-bigquery, google-bigquery-sql | yes |
 | camel-google-calendar | google-calendar, google-calendar-stream |  |
 | camel-google-drive | google-drive |  |
 | camel-google-firestore | google-firestore | yes |
-| camel-google-functions | google-functions |  |
+| camel-google-functions | google-functions | yes |
 | camel-google-mail | google-mail, google-mail-stream |  |
 | camel-google-pubsub | google-pubsub |  |
 | camel-google-secret-manager | google-secret-manager |  |
 | camel-google-sheets | google-sheets, google-sheets-stream |  |
-| camel-google-speech-to-text | google-speech-to-text |  |
+| camel-google-speech-to-text | google-speech-to-text | yes |
 | camel-google-storage | google-storage |  |
 | camel-google-text-to-speech | google-text-to-speech |  |
 | camel-google-vertexai | google-vertexai |  |
 | camel-google-vision | google-vision |  |
 | camel-graphql | graphql |  |
-| camel-grpc | grpc |  |
+| camel-grpc | grpc | yes |
 | camel-hashicorp-vault | hashicorp-vault |  |
 | camel-hazelcast | hazelcast-instance, hazelcast-list, hazelcast-map, hazelcast-multimap, hazelcast-pncounter, hazelcast-queue, hazelcast-replicatedmap, hazelcast-ringbuffer, hazelcast-seda, hazelcast-set, hazelcast-topic |  |
-| camel-hibernate | hibernate |  |
-| camel-hivemq | hivemq |  |
+| camel-hibernate | hibernate | yes |
+| camel-hivemq | hivemq | yes |
 | camel-http | http, https |  |
 | camel-huaweicloud-dms | hwcloud-dms |  |
 | camel-huaweicloud-frs | hwcloud-frs |  |
@@ -210,12 +210,12 @@ or removes its row.
 | camel-huaweicloud-iam | hwcloud-iam |  |
 | camel-huaweicloud-imagerecognition | hwcloud-imagerecognition | yes |
 | camel-huaweicloud-obs | hwcloud-obs |  |
-| camel-huaweicloud-smn | hwcloud-smn |  |
+| camel-huaweicloud-smn | hwcloud-smn | yes |
 | camel-huggingface | huggingface | yes |
 | camel-ibm-cos | ibm-cos |  |
 | camel-ibm-secrets-manager | ibm-secrets-manager |  |
 | camel-ibm-watson-discovery | ibm-watson-discovery |  |
-| camel-ibm-watson-language | ibm-watson-language |  |
+| camel-ibm-watson-language | ibm-watson-language | yes |
 | camel-ibm-watson-speech-to-text | ibm-watson-speech-to-text | yes |
 | camel-ibm-watson-text-to-speech | ibm-watson-text-to-speech |  |
 | camel-ibm-watsonx-ai | ibm-watsonx-ai |  |
@@ -224,18 +224,18 @@ or removes its row.
 | camel-ignite | ignite-cache, ignite-compute, ignite-events, ignite-idgen, ignite-messaging, ignite-queue, ignite-set |  |
 | camel-infinispan | infinispan |  |
 | camel-infinispan-embedded | infinispan-embedded | yes |
-| camel-influxdb | influxdb |  |
+| camel-influxdb | influxdb | yes |
 | camel-influxdb2 | influxdb2 | yes |
 | camel-jcache | jcache |  |
 | camel-jcr | jcr |  |
 | camel-jdbc | jdbc |  |
 | camel-jetty | jetty |  |
 | camel-jgroups | jgroups |  |
-| camel-jgroups-raft | jgroups-raft |  |
+| camel-jgroups-raft | jgroups-raft | yes |
 | camel-jira | jira | yes |
 | camel-jms | jms |  |
 | camel-jmx | jmx | yes |
-| camel-jolt | jolt |  |
+| camel-jolt | jolt | yes |
 | camel-jooq | jooq | yes |
 | camel-jpa | jpa |  |
 | camel-jsch | scp | yes |
@@ -251,7 +251,7 @@ or removes its row.
 | camel-knative | knative |  |
 | camel-kserve | kserve |  |
 | camel-kubernetes | kubernetes-config-maps, kubernetes-cronjob, kubernetes-custom-resources, kubernetes-deployments, kubernetes-events, kubernetes-hpa, kubernetes-job, kubernetes-namespaces, kubernetes-nodes, kubernetes-persistent-volumes, kubernetes-persistent-volumes-claims, kubernetes-pods, kubernetes-replication-controllers, kubernetes-resources-quota, kubernetes-secrets, kubernetes-service-accounts, kubernetes-services, openshift-build-configs, openshift-builds, openshift-deploymentconfigs |  |
-| camel-kudu | kudu |  |
+| camel-kudu | kudu | yes |
 | camel-langchain4j-agent | langchain4j-agent | yes |
 | camel-langchain4j-chat | langchain4j-chat |  |
 | camel-langchain4j-embeddings | langchain4j-embeddings |  |
@@ -269,15 +269,15 @@ or removes its row.
 | camel-master | master |  |
 | camel-metrics | metrics | yes |
 | camel-micrometer | micrometer |  |
-| camel-milo | milo-browse, milo-client, milo-server |  |
-| camel-milvus | milvus |  |
+| camel-milo | milo-browse, milo-client, milo-server | yes |
+| camel-milvus | milvus | yes |
 | camel-mina | mina |  |
 | camel-mina-sftp | mina-sftp |  |
 | camel-minio | minio (deprecated) |  |
 | camel-mllp | mllp |  |
 | camel-mock | mock |  |
 | camel-mongodb | mongodb |  |
-| camel-mongodb-gridfs | mongodb-gridfs |  |
+| camel-mongodb-gridfs | mongodb-gridfs | yes |
 | camel-mtconnect | mtconnect |  |
 | camel-mustache | mustache | yes |
 | camel-mvel | mvel |  |
@@ -316,12 +316,12 @@ or removes its row.
 | camel-quartz | quartz |  |
 | camel-quickfix | quickfix |  |
 | camel-reactive-streams | reactive-streams |  |
-| camel-ref | ref |  |
+| camel-ref | ref | yes |
 | camel-rest | rest, rest-api | yes |
 | camel-rest-openapi | rest-openapi |  |
-| camel-rest-postman | rest-postman |  |
+| camel-rest-postman | rest-postman | yes |
 | camel-robotframework | robotframework |  |
-| camel-rocketmq | rocketmq |  |
+| camel-rocketmq | rocketmq | yes |
 | camel-rss | rss |  |
 | camel-saga | saga | yes |
 | camel-salesforce | salesforce |  |
@@ -330,12 +330,12 @@ or removes its row.
 | camel-scheduler | scheduler | yes |
 | camel-schematron | schematron |  |
 | camel-seda | seda |  |
-| camel-servicenow | servicenow |  |
+| camel-servicenow | servicenow | yes |
 | camel-servlet | servlet |  |
 | camel-shell | shell |  |
 | camel-sjms | sjms |  |
-| camel-sjms2 | sjms2 |  |
-| camel-slack | slack |  |
+| camel-sjms2 | sjms2 | yes |
+| camel-slack | slack | yes |
 | camel-smb | smb |  |
 | camel-smooks | smooks |  |
 | camel-smpp | smpp, smpps |  |
@@ -355,16 +355,16 @@ or removes its row.
 | camel-spring-redis | spring-redis | yes |
 | camel-spring-ws | spring-ws | yes |
 | camel-sql | sql, sql-stored |  |
-| camel-ssh | ssh |  |
-| camel-state-store | state-store |  |
-| camel-stax | stax |  |
+| camel-ssh | ssh | yes |
+| camel-state-store | state-store | yes |
+| camel-stax | stax | yes |
 | camel-stitch | stitch |  |
 | camel-stream | stream | yes |
 | camel-stringtemplate | string-template |  |
 | camel-stripe | stripe |  |
 | camel-stub | stub |  |
 | camel-tahu | tahu-edge, tahu-host |  |
-| camel-telegram | telegram |  |
+| camel-telegram | telegram | yes |
 | camel-tensorflow-serving | tensorflow-serving |  |
 | camel-test-citrus | citrus |  |
 | camel-thrift | thrift |  |
@@ -380,7 +380,7 @@ or removes its row.
 | camel-vertx | vertx |  |
 | camel-vertx-http | vertx-http |  |
 | camel-vertx-mqtt | vertx-mqtt | yes |
-| camel-vertx-websocket | vertx-websocket |  |
+| camel-vertx-websocket | vertx-websocket | yes |
 | camel-wasm | wasm |  |
 | camel-weather | weather | yes |
 | camel-weaviate | weaviate |  |
@@ -390,9 +390,9 @@ or removes its row.
 | camel-wordpress | wordpress |  |
 | camel-workday | workday |  |
 | camel-xchange | xchange | yes |
-| camel-xj | xj |  |
-| camel-xmlsecurity | xmlsecurity-sign, xmlsecurity-verify |  |
-| camel-xmpp | xmpp |  |
+| camel-xj | xj | yes |
+| camel-xmlsecurity | xmlsecurity-sign, xmlsecurity-verify | yes |
+| camel-xmpp | xmpp | yes |
 | camel-xslt | xslt |  |
 | camel-xslt-saxon | xslt-saxon |  |
 | camel-zendesk | zendesk |  |

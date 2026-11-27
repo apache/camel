@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY;
 
 /**
- * Google BigQuery data warehouse for analytics.
+ * Insert rows into Google BigQuery tables.
  *
  * BigQuery Endpoint Definition Represents a table within a BigQuery dataset Contains configuration details for a single
  * table and the utility methods (such as check, create) to ease operations URI Parameters: * Logger ID - To ensure that

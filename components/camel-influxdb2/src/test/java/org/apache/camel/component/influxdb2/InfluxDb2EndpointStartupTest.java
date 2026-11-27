@@ -23,6 +23,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -32,10 +33,13 @@ import com.influxdb.client.write.Point;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -208,6 +212,38 @@ class InfluxDb2EndpointStartupTest extends CamelTestSupport {
                 cause.getMessage());
         assertEquals(List.of("GET /api/v2/buckets", "GET /api/v2/orgs"), requests,
                 "requests when the route has failed to start");
+    }
+
+    @Test
+    void pingEndpointNeedsNoOrganizationOrBucket() throws Exception {
+        orgExists.set(false);
+        bucketExists.set(false);
+
+        assertDoesNotThrow(() -> addRouteTo("influxdb2:influxDbBean?operation=PING"));
+
+        assertEquals(List.of(), requests, "requests when the route has started");
+    }
+
+    @Test
+    void pingEndpointDoesNotCreateTheOrganizationOrTheBucket() throws Exception {
+        orgExists.set(false);
+        bucketExists.set(false);
+
+        addRouteTo("influxdb2:influxDbBean?operation=PING&org=myOrg&bucket=myBucket");
+
+        assertEquals(List.of(), requests, "requests when the route has started");
+    }
+
+    @Test
+    void organizationAndBucketAreNotRequiredOptions() throws Exception {
+        JsonObject json = (JsonObject) Jsoner.deserialize(
+                ((CatalogCamelContext) context).getComponentParameterJsonSchema("influxdb2"));
+        Map<String, Object> properties = json.getMap("properties");
+        Map<String, Object> componentProperties = json.getMap("componentProperties");
+
+        assertEquals(Boolean.FALSE, ((Map<?, ?>) properties.get("org")).get("required"));
+        assertEquals(Boolean.FALSE, ((Map<?, ?>) properties.get("bucket")).get("required"));
+        assertEquals("InfluxDB Client", ((Map<?, ?>) componentProperties.get("influxDBClient")).get("displayName"));
     }
 
     private void addRouteTo(String uri) throws Exception {

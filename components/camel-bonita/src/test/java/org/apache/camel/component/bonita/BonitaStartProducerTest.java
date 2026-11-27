@@ -70,7 +70,7 @@ class BonitaStartProducerTest {
         server.start();
         server.stubFor(post(urlEqualTo(LOGIN))
                 .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=session", "X-Bonita-API-Token=token")));
-        server.stubFor(get(urlPathEqualTo(PROCESS)).withQueryParam("s", equalTo("orders"))
+        server.stubFor(get(urlPathEqualTo(PROCESS)).withQueryParam("f", equalTo("name=orders"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBody("[{\"id\":\"7\",\"name\":\"orders\",\"version\":\"1.0\"}]")));
         server.stubFor(post(urlEqualTo(INSTANTIATION))

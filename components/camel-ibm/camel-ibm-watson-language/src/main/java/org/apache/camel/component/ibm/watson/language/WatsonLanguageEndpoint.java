@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Perform natural language processing using IBM Watson Natural Language Understanding
+ * Analyze text and web pages with IBM Watson Natural Language Understanding.
  */
 @UriEndpoint(firstVersion = "4.16.0", scheme = "ibm-watson-language", title = "IBM Watson Language",
              syntax = "ibm-watson-language:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
@@ -52,7 +52,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @Deprecated(since = "4.24")
 public class WatsonLanguageEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A name of your choice for the endpoint. The component does not use it.")
     @Metadata(required = true)
     private String label;
 

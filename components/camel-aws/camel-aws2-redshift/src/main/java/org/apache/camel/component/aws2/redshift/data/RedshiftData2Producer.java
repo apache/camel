@@ -69,6 +69,10 @@ public class RedshiftData2Producer extends DefaultProducer {
         if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
+        if (operation == null) {
+            throw new IllegalArgumentException(
+                    "No operation: set the " + RedshiftData2Constants.OPERATION + " header or the operation option");
+        }
         return operation;
     }
 
@@ -135,6 +139,11 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.workgroupName(workgroupName);
             }
 
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN))) {
+                String nextToken = exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN, String.class);
+                builder.nextToken(nextToken);
+            }
+
             ListDatabasesResponse result;
             try {
                 result = redshiftDataClient.listDatabases(builder.build());
@@ -199,6 +208,11 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.schemaPattern(schemaPattern);
             }
 
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN))) {
+                String nextToken = exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN, String.class);
+                builder.nextToken(nextToken);
+            }
+
             ListSchemasResponse result;
             try {
                 result = redshiftDataClient.listSchemas(builder.build());
@@ -246,6 +260,23 @@ public class RedshiftData2Producer extends DefaultProducer {
                 Integer maxResults
                         = exchange.getIn().getHeader(RedshiftData2Constants.LIST_STATEMENTS_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxResults);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN))) {
+                String nextToken = exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN, String.class);
+                builder.nextToken(nextToken);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER))) {
+                String clusterIdentifier = exchange.getIn().getHeader(RedshiftData2Constants.CLUSTER_IDENTIFIER, String.class);
+                builder.clusterIdentifier(clusterIdentifier);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.WORKGROUP_NAME))) {
+                String workgroupName = exchange.getIn().getHeader(RedshiftData2Constants.WORKGROUP_NAME, String.class);
+                builder.workgroupName(workgroupName);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.DATABASE))) {
+                String database = exchange.getIn().getHeader(RedshiftData2Constants.DATABASE, String.class);
+                builder.database(database);
             }
 
             ListStatementsResponse result;
@@ -316,6 +347,11 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.tablePattern(tablePattern);
             }
 
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN))) {
+                String nextToken = exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN, String.class);
+                builder.nextToken(nextToken);
+            }
+
             ListTablesResponse result;
             try {
                 result = redshiftDataClient.listTables(builder.build());
@@ -383,6 +419,11 @@ public class RedshiftData2Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SCHEMA))) {
                 String schema = exchange.getIn().getHeader(RedshiftData2Constants.SCHEMA, String.class);
                 builder.schema(schema);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN))) {
+                String nextToken = exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN, String.class);
+                builder.nextToken(nextToken);
             }
 
             DescribeTableResponse result;
@@ -458,6 +499,24 @@ public class RedshiftData2Producer extends DefaultProducer {
                 builder.parameters(sqlParameterList);
             }
 
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.WAIT_TIME_SECONDS))) {
+                Integer waitTimeSeconds = exchange.getIn().getHeader(RedshiftData2Constants.WAIT_TIME_SECONDS, Integer.class);
+                builder.waitTimeSeconds(waitTimeSeconds);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.RESULT_FORMAT))) {
+                String resultFormat = exchange.getIn().getHeader(RedshiftData2Constants.RESULT_FORMAT, String.class);
+                builder.resultFormat(resultFormat);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SESSION_ID))) {
+                String sessionId = exchange.getIn().getHeader(RedshiftData2Constants.SESSION_ID, String.class);
+                builder.sessionId(sessionId);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SESSION_KEEP_ALIVE_SECONDS))) {
+                Integer sessionKeepAliveSeconds
+                        = exchange.getIn().getHeader(RedshiftData2Constants.SESSION_KEEP_ALIVE_SECONDS, Integer.class);
+                builder.sessionKeepAliveSeconds(sessionKeepAliveSeconds);
+            }
+
             ExecuteStatementResponse result;
             try {
                 result = redshiftDataClient.executeStatement(builder.build());
@@ -525,6 +584,33 @@ public class RedshiftData2Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SQL_STATEMENT_LIST))) {
                 List<String> sqlStatements = exchange.getIn().getHeader(RedshiftData2Constants.SQL_STATEMENT_LIST, List.class);
                 builder.sqls(sqlStatements);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SQL_PARAMETER_LIST))) {
+                List<SqlParameter> sqlParameterList
+                        = exchange.getIn().getHeader(RedshiftData2Constants.SQL_PARAMETER_LIST, List.class);
+                builder.parameters(sqlParameterList);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.WAIT_TIME_SECONDS))) {
+                Integer waitTimeSeconds = exchange.getIn().getHeader(RedshiftData2Constants.WAIT_TIME_SECONDS, Integer.class);
+                builder.waitTimeSeconds(waitTimeSeconds);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.EXECUTION_MODE))) {
+                String executionMode = exchange.getIn().getHeader(RedshiftData2Constants.EXECUTION_MODE, String.class);
+                builder.executionMode(executionMode);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.RESULT_FORMAT))) {
+                String resultFormat = exchange.getIn().getHeader(RedshiftData2Constants.RESULT_FORMAT, String.class);
+                builder.resultFormat(resultFormat);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SESSION_ID))) {
+                String sessionId = exchange.getIn().getHeader(RedshiftData2Constants.SESSION_ID, String.class);
+                builder.sessionId(sessionId);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.SESSION_KEEP_ALIVE_SECONDS))) {
+                Integer sessionKeepAliveSeconds
+                        = exchange.getIn().getHeader(RedshiftData2Constants.SESSION_KEEP_ALIVE_SECONDS, Integer.class);
+                builder.sessionKeepAliveSeconds(sessionKeepAliveSeconds);
             }
 
             BatchExecuteStatementResponse result;
@@ -633,6 +719,15 @@ public class RedshiftData2Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.STATEMENT_ID))) {
                 String id = exchange.getIn().getHeader(RedshiftData2Constants.STATEMENT_ID, String.class);
                 builder.id(id);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN))) {
+                String nextToken = exchange.getIn().getHeader(RedshiftData2Constants.NEXT_TOKEN, String.class);
+                builder.nextToken(nextToken);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(RedshiftData2Constants.WAIT_TIME_SECONDS))) {
+                Integer waitTimeSeconds = exchange.getIn().getHeader(RedshiftData2Constants.WAIT_TIME_SECONDS, Integer.class);
+                builder.waitTimeSeconds(waitTimeSeconds);
             }
 
             GetStatementResultResponse result;

@@ -65,6 +65,11 @@ how the body is interpreted:
 * `BOTH` - sends the message body as telemetry and applies twin reported properties from the
   `CamelAzureIoTHubTwinProperties` header.
 
+`TWIN` and `BOTH` update the device twin, which the Azure IoT SDK supports only over `MQTT`, `MQTT_WS`, `AMQPS` and
+`AMQPS_WS`. With `protocol=HTTPS` only `TELEMETRY` works: a producer with `deliveryMode` `TWIN` or `BOTH` fails to
+start, and a message whose `CamelAzureIoTHubDeliveryMode` header asks for a twin update fails. An HTTPS endpoint and an
+MQTT or AMQPS endpoint of the same device each open their own device client.
+
 Any payload decoding (for example Protobuf or CloudEvent to `Map`) must be done by a
 preceding processor in the route; this component is payload-agnostic.
 
