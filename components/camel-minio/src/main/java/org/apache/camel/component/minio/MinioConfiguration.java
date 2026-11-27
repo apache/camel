@@ -42,12 +42,14 @@ public class MinioConfiguration implements Cloneable {
                             + "443. Required unless minioClient is set.",
               label = "common")
     private String endpoint;
-    @UriParam(description = "The TCP port of the server. When set, it replaces the port of the endpoint option, and the "
-                            + "secure option sets the scheme. Not used when minioClient is set.",
+    @UriParam(description = "The TCP port of the server. When set, it replaces the port of the endpoint option. An "
+                            + "endpoint with the http:// or https:// scheme keeps its scheme; for a host name without a scheme, "
+                            + "the secure option sets it. Not used when minioClient is set.",
               label = "common")
     private Integer proxyPort;
-    @UriParam(description = "Whether the client uses HTTPS (true) or HTTP (false) when proxyPort is set. Without proxyPort, "
-                            + "this option is not used and the scheme of the endpoint option applies.",
+    @UriParam(description = "Whether the client uses HTTPS (true) or HTTP (false) when proxyPort is set and the endpoint "
+                            + "option is a host name without a scheme. When the endpoint has the http:// or https:// scheme, "
+                            + "or proxyPort is not set, this option is not used and the scheme of the endpoint applies.",
               label = "common")
     private boolean secure;
     @UriParam(description = "The region of the server, for example us-east-1. The client signs its requests for this region, "

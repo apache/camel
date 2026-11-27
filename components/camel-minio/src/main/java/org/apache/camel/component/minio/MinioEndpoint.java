@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.minio;
 
+import java.util.Locale;
+
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -185,7 +187,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint implements EndpointServ
 
             if (isNotEmpty(configuration.getProxyPort())) {
                 minioClientRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(),
-                        configuration.isSecure());
+                        isSecureForProxyPort(configuration.getEndpoint(), configuration.isSecure()));
             } else {
                 minioClientRequest.endpoint(configuration.getEndpoint());
             }
@@ -203,6 +205,25 @@ public class MinioEndpoint extends ScheduledPollEndpoint implements EndpointServ
         } else {
             throw new IllegalArgumentException("Endpoint must be specified");
         }
+    }
+
+    /**
+     * Determines the secure flag to pass to MinioClient.Builder.endpoint(endpoint, port, secure). An endpoint with a
+     * scheme keeps its scheme; the secure option applies only to a host name without a scheme. This works around the
+     * MinIO client replacing the scheme of the endpoint with the secure flag when a port is given.
+     */
+    static boolean isSecureForProxyPort(String endpoint, boolean secure) {
+        String lower = endpoint.trim().toLowerCase(Locale.ROOT);
+        if (lower.startsWith("https://")) {
+            return true;
+        }
+        if (lower.startsWith("http://")) {
+            if (secure) {
+                LOG.warn("The secure option is not used, as the endpoint {} has the http:// scheme", endpoint);
+            }
+            return false;
+        }
+        return secure;
     }
 
     private boolean bucketExists(String bucketName) throws Exception {

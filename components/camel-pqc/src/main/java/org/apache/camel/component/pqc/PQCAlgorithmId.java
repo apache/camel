@@ -97,7 +97,9 @@ public enum PQCAlgorithmId {
     RC2(0x0508, "RC2"),
     RC5(0x0509, "RC5"),
     SEED(0x050A, "SEED"),
-    SM4(0x050B, "SM4");
+    SM4(0x050B, "SM4"),
+    DSTU7624(0x050C, "DSTU7624"),
+    GOST3412_2015(0x050D, "GOST3412-2015");
 
     private static final Map<Integer, PQCAlgorithmId> BY_ID = new HashMap<>();
     private static final Map<String, PQCAlgorithmId> BY_JCA_NAME = new HashMap<>();
