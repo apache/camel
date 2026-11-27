@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -35,7 +36,7 @@ public class IggyConfiguration implements Cloneable {
     private int port = 8090;
     @UriParam(security = "secret", label = "security", description = "Iggy username")
     private String username;
-    @UriParam(security = "secret", description = "Iggy password")
+    @UriParam(security = "secret", label = "security", description = "Iggy password")
     private String password;
     @UriParam(defaultValue = "true",
               description = "Whether to automatically create stream if it does not exist")
@@ -58,7 +59,10 @@ public class IggyConfiguration implements Cloneable {
     private Long maxTopicSize = 0L;
     @UriParam(description = "Options provided when creating a topic")
     private Map<String, String> iggyHeaderOptions = new HashMap<>();
-    @UriParam(label = "producer", defaultValue = "balanced", description = "Partitioning strategy for message distribution")
+    @UriParam(label = "producer", defaultValue = "balanced",
+              description = "Partitioning strategy for message distribution: balanced, a partition ID such as partitionId:2,"
+                            + " or a messages key such as messagesKey:order-1 as text, or an"
+                            + " org.apache.iggy.message.Partitioning")
     private Partitioning partitioning = Partitioning.balanced();
     @UriParam(label = "consumer", description = "The name of the consumer group")
     private String consumerGroupName;
@@ -67,8 +71,10 @@ public class IggyConfiguration implements Cloneable {
     @UriParam(label = "consumer", description = "The consumer partition id")
     private Long partitionId;
     @UriParam(label = "consumer", defaultValue = "1", description = "Camel Iggy consumers count")
+    @Metadata(deprecationNote = "The consumer polls the topic with one task, so a value above 1 only adds idle threads")
+    @Deprecated(since = "4.24.0")
     private int consumersCount = 1;
-    @UriParam(label = "common,consumer", defaultValue = "30000", description = "Camel Iggy shutdown timeout")
+    @UriParam(label = "consumer", defaultValue = "30000", description = "Camel Iggy shutdown timeout")
     private int shutdownTimeout = 30000;
     @UriParam(label = "consumer", defaultValue = "next", description = "Polling strategy", enums = "next,first,last")
     private String pollingStrategy = "next";
@@ -236,10 +242,15 @@ public class IggyConfiguration implements Cloneable {
         this.partitionId = partitionId;
     }
 
+    @Deprecated(since = "4.24.0")
     public int getConsumersCount() {
         return consumersCount;
     }
 
+    /**
+     * @deprecated the consumer polls the topic with one task, so a value above 1 only adds idle threads
+     */
+    @Deprecated(since = "4.24.0")
     public void setConsumersCount(int consumersCount) {
         this.consumersCount = consumersCount;
     }

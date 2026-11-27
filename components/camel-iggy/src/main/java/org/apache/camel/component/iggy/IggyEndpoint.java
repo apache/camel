@@ -103,7 +103,8 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         String stream = streamName != null ? streamName : iggyConfiguration.getStreamName();
 
         if (iggyConfiguration.isAutoCreateStream()) {
-            if (iggyConfiguration.getStreamId() != null) {
+            // streamId identifies the stream of the endpoint, not the one of a CamelIggyStreamOverride header
+            if (iggyConfiguration.getStreamId() != null && stream.equals(iggyConfiguration.getStreamName())) {
                 client.streams().getStream(StreamId.of(iggyConfiguration.getStreamId())).orElseGet(() -> {
                     LOG.debug("Creating stream with id {} and name {}", iggyConfiguration.getStreamId(),
                             iggyConfiguration.getStreamName());

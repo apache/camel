@@ -287,20 +287,6 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Iggy password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Iggy server port number.
          * 
          * The option is a: <code>int</code> type.
@@ -423,7 +409,8 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Camel Iggy consumers count.
+         * Camel Iggy consumers count. Deprecation note: The consumer polls the
+         * topic with one task, so a value above 1 only adds idle threads.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -433,12 +420,14 @@ public interface IggyEndpointBuilderFactory {
          * @param consumersCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default IggyEndpointConsumerBuilder consumersCount(int consumersCount) {
             doSetProperty("consumersCount", consumersCount);
             return this;
         }
         /**
-         * Camel Iggy consumers count.
+         * Camel Iggy consumers count. Deprecation note: The consumer polls the
+         * topic with one task, so a value above 1 only adds idle threads.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -448,6 +437,7 @@ public interface IggyEndpointBuilderFactory {
          * @param consumersCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default IggyEndpointConsumerBuilder consumersCount(String consumersCount) {
             doSetProperty("consumersCount", consumersCount);
             return this;
@@ -587,6 +577,20 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointConsumerBuilder startingOffset(String startingOffset) {
             doSetProperty("startingOffset", startingOffset);
+            return this;
+        }
+        /**
+         * Iggy password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1100,20 +1104,6 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Iggy password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Iggy server port number.
          * 
          * The option is a: <code>int</code> type.
@@ -1186,7 +1176,10 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Partitioning strategy for message distribution.
+         * Partitioning strategy for message distribution: balanced, a partition
+         * ID such as partitionId:2, or a messages key such as
+         * messagesKey:order-1 as text, or an
+         * org.apache.iggy.message.Partitioning.
          * 
          * The option is a: <code>org.apache.iggy.message.Partitioning</code>
          * type.
@@ -1202,7 +1195,10 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Partitioning strategy for message distribution.
+         * Partitioning strategy for message distribution: balanced, a partition
+         * ID such as partitionId:2, or a messages key such as
+         * messagesKey:order-1 as text, or an
+         * org.apache.iggy.message.Partitioning.
          * 
          * The option will be converted to a
          * <code>org.apache.iggy.message.Partitioning</code> type.
@@ -1215,6 +1211,20 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointProducerBuilder partitioning(String partitioning) {
             doSetProperty("partitioning", partitioning);
+            return this;
+        }
+        /**
+         * Iggy password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1657,20 +1667,6 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Iggy password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Iggy server port number.
          * 
          * The option is a: <code>int</code> type.
@@ -1740,6 +1736,20 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointBuilder streamName(String streamName) {
             doSetProperty("streamName", streamName);
+            return this;
+        }
+        /**
+         * Iggy password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**

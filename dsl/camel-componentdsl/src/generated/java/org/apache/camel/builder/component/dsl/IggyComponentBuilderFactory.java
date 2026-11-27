@@ -217,21 +217,6 @@ public interface IggyComponentBuilderFactory {
             return this;
         }
     
-        /**
-         * Iggy password.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default IggyComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-    
         
         /**
          * Iggy server port number.
@@ -344,7 +329,8 @@ public interface IggyComponentBuilderFactory {
     
         
         /**
-         * Camel Iggy consumers count.
+         * Camel Iggy consumers count. Deprecation note: The consumer polls the
+         * topic with one task, so a value above 1 only adds idle threads.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -354,6 +340,7 @@ public interface IggyComponentBuilderFactory {
          * @param consumersCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default IggyComponentBuilder consumersCount(int consumersCount) {
             doSetProperty("consumersCount", consumersCount);
             return this;
@@ -469,7 +456,10 @@ public interface IggyComponentBuilderFactory {
     
         
         /**
-         * Partitioning strategy for message distribution.
+         * Partitioning strategy for message distribution: balanced, a partition
+         * ID such as partitionId:2, or a messages key such as
+         * messagesKey:order-1 as text, or an
+         * org.apache.iggy.message.Partitioning.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.iggy.message.Partitioning&lt;/code&gt; type.
@@ -504,6 +494,21 @@ public interface IggyComponentBuilderFactory {
          */
         default IggyComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+    
+        /**
+         * Iggy password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default IggyComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
             return this;
         }
     
@@ -621,7 +626,6 @@ public interface IggyComponentBuilderFactory {
             case "maxTopicSize": getOrCreateConfiguration((IggyComponent) component).setMaxTopicSize((java.lang.Long) value); return true;
             case "messageExpiry": getOrCreateConfiguration((IggyComponent) component).setMessageExpiry((java.lang.Long) value); return true;
             case "partitionsCount": getOrCreateConfiguration((IggyComponent) component).setPartitionsCount((java.lang.Long) value); return true;
-            case "password": getOrCreateConfiguration((IggyComponent) component).setPassword((java.lang.String) value); return true;
             case "port": getOrCreateConfiguration((IggyComponent) component).setPort((int) value); return true;
             case "streamId": getOrCreateConfiguration((IggyComponent) component).setStreamId((java.lang.Long) value); return true;
             case "streamName": getOrCreateConfiguration((IggyComponent) component).setStreamName((java.lang.String) value); return true;
@@ -637,6 +641,7 @@ public interface IggyComponentBuilderFactory {
             case "lazyStartProducer": ((IggyComponent) component).setLazyStartProducer((boolean) value); return true;
             case "partitioning": getOrCreateConfiguration((IggyComponent) component).setPartitioning((org.apache.iggy.message.Partitioning) value); return true;
             case "autowiredEnabled": ((IggyComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "password": getOrCreateConfiguration((IggyComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((IggyComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "tlsCertificatePath": getOrCreateConfiguration((IggyComponent) component).setTlsCertificatePath((java.lang.String) value); return true;
             case "tlsEnabled": getOrCreateConfiguration((IggyComponent) component).setTlsEnabled((boolean) value); return true;

@@ -5851,6 +5851,18 @@ charset of the JVM, which corrupted binary payloads. Camel converts the `byte[]`
 needed, with the charset of the exchange (`CamelCharsetName`) if set, but code that reads the body with `getBody()`
 and expects a `String` must now use `getBody(String.class)` or add `convertBodyTo(String.class)` to the route.
 
+=== camel-iggy - the stream of the override header with streamId, partitioning as text, consumersCount deprecated
+
+With `streamId` and `autoCreateStream=true`, the producer looked up the stream of a `CamelIggyStreamOverride` header
+by `streamId`, and created the stream of the endpoint when it was missing, so the message failed on a stream that
+did not exist. The stream of the header is now looked up and created by its name; `streamId` is only used for the
+stream of the endpoint.
+
+The `partitioning` option can now be given as text: `balanced`, `partitionId:<partition id>` or `messagesKey:<key>`.
+Before, only a bean reference worked. The `consumersCount` option is deprecated: the consumer polls with one task, so
+a value above 1 only adds idle threads. `password` is in the `security` group and `shutdownTimeout` in the `consumer`
+group of the catalog and the docs.
+
 === camel-jira - the newIssues consumer reads every new issue
 
 A poll of the `newIssues` consumer read only the newest `maxResults` (default 50) of the issues created since the
