@@ -95,7 +95,7 @@ or removes its row.
 | camel-aws2-mq | aws2-mq |  |
 | camel-aws2-msk | aws2-msk |  |
 | camel-aws2-polly | aws2-polly |  |
-| camel-aws2-redshift | aws2-redshift-data |  |
+| camel-aws2-redshift | aws2-redshift-data | yes |
 | camel-aws2-rekognition | aws2-rekognition |  |
 | camel-aws2-s3 | aws2-s3 |  |
 | camel-aws2-s3-vectors | aws2-s3-vectors |  |

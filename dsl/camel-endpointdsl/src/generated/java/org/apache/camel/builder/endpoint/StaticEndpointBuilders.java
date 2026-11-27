@@ -2066,7 +2066,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS RedshiftData (camel-aws2-redshift)
-     * Perform operations on AWS Redshift using Redshift Data API.
+     * Run SQL statements and read database metadata in Amazon Redshift through
+     * the Amazon Redshift Data API.
      * 
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1
@@ -2075,7 +2076,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-redshift-data:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of the endpoint, which you choose freely. The producer
+     * does not use it.
      * 
      * @param path label
      * @return the dsl builder
@@ -2085,7 +2087,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS RedshiftData (camel-aws2-redshift)
-     * Perform operations on AWS Redshift using Redshift Data API.
+     * Run SQL statements and read database metadata in Amazon Redshift through
+     * the Amazon Redshift Data API.
      * 
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1
@@ -2094,7 +2097,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-redshift-data:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of the endpoint, which you choose freely. The producer
+     * does not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
