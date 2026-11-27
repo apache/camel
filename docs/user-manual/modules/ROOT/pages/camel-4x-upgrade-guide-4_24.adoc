@@ -12297,6 +12297,17 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-solr - certificatePath and sslContextParameters need enableSSL
+
+The client that Camel creates connects with plain HTTP unless `enableSSL=true`, so the `certificatePath` and
+`sslContextParameters` options were ignored without `enableSSL`. Now, when `certificatePath`, or the
+`sslContextParameters` of the endpoint or the component, is set and `enableSSL` is not enabled, the endpoint fails at
+startup with a message to set `enableSSL=true`. Enable `enableSSL` to connect with HTTPS, or remove the options that are
+not used. The global SSL context parameters (`useGlobalSslContextParameters=true`) only log a WARN in that case.
+
+The `certificatePath` option now refuses an `http:` URL. Load the certificate from the classpath, or with the
+`classpath:`, `file:` or `https:` prefix.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
