@@ -66,7 +66,7 @@ or removes its row.
 | camel-alibaba-ots | alibaba-ots | yes |
 | camel-alibaba-sls | alibaba-sls | yes |
 | camel-alibaba-sms | alibaba-sms | yes |
-| camel-amqp | amqp |  |
+| camel-amqp | amqp | yes |
 | camel-apicurio-registry | apicurio-registry |  |
 | camel-arangodb | arangodb | yes |
 | camel-as2 | as2 |  |

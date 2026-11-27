@@ -238,7 +238,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache Qpid Client.
+     * Send and receive messages over AMQP 1.0 with the Apache Qpid JMS client.
      * 
      * Category: messaging
      * Since: 1.2
