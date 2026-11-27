@@ -127,7 +127,7 @@ or removes its row.
 | camel-browse | browse |  |
 | camel-caffeine | caffeine-cache, caffeine-loadcache |  |
 | camel-camunda | camunda |  |
-| camel-cassandraql | cql |  |
+| camel-cassandraql | cql | yes |
 | camel-cedar | cedar |  |
 | camel-chatscript | chatscript |  |
 | camel-chunk | chunk |  |

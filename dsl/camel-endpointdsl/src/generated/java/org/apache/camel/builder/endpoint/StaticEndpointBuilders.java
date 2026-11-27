@@ -4299,8 +4299,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
-     * Based on Cassandra Java Driver provided by DataStax.
+     * Query and update an Apache Cassandra database with CQL statements.
      * 
      * Category: database,bigdata
      * Since: 2.15
@@ -4309,17 +4308,25 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
      * 
      * Path parameter: beanRef
-     * beanRef is defined using bean:id
+     * The name of a com.datastax.oss.driver.api.core.CqlSession in the
+     * registry, written as bean:name in the URI. The endpoint uses the keyspace
+     * of this session, not the keyspace in the URI, and does not close the
+     * session. The session option replaces it.
      * 
      * Path parameter: hosts
-     * Hostname(s) Cassandra server(s). Multiple hosts can be separated by
-     * comma.
+     * The host names or IP addresses of the Cassandra nodes that the driver
+     * contacts first, separated by commas. When neither the session option nor
+     * a bean is set, the endpoint creates a session from them and closes it
+     * when it stops.
      * 
      * Path parameter: port
-     * Port number of Cassandra server(s)
+     * The port of the CQL native protocol, the same for all the nodes in the
+     * hosts. If not set, 9042 is used.
      * 
      * Path parameter: keyspace
-     * Keyspace to use
+     * The keyspace of the session that the endpoint creates from the hosts, so
+     * that the CQL can name tables without their keyspace. It is not used with
+     * the session option or a bean.
      * 
      * @param path beanRef:hosts:port/keyspace
      * @return the dsl builder
@@ -4329,8 +4336,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
-     * Based on Cassandra Java Driver provided by DataStax.
+     * Query and update an Apache Cassandra database with CQL statements.
      * 
      * Category: database,bigdata
      * Since: 2.15
@@ -4339,17 +4345,25 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
      * 
      * Path parameter: beanRef
-     * beanRef is defined using bean:id
+     * The name of a com.datastax.oss.driver.api.core.CqlSession in the
+     * registry, written as bean:name in the URI. The endpoint uses the keyspace
+     * of this session, not the keyspace in the URI, and does not close the
+     * session. The session option replaces it.
      * 
      * Path parameter: hosts
-     * Hostname(s) Cassandra server(s). Multiple hosts can be separated by
-     * comma.
+     * The host names or IP addresses of the Cassandra nodes that the driver
+     * contacts first, separated by commas. When neither the session option nor
+     * a bean is set, the endpoint creates a session from them and closes it
+     * when it stops.
      * 
      * Path parameter: port
-     * Port number of Cassandra server(s)
+     * The port of the CQL native protocol, the same for all the nodes in the
+     * hosts. If not set, 9042 is used.
      * 
      * Path parameter: keyspace
-     * Keyspace to use
+     * The keyspace of the session that the endpoint creates from the hosts, so
+     * that the CQL can name tables without their keyspace. It is not used with
+     * the session option or a bean.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
