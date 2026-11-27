@@ -5098,7 +5098,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * StAX (camel-stax)
-     * Process XML payloads by a SAX ContentHandler.
+     * Parse XML payloads with a StAX reader and send the parse events to a SAX
+     * ContentHandler.
      * 
      * Category: transformation
      * Since: 2.9

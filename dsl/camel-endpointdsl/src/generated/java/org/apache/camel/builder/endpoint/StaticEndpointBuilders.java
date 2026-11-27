@@ -17371,7 +17371,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * StAX (camel-stax)
-     * Process XML payloads by a SAX ContentHandler.
+     * Parse XML payloads with a StAX reader and send the parse events to a SAX
+     * ContentHandler.
      * 
      * Category: transformation
      * Since: 2.9
@@ -17380,7 +17381,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stax:contentHandlerClass</code>
      * 
      * Path parameter: contentHandlerClass (required)
-     * The FQN class name for the ContentHandler implementation to use.
+     * The fully qualified class name of the org.xml.sax.ContentHandler that
+     * receives the parse events. The producer creates a new instance per
+     * message with the no-argument constructor and sets it as the message body
+     * after the parse. Use the #beanName syntax to use one ContentHandler bean
+     * from the registry for all messages instead.
      * 
      * @param path contentHandlerClass
      * @return the dsl builder
@@ -17390,7 +17395,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * StAX (camel-stax)
-     * Process XML payloads by a SAX ContentHandler.
+     * Parse XML payloads with a StAX reader and send the parse events to a SAX
+     * ContentHandler.
      * 
      * Category: transformation
      * Since: 2.9
@@ -17399,7 +17405,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stax:contentHandlerClass</code>
      * 
      * Path parameter: contentHandlerClass (required)
-     * The FQN class name for the ContentHandler implementation to use.
+     * The fully qualified class name of the org.xml.sax.ContentHandler that
+     * receives the parse events. The producer creates a new instance per
+     * message with the no-argument constructor and sets it as the message body
+     * after the parse. Use the #beanName syntax to use one ContentHandler bean
+     * from the registry for all messages instead.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

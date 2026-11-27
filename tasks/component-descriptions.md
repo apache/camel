@@ -357,7 +357,7 @@ or removes its row.
 | camel-sql | sql, sql-stored |  |
 | camel-ssh | ssh |  |
 | camel-state-store | state-store |  |
-| camel-stax | stax |  |
+| camel-stax | stax | yes |
 | camel-stitch | stitch |  |
 | camel-stream | stream | yes |
 | camel-stringtemplate | string-template |  |
