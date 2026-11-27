@@ -12500,6 +12500,15 @@ The `CamelWeatherQuery` header that the consumer and the producer set has the va
 masked as `xxxxxx`, and so do the log and the error messages that show the request URL. The request to OpenWeatherMap
 still sends the real `appid`. A route that read the API key from this header must use the `appid` option instead.
 
+=== camel-tahu - sslContextParameters fails the endpoint
+
+The `sslContextParameters` option of `tahu-edge` and `tahu-host`, and `useGlobalSslContextParameters` of their
+components, never had an effect: Eclipse Tahu creates its MQTT clients without these TLS settings, so an `ssl://`
+server was checked with the default trust store of the JVM, and a configured trust store or client certificate was
+ignored without a message. An endpoint with `sslContextParameters`, or with `useGlobalSslContextParameters=true` and a
+global `SSLContextParameters`, now fails to start. Remove the option, and configure the trust store (and the key store
+for a client certificate) with the `javax.net.ssl.*` system properties of the JVM.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:

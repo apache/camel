@@ -192,7 +192,10 @@ public interface TahuHostEndpointBuilderFactory {
             return this;
         }
         /**
-         * SSL configuration for MQTT server connections.
+         * Not supported: Eclipse Tahu creates its MQTT clients without these
+         * TLS settings, so the endpoint fails to start when this option is set.
+         * An ssl:// server is checked with the default trust store of the JVM,
+         * which the javax.net.ssl.* system properties configure.
          * 
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
@@ -207,7 +210,10 @@ public interface TahuHostEndpointBuilderFactory {
             return this;
         }
         /**
-         * SSL configuration for MQTT server connections.
+         * Not supported: Eclipse Tahu creates its MQTT clients without these
+         * TLS settings, so the endpoint fails to start when this option is set.
+         * An ssl:// server is checked with the default trust store of the JVM,
+         * which the javax.net.ssl.* system properties configure.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
