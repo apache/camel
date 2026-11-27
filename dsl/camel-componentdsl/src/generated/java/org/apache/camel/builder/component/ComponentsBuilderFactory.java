@@ -5425,7 +5425,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Weather (camel-weather)
-     * Poll the weather information from Open Weather Map.
+     * Query the current weather and weather forecasts from OpenWeatherMap.
      * 
      * Category: api
      * Since: 2.12
