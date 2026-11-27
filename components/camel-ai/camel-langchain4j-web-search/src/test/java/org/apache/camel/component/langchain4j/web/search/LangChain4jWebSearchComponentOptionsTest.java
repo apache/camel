@@ -134,7 +134,7 @@ public class LangChain4jWebSearchComponentOptionsTest extends CamelTestSupport {
                 = context.getEndpoint("langchain4j-web-search:plain", LangChain4jWebSearchEndpoint.class);
 
         assertEquals(Map.of("a", "1", "b", "2"), withB.getConfiguration().getAdditionalParams());
-        // the endpoints shared the map of the component, so b reached the component and every other endpoint
+        // without the deep-copy fix in copy(), b would have leaked into the component and every other endpoint
         assertEquals(Map.of("a", "1"), component.getConfiguration().getAdditionalParams());
         assertEquals(Map.of("a", "1"), plain.getConfiguration().getAdditionalParams());
     }
