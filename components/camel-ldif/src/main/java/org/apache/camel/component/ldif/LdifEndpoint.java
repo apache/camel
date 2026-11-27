@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Perform updates on an LDAP server from an LDIF body content.
+ * Apply the changes of an LDIF message body to an LDAP server.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true,
              category = { Category.DATABASE, Category.SECURITY })
@@ -43,10 +43,17 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " the DN and the message from the server, such as entryAlreadyExists (68) on"
                                                  + " uid=a,dc=example,dc=org. No body or an empty body gives an empty String"))
 public class LdifEndpoint extends DefaultEndpoint {
-    @UriPath
+    @UriPath(description = "The name of the org.apache.directory.ldap.client.api.LdapConnection bean in the registry. The"
+                           + " producer looks it up for each message, binds it with its configured name and credentials"
+                           + " when it is not authenticated, and closes it after the message. Use a bean of scope prototype,"
+                           + " so that concurrent messages do not share a connection.")
     @Metadata(required = true)
     private String ldapConnectionName;
-    @UriParam(label = "security", defaultValue = "false", security = "insecure:dev")
+    @UriParam(description = "Whether the producer reads a message body that does not start with version: 1 as the URL of an"
+                            + " LDIF file, and applies the LDIF content that it fetches from that URL. If false, such a body"
+                            + " fails with an IllegalArgumentException. Enable it only for a trusted body, as the producer"
+                            + " fetches any URL that the body names (SSRF).",
+              label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean allowUrlBody;
 
     protected LdifEndpoint(String endpointUri, String remaining, LdifComponent component) {
@@ -68,11 +75,6 @@ public class LdifEndpoint extends DefaultEndpoint {
         return ldapConnectionName;
     }
 
-    /**
-     * The name of the LdapConnection bean to pull from the registry. Note that this must be of scope "prototype" to
-     * avoid it being shared among threads or using a connection that has timed out. The connection is closed after each
-     * message, and bound again with its configured name and credentials when it is used for the next message.
-     */
     public void setLdapConnectionName(String ldapConnectionName) {
         this.ldapConnectionName = ldapConnectionName;
     }
@@ -81,12 +83,6 @@ public class LdifEndpoint extends DefaultEndpoint {
         return allowUrlBody;
     }
 
-    /**
-     * Whether to allow a message body that is not LDIF content to be dereferenced as a URL and fetched. When disabled
-     * (default), a body that does not start with <tt>version: 1</tt> is rejected with an
-     * {@link IllegalArgumentException} instead of being fetched as a URL, which avoids a content-sniffed URL fetch
-     * (SSRF) from untrusted body content.
-     */
     public void setAllowUrlBody(boolean allowUrlBody) {
         this.allowUrlBody = allowUrlBody;
     }

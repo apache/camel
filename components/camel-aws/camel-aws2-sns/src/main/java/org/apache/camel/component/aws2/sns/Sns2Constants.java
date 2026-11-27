@@ -28,26 +28,38 @@ public interface Sns2Constants {
      */
     int MAX_SUBJECT_LENGTH = 100;
 
-    @Metadata(description = "The Amazon SNS message ID.", javaType = "String")
+    @Metadata(description = "The ID that Amazon SNS assigned to the published message. The producer sets it after a"
+                            + " publish, but not when batchEnabled is true.",
+              javaType = "String")
     String MESSAGE_ID = "CamelAwsSnsMessageId";
-    @Metadata(description = "The Amazon SNS message subject. If not set, the subject from the\n" +
-                            "`SnsConfiguration` is used.",
+    @Metadata(description = "The subject of the message, which Amazon SNS uses as the Subject line of the email for email"
+                            + " subscriptions. It replaces the subject option. The producer cuts a subject longer than 100"
+                            + " characters, and does not use it when batchEnabled is true.",
               javaType = "String")
     String SUBJECT = "CamelAwsSnsSubject";
-    @Metadata(description = "The message structure to use such as json.", javaType = "String")
+    @Metadata(description = "Set to json to send a different message for each protocol, with the body a JSON object with a"
+                            + " default key and a key per protocol. It replaces the messageStructure option, and is not used"
+                            + " when batchEnabled is true.",
+              javaType = "String")
     String MESSAGE_STRUCTURE = "CamelAwsSnsMessageStructure";
     String MESSAGE_GROUP_ID_PROPERTY = "CamelAwsSnsMessageGroupId";
 
     // Response metadata for FIFO topics
     @Metadata(label = "producer",
-              description = "The sequence number for FIFO topics.", javaType = "String")
+              description = "The sequence number that Amazon SNS assigned to the message in a FIFO topic. The producer sets"
+                            + " it after a publish, with no value for a standard topic, and not when batchEnabled is true.",
+              javaType = "String")
     String SEQUENCE_NUMBER = "CamelAwsSnsSequenceNumber";
 
     // Batch operation response metadata
     @Metadata(label = "producer",
-              description = "The number of failed messages in a batch publish operation.", javaType = "Integer")
+              description = "The number of entries of the batch that Amazon SNS did not publish, which the producer sets"
+                            + " when batchEnabled is true. The PublishBatchResponse in the body lists them with the reason.",
+              javaType = "Integer")
     String FAILED_MESSAGE_COUNT = "CamelAwsSnsFailedMessageCount";
     @Metadata(label = "producer",
-              description = "The number of successful messages in a batch publish operation.", javaType = "Integer")
+              description = "The number of entries of the batch that Amazon SNS published, which the producer sets when"
+                            + " batchEnabled is true. The PublishBatchResponse in the body lists them with their message ID.",
+              javaType = "Integer")
     String SUCCESSFUL_MESSAGE_COUNT = "CamelAwsSnsSuccessfulMessageCount";
 }

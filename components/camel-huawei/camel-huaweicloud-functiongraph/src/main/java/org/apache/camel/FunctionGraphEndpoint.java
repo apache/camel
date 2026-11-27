@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To call serverless functions on Huawei Cloud
+ * Invoke serverless functions in Huawei Cloud FunctionGraph.
  */
 @UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-functiongraph", title = "Huawei FunctionGraph",
              syntax = "hwcloud-functiongraph:operation",
@@ -53,67 +53,93 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " exchange property"))
 public class FunctionGraphEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
+    @UriPath(description = "The operation that the producer performs. Only invokeFunction is supported. The"
+                           + " CamelHwCloudFgOperation exchange property replaces this option.",
+             displayName = "Operation", label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "FunctionGraph service region. This is lower precedence than endpoint based configuration",
+    @UriParam(description = "The region ID of FunctionGraph, for example cn-north-4. The producer uses it in the URN of the"
+                            + " function, and to build the client when the endpoint option is not set.",
               displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "Cloud project ID", displayName = "Project ID")
+    @UriParam(description = "The ID of the Huawei Cloud project of the function. The producer uses it in the URN of the"
+                            + " function and in the credentials of the requests.",
+              displayName = "Project ID")
     @Metadata(required = true)
     private String projectId;
 
-    @UriParam(description = "Functions that can be logically grouped together",
+    @UriParam(description = "The package of the function, which is part of the URN of the function. The"
+                            + " CamelHwCloudFgPackage exchange property replaces this option.",
               displayName = "Function package", defaultValue = FunctionGraphConstants.DEFAULT_FUNCTION_PACKAGE)
     @Metadata(required = false)
     private String functionPackage;
 
-    @UriParam(description = "Name of the function to invoke",
+    @UriParam(description = "The name of the function to invoke. The producer always invokes the latest version of the"
+                            + " function. The CamelHwCloudFgFunction exchange property replaces this option, and one of"
+                            + " them must be set.",
               displayName = "Function name")
     @Metadata(required = false)
     private String functionName;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", label = "proxy")
+    @UriParam(description = "The host name or IP address of the proxy server. The producer uses a proxy only when both this"
+                            + " option and the proxyPort option are set.",
+              displayName = "Proxy server host", label = "proxy")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port", label = "proxy")
+    @UriParam(description = "The port of the proxy server. The producer uses a proxy only when both this option and the"
+                            + " proxyHost option are set.",
+              displayName = "Proxy server port", label = "proxy")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret", label = "proxy")
+    @UriParam(description = "The user name to authenticate with the proxy server. It is used only when the proxyHost and"
+                            + " proxyPort options are set.",
+              displayName = "Proxy user", security = "secret", label = "proxy")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret",
+    @UriParam(description = "The password to authenticate with the proxy server. It is used only when the proxyUser option"
+                            + " is set.",
+              displayName = "Proxy password", security = "secret",
               label = "proxy")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored",
+    @UriParam(description = "Whether to skip the verification of the TLS certificate of the server. This makes the connection"
+                            + " insecure: use it only for testing.",
+              displayName = "SSL Verification Ignored",
               defaultValue = "false", label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
-    @UriParam(description = "FunctionGraph url. Carries higher precedence than region parameter based client initialization",
+    @UriParam(description = "The endpoint URL of FunctionGraph, for example https://functiongraph.cn-north-4.myhuaweicloud.com."
+                            + " When set, the client uses it instead of the endpoint of the region option. The region option"
+                            + " is still needed for the URN of the function.",
               displayName = "Service endpoint")
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
+    @UriParam(description = "The AK/SK pair as an org.apache.camel.component.huaweicloud.common.models.ServiceKeys. When set,"
+                            + " its accessKey and secretKey replace the accessKey and secretKey options.",
+              displayName = "Service Configuration",
               security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret",
+    @UriParam(description = "The access key ID (AK) of the Huawei Cloud credentials. It is not used when the serviceKeys"
+                            + " option is set.",
+              displayName = "API access key (AK)", security = "secret",
               label = "security")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret",
+    @UriParam(description = "The secret access key (SK) of the Huawei Cloud credentials. It is not used when the serviceKeys"
+                            + " option is set.",
+              displayName = "API secret key (SK)", security = "secret",
               label = "security")
     @Metadata(required = true)
     private String secretKey;

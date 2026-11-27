@@ -39,20 +39,27 @@ public class HibernateComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateComponent.class);
 
-    @Metadata(description = "The Hibernate SessionFactory to use.")
+    @Metadata(description = "The Hibernate SessionFactory for all endpoints. If not set, the single SessionFactory in the"
+                            + " registry is used, otherwise the component bootstraps one. The component does not close a"
+                            + " SessionFactory that it did not create.")
     private SessionFactory sessionFactory;
 
-    @Metadata(description = "The DataSource to use for bootstrapping the SessionFactory (bean reference or registry name).")
+    @Metadata(description = "The DataSource, or the name of a DataSource bean in the registry, that the component uses when it"
+                            + " bootstraps the SessionFactory. If not set, the single DataSource in the registry is used. It is"
+                            + " ignored if hibernateProperties set jakarta.persistence.jtaDataSource or"
+                            + " jakarta.persistence.nonJtaDataSource.")
     private Object dataSource;
 
     private Class<?>[] entityClasses;
 
-    @Metadata(description = "Schema generation action: none, validate, update, create, create-drop, create-only, drop.",
+    @Metadata(description = "The schema management action (hibernate.hbm2ddl.auto) when the component bootstraps the"
+                            + " SessionFactory. The default none leaves the schema as it is.",
               defaultValue = "none",
               enums = "none,validate,update,create,create-drop,create-only,drop")
     private String schemaAction = "none";
 
-    @Metadata(description = "Arbitrary Hibernate configuration properties passthrough map.")
+    @Metadata(description = "Hibernate configuration properties, such as hibernate.show_sql, that the component passes to"
+                            + " Hibernate when it bootstraps the SessionFactory.")
     private Map<String, Object> hibernateProperties = new HashMap<>();
 
     private boolean sessionFactoryOwned;

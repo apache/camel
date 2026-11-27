@@ -34,41 +34,68 @@ public class RedisConfiguration {
     private boolean managedListenerContainer;
     private boolean managedConnectionFactory;
 
-    @UriPath
+    @UriPath(defaultValue = "localhost",
+             description = "The host name or IP address of the Redis server. The endpoint connects to it with the"
+                           + " JedisConnectionFactory that it creates when connectionFactory is not set, and does not use it"
+                           + " otherwise. If not set, localhost is used.")
     @Metadata(required = true)
     private String host;
-    @UriPath
+    @UriPath(defaultValue = "6379",
+             description = "The port of the Redis server. The endpoint connects to it with the JedisConnectionFactory that"
+                           + " it creates when connectionFactory is not set, and does not use it otherwise. If not set, 6379"
+                           + " is used.")
     @Metadata(required = true)
     private Integer port;
-    @UriParam(defaultValue = "SET")
+    @UriParam(defaultValue = "SET",
+              description = "The Redis command that the producer runs, such as GET, SET or HSET. The CamelRedis.Command"
+                            + " header replaces this option for a message. The consumer needs SUBSCRIBE or PSUBSCRIBE and"
+                            + " fails to start with any other command, including the default SET. The producer fails a"
+                            + " message with SUBSCRIBE, PSUBSCRIBE or a server command that it does not run, such as AUTH,"
+                            + " FLUSHDB, INFO or SELECT.")
     private Command command = Command.SET;
-    @UriParam
+    @UriParam(label = "consumer",
+              description = "The channels that the consumer subscribes to, separated by comma. With the PSUBSCRIBE command"
+                            + " they are patterns, such as news.*, and with SUBSCRIBE channel names. Required by the"
+                            + " consumer. The producer does not use it: PUBLISH takes the channel from the"
+                            + " CamelRedis.Channel header.")
     private String channels;
-    @UriParam
+    @UriParam(label = "producer",
+              description = "The org.springframework.data.redis.core.RedisTemplate that the producer runs the commands"
+                            + " with, which also decides how keys and values are serialized. If not set, the redisTemplate"
+                            + " of the component is used, and if that is not set either, the endpoint creates a"
+                            + " RedisTemplate from connectionFactory and serializer. The consumer does not use it.")
     private RedisTemplate<?, ?> redisTemplate;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced",
+              description = "The org.springframework.data.redis.listener.RedisMessageListenerContainer that the consumer"
+                            + " subscribes to the channels with. If not set, the endpoint creates and starts one on"
+                            + " connectionFactory, and destroys it when the endpoint shuts down.")
     private RedisMessageListenerContainer listenerContainer;
-    @UriParam
+    @UriParam(description = "The org.springframework.data.redis.connection.RedisConnectionFactory that connects to Redis."
+                            + " The endpoint uses it for the RedisTemplate and the listener container that it creates, and"
+                            + " then does not use host and port. If not set, the endpoint creates a JedisConnectionFactory"
+                            + " for host and port, and destroys it when the endpoint shuts down.")
     private RedisConnectionFactory connectionFactory;
-    @UriParam
+    @UriParam(description = "The org.springframework.data.redis.serializer.RedisSerializer for keys and values. The"
+                            + " endpoint sets it as the default serializer of the RedisTemplate that it creates, and the"
+                            + " consumer deserializes the body of each message with it. If not set, a"
+                            + " JdkSerializationRedisSerializer is used, which stores keys and values in Java serialized"
+                            + " form: use a StringRedisSerializer to work with text. The producer does not use it when a"
+                            + " redisTemplate is set.")
     private RedisSerializer<?> serializer;
     @UriParam(label = "advanced,security",
-              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when the default"
-                            + " JDK serializer deserializes Redis payloads, both on the consumer and on producer read"
-                            + " commands. When not set, the JVM-wide jdk.serialFilter is used if present; otherwise a"
-                            + " conservative default filter denying java.net.* and otherwise allowing java.*, javax.*"
-                            + " and org.apache.camel.* packages is applied. Ignored when a custom serializer is set.")
+              description = "An ObjectInputFilter pattern, in jdk.serialFilter syntax, that the default"
+                            + " JdkSerializationRedisSerializer applies when it deserializes a value: the body of a message"
+                            + " that the consumer receives, and a value that the producer reads with the RedisTemplate that"
+                            + " the endpoint creates. If not set, the JVM-wide jdk.serialFilter is used when present,"
+                            + " otherwise a default filter that rejects java.net.**, allows only java.**, javax.** and"
+                            + " org.apache.camel.**, and limits the depth, references and size of the object graph. Not"
+                            + " used when serializer is set.")
     private String deserializationFilter;
 
     public Command getCommand() {
         return command;
     }
 
-    /**
-     * Default command, which can be overridden by message header.
-     * <p/>
-     * Notice the consumer only supports the following commands: PSUBSCRIBE and SUBSCRIBE
-     */
     public void setCommand(Command command) {
         this.command = command;
     }
@@ -77,9 +104,6 @@ public class RedisConfiguration {
         return port;
     }
 
-    /**
-     * Redis server port number
-     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -88,9 +112,6 @@ public class RedisConfiguration {
         return host;
     }
 
-    /**
-     * The host where Redis server is running.
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -99,9 +120,6 @@ public class RedisConfiguration {
         return redisTemplate != null ? redisTemplate : createDefaultTemplate();
     }
 
-    /**
-     * Reference to a pre-configured RedisTemplate instance to use.
-     */
     public void setRedisTemplate(RedisTemplate<?, ?> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -110,9 +128,6 @@ public class RedisConfiguration {
         return listenerContainer != null ? listenerContainer : createDefaultListenerContainer();
     }
 
-    /**
-     * Reference to a pre-configured RedisMessageListenerContainer instance to use.
-     */
     public void setListenerContainer(RedisMessageListenerContainer listenerContainer) {
         this.listenerContainer = listenerContainer;
     }
@@ -121,16 +136,10 @@ public class RedisConfiguration {
         return channels;
     }
 
-    /**
-     * List of topic names or name patterns to subscribe to. Multiple names can be separated by comma.
-     */
     public void setChannels(String channels) {
         this.channels = channels;
     }
 
-    /**
-     * Reference to a pre-configured RedisConnectionFactory instance to use.
-     */
     public void setConnectionFactory(RedisConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
@@ -143,9 +152,6 @@ public class RedisConfiguration {
         return serializer != null ? serializer : createDefaultSerializer();
     }
 
-    /**
-     * Reference to a pre-configured RedisSerializer instance to use.
-     */
     public void setSerializer(RedisSerializer<?> serializer) {
         this.serializer = serializer;
     }
@@ -154,11 +160,6 @@ public class RedisConfiguration {
         return deserializationFilter;
     }
 
-    /**
-     * Sets an {@link java.io.ObjectInputFilter} pattern ({@code jdk.serialFilter} syntax) applied when the default JDK
-     * serializer deserializes Redis payloads. When not set, the JVM-wide {@code jdk.serialFilter} is used if present,
-     * otherwise a conservative default filter is applied. Ignored when a custom serializer is set.
-     */
     public void setDeserializationFilter(String deserializationFilter) {
         this.deserializationFilter = deserializationFilter;
     }

@@ -30,7 +30,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("stitch")
 public class StitchComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The shared configuration of the endpoints. Each endpoint gets a copy, and the options and"
+                            + " the table name of the endpoint URI override its values.")
     private StitchConfiguration configuration = new StitchConfiguration();
 
     public StitchComponent() {
@@ -52,9 +53,6 @@ public class StitchComponent extends DefaultComponent {
         return endpoint;
     }
 
-    /**
-     * The component configurations
-     */
     public StitchConfiguration getConfiguration() {
         return configuration;
     }

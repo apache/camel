@@ -28,54 +28,89 @@ import software.amazon.awssdk.services.ecs.EcsClient;
 @UriParams
 public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A logical name for the endpoint, which you can choose freely. The component does not use it.")
     @Metadata(required = true)
     private String label;
-    @UriParam
+    @UriParam(description = "To use a custom software.amazon.awssdk.services.ecs.EcsClient. When this option is set or"
+                            + " autowired, the endpoint does not build a client from the credentials, proxy, region,"
+                            + " overrideEndpoint, uriEndpointOverride and trustAllCertificates options, and it does not close"
+                            + " the client when it stops.")
     @Metadata(label = "advanced", autowired = true)
     private EcsClient ecsClient;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The access key ID of the AWS credentials, used together with secretKey. It is required unless"
+                            + " ecsClient is set or useDefaultCredentialsProvider, useProfileCredentialsProvider or"
+                            + " useSessionCredentials is true.",
+              label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The secret access key of the AWS credentials, used together with accessKey. It is required"
+                            + " unless ecsClient is set or useDefaultCredentialsProvider, useProfileCredentialsProvider or"
+                            + " useSessionCredentials is true.",
+              label = "security", security = "secret")
     private String secretKey;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The session token of temporary AWS credentials, for example from assuming an IAM role. It is"
+                            + " used only when useSessionCredentials is true, together with accessKey and secretKey.",
+              label = "security", security = "secret")
     private String sessionToken;
-    @UriParam
-    @Metadata(required = true)
+    @UriParam(description = "The operation that the producer performs. The CamelAwsECSOperation header replaces this option.")
     private ECS2Operations operation;
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(description = "The protocol of the proxy through which the ECS client sends its requests. It is used only when"
+                            + " proxyHost and proxyPort are set.",
+              label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "proxy")
+    @UriParam(description = "The host name of the proxy through which the ECS client sends its requests. The proxy is used"
+                            + " only when proxyPort is set too.",
+              label = "proxy")
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(description = "The port of the proxy through which the ECS client sends its requests. The proxy is used only"
+                            + " when proxyHost is set too.",
+              label = "proxy")
     private Integer proxyPort;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
+    @UriParam(description = "The AWS region of the ECS client, as the lowercase region ID, for example eu-west-1 (the value"
+                            + " of Region.EU_WEST_1.id()). If not set, the AWS SDK takes the region from its default region"
+                            + " provider chain, such as the AWS_REGION environment variable.",
+              enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
     private String region;
-    @UriParam
+    @UriParam(description = "Whether the producer takes the request from the message body, as the AWS SDK request class of"
+                            + " the operation, for example a ListClustersRequest for listClusters. A body of another type"
+                            + " fails. If false, the producer builds the request from the headers.")
     private boolean pojoRequest;
-    @UriParam(label = "security", security = "insecure:ssl")
+    @UriParam(description = "Whether the ECS client accepts any TLS certificate without validating it, for example the"
+                            + " self-signed certificate of a test endpoint set with uriEndpointOverride. It applies to every"
+                            + " request of the client, not only to an overridden endpoint.",
+              label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
-    @UriParam
+    @UriParam(description = "Whether the ECS client sends its requests to the URI of the uriEndpointOverride option instead"
+                            + " of the AWS endpoint of the region. It has no effect when uriEndpointOverride is not set.")
     private boolean overrideEndpoint;
-    @UriParam
+    @UriParam(description = "The URI of the endpoint that the ECS client uses instead of the AWS endpoint of the region, for"
+                            + " example http://localhost:4566 for LocalStack. It is used only when overrideEndpoint is true.")
     private String uriEndpointOverride;
-    @UriParam(label = "security")
+    @UriParam(description = "Whether the ECS client loads its credentials with the default credentials provider chain of the"
+                            + " AWS SDK: system properties, environment variables, the profile files, and the credentials of"
+                            + " the container or the EC2 instance. It takes precedence over the other credentials options.",
+              label = "security")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(description = "Whether the ECS client loads its credentials from a profile of the AWS config and credentials"
+                            + " files, the one of profileCredentialsName. It is ignored when useDefaultCredentialsProvider is"
+                            + " true.",
+              label = "security")
     private boolean useProfileCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(description = "Whether the ECS client uses the temporary credentials made of accessKey, secretKey and"
+                            + " sessionToken, for example after assuming an IAM role. If sessionToken is not set, accessKey"
+                            + " and secretKey are used without it. It is ignored when useDefaultCredentialsProvider or"
+                            + " useProfileCredentialsProvider is true.",
+              label = "security")
     private boolean useSessionCredentials;
-    @UriParam(label = "security")
+    @UriParam(description = "The name of the profile that useProfileCredentialsProvider loads. If not set, the AWS SDK uses"
+                            + " its default profile: the one of the AWS_PROFILE environment variable, or else default.",
+              label = "security")
     private String profileCredentialsName;
 
     public EcsClient getEcsClient() {
         return ecsClient;
     }
 
-    /**
-     * To use an existing configured AWS ECS client
-     */
     public void setEcsClient(EcsClient ecsClient) {
         this.ecsClient = ecsClient;
     }
@@ -84,9 +119,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return accessKey;
     }
 
-    /**
-     * Amazon AWS Access Key
-     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -95,9 +127,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return secretKey;
     }
 
-    /**
-     * Amazon AWS Secret Key
-     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -106,9 +135,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return sessionToken;
     }
 
-    /**
-     * Amazon AWS Session Token used when the user needs to assume an IAM role
-     */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
     }
@@ -117,9 +143,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return operation;
     }
 
-    /**
-     * The operation to perform
-     */
     public void setOperation(ECS2Operations operation) {
         this.operation = operation;
     }
@@ -128,9 +151,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyProtocol;
     }
 
-    /**
-     * To define a proxy protocol when instantiating the ECS client
-     */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
@@ -139,9 +159,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyHost;
     }
 
-    /**
-     * To define a proxy host when instantiating the ECS client
-     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -150,9 +167,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyPort;
     }
 
-    /**
-     * To define a proxy port when instantiating the ECS client
-     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -161,10 +175,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return region;
     }
 
-    /**
-     * The region in which the ECS client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
-     */
     public void setRegion(String region) {
         this.region = region;
     }
@@ -173,9 +183,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return pojoRequest;
     }
 
-    /**
-     * If we want to use a POJO request as body or not
-     */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }
@@ -184,9 +191,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return trustAllCertificates;
     }
 
-    /**
-     * If we want to trust all certificates in case of overriding the endpoint
-     */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
@@ -195,10 +199,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return overrideEndpoint;
     }
 
-    /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the
-     * uriEndpointOverride option
-     */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
     }
@@ -207,17 +207,10 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return uriEndpointOverride;
     }
 
-    /**
-     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
-     */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
-    /**
-     * Set whether the ECS client should expect to load credentials through a default credentials provider or to expect
-     * static credentials to be passed in.
-     */
     public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
@@ -232,9 +225,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return useProfileCredentialsProvider;
     }
 
-    /**
-     * Set whether the ECS client should expect to load credentials through a profile credentials provider.
-     */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
     }
@@ -243,10 +233,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return useSessionCredentials;
     }
 
-    /**
-     * Set whether the ECS client should expect to use Session Credentials. This is useful in a situation in which the
-     * user needs to assume an IAM role for doing operations in ECS.
-     */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
     }
@@ -255,9 +241,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
         return profileCredentialsName;
     }
 
-    /**
-     * If using a profile credentials provider, this parameter will set the profile name
-     */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }

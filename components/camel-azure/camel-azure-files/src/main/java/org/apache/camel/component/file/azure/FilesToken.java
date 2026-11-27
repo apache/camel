@@ -36,29 +36,57 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 final class FilesToken {
 
-    @UriParam(label = "security", description = "part of SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed version (sv) of the SAS token for credentialType=AZURE_SAS: the storage service "
+                            + "version that signs it, for example 2022-11-02. Azure requires it in every SAS token.")
     private String sv;
-    @UriParam(label = "security", description = "part of account SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed services (ss) of an account SAS token for credentialType=AZURE_SAS, for example f. "
+                            + "The value must include f, the file service. Not used in a service SAS token.")
     private String ss;
-    @UriParam(label = "security", description = "part of SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed resource types (srt) of an account SAS token for credentialType=AZURE_SAS: s for "
+                            + "service, c for container (share or directory) and o for object (file), for example sco. Not "
+                            + "used in a service SAS token.")
     private String srt;
-    @UriParam(label = "security", description = "part of SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed permissions (sp) of the SAS token for credentialType=AZURE_SAS, for example rwdlc "
+                            + "for read, write, delete, list and create.")
     private String sp;
-    @UriParam(label = "security", description = "part of SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed expiry (se) of the SAS token for credentialType=AZURE_SAS: the UTC time in ISO 8601 "
+                            + "format after which the token is no longer valid, for example 2023-06-18T22:29:13Z.")
     private String se;
-    @UriParam(label = "security", description = "part of SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed start (st) of the SAS token for credentialType=AZURE_SAS: the UTC time in ISO 8601 "
+                            + "format from which the token is valid. If the token has no start time, it is valid from the time "
+                            + "that the file service receives the request.")
     private String st;
-    @UriParam(label = "security", description = "part of SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed protocol (spr) of the SAS token for credentialType=AZURE_SAS: https, or https,http. "
+                            + "The component always connects with HTTPS.")
     private String spr;
-    @UriParam(label = "security", description = "part of SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signature (sig) of the SAS token for credentialType=AZURE_SAS, Base64 encoded. It can be "
+                            + "given URL-encoded, as it appears in the SAS token.")
     private String sig;
-    @UriParam(label = "security", description = "part of service SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed identifier (si) of a service SAS token for credentialType=AZURE_SAS: the name of a "
+                            + "stored access policy on the share, which can hold the permissions and validity times of the "
+                            + "token.")
     private String si;
-    @UriParam(label = "security", description = "part of service SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed resource (sr) of a service SAS token for credentialType=AZURE_SAS: s for a share or "
+                            + "f for a file. Not used in an account SAS token.")
     private String sr;
-    @UriParam(label = "security", description = "part of service SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed directory depth (sdd) of a service SAS token for credentialType=AZURE_SAS. The "
+                            + "component adds it to the token as given.")
     private String sdd;
-    @UriParam(label = "security", description = "part of SAS token", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The signed IP (sip) of the SAS token for credentialType=AZURE_SAS: the IP address or range of "
+                            + "IP addresses that requests with the token must come from, for example 168.1.5.65 or "
+                            + "168.1.5.60-168.1.5.70.")
     private String sip;
 
     public void setSv(String sv) {

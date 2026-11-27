@@ -47,7 +47,7 @@ import tools.jackson.databind.json.JsonMapper;
 import static com.dashjoin.jsonata.Jsonata.jsonata;
 
 /**
- * Transforms JSON payload using JSONata transformation.
+ * Transform JSON data with a JSONata expression.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri",
              producerOnly = true, remote = false,
@@ -76,15 +76,28 @@ public class JsonataEndpoint extends ResourceEndpoint {
     // keeps the Jackson 2 defaults, so the input of the expression and its output do not change
     private final ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 
-    @UriParam(defaultValue = "Jackson")
+    @UriParam(defaultValue = "Jackson",
+              description = "The type of the result that the producer sets as the message body: Jackson for a Jackson 3"
+                            + " JsonNode, or JsonString for the JSON text.")
     private JsonataInputOutputType outputType;
-    @UriParam(defaultValue = "Jackson")
+    @UriParam(defaultValue = "Jackson",
+              description = "How the producer reads the message body as the input of the expression. With Jackson, a body"
+                            + " that is JSON text (its first non-whitespace character is { or [), bytes, a stream or a file"
+                            + " is parsed as JSON, other text is a JSON string value, and any other body, such as a Map or a"
+                            + " List, is converted by Jackson. With JsonString, the body is always parsed as JSON.")
     private JsonataInputOutputType inputType;
-    @UriParam(label = "advanced", description = "To configure the Jsonata frame binding. Allows custom functions to be added.")
+    @UriParam(label = "advanced",
+              description = "A JsonataFrameBinding that the producer calls with the Jsonata.Frame of each evaluation, to bind"
+                            + " custom functions and variables that the expression can use. If not set, the frameBinding"
+                            + " option of the component is used.")
     private JsonataFrameBinding frameBinding;
-    @UriParam
+    @UriParam(description = "Whether the producer takes the JSONata expression from the CamelJsonataResourceUri header,"
+                            + " when the header is set, instead of from the resourceUri option. Enable it only when the"
+                            + " header comes from a trusted source, as its value can be any expression or the URI of any"
+                            + " resource that Camel can read.")
     private boolean allowTemplateFromHeader;
-    @UriParam
+    @UriParam(description = "Whether to format the JSON text of the result with indentation and line breaks. It applies"
+                            + " only when outputType is JsonString.")
     private boolean prettyPrint;
     // shadows the option of ResourceEndpoint, so it can be marked deprecated for jsonata only
     @UriParam(defaultValue = "false", description = "Not used by jsonata.")
@@ -119,9 +132,6 @@ public class JsonataEndpoint extends ResourceEndpoint {
         return outputType;
     }
 
-    /**
-     * Specifies if the output should be Jackson JsonNode or a JSON String.
-     */
     public void setOutputType(JsonataInputOutputType outputType) {
         this.outputType = outputType;
     }
@@ -130,19 +140,10 @@ public class JsonataEndpoint extends ResourceEndpoint {
         return inputType;
     }
 
-    /**
-     * Specifies if the input should be Jackson JsonNode or a JSON String. With Jackson, a body that is JSON text (its
-     * first non-whitespace character is { or [), bytes, a stream or a file is parsed as JSON, other text is a JSON
-     * string value, and any other body, such as a Map or a List, is converted by Jackson. With JsonString, the body is
-     * always parsed as JSON.
-     */
     public void setInputType(JsonataInputOutputType inputType) {
         this.inputType = inputType;
     }
 
-    /**
-     * Specifies the custom framebinding.
-     */
     public void setFrameBinding(JsonataFrameBinding frameBinding) {
         this.frameBinding = frameBinding;
     }
@@ -155,12 +156,6 @@ public class JsonataEndpoint extends ResourceEndpoint {
         return allowTemplateFromHeader;
     }
 
-    /**
-     * Whether to allow to use resource template from header or not (default false).
-     *
-     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
-     * security vulnerability if the header is coming from a malicious user, so use this with care.
-     */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
@@ -169,9 +164,6 @@ public class JsonataEndpoint extends ResourceEndpoint {
         return prettyPrint;
     }
 
-    /**
-     * Whether to pretty print JSon output when using string as output type.
-     */
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }

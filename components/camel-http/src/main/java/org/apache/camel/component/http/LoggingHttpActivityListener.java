@@ -21,8 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
@@ -56,13 +54,6 @@ import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
           annotations = { "interfaceName=org.apache.camel.component.http.HttpActivityListener" })
 @Configurer(metadataOnly = true)
 public class LoggingHttpActivityListener extends ServiceSupport implements CamelContextAware, HttpActivityListener {
-
-    /**
-     * HTTP headers that carry a credential, but whose name is not a sensitive key known by {@link SensitiveUtils} (such
-     * as Authorization), in lower case.
-     */
-    private static final Set<String> SENSITIVE_HEADERS
-            = Set.of("proxy-authorization", "cookie", "set-cookie", "x-api-key", "x-auth-token");
 
     private static final String DEFAULT_MASK = "xxxxx";
 
@@ -285,8 +276,7 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
      * key), which is never logged
      */
     protected boolean isSensitiveHeader(String name) {
-        return name != null
-                && (SENSITIVE_HEADERS.contains(name.toLowerCase(Locale.ENGLISH)) || SensitiveUtils.containsSensitive(name));
+        return SensitiveUtils.isSensitiveHeader(name);
     }
 
     private String getMaskString() {

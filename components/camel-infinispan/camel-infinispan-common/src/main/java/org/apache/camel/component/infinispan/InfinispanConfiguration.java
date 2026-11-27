@@ -22,41 +22,61 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 
 public abstract class InfinispanConfiguration {
-    @UriParam(label = "producer", defaultValue = "PUT", description = "The operation to perform",
+    @UriParam(label = "producer", defaultValue = "PUT",
+              description = "The operation that the producer performs. The CamelInfinispanOperation header replaces this"
+                            + " option.",
               enums = "PUT,PUTASYNC,PUTALL,PUTALLASYNC,PUTIFABSENT,PUTIFABSENTASYNC,GET,GETORDEFAULT,CONTAINSKEY,CONTAINSVALUE,REMOVE,REMOVEASYNC,REPLACE,REPLACEASYNC,SIZE,CLEAR,CLEARASYNC,QUERY,STATS,COMPUTE,COMPUTEASYNC")
     private InfinispanOperation operation = InfinispanOperation.PUT;
 
     @UriParam(label = "producer",
-              description = "Set a specific key for producer operations. When set, it takes precedence over the CamelInfinispanKey header.")
+              description = "The key of the entry for the producer operations that take a key, such as PUT, GET, REMOVE and"
+                            + " COMPUTE. When set, it takes precedence over the CamelInfinispanKey header.")
     private Object key;
 
-    @UriParam(label = "producer", description = "Set a specific value for producer operations")
+    @UriParam(label = "producer",
+              description = "The value of the entry for the PUT, PUTIFABSENT and REPLACE operations and their ASYNC variants,"
+                            + " the value to look for with CONTAINSVALUE, and the value that REMOVE and REMOVEASYNC compare with"
+                            + " the current value, to remove the entry only if they are equal. The CamelInfinispanValue header"
+                            + " replaces this option.")
     private Object value;
 
-    @UriParam(label = "producer", description = "Set a specific old value for some producer operations")
+    @UriParam(label = "producer",
+              description = "The value that the REPLACE and REPLACEASYNC operations compare with the current value of the"
+                            + " entry, to replace the entry only if they are equal. If not set, an existing entry is replaced"
+                            + " whatever its value. The CamelInfinispanOldValue header replaces this option.")
     private Object oldValue;
 
-    @UriParam(label = "producer", description = "Set a specific default value for some producer operations")
+    @UriParam(label = "producer",
+              description = "The value that the GETORDEFAULT operation returns when the key is not in the cache. The"
+                            + " CamelInfinispanDefaultValue header replaces this option.")
     private Object defaultValue;
 
-    @UriParam(label = "advanced", description = "An implementation specific URI for the CacheManager")
+    @UriParam(label = "advanced",
+              description = "The location of the configuration file of the cache manager that Camel creates, read from the"
+                            + " classpath unless it has a prefix such as file:. Not used when cacheContainer or"
+                            + " cacheContainerConfiguration is set. For infinispan-embedded it is an Infinispan XML"
+                            + " configuration file, read on the component only; for infinispan it is a Hot Rod client"
+                            + " properties file.")
     @Metadata(supportFileReference = true)
     private String configurationUri;
 
     @UriParam(label = "advanced",
-              description = """
-                      Store the operation result in a header instead of the message body. By default,
-                      resultHeader == null and the query result is stored in the message body, any\s
-                      existing content in the message body is discarded. If resultHeader is set, the\s
-                      value is used as the name of the header to store the query result and the original\s
-                      message body is preserved. This value can be overridden by an in message header\s
-                      named: CamelInfinispanOperationResultHeader""")
+              description = "The name of the header in which the producer stores the result of the operation, keeping the"
+                            + " message body. If not set, the result replaces the message body. The"
+                            + " CamelInfinispanOperationResultHeader header replaces this option.")
     private String resultHeader;
 
-    @UriParam(label = "advanced", description = "Set a specific remappingFunction to use in a compute operation.")
+    @UriParam(label = "advanced",
+              description = "The java.util.function.BiFunction that the COMPUTE and COMPUTEASYNC operations call with the key"
+                            + " and the current value of the entry, or null if there is none, to compute its new value. If the"
+                            + " function returns null, the entry is removed.")
     private BiFunction remappingFunction;
 
-    @UriParam(description = "Specifies the query builder.")
+    @UriParam(description = "To use a custom org.apache.camel.component.infinispan.InfinispanQueryBuilder that builds the query"
+                            + " of the QUERY operation of the producer, which the CamelInfinispanQueryBuilder header replaces."
+                            + " When set, the consumer registers a continuous query instead of a listener, and receives the"
+                            + " CacheEntryJoining, CacheEntryUpdated and CacheEntryLeaving events of the entries that match the"
+                            + " query.")
     private InfinispanQueryBuilder queryBuilder;
 
     public InfinispanOperation getOperation() {

@@ -2,7 +2,7 @@
 :doctitle: Bonita
 :shortname: bonita
 :artifactid: camel-bonita
-:description: Communicate with a remote Bonita BPM process engine.
+:description: Start cases of processes in a remote Bonita engine through its REST API.
 :since: 2.19
 :supportlevel: Stable
 :tabs-sync-option:
@@ -39,6 +39,24 @@ Any other body, also JSON text that is not an object (such as a JSON array), fai
 
 After the operation, the body is still the `Map` of the inputs, or the JSON text that was sent.
 The id of the started case is set in the `CamelBonitaCaseId` header.
+
+=== Using HTTPS
+
+By default, the producer calls the REST API of Bonita over plain HTTP. The username and password of the login, the
+session cookies and the `X-Bonita-API-Token` header travel in clear text.
+Set the `protocol` option to `https` to send them over TLS, and set `port` to the HTTPS port of the Bonita server.
+
+When the JVM does not trust the certificate of the Bonita server, configure a trust store with the
+`sslContextParameters` option (or with the global SSL context parameters of Camel and the
+`useGlobalSslContextParameters` option of the component). The login and all the requests of the producer use this
+SSL context. Without it, the JAX-RS runtime uses the default SSL context of the JVM. The `http` protocol ignores it.
+
+[source,java]
+----
+from("direct:start")
+    .to("bonita:startCase?protocol=https&hostname=bonita.example.com&port=8443&processName=TestProcess"
+        + "&username=install&password=install&sslContextParameters=#bonitaSsl");
+----
 
 
 == Examples

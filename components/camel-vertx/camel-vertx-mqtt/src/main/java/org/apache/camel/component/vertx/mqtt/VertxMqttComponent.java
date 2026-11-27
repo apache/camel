@@ -35,21 +35,17 @@ public class VertxMqttComponent extends DefaultComponent implements SSLContextPa
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxMqttComponent.class);
 
-    /**
-     * The shared configuration of the endpoints.
-     */
-    @Metadata
+    @Metadata(description = "The configuration that every endpoint of the component starts from. An endpoint works on its"
+                            + " own copy, so its options do not change the component.")
     private VertxMqttConfiguration configuration = new VertxMqttConfiguration();
-    /**
-     * The Vert.x instance to use. Without, the one of the registry if there is exactly one, else a Vert.x instance of
-     * the component's own, closed when the component stops.
-     */
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "The Vert.x instance that the connections run on. If not set, the single Vert.x instance in"
+                            + " the registry is used, or else the component creates a Vert.x instance of its own and closes"
+                            + " it when the component stops.")
     private Vertx vertx;
-    /**
-     * The options of the Vert.x instance the component creates when none is given.
-     */
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The options of the Vert.x instance that the component creates when the vertx option is not"
+                            + " set and the registry does not hold exactly one Vert.x instance.")
     private VertxOptions vertxOptions;
     /**
      * Whether to use the global SSL context parameters of the Camel context for an endpoint that sets none.

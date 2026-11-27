@@ -23,7 +23,9 @@ import org.apache.camel.spi.Metadata;
  */
 public final class JsonataConstants {
 
-    @Metadata(description = "A URI for the template resource to load and use instead of the endpoint configured.",
+    @Metadata(description = "The JSONata expression to use instead of the resource of the endpoint, or the URI of a resource"
+                            + " that holds it, with a scheme such as classpath:, file: or http:. The producer reads it only"
+                            + " when allowTemplateFromHeader is true, and removes it from the message.",
               javaType = "String")
     public static final String JSONATA_RESOURCE_URI = "CamelJsonataResourceUri";
 

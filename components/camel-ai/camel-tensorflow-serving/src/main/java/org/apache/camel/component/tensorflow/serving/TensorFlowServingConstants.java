@@ -28,7 +28,7 @@ public interface TensorFlowServingConstants {
      *             cannot be redirected per exchange. Use the {@code target} endpoint option instead, or route to a
      *             different endpoint with {@code toD} when the destination varies per message.
      */
-    @Metadata(description = "The target of the client. See: https://grpc.github.io/grpc-java/javadoc/io/grpc/Grpc.html#newChannelBuilder%28java.lang.String,io.grpc.ChannelCredentials%29",
+    @Metadata(description = "The gRPC target of the model server. The component does not read this header.",
               javaType = "String",
               deprecationNote = "Never read by the component. The gRPC channel is built once when the endpoint is"
                                 + " initialised, so it cannot be redirected per exchange. Use the target endpoint option.")
@@ -39,25 +39,31 @@ public interface TensorFlowServingConstants {
      * @deprecated Never read by the component. The gRPC channel is built once when the endpoint is initialised, so it
      *             cannot be re-authenticated per exchange. Use the {@code credentials} endpoint option instead.
      */
-    @Metadata(description = "The credentials of the client.", javaType = "io.grpc.ChannelCredentials",
+    @Metadata(description = "The credentials of the gRPC channel. The component does not read this header.",
+              javaType = "io.grpc.ChannelCredentials",
               deprecationNote = "Never read by the component. The gRPC channel is built once when the endpoint is"
                                 + " initialised, so it cannot be re-authenticated per exchange. Use the credentials"
                                 + " endpoint option.")
     @Deprecated
     String CREDENTIALS = "CamelTensorFlowServingCredentials";
 
-    @Metadata(description = "Required servable name.", javaType = "String")
+    @Metadata(description = "The name of the model (servable) to call. It replaces the modelName option, and the model_spec"
+                            + " of a request in the body replaces it.",
+              javaType = "String")
     String MODEL_NAME = "CamelTensorFlowServingModelName";
 
-    @Metadata(description = "Optional choice of which version of the model to use. Use this specific version number.",
+    @Metadata(description = "The version number of the model to use. It replaces the modelVersion option. A version label, if"
+                            + " one is set, is used instead of it.",
               javaType = "long")
     String MODEL_VERSION = "CamelTensorFlowServingModelVersion";
 
-    @Metadata(description = "Optional choice of which version of the model to use. Use the version associated with the given label.",
+    @Metadata(description = "The label of the model version to use, for example stable or canary. It replaces the"
+                            + " modelVersionLabel option.",
               javaType = "String")
     String MODEL_VERSION_LABEL = "CamelTensorFlowServingModelVersionLabel";
 
-    @Metadata(description = "A named signature to evaluate. If unspecified, the default signature will be used.",
+    @Metadata(description = "The name of the signature (SignatureDef) of the model to evaluate. It replaces the signatureName"
+                            + " option.",
               javaType = "String")
     String SIGNATURE_NAME = "CamelTensorFlowServingSignatureName";
 

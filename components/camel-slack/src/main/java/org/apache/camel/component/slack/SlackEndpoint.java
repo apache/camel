@@ -33,7 +33,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Send and receive messages to/from Slack.
+ * Send messages to a Slack channel or user, and receive the new messages of a Slack conversation.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel",
              category = { Category.SOCIAL })
@@ -55,31 +55,55 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
               description = "Milliseconds before the next poll.")
     private long delay = SlackConsumer.DEFAULT_CONSUMER_DELAY;
 
-    @UriPath
+    @UriPath(description = "For the producer, where the message goes: a channel name such as #general, a channel ID, or a"
+                           + " user ID for a direct message, as chat.postMessage of Slack accepts. For the consumer, the name"
+                           + " of the conversation without #, such as general, which it looks up among the conversations"
+                           + " of conversationType.")
     @Metadata(required = true)
     private String channel;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,security", secret = true,
+              description = "The URL of a Slack incoming webhook, such as https://hooks.slack.com/services/..., that the"
+                            + " producer posts the message to as JSON. It is used only when no token is set. The consumer"
+                            + " does not use it.")
     private String webhookUrl;
-    @UriParam(label = "producer", security = "secret")
+    @UriParam(label = "producer", security = "secret",
+              description = "The name shown as the author of the messages that the producer sends. Slack applies it only"
+                            + " for a bot token with the chat:write.customize scope, or for a legacy incoming webhook.")
     @Deprecated
     private String username;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The URL of an image shown as the icon of the messages that the producer sends. Slack"
+                            + " applies it only for a bot token with the chat:write.customize scope, or for a legacy"
+                            + " incoming webhook. iconEmoji takes precedence over it.")
     @Deprecated
     private String iconUrl;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "An emoji, such as :ghost:, shown as the icon of the messages that the producer sends. Slack"
+                            + " applies it only for a bot token with the chat:write.customize scope, or for a legacy"
+                            + " incoming webhook.")
     @Deprecated
     private String iconEmoji;
-    @UriParam(security = "secret")
+    @UriParam(security = "secret",
+              description = "The OAuth token of a Slack app, a bot token (xoxb-) or a user token (xoxp-). The producer"
+                            + " posts with chat.postMessage, which needs the chat:write scope, and uses the token instead"
+                            + " of webhookUrl when both are set. The consumer requires it, with the history and read"
+                            + " scopes of conversationType, such as channels:history and channels:read.")
     private String token;
     @UriParam(label = "consumer", defaultValue = "10")
     private String maxResults = "10";
-    @UriParam(label = "consumer", defaultValue = "https://slack.com")
+    @UriParam(label = "consumer", defaultValue = "https://slack.com",
+              description = "The base URL of the Slack Web API. The consumer, and the producer with a token, call the"
+                            + " API methods at this URL followed by /api/. Change it for a proxy or a test server only.")
     private String serverUrl = "https://slack.com";
     @UriParam(label = "consumer", defaultValue = "false", javaType = "boolean",
-              description = "Create exchanges in natural order (oldest to newest) or not")
+              description = "Whether the consumer routes the new messages of a poll from the oldest to the newest. By"
+                            + " default the most recent message comes first.")
     private boolean naturalOrder;
     @UriParam(label = "consumer", enums = "PUBLIC_CHANNEL,PRIVATE_CHANNEL,MPIM,IM", defaultValue = "PUBLIC_CHANNEL",
-              description = "Type of conversation")
+              description = "The type of the conversation that the consumer reads, which it looks up by its name with"
+                            + " conversations.list of Slack: a public channel, a private channel, a group direct message"
+                            + " (MPIM) or a direct message (IM). The token needs the scopes of that type, such as"
+                            + " groups:history and groups:read for PRIVATE_CHANNEL.")
     private ConversationType conversationType = ConversationType.PUBLIC_CHANNEL;
 
     /**
@@ -124,9 +148,6 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    /**
-     * The incoming webhook URL
-     */
     public void setWebhookUrl(String webhookUrl) {
         this.webhookUrl = webhookUrl;
     }
@@ -139,9 +160,6 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return channel;
     }
 
-    /**
-     * The channel name (syntax #name) or slack user (syntax @userName) to send a message directly to an user.
-     */
     public void setChannel(String channel) {
         this.channel = channel;
     }
@@ -150,9 +168,6 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return username;
     }
 
-    /**
-     * This is the username that the bot will have when sending messages to a channel or user.
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -161,9 +176,6 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return iconUrl;
     }
 
-    /**
-     * The avatar that the component will use when sending message to a channel or user.
-     */
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;
     }
@@ -172,9 +184,6 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return iconEmoji;
     }
 
-    /**
-     * Use a Slack emoji as an avatar
-     */
     public void setIconEmoji(String iconEmoji) {
         this.iconEmoji = iconEmoji;
     }
@@ -183,10 +192,6 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return token;
     }
 
-    /**
-     * The token to access Slack. This app needs to have channels:history, groups:history, im:history, mpim:history,
-     * channels:read, groups:read, im:read and mpim:read permissions. The User OAuth Token is the kind of token needed.
-     */
     public void setToken(String token) {
         this.token = token;
     }
@@ -207,16 +212,10 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return serverUrl;
     }
 
-    /**
-     * The Server URL of the Slack instance
-     */
     public void setServerUrl(String serverUrl) {
         this.serverUrl = serverUrl;
     }
 
-    /**
-     * Is consuming message in natural order
-     */
     public void setNaturalOrder(boolean naturalOrder) {
         this.naturalOrder = naturalOrder;
     }
@@ -225,9 +224,6 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         return naturalOrder;
     }
 
-    /**
-     * The type of the conversation
-     */
     public void setConversationType(ConversationType conversationType) {
         this.conversationType = conversationType;
     }

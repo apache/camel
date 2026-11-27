@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Perform DNS queries using DNSJava.
+ * Query DNS records and resolve host names to IP addresses, using the dnsjava library.
  */
 @UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true,
              category = { Category.NETWORKING }, headersClass = DnsConstants.class)
@@ -53,7 +53,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " Message; for wikipedia the text of the first TXT record, or no body"))
 public class DnsEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath(description = "The operation to run: ip resolves the host name in the CamelDnsDomain header to an IP address"
+                           + " with the resolver of the JVM; lookup runs a dnsjava lookup of the CamelDnsName header and"
+                           + " returns the records of the answer; dig sends one query for the CamelDnsName header to a DNS"
+                           + " server and returns the whole response. The wikipedia type is deprecated, as the Wikipedia"
+                           + " over DNS service it queries is no longer available.")
     @Metadata(required = true)
     private DnsType dnsType;
 
@@ -86,10 +90,6 @@ public class DnsEndpoint extends DefaultEndpoint {
         return dnsType;
     }
 
-    /**
-     * The type of the lookup. The wikipedia type is deprecated, as the Wikipedia over DNS service it queries is no
-     * longer available.
-     */
     public void setDnsType(DnsType dnsType) {
         this.dnsType = dnsType;
     }

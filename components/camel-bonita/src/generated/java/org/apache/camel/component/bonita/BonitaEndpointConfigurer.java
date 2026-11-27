@@ -24,6 +24,8 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BonitaEndpoint target = (BonitaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "basepath":
+        case "basePath": target.getConfiguration().setBasePath(property(camelContext, java.lang.String.class, value)); return true;
         case "hostname": target.getConfiguration().setHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -31,6 +33,11 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": target.getConfiguration().setPort(property(camelContext, java.lang.String.class, value)); return true;
         case "processname":
         case "processName": target.getConfiguration().setProcessName(property(camelContext, java.lang.String.class, value)); return true;
+        case "processversion":
+        case "processVersion": target.getConfiguration().setProcessVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "protocol": target.getConfiguration().setProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -39,6 +46,8 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "basepath":
+        case "basePath": return java.lang.String.class;
         case "hostname": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -46,6 +55,11 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": return java.lang.String.class;
         case "processname":
         case "processName": return java.lang.String.class;
+        case "processversion":
+        case "processVersion": return java.lang.String.class;
+        case "protocol": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -55,6 +69,8 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BonitaEndpoint target = (BonitaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "basepath":
+        case "basePath": return target.getConfiguration().getBasePath();
         case "hostname": return target.getConfiguration().getHostname();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
@@ -62,6 +78,11 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "port": return target.getConfiguration().getPort();
         case "processname":
         case "processName": return target.getConfiguration().getProcessName();
+        case "processversion":
+        case "processVersion": return target.getConfiguration().getProcessVersion();
+        case "protocol": return target.getConfiguration().getProtocol();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

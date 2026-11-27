@@ -26,29 +26,49 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleBigQuerySQLConfiguration implements Cloneable {
 
-    @UriPath(label = "common", description = "BigQuery standard SQL query")
+    @UriPath(label = "common", description = "The GoogleSQL (standard SQL) query or statement to run, or a resource with the"
+                                             + " query, such as classpath:query.sql, loaded when the producer starts. A named"
+                                             + " query parameter takes its value from the entry of that name of a Map body, else"
+                                             + " from the header of that name, and a ${name} placeholder is replaced by the text"
+                                             + " of the header or exchange property of that name.")
     @Metadata(required = true, supportFileReference = true, largeInput = true)
     private String queryString;
 
-    @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
+    @UriParam(description = "The org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory that provides the"
+                            + " BigQuery client. If not set, the connectionFactory of the component is used, and if that is not"
+                            + " set either, the endpoint creates one from the serviceAccountKey and projectId options.")
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
 
-    @UriPath(label = "common", description = "Google Cloud Project Id")
+    @UriPath(label = "common",
+             description = "The ID of the Google Cloud project that runs the query jobs. The endpoint also sets"
+                           + " it as the project of the BigQuery client that it creates.")
     @Metadata(required = true)
     private String projectId;
 
     @UriParam(label = "security",
-              description = "Service account key in json format to authenticate an application as a service account to google cloud platform")
+              description = "The location of the JSON key file of the service account to authenticate with Google Cloud, such"
+                            + " as a classpath:, file: or https: resource, or base64: followed by the Base64 encoded content of"
+                            + " the file. If not set, Application Default Credentials are used. It is not used when a"
+                            + " connectionFactory is set.")
     private String serviceAccountKey;
 
-    @UriParam(label = "producer", description = "Page token, returned by a previous call, to request the next page of results")
+    @UriParam(label = "producer", description = "The token of the page of SELECT results to return, from the"
+                                                + " CamelGoogleBigQueryNextPageToken header of a previous call. If not set, the"
+                                                + " first page is returned. The CamelGoogleBigQueryPageToken header replaces it.")
     private String pageToken;
 
-    @UriParam(label = "producer", description = "Size of a page to request. Unset by default", defaultValue = "0")
+    @UriParam(label = "producer", description = "The maximum number of rows in a page of SELECT results. With 0 or less,"
+                                                + " BigQuery chooses the page size.",
+              defaultValue = "0")
     private long pageSize;
 
-    @UriParam(label = "producer", description = "Output mode type for select queries", defaultValue = "SELECT_LIST")
+    @UriParam(label = "producer",
+              description = "How the producer returns the rows of a SELECT. SELECT_LIST returns one page as a"
+                            + " List of Maps, with the CamelGoogleBigQueryNextPageToken and"
+                            + " CamelGoogleBigQueryJobId headers. STREAM_LIST returns an Iterator of Maps that"
+                            + " fetches all the pages while it is read, and sets no header.",
+              defaultValue = "SELECT_LIST")
     private OutputType outputType = OutputType.SELECT_LIST;
 
     public void parseRemaining(String remaining) {
@@ -62,9 +82,6 @@ public class GoogleBigQuerySQLConfiguration implements Cloneable {
         queryString = remaining.substring(indexOfColon + 1);
     }
 
-    /**
-     * ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used.
-     */
     public GoogleBigQueryConnectionFactory getConnectionFactory() {
         return connectionFactory;
     }

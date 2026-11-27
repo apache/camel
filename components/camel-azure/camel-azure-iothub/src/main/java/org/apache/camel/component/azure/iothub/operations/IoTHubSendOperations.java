@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.iothub.operations;
 
+import java.time.Duration;
 import java.util.List;
 
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
@@ -35,10 +36,20 @@ public class IoTHubSendOperations {
 
     private final DeviceClientPool pool;
     private final List<DeliveryStrategy> strategies;
+    private final Duration subscribeTimeout;
 
     public IoTHubSendOperations(DeviceClientPool pool, List<DeliveryStrategy> strategies) {
+        this(pool, strategies, null);
+    }
+
+    /**
+     * @param subscribeTimeout the timeout of the subscription to desired properties when a device client is created, or
+     *                         null for the default of the Azure IoT SDK
+     */
+    public IoTHubSendOperations(DeviceClientPool pool, List<DeliveryStrategy> strategies, Duration subscribeTimeout) {
         this.pool = pool;
         this.strategies = strategies;
+        this.subscribeTimeout = subscribeTimeout;
     }
 
     /**
@@ -56,7 +67,7 @@ public class IoTHubSendOperations {
             throw new InterruptedException("Thread interrupted before dispatch for device: " + deviceId);
         }
 
-        try (DeviceClientPool.Lease lease = pool.lease(deviceId, connectionString, protocol)) {
+        try (DeviceClientPool.Lease lease = pool.lease(deviceId, connectionString, protocol, subscribeTimeout)) {
             DeviceClient client = lease.client();
             executeStrategies(client, deviceId, context, mode);
         } catch (Exception e) {

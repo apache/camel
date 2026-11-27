@@ -43,7 +43,7 @@ import tools.jackson.databind.cfg.MapperBuilder;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
- * Validate JSON payloads using NetworkNT JSON Schema.
+ * Validate the JSON in the message body or in a header against a JSON Schema, with the NetworkNT JSON Schema Validator.
  */
 @ManagedResource(description = "Managed JsonValidatorEndpoint")
 @UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator",
@@ -65,23 +65,43 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     private volatile Schema schema;
 
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether to fail with a NoJsonBodyValidationException when the message has no body. If false, a"
+                            + " message without a body is not validated and continues unchanged. Not used with headerName,"
+                            + " where failOnNullHeader applies instead.")
     private boolean failOnNullBody = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether to fail with a NoJsonHeaderValidationException when the header of the headerName option"
+                            + " is missing or null. If false, the message is then not validated and continues unchanged. Only"
+                            + " used with headerName.")
     private boolean failOnNullHeader = true;
-    @UriParam(description = "To validate against a header instead of the message body.")
+    @UriParam(description = "The name of the header that holds the JSON to validate, in place of the message body. If not"
+                            + " set, the message body is validated.")
     private String headerName;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "A custom JsonValidatorErrorHandler that receives the schema validation errors, or the exception"
+                            + " when the JSON cannot be read or parsed. The default handler throws a JsonValidationException."
+                            + " A handler that does not throw lets the message continue.")
     private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "A custom JsonUriSchemaLoader that creates the schema from the resourceUri, for example to add"
+                            + " custom formats or keywords. The default loader takes the JSON Schema version from the $schema"
+                            + " property of the schema, and uses draft 2019-09 when $schema is missing or unknown.")
     private JsonUriSchemaLoader uriSchemaLoader = new DefaultJsonUriSchemaLoader();
     @UriParam(label = "advanced",
-              description = "Comma-separated list of Jackson DeserializationFeature enum values which will be enabled for parsing exchange body")
+              description = "Comma-separated list of Jackson 3 DeserializationFeature names, such as FAIL_ON_TRAILING_TOKENS,"
+                            + " to enable on a copy of the ObjectMapper that parses the JSON to validate. An unknown name fails"
+                            + " the start of the endpoint. The schema itself is parsed with a separate mapper.")
     private String enabledDeserializationFeatures;
     @UriParam(label = "advanced",
-              description = "Comma-separated list of Jackson DeserializationFeature enum values which will be disabled for parsing exchange body")
+              description = "Comma-separated list of Jackson 3 DeserializationFeature names to disable on a copy of the"
+                            + " ObjectMapper that parses the JSON to validate. An unknown name fails the start of the endpoint."
+                            + " The schema itself is parsed with a separate mapper.")
     private String disabledDeserializationFeatures;
-    @UriParam(label = "advanced", description = "The Jackson 3 (tools.jackson) object mapper used to parse the JSON")
+    @UriParam(label = "advanced",
+              description = "The Jackson 3 (tools.jackson) ObjectMapper that parses the JSON to validate. If not set, the"
+                            + " objectMapper and useDefaultObjectMapper options of the component decide, and otherwise the"
+                            + " endpoint creates a mapper with the Jackson 2 defaults.")
     private ObjectMapper objectMapper;
 
     public JsonValidatorEndpoint(String endpointUri, Component component, String resourceUri) {
@@ -250,11 +270,6 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         return errorHandler;
     }
 
-    /**
-     * To use a custom ValidatorErrorHandler.
-     * <p/>
-     * The default error handler captures the errors and throws an exception.
-     */
     public void setErrorHandler(JsonValidatorErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
@@ -263,11 +278,6 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         return uriSchemaLoader;
     }
 
-    /**
-     * To use a custom schema loader allowing for adding custom format validation. The default implementation will
-     * create a schema loader that tries to determine the schema version from the $schema property of the specified
-     * schema.
-     */
     public void setUriSchemaLoader(JsonUriSchemaLoader uriSchemaLoader) {
         this.uriSchemaLoader = uriSchemaLoader;
     }
@@ -276,9 +286,6 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         return failOnNullBody;
     }
 
-    /**
-     * Whether to fail if no body exists.
-     */
     public void setFailOnNullBody(boolean failOnNullBody) {
         this.failOnNullBody = failOnNullBody;
     }
@@ -287,9 +294,6 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         return failOnNullHeader;
     }
 
-    /**
-     * Whether to fail if no header exists when validating against a header.
-     */
     public void setFailOnNullHeader(boolean failOnNullHeader) {
         this.failOnNullHeader = failOnNullHeader;
     }
@@ -298,9 +302,6 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         return headerName;
     }
 
-    /**
-     * To validate against a header instead of the message body.
-     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }

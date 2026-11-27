@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Perform operations against Apache Lucene Solr.
+ * Index, search and delete documents in Apache Solr.
  */
 @UriEndpoint(firstVersion = "4.8.0", scheme = "solr", title = "Solr", syntax = "solr:host:port/basePath", producerOnly = true,
              category = { Category.SEARCH, Category.MONITORING }, headersClass = SolrConstants.class)
@@ -154,15 +154,51 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         if (ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
             builder.withBasicAuthCredentials(configuration.getUsername(), configuration.getPassword());
         }
-        if (configuration.getSslContextParameters() != null) {
-            builder.withSSLContext(createSslContext(getCamelContext(), configuration.getSslContextParameters()));
-        } else if (ObjectHelper.isNotEmpty(configuration.getCertificatePath())) {
-            builder.withSSLContext(createSslContextFromCa(getCamelContext(), configuration.getCertificatePath()));
+        if (checkSslConfiguration()) {
+            if (configuration.getSslContextParameters() != null) {
+                builder.withSSLContext(createSslContext(getCamelContext(), configuration.getSslContextParameters()));
+            } else if (ObjectHelper.isNotEmpty(configuration.getCertificatePath())) {
+                builder.withSSLContext(createSslContextFromCa(getCamelContext(), configuration.getCertificatePath()));
+            }
         }
         if (configuration.getCollection() != null) {
             builder.withDefaultCollection(configuration.getCollection());
         }
         return builder.build();
+    }
+
+    /**
+     * Checks the SSL options of the client that Camel creates.
+     *
+     * @return true when the client connects with HTTPS, so the SSL context is configured
+     */
+    private boolean checkSslConfiguration() {
+        final String certificatePath = configuration.getCertificatePath();
+        if (ObjectHelper.isNotEmpty(certificatePath) && certificatePath.regionMatches(true, 0, "http:", 0, 5)) {
+            throw new IllegalArgumentException(
+                    "The certificatePath option must not be an http: URL, as the certificate would be loaded over plain"
+                                               + " HTTP. Use the classpath:, file: or https: prefix instead on endpoint: "
+                                               + URISupport.sanitizeUri(getEndpointUri()));
+        }
+        if (configuration.isEnableSSL()) {
+            return true;
+        }
+        final SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
+        final boolean global
+                = sslContextParameters != null && sslContextParameters == getCamelContext().getSSLContextParameters();
+        if (ObjectHelper.isNotEmpty(certificatePath) || (sslContextParameters != null && !global)) {
+            throw new IllegalArgumentException(
+                    "The certificatePath or sslContextParameters option is set, but enableSSL is false, so the client would"
+                                               + " connect to Solr with plain HTTP and not use them. Set enableSSL=true to"
+                                               + " connect with HTTPS on endpoint: "
+                                               + URISupport.sanitizeUri(getEndpointUri()));
+        }
+        if (global) {
+            LOG.warn("The global SSL context parameters are not used as enableSSL is false, so the client connects to Solr"
+                     + " with plain HTTP on endpoint: {}",
+                    URISupport.sanitizeUri(getEndpointUri()));
+        }
+        return false;
     }
 
     protected static boolean isProcessAsync(SolrClient solrClient, SolrConfiguration configuration) {

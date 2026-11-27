@@ -27,12 +27,16 @@ public final class MyBatisConstants {
     public static final String SCHEME_MYBATIS_BEAN = "mybatis-bean";
     public static final String SCHEME_MYBATIS = "mybatis";
 
-    @Metadata(label = "producer", description = "The response returned from MyBatis in any of the operations." +
-                                                " Such as `INSERT` could return the auto-generated key, or number of rows etc.",
+    @Metadata(label = "producer",
+              description = "The result that the producer sets: the row or the List of rows of a select, the count of"
+                            + " rows of an insert, update or delete (of the last run for a List), or for mybatis-bean what"
+                            + " the method returns. A generated key is not in it: MyBatis sets that key on the parameter"
+                            + " object. With outputHeader, the result is in that header instead.",
               javaType = "Object")
     public static final String MYBATIS_RESULT = "CamelMyBatisResult";
-    @Metadata(description = "The statementName used (for example: insertAccount).", javaType = "String",
-              applicableFor = SCHEME_MYBATIS)
+    @Metadata(description = "The ID of the mapped statement that ran, from the statement option, for example insertAccount."
+                            + " The consumer and the producer set it.",
+              javaType = "String", applicableFor = SCHEME_MYBATIS)
     public static final String MYBATIS_STATEMENT_NAME = "CamelMyBatisStatementName";
 
     private MyBatisConstants() {

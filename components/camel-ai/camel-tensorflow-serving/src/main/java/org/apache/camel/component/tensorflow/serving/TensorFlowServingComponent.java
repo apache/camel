@@ -27,7 +27,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("tensorflow-serving")
 public class TensorFlowServingComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints start from. Each endpoint gets a copy of it, and the"
+                            + " options of the endpoint replace its values.")
     private TensorFlowServingConfiguration configuration = new TensorFlowServingConfiguration();
 
     public TensorFlowServingComponent() {
@@ -50,9 +51,6 @@ public class TensorFlowServingComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * The configuration.
-     */
     public void setConfiguration(TensorFlowServingConfiguration configuration) {
         this.configuration = configuration;
     }

@@ -2,7 +2,7 @@
 :doctitle: Vert.x WebSocket
 :shortname: vertx-websocket
 :artifactid: camel-vertx-websocket
-:description: Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x
+:description: Receive and send WebSocket messages with Vert.x, as a WebSocket server or as a client of a remote WebSocket server.
 :since: 3.5
 :supportlevel: Stable
 :tabs-sync-option:

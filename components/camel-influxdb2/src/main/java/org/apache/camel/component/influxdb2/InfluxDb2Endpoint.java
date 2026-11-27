@@ -42,8 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a> v2, a time series
- * database.
+ * Write time series data to <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a> 2.x.
  */
 @UriEndpoint(firstVersion = "3.20.0", scheme = "influxdb2", title = "InfluxDB2",
              syntax = "influxdb2:connectionBean", category = { Category.DATABASE },
@@ -71,30 +70,53 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true,
-              description = "Connection to the Influx database, of class com.influxdb.client.InfluxDBClient.class.")
+              description = "The name of the com.influxdb.client.InfluxDBClient bean to look up in the registry. It is not"
+                            + " looked up when the component has a client, set with its influxDBClient option or"
+                            + " autowired.")
     private String connectionBean;
     @UriParam
-    @Metadata(required = true, description = "The name of the organization where the time series will be stored.")
+    @Metadata(description = "The name of the organization to write to. The CamelInfluxDB2Org header replaces this option"
+                            + " for a write, so the option can be left out when autoCreateOrg and autoCreateBucket are false."
+                            + " The autoCreateOrg and autoCreateBucket options use this organization when the endpoint"
+                            + " starts: with autoCreateOrg, or with autoCreateBucket and a bucket that does not exist yet, the"
+                            + " endpoint fails to start without it. Not used by the PING operation.")
     private String org;
     @UriParam
-    @Metadata(required = true, description = "The name of the bucket where the time series will be stored.")
+    @Metadata(description = "The name of the bucket to write to. The CamelInfluxDB2Bucket header replaces this option for a"
+                            + " write, so the option can be left out when autoCreateBucket is false. The autoCreateBucket"
+                            + " option uses this bucket when the endpoint starts, and the endpoint fails to start without"
+                            + " it. Not used by the PING operation.")
     private String bucket;
-    @UriParam(defaultValue = "default", description = "Define the retention policy to the data created by the endpoint.")
+    @UriParam(defaultValue = "default",
+              description = "The name of a retention policy, which InfluxDB 1.x has and InfluxDB 2.x does not.")
     @Metadata(deprecationNote = "Never read by the component: the InfluxDB 2.x write API has no retention policy,"
                                 + " retention is a property of the bucket")
     @Deprecated
     private String retentionPolicy = "default";
 
-    @UriParam(defaultValue = "INSERT", description = "Define if this operation is an insert or a ping.")
+    @UriParam(defaultValue = "INSERT",
+              description = "The operation of the producer. INSERT writes the body to the bucket. PING calls the ping"
+                            + " endpoint of InfluxDB and sets the body to a Boolean: true when InfluxDB answered with"
+                            + " success, false otherwise.")
     private Operation operation = Operation.INSERT;
-    @UriParam(defaultValue = "true", description = "Define if we want to auto create the organization if it's not present.")
+    @UriParam(defaultValue = "true",
+              description = "Whether the endpoint looks up the organization of the org option when it starts, and creates"
+                            + " it when it does not exist. An organization that the CamelInfluxDB2Org header names is not"
+                            + " created. Not used by the PING operation.")
     private boolean autoCreateOrg = true;
 
-    @UriParam(defaultValue = "true", description = "Define if we want to auto create the bucket if it's not present.")
+    @UriParam(defaultValue = "true",
+              description = "Whether the endpoint looks up the bucket of the bucket option when it starts, and creates it in"
+                            + " the organization of the org option when it does not exist. If autoCreateOrg is false and"
+                            + " that organization does not exist, the endpoint fails to start. A bucket that the"
+                            + " CamelInfluxDB2Bucket header names is not created. Not used by the PING operation.")
     private boolean autoCreateBucket = true;
 
     @UriParam(defaultValue = "ms",
-              description = "The format or precision of time series timestamps.")
+              description = "The precision of the timestamps in a Measurement, Record, Measurements or Records body. It"
+                            + " does not apply to a Point, a Map or a Points body, as the client writes each Point with its"
+                            + " own precision (ns unless set with Point.time). The CamelInfluxDB2WritePrecision header"
+                            + " replaces this option.")
     private WritePrecision writePrecision = WritePrecision.MS;
     private String orgID;
 
@@ -208,6 +230,10 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
         super.doInit();
         // InfluxDB is called at startup only to create the organization or the bucket when it is missing. A write names
         // the organization and the bucket, so an endpoint that creates neither does not need the server to start.
+        if (operation == Operation.PING) {
+            // a ping uses neither the organization nor the bucket
+            return;
+        }
         if (autoCreateOrg) {
             ensureOrgExists();
         }

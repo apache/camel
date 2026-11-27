@@ -39,12 +39,33 @@ This approach provides **defense-in-depth**: even if the symmetric algorithm is 
 
 == Wire Format
 
-The encrypted message produced by the PQC DataFormat is:
+Since Camel 4.24, the PQC DataFormat produces wire format v2 with an 8-byte self-describing header that includes algorithm identifiers.
+The header bytes are bound as AAD (additional authenticated data) to the AEAD cipher, so any modification to the header is detected by the authentication tag verification on decryption.
+
+**Wire format v2 (current):**
+
+[source,text]
+----
+[8 bytes: header] [4 bytes: encapsulation length] [N bytes: encapsulation] [12 bytes: AEAD nonce] [M bytes: ciphertext + auth tag]
+
+Header layout (8 bytes):
+  byte 0:   magic 0x50 ('P')
+  byte 1:   magic 0x51 ('Q')
+  byte 2:   version 0x02
+  byte 3:   format type 0x03 (KEM data encryption)
+  byte 4-5: 16-bit KEM algorithm ID (big-endian, from PQCAlgorithmId)
+  byte 6-7: 16-bit symmetric algorithm ID (big-endian, from PQCAlgorithmId)
+----
+
+**Wire format v1 (legacy, read-only):**
 
 [source,text]
 ----
 [4 bytes: encapsulation length] [N bytes: encapsulation] [12 bytes: AEAD nonce] [M bytes: ciphertext + auth tag]
 ----
+
+The unmarshal path auto-detects the format by peeking at the first two bytes: if they match the magic bytes `0x50 0x51` ("PQ"), the message is parsed as v2; otherwise it falls back to v1.
+Messages produced by Camel 4.22 and 4.23 (wire format v1) continue to decrypt without any configuration change.
 
 The KEM encapsulation allows the receiver to decapsulate the shared secret using their private key. The payload is then encrypted with an authenticated cipher (AEAD): 128-bit block ciphers use GCM and the ChaCha20 stream cipher uses ChaCha20-Poly1305, so both confidentiality and integrity are protected. Decryption fails if the ciphertext or its authentication tag has been modified.
 

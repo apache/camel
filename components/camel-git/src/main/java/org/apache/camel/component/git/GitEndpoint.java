@@ -35,7 +35,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * Perform operations on git repositories.
+ * Run git operations, such as clone, commit, push and pull, on a local repository with JGit, and receive its commits,
+ * branches and tags.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = { Category.FILE },
              headersClass = GitConstants.class)
@@ -97,52 +98,80 @@ import org.apache.camel.support.ScheduledPollEndpoint;
                                                  + " from the CamelGitOperation header"))
 public class GitEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath
+    @UriPath(description = "The path of the working tree of the local repository, the directory that holds the .git"
+                           + " directory. The clone operation creates the repository there and fails if the directory exists,"
+                           + " and init creates it there.")
     @Metadata(required = true)
     private String localPath;
 
-    @UriParam
+    @UriParam(description = "The name of the branch. The commit consumer receives the commits reachable from it, or the"
+                            + " commits of all refs when it is not set or not found. For the producer it is the branch to"
+                            + " create or delete, to check out (clone and checkout, which creates it when it does not exist) or"
+                            + " to merge into targetBranchName (merge), and add, remove, commit, commitAll, status, log, push,"
+                            + " pull, cherryPick and clean check out this existing branch first.")
     private String branchName;
 
     @UriParam(label = "producer",
-              description = "Name of target branch in merge operation. If not supplied will try to use init.defaultBranch git configs. If not configured will use default value",
+              description = "The branch that the merge operation checks out and merges branchName into. If not set, merge"
+                            + " uses init.defaultBranch of the user git config, or master when that is not set either.",
               defaultValue = "master")
     private String targetBranchName;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the tag for createTag, which creates an annotated tag of HEAD, and for deleteTag and"
+                            + " pushTag. For checkout, the tag that the new branchName branch starts from.")
     private String tagName;
 
-    @UriParam(enums = "commit,tag,branch", label = "consumer")
+    @UriParam(enums = "commit,tag,branch", label = "consumer",
+              description = "What the consumer receives: commit for each commit, tag for each tag, or branch for each local"
+                            + " and remote-tracking branch. Required for the consumer. It receives all the existing items on"
+                            + " its first poll and keeps the consumed ones in memory only, so after a restart it receives all"
+                            + " of them again.")
     private GitType type;
 
-    @UriParam(label = "producer,security", security = "secret")
+    @UriParam(label = "producer,security", security = "secret",
+              description = "The user name to authenticate with the remote repository in clone, pull, push and pushTag. Used"
+                            + " only when password is set too.")
     private String username;
 
-    @UriParam(label = "producer,security", security = "secret")
+    @UriParam(label = "producer,security", security = "secret",
+              description = "The password, or an access token, to authenticate with the remote repository in clone, pull, push"
+                            + " and pushTag. Used only when username is set too.")
     private String password;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The URL of the remote repository, such as https://github.com/apache/camel.git. The clone"
+                            + " operation clones it, and remoteAdd adds it as the remote named remoteName.")
     private String remotePath;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The name of the remote, such as origin, that pull, push and pushTag use and that remoteAdd adds."
+                            + " Required by these operations.")
     private String remoteName;
 
     // Set to true for backward compatibility , better to set to false (native git behavior)
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether commit and commitAll create a commit when there is nothing to commit. If false, they fail"
+                            + " with the EmptyCommitException of JGit instead, as git commit does without --allow-empty. The"
+                            + " CamelGitAllowEmpty header replaces this option.")
     @Metadata(label = "producer")
     private boolean allowEmpty = true;
 
     @UriParam(label = "producer",
-              description = "Clone depth for shallow clones. Must be a positive integer. "
-                            + "A value of 1 fetches only the latest commit. "
-                            + "When set to 0 or not specified, a full clone is performed.")
+              description = "The depth of a shallow clone in the clone operation, as the number of commits of history to"
+                            + " fetch. For example, 1 fetches only the latest commit. The default 0 makes a full clone, and a"
+                            + " negative value fails the clone.")
     private int depth;
 
     @UriParam(label = "producer",
-              enums = "add,checkout,cherryPick,clean,clone,commit,commitAll,createBranch,createTag,deleteBranch,deleteTag,gc,init,log,merge,pull,push,pushTag,remoteAdd,remoteList,remove,showBranches,showTags,status")
+              enums = "add,checkout,cherryPick,clean,clone,commit,commitAll,createBranch,createTag,deleteBranch,deleteTag,gc,init,log,merge,pull,push,pushTag,remoteAdd,remoteList,remove,showBranches,showTags,status",
+              description = "The operation that the producer performs. If not set, the producer takes it from the"
+                            + " CamelGitOperation header.")
     private String operation;
 
-    @UriParam(description = "A String with path to a .gitconfig file", label = "advanced")
+    @UriParam(description = "The git config file to read in place of the user git config (~/.gitconfig), as a URI with the"
+                            + " classpath:, file:, http: or https: scheme. When it is set, the system git config is not read.",
+              label = "advanced")
     private String gitConfigFile;
 
     public GitEndpoint(String uri, GitComponent component) {
@@ -169,9 +198,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    /**
-     * The remote repository path
-     */
     public String getRemotePath() {
         return remotePath;
     }
@@ -180,9 +206,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.remotePath = remotePath;
     }
 
-    /**
-     * The branch name to work on
-     */
     public String getBranchName() {
         return branchName;
     }
@@ -191,9 +214,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.branchName = branchName;
     }
 
-    /**
-     * Remote repository username
-     */
     public String getUsername() {
         return username;
     }
@@ -202,9 +222,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.username = username;
     }
 
-    /**
-     * Remote repository password
-     */
     public String getPassword() {
         return password;
     }
@@ -213,9 +230,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.password = password;
     }
 
-    /**
-     * Local repository path
-     */
     public String getLocalPath() {
         return localPath;
     }
@@ -224,9 +238,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.localPath = localPath;
     }
 
-    /**
-     * The operation to do on the repository
-     */
     public String getOperation() {
         return operation;
     }
@@ -235,9 +246,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.operation = operation;
     }
 
-    /**
-     * The consumer type
-     */
     public GitType getType() {
         return type;
     }
@@ -246,9 +254,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.type = type;
     }
 
-    /**
-     * The tag name to work on
-     */
     public String getTagName() {
         return tagName;
     }
@@ -257,9 +262,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.tagName = tagName;
     }
 
-    /**
-     * The remote repository name to use in particular operation like pull
-     */
     public String getRemoteName() {
         return remoteName;
     }
@@ -268,9 +270,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.remoteName = remoteName;
     }
 
-    /**
-     * The flag to manage empty git commits
-     */
     public boolean isAllowEmpty() {
         return allowEmpty;
     }
@@ -279,9 +278,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.allowEmpty = allowEmpty;
     }
 
-    /**
-     * Clone depth for shallow clones
-     */
     public int getDepth() {
         return depth;
     }
@@ -290,9 +286,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.depth = depth;
     }
 
-    /**
-     * The branch name to merge
-     */
     public String getTargetBranchName() {
         return this.targetBranchName;
     }
@@ -301,9 +294,6 @@ public class GitEndpoint extends ScheduledPollEndpoint {
         this.targetBranchName = targetBranchName;
     }
 
-    /**
-     * A String with path to a .gitconfig file
-     */
     public String getGitConfigFile() {
         return this.gitConfigFile;
     }

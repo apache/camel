@@ -104,7 +104,8 @@ public class SentenceEmbeddingsPredictor extends AbstractTaskPredictor {
 
     @Override
     protected String getPythonScript() {
-        return loadPythonScript("sentence_embeddings.py", config.getDevice(), config.getModelId(), config.getRevision());
+        return loadPythonScript("sentence_embeddings.py", pythonString(config.getDevice()), pythonString(config.getModelId()),
+                pythonString(config.getRevision()));
     }
 
     @Override

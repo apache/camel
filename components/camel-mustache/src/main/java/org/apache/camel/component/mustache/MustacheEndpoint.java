@@ -37,13 +37,15 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RESOURCE_URI;
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEMPLATE;
 
 /**
- * Transform messages using a Mustache template.
+ * Render a Mustache template with the data of the message and use the text it writes as the new message body.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri",
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
@@ -60,17 +62,33 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEM
                                                  + " are. The headers are kept"))
 public class MustacheEndpoint extends ResourceEndpoint {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MustacheEndpoint.class);
+
+    private static final String DEFAULT_START_DELIMITER = "{{";
+    private static final String DEFAULT_END_DELIMITER = "}}";
+
     private MustacheFactory mustacheFactory;
     private Mustache mustache;
 
     @UriParam
     private boolean allowTemplateFromHeader;
-    @UriParam
+    @UriParam(description = "The name of the character encoding (charset) that the producer uses to read the template"
+                            + " resource of resourceUri, for example UTF-8. If not set, the default charset of the JVM is"
+                            + " used. Not used for the template of the CamelMustacheTemplate header, which is already text,"
+                            + " nor for partials, which the mustacheFactory reads.")
     private String encoding;
-    @UriParam(defaultValue = "{{")
-    private String startDelimiter;
-    @UriParam(defaultValue = "}}")
-    private String endDelimiter;
+    @UriParam(defaultValue = "{{",
+              description = "The characters that start a tag in the template, in place of {{. It can be set without"
+                            + " endDelimiter, which then stays }}. Only applied when the mustacheFactory of the component is"
+                            + " a com.github.mustachejava.DefaultMustacheFactory, which it is by default; with another factory"
+                            + " the endpoint logs a WARN. Also applied to the template of the CamelMustacheTemplate header.")
+    private String startDelimiter = DEFAULT_START_DELIMITER;
+    @UriParam(defaultValue = "}}",
+              description = "The characters that end a tag in the template, in place of }}. It can be set without"
+                            + " startDelimiter, which then stays {{. Only applied when the mustacheFactory of the component is"
+                            + " a com.github.mustachejava.DefaultMustacheFactory, which it is by default; with another factory"
+                            + " the endpoint logs a WARN. Also applied to the template of the CamelMustacheTemplate header.")
+    private String endDelimiter = DEFAULT_END_DELIMITER;
 
     public MustacheEndpoint() {
     }
@@ -92,6 +110,29 @@ public class MustacheEndpoint extends ResourceEndpoint {
     @Override
     protected String createEndpointUri() {
         return MUSTACHE_ENDPOINT_URI_PREFIX + getResourceUri();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (hasCustomDelimiters() && mustacheFactory != null && !(mustacheFactory instanceof DefaultMustacheFactory)) {
+            LOG.warn("The startDelimiter {} and endDelimiter {} of {} are not used: the mustacheFactory {} is not a"
+                     + " DefaultMustacheFactory, so the templates are compiled with its own delimiters",
+                    getEffectiveStartDelimiter(), getEffectiveEndDelimiter(), this, mustacheFactory.getClass().getName());
+        }
+    }
+
+    private String getEffectiveStartDelimiter() {
+        return startDelimiter != null ? startDelimiter : DEFAULT_START_DELIMITER;
+    }
+
+    private String getEffectiveEndDelimiter() {
+        return endDelimiter != null ? endDelimiter : DEFAULT_END_DELIMITER;
+    }
+
+    private boolean hasCustomDelimiters() {
+        return !DEFAULT_START_DELIMITER.equals(getEffectiveStartDelimiter())
+                || !DEFAULT_END_DELIMITER.equals(getEffectiveEndDelimiter());
     }
 
     @Override
@@ -152,9 +193,11 @@ public class MustacheEndpoint extends ResourceEndpoint {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
             Mustache newMustache;
-            if (startDelimiter != null && endDelimiter != null
-                    && mustacheFactory instanceof DefaultMustacheFactory defaultMustacheFactory) {
-                newMustache = defaultMustacheFactory.compile(resourceReader, resourceUri, startDelimiter, endDelimiter);
+            // one delimiter can be set alone: the other keeps its default. With the default delimiters the factory
+            // compiles as it does without them
+            if (hasCustomDelimiters() && mustacheFactory instanceof DefaultMustacheFactory defaultMustacheFactory) {
+                newMustache = defaultMustacheFactory.compile(resourceReader, resourceUri, getEffectiveStartDelimiter(),
+                        getEffectiveEndDelimiter());
             } else {
                 newMustache = mustacheFactory.compile(resourceReader, resourceUri);
             }
@@ -191,9 +234,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return mustacheFactory;
     }
 
-    /**
-     * To use a custom {@link MustacheFactory}
-     */
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }
@@ -202,9 +242,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
-    /**
-     * Character encoding of the resource content.
-     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -219,9 +256,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return startDelimiter;
     }
 
-    /**
-     * Characters used to mark template code beginning.
-     */
     public void setStartDelimiter(String startDelimiter) {
         this.startDelimiter = startDelimiter;
     }
@@ -230,9 +264,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return endDelimiter;
     }
 
-    /**
-     * Characters used to mark template code end.
-     */
     public void setEndDelimiter(String endDelimiter) {
         this.endDelimiter = endDelimiter;
     }

@@ -19,13 +19,10 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ibm.watsonx.ai.timeseries.ForecastData;
 import com.ibm.watsonx.ai.timeseries.ForecastResponse;
-import com.ibm.watsonx.ai.timeseries.InputSchema;
 import com.ibm.watsonx.ai.timeseries.TimeSeriesRequest;
 import com.ibm.watsonx.ai.timeseries.TimeSeriesService;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations;
@@ -53,35 +50,11 @@ public class ForecastHandler extends AbstractWatsonxAiHandler {
     }
 
     private WatsonxAiOperationResponse processForecast(Exchange exchange) {
-        Message in = exchange.getIn();
-
-        // Get input schema and data from headers or body
-        InputSchema inputSchema = in.getHeader(WatsonxAiConstants.FORECAST_INPUT_SCHEMA, InputSchema.class);
-        ForecastData forecastData = in.getHeader(WatsonxAiConstants.FORECAST_DATA, ForecastData.class);
-
-        // If not in headers, try to get from body as TimeSeriesRequest
-        if (inputSchema == null || forecastData == null) {
-            Object body = in.getBody();
-            if (body instanceof TimeSeriesRequest request) {
-                inputSchema = request.inputSchema();
-                forecastData = request.data();
-            }
-        }
-
-        if (inputSchema == null) {
-            throw new IllegalArgumentException(
-                    "Input schema must be provided via header '" + WatsonxAiConstants.FORECAST_INPUT_SCHEMA
-                                               + "' or as part of TimeSeriesRequest in body");
-        }
-        if (forecastData == null) {
-            throw new IllegalArgumentException(
-                    "Forecast data must be provided via header '" + WatsonxAiConstants.FORECAST_DATA
-                                               + "' or as part of TimeSeriesRequest in body");
-        }
+        TimeSeriesRequest request = getTimeSeriesRequest(exchange, null, false);
 
         // Call the service
         TimeSeriesService service = endpoint.getTimeSeriesService();
-        ForecastResponse response = service.forecast(inputSchema, forecastData);
+        ForecastResponse response = service.forecast(request);
 
         // Build response headers
         Map<String, Object> headers = new HashMap<>();

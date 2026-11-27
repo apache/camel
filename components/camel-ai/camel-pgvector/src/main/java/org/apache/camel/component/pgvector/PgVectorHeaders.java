@@ -23,12 +23,13 @@ public final class PgVectorHeaders {
     private PgVectorHeaders() {
     }
 
-    @Metadata(description = "The action to be performed.",
+    @Metadata(description = "The action that the producer performs. It replaces the action option.",
               javaType = "String",
               enums = "CREATE_TABLE,CREATE_INDEX,DROP_TABLE,UPSERT,DELETE,SIMILARITY_SEARCH")
     public static final String ACTION = "CamelPgVectorAction";
 
-    @Metadata(description = "The id of the vector record.",
+    @Metadata(description = "The id of the record, of at most 36 characters. UPSERT inserts the record with this id or"
+                            + " replaces it, and uses a random UUID when the header is not set. DELETE requires it.",
               javaType = "String")
     public static final String RECORD_ID = "CamelPgVectorRecordId";
 
@@ -36,11 +37,13 @@ public final class PgVectorHeaders {
               javaType = "Integer", defaultValue = "3")
     public static final String QUERY_TOP_K = "CamelPgVectorQueryTopK";
 
-    @Metadata(description = "The text content to store alongside the vector embedding.",
+    @Metadata(description = "The text that UPSERT stores in the text_content column of the record.",
               javaType = "String")
     public static final String TEXT_CONTENT = "CamelPgVectorTextContent";
 
-    @Metadata(description = "The metadata associated with the vector record, stored as JSON.",
+    @Metadata(description = "The metadata that UPSERT stores in the metadata column of the record, a TEXT column. The"
+                            + " producer does not check the value; the pgvector:embeddings transformer sets it as a JSON"
+                            + " object.",
               javaType = "String")
     public static final String METADATA = "CamelPgVectorMetadata";
 
@@ -54,10 +57,9 @@ public final class PgVectorHeaders {
               javaType = "String")
     public static final String FILTER = "CamelPgVectorFilter";
 
-    @Metadata(description = "Parameter values for parameterized filter queries."
-                            + " Use with ? placeholders in the CamelPgVectorFilter header."
-                            + " Example: filter = 'text_content LIKE ? AND metadata::jsonb->>'category' = ?'"
-                            + " with filterParams = List.of(\"%hello%\", \"science\").",
+    @Metadata(description = "The values of the ? placeholders of the CamelPgVectorFilter header, in order. For example the"
+                            + " filter text_content LIKE ? AND metadata::jsonb->>'category' = ? with the List"
+                            + " [\"%hello%\", \"science\"]. The producer reads it only when that header is set.",
               javaType = "java.util.List")
     public static final String FILTER_PARAMS = "CamelPgVectorFilterParams";
 

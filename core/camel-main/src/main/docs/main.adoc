@@ -954,7 +954,7 @@ The camel.cluster.jgroups-raft supports 5 options, which are listed below.
 | `camel.cluster.jgroups-raft.enabled` | Whether to enable this cluster service. | true | boolean
 | `camel.cluster.jgroups-raft.id` | Unique Raft id |  | String
 | `camel.cluster.jgroups-raft.jgroupsClusterName` | The name of the cluster | jgroupsraft-master | String
-| `camel.cluster.jgroups-raft.jgroupsConfig` | The path to the JGroups Raft configuration | raft.xml | String
+| `camel.cluster.jgroups-raft.jgroupsConfig` | The JGroups XML configuration of the channel, as a file, a URL or a classpath resource. The default raft.xml in the camel-jgroups-raft JAR is a sample for development and tests (UDP multicast without authentication or encryption, and A as the only RAFT member), and a WARN is logged when it is used. In production, set your own configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT, and the members of the cluster in the members attribute of RAFT. | raft.xml | String
 | `camel.cluster.jgroups-raft.raftHandle` | To use a custom RaftHandler |  | RaftHandle
 |===
 

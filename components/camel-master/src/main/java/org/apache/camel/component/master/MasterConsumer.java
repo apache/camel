@@ -62,7 +62,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     private volatile Consumer delegatedConsumer;
     private volatile CamelClusterView view;
     private ResumeStrategy resumeStrategy;
-    private ScheduledExecutorService leaderPool;
+    // a new pool for each lifecycle (doInit); the start attempts compare it with the pool they run on
+    private volatile ScheduledExecutorService leaderPool;
     // leadership state and the pending start task are guarded by leadershipLock. This is deliberately not
     // the lock of BaseService: the cluster view dispatches events while holding its own read lock and then
     // needs this lock, while doStop holds the service lock and needs the write lock of the view to remove
@@ -125,6 +126,10 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
         }
 
         try {
+            // the start task was cancelled above, but an attempt may still be running: the delegated consumer it
+            // starts may not stop on the interrupt. Wait for it (bounded by the shutdown await termination of the
+            // executor service manager) so it does not finish starting after this consumer has stopped
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(leaderPool);
             // the delegated consumer is stopped while this node still holds the leadership, and before the processor
             // of the route, so no other node starts consuming while it stops, and the messages it still routes while
             // it stops (a consumer may wait in its stop for the messages it processes) reach a started route. A
@@ -132,8 +137,6 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             Consumer delegate = delegatedConsumer;
             delegatedConsumer = null;
             ServiceHelper.stopAndShutdownServices(delegate, delegatedEndpoint);
-            // the start task was cancelled above
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(leaderPool);
         } finally {
             try {
                 super.doStop();
@@ -211,14 +214,17 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             final BackgroundTask task = createTask();
             // the consumer is created once and re-used by the start attempts of this task
             final AtomicReference<Consumer> attempt = new AtomicReference<>();
+            final ScheduledExecutorService pool = leaderPool;
             leaderTask = task;
-            leaderTaskFuture = task.schedule(getEndpoint().getCamelContext(), () -> startDelegatedConsumer(task, attempt));
+            leaderTaskFuture
+                    = task.schedule(getEndpoint().getCamelContext(), () -> startDelegatedConsumer(task, pool, attempt));
         } finally {
             leadershipLock.unlock();
         }
     }
 
-    private boolean startDelegatedConsumer(BackgroundTask task, AtomicReference<Consumer> attempt) {
+    private boolean startDelegatedConsumer(
+            BackgroundTask task, ScheduledExecutorService pool, AtomicReference<Consumer> attempt) {
         leadershipLock.lock();
         try {
             if (!isRunAllowed()) {
@@ -290,11 +296,35 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 throw new TaskRunFailureException(message, cause);
             }
 
-            if (!leadershipTaken || !isRunAllowed()) {
-                // the leadership went away while the consumer was starting, so stop what was just started
-                // instead of publishing it. No leadership event is going to do it, delegatedConsumer is unset
-                LOG.info("Leadership lost while the consumer was starting. Stopping consumer: {}", delegatedEndpoint);
-                ServiceHelper.stopAndShutdownServices(consumer, delegatedEndpoint);
+            // an attempt of an earlier lifecycle of this consumer (a stop and start of the same instance) runs on the
+            // pool of that lifecycle. Within one lifecycle, a task newer than this one only exists when the leadership
+            // was lost and taken again while this attempt was starting, and as the pool has a single thread, that task
+            // has not run yet: this attempt publishes its consumer below and cancels it
+            boolean earlierLifecycle = pool != leaderPool;
+            if (earlierLifecycle || delegatedConsumer != null || !leadershipTaken || !isRunAllowed()) {
+                // the leadership went away, or this consumer was stopped (and maybe started again), while the
+                // consumer was starting. This attempt is no longer the current one, so stop what it started instead
+                // of publishing it over the consumer of a newer attempt. Only the consumer: the endpoint is shared
+                // with that newer consumer, and onLeadershipLost and doStop stop it. And only stop it
+                // (stopService, not stopAndShutdownServices): a shutdown calls DefaultConsumer.doShutdown, which
+                // shuts down the processor of the route, and that cannot be undone, so a newer consumer that uses
+                // the same processor would be broken
+                LOG.info("Leadership lost or consumer stopped while the delegated consumer was starting. Stopping it: {}",
+                        delegatedEndpoint);
+                ServiceHelper.stopService(consumer);
+                if (isRunAllowed()) {
+                    // stopping a consumer also stops the processor of the route, which a delegated consumer of this
+                    // lifecycle may use (running, or still starting), so start it again while this master consumer
+                    // runs. It is not enough to check for a published consumer: the attempt of the restarted
+                    // consumer may still be inside its start, after its doStart has started the processor. Until
+                    // then, a message of a running delegated consumer that reaches the stopped processor fails (a
+                    // SendProcessor that is not started fails the exchange). This window only opens when an attempt
+                    // of an earlier lifecycle outlived the wait of doStop (shutdownGraceful, bounded by the shutdown
+                    // await termination of the executor service manager). When the leadership was lost within this
+                    // lifecycle the route is started, so the processor runs as it does on a node that is not the
+                    // leader. When this master consumer is stopping, its own stop stops the processor
+                    ServiceHelper.startService(processor);
+                }
                 attempt.set(null);
                 return true; // no more attempts
             }
@@ -302,7 +332,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             delegatedConsumer = consumer;
             LOG.info("Leadership taken. Attempt #{} success. Consumer started: {}", task.iteration(),
                     delegatedEndpoint);
-            // release the task, a later leadership term schedules a new one
+            // release the task, a later leadership term schedules a new one. When the leadership was lost and taken
+            // again while this attempt was starting, this cancels the newer task before it starts a second consumer
             cancelLeaderTask(false);
             return true; // no more attempts
         } finally {

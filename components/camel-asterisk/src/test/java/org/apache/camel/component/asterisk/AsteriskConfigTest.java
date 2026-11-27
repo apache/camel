@@ -41,5 +41,6 @@ public class AsteriskConfigTest extends CamelTestSupport {
         assertEquals(username, asteriskEndpoint.getUsername());
         assertEquals(password, asteriskEndpoint.getPassword());
         assertEquals(action, asteriskEndpoint.getAction().name());
+        assertEquals("myVoIP", asteriskEndpoint.getName());
     }
 }

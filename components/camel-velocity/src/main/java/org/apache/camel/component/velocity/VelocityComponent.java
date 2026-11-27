@@ -30,11 +30,18 @@ public class VelocityComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
-    @Metadata
+    @Metadata(description = "Whether the producer reads the CamelVelocityResourceUri, CamelVelocityTemplate,"
+                            + " CamelVelocityContext and CamelVelocitySupplementalContext headers. If false, the producer"
+                            + " ignores all four headers. Enable it only when the route sets these headers, not a message"
+                            + " sender.")
     private boolean allowTemplateFromHeader;
     @Metadata
     private boolean allowContextMapAll;
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use a custom org.apache.velocity.app.VelocityEngine for all endpoints of the component. If not"
+                            + " set, each endpoint creates its own engine, which loads the templates that a template includes"
+                            + " with #parse or #include from the file system and the classpath, and applies the loaderCache and"
+                            + " propertiesFile options.")
     private VelocityEngine velocityEngine;
 
     public VelocityComponent() {
@@ -44,9 +51,6 @@ public class VelocityComponent extends DefaultComponent {
         return velocityEngine;
     }
 
-    /**
-     * To use the {@link VelocityEngine} otherwise a new engine is created
-     */
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
     }
@@ -66,12 +70,6 @@ public class VelocityComponent extends DefaultComponent {
         return allowTemplateFromHeader;
     }
 
-    /**
-     * Whether to allow to use resource template from header or not (default false).
-     *
-     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
-     * security vulnerability if the header is coming from a malicious user, so use this with care.
-     */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }

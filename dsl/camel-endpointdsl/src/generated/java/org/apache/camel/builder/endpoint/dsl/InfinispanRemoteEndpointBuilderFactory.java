@@ -59,7 +59,13 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the query builder.
+         * To use a custom
+         * org.apache.camel.component.infinispan.InfinispanQueryBuilder that
+         * builds the query of the QUERY operation of the producer, which the
+         * CamelInfinispanQueryBuilder header replaces. When set, the consumer
+         * registers a continuous query instead of a listener, and receives the
+         * CacheEntryJoining, CacheEntryUpdated and CacheEntryLeaving events of
+         * the entries that match the query.
          * 
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
@@ -74,7 +80,13 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the query builder.
+         * To use a custom
+         * org.apache.camel.component.infinispan.InfinispanQueryBuilder that
+         * builds the query of the QUERY operation of the producer, which the
+         * CamelInfinispanQueryBuilder header replaces. When set, the consumer
+         * registers a continuous query instead of a listener, and receives the
+         * CacheEntryJoining, CacheEntryUpdated and CacheEntryLeaving events of
+         * the entries that match the query.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
@@ -460,7 +472,12 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * An implementation specific URI for the CacheManager.
+         * The location of the configuration file of the cache manager that
+         * Camel creates, read from the classpath unless it has a prefix such as
+         * file:. Not used when cacheContainer or cacheContainerConfiguration is
+         * set. For infinispan-embedded it is an Infinispan XML configuration
+         * file, read on the component only; for infinispan it is a Hot Rod
+         * client properties file.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -492,7 +509,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific remappingFunction to use in a compute operation.
+         * The java.util.function.BiFunction that the COMPUTE and COMPUTEASYNC
+         * operations call with the key and the current value of the entry, or
+         * null if there is none, to compute its new value. If the function
+         * returns null, the entry is removed.
          * 
          * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
@@ -506,7 +526,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific remappingFunction to use in a compute operation.
+         * The java.util.function.BiFunction that the COMPUTE and COMPUTEASYNC
+         * operations call with the key and the current value of the entry, or
+         * null if there is none, to compute its new value. If the function
+         * returns null, the entry is removed.
          * 
          * The option will be converted to a
          * <code>java.util.function.BiFunction</code> type.
@@ -521,13 +544,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Store the operation result in a header instead of the message body.
-         * By default, resultHeader == null and the query result is stored in
-         * the message body, any existing content in the message body is
-         * discarded. If resultHeader is set, the value is used as the name of
-         * the header to store the query result and the original message body is
-         * preserved. This value can be overridden by an in message header
-         * named: CamelInfinispanOperationResultHeader.
+         * The name of the header in which the producer stores the result of the
+         * operation, keeping the message body. If not set, the result replaces
+         * the message body. The CamelInfinispanOperationResultHeader header
+         * replaces this option.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -568,7 +588,13 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the query builder.
+         * To use a custom
+         * org.apache.camel.component.infinispan.InfinispanQueryBuilder that
+         * builds the query of the QUERY operation of the producer, which the
+         * CamelInfinispanQueryBuilder header replaces. When set, the consumer
+         * registers a continuous query instead of a listener, and receives the
+         * CacheEntryJoining, CacheEntryUpdated and CacheEntryLeaving events of
+         * the entries that match the query.
          * 
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
@@ -583,7 +609,13 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the query builder.
+         * To use a custom
+         * org.apache.camel.component.infinispan.InfinispanQueryBuilder that
+         * builds the query of the QUERY operation of the producer, which the
+         * CamelInfinispanQueryBuilder header replaces. When set, the consumer
+         * registers a continuous query instead of a listener, and receives the
+         * CacheEntryJoining, CacheEntryUpdated and CacheEntryLeaving events of
+         * the entries that match the query.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
@@ -598,7 +630,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific default value for some producer operations.
+         * The value that the GETORDEFAULT operation returns when the key is not
+         * in the cache. The CamelInfinispanDefaultValue header replaces this
+         * option.
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
@@ -612,7 +646,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific default value for some producer operations.
+         * The value that the GETORDEFAULT operation returns when the key is not
+         * in the cache. The CamelInfinispanDefaultValue header replaces this
+         * option.
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
@@ -626,8 +662,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific key for producer operations. When set, it takes
-         * precedence over the CamelInfinispanKey header.
+         * The key of the entry for the producer operations that take a key,
+         * such as PUT, GET, REMOVE and COMPUTE. When set, it takes precedence
+         * over the CamelInfinispanKey header.
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
@@ -641,8 +678,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific key for producer operations. When set, it takes
-         * precedence over the CamelInfinispanKey header.
+         * The key of the entry for the producer operations that take a key,
+         * such as PUT, GET, REMOVE and COMPUTE. When set, it takes precedence
+         * over the CamelInfinispanKey header.
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
@@ -656,7 +694,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific old value for some producer operations.
+         * The value that the REPLACE and REPLACEASYNC operations compare with
+         * the current value of the entry, to replace the entry only if they are
+         * equal. If not set, an existing entry is replaced whatever its value.
+         * The CamelInfinispanOldValue header replaces this option.
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
@@ -670,7 +711,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific old value for some producer operations.
+         * The value that the REPLACE and REPLACEASYNC operations compare with
+         * the current value of the entry, to replace the entry only if they are
+         * equal. If not set, an existing entry is replaced whatever its value.
+         * The CamelInfinispanOldValue header replaces this option.
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
@@ -684,7 +728,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation that the producer performs. The
+         * CamelInfinispanOperation header replaces this option.
          * 
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
@@ -700,7 +745,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation that the producer performs. The
+         * CamelInfinispanOperation header replaces this option.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
@@ -716,7 +762,11 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific value for producer operations.
+         * The value of the entry for the PUT, PUTIFABSENT and REPLACE
+         * operations and their ASYNC variants, the value to look for with
+         * CONTAINSVALUE, and the value that REMOVE and REMOVEASYNC compare with
+         * the current value, to remove the entry only if they are equal. The
+         * CamelInfinispanValue header replaces this option.
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
@@ -730,7 +780,11 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific value for producer operations.
+         * The value of the entry for the PUT, PUTIFABSENT and REPLACE
+         * operations and their ASYNC variants, the value to look for with
+         * CONTAINSVALUE, and the value that REMOVE and REMOVEASYNC compare with
+         * the current value, to remove the entry only if they are equal. The
+         * CamelInfinispanValue header replaces this option.
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
@@ -1213,7 +1267,12 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * An implementation specific URI for the CacheManager.
+         * The location of the configuration file of the cache manager that
+         * Camel creates, read from the classpath unless it has a prefix such as
+         * file:. Not used when cacheContainer or cacheContainerConfiguration is
+         * set. For infinispan-embedded it is an Infinispan XML configuration
+         * file, read on the component only; for infinispan it is a Hot Rod
+         * client properties file.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -1245,7 +1304,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific remappingFunction to use in a compute operation.
+         * The java.util.function.BiFunction that the COMPUTE and COMPUTEASYNC
+         * operations call with the key and the current value of the entry, or
+         * null if there is none, to compute its new value. If the function
+         * returns null, the entry is removed.
          * 
          * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
@@ -1259,7 +1321,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific remappingFunction to use in a compute operation.
+         * The java.util.function.BiFunction that the COMPUTE and COMPUTEASYNC
+         * operations call with the key and the current value of the entry, or
+         * null if there is none, to compute its new value. If the function
+         * returns null, the entry is removed.
          * 
          * The option will be converted to a
          * <code>java.util.function.BiFunction</code> type.
@@ -1274,13 +1339,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Store the operation result in a header instead of the message body.
-         * By default, resultHeader == null and the query result is stored in
-         * the message body, any existing content in the message body is
-         * discarded. If resultHeader is set, the value is used as the name of
-         * the header to store the query result and the original message body is
-         * preserved. This value can be overridden by an in message header
-         * named: CamelInfinispanOperationResultHeader.
+         * The name of the header in which the producer stores the result of the
+         * operation, keeping the message body. If not set, the result replaces
+         * the message body. The CamelInfinispanOperationResultHeader header
+         * replaces this option.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1322,7 +1384,13 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the query builder.
+         * To use a custom
+         * org.apache.camel.component.infinispan.InfinispanQueryBuilder that
+         * builds the query of the QUERY operation of the producer, which the
+         * CamelInfinispanQueryBuilder header replaces. When set, the consumer
+         * registers a continuous query instead of a listener, and receives the
+         * CacheEntryJoining, CacheEntryUpdated and CacheEntryLeaving events of
+         * the entries that match the query.
          * 
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
@@ -1337,7 +1405,13 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the query builder.
+         * To use a custom
+         * org.apache.camel.component.infinispan.InfinispanQueryBuilder that
+         * builds the query of the QUERY operation of the producer, which the
+         * CamelInfinispanQueryBuilder header replaces. When set, the consumer
+         * registers a continuous query instead of a listener, and receives the
+         * CacheEntryJoining, CacheEntryUpdated and CacheEntryLeaving events of
+         * the entries that match the query.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
@@ -1560,7 +1634,12 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * An implementation specific URI for the CacheManager.
+         * The location of the configuration file of the cache manager that
+         * Camel creates, read from the classpath unless it has a prefix such as
+         * file:. Not used when cacheContainer or cacheContainerConfiguration is
+         * set. For infinispan-embedded it is an Infinispan XML configuration
+         * file, read on the component only; for infinispan it is a Hot Rod
+         * client properties file.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -1592,7 +1671,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific remappingFunction to use in a compute operation.
+         * The java.util.function.BiFunction that the COMPUTE and COMPUTEASYNC
+         * operations call with the key and the current value of the entry, or
+         * null if there is none, to compute its new value. If the function
+         * returns null, the entry is removed.
          * 
          * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
@@ -1606,7 +1688,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a specific remappingFunction to use in a compute operation.
+         * The java.util.function.BiFunction that the COMPUTE and COMPUTEASYNC
+         * operations call with the key and the current value of the entry, or
+         * null if there is none, to compute its new value. If the function
+         * returns null, the entry is removed.
          * 
          * The option will be converted to a
          * <code>java.util.function.BiFunction</code> type.
@@ -1621,13 +1706,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Store the operation result in a header instead of the message body.
-         * By default, resultHeader == null and the query result is stored in
-         * the message body, any existing content in the message body is
-         * discarded. If resultHeader is set, the value is used as the name of
-         * the header to store the query result and the original message body is
-         * preserved. This value can be overridden by an in message header
-         * named: CamelInfinispanOperationResultHeader.
+         * The name of the header in which the producer stores the result of the
+         * operation, keeping the message body. If not set, the result replaces
+         * the message body. The CamelInfinispanOperationResultHeader header
+         * replaces this option.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1716,7 +1798,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         public static final InfinispanRemoteHeaderNameBuilder INSTANCE = new InfinispanRemoteHeaderNameBuilder();
 
         /**
-         * The type of the received event.
+         * The type of the event that the consumer received: the name of the
+         * Infinispan event type, or CacheEntryJoining, CacheEntryUpdated or
+         * CacheEntryLeaving for a continuous query.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1728,7 +1812,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanEventType";
         }
         /**
-         * The cache participating in the operation or event.
+         * The name of the cache. The consumer sets it for each event, and for
+         * the producer it replaces the cache name of the endpoint.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1740,7 +1825,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanCacheName";
         }
         /**
-         * The key to perform the operation to or the key generating the event.
+         * The key of the entry. The consumer sets it for each event that has
+         * one. The producer uses it for the operations that take a key, unless
+         * the key option is set.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -1752,7 +1839,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanKey";
         }
         /**
-         * The value to use for the operation.
+         * The value of the entry for the producer operations that take a value.
+         * It replaces the value option.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -1764,7 +1852,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanValue";
         }
         /**
-         * The default value to use for a getOrDefault.
+         * The value that the GETORDEFAULT operation returns when the key is not
+         * in the cache. It replaces the defaultValue option.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -1776,7 +1865,11 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanDefaultValue";
         }
         /**
-         * The old value to use for a replace.
+         * The value that the REPLACE and REPLACEASYNC operations compare with
+         * the current value of the entry, to replace the entry only if they are
+         * equal. It replaces the oldValue option. The consumer of
+         * infinispan-embedded sets it to the value of the removed entry for a
+         * CACHE_ENTRY_REMOVED event.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -1788,7 +1881,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanOldValue";
         }
         /**
-         * A Map to use in case of CamelInfinispanOperationPutAll operation.
+         * The java.util.Map of the entries that the PUTALL and PUTALLASYNC
+         * operations store.
          * 
          * The option is a: {@code Map} type.
          * 
@@ -1800,7 +1894,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanMap";
         }
         /**
-         * The operation to perform.
+         * The operation that the producer performs. It replaces the operation
+         * option.
          * 
          * The option is a: {@code
          * org.apache.camel.component.infinispan.InfinispanOperation} type.
@@ -1829,7 +1924,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanOperationResult";
         }
         /**
-         * Store the operation result in a header instead of the message body.
+         * The name of the header in which the producer stores the result of the
+         * operation, keeping the message body. It replaces the resultHeader
+         * option.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1842,8 +1939,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanOperationResultHeader";
         }
         /**
-         * The Lifespan time of a value inside the cache. Negative values are
-         * interpreted as infinity.
+         * The lifespan of the entry, after which it expires, for the PUT,
+         * PUTALL, PUTIFABSENT and REPLACE operations and their ASYNC variants.
+         * Only used together with the CamelInfinispanTimeUnit header. A
+         * negative value means that the entry does not expire.
          * 
          * The option is a: {@code long} type.
          * 
@@ -1855,7 +1954,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanLifespanTime";
         }
         /**
-         * The Time Unit of an entry Lifespan Time.
+         * The java.util.concurrent.TimeUnit of the CamelInfinispanLifespanTime
+         * header.
          * 
          * The option is a: {@code java.util.concurrent.TimeUnit} type.
          * 
@@ -1867,8 +1967,12 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanTimeUnit";
         }
         /**
-         * The maximum amount of time an entry is allowed to be idle for before
-         * it is considered as expired.
+         * The maximum time that the entry can stay without being accessed
+         * before it expires, for the same operations as the
+         * CamelInfinispanLifespanTime header. Only used together with the
+         * CamelInfinispanMaxIdleTimeUnit header, and only when the
+         * CamelInfinispanLifespanTime and CamelInfinispanTimeUnit headers are
+         * set too.
          * 
          * The option is a: {@code long} type.
          * 
@@ -1880,7 +1984,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanMaxIdleTime";
         }
         /**
-         * The Time Unit of an entry Max Idle Time.
+         * The java.util.concurrent.TimeUnit of the CamelInfinispanMaxIdleTime
+         * header.
          * 
          * The option is a: {@code java.util.concurrent.TimeUnit} type.
          * 
@@ -1892,7 +1997,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanMaxIdleTimeUnit";
         }
         /**
-         * The event data.
+         * The value of the entry that the event is about, when the event
+         * carries one. For a continuous query, it is the value of the entry
+         * that joins the result or is updated.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -1904,8 +2011,9 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanEventData";
         }
         /**
-         * The QueryBuilder to use for QUERY command, if not present the command
-         * defaults to the InfinispanConfiguration one.
+         * The org.apache.camel.component.infinispan.InfinispanQueryBuilder that
+         * builds the query of the QUERY operation. It replaces the queryBuilder
+         * option.
          * 
          * The option is a: {@code
          * org.apache.camel.component.infinispan.InfinispanQueryBuilder} type.

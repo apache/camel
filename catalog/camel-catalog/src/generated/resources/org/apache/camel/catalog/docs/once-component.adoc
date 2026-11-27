@@ -2,7 +2,7 @@
 :doctitle: Once
 :shortname: once
 :artifactid: camel-once
-:description: Trigger a single message only once at startup (useful for development and testing purposes).
+:description: Send a single message to the route once, after the route starts, which is useful for development and testing.
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:

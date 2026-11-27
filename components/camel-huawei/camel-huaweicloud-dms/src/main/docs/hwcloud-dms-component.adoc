@@ -2,7 +2,7 @@
 :doctitle: Huawei Distributed Message Service (DMS)
 :shortname: hwcloud-dms
 :artifactid: camel-huaweicloud-dms
-:description: To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
+:description: Create, update, query, list and delete Kafka and RabbitMQ instances of Huawei Cloud Distributed Message Service (DMS).
 :since: 3.12
 :supportlevel: Stable
 :tabs-sync-option:
@@ -276,5 +276,3 @@ YAML::
               serviceKeys: "#myServiceKeyConfig"
 ----
 ====
-
-

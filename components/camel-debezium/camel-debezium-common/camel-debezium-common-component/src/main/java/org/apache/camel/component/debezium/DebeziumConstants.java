@@ -25,27 +25,34 @@ public final class DebeziumConstants {
 
     // header names
     private static final String HEADER_PREFIX = "CamelDebezium";
-    @Metadata(description = "The metadata about the source event, for example `table` name, database `name`, log position, etc, "
-                            +
-                            "please refer to the Debezium documentation for more info.",
+    @Metadata(description = "The source block of the change event as a Map: the connector name, the database, schema and"
+                            + " table names, the position in the database log, and so on. Its fields depend on the connector,"
+                            + " see the Debezium documentation of the connector.",
               javaType = "Map<String, Object>")
     public static final String HEADER_SOURCE_METADATA = HEADER_PREFIX + "SourceMetadata";
-    @Metadata(description = "The identifier of the connector, normally is this format \"+++{server-name}.{database-name}.{table-name}+++\".",
+    @Metadata(description = "The Kafka topic name that Debezium gives the event: for a row change the topic prefix, the"
+                            + " database or schema name and the table name, for example dbserver1.inventory.customers.",
               javaType = "String")
     public static final String HEADER_IDENTIFIER = HEADER_PREFIX + "Identifier";
-    @Metadata(description = "The key of the event, normally is the table Primary Key.", javaType = "Struct")
+    @Metadata(description = "The key of the event as a Kafka Connect Struct, usually the primary key columns of the row."
+                            + " Null for a table without a primary key.",
+              javaType = "Struct")
     public static final String HEADER_KEY = HEADER_PREFIX + "Key";
-    @Metadata(description = "If presents, the type of event operation. Values for the connector are `c` for create (or insert), "
-                            +
-                            "`u` for update, `d` for delete or `r` for read (in the case of a initial sync) or in case of a snapshot event.",
+    @Metadata(description = "The operation of the change event: c for create (insert), u for update, d for delete, r for a"
+                            + " read of a snapshot, and t (truncate) or m (message) on the connectors that send them."
+                            + " Not set for an event without an operation, such as a schema change event.",
               javaType = "String")
     public static final String HEADER_OPERATION = HEADER_PREFIX + "Operation";
-    @Metadata(description = "If presents, the time (using the system clock in the JVM) at which the connector processed the event.",
+    @Metadata(description = "The time in milliseconds since the epoch at which the connector processed the event, from the"
+                            + " system clock of its JVM (the ts_ms field of the event). Also set as the CamelMessageTimestamp"
+                            + " header.",
               javaType = "Long")
     public static final String HEADER_TIMESTAMP = HEADER_PREFIX + "Timestamp";
-    @Metadata(description = "If presents, contains the state of the row before the event occurred.", javaType = "Struct")
+    @Metadata(description = "The row before the change as a Kafka Connect Struct, for an update or a delete when the"
+                            + " connector provides it. Null for an insert and a snapshot read.",
+              javaType = "Struct")
     public static final String HEADER_BEFORE = HEADER_PREFIX + "Before";
-    @Metadata(description = "If presents, the ddl sql text of the event.", javaType = "String")
+    @Metadata(description = "The DDL statement of a schema change event. Not set for a row change.", javaType = "String")
     public static final String HEADER_DDL_SQL = HEADER_PREFIX + "DdlSQL";
     @Metadata(description = "If presents, the description of an update: `updatedFields` (the changed fields as a JSON String), "
                             + "`removedFields` (the names of the removed fields) and `truncatedArrays` (the arrays that were "

@@ -52,7 +52,9 @@ public class WeatherConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        LOG.debug("Going to execute the Weather query {}", query);
+        // the query with the appid masked, for the header, the log and error messages
+        String sanitizedQuery = WeatherQuery.sanitize(query);
+        LOG.debug("Going to execute the Weather query {}", sanitizedQuery);
         HttpClient httpClient = getEndpoint().getConfiguration().getHttpClient();
         HttpGet getMethod = new HttpGet(query);
         try {
@@ -63,7 +65,7 @@ public class WeatherConsumer extends ScheduledPollConsumer {
                             if (HttpStatus.SC_OK != response.getCode()) {
                                 LOG.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}",
                                         status,
-                                        response.getCode(), query);
+                                        response.getCode(), sanitizedQuery);
                                 return 0;
                             }
                             String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
@@ -80,7 +82,7 @@ public class WeatherConsumer extends ScheduledPollConsumer {
                             } else {
                                 exchange.getIn().setBody(weather);
                             }
-                            exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, query);
+                            exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, sanitizedQuery);
 
                             try {
                                 getProcessor().process(exchange);

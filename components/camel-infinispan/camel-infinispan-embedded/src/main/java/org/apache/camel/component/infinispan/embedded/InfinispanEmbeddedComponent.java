@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.infinispan.embedded;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -24,12 +28,18 @@ import org.apache.camel.component.infinispan.InfinispanComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(InfinispanEmbeddedComponent.SCHEME)
 public class InfinispanEmbeddedComponent extends InfinispanComponent {
     public static final String SCHEME = "infinispan-embedded";
 
-    @Metadata(description = "Component configuration")
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanEmbeddedComponent.class);
+
+    @Metadata(description = "The configuration of the component, which each endpoint copies and then changes with its own"
+                            + " options. The cache manager of the component uses only this configuration.")
     private InfinispanEmbeddedConfiguration configuration = new InfinispanEmbeddedConfiguration();
 
     private InfinispanEmbeddedManager manager;
@@ -47,7 +57,33 @@ public class InfinispanEmbeddedComponent extends InfinispanComponent {
 
         InfinispanEmbeddedEndpoint endpoint = new InfinispanEmbeddedEndpoint(uri, remaining, this, conf);
         setProperties(endpoint, parameters);
+        warnAboutIgnoredOptions(uri, conf);
         return endpoint;
+    }
+
+    /**
+     * All the endpoints use the one cache manager of the component, which is created from the configuration of the
+     * component, and its flags. The values of the endpoint for these options are not used.
+     */
+    private void warnAboutIgnoredOptions(String uri, InfinispanEmbeddedConfiguration conf) {
+        List<String> ignored = new ArrayList<>();
+        if (conf.getCacheContainer() != configuration.getCacheContainer()) {
+            ignored.add("cacheContainer");
+        }
+        if (conf.getCacheContainerConfiguration() != configuration.getCacheContainerConfiguration()) {
+            ignored.add("cacheContainerConfiguration");
+        }
+        if (!Objects.equals(conf.getConfigurationUri(), configuration.getConfigurationUri())) {
+            ignored.add("configurationUri");
+        }
+        if (!Arrays.equals(conf.getFlags(), configuration.getFlags())) {
+            ignored.add("flags");
+        }
+        if (!ignored.isEmpty()) {
+            LOG.warn("The options {} of endpoint {} are not used: every infinispan-embedded endpoint uses the cache"
+                     + " manager and the flags of the component. Set them on the component instead.",
+                    ignored, URISupport.sanitizeUri(uri));
+        }
     }
 
     @Override
