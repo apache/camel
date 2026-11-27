@@ -102,6 +102,38 @@ When configuring security for the OPC UA server, the following considerations ap
 * The component supports both certificate-based and username/password authentication
 * Security policies can be configured using the `securityPolicies` or `securityPoliciesById` options
 
+==== Validating the certificates of the clients
+
+On an endpoint with a security policy other than `None`, the server validates the certificate of each client.
+Use one of these options:
+
+* `defaultCertificateValidator`: the directory of a file based trust list. The server accepts the client
+  certificates that are trusted in that directory (or issued by a trusted CA), and puts the rejected ones in
+  `rejected/certs`.
+* `certificateValidator`: a custom `CertificateValidator`, for example from the registry
+  (`#myCertificateValidator`). It needs `certificateManager`, which holds the certificate and the key pair of the server. The
+  server validates the client certificates with this validator instead of the validators of the certificate groups
+  of `certificateManager`.
+
+The two options cannot be used together: when both are set, the server fails to start.
+
+For example, with a certificate manager, the server certificate and a validator bound in the registry:
+
+[source,properties]
+----
+camel.component.milo-server.certificate-manager = #myCertificateManager
+camel.component.milo-server.certificate = #myServerCertificate
+camel.component.milo-server.certificate-validator = #myCertificateValidator
+camel.component.milo-server.security-policies-by-id = Basic256Sha256
+----
+
+==== Anonymous clients for development
+
+When neither `userAuthenticationCredentials` nor `enableAnonymousAuthentication` is set, the JVM system property
+`org.apache.camel.milo.server.default.enableAnonymous=true` makes the endpoints of the server offer the Anonymous
+user token policy (next to UserName and X509), and lets clients connect without a user name.
+The property is off by default. It is meant for development and testing only: do not set it in production.
+
 ==== Milo 1.0.5 Migration Notes
 
 With Milo 1.0.5, several security-related API changes were introduced:
