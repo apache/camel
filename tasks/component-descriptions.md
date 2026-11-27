@@ -135,7 +135,7 @@ or removes its row.
 | camel-clickup | clickup |  |
 | camel-cm-sms | cm-sms |  |
 | camel-coap | coap, coap+tcp, coaps, coaps+tcp |  |
-| camel-cometd | cometd, cometds |  |
+| camel-cometd | cometd, cometds | yes |
 | camel-consul | consul |  |
 | camel-controlbus | controlbus |  |
 | camel-couchbase | couchbase |  |

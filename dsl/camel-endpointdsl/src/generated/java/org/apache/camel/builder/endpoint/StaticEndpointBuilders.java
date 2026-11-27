@@ -4112,8 +4112,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * CometD (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
+     * Publish messages to web clients and receive their messages with the
+     * CometD/Bayeux protocol, through an embedded Jetty server.
      * 
      * Category: networking,messaging
      * Since: 2.0
@@ -4122,14 +4122,19 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cometd:host:port/channelName</code>
      * 
      * Path parameter: host (required)
-     * Hostname
+     * The host name or IP address that the embedded Jetty server listens on.
+     * Use 0.0.0.0 to listen on all network interfaces; localhost accepts only
+     * local connections.
      * 
      * Path parameter: port (required)
-     * Host port number
+     * The TCP port that the embedded Jetty server listens on. The producers and
+     * consumers with the same scheme, host and port share one server.
      * 
      * Path parameter: channelName (required)
-     * The channelName represents a topic that can be subscribed to by the Camel
-     * endpoints.
+     * The name of the Bayeux channel, which is the path of the URI, such as
+     * /channel/orders. The consumer receives the messages that clients publish
+     * to this channel, and the producer publishes to the clients that subscribe
+     * to it.
      * 
      * @param path host:port/channelName
      * @return the dsl builder
@@ -4139,8 +4144,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * CometD (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
+     * Publish messages to web clients and receive their messages with the
+     * CometD/Bayeux protocol, through an embedded Jetty server.
      * 
      * Category: networking,messaging
      * Since: 2.0
@@ -4149,14 +4154,19 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cometd:host:port/channelName</code>
      * 
      * Path parameter: host (required)
-     * Hostname
+     * The host name or IP address that the embedded Jetty server listens on.
+     * Use 0.0.0.0 to listen on all network interfaces; localhost accepts only
+     * local connections.
      * 
      * Path parameter: port (required)
-     * Host port number
+     * The TCP port that the embedded Jetty server listens on. The producers and
+     * consumers with the same scheme, host and port share one server.
      * 
      * Path parameter: channelName (required)
-     * The channelName represents a topic that can be subscribed to by the Camel
-     * endpoints.
+     * The name of the Bayeux channel, which is the path of the URI, such as
+     * /channel/orders. The consumer receives the messages that clients publish
+     * to this channel, and the producer publishes to the clients that subscribe
+     * to it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4168,8 +4178,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * CometD (Secure) (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
+     * Publish messages to web clients and receive their messages with the
+     * CometD/Bayeux protocol, through an embedded Jetty server.
      * 
      * Category: networking,messaging
      * Since: 2.0
@@ -4178,14 +4188,19 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cometds:host:port/channelName</code>
      * 
      * Path parameter: host (required)
-     * Hostname
+     * The host name or IP address that the embedded Jetty server listens on.
+     * Use 0.0.0.0 to listen on all network interfaces; localhost accepts only
+     * local connections.
      * 
      * Path parameter: port (required)
-     * Host port number
+     * The TCP port that the embedded Jetty server listens on. The producers and
+     * consumers with the same scheme, host and port share one server.
      * 
      * Path parameter: channelName (required)
-     * The channelName represents a topic that can be subscribed to by the Camel
-     * endpoints.
+     * The name of the Bayeux channel, which is the path of the URI, such as
+     * /channel/orders. The consumer receives the messages that clients publish
+     * to this channel, and the producer publishes to the clients that subscribe
+     * to it.
      * 
      * @param path host:port/channelName
      * @return the dsl builder
