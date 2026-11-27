@@ -2,7 +2,7 @@
 :doctitle: OPC UA Server
 :shortname: milo-server
 :artifactid: camel-milo
-:description: Make telemetry data available as an OPC UA server.
+:description: Expose values as variable nodes of an embedded OPC UA server, which OPC UA clients can read and write.
 :since: 2.19
 :supportlevel: Stable
 :tabs-sync-option:

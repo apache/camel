@@ -722,7 +722,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache Qpid Client.
+     * Send and receive messages over AMQP 1.0 with the Apache Qpid JMS client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -747,7 +747,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache Qpid Client.
+     * Send and receive messages over AMQP 1.0 with the Apache Qpid JMS client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -2338,7 +2338,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to AWS Simple Notification Topic.
+     * Publish messages to a topic of Amazon Simple Notification Service (SNS).
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -2347,7 +2347,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-sns:topicNameOrArn</code>
      * 
      * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
+     * The name of the topic, or its ARN in the form
+     * arn:aws:sns:region:account:name. For a name, the endpoint looks up the
+     * ARN of the topic in the region when it starts, and creates the topic if
+     * autoCreateTopic is true and none exists. A topic whose name ends with
+     * .fifo is a FIFO topic.
      * 
      * @param path topicNameOrArn
      * @return the dsl builder
@@ -2357,7 +2361,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to AWS Simple Notification Topic.
+     * Publish messages to a topic of Amazon Simple Notification Service (SNS).
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -2366,7 +2370,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-sns:topicNameOrArn</code>
      * 
      * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
+     * The name of the topic, or its ARN in the form
+     * arn:aws:sns:region:account:name. For a name, the endpoint looks up the
+     * ARN of the topic in the region when it starts, and creates the topic if
+     * autoCreateTopic is true and none exists. A topic whose name ends with
+     * .fifo is a FIFO topic.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4226,7 +4234,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
+     * Read, write and watch keys and events in Consul, and query or register
+     * its services, nodes, health checks and sessions.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -4235,7 +4244,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>consul:apiEndpoint</code>
      * 
      * Path parameter: apiEndpoint (required)
-     * The API endpoint
+     * The Consul API to use: kv, event, agent, catalog, health, session,
+     * preparedQuery, coordinates or status. Only kv and event have a consumer,
+     * the others only a producer; any other value is used as kv.
      * 
      * @param path apiEndpoint
      * @return the dsl builder
@@ -4245,7 +4256,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
+     * Read, write and watch keys and events in Consul, and query or register
+     * its services, nodes, health checks and sessions.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -4254,7 +4266,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>consul:apiEndpoint</code>
      * 
      * Path parameter: apiEndpoint (required)
-     * The API endpoint
+     * The Consul API to use: kv, event, agent, catalog, health, session,
+     * preparedQuery, coordinates or status. Only kv and event have a consumer,
+     * the others only a producer; any other value is used as kv.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6750,7 +6764,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google BigQuery (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics.
+     * Insert rows into Google BigQuery tables.
      * 
      * Category: cloud,bigdata
      * Since: 2.20
@@ -6759,13 +6773,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
      * 
      * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * The ID of the Google Cloud project of the dataset. The endpoint sets it
+     * as the project of the BigQuery client that it creates.
      * 
      * Path parameter: datasetId (required)
-     * BigQuery Dataset Id
+     * The ID of the BigQuery dataset that holds the table.
      * 
      * Path parameter: tableId
-     * BigQuery table id
+     * The ID of the table to insert the rows into. The
+     * CamelGoogleBigQueryTableId header replaces it. If neither is set, the
+     * exchange fails.
      * 
      * @param path projectId:datasetId:tableId
      * @return the dsl builder
@@ -6775,7 +6792,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google BigQuery (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics.
+     * Insert rows into Google BigQuery tables.
      * 
      * Category: cloud,bigdata
      * Since: 2.20
@@ -6784,13 +6801,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
      * 
      * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * The ID of the Google Cloud project of the dataset. The endpoint sets it
+     * as the project of the BigQuery client that it creates.
      * 
      * Path parameter: datasetId (required)
-     * BigQuery Dataset Id
+     * The ID of the BigQuery dataset that holds the table.
      * 
      * Path parameter: tableId
-     * BigQuery table id
+     * The ID of the table to insert the rows into. The
+     * CamelGoogleBigQueryTableId header replaces it. If neither is set, the
+     * exchange fails.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6802,7 +6822,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Access Google Cloud BigQuery service using SQL queries.
+     * Run SQL queries and statements in Google BigQuery.
      * 
      * Category: cloud,messaging
      * Since: 2.23
@@ -6811,10 +6831,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
      * 
      * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * The ID of the Google Cloud project that runs the query jobs. The endpoint
+     * also sets it as the project of the BigQuery client that it creates.
      * 
      * Path parameter: queryString (required)
-     * BigQuery standard SQL query
+     * The GoogleSQL (standard SQL) query or statement to run, or a resource
+     * with the query, such as classpath:query.sql, loaded when the producer
+     * starts. A named query parameter takes its value from the entry of that
+     * name of a Map body, else from the header of that name, and a ${name}
+     * placeholder is replaced by the text of the header or exchange property of
+     * that name.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
      * 
@@ -6826,7 +6852,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Access Google Cloud BigQuery service using SQL queries.
+     * Run SQL queries and statements in Google BigQuery.
      * 
      * Category: cloud,messaging
      * Since: 2.23
@@ -6835,10 +6861,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
      * 
      * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * The ID of the Google Cloud project that runs the query jobs. The endpoint
+     * also sets it as the project of the BigQuery client that it creates.
      * 
      * Path parameter: queryString (required)
-     * BigQuery standard SQL query
+     * The GoogleSQL (standard SQL) query or statement to run, or a resource
+     * with the query, such as classpath:query.sql, loaded when the producer
+     * starts. A named query parameter takes its value from the entry of that
+     * name of a Map body, else from the header of that name, and a ${name}
+     * placeholder is replaced by the text of the header or exchange property of
+     * that name.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
      * 
@@ -8174,8 +8206,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Execute selection and mutation queries and natural-id lookups using
-     * Hibernate ORM.
+     * Run HQL queries, look up, insert and upsert entities, and poll entities
+     * from a relational database with Hibernate ORM.
      * 
      * Category: database
      * Since: 4.24
@@ -8184,7 +8216,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hibernate:entityClassName</code>
      * 
      * Path parameter: entityClassName (required)
-     * Target entity class name
+     * The fully qualified class name of the Hibernate entity. It is the result
+     * type of the selection query and the entity type of the natural-id lookup.
+     * The mutation query and the stateless operations do not use it.
      * 
      * @param path entityClassName
      * @return the dsl builder
@@ -8194,8 +8228,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Execute selection and mutation queries and natural-id lookups using
-     * Hibernate ORM.
+     * Run HQL queries, look up, insert and upsert entities, and poll entities
+     * from a relational database with Hibernate ORM.
      * 
      * Category: database
      * Since: 4.24
@@ -8204,7 +8238,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hibernate:entityClassName</code>
      * 
      * Path parameter: entityClassName (required)
-     * Target entity class name
+     * The fully qualified class name of the Hibernate entity. It is the result
+     * type of the selection query and the entity type of the natural-id lookup.
+     * The mutation query and the stateless operations do not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8793,8 +8829,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM Watson Language (camel-ibm-watson-language)
-     * Perform natural language processing using IBM Watson Natural Language
-     * Understanding
+     * Analyze text and web pages with IBM Watson Natural Language
+     * Understanding.
      * 
      * Category: ai,cloud
      * Since: 4.16
@@ -8803,7 +8839,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watson-language:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A name of your choice for the endpoint. The component does not use it.
      * 
      * @param path label
      * @return the dsl builder
@@ -8814,8 +8850,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM Watson Language (camel-ibm-watson-language)
-     * Perform natural language processing using IBM Watson Natural Language
-     * Understanding
+     * Analyze text and web pages with IBM Watson Natural Language
+     * Understanding.
      * 
      * Category: ai,cloud
      * Since: 4.16
@@ -8824,7 +8860,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watson-language:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A name of your choice for the endpoint. The component does not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12473,8 +12509,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -12483,7 +12518,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-browse:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
+     * The endpoint URL of the OPC UA server, for example
+     * opc.tcp://localhost:4840/path. It can hold a user name and password in
+     * its user info part. The username and password options take precedence
+     * over them.
      * 
      * @param path endpointUri
      * @return the dsl builder
@@ -12493,8 +12531,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -12503,7 +12540,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-browse:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
+     * The endpoint URL of the OPC UA server, for example
+     * opc.tcp://localhost:4840/path. It can hold a user name and password in
+     * its user info part. The username and password options take precedence
+     * over them.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12515,8 +12555,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19
@@ -12525,7 +12565,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-client:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
+     * The endpoint URL of the OPC UA server, for example
+     * opc.tcp://localhost:4840/path. It can hold a user name and password in
+     * its user info part. The username and password options take precedence
+     * over them.
      * 
      * @param path endpointUri
      * @return the dsl builder
@@ -12535,8 +12578,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19
@@ -12545,7 +12588,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-client:endpointUri</code>
      * 
      * Path parameter: endpointUri (required)
-     * The OPC UA server endpoint
+     * The endpoint URL of the OPC UA server, for example
+     * opc.tcp://localhost:4840/path. It can hold a user name and password in
+     * its user info part. The username and password options take precedence
+     * over them.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12557,7 +12603,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Server (camel-milo)
-     * Make telemetry data available as an OPC UA server.
+     * Expose values as variable nodes of an embedded OPC UA server, which OPC
+     * UA clients can read and write.
      * 
      * Category: iot
      * Since: 2.19
@@ -12566,7 +12613,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-server:itemId</code>
      * 
      * Path parameter: itemId (required)
-     * ID of the item
+     * The ID of the item: the string node ID of a variable node in the
+     * namespace of the namespaceUri option. A client addresses the item myItem
+     * in the default namespace as nsu=urn:org:apache:camel;s=myItem. The
+     * consumer receives the values that clients write to the node, and the
+     * producer sets its value.
      * 
      * @param path itemId
      * @return the dsl builder
@@ -12576,7 +12627,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * OPC UA Server (camel-milo)
-     * Make telemetry data available as an OPC UA server.
+     * Expose values as variable nodes of an embedded OPC UA server, which OPC
+     * UA clients can read and write.
      * 
      * Category: iot
      * Since: 2.19
@@ -12585,7 +12637,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>milo-server:itemId</code>
      * 
      * Path parameter: itemId (required)
-     * ID of the item
+     * The ID of the item: the string node ID of a variable node in the
+     * namespace of the namespaceUri option. A client addresses the item myItem
+     * in the default namespace as nsu=urn:org:apache:camel;s=myItem. The
+     * consumer receives the values that clients write to the node, and the
+     * producer sets its value.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15997,7 +16053,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with ServiceNow via its REST API.
+     * Query and change records, attachments, import sets and service catalog
+     * items of a ServiceNow instance through its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -16006,7 +16063,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>servicenow:instanceName</code>
      * 
      * Path parameter: instanceName (required)
-     * The ServiceNow instance name
+     * The name of the ServiceNow instance, the first part of its host name
+     * {instanceName}.service-now.com. The producer builds the default apiUrl
+     * and oauthTokenUrl from it.
      * 
      * @param path instanceName
      * @return the dsl builder
@@ -16016,7 +16075,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with ServiceNow via its REST API.
+     * Query and change records, attachments, import sets and service catalog
+     * items of a ServiceNow instance through its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -16025,7 +16085,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>servicenow:instanceName</code>
      * 
      * Path parameter: instanceName (required)
-     * The ServiceNow instance name
+     * The name of the ServiceNow instance, the first part of its host name
+     * {instanceName}.service-now.com. The producer builds the default apiUrl
+     * and oauthTokenUrl from it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17399,10 +17461,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ssh:host:port</code>
      * 
      * Path parameter: host (required)
-     * Sets the hostname of the remote SSH server.
+     * The host name or IP address of the SSH server. When the .ssh/config file
+     * in the home directory of the user has an entry for this host, the client
+     * connects to the HostName of that entry.
      * 
      * Path parameter: port
-     * Sets the port number for the remote SSH server.
+     * The port of the SSH server.
      * Default value: 22
      * 
      * @param path host:port
@@ -17422,10 +17486,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ssh:host:port</code>
      * 
      * Path parameter: host (required)
-     * Sets the hostname of the remote SSH server.
+     * The host name or IP address of the SSH server. When the .ssh/config file
+     * in the home directory of the user has an entry for this host, the client
+     * connects to the HostName of that entry.
      * 
      * Path parameter: port
-     * Sets the port number for the remote SSH server.
+     * The port of the SSH server.
      * Default value: 22
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -19194,7 +19260,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
+     * Sign an XML document or plain text with an enveloped, enveloping or
+     * detached XML signature.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -19203,8 +19270,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmlsecurity-sign:name</code>
      * 
      * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different signer endpoints within the camel context.
+     * The name of the endpoint, chosen freely to tell endpoints apart. The
+     * component does not use it otherwise.
      * 
      * @param path name
      * @return the dsl builder
@@ -19214,7 +19281,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
+     * Sign an XML document or plain text with an enveloped, enveloping or
+     * detached XML signature.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -19223,8 +19291,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmlsecurity-sign:name</code>
      * 
      * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different signer endpoints within the camel context.
+     * The name of the endpoint, chosen freely to tell endpoints apart. The
+     * component does not use it otherwise.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -19236,7 +19304,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
+     * Verify the XML signatures of an XML document and return the signed
+     * content.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -19245,8 +19314,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmlsecurity-verify:name</code>
      * 
      * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different verify endpoints within the camel context.
+     * The name of the endpoint, chosen freely to tell endpoints apart. The
+     * component does not use it otherwise.
      * 
      * @param path name
      * @return the dsl builder
@@ -19256,7 +19325,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
+     * Verify the XML signatures of an XML document and return the signed
+     * content.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -19265,8 +19335,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmlsecurity-verify:name</code>
      * 
      * Path parameter: name (required)
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different verify endpoints within the camel context.
+     * The name of the endpoint, chosen freely to tell endpoints apart. The
+     * component does not use it otherwise.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

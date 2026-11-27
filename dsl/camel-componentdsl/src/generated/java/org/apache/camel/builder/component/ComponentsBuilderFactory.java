@@ -238,7 +238,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache Qpid Client.
+     * Send and receive messages over AMQP 1.0 with the Apache Qpid JMS client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -744,7 +744,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to AWS Simple Notification Topic.
+     * Publish messages to a topic of Amazon Simple Notification Service (SNS).
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -1311,7 +1311,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
+     * Read, write and watch keys and events in Consul, and query or register
+     * its services, nodes, health checks and sessions.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -2015,7 +2016,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google BigQuery (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics.
+     * Insert rows into Google BigQuery tables.
      * 
      * Category: cloud,bigdata
      * Since: 2.20
@@ -2028,7 +2029,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Access Google Cloud BigQuery service using SQL queries.
+     * Run SQL queries and statements in Google BigQuery.
      * 
      * Category: cloud,messaging
      * Since: 2.23
@@ -2436,8 +2437,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Execute selection and mutation queries and natural-id lookups using
-     * Hibernate ORM.
+     * Run HQL queries, look up, insert and upsert entities, and poll entities
+     * from a relational database with Hibernate ORM.
      * 
      * Category: database
      * Since: 4.24
@@ -2640,8 +2641,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * IBM Watson Language (camel-ibm-watson-language)
-     * Perform natural language processing using IBM Watson Natural Language
-     * Understanding
+     * Analyze text and web pages with IBM Watson Natural Language
+     * Understanding.
      * 
      * Category: ai,cloud
      * Since: 4.16
@@ -3693,8 +3694,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -3707,8 +3707,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19
@@ -3721,7 +3721,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OPC UA Server (camel-milo)
-     * Make telemetry data available as an OPC UA server.
+     * Expose values as variable nodes of an embedded OPC UA server, which OPC
+     * UA clients can read and write.
      * 
      * Category: iot
      * Since: 2.19
@@ -4681,7 +4682,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with ServiceNow via its REST API.
+     * Query and change records, attachments, import sets and service catalog
+     * items of a ServiceNow instance through its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -5589,7 +5591,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
+     * Sign an XML document or plain text with an enveloped, enveloping or
+     * detached XML signature.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -5602,7 +5605,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
+     * Verify the XML signatures of an XML document and return the signed
+     * content.
      * 
      * Category: security,transformation
      * Since: 2.12
