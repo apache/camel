@@ -144,7 +144,7 @@ or removes its row.
 | camel-crypto | crypto |  |
 | camel-cxf-rest | cxfrs | yes |
 | camel-cxf-soap | cxf | yes |
-| camel-cyberark-vault | cyberark-vault |  |
+| camel-cyberark-vault | cyberark-vault | yes |
 | camel-dapr | dapr |  |
 | camel-dataformat | dataformat |  |
 | camel-dataset | dataset, dataset-test |  |

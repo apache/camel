@@ -1431,7 +1431,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * CyberArk Vault (camel-cyberark-vault)
-     * Retrieve secrets from CyberArk Conjur Vault.
+     * Retrieve and store secrets in CyberArk Conjur.
      * 
      * Category: cloud,security
      * Since: 4.17

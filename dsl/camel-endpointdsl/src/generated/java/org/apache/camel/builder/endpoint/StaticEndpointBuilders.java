@@ -4723,7 +4723,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * CyberArk Vault (camel-cyberark-vault)
-     * Retrieve secrets from CyberArk Conjur Vault.
+     * Retrieve and store secrets in CyberArk Conjur.
      * 
      * Category: cloud,security
      * Since: 4.17
@@ -4732,7 +4732,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cyberark-vault:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * The default ID of the secret, which is the ID of a Conjur variable, for
+     * example db/password. The producer uses it when the secretId option is not
+     * set, and the CamelCyberArkVaultSecretId header replaces both.
      * 
      * @param path label
      * @return the dsl builder
@@ -4742,7 +4744,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * CyberArk Vault (camel-cyberark-vault)
-     * Retrieve secrets from CyberArk Conjur Vault.
+     * Retrieve and store secrets in CyberArk Conjur.
      * 
      * Category: cloud,security
      * Since: 4.17
@@ -4751,7 +4753,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cyberark-vault:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * The default ID of the secret, which is the ID of a Conjur variable, for
+     * example db/password. The producer uses it when the secretId option is not
+     * set, and the CamelCyberArkVaultSecretId header replaces both.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
