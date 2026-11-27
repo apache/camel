@@ -12297,6 +12297,22 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-consul - the aclToken is sent in the X-Consul-Token header
+
+The Consul client that the endpoint (and the `ConsulClusterService`) creates now sends the `aclToken` in the
+`X-Consul-Token` header of each request. Before, the token was added to the URL of each request as the `token` query
+parameter, and the catalog, health and agent `DEREGISTER` actions added it a second time. The Consul agent accepts
+both, so a working setup keeps working, but a proxy in front of Consul that relies on the `token` query parameter
+must read the header instead.
+
+When you set your own `consulClient`, the `aclToken` option of the endpoint is no longer used: the catalog, health and
+agent `DEREGISTER` actions used to add it to the URL next to the token of that client. Configure the token on your
+client, preferably with `Consul.builder().withTokenAuth(token)` (the header) instead of `withAclToken(token)` (the
+query parameter).
+
+The event consumer now logs the received events at DEBUG level (id and name) and TRACE level (the whole event with its
+payload), instead of logging each event with its payload at INFO level.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:

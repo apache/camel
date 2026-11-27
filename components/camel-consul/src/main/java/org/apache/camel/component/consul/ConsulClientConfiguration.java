@@ -68,7 +68,8 @@ public abstract class ConsulClientConfiguration implements Cloneable {
                             + " SSL context parameters are used if the component enables useGlobalSslContextParameters.")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "security", security = "secret",
-              description = "The ACL token that the client sends with each request to Consul.")
+              description = "The ACL token that the client sends with each request to Consul, in the X-Consul-Token"
+                            + " header. Not used when a consulClient is set: configure the token on that client instead.")
     private String aclToken;
     @UriParam(label = "security", security = "secret",
               description = "The user name for HTTP basic authentication to the Consul agent. Used only together with"
@@ -289,7 +290,9 @@ public abstract class ConsulClientConfiguration implements Cloneable {
             builder.withSslContext(sslContextParameters.createSSLContext(camelContext));
         }
         if (ObjectHelper.isNotEmpty(aclToken)) {
-            builder.withAclToken(aclToken);
+            // withTokenAuth sends the token in the X-Consul-Token header, while withAclToken adds it to the URL of
+            // every request as the token query parameter
+            builder.withTokenAuth(aclToken);
         }
         if (requiresBasicAuthentication()) {
             builder.withBasicAuth(userName, password);
