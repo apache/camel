@@ -2784,7 +2784,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
-     * LangChain4j Agent component
+     * Send a message to an AI agent of LangChain4j, which can call Camel routes
+     * and MCP servers as tools, and return its answer.
      * 
      * Category: ai
      * Since: 4.14
