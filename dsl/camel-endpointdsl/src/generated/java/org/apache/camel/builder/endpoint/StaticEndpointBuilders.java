@@ -18367,8 +18367,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Vert.x MQTT (camel-vertx-mqtt)
-     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
-     * with the Vert.x MQTT client.
+     * Send and receive messages with an MQTT 3.1.1 or MQTT 5 broker, using the
+     * Vert.x MQTT client.
      * 
      * Category: messaging,iot
      * Since: 4.24
@@ -18377,8 +18377,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>vertx-mqtt:topic</code>
      * 
      * Path parameter: topic (required)
-     * The topic to publish on, or the topic filter to subscribe to. A filter
-     * may hold the wildcards + and #, a topic to publish on may not.
+     * The topic that the producer publishes on, or the topic filter that the
+     * consumer subscribes to. A filter may hold the wildcards + and #, a topic
+     * to publish on may not. The CamelVertxMqttOverrideTopic header replaces
+     * this topic for the producer.
      * 
      * @param path topic
      * @return the dsl builder
@@ -18388,8 +18390,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Vert.x MQTT (camel-vertx-mqtt)
-     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
-     * with the Vert.x MQTT client.
+     * Send and receive messages with an MQTT 3.1.1 or MQTT 5 broker, using the
+     * Vert.x MQTT client.
      * 
      * Category: messaging,iot
      * Since: 4.24
@@ -18398,8 +18400,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>vertx-mqtt:topic</code>
      * 
      * Path parameter: topic (required)
-     * The topic to publish on, or the topic filter to subscribe to. A filter
-     * may hold the wildcards + and #, a topic to publish on may not.
+     * The topic that the producer publishes on, or the topic filter that the
+     * consumer subscribes to. A filter may hold the wildcards + and #, a topic
+     * to publish on may not. The CamelVertxMqttOverrideTopic header replaces
+     * this topic for the producer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
