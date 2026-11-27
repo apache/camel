@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.geocoder;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -52,6 +56,26 @@ public class GeoCoderProxyAuthMethodTest {
         try (CamelContext context = createContext(method)) {
             context.start();
             assertThat(context.isStarted()).isTrue();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "Basic", "basic", "BASIC" })
+    public void testBasicProxyAuthMethodIsValidInTheCatalog(String method) throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            RuntimeCamelCatalog catalog = context.getCamelContextExtension().getContextPlugin(RuntimeCamelCatalog.class);
+            EndpointValidationResult result = catalog.validateProperties("geocoder", Map.of("proxyAuthMethod", method));
+            assertThat(result.getInvalidEnum()).isNull();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "Digest", "NTLM" })
+    public void testUnsupportedProxyAuthMethodIsInvalidInTheCatalog(String method) throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            RuntimeCamelCatalog catalog = context.getCamelContextExtension().getContextPlugin(RuntimeCamelCatalog.class);
+            EndpointValidationResult result = catalog.validateProperties("geocoder", Map.of("proxyAuthMethod", method));
+            assertThat(result.getInvalidEnum()).containsEntry("proxyAuthMethod", method);
         }
     }
 
