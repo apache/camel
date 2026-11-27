@@ -21,7 +21,10 @@ import org.apache.camel.spi.Metadata;
 
 public final class SagaConstants {
 
-    @Metadata(description = "The long running action", javaType = "String")
+    @Metadata(description = "The id of the saga, which the Saga EIP sets on the message. The producer reads it only when the"
+                            + " exchange is not bound to a saga and the saga service carries the id in this header, as the"
+                            + " LRA saga service does.",
+              javaType = "String")
     public static final String SAGA_LONG_RUNNING_ACTION = Exchange.SAGA_LONG_RUNNING_ACTION;
 
     private SagaConstants() {

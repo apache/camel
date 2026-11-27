@@ -15254,7 +15254,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Saga (camel-saga)
-     * Execute custom actions within a route using the Saga EIP.
+     * Complete or compensate the saga that an exchange takes part in through
+     * the Saga EIP.
      * 
      * Category: clustering
      * Since: 2.21
@@ -15263,7 +15264,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>saga:action</code>
      * 
      * Path parameter: action (required)
-     * Action to execute (complete or compensate)
+     * Whether to complete or to compensate the saga that the exchange takes
+     * part in. The saga service then calls the completion or the compensation
+     * endpoint of the saga. The exchange fails if it does not take part in a
+     * saga.
      * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
      * 
      * @param path action
@@ -15274,7 +15278,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Saga (camel-saga)
-     * Execute custom actions within a route using the Saga EIP.
+     * Complete or compensate the saga that an exchange takes part in through
+     * the Saga EIP.
      * 
      * Category: clustering
      * Since: 2.21
@@ -15283,7 +15288,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>saga:action</code>
      * 
      * Path parameter: action (required)
-     * Action to execute (complete or compensate)
+     * Whether to complete or to compensate the saga that the exchange takes
+     * part in. The saga service then calls the completion or the compensation
+     * endpoint of the saga. The exchange fails if it does not take part in a
+     * saga.
      * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
      * 
      * @param componentName to use a custom component name for the endpoint

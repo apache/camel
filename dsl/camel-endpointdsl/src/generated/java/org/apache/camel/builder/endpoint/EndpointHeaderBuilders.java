@@ -3671,7 +3671,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Saga (camel-saga)
-     * Execute custom actions within a route using the Saga EIP.
+     * Complete or compensate the saga that an exchange takes part in through
+     * the Saga EIP.
      * 
      * Category: clustering
      * Since: 2.21
