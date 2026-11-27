@@ -187,7 +187,7 @@ or removes its row.
 | camel-google-calendar | google-calendar, google-calendar-stream |  |
 | camel-google-drive | google-drive |  |
 | camel-google-firestore | google-firestore | yes |
-| camel-google-functions | google-functions |  |
+| camel-google-functions | google-functions | yes |
 | camel-google-mail | google-mail, google-mail-stream |  |
 | camel-google-pubsub | google-pubsub |  |
 | camel-google-secret-manager | google-secret-manager |  |

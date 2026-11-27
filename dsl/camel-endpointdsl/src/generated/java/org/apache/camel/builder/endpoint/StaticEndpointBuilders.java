@@ -7092,7 +7092,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Cloud Functions (camel-google-functions)
-     * Manage and invoke Google Cloud Functions
+     * Manage and call functions in Google Cloud Functions.
      * 
      * Category: cloud
      * Since: 3.9
@@ -7101,7 +7101,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-functions:functionName</code>
      * 
      * Path parameter: functionName (required)
-     * The user-defined name of the function
+     * The name of the function, without the
+     * projects/{project}/locations/{location}/functions/ prefix. The producer
+     * builds the full name from it and the project and location options. Not
+     * used by listFunctions and generateUploadUrl, and not used when
+     * pojoRequest=true.
      * 
      * @param path functionName
      * @return the dsl builder
@@ -7111,7 +7115,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Cloud Functions (camel-google-functions)
-     * Manage and invoke Google Cloud Functions
+     * Manage and call functions in Google Cloud Functions.
      * 
      * Category: cloud
      * Since: 3.9
@@ -7120,7 +7124,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-functions:functionName</code>
      * 
      * Path parameter: functionName (required)
-     * The user-defined name of the function
+     * The name of the function, without the
+     * projects/{project}/locations/{location}/functions/ prefix. The producer
+     * builds the full name from it and the project and location options. Not
+     * used by listFunctions and generateUploadUrl, and not used when
+     * pojoRequest=true.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -1685,7 +1685,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Google Cloud Functions (camel-google-functions)
-     * Manage and invoke Google Cloud Functions
+     * Manage and call functions in Google Cloud Functions.
      * 
      * Category: cloud
      * Since: 3.9
