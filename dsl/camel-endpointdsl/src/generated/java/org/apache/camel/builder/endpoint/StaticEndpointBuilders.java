@@ -15157,16 +15157,22 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rest:method:path:uriTemplate</code>
      * 
      * Path parameter: method (required)
-     * HTTP method to use.
+     * The HTTP method of the REST service. The consumer answers requests with
+     * this method, and the producer sends the request with it.
      * There are 9 enums and the value can be one of: get, post, put, delete,
      * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
-     * The base path, can use &#42; as path suffix to support wildcard HTTP
-     * route matching.
+     * The base path of the REST service, such as users. Without uriTemplate, it
+     * is the whole path, and it can hold {name} path parameters as in
+     * uriTemplate. A consumer can end it with * to match all the paths that
+     * start with it.
      * 
      * Path parameter: uriTemplate
-     * The uri template
+     * The path below the base path, such as {id}, which can hold {name} path
+     * parameters. The consumer sets each path parameter of a request as a
+     * header. The producer fills each {name} with the header of that name, or
+     * else the exchange variable of that name.
      * 
      * @param path method:path:uriTemplate
      * @return the dsl builder
@@ -15185,16 +15191,22 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rest:method:path:uriTemplate</code>
      * 
      * Path parameter: method (required)
-     * HTTP method to use.
+     * The HTTP method of the REST service. The consumer answers requests with
+     * this method, and the producer sends the request with it.
      * There are 9 enums and the value can be one of: get, post, put, delete,
      * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
-     * The base path, can use &#42; as path suffix to support wildcard HTTP
-     * route matching.
+     * The base path of the REST service, such as users. Without uriTemplate, it
+     * is the whole path, and it can hold {name} path parameters as in
+     * uriTemplate. A consumer can end it with * to match all the paths that
+     * start with it.
      * 
      * Path parameter: uriTemplate
-     * The uri template
+     * The path below the base path, such as {id}, which can hold {name} path
+     * parameters. The consumer sets each path parameter of a request as a
+     * header. The producer fills each {name} with the header of that name, or
+     * else the exchange variable of that name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15206,8 +15218,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST API (camel-rest)
-     * Expose OpenAPI Specification of the REST services defined using Camel
-     * REST DSL.
+     * Expose the OpenAPI document of the REST services that are defined with
+     * the Rest DSL.
      * 
      * Category: core,rest
      * Since: 2.16
@@ -15216,7 +15228,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rest-api:path</code>
      * 
      * Path parameter: path (required)
-     * The base path
+     * The path that serves the API document, such as api-doc. The Rest DSL sets
+     * it from the apiContextPath of the rest configuration. The document is
+     * JSON, or YAML when the path ends with .yaml or the Accept header asks for
+     * YAML.
      * 
      * @param path path
      * @return the dsl builder
@@ -15226,8 +15241,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST API (camel-rest)
-     * Expose OpenAPI Specification of the REST services defined using Camel
-     * REST DSL.
+     * Expose the OpenAPI document of the REST services that are defined with
+     * the Rest DSL.
      * 
      * Category: core,rest
      * Since: 2.16
@@ -15236,7 +15251,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>rest-api:path</code>
      * 
      * Path parameter: path (required)
-     * The base path
+     * The path that serves the API document, such as api-doc. The Rest DSL sets
+     * it from the apiContextPath of the rest configuration. The document is
+     * JSON, or YAML when the path ends with .yaml or the Accept header asks for
+     * YAML.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

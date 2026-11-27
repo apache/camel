@@ -4498,8 +4498,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * REST API (camel-rest)
-     * Expose OpenAPI Specification of the REST services defined using Camel
-     * REST DSL.
+     * Expose the OpenAPI document of the REST services that are defined with
+     * the Rest DSL.
      * 
      * Category: core,rest
      * Since: 2.16
