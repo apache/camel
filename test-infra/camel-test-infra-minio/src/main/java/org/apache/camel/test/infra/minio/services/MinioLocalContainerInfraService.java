@@ -30,8 +30,7 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
 @InfraService(service = MinioInfraService.class,
               description = "MinIO is a high-performance S3 compatible object storage",
-              serviceAlias = { "minio" },
-              uiSupported = true)
+              serviceAlias = { "minio" })
 @Deprecated(since = "4.23")
 public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "minio";
