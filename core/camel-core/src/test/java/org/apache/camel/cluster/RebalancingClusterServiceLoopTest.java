@@ -158,20 +158,24 @@ class RebalancingClusterServiceLoopTest {
             delegate.getView("my-ns");
             await().atMost(10, TimeUnit.SECONDS).until(() -> service.passes.get() >= 1);
 
-            // a VirtualMachineError is logged at ERROR, with the stack trace
-            delegate.nextFailure.set(new OutOfMemoryError("Simulated out of memory while listing the namespaces"));
-            await().atMost(10, TimeUnit.SECONDS).until(() -> events.size() >= 1);
+            // a VirtualMachineError is logged at ERROR, with the stack trace, and another failure in the pass right
+            // after it is still logged at WARN, with the stack trace
+            delegate.nextFailures.add(new OutOfMemoryError("Simulated out of memory while listing the namespaces"));
+            delegate.nextFailures.add(new IllegalStateException("Simulated failure right after the out of memory"));
+            await().atMost(10, TimeUnit.SECONDS).until(() -> events.size() >= 2);
             assertEquals(Level.ERROR, events.get(0).getLevel());
             assertTrue(events.get(0).getThrown() instanceof OutOfMemoryError, "The stack trace was not logged");
+            assertEquals(Level.WARN, events.get(1).getLevel());
+            assertTrue(events.get(1).getThrown() instanceof IllegalStateException, "The stack trace was not logged");
 
             // after a pass that works (the passes run one at a time, so the one after it has started), another
             // failure is logged at WARN, with the stack trace
             int passes = service.passes.get();
             await().atMost(10, TimeUnit.SECONDS).until(() -> service.passes.get() >= passes + 2);
-            delegate.nextFailure.set(new IllegalStateException("Simulated failure while listing the namespaces"));
-            await().atMost(10, TimeUnit.SECONDS).until(() -> events.size() >= 2);
-            assertEquals(Level.WARN, events.get(1).getLevel());
-            assertTrue(events.get(1).getThrown() instanceof IllegalStateException, "The stack trace was not logged");
+            delegate.nextFailures.add(new IllegalStateException("Simulated failure while listing the namespaces"));
+            await().atMost(10, TimeUnit.SECONDS).until(() -> events.size() >= 3);
+            assertEquals(Level.WARN, events.get(2).getLevel());
+            assertTrue(events.get(2).getThrown() instanceof IllegalStateException, "The stack trace was not logged");
         } finally {
             logging.getConfiguration().getRootLogger().removeAppender(appender.getName());
             logging.updateLoggers();
@@ -294,8 +298,8 @@ class RebalancingClusterServiceLoopTest {
     private static final class TestClusterService extends AbstractCamelClusterService<TestClusterView>
             implements CamelPreemptiveClusterService {
         private final AtomicInteger failures = new AtomicInteger();
-        // thrown once by the next listing of the namespaces
-        private final AtomicReference<Throwable> nextFailure = new AtomicReference<>();
+        // each is thrown once, in order, by the next listings of the namespaces
+        private final Queue<Throwable> nextFailures = new ConcurrentLinkedQueue<>();
         private volatile TestClusterView view;
 
         TestClusterService(String id) {
@@ -315,7 +319,7 @@ class RebalancingClusterServiceLoopTest {
 
         @Override
         public Collection<String> getNamespaces() {
-            Throwable failure = nextFailure.getAndSet(null);
+            Throwable failure = nextFailures.poll();
             if (failure instanceof Error error) {
                 throw error;
             } else if (failure instanceof RuntimeException e) {

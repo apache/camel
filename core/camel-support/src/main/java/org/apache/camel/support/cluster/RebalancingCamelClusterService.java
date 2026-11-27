@@ -132,11 +132,13 @@ public class RebalancingCamelClusterService extends ServiceSupport implements Ca
             state.previousPassFatal = false;
         } catch (Throwable e) {
             // a VirtualMachineError (such as an OutOfMemoryError) is logged at ERROR, another failure at WARN, each with
-            // the stack trace and only the first time in a row: a failure that repeats every period is logged at DEBUG
+            // the stack trace and only the first time in a row of its kind: a failure that repeats every period is
+            // logged at DEBUG, while a failure of the other kind than the one before it (such as an
+            // IllegalStateException right after an OutOfMemoryError) is logged at its own level again
             boolean fatal = ObjectHelper.getVirtualMachineError(e) != null;
             if (fatal && !state.previousPassFatal) {
                 LOG.error("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
-            } else if (!fatal && !state.previousPassFailed) {
+            } else if (!fatal && (!state.previousPassFailed || state.previousPassFatal)) {
                 LOG.warn("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
             } else {
                 LOG.debug("Error while rebalancing the partitions (will try again in {} ms)", periodMillis, e);
