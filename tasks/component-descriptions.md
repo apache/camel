@@ -114,7 +114,7 @@ or removes its row.
 | camel-azure-files | azure-files |  |
 | camel-azure-functions | azure-functions |  |
 | camel-azure-iothub | azure-iothub | yes |
-| camel-azure-key-vault | azure-key-vault |  |
+| camel-azure-key-vault | azure-key-vault | yes |
 | camel-azure-servicebus | azure-servicebus |  |
 | camel-azure-storage-blob | azure-storage-blob |  |
 | camel-azure-storage-datalake | azure-storage-datalake |  |

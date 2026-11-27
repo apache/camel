@@ -40,7 +40,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Manage secrets and keys in Azure Key Vault Service
+ * Create, get, update, delete and purge secrets in Azure Key Vault.
  */
 @UriEndpoint(firstVersion = "3.17.0", scheme = "azure-key-vault", title = "Azure Key Vault",
              syntax = "azure-key-vault:vaultName", category = {
