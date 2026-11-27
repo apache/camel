@@ -524,7 +524,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
-     * Manage AWS ECS cluster instances.
+     * Create, describe, list and delete clusters of AWS Elastic Container
+     * Service (ECS).
      * 
      * Category: cloud,management
      * Since: 3.1
