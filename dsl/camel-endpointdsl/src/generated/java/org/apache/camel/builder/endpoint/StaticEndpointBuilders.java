@@ -1628,7 +1628,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
-     * Manage AWS ECS cluster instances.
+     * Create, describe, list and delete clusters of AWS Elastic Container
+     * Service (ECS).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1637,7 +1638,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-ecs:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name for the endpoint, which you can choose freely. The
+     * component does not use it.
      * 
      * @param path label
      * @return the dsl builder
@@ -1647,7 +1649,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
-     * Manage AWS ECS cluster instances.
+     * Create, describe, list and delete clusters of AWS Elastic Container
+     * Service (ECS).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1656,7 +1659,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-ecs:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name for the endpoint, which you can choose freely. The
+     * component does not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
