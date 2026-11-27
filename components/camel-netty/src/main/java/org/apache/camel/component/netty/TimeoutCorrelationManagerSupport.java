@@ -19,6 +19,8 @@ package org.apache.camel.component.netty;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -40,6 +42,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A base class for using {@link NettyCamelStateCorrelationManager} that supports timeout.
+ * <p/>
+ * The correlation id of a request must not be used by another request that still waits for its reply: such a request
+ * fails with an {@link IllegalStateException}, as its reply could not be told apart from the reply of the other one.
  */
 public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
         implements CamelContextAware, NettyCamelStateCorrelationManager {
@@ -291,8 +296,40 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
      */
     private static final class CorrelationTimeoutMap extends DefaultTimeoutMap<String, NettyCamelState> {
 
+        // the lock of the map, also held while a state is put, so that the check of the state that holds its correlation
+        // id and the put are atomic
+        private final Lock mapLock;
+
         CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
-            super(executor, requestMapPollTimeMillis);
+            this(executor, requestMapPollTimeMillis, new ReentrantLock());
+        }
+
+        private CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, Lock mapLock) {
+            super(executor, requestMapPollTimeMillis, mapLock);
+            this.mapLock = mapLock;
+        }
+
+        /**
+         * Puts the state of a request, unless its correlation id is held by a request that still waits for its reply:
+         * the reply could not be told apart, and the state of that request, if replaced, would never be completed. A
+         * state that is done (the write of its request failed) only waits to expire, and is replaced.
+         */
+        @Override
+        public NettyCamelState put(String key, NettyCamelState value, long timeoutMillis) {
+            mapLock.lock();
+            try {
+                NettyCamelState held = super.putIfAbsent(key, value, timeoutMillis);
+                if (held == null) {
+                    return null;
+                }
+                if (!held.isDone()) {
+                    throw new IllegalStateException(
+                            "Correlation id: " + key + " is used by another request that waits for its reply");
+                }
+                return super.put(key, value, timeoutMillis);
+            } finally {
+                mapLock.unlock();
+            }
         }
 
         @Override

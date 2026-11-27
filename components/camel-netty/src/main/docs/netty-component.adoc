@@ -571,6 +571,11 @@ correlate the replies to the Camel callback that is responsible for continue pro
 To do this, you need to implement `NettyCamelStateCorrelationManager` as correlation manager and configure
 it via the `correlationManager=#myManager` option.
 
+A correlation id must not be used by two requests that wait for their reply at the same time: a
+`TimeoutCorrelationManagerSupport` fails the second request with an `IllegalStateException`, as the reply could not be
+told apart. With `sync=false` no reply is waited for, and the producer does not put its requests in a
+`TimeoutCorrelationManagerSupport`.
+
 [NOTE]
 ====
 We recommend extending the `TimeoutCorrelationManagerSupport` when you build custom correlation managers.
