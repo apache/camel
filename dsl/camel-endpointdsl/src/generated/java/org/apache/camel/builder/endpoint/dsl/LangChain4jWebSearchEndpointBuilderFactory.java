@@ -116,7 +116,6 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Required: true
          * Default: 1
          * Group: producer
          * 
@@ -135,7 +134,6 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Required: true
          * Default: 1
          * Group: producer
          * 
@@ -160,7 +158,6 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType</code> type.
          * 
-         * Required: true
          * Default: CONTENT
          * Group: producer
          * 
@@ -185,7 +182,6 @@ public interface LangChain4jWebSearchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType</code> type.
          * 
-         * Required: true
          * Default: CONTENT
          * Group: producer
          * 

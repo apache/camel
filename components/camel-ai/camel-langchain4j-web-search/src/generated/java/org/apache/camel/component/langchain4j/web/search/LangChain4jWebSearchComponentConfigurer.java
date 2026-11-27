@@ -20,25 +20,77 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class LangChain4jWebSearchComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration getOrCreateConfiguration(LangChain4jWebSearchComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jWebSearchComponent target = (LangChain4jWebSearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "additionalparams":
+        case "additionalParams": getOrCreateConfiguration(target).setAdditionalParams(property(camelContext, java.util.Map.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration.class, value)); return true;
+        case "geolocation":
+        case "geoLocation": getOrCreateConfiguration(target).setGeoLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "language": getOrCreateConfiguration(target).setLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxresults":
+        case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "resulttype":
+        case "resultType": getOrCreateConfiguration(target).setResultType(property(camelContext, org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType.class, value)); return true;
+        case "safesearch":
+        case "safeSearch": getOrCreateConfiguration(target).setSafeSearch(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "startindex":
+        case "startIndex": getOrCreateConfiguration(target).setStartIndex(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "startpage":
+        case "startPage": getOrCreateConfiguration(target).setStartPage(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "websearchengine":
+        case "webSearchEngine": getOrCreateConfiguration(target).setWebSearchEngine(property(camelContext, dev.langchain4j.web.search.WebSearchEngine.class, value)); return true;
+        case "websearchrequest":
+        case "webSearchRequest": getOrCreateConfiguration(target).setWebSearchRequest(property(camelContext, dev.langchain4j.web.search.WebSearchRequest.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"webSearchEngine"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "additionalparams":
+        case "additionalParams": return java.util.Map.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "configuration": return org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration.class;
+        case "geolocation":
+        case "geoLocation": return java.lang.String.class;
+        case "language": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
+        case "resulttype":
+        case "resultType": return org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType.class;
+        case "safesearch":
+        case "safeSearch": return java.lang.Boolean.class;
+        case "startindex":
+        case "startIndex": return java.lang.Integer.class;
+        case "startpage":
+        case "startPage": return java.lang.Integer.class;
+        case "websearchengine":
+        case "webSearchEngine": return dev.langchain4j.web.search.WebSearchEngine.class;
+        case "websearchrequest":
+        case "webSearchRequest": return dev.langchain4j.web.search.WebSearchRequest.class;
         default: return null;
         }
     }
@@ -47,10 +99,39 @@ public class LangChain4jWebSearchComponentConfigurer extends PropertyConfigurerS
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jWebSearchComponent target = (LangChain4jWebSearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "additionalparams":
+        case "additionalParams": return getOrCreateConfiguration(target).getAdditionalParams();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "configuration": return target.getConfiguration();
+        case "geolocation":
+        case "geoLocation": return getOrCreateConfiguration(target).getGeoLocation();
+        case "language": return getOrCreateConfiguration(target).getLanguage();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxresults":
+        case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
+        case "resulttype":
+        case "resultType": return getOrCreateConfiguration(target).getResultType();
+        case "safesearch":
+        case "safeSearch": return getOrCreateConfiguration(target).getSafeSearch();
+        case "startindex":
+        case "startIndex": return getOrCreateConfiguration(target).getStartIndex();
+        case "startpage":
+        case "startPage": return getOrCreateConfiguration(target).getStartPage();
+        case "websearchengine":
+        case "webSearchEngine": return getOrCreateConfiguration(target).getWebSearchEngine();
+        case "websearchrequest":
+        case "webSearchRequest": return getOrCreateConfiguration(target).getWebSearchRequest();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "additionalparams":
+        case "additionalParams": return java.lang.Object.class;
         default: return null;
         }
     }

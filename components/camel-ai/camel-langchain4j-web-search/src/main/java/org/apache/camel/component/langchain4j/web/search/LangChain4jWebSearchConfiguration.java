@@ -34,11 +34,11 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
     @UriParam
     private WebSearchEngine webSearchEngine;
 
-    @Metadata(required = true, defaultValue = "CONTENT")
+    @Metadata(defaultValue = "CONTENT")
     @UriParam
     private LangChain4jWebSearchResultType resultType = LangChain4jWebSearchResultType.CONTENT;
 
-    @Metadata(required = true, defaultValue = "1")
+    @Metadata(defaultValue = "1")
     @UriParam
     private Integer maxResults = 1;
     @UriParam

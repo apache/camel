@@ -50,6 +50,73 @@ public interface Langchain4jWebSearchComponentBuilderFactory {
      */
     interface Langchain4jWebSearchComponentBuilder extends ComponentBuilder<LangChain4jWebSearchComponent> {
     
+        /**
+         * The additionalParams is the additional parameters for the search
+         * request are a map of key-value pairs that represent additional
+         * parameters for the search request.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param additionalParams the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder additionalParams(java.util.Map<java.lang.String, java.lang.Object> additionalParams) {
+            doSetProperty("additionalParams", additionalParams);
+            return this;
+        }
+    
+        /**
+         * The configuration that each endpoint starts from. Options set on the
+         * endpoint override it.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder configuration(org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        /**
+         * The geoLocation is the desired geolocation for search results. Each
+         * search engine may have a different set of supported geolocations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param geoLocation the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder geoLocation(java.lang.String geoLocation) {
+            doSetProperty("geoLocation", geoLocation);
+            return this;
+        }
+    
+        /**
+         * The language is the desired language for search results. The expected
+         * values may vary depending on the search engine.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param language the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder language(java.lang.String language) {
+            doSetProperty("language", language);
+            return this;
+        }
+    
         
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -77,6 +144,116 @@ public interface Langchain4jWebSearchComponentBuilderFactory {
     
         
         /**
+         * The maxResults is the expected number of results to be found if the
+         * search request were made. Each search engine may have a different
+         * limit for the maximum number of results that can be returned.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder maxResults(java.lang.Integer maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+    
+        
+        /**
+         * The resultType is the result type of the request. Valid values are
+         * LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT, CONTENT, or SNIPPET. CONTENT
+         * is the default value; it will return a list of String . You can also
+         * specify to return either the Langchain4j Web Search Organic Result
+         * object (using LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT) or snippet
+         * (using SNIPPET) for each result. With CONTENT, a result without
+         * content returns its snippet, as some engines give no content. If
+         * maxResults is equal to 1, the response will be a single object
+         * instead of a list.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType&lt;/code&gt; type.
+         * 
+         * Default: CONTENT
+         * Group: producer
+         * 
+         * @param resultType the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder resultType(org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType resultType) {
+            doSetProperty("resultType", resultType);
+            return this;
+        }
+    
+        /**
+         * The safeSearch is the safe search flag, indicating whether to enable
+         * or disable safe search.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param safeSearch the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder safeSearch(java.lang.Boolean safeSearch) {
+            doSetProperty("safeSearch", safeSearch);
+            return this;
+        }
+    
+        /**
+         * The startIndex is the start index for search results, which may vary
+         * depending on the search engine.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param startIndex the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder startIndex(java.lang.Integer startIndex) {
+            doSetProperty("startIndex", startIndex);
+            return this;
+        }
+    
+        /**
+         * The startPage is the start page number for search results.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param startPage the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder startPage(java.lang.Integer startPage) {
+            doSetProperty("startPage", startPage);
+            return this;
+        }
+    
+        /**
+         * The WebSearchEngine engine to use. This is mandatory. Use one of the
+         * implementations from Langchain4j web search engines.
+         * 
+         * The option is a:
+         * &lt;code&gt;dev.langchain4j.web.search.WebSearchEngine&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param webSearchEngine the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder webSearchEngine(dev.langchain4j.web.search.WebSearchEngine webSearchEngine) {
+            doSetProperty("webSearchEngine", webSearchEngine);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -96,6 +273,24 @@ public interface Langchain4jWebSearchComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * The webSearchRequest is the custom WebSearchRequest - advanced. When
+         * set, the message body and the other search options are not used.
+         * 
+         * The option is a:
+         * &lt;code&gt;dev.langchain4j.web.search.WebSearchRequest&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param webSearchRequest the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jWebSearchComponentBuilder webSearchRequest(dev.langchain4j.web.search.WebSearchRequest webSearchRequest) {
+            doSetProperty("webSearchRequest", webSearchRequest);
+            return this;
+        }
     }
 
     class Langchain4jWebSearchComponentBuilderImpl
@@ -105,14 +300,31 @@ public interface Langchain4jWebSearchComponentBuilderFactory {
         protected LangChain4jWebSearchComponent buildConcreteComponent() {
             return new LangChain4jWebSearchComponent();
         }
+        private org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration getOrCreateConfiguration(LangChain4jWebSearchComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "additionalParams": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setAdditionalParams((java.util.Map) value); return true;
+            case "configuration": ((LangChain4jWebSearchComponent) component).setConfiguration((org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchConfiguration) value); return true;
+            case "geoLocation": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setGeoLocation((java.lang.String) value); return true;
+            case "language": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setLanguage((java.lang.String) value); return true;
             case "lazyStartProducer": ((LangChain4jWebSearchComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxResults": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setMaxResults((java.lang.Integer) value); return true;
+            case "resultType": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setResultType((org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchResultType) value); return true;
+            case "safeSearch": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setSafeSearch((java.lang.Boolean) value); return true;
+            case "startIndex": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setStartIndex((java.lang.Integer) value); return true;
+            case "startPage": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setStartPage((java.lang.Integer) value); return true;
+            case "webSearchEngine": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setWebSearchEngine((dev.langchain4j.web.search.WebSearchEngine) value); return true;
             case "autowiredEnabled": ((LangChain4jWebSearchComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "webSearchRequest": getOrCreateConfiguration((LangChain4jWebSearchComponent) component).setWebSearchRequest((dev.langchain4j.web.search.WebSearchRequest) value); return true;
             default: return false;
             }
         }
