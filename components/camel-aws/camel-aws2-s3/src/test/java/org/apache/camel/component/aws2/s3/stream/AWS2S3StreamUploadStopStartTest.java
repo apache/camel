@@ -187,7 +187,8 @@ class AWS2S3StreamUploadStopStartTest {
 
         failingUploadParts.set(1);
         assertThrows(S3Exception.class, producer::stop, "the upload of the stop fails");
-        await().atMost(10, TimeUnit.SECONDS).until(() -> timeoutCheckersOfTheProducer(others).isEmpty());
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(Set.of(), timeoutCheckersOfTheProducer(others), "the failed stop ends the timeout task"));
 
         producer.start();
         assertEquals(1, timeoutCheckersOfTheProducer(others).size(), "the start after the failed stop runs one task");
