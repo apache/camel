@@ -140,7 +140,7 @@ or removes its row.
 | camel-controlbus | controlbus |  |
 | camel-couchbase | couchbase |  |
 | camel-couchdb | couchdb |  |
-| camel-cron | cron |  |
+| camel-cron | cron | yes |
 | camel-crypto | crypto |  |
 | camel-cxf-rest | cxfrs | yes |
 | camel-cxf-soap | cxf | yes |

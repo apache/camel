@@ -33,7 +33,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A generic interface for triggering events at times specified through the Unix cron syntax.
+ * Trigger events at the times of a cron expression, using a cron implementation such as camel-quartz or camel-spring.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "cron", title = "Cron", syntax = "cron:name", consumerOnly = true,
              remote = false, category = { Category.SCHEDULING })

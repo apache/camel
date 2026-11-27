@@ -2,7 +2,7 @@
 :doctitle: Cron
 :shortname: cron
 :artifactid: camel-cron
-:description: A generic interface for triggering events at times specified through the Unix cron syntax.
+:description: Trigger events at the times of a cron expression, using a cron implementation such as camel-quartz or camel-spring.
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:

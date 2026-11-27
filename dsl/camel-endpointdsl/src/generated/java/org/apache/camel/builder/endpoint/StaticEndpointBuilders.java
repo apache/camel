@@ -4361,8 +4361,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Cron (camel-cron)
-     * A generic interface for triggering events at times specified through the
-     * Unix cron syntax.
+     * Trigger events at the times of a cron expression, using a cron
+     * implementation such as camel-quartz or camel-spring.
      * 
      * Category: scheduling
      * Since: 3.1
@@ -4371,7 +4371,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cron:name</code>
      * 
      * Path parameter: name (required)
-     * The name of the cron trigger
+     * The name of the trigger, which the cron implementation uses to identify
+     * its job. With camel-quartz it is the name of the Quartz trigger, which
+     * must be unique, and a value of the form group/name also sets the trigger
+     * group.
      * 
      * @param path name
      * @return the dsl builder
@@ -4381,8 +4384,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Cron (camel-cron)
-     * A generic interface for triggering events at times specified through the
-     * Unix cron syntax.
+     * Trigger events at the times of a cron expression, using a cron
+     * implementation such as camel-quartz or camel-spring.
      * 
      * Category: scheduling
      * Since: 3.1
@@ -4391,7 +4394,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>cron:name</code>
      * 
      * Path parameter: name (required)
-     * The name of the cron trigger
+     * The name of the trigger, which the cron implementation uses to identify
+     * its job. With camel-quartz it is the name of the Quartz trigger, which
+     * must be unique, and a value of the form group/name also sets the trigger
+     * group.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
