@@ -2,7 +2,7 @@
 :doctitle: XMPP
 :shortname: xmpp
 :artifactid: camel-xmpp
-:description: Send and receive messages to/from an XMPP chat server.
+:description: Send and receive XMPP (Jabber) messages, in private chats and in multi-user chat rooms.
 :since: 1.0
 :supportlevel: Stable
 :tabs-sync-option:

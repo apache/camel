@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY_SQL;
 
 /**
- * Access Google Cloud BigQuery service using SQL queries.
+ * Run SQL queries and statements in Google BigQuery.
  *
  * BigQuery Endpoint Definition Represents a table within a BigQuery dataset Contains configuration details for a single
  * table and the utility methods (such as check, create) to ease operations URI Parameters: * Logger ID - To ensure that

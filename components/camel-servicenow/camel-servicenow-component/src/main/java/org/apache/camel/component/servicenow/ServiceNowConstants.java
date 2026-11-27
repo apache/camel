@@ -23,169 +23,233 @@ public final class ServiceNowConstants {
 
     public static final String CAMEL_HEADER_PREFIX = "CamelServiceNow";
 
-    @Metadata(description = "The resource to access", javaType = "String")
+    @Metadata(description = "The REST API to call: table, aggregate, import, attachment, scorecards, misc, service_catalog, "
+                            + "service_catalog_items, service_catalog_cart or service_catalog_categories. It replaces the "
+                            + "resource option.",
+              javaType = "String")
     public static final String RESOURCE = "CamelServiceNowResource";
-    @Metadata(description = "The action to perform", javaType = "String")
+    @Metadata(description = "The action to perform on the resource: retrieve, content, create, modify, delete, update or "
+                            + "upload. For the table resource, modify replaces a record (PUT) and update changes only the "
+                            + "fields in the body (PATCH).",
+              javaType = "String")
     public static final String ACTION = "CamelServiceNowAction";
-    @Metadata(description = "The action subject", javaType = "String")
+    @Metadata(description = "The subject that selects the operation when a resource has several for the same action: "
+                            + "categories, cart, producer, submit_guide, checkout_guide, performance_analytics, "
+                            + "user_role_inheritance, identify_reconcile, delivery_address or checkout. The scorecards and "
+                            + "misc resources always need one.",
+              javaType = "String")
     public static final String ACTION_SUBJECT = "CamelServiceNowActionSubject";
-    @Metadata(description = "The data model", javaType = "Class")
+    @Metadata(description = "The class used as both the request model and the response model. It replaces the models option. "
+                            + "After a call, the producer sets it to the name of the response model class if it is not set.",
+              javaType = "Class")
     public static final String MODEL = "CamelServiceNowModel";
-    @Metadata(description = "The request data model", javaType = "Class")
+    @Metadata(description = "The class of the request body. The producer fails when the body is not an instance of it. It "
+                            + "replaces the CamelServiceNowModel header and the requestModels option.",
+              javaType = "Class")
     public static final String REQUEST_MODEL = "CamelServiceNowRequestModel";
-    @Metadata(description = "The response data model", javaType = "Class")
+    @Metadata(description = "The class that the producer converts the result to. It replaces the CamelServiceNowModel header "
+                            + "and the responseModels option. After a call, the producer sets it to the name of the response "
+                            + "model class if it is not set.",
+              javaType = "Class")
     public static final String RESPONSE_MODEL = "CamelServiceNowResponseModel";
     public static final String OFFSET_NEXT = "CamelServiceNowOffsetNext";
     public static final String OFFSET_PREV = "CamelServiceNowOffsetPrev";
     public static final String OFFSET_FIRST = "CamelServiceNowOffsetFirst";
     public static final String OFFSET_LAST = "CamelServiceNowOffsetLast";
-    @Metadata(description = "The content type", javaType = "String")
+    @Metadata(description = "The content type of the file that the upload action of the attachment resource sends, which the "
+                            + "upload requires. The producer sets it to the Content-Type of the response.",
+              javaType = "String")
     public static final String CONTENT_TYPE = "CamelServiceNowContentType";
     public static final String CONTENT_ENCODING = "CamelServiceNowContentEncoding";
-    @Metadata(description = "The content meta", javaType = "Map")
+    @Metadata(description = "The metadata of the attachment as a Map, which the producer reads from the "
+                            + "X-Attachment-Metadata header of the response of the content action.",
+              javaType = "Map")
     public static final String CONTENT_META = "CamelServiceNowContentMeta";
-    @Metadata(description = "The response meta", javaType = "Map")
+    @Metadata(description = "The fields of the response other than result, as a Map of their text values.", javaType = "Map")
     public static final String RESPONSE_META = "CamelServiceNowResponseMeta";
-    @Metadata(description = "The REST API version", javaType = "String")
+    @Metadata(description = "The version of the REST API, for example v1. It replaces the apiVersion option.",
+              javaType = "String")
     public static final String API_VERSION = "CamelServiceNowApiVersion";
-    @Metadata(description = "The type of the response", javaType = "Class")
+    @Metadata(description = "The class of the body that the producer set from the result.", javaType = "Class")
     public static final String RESPONSE_TYPE = "CamelServiceNowResponseType";
-    @Metadata(description = "Set this parameter to true to retrieve the target record.", javaType = "Boolean")
+    @Metadata(description = "Whether the create action of the import resource returns the record inserted into the target "
+                            + "table instead of the import set result. It replaces the retrieveTargetRecordOnImport option.",
+              javaType = "Boolean")
     public static final String RETRIEVE_TARGET_RECORD = "CamelServiceNowRetrieveTargetRecord";
 
-    @Metadata(description = "The default table", javaType = "String")
+    @Metadata(description = "The name of the table. It replaces the table option. For the upload action of the attachment "
+                            + "resource, it is the table of the record to attach the file to (table_name).",
+              javaType = "String")
     public static final String PARAM_TABLE_NAME = "CamelServiceNowTable";
-    @Metadata(description = "The sys id", javaType = "String")
+    @Metadata(description = "The sys_id of the record, attachment, catalog, category, item or cart to act on. Without it, "
+                            + "the retrieve action of the table and attachment resources lists the records.",
+              javaType = "String")
     public static final String PARAM_SYS_ID = "CamelServiceNowSysId";
-    @Metadata(description = "The user sys id", javaType = "String")
+    @Metadata(description = "The sys_id of the user whose roles the user_role_inheritance subject of the misc resource "
+                            + "returns (user_sysid).",
+              javaType = "String")
     public static final String PARAM_USER_SYS_ID = "CamelServiceNowUserSysId";
-    @Metadata(description = "The user id", javaType = "String")
+    @Metadata(description = "The ID of the user whose delivery address the delivery_address subject of the "
+                            + "service_catalog_cart resource returns.",
+              javaType = "String")
     public static final String PARAM_USER_ID = "CamelServiceNowUserId";
-    @Metadata(description = "The cart item id", javaType = "String")
+    @Metadata(description = "The ID of the cart item that the update action of the service_catalog_cart resource changes.",
+              javaType = "String")
     public static final String PARAM_CART_ITEM_ID = "CamelServiceNowCartItemId";
-    @Metadata(description = "The file name", javaType = "String")
+    @Metadata(description = "The name of the file that the upload action of the attachment resource creates (file_name).",
+              javaType = "String")
     public static final String PARAM_FILE_NAME = "CamelServiceNowFileName";
-    @Metadata(description = "The table sys id", javaType = "String")
+    @Metadata(description = "The sys_id of the record that the upload action of the attachment resource attaches the file to "
+                            + "(table_sys_id).",
+              javaType = "String")
     public static final String PARAM_TABLE_SYS_ID = "CamelServiceNowTableSysId";
-    @Metadata(description = "The encryption context", javaType = "String")
+    @Metadata(description = "The sys_id of the encryption context that the upload action of the attachment resource encrypts "
+                            + "the file with (encryption_context).",
+              javaType = "String")
     public static final String PARAM_ENCRYPTION_CONTEXT = "CamelServiceNowEncryptionContext";
-    @Metadata(description = "The sys param category", javaType = "String")
+    @Metadata(description = "The sys_id of the category to filter the service catalog items by (sysparm_category).",
+              javaType = "String")
     public static final String SYSPARM_CATEGORY = "CamelServiceNowCategory";
-    @Metadata(description = "The sys param type", javaType = "String")
+    @Metadata(description = "The type of the service catalog items to return (sysparm_type).", javaType = "String")
     public static final String SYSPARM_TYPE = "CamelServiceNowType";
-    @Metadata(description = "The sys param catalog", javaType = "String")
+    @Metadata(description = "The sys_id of the catalog to filter the service catalog items by (sysparm_catalog).",
+              javaType = "String")
     public static final String SYSPARM_CATALOG = "CamelServiceNowCatalog";
-    @Metadata(description = "The sys param query", javaType = "String")
+    @Metadata(description = "The encoded query that filters the records, for example active=true^priority=1 (sysparm_query).",
+              javaType = "String")
     public static final String SYSPARM_QUERY = "CamelServiceNowQuery";
-    @Metadata(description = "Return the display value (true), actual value (false), or both (all) for reference fields",
+    @Metadata(description = "Whether ServiceNow returns the display values (true), the actual values (false) or both (all) "
+                            + "of the fields. It replaces the displayValue option.",
               javaType = "String", defaultValue = "false")
     public static final String SYSPARM_DISPLAY_VALUE = "CamelServiceNowDisplayValue";
-    @Metadata(description = "True to set raw value of input fields", javaType = "Boolean", defaultValue = "false")
+    @Metadata(description = "Whether ServiceNow treats the field values of a create or change as display values. It replaces "
+                            + "the inputDisplayValue option.",
+              javaType = "Boolean", defaultValue = "false")
     public static final String SYSPARM_INPUT_DISPLAY_VALUE = "CamelServiceNowInputDisplayValue";
-    @Metadata(description = "True to exclude Table API links for reference fields", javaType = "Boolean",
+    @Metadata(description = "Whether ServiceNow leaves out the Table API links of reference fields. It replaces the "
+                            + "excludeReferenceLink option.",
+              javaType = "Boolean",
               defaultValue = "false")
     public static final String SYSPARM_EXCLUDE_REFERENCE_LINK = "CamelServiceNowExcludeReferenceLink";
-    @Metadata(description = "The sys param fields", javaType = "String")
+    @Metadata(description = "The comma-separated names of the fields to return (sysparm_fields).", javaType = "String")
     public static final String SYSPARM_FIELDS = "CamelServiceNowFields";
-    @Metadata(description = "The sys param limit", javaType = "Integer")
+    @Metadata(description = "The maximum number of records to return (sysparm_limit).", javaType = "Integer")
     public static final String SYSPARM_LIMIT = "CamelServiceNowLimit";
-    @Metadata(description = "The sys param text", javaType = "String")
+    @Metadata(description = "The text to search the service catalog items for (sysparm_text).", javaType = "String")
     public static final String SYSPARM_TEXT = "CamelServiceNowText";
-    @Metadata(description = "The sys param offset", javaType = "Integer")
+    @Metadata(description = "The index of the first record to return, for paging (sysparm_offset).", javaType = "Integer")
     public static final String SYSPARM_OFFSET = "CamelServiceNowOffset";
-    @Metadata(description = "The sys param view", javaType = "String")
+    @Metadata(description = "The UI view whose fields to return: desktop, mobile or both (sysparm_view).", javaType = "String")
     public static final String SYSPARM_VIEW = "CamelServiceNowView";
-    @Metadata(description = "True to suppress auto generation of system fields", javaType = "Boolean", defaultValue = "false")
+    @Metadata(description = "Whether ServiceNow does not generate the system fields when a record is created or changed. It "
+                            + "replaces the suppressAutoSysField option.",
+              javaType = "Boolean", defaultValue = "false")
     public static final String SYSPARM_SUPPRESS_AUTO_SYS_FIELD = "CamelServiceNowSuppressAutoSysField";
-    @Metadata(description = """
-            Set this value to true to remove the Link header from the response. The Link header allows you to request
-            additional pages of data when the number of records matching your query exceeds the query limit""",
+    @Metadata(description = "Whether ServiceNow leaves out the Link header of the response, from which the producer reads "
+                            + "the paging offsets. It replaces the suppressPaginationHeader option.",
               javaType = "Boolean")
     public static final String SYSPARM_SUPPRESS_PAGINATION_HEADER = "CamelServiceNowSuppressPaginationHeader";
-    @Metadata(description = "The sys param min fields", javaType = "String")
+    @Metadata(description = "The comma-separated fields whose minimum the aggregate resource returns (sysparm_min_fields).",
+              javaType = "String")
     public static final String SYSPARM_MIN_FIELDS = "CamelServiceNowMinFields";
-    @Metadata(description = "The sys param max fields", javaType = "String")
+    @Metadata(description = "The comma-separated fields whose maximum the aggregate resource returns (sysparm_max_fields).",
+              javaType = "String")
     public static final String SYSPARM_MAX_FIELDS = "CamelServiceNowMaxFields";
-    @Metadata(description = "The sys param sum fields", javaType = "String")
+    @Metadata(description = "The comma-separated fields whose sum the aggregate resource returns (sysparm_sum_fields).",
+              javaType = "String")
     public static final String SYSPARM_SUM_FIELDS = "CamelServiceNowSumFields";
-    @Metadata(description = "The sys param avg fields", javaType = "String")
+    @Metadata(description = "The comma-separated fields whose average the aggregate resource returns (sysparm_avg_fields).",
+              javaType = "String")
     public static final String SYSPARM_AVG_FIELDS = "CamelServiceNowAvgFields";
-    @Metadata(description = "The sys param count", javaType = "Boolean")
+    @Metadata(description = "Whether the aggregate resource returns the number of records (sysparm_count).",
+              javaType = "Boolean")
     public static final String SYSPARM_COUNT = "CamelServiceNowCount";
-    @Metadata(description = "The sys param group by", javaType = "String")
+    @Metadata(description = "The comma-separated fields to group the aggregate results by (sysparm_group_by).",
+              javaType = "String")
     public static final String SYSPARM_GROUP_BY = "CamelServiceNowGroupBy";
-    @Metadata(description = "The sys param order by", javaType = "String")
+    @Metadata(description = "The comma-separated fields to order the aggregate groups by (sysparm_order_by).",
+              javaType = "String")
     public static final String SYSPARM_ORDER_BY = "CamelServiceNowOrderBy";
-    @Metadata(description = "The sys param having", javaType = "String")
+    @Metadata(description = "The condition on an aggregate that the groups must meet, as aggregate^field^operator^value, for "
+                            + "example count^priority^>^3 (sysparm_having).",
+              javaType = "String")
     public static final String SYSPARM_HAVING = "CamelServiceNowHaving";
-    @Metadata(description = "The sys param UUID", javaType = "String")
+    @Metadata(description = "The colon-separated sys_ids of the indicator, and optionally of its breakdown, element and "
+                            + "aggregate, whose scorecards to return (sysparm_uuid).",
+              javaType = "String")
     public static final String SYSPARM_UUID = "CamelServiceNowUUID";
-    @Metadata(description = "The sys param breakdown", javaType = "String")
+    @Metadata(description = "The sys_id of the breakdown that organizes the returned scorecards (sysparm_breakdown).",
+              javaType = "String")
     public static final String SYSPARM_BREAKDOWN = "CamelServiceNowBreakdown";
-    @Metadata(description = """
-            Set this parameter to true to return all scores for a scorecard. If a value is not specified, this parameter
-            defaults to false and returns only the most recent score value.""",
+    @Metadata(description = "Whether to return all scores of a scorecard instead of only the most recent one. It replaces "
+                            + "the includeScores option.",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_SCORES = "CamelServiceNowIncludeScores";
-    @Metadata(description = """
-            Set this parameter to true to return all notes associated with the score. The note element contains the note text
-            as well as the author and timestamp when the note was added.""",
+    @Metadata(description = "Whether to return the notes of each score. It replaces the includeScoreNotes option.",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_SCORE_NOTES = "CamelServiceNowIncludeScoreNotes";
-    @Metadata(description = """
-            Set this parameter to true to always return all available aggregates for an indicator, including when an
-            aggregate has already been applied. If a value is not specified, this parameter defaults to false and returns no
-            aggregates.""",
+    @Metadata(description = "Whether to return all available aggregates of an indicator, also when an aggregate is already "
+                            + "applied. It replaces the includeAggregates option.",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_AGGREGATES = "CamelServiceNowIncludeAggregates";
-    @Metadata(description = """
-            Set this parameter to true to return all available breakdowns for an indicator. If a value is not specified, this
-            parameter defaults to false and returns no breakdowns.""",
+    @Metadata(description = "Whether to return all available breakdowns of an indicator. It replaces the "
+                            + "includeAvailableBreakdowns option.",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS = "CamelServiceNowIncludeAvailableBreakdowns";
-    @Metadata(description = """
-            Set this parameter to true to return all available aggregates for an indicator when no aggregate has been
-            applied. If a value is not specified, this parameter defaults to false and returns no aggregates.""",
+    @Metadata(description = "Whether to return all available aggregates of an indicator when no aggregate is applied. It "
+                            + "replaces the includeAvailableAggregates option.",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_AVAILABLE_AGGREGATES = "CamelServiceNowIncludeAvailableAggregates";
-    @Metadata(description = "Set this parameter to true to return only scorecards that are favorites of the querying user.",
+    @Metadata(description = "Whether to return only the scorecards that are favorites of the user. It replaces the favorites "
+                            + "option.",
               javaType = "Boolean")
     public static final String SYSPARM_FAVORITES = "CamelServiceNowFavorites";
-    @Metadata(description = "Set this parameter to true to return only scorecards for key indicators.", javaType = "Boolean")
+    @Metadata(description = "Whether to return only the scorecards of key indicators. It replaces the key option.",
+              javaType = "Boolean")
     public static final String SYSPARM_KEY = "CamelServiceNowKey";
-    @Metadata(description = "Set this parameter to true to return only scorecards that have a target.", javaType = "Boolean")
+    @Metadata(description = "Whether to return only the scorecards that have a target. It replaces the target option.",
+              javaType = "Boolean")
     public static final String SYSPARM_TARGET = "CamelServiceNowTarget";
-    @Metadata(description = """
-            Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this
-            parameter to all to return scorecards with any Display field value.""",
+    @Metadata(description = "Which scorecards to return by the Display field of their indicator: true for only those with "
+                            + "Display selected, all for any. It replaces the display option.",
               javaType = "String", defaultValue = "true")
     public static final String SYSPARM_DISPLAY = "CamelServiceNowDisplay";
-    @Metadata(description = """
-            Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is
-            100.""",
+    @Metadata(description = "The maximum number of scorecards to return per page, at most 100. It replaces the perPage "
+                            + "option.",
               javaType = "Integer", defaultValue = "10")
     public static final String SYSPARM_PER_PAGE = "CamelServiceNowPerPage";
-    @Metadata(description = "Specify the value to use when sorting results. By default, queries sort records by value.",
+    @Metadata(description = "The value to sort the scorecards by. It replaces the sortBy option.",
               javaType = "String")
     public static final String SYSPARM_SORT_BY = "CamelServiceNowSortBy";
-    @Metadata(description = """
-            Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use
-            sysparm_sortdir=asc to sort in ascending order.""",
+    @Metadata(description = "The sort direction of the scorecards, asc or desc. It replaces the sortDir option.",
               javaType = "String")
     public static final String SYSPARM_SORT_DIR = "CamelServiceNowSortDir";
-    @Metadata(description = "The sys param contains.", javaType = "String")
+    @Metadata(description = "The comma-separated names or descriptions of the indicators whose scorecards to return "
+                            + "(sysparm_contains).",
+              javaType = "String")
     public static final String SYSPARM_CONTAINS = "CamelServiceNowContains";
-    @Metadata(description = "The sys param tags.", javaType = "String")
+    @Metadata(description = "The comma-separated sys_ids of the indicator groups whose scorecards to return (sysparm_tags).",
+              javaType = "String")
     public static final String SYSPARM_TAGS = "CamelServiceNowTags";
-    @Metadata(description = "The sys param page.", javaType = "String")
+    @Metadata(description = "The number of the page of scorecards to return, with perPage scorecards per page "
+                            + "(sysparm_page).",
+              javaType = "String")
     public static final String SYSPARM_PAGE = "CamelServiceNowPage";
-    @Metadata(description = "The sys param elements filter.", javaType = "String")
+    @Metadata(description = "The sys_id of the elements filter to apply to the returned scorecards "
+                            + "(sysparm_elements_filter).",
+              javaType = "String")
     public static final String SYSPARM_ELEMENTS_FILTER = "CamelServiceNowElementsFilter";
-    @Metadata(description = "The sys param breakdown relation.", javaType = "String")
+    @Metadata(description = "The sys_id of the breakdown relation to break down the returned scorecards by "
+                            + "(sysparm_breakdown_relation).",
+              javaType = "String")
     public static final String SYSPARM_BREAKDOWN_RELATION = "CamelServiceNowBreakdownRelation";
-    @Metadata(description = "The sys param data source.", javaType = "String")
+    @Metadata(description = "The source of the configuration item data that the identify_reconcile subject of the misc "
+                            + "resource sends (sysparm_data_source).",
+              javaType = "String")
     public static final String SYSPARM_DATA_SOURCE = "CamelServiceNowDataSource";
-    @Metadata(description = "Gets only those categories whose parent is a catalog.", javaType = "Boolean")
+    @Metadata(description = "Whether to return only the categories whose parent is the catalog. It replaces the topLevelOnly "
+                            + "option.",
+              javaType = "Boolean")
     public static final String SYSPARM_TOP_LEVEL_ONLY = "CamelServiceNowTopLevelOnly";
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";

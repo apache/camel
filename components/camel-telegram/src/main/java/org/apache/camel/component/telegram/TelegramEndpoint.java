@@ -81,7 +81,10 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @UriParam
     private TelegramConfiguration configuration;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom java.net.http.HttpClient for the calls to the Bot API. When set, the proxyHost,"
+                            + " proxyPort and proxyType options are not used. If not set, the client of the component is used,"
+                            + " or else a new client is created.")
     private HttpClient client;
     @UriParam(label = "advanced", defaultValue = "" + (8 * 1024))
     private int bufferSize = 8 * 1024;
@@ -241,9 +244,6 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
         return client;
     }
 
-    /**
-     * To use a custom {@link HttpClient}
-     */
     public void setClient(HttpClient client) {
         this.client = client;
     }

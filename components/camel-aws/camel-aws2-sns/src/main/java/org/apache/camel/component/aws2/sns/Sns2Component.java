@@ -34,7 +34,8 @@ public class Sns2Component extends HealthCheckComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Component.class);
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of this component start from. Each endpoint gets a copy of"
+                            + " it, and the options of the endpoint replace its values.")
     private Sns2Configuration configuration = new Sns2Configuration();
 
     public Sns2Component() {
@@ -125,9 +126,6 @@ public class Sns2Component extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(Sns2Configuration configuration) {
         this.configuration = configuration;
     }

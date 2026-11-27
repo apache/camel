@@ -34,7 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.kiwiproject.consul.Consul;
 
 /**
- * Integrate with <a href="https://www.consul.io/">Consul</a> service discovery and configuration store.
+ * Read, write and watch keys and events in <a href="https://www.consul.io/">Consul</a>, and query or register its
+ * services, nodes, health checks and sessions.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint",
              category = { Category.CLOUD, Category.API }, headersClass = ConsulConstants.class)
@@ -133,7 +134,9 @@ public class ConsulEndpoint extends DefaultEndpoint {
     @UriParam
     private final ConsulConfiguration configuration;
 
-    @UriPath(description = "The API endpoint")
+    @UriPath(description = "The Consul API to use: kv, event, agent, catalog, health, session, preparedQuery, coordinates"
+                           + " or status. Only kv and event have a consumer, the others only a producer; any other value"
+                           + " is used as kv.")
     @Metadata(required = true)
     private final String apiEndpoint;
 

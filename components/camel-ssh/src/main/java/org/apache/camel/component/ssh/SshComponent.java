@@ -29,7 +29,8 @@ import org.apache.camel.support.HealthCheckComponent;
  */
 @Component("ssh")
 public class SshComponent extends HealthCheckComponent {
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The shared configuration of the endpoints: each endpoint starts from a copy of it.")
     private SshConfiguration configuration = new SshConfiguration();
 
     public SshComponent() {
@@ -50,9 +51,6 @@ public class SshComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(SshConfiguration configuration) {
         this.configuration = configuration;
     }

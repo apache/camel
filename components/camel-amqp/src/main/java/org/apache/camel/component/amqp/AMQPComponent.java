@@ -39,7 +39,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 
 /**
- * Messaging with AMQP protocol using Apache Qpid Client.
+ * Send and receive messages over AMQP 1.0 with the Apache Qpid JMS client.
  */
 @Component("amqp")
 public class AMQPComponent extends JmsComponent {
@@ -49,27 +49,48 @@ public class AMQPComponent extends JmsComponent {
     public static final String AMQP_DEFAULT_HOST = "localhost";
     public static final int AMQP_DEFAULT_PORT = 5672;
 
-    @Metadata(description = "Remote URL to broker. The URL is used to setup connection factory and is broker specific (such as ActiveMQ).")
+    @Metadata(description = "The connection URI of the broker in the Qpid JMS format, such as amqp://localhost:5672,"
+                            + " amqps://broker:5671 or failover:(amqp://host1:5672,amqp://host2:5672), with Qpid JMS options"
+                            + " in its query. The component creates a Qpid JMS connection factory from it, which replaces the"
+                            + " connectionFactory of the component. The host, port, useSsl, keystore and truststore options are"
+                            + " then not used.")
     private String brokerUrl;
-    @Metadata(description = "The host name or IP address of the computer that hosts the AMQP Broker.")
+    @Metadata(description = "The host name or IP address of the AMQP broker, default localhost. The component connects to"
+                            + " amqp://host:port (amqps:// with useSsl) when neither brokerUrl nor connectionFactory is set.")
     private String host;
-    @Metadata(description = "The port number on which the AMPQ Broker listens.")
+    @Metadata(description = "The port of the AMQP broker, default 5672, also with useSsl. It is used with host when neither"
+                            + " brokerUrl nor connectionFactory is set.")
     private Integer port;
-    @Metadata(description = "Whether to configure topics with a `topic://` prefix.")
+    @Metadata(description = "Whether the connection factory that the component creates, from brokerUrl or from host and"
+                            + " port, adds the topic:// prefix to the address of each topic (the topicPrefix option of Qpid"
+                            + " JMS). The prefix is added unless this is false. A connectionFactory that you set yourself is"
+                            + " not changed.")
     private Boolean useTopicPrefix;
-    @Metadata(description = "Whether to enable SSL when connecting to the AMQP Broker.")
+    @Metadata(description = "Whether the component connects to the broker over TLS, with an amqps:// connection URI built"
+                            + " from host and port. Only then are the keystore and truststore options used. Not used when"
+                            + " brokerUrl or connectionFactory is set.")
     private Boolean useSsl;
-    @Metadata(description = "The SSL keystore location.")
+    @Metadata(description = "The path of the keystore file with the client certificate and key that the client presents to"
+                            + " the broker over TLS (the transport.keyStoreLocation option of Qpid JMS). Used only with useSsl."
+                            + " When not set, Qpid JMS uses the javax.net.ssl.keyStore system property.")
     private String keyStoreLocation;
-    @Metadata(defaultValue = "JKS", description = "The SSL keystore type.")
+    @Metadata(defaultValue = "JKS",
+              description = "The type of the keystore file, such as JKS or PKCS12. Used only with useSsl and"
+                            + " keyStoreLocation.")
     private String keyStoreType = "JKS";
-    @Metadata(label = "security", security = "secret", description = "The SSL keystore password.")
+    @Metadata(label = "security", security = "secret",
+              description = "The password of the keystore file. Used only with useSsl and keyStoreLocation.")
     private String keyStorePassword;
-    @Metadata(description = "The SSL truststore location.")
+    @Metadata(description = "The path of the truststore file with the certificates that the client trusts to verify the"
+                            + " broker over TLS (the transport.trustStoreLocation option of Qpid JMS). Used only with useSsl."
+                            + " When not set, Qpid JMS uses the javax.net.ssl.trustStore system property.")
     private String trustStoreLocation;
-    @Metadata(defaultValue = "JKS", description = "The SSL truststore type.")
+    @Metadata(defaultValue = "JKS",
+              description = "The type of the truststore file, such as JKS or PKCS12. Used only with useSsl and"
+                            + " trustStoreLocation.")
     private String trustStoreType = "JKS";
-    @Metadata(label = "security", security = "secret", description = "The SSL truststore password.")
+    @Metadata(label = "security", security = "secret",
+              description = "The password of the truststore file. Used only with useSsl and trustStoreLocation.")
     private String trustStorePassword;
     @Metadata(defaultValue = "true",
               description = "Whether the producers send over one shared connection to the broker, when the component creates"
@@ -255,12 +276,10 @@ public class AMQPComponent extends JmsComponent {
 
     // Properties
 
-    /**
-     * Whether to include AMQP annotations when mapping from AMQP to Camel Message. Setting this to true maps AMQP
-     * message annotations that contain a JMS_AMQP_MA_ prefix to message headers. Due to limitations in Apache Qpid JMS
-     * API, currently delivery annotations are ignored.
-     */
-    @Metadata(displayName = "Include AMQP Annotations")
+    @Metadata(displayName = "Include AMQP Annotations",
+              description = "Whether the message annotations of a received AMQP message become message headers, named"
+                            + " JMS_AMQP_MA_ followed by the annotation name. The delivery annotations are not mapped, as the"
+                            + " Qpid JMS client gives no access to them.")
     public void setIncludeAmqpAnnotations(boolean includeAmqpAnnotations) {
         if (getConfiguration() instanceof AMQPConfiguration amqpConfiguration) {
             amqpConfiguration.setIncludeAmqpAnnotations(includeAmqpAnnotations);
