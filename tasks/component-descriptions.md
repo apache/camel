@@ -55,7 +55,7 @@ or removes its row.
 | camel-a2a | a2a |  |
 | camel-activemq | activemq |  |
 | camel-activemq6 | activemq6 |  |
-| camel-ai-prompt | ai-prompt |  |
+| camel-ai-prompt | ai-prompt | yes |
 | camel-ai-resource | ai-resource |  |
 | camel-ai-tool | ai-tool |  |
 | camel-alibaba-eventbridge | alibaba-eventbridge | yes |

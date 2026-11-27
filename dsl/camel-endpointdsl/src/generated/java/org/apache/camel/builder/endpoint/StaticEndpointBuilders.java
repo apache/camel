@@ -178,7 +178,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AI Prompt (camel-ai-prompt)
-     * Consumer endpoint that registers a Camel route as an MCP prompt.
+     * Expose a Camel route as a prompt that MCP clients list and get through
+     * the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.24
@@ -187,7 +188,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ai-prompt:promptName</code>
      * 
      * Path parameter: promptName (required)
-     * The prompt name advertised to MCP clients.
+     * The name of the prompt, which MCP clients see in prompts/list and pass to
+     * prompts/get. It must not contain a slash. A route whose prompt name is
+     * already registered under one of its tags, or in the pool of prompts
+     * without tags, fails to start.
      * 
      * @param path promptName
      * @return the dsl builder
@@ -197,7 +201,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AI Prompt (camel-ai-prompt)
-     * Consumer endpoint that registers a Camel route as an MCP prompt.
+     * Expose a Camel route as a prompt that MCP clients list and get through
+     * the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.24
@@ -206,7 +211,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ai-prompt:promptName</code>
      * 
      * Path parameter: promptName (required)
-     * The prompt name advertised to MCP clients.
+     * The name of the prompt, which MCP clients see in prompts/list and pass to
+     * prompts/get. It must not contain a slash. A route whose prompt name is
+     * already registered under one of its tags, or in the pool of prompts
+     * without tags, fails to start.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

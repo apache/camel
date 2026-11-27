@@ -88,7 +88,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AI Prompt (camel-ai-prompt)
-     * Consumer endpoint that registers a Camel route as an MCP prompt.
+     * Expose a Camel route as a prompt that MCP clients list and get through
+     * the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.24
