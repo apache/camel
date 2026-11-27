@@ -10590,6 +10590,22 @@ is known, and `strictHostKeyChecking` decides whether to connect.
 The `aws-cloudtrail:application-cloudevents` data type now sets the content type `application/json`, as the body is
 the JSON of the event. It was `text/plain`.
 
+=== camel-aws2-redshift - listStatements filters, batch parameters and new headers
+
+In header mode, `listStatements` now passes the `CamelAwsRedshiftDataClusterIdentifier`,
+`CamelAwsRedshiftDataWorkGroupName` and `CamelAwsRedshiftDataDatabase` headers to the request as filters, as the other
+operations do, and `batchExecuteStatement` now passes the `CamelAwsRedshiftDataSqlParameterList` header as the
+parameters of its statements. Before, these operations ignored those headers. Remove the headers before such a step
+if a route sets them for another step.
+
+The new `CamelAwsRedshiftDataNextToken` header asks the list operations, `describeTable` and `getStatementResult` for
+the next page (the `nextToken` of the previous response). New headers set the `WaitTimeSeconds`, `ResultFormat`,
+`SessionId` and `SessionKeepAliveSeconds` of `executeStatement` and `batchExecuteStatement`, the `ExecutionMode` of
+`batchExecuteStatement` and the `WaitTimeSeconds` of `getStatementResult`.
+
+An exchange without the `CamelAwsRedshiftDataOperation` header and without the `operation` option now fails with an
+`IllegalArgumentException` that says so, instead of a `NullPointerException`.
+
 === camel-python - a script gives the Java value of its result
 
 The `python` language (Jython) now gives the Java value of what a script returns, instead of its Python text from

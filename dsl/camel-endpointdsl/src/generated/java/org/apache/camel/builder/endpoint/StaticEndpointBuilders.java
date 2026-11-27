@@ -2141,7 +2141,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>aws2-redshift-data:label</code>
      * 
-     * Path parameter: label (required)
+     * Path parameter: label
      * A logical name of the endpoint, which you choose freely. The producer
      * does not use it.
      * 
@@ -2162,7 +2162,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>aws2-redshift-data:label</code>
      * 
-     * Path parameter: label (required)
+     * Path parameter: label
      * A logical name of the endpoint, which you choose freely. The producer
      * does not use it.
      * 
