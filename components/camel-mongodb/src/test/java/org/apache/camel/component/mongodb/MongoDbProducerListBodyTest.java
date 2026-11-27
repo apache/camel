@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -114,6 +116,42 @@ class MongoDbProducerListBodyTest extends CamelTestSupport {
     }
 
     @Test
+    void testUpdateInputStreamBodyWithCriteriaAndUpdate() {
+        String body = "[{\"name\": \"order-1\"}, {\"$set\": {\"qty\": 3}}]";
+        template.requestBody("direct:update", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)));
+
+        ArgumentCaptor<Bson> criteria = ArgumentCaptor.forClass(Bson.class);
+        ArgumentCaptor<Bson> update = ArgumentCaptor.forClass(Bson.class);
+        verify(collection).updateOne(criteria.capture(), update.capture(), any(UpdateOptions.class));
+        assertEquals("order-1", toBsonDocument(criteria.getValue()).getString("name").getValue());
+        assertEquals(3, toBsonDocument(update.getValue()).getDocument("$set").getInt32("qty").getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testAggregateStreamCachePipelineEndingWithNewline() {
+        // as a file or an HTTP request delivers it, with stream caching, and with a trailing newline
+        String body = "[{\"$match\": {\"qty\": 3}}, {\"$limit\": 5}]\n";
+        template.requestBody("direct:aggregate",
+                new ByteArrayInputStreamCache(new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8))));
+
+        ArgumentCaptor<List<Bson>> pipeline = ArgumentCaptor.forClass(List.class);
+        verify(collection).aggregate(pipeline.capture());
+        assertEquals(2, pipeline.getValue().size());
+        assertEquals(5, toBsonDocument(pipeline.getValue().get(1)).getInt32("$limit").getValue());
+    }
+
+    @Test
+    void testUpdateStringBodyWithSurroundingWhitespace() {
+        String body = "\n  [{\"name\": \"order-1\"}, {\"$set\": {\"qty\": 3}}]\r\n";
+        template.requestBody("direct:update", body);
+
+        ArgumentCaptor<Bson> criteria = ArgumentCaptor.forClass(Bson.class);
+        verify(collection).updateOne(criteria.capture(), any(Bson.class), any(UpdateOptions.class));
+        assertEquals("order-1", toBsonDocument(criteria.getValue()).getString("name").getValue());
+    }
+
+    @Test
     void testMalformedByteArrayBodyKeepsTheParseError() {
         byte[] body = "[{\"name\": }]".getBytes(StandardCharsets.UTF_8);
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
@@ -127,6 +165,16 @@ class MongoDbProducerListBodyTest extends CamelTestSupport {
         }
         assertTrue(payload, "an InvalidPayloadException should be in the cause chain");
         assertTrue(found, "the JsonParseException should be in the cause chain");
+    }
+
+    @Test
+    void testUpdateBodyThatIsNotAnArrayFailsWithTheSizeError() {
+        // a String that is not a JSON array does not convert to a List; it failed with a NullPointerException
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:update", "{\"name\": \"order-1\"}"));
+
+        CamelMongoDbException cause = assertInstanceOf(CamelMongoDbException.class, e.getCause());
+        assertTrue(cause.getMessage().startsWith("MongoDB operation = update,"), cause.getMessage());
     }
 
     @Test

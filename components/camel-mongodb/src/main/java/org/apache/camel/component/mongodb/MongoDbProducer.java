@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,6 +48,7 @@ import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.MessageHelper;
@@ -487,7 +489,7 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson objNew;
                 if (null == updateCriteria) {
                     List<Bson> saveObj = getBsonListBody(exchange);
-                    if (saveObj.size() != 2) {
+                    if (saveObj == null || saveObj.size() != 2) {
                         throw new CamelMongoDbException(
                                 "MongoDB operation = update, failed because body is not a List of Document objects with size = 2");
                     }
@@ -524,13 +526,14 @@ public class MongoDbProducer extends DefaultProducer {
 
     /**
      * The body as a List of Bson: the criteria and the update of an update or a findOneAndUpdate without the criteria
-     * header, or the pipeline of an aggregate. A byte[] body, such as JSON text from a Kafka consumer or a file, is
-     * read as text first, so that a JSON array converts as it does from a String.
+     * header, or the pipeline of an aggregate. A byte[], InputStream or StreamCache body, such as JSON text from a
+     * Kafka consumer, a file or an HTTP request, is read as text first, so that a JSON array converts as it does from a
+     * String.
      */
     @SuppressWarnings("unchecked")
     private static List<Bson> getBsonListBody(Exchange exchange) throws InvalidPayloadException {
         Object body = exchange.getIn().getBody();
-        if (body instanceof byte[]) {
+        if (body instanceof byte[] || body instanceof InputStream || body instanceof StreamCache) {
             body = exchange.getIn().getBody(String.class);
         }
         try {
@@ -700,7 +703,7 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson update;
                 if (filter == null) {
                     List<Bson> saveObj = getBsonListBody(exchange);
-                    if (saveObj.size() != 2) {
+                    if (saveObj == null || saveObj.size() != 2) {
                         throw new CamelMongoDbException(
                                 "MongoDB operation = findOneAndUpdate, failed because body is not a List of Document objects with size = 2");
                     }
