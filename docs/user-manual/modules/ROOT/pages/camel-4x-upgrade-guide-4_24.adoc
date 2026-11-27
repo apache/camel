@@ -1923,6 +1923,16 @@ Before, the route became `Suspended`, and a later `startRoute` or `resumeRoute` 
 consumer, so it consumed nothing. Code that checks the status of a route after `suspendRoute` now sees `Stopped` for
 such a route. The last error of such a route, for example from a failed start, is kept.
 
+=== camel-core - starting or resuming a route that is already started leaves it as it is
+
+`startRoute` or `resumeRoute` on a route that is already started, from the `RouteController`, JMX, the control bus or
+the CLI, is now a no-op: it no longer starts the consumer of the route again, and route policies get no `onStart` for
+it. The same applies to the started routes of `startAllRoutes` and `startRouteGroup`. Before, a consumer that a route
+policy stopped while the route stayed started (such as the master route policy of `camel-zookeeper-master` on a node
+that is not the master, `HazelcastRoutePolicy`, `ThrottlingInflightRoutePolicy`, `ThrottlingExceptionRoutePolicy` or a
+`ScheduledRoutePolicy` that suspended the route) was started again, bypassing the route policy. To start the consumer
+of a started route again, stop and start the route. A suspended route is still resumed, and a stopped route started.
+
 === camel-core - Routing Slip and Dynamic Router fire the sent event of a step before the next step
 
 The `ExchangeSentEvent` of a step of a `routingSlip` or `dynamicRouter` is now fired when that step is done, before the
