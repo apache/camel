@@ -334,7 +334,7 @@ or removes its row.
 | camel-servlet | servlet |  |
 | camel-shell | shell |  |
 | camel-sjms | sjms |  |
-| camel-sjms2 | sjms2 |  |
+| camel-sjms2 | sjms2 | yes |
 | camel-slack | slack |  |
 | camel-smb | smb |  |
 | camel-smooks | smooks |  |
