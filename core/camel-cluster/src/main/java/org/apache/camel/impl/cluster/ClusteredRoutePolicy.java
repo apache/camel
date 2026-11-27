@@ -276,6 +276,10 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         stoppedRoutes.remove(route);
     }
 
+    /**
+     * Applies the current leadership state to a route that just started. If this node has lost the leadership before
+     * the route started, the leadership change is applied again so the route is stopped promptly.
+     */
     @Override
     public void onStart(Route route) {
         super.onStart(route);
@@ -336,6 +340,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         contextStarted.set(false);
         contextResumed = false;
         initialDelayElapsed = false;
+        // onRemove already clears the entries of the removed routes; start the failure counts afresh anyway
+        failedStarts.clear();
         // the routes are created while the CamelContext initializes: start them once it has started
         startManagedRoutesEarly = true;
         camelContext.getManagementStrategy().addEventNotifier(listener);
