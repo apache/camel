@@ -12297,6 +12297,15 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-aws-bedrock - guardrailTrace no longer switches converseStream to asynchronous guardrail processing
+
+For the `converseStream` operation with the guardrail of the `guardrailIdentifier` option, `guardrailTrace=true` used
+to also set the processing mode of the guardrail on the stream to `async`, so Bedrock sent the response chunks before
+the guardrail had checked them. Now `guardrailTrace` only asks for the trace, and the processing mode is the new
+`guardrailStreamProcessingMode` option, with default `sync`: Bedrock checks the chunks with the guardrail before it
+sends them. Set `guardrailStreamProcessingMode=async` to keep the old behavior. A
+`CamelAwsBedrockGuardrailConfig` header is used as before.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
