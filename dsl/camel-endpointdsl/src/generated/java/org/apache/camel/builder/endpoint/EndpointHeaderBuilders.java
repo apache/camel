@@ -2234,8 +2234,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Infinispan Embedded (camel-infinispan-embedded)
-     * Read and write from/to Infinispan distributed key/value store and data
-     * grid.
+     * Read and write the entries of caches of an Infinispan cache manager
+     * embedded in the application, and receive their events.
      * 
      * Category: cache,clustering
      * Since: 2.13

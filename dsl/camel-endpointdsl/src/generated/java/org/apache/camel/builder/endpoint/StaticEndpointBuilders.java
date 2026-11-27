@@ -9182,8 +9182,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Infinispan Embedded (camel-infinispan-embedded)
-     * Read and write from/to Infinispan distributed key/value store and data
-     * grid.
+     * Read and write the entries of caches of an Infinispan cache manager
+     * embedded in the application, and receive their events.
      * 
      * Category: cache,clustering
      * Since: 2.13
@@ -9192,9 +9192,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>infinispan-embedded:cacheName</code>
      * 
      * Path parameter: cacheName (required)
-     * The name of the cache to use. Use current to use the existing cache name
-     * from the currently configured cached manager. Or use default for the
-     * default cache manager name.
+     * The name of the cache. The value current uses the default cache of the
+     * cache manager, and the default cache of a cache manager that Camel
+     * creates is named default. The CamelInfinispanCacheName header replaces
+     * this name for the producer.
      * 
      * @param path cacheName
      * @return the dsl builder
@@ -9204,8 +9205,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Infinispan Embedded (camel-infinispan-embedded)
-     * Read and write from/to Infinispan distributed key/value store and data
-     * grid.
+     * Read and write the entries of caches of an Infinispan cache manager
+     * embedded in the application, and receive their events.
      * 
      * Category: cache,clustering
      * Since: 2.13
@@ -9214,9 +9215,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>infinispan-embedded:cacheName</code>
      * 
      * Path parameter: cacheName (required)
-     * The name of the cache to use. Use current to use the existing cache name
-     * from the currently configured cached manager. Or use default for the
-     * default cache manager name.
+     * The name of the cache. The value current uses the default cache of the
+     * cache manager, and the default cache of a cache manager that Camel
+     * creates is named default. The CamelInfinispanCacheName header replaces
+     * this name for the producer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
