@@ -564,6 +564,78 @@ public interface OpenfgaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Fixed SDK submission worker count; workers do not await responses.
+         * Must be positive.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 4
+         * Group: producer (advanced)
+         * 
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder asyncPoolSize(int asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+    
+        
+        /**
+         * Offload authorization with bounded managed resources instead of
+         * blocking the routing thread.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param asyncProcessing the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder asyncProcessing(boolean asyncProcessing) {
+            doSetProperty("asyncProcessing", asyncProcessing);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum queued authorization submissions; saturation fails closed
+         * rather than running on the routing thread.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: producer (advanced)
+         * 
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder asyncQueueSize(int asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+    
+        
+        /**
+         * Total queued and running authorization deadline in milliseconds; must
+         * be positive.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: producer (advanced)
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+    
         /**
          * Transport for streamedListObjects. Required with an injected
          * OpenFgaClient, whose HTTP configuration is opaque. The caller owns
@@ -1006,6 +1078,10 @@ public interface OpenfgaComponentBuilderFactory {
             case "checkpointRepository": getOrCreateConfiguration((OpenFgaComponent) component).setCheckpointRepository((org.apache.camel.spi.StateRepository) value); return true;
             case "changePollTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setChangePollTimeout((long) value); return true;
             case "lazyStartProducer": ((OpenFgaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "asyncPoolSize": getOrCreateConfiguration((OpenFgaComponent) component).setAsyncPoolSize((int) value); return true;
+            case "asyncProcessing": getOrCreateConfiguration((OpenFgaComponent) component).setAsyncProcessing((boolean) value); return true;
+            case "asyncQueueSize": getOrCreateConfiguration((OpenFgaComponent) component).setAsyncQueueSize((int) value); return true;
+            case "asyncTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setAsyncTimeout((long) value); return true;
             case "streamingClient": getOrCreateConfiguration((OpenFgaComponent) component).setStreamingClient((org.apache.camel.component.openfga.OpenFgaStreamingClient) value); return true;
             case "streamMaxLineLength": getOrCreateConfiguration((OpenFgaComponent) component).setStreamMaxLineLength((int) value); return true;
             case "streamMaxResults": getOrCreateConfiguration((OpenFgaComponent) component).setStreamMaxResults((int) value); return true;

@@ -17,6 +17,8 @@
 package org.apache.camel.support.security;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLongArray;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -47,7 +49,8 @@ public final class AuthorizationObservation {
     private final long started;
     private long poolWaitNanos = -1;
     private int expectedItems;
-    private final long[] counts;
+    private final AtomicLongArray counts;
+    private final AtomicBoolean published = new AtomicBoolean();
 
     private AuthorizationObservation() {
         context = null;
@@ -68,7 +71,7 @@ public final class AuthorizationObservation {
         this.exchangeId = exchange.getExchangeId();
         this.routeId = exchange.getFromRouteId();
         this.started = System.nanoTime();
-        this.counts = new long[Outcome.values().length];
+        this.counts = new AtomicLongArray(Outcome.values().length);
     }
 
     public static AuthorizationObservation begin(Exchange exchange, Engine engine, Operation operation, String revision) {
@@ -102,13 +105,13 @@ public final class AuthorizationObservation {
 
     public void item(Outcome outcome) {
         if (isEnabled()) {
-            counts[outcome.ordinal()]++;
+            counts.incrementAndGet(outcome.ordinal());
         }
     }
 
     public void items(Outcome outcome, int count) {
         if (isEnabled()) {
-            counts[outcome.ordinal()] += count;
+            counts.addAndGet(outcome.ordinal(), count);
         }
     }
 
@@ -119,17 +122,23 @@ public final class AuthorizationObservation {
     }
 
     public void failure(Outcome outcome, Failure failure) {
+        if (!claim()) {
+            return;
+        }
         remainingItems(outcome, expectedItems);
-        complete(outcome, failure);
+        if (operation != Operation.BATCH) {
+            item(outcome);
+        }
+        publish(outcome, failure);
     }
 
     public void remainingItems(Outcome outcome, int total) {
         if (isEnabled()) {
             long recorded = 0;
-            for (long count : counts) {
-                recorded += count;
+            for (int i = 0; i < counts.length(); i++) {
+                recorded += counts.get(i);
             }
-            counts[outcome.ordinal()] += Math.max(0, total - recorded);
+            counts.addAndGet(outcome.ordinal(), Math.max(0, total - recorded));
         }
     }
 
@@ -140,7 +149,7 @@ public final class AuthorizationObservation {
     }
 
     public void complete(Outcome outcome, Failure failure) {
-        if (!isEnabled()) {
+        if (!claim()) {
             return;
         }
         if (operation != Operation.BATCH) {
@@ -150,18 +159,27 @@ public final class AuthorizationObservation {
     }
 
     public void completeBatch() {
-        if (!isEnabled()) {
+        if (!claim()) {
             return;
         }
-        Outcome outcome = counts[Outcome.FAILED_OPEN.ordinal()] > 0 ? Outcome.FAILED_OPEN
-                : counts[Outcome.ERROR.ordinal()] > 0 ? Outcome.ERROR
-                : counts[Outcome.UNAVAILABLE.ordinal()] > 0 ? Outcome.UNAVAILABLE
-                : counts[Outcome.DENY.ordinal()] > 0 ? Outcome.DENY : Outcome.ALLOW;
-        Failure failure = counts[Outcome.ERROR.ordinal()] > 0 ? Failure.EVALUATION
-                : counts[Outcome.UNAVAILABLE.ordinal()] + counts[Outcome.FAILED_OPEN.ordinal()] > 0
+        Outcome outcome = counts.get(Outcome.FAILED_OPEN.ordinal()) > 0 ? Outcome.FAILED_OPEN
+                : counts.get(Outcome.ERROR.ordinal()) > 0 ? Outcome.ERROR
+                : counts.get(Outcome.UNAVAILABLE.ordinal()) > 0 ? Outcome.UNAVAILABLE
+                : counts.get(Outcome.DENY.ordinal()) > 0 ? Outcome.DENY : Outcome.ALLOW;
+        Failure failure = counts.get(Outcome.ERROR.ordinal()) > 0 ? Failure.EVALUATION
+                : counts.get(Outcome.UNAVAILABLE.ordinal()) + counts.get(Outcome.FAILED_OPEN.ordinal()) > 0
                         ? Failure.UNAVAILABLE
                 : Failure.NONE;
         publish(outcome, failure);
+    }
+
+    /**
+     * An observation publishes once. The completion that claims it builds the event; a cancellation listener firing
+     * after the decision, a late second completion, or a loser in a race between two completions changes nothing, not
+     * even the counts the winner is reading.
+     */
+    private boolean claim() {
+        return isEnabled() && published.compareAndSet(false, true);
     }
 
     private void publish(Outcome outcome, Failure failure) {
@@ -169,8 +187,9 @@ public final class AuthorizationObservation {
                 engine, operation, outcome, failure,
                 Math.max(0, System.nanoTime() - started), poolWaitNanos,
                 new Counts(
-                        counts[Outcome.ALLOW.ordinal()], counts[Outcome.DENY.ordinal()], counts[Outcome.ERROR.ordinal()],
-                        counts[Outcome.UNAVAILABLE.ordinal()], counts[Outcome.FAILED_OPEN.ordinal()]),
+                        counts.get(Outcome.ALLOW.ordinal()), counts.get(Outcome.DENY.ordinal()),
+                        counts.get(Outcome.ERROR.ordinal()),
+                        counts.get(Outcome.UNAVAILABLE.ordinal()), counts.get(Outcome.FAILED_OPEN.ordinal())),
                 revision, exchangeId, routeId);
         EventHelper.notifyCustomEvent(context, () -> event);
     }

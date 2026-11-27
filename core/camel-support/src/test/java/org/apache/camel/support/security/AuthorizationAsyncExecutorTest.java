@@ -1,0 +1,778 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.support.security;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.ThreadPoolFactory;
+import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.DefaultThreadPoolFactory;
+import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.util.concurrent.CamelThreadFactory;
+import org.apache.camel.util.concurrent.ThreadFactoryTypeAware;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
+class AuthorizationAsyncExecutorTest {
+    @Test
+    void cancellationCannotInterruptTheNextTaskReusingItsWorker() throws Exception {
+        CountDownLatch interruptEntered = new CountDownLatch(1);
+        CountDownLatch releaseInterrupt = new CountDownLatch(1);
+        AtomicReference<Thread> firstRunner = new AtomicReference<>();
+        AtomicBoolean intercepted = new AtomicBoolean();
+        try (var context = TestContext.create()) {
+            context.getExecutorServiceManager().addThreadFactoryListener((source, factory) -> action -> {
+                Thread template = factory.newThread(action);
+                Thread thread = new Thread(action, template.getName()) {
+                    @Override
+                    public void interrupt() {
+                        if (this == firstRunner.get() && intercepted.compareAndSet(false, true)) {
+                            interruptEntered.countDown();
+                            try {
+                                awaitIgnoringInterrupt(releaseInterrupt);
+                            } catch (Exception e) {
+                                throw new IllegalStateException(e);
+                            }
+                        }
+                        super.interrupt();
+                    }
+                };
+                thread.setDaemon(template.isDaemon());
+                return thread;
+            });
+            try (var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+                Exchange first = new DefaultExchange(context);
+                Exchange second = new DefaultExchange(context);
+                CountDownLatch firstEntered = new CountDownLatch(1);
+                CountDownLatch releaseFirst = new CountDownLatch(1);
+                CountDownLatch firstReturning = new CountDownLatch(1);
+                CountDownLatch secondEntered = new CountDownLatch(1);
+                CountDownLatch secondCallback = new CountDownLatch(1);
+                executor.process(first, doneSync -> {
+                }, snapshot -> () -> {
+                    firstRunner.set(Thread.currentThread());
+                    firstEntered.countDown();
+                    awaitIgnoringInterrupt(releaseFirst);
+                    firstReturning.countDown();
+                    return CompletableFuture.completedFuture(null);
+                });
+                assertThat(firstEntered.await(5, TimeUnit.SECONDS)).isTrue();
+                executor.process(second, doneSync -> secondCallback.countDown(), snapshot -> () -> {
+                    secondEntered.countDown();
+                    assertThat(Thread.currentThread().isInterrupted()).isFalse();
+                    return CompletableFuture.completedFuture(null);
+                });
+                try {
+                    executor.cancel(first);
+                    assertThat(interruptEntered.await(5, TimeUnit.SECONDS)).isTrue();
+                    releaseFirst.countDown();
+                    assertThat(firstReturning.await(5, TimeUnit.SECONDS)).isTrue();
+                    // The first task still owns the worker while cancellation interrupts it under runnerLock.
+                    assertThat(secondEntered.await(100, TimeUnit.MILLISECONDS)).isFalse();
+                } finally {
+                    releaseFirst.countDown();
+                    releaseInterrupt.countDown();
+                }
+                assertThat(secondCallback.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(secondEntered.getCount()).isZero();
+                assertThat(second.getException()).isNull();
+            }
+        } finally {
+            releaseInterrupt.countDown();
+        }
+    }
+
+    @Test
+    void claimedCancellationLeavesTheExchangeAndItsCallbackToTheCanceller() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            CountDownLatch entered = new CountDownLatch(1);
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch workerDone = new CountDownLatch(1);
+            AtomicInteger callbacks = new AtomicInteger();
+            Exchange exchange = new DefaultExchange(context);
+            // what the await manager records when the thread waiting for the decision is interrupted
+            InterruptedException interrupted = new InterruptedException("caller interrupted");
+            List<Throwable> abandoned = new CopyOnWriteArrayList<>();
+            try {
+                assertThat(executor.process(exchange, doneSync -> callbacks.incrementAndGet(),
+                        snapshot -> new AuthorizationAsyncExecutor.Action() {
+                            @Override
+                            public CompletableFuture<?> run() throws Exception {
+                                entered.countDown();
+                                awaitIgnoringInterrupt(release);
+                                snapshot.getMessage().setHeader("late", "must-not-escape");
+                                workerDone.countDown();
+                                return CompletableFuture.completedFuture(null);
+                            }
+
+                            @Override
+                            public void abandoned(Throwable failure) {
+                                abandoned.add(failure);
+                            }
+                        })).isFalse();
+                assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+                exchange.setException(interrupted);
+                assertThat(executor.cancel(exchange, interrupted)).isTrue();
+                assertThat(exchange.getException()).isSameAs(interrupted);
+                assertThat(executor.cancel(exchange)).isFalse();
+            } finally {
+                release.countDown();
+            }
+            assertThat(workerDone.await(5, TimeUnit.SECONDS)).isTrue();
+            // the action hears the caller's reason, once, on the continuation pool
+            await().atMost(5, TimeUnit.SECONDS).until(() -> abandoned.size() == 1);
+            assertThat(abandoned.get(0)).isSameAs(interrupted);
+            // the capacity comes back when the worker returns from the action, not with the continuation
+            await().atMost(5, TimeUnit.SECONDS).until(() -> executor.availableCapacity() == 2);
+            // the capacity of one worker and one queued admission is back without the callback: two more fit
+            Exchange next = new DefaultExchange(context);
+            Exchange last = new DefaultExchange(context);
+            CountDownLatch nextCallbacks = new CountDownLatch(2);
+            AuthorizationAsyncExecutor.Preparation work = snapshot -> () -> CompletableFuture.completedFuture(null);
+            assertThat(executor.process(next, doneSync -> nextCallbacks.countDown(), work)).isFalse();
+            assertThat(executor.process(last, doneSync -> nextCallbacks.countDown(), work)).isFalse();
+            assertThat(nextCallbacks.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(next.getException()).isNull();
+            assertThat(last.getException()).isNull();
+            assertThat(callbacks).hasValue(0);
+            assertThat(exchange.getException()).isSameAs(interrupted);
+            assertThat(exchange.getMessage().getHeader("late")).isNull();
+        }
+    }
+
+    @Test
+    void abandonedHookHearsTheExecutorsReasonWhetherOrNotTheActionStarted() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 300)) {
+            CountDownLatch entered = new CountDownLatch(1);
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch callbacks = new CountDownLatch(2);
+            List<Throwable> firstAbandoned = new CopyOnWriteArrayList<>();
+            List<Throwable> secondAbandoned = new CopyOnWriteArrayList<>();
+            AtomicInteger secondRuns = new AtomicInteger();
+            Exchange first = new DefaultExchange(context);
+            Exchange second = new DefaultExchange(context);
+            try {
+                // the first action blocks in its SDK call and holds the only worker; the second task waits in the queue
+                executor.process(first, doneSync -> callbacks.countDown(), snapshot -> new AuthorizationAsyncExecutor.Action() {
+                    @Override
+                    public CompletableFuture<?> run() throws Exception {
+                        entered.countDown();
+                        awaitIgnoringInterrupt(release);
+                        return new CompletableFuture<>();
+                    }
+
+                    @Override
+                    public void abandoned(Throwable failure) {
+                        firstAbandoned.add(failure);
+                    }
+                });
+                assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+                executor.process(second, doneSync -> callbacks.countDown(),
+                        snapshot -> new AuthorizationAsyncExecutor.Action() {
+                            @Override
+                            public CompletableFuture<?> run() {
+                                secondRuns.incrementAndGet();
+                                return CompletableFuture.completedFuture(null);
+                            }
+
+                            @Override
+                            public void abandoned(Throwable failure) {
+                                secondAbandoned.add(failure);
+                            }
+                        });
+                assertThat(callbacks.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(first.getException()).isInstanceOf(TimeoutException.class);
+                assertThat(second.getException()).isInstanceOf(TimeoutException.class);
+                await().atMost(5, TimeUnit.SECONDS).until(() -> firstAbandoned.size() + secondAbandoned.size() == 2);
+                assertThat(firstAbandoned).singleElement().isInstanceOf(TimeoutException.class);
+                assertThat(secondAbandoned).singleElement().isInstanceOf(TimeoutException.class);
+                assertThat(secondRuns).hasValue(0);
+            } finally {
+                release.countDown();
+            }
+        }
+    }
+
+    @Test
+    void completionOfTheActionsOwnFutureDoesNotCountAsAbandonment() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            CountDownLatch callback = new CountDownLatch(1);
+            AtomicInteger abandoned = new AtomicInteger();
+            Exchange exchange = new DefaultExchange(context);
+            executor.process(exchange, doneSync -> callback.countDown(), snapshot -> new AuthorizationAsyncExecutor.Action() {
+                @Override
+                public CompletableFuture<?> run() {
+                    return CompletableFuture.failedFuture(new IllegalStateException("decision point said no"));
+                }
+
+                @Override
+                public void abandoned(Throwable failure) {
+                    abandoned.incrementAndGet();
+                }
+            });
+            assertThat(callback.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(exchange.getException()).isInstanceOf(IllegalStateException.class);
+            assertThat(abandoned).hasValue(0);
+        }
+    }
+
+    @Test
+    void cancellationWritesItsFailureBeforeReturning() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            CountDownLatch entered = new CountDownLatch(1);
+            CountDownLatch release = new CountDownLatch(1);
+            AtomicInteger callbacks = new AtomicInteger();
+            Exchange exchange = new DefaultExchange(context);
+            try {
+                executor.process(exchange, doneSync -> callbacks.incrementAndGet(), snapshot -> () -> {
+                    entered.countDown();
+                    awaitIgnoringInterrupt(release);
+                    return CompletableFuture.completedFuture(null);
+                });
+                assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(executor.cancel(exchange)).isTrue();
+                assertThat(exchange.getException()).isInstanceOf(CancellationException.class);
+            } finally {
+                release.countDown();
+            }
+            await().atMost(5, TimeUnit.SECONDS).until(() -> executor.availableCapacity() == 2);
+            Exchange next = new DefaultExchange(context);
+            CountDownLatch nextCallback = new CountDownLatch(1);
+            executor.process(next, doneSync -> nextCallback.countDown(),
+                    snapshot -> () -> CompletableFuture.completedFuture(null));
+            assertThat(nextCallback.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(callbacks).hasValue(0);
+        }
+    }
+
+    @Test
+    void blockedRoutingCallbacksDoNotHoldAuthorizationCapacityOrLimitOtherContinuations() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            CountDownLatch entered = new CountDownLatch(3);
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch returned = new CountDownLatch(3);
+            try {
+                for (int index = 0; index < 3; index++) {
+                    Exchange exchange = new DefaultExchange(context);
+                    CountDownLatch thisCallback = new CountDownLatch(1);
+                    assertThat(executor.process(exchange, doneSync -> {
+                        thisCallback.countDown();
+                        entered.countDown();
+                        try {
+                            awaitIgnoringInterrupt(release);
+                        } catch (Exception e) {
+                            exchange.setException(e);
+                        } finally {
+                            returned.countDown();
+                        }
+                    }, snapshot -> () -> CompletableFuture.completedFuture(null))).isFalse();
+                    assertThat(thisCallback.await(5, TimeUnit.SECONDS)).isTrue();
+                    assertThat(exchange.getException()).isNull();
+                }
+                assertThat(entered.getCount()).isZero();
+            } finally {
+                release.countDown();
+            }
+            assertThat(returned.await(5, TimeUnit.SECONDS)).isTrue();
+        }
+    }
+
+    @Test
+    void committingDecisionPreservesUnchangedCallerContainerInstancesAndTypes() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            Exchange exchange = new DefaultExchange(context);
+            List<String> body = List.of("immutable");
+            Map<String, String> header = new TreeMap<>(Map.of("key", "value"));
+            List<String> property = new ArrayList<>(List.of("shared"));
+            exchange.getMessage().setBody(body);
+            exchange.getMessage().setHeader("untouched", header);
+            exchange.setProperty("untouched", property);
+            CountDownLatch callback = new CountDownLatch(1);
+            executor.process(exchange, doneSync -> callback.countDown(), snapshot -> () -> {
+                assertThat(snapshot.getMessage().getBody()).isNotSameAs(body);
+                assertThat(snapshot.getMessage().getHeader("untouched")).isNotSameAs(header);
+                assertThat(snapshot.getProperty("untouched")).isNotSameAs(property);
+                snapshot.getMessage().setHeader("decision", true);
+                return CompletableFuture.completedFuture(null);
+            });
+            assertThat(callback.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getMessage().getBody()).isSameAs(body);
+            assertThat(exchange.getMessage().getHeader("untouched")).isSameAs(header);
+            assertThat(exchange.getProperty("untouched")).isSameAs(property);
+            assertThat(exchange.getMessage().getHeader("decision")).isEqualTo(true);
+        }
+    }
+
+    @Test
+    void boundedSaturationRejectsWithoutRunningOnTheCaller() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            CountDownLatch entered = new CountDownLatch(1);
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch callbacks = new CountDownLatch(2);
+            AtomicInteger count = new AtomicInteger();
+            Thread caller = Thread.currentThread();
+            AuthorizationAsyncExecutor.Preparation work = snapshot -> () -> {
+                assertThat(Thread.currentThread()).isNotSameAs(caller);
+                entered.countDown();
+                assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
+                snapshot.getMessage().setHeader("completed", true);
+                return CompletableFuture.completedFuture(null);
+            };
+            Exchange first = new DefaultExchange(context);
+            Exchange second = new DefaultExchange(context);
+            try {
+                assertThat(executor.process(first, doneSync -> {
+                    count.incrementAndGet();
+                    callbacks.countDown();
+                }, work)).isFalse();
+                assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(executor.process(second, doneSync -> {
+                    count.incrementAndGet();
+                    callbacks.countDown();
+                }, work)).isFalse();
+                Exchange rejected = new DefaultExchange(context);
+                AtomicInteger rejectionCallbacks = new AtomicInteger();
+                assertThat(executor.process(rejected, doneSync -> {
+                    assertThat(doneSync).isTrue();
+                    rejectionCallbacks.incrementAndGet();
+                }, work)).isTrue();
+                assertThat(rejected.getException()).isInstanceOf(RejectedExecutionException.class);
+                assertThat(rejectionCallbacks).hasValue(1);
+            } finally {
+                release.countDown();
+            }
+            assertThat(callbacks.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(count).hasValue(2);
+            assertThat(first.getMessage().getHeader("completed")).isEqualTo(true);
+            assertThat(second.getMessage().getHeader("completed")).isEqualTo(true);
+        }
+    }
+
+    @Test
+    void deadlineCompletesOnceAndLateWorkerCannotMutateTheCaller() throws Exception {
+        try (var context = TestContext.create(); var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 300)) {
+            CountDownLatch entered = new CountDownLatch(1);
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch workerDone = new CountDownLatch(1);
+            CountDownLatch callback = new CountDownLatch(1);
+            AtomicInteger calls = new AtomicInteger();
+            Exchange exchange = new DefaultExchange(context);
+            try {
+                executor.process(exchange, doneSync -> {
+                    calls.incrementAndGet();
+                    callback.countDown();
+                }, snapshot -> () -> {
+                    entered.countDown();
+                    awaitIgnoringInterrupt(release);
+                    snapshot.getMessage().setHeader("late", "must-not-escape");
+                    workerDone.countDown();
+                    return CompletableFuture.completedFuture(null);
+                });
+                assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(callback.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
+            } finally {
+                release.countDown();
+            }
+            assertThat(workerDone.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(exchange.getMessage().getHeader("late")).isNull();
+            assertThat(calls).hasValue(1);
+        }
+    }
+
+    @Test
+    void stopCancelsRunningAndQueuedWorkExactlyOnce() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            CountDownLatch entered = new CountDownLatch(1);
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch callbacks = new CountDownLatch(2);
+            AtomicInteger calls = new AtomicInteger();
+            AuthorizationAsyncExecutor.Preparation work = snapshot -> () -> {
+                entered.countDown();
+                awaitIgnoringInterrupt(release);
+                return CompletableFuture.completedFuture(null);
+            };
+            Exchange first = new DefaultExchange(context);
+            Exchange second = new DefaultExchange(context);
+            try {
+                executor.process(first, doneSync -> {
+                    calls.incrementAndGet();
+                    callbacks.countDown();
+                }, work);
+                assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+                executor.process(second, doneSync -> {
+                    calls.incrementAndGet();
+                    callbacks.countDown();
+                }, work);
+                executor.close();
+                assertThat(callbacks.await(5, TimeUnit.SECONDS)).isTrue();
+                assertThat(first.getException()).isInstanceOf(CancellationException.class);
+                assertThat(second.getException()).isInstanceOf(CancellationException.class);
+                assertThat(calls).hasValue(2);
+            } finally {
+                release.countDown();
+            }
+        }
+    }
+
+    @Test
+    void snapshotsContainerValuesWithoutCompletingTheOriginalUnitOfWork() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 5000)) {
+            Exchange exchange = new DefaultExchange(context);
+            AtomicInteger completions = new AtomicInteger();
+            UnitOfWork originalUnitOfWork = proxy(UnitOfWork.class, (method, args) -> {
+                if ("done".equals(method.getName())) {
+                    completions.incrementAndGet();
+                }
+                return defaultValue(method.getReturnType());
+            });
+            exchange.getExchangeExtension().setUnitOfWork(originalUnitOfWork);
+            List<String> body = new ArrayList<>(List.of("before"));
+            exchange.getMessage().setBody(Map.of("items", body));
+            CountDownLatch release = new CountDownLatch(1);
+            CountDownLatch callback = new CountDownLatch(1);
+            try {
+                executor.process(exchange, doneSync -> callback.countDown(), snapshot -> () -> {
+                    assertThat(snapshot.getUnitOfWork()).isNull();
+                    assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
+                    assertThat(snapshot.getMessage().getBody(Map.class)).containsEntry("items", List.of("before"));
+                    return CompletableFuture.completedFuture(null);
+                });
+                body.add("after");
+            } finally {
+                release.countDown();
+            }
+            assertThat(callback.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(exchange.getException()).isNull();
+            assertThat(exchange.getUnitOfWork()).isSameAs(originalUnitOfWork);
+            assertThat(completions).hasValue(0);
+        }
+    }
+
+    @Test
+    void blockedRoutingCallbackCannotStallAnotherAuthorizationDeadline() throws Exception {
+        try (var context = TestContext.create(); var executor = new AuthorizationAsyncExecutor(context, this, 1, 2, 200)) {
+            CountDownLatch callbackEntered = new CountDownLatch(1);
+            CountDownLatch releaseCallback = new CountDownLatch(1);
+            CountDownLatch secondCallback = new CountDownLatch(1);
+            Exchange first = new DefaultExchange(context);
+            Exchange second = new DefaultExchange(context);
+            try {
+                executor.process(first, doneSync -> {
+                    callbackEntered.countDown();
+                    try {
+                        assertThat(releaseCallback.await(5, TimeUnit.SECONDS)).isTrue();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }, snapshot -> CompletableFuture::new);
+                assertThat(callbackEntered.await(5, TimeUnit.SECONDS)).isTrue();
+                executor.process(second, doneSync -> secondCallback.countDown(), snapshot -> CompletableFuture::new);
+                assertThat(secondCallback.await(2, TimeUnit.SECONDS)).isTrue();
+                assertThat(second.getException()).isInstanceOf(TimeoutException.class);
+            } finally {
+                releaseCallback.countDown();
+            }
+        }
+    }
+
+    @Test
+    void resultCopyFailureStillCompletesTheCallbackExactlyOnce() throws Exception {
+        try (var context = TestContext.create();
+             var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 1000)) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.setIn(new DefaultMessage(context) {
+                @Override
+                public void setBody(Object body) {
+                    if ("replacement".equals(body)) {
+                        throw new IllegalStateException("Result copy failed");
+                    }
+                    super.setBody(body);
+                }
+            });
+            CountDownLatch callback = new CountDownLatch(1);
+            AtomicInteger calls = new AtomicInteger();
+            executor.process(exchange, doneSync -> {
+                calls.incrementAndGet();
+                callback.countDown();
+            },
+                    snapshot -> () -> {
+                        snapshot.getMessage().setBody("replacement");
+                        return CompletableFuture.completedFuture(null);
+                    });
+            assertThat(callback.await(2, TimeUnit.SECONDS)).isTrue();
+            assertThat(calls).hasValue(1);
+            assertThat(exchange.getException()).isInstanceOf(IllegalStateException.class).hasMessage("Result copy failed");
+        }
+    }
+
+    @Test
+    void virtualThreadFactoryCannotExceedWorkerBoundOrBlockSubmissionAfterTimeout() throws Exception {
+        try (var context = TestContext.create()) {
+            context.getExecutorServiceManager().setThreadPoolFactory(new DefaultThreadPoolFactory() {
+                @Override
+                public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory factory) {
+                    return super.newThreadPool(profile, new ThreadFactoryTypeAware() {
+                        @Override
+                        public boolean isVirtual() {
+                            return true;
+                        }
+
+                        @Override
+                        public Thread newThread(Runnable task) {
+                            return Thread.ofVirtual().unstarted(task);
+                        }
+                    });
+                }
+            });
+            try (var executor = new AuthorizationAsyncExecutor(context, this, 1, 1, 200)) {
+                CountDownLatch entered = new CountDownLatch(1);
+                CountDownLatch release = new CountDownLatch(1);
+                CountDownLatch firstDone = new CountDownLatch(1);
+                AtomicInteger actualInvocations = new AtomicInteger();
+                AuthorizationAsyncExecutor.Preparation work = snapshot -> () -> {
+                    actualInvocations.incrementAndGet();
+                    entered.countDown();
+                    awaitIgnoringInterrupt(release);
+                    return CompletableFuture.completedFuture(null);
+                };
+                try {
+                    executor.process(new DefaultExchange(context), doneSync -> firstDone.countDown(), work);
+                    assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
+                    assertThat(firstDone.await(2, TimeUnit.SECONDS)).isTrue();
+                    for (int index = 0; index < 3; index++) {
+                        CountDownLatch callback = new CountDownLatch(1);
+                        var submitted = CompletableFuture.supplyAsync(() -> executor.process(new DefaultExchange(context),
+                                doneSync -> callback.countDown(), work));
+                        submitted.get(1, TimeUnit.SECONDS);
+                        assertThat(callback.await(2, TimeUnit.SECONDS)).isTrue();
+                    }
+                    assertThat(actualInvocations).hasValue(1);
+                } finally {
+                    release.countDown();
+                }
+            }
+        }
+    }
+
+    private static void awaitIgnoringInterrupt(CountDownLatch latch) throws Exception {
+        boolean interrupted = false;
+        try {
+            for (;;) {
+                try {
+                    if (!latch.await(5, TimeUnit.SECONDS)) {
+                        throw new IllegalStateException("Test did not release work");
+                    }
+                    return;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    @FunctionalInterface
+    private interface Handler {
+        Object invoke(Method method, Object[] args) throws Throwable;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T proxy(Class<T> type, Handler handler) {
+        return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type }, (self, method, args) -> {
+            switch (method.getName()) {
+                case "hashCode":
+                    return System.identityHashCode(self);
+                case "equals":
+                    return self == args[0];
+                case "toString":
+                    return type.getSimpleName() + " stub";
+                default:
+                    return handler.invoke(method, args);
+            }
+        });
+    }
+
+    private static Object defaultValue(Class<?> type) {
+        if (type == boolean.class || type == Boolean.class) {
+            return false;
+        }
+        if (type == int.class) {
+            return 0;
+        }
+        if (type == long.class) {
+            return 0L;
+        }
+        if (type == double.class) {
+            return 0d;
+        }
+        if (type == float.class) {
+            return 0f;
+        }
+        if (type == short.class) {
+            return (short) 0;
+        }
+        if (type == byte.class) {
+            return (byte) 0;
+        }
+        if (type == char.class) {
+            return (char) 0;
+        }
+        if (type == List.class) {
+            return List.of();
+        }
+        if (type == Set.class) {
+            return Set.of();
+        }
+        if (type == Map.class) {
+            return Map.of();
+        }
+        return null;
+    }
+
+    /**
+     * camel-support has no CamelContext implementation to test with. This stub provides what the executor and the
+     * exchanges use: an executor service manager with real pools, the thread factory listeners and the pool factory the
+     * tests hook into, and an id generator for exchange copies.
+     */
+    private static final class TestContext {
+        private final List<ExecutorService> pools = new CopyOnWriteArrayList<>();
+        private final List<ExecutorServiceManager.ThreadFactoryListener> listeners = new CopyOnWriteArrayList<>();
+        private final UuidGenerator uuids = new DefaultUuidGenerator();
+        private volatile ThreadPoolFactory factory = new DefaultThreadPoolFactory();
+
+        static CamelContext create() {
+            return new TestContext().context();
+        }
+
+        private CamelContext context() {
+            ExtendedCamelContext extension
+                    = proxy(ExtendedCamelContext.class, (method, args) -> defaultValue(method.getReturnType()));
+            ExecutorServiceManager manager = proxy(ExecutorServiceManager.class, this::manage);
+            return proxy(CamelContext.class, (method, args) -> {
+                switch (method.getName()) {
+                    case "getExecutorServiceManager":
+                        return manager;
+                    case "getCamelContextExtension":
+                        return extension;
+                    case "getUuidGenerator":
+                        return uuids;
+                    case "close":
+                    case "stop":
+                    case "shutdown":
+                        pools.forEach(ExecutorService::shutdownNow);
+                        return null;
+                    default:
+                        return defaultValue(method.getReturnType());
+                }
+            });
+        }
+
+        private Object manage(Method method, Object[] args) {
+            switch (method.getName()) {
+                case "newThreadPool":
+                    if (args.length == 3 && args[2] instanceof ThreadPoolProfile profile) {
+                        return remember(factory.newThreadPool(profile, threadFactory(args[0], (String) args[1])));
+                    }
+                    throw new UnsupportedOperationException(method.toString());
+                case "newSingleThreadScheduledExecutor": {
+                    ThreadPoolProfile profile = new ThreadPoolProfile((String) args[1]);
+                    profile.setPoolSize(1);
+                    profile.setMaxPoolSize(1);
+                    profile.setMaxQueueSize(-1);
+                    profile.setKeepAliveTime(60L);
+                    profile.setTimeUnit(TimeUnit.SECONDS);
+                    profile.setAllowCoreThreadTimeOut(false);
+                    profile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
+                    return remember(factory.newScheduledThreadPool(profile, threadFactory(args[0], (String) args[1])));
+                }
+                case "newCachedThreadPool":
+                    return remember(factory.newCachedThreadPool(threadFactory(args[0], (String) args[1])));
+                case "shutdown":
+                    ((ExecutorService) args[0]).shutdown();
+                    return null;
+                case "shutdownNow":
+                    return ((ExecutorService) args[0]).shutdownNow();
+                case "addThreadFactoryListener":
+                    listeners.add((ExecutorServiceManager.ThreadFactoryListener) args[0]);
+                    return null;
+                case "setThreadPoolFactory":
+                    factory = (ThreadPoolFactory) args[0];
+                    return null;
+                case "getThreadPoolFactory":
+                    return factory;
+                default:
+                    return defaultValue(method.getReturnType());
+            }
+        }
+
+        private <T extends ExecutorService> T remember(T pool) {
+            pools.add(pool);
+            return pool;
+        }
+
+        private ThreadFactory threadFactory(Object source, String name) {
+            ThreadFactory answer = new CamelThreadFactory("Camel (test) thread ##counter# - #name#", name, true);
+            for (ExecutorServiceManager.ThreadFactoryListener listener : listeners) {
+                answer = listener.onNewThreadFactory(source, answer);
+            }
+            return answer;
+        }
+    }
+}

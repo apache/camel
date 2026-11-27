@@ -26,6 +26,14 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowoperationheader":
         case "allowOperationHeader": target.getConfiguration().setAllowOperationHeader(property(camelContext, boolean.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": target.getConfiguration().setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncprocessing":
+        case "asyncProcessing": target.getConfiguration().setAsyncProcessing(property(camelContext, boolean.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": target.getConfiguration().setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": target.getConfiguration().setAsyncTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "audience": target.getConfiguration().setAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "healthcheckexpirythreshold":
         case "healthCheckExpiryThreshold": target.getConfiguration().setHealthCheckExpiryThreshold(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
@@ -56,6 +64,14 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowoperationheader":
         case "allowOperationHeader": return boolean.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
+        case "asyncprocessing":
+        case "asyncProcessing": return boolean.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "audience": return java.lang.String.class;
         case "healthcheckexpirythreshold":
         case "healthCheckExpiryThreshold": return long.class;
@@ -82,6 +98,14 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowoperationheader":
         case "allowOperationHeader": return target.getConfiguration().isAllowOperationHeader();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return target.getConfiguration().getAsyncPoolSize();
+        case "asyncprocessing":
+        case "asyncProcessing": return target.getConfiguration().isAsyncProcessing();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return target.getConfiguration().getAsyncQueueSize();
+        case "asynctimeout":
+        case "asyncTimeout": return target.getConfiguration().getAsyncTimeout();
         case "audience": return target.getConfiguration().getAudience();
         case "healthcheckexpirythreshold":
         case "healthCheckExpiryThreshold": return target.getConfiguration().getHealthCheckExpiryThreshold();

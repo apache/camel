@@ -2374,6 +2374,134 @@ public interface OpenFgaEndpointBuilderFactory {
         }
 
         /**
+         * Fixed SDK submission worker count; workers do not await responses.
+         * Must be positive.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: producer (advanced)
+         * 
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder asyncPoolSize(int asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+        /**
+         * Fixed SDK submission worker count; workers do not await responses.
+         * Must be positive.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: producer (advanced)
+         * 
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder asyncPoolSize(String asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+        /**
+         * Offload authorization with bounded managed resources instead of
+         * blocking the routing thread.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param asyncProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder asyncProcessing(boolean asyncProcessing) {
+            doSetProperty("asyncProcessing", asyncProcessing);
+            return this;
+        }
+        /**
+         * Offload authorization with bounded managed resources instead of
+         * blocking the routing thread.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param asyncProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder asyncProcessing(String asyncProcessing) {
+            doSetProperty("asyncProcessing", asyncProcessing);
+            return this;
+        }
+        /**
+         * Maximum queued authorization submissions; saturation fails closed
+         * rather than running on the routing thread.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: producer (advanced)
+         * 
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder asyncQueueSize(int asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+        /**
+         * Maximum queued authorization submissions; saturation fails closed
+         * rather than running on the routing thread.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: producer (advanced)
+         * 
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder asyncQueueSize(String asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+        /**
+         * Total queued and running authorization deadline in milliseconds; must
+         * be positive.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: producer (advanced)
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
+         * Total queued and running authorization deadline in milliseconds; must
+         * be positive.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: producer (advanced)
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenFgaEndpointProducerBuilder asyncTimeout(String asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
