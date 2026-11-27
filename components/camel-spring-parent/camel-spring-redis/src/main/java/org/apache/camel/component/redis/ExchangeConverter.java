@@ -148,6 +148,22 @@ public class ExchangeConverter {
         return getInHeaderValue(exchange, RedisConstants.MAX, Double.class);
     }
 
+    /**
+     * The minimum score for ZREMRANGEBYSCORE: the Min header, or the Start header that this command used to read.
+     */
+    Double getMinOrStart(Exchange exchange) {
+        Double min = getMin(exchange);
+        return min != null ? min : getInHeaderValue(exchange, RedisConstants.START, Double.class);
+    }
+
+    /**
+     * The maximum score for ZREMRANGEBYSCORE: the Max header, or the End header that this command used to read.
+     */
+    Double getMaxOrEnd(Exchange exchange) {
+        Double max = getMax(exchange);
+        return max != null ? max : getInHeaderValue(exchange, RedisConstants.END, Double.class);
+    }
+
     Double getIncrement(Exchange exchange) {
         return getInHeaderValue(exchange, RedisConstants.INCREMENT, Double.class);
     }

@@ -2,7 +2,7 @@
 :doctitle: IBM watsonx.ai
 :shortname: ibm-watsonx-ai
 :artifactid: camel-ibm-watsonx-ai
-:description: Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
+:description: Generate text, chat, embed, rerank and tokenize text, extract and classify documents, detect harmful content and forecast time series with the foundation models and deployments of IBM watsonx.ai.
 :since: 4.18
 :supportlevel: Stable
 :tabs-sync-option:

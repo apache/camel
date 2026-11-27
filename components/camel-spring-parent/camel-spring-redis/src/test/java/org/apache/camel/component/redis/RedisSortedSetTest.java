@@ -230,6 +230,30 @@ public class RedisSortedSetTest extends RedisTestSupport {
     }
 
     @Test
+    public void shouldExecuteZREMRANGEBYSCOREWithMinAndMax() {
+        sendHeaders(
+                RedisConstants.COMMAND, "ZREMRANGEBYSCORE",
+                RedisConstants.KEY, "key",
+                RedisConstants.MIN, 1.5,
+                RedisConstants.MAX, 2.5);
+
+        verify(zSetOperations).removeRangeByScore("key", 1.5, 2.5);
+    }
+
+    @Test
+    public void shouldPreferMinAndMaxOverStartAndEndForZREMRANGEBYSCORE() {
+        sendHeaders(
+                RedisConstants.COMMAND, "ZREMRANGEBYSCORE",
+                RedisConstants.KEY, "key",
+                RedisConstants.MIN, 0.5,
+                RedisConstants.MAX, 3.5,
+                RedisConstants.START, 1,
+                RedisConstants.END, 2);
+
+        verify(zSetOperations).removeRangeByScore("key", 0.5, 3.5);
+    }
+
+    @Test
     public void shouldExecuteZREVRANGE() {
         Set<String> keys = new HashSet<>();
         keys.add("key2");

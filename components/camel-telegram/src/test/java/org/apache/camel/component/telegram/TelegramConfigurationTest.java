@@ -22,6 +22,8 @@ import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that the configuration is loaded properly.
@@ -43,6 +45,19 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
         assertEquals("127.0.0.1", config.getProxyHost());
         assertEquals(Integer.valueOf(1234), config.getProxyPort());
         assertEquals(TelegramProxyType.SOCKS5, config.getProxyType());
+    }
+
+    @Test
+    public void testToStringMasksTheAuthorizationToken() {
+        TelegramConfiguration config = new TelegramConfiguration();
+        config.setType("bots");
+        config.setAuthorizationToken("123456:secret-bot-token");
+        config.setChatId("12345");
+
+        String text = config.toString();
+        assertFalse(text.contains("secret-bot-token"), text);
+        assertTrue(text.contains("authorizationToken='xxxxxx'"), text);
+        assertTrue(text.contains("chatId='12345'"), text);
     }
 
     @Override

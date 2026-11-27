@@ -129,9 +129,13 @@ check to ensure proper Client ID lengths. This is a configuration-time check and
 is not required to connect to MQTT v3.1 Servers.
 
 MQTT Server authentication can be configured using the `username` and `password`
-properties. TLS configuration can also be configured by providing an
-`SSLContextParameters` instance or through the `useGlobalSslContextParameters`
-flag.
+properties. An `ssl://` server in the `servers` list is checked with the default
+trust store of the JVM, which the `javax.net.ssl.*` system properties configure
+(for example `javax.net.ssl.trustStore`, and `javax.net.ssl.keyStore` for a client
+certificate). The `sslContextParameters` and `useGlobalSslContextParameters` options
+are not supported: Eclipse Tahu creates its MQTT clients without these TLS settings,
+so an endpoint with `sslContextParameters`, or with `useGlobalSslContextParameters=true`
+and a global `SSLContextParameters`, fails to start.
 
 An MQTT connection keep alive timeout can be configured using `keepAliveTimeout`.
 

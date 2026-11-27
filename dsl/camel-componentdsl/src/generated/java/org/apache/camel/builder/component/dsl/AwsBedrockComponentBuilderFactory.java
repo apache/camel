@@ -91,6 +91,30 @@ public interface AwsBedrockComponentBuilderFactory {
     
         
         /**
+         * How converseStream applies the guardrail of the guardrailIdentifier
+         * option to the streamed response. With sync, Bedrock buffers the
+         * chunks and checks them with the guardrail before it sends them. With
+         * async, Bedrock sends the chunks at once and checks them in the
+         * background, so chunks that the guardrail would block can be sent
+         * before it blocks the rest, and masking of sensitive information is
+         * not supported. Not used when the CamelAwsBedrockGuardrailConfig
+         * header is set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: sync
+         * Group: producer
+         * 
+         * @param guardrailStreamProcessingMode the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockComponentBuilder guardrailStreamProcessingMode(java.lang.String guardrailStreamProcessingMode) {
+            doSetProperty("guardrailStreamProcessingMode", guardrailStreamProcessingMode);
+            return this;
+        }
+    
+        
+        /**
          * Whether converse and converseStream ask for the trace of the
          * guardrail of the guardrailIdentifier option, which the producer gives
          * in the CamelAwsBedrockGuardrailTrace header. Not used when the
@@ -649,6 +673,7 @@ public interface AwsBedrockComponentBuilderFactory {
             switch (name) {
             case "configuration": ((BedrockComponent) component).setConfiguration((org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration) value); return true;
             case "guardrailIdentifier": getOrCreateConfiguration((BedrockComponent) component).setGuardrailIdentifier((java.lang.String) value); return true;
+            case "guardrailStreamProcessingMode": getOrCreateConfiguration((BedrockComponent) component).setGuardrailStreamProcessingMode((java.lang.String) value); return true;
             case "guardrailTrace": getOrCreateConfiguration((BedrockComponent) component).setGuardrailTrace((boolean) value); return true;
             case "guardrailVersion": getOrCreateConfiguration((BedrockComponent) component).setGuardrailVersion((java.lang.String) value); return true;
             case "includeStreamingMetadata": getOrCreateConfiguration((BedrockComponent) component).setIncludeStreamingMetadata((boolean) value); return true;

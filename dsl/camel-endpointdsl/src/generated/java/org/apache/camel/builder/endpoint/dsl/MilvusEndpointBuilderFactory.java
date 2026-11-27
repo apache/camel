@@ -160,6 +160,130 @@ public interface MilvusEndpointBuilderFactory {
             return this;
         }
         /**
+         * The path of a PEM file with the certificate authority that the client
+         * trusts for mutual TLS. Set it together with clientPemPath and
+         * clientKeyPath; for one-way TLS use serverPemPath instead. Not used
+         * when a MilvusClient is set with MilvusConfiguration.setClient().
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param caPemPath the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder caPemPath(String caPemPath) {
+            doSetProperty("caPemPath", caPemPath);
+            return this;
+        }
+        /**
+         * The path of a PEM file with the private key (PKCS#8) of the client
+         * for mutual TLS. Set it together with caPemPath and clientPemPath. Not
+         * used when a MilvusClient is set with MilvusConfiguration.setClient().
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param clientKeyPath the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder clientKeyPath(String clientKeyPath) {
+            doSetProperty("clientKeyPath", clientKeyPath);
+            return this;
+        }
+        /**
+         * The path of a PEM file with the certificate of the client for mutual
+         * TLS. Set it together with caPemPath and clientKeyPath. Not used when
+         * a MilvusClient is set with MilvusConfiguration.setClient().
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param clientPemPath the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder clientPemPath(String clientPemPath) {
+            doSetProperty("clientPemPath", clientPemPath);
+            return this;
+        }
+        /**
+         * Whether to connect to the Milvus server with TLS. If not set, the
+         * connection is plaintext, and the token is sent in clear text, unless
+         * serverPemPath, or caPemPath with clientPemPath and clientKeyPath, is
+         * set. Without these options, the client trusts the certificate
+         * authorities of the JVM. Not used when a MilvusClient is set with
+         * MilvusConfiguration.setClient().
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Whether to connect to the Milvus server with TLS. If not set, the
+         * connection is plaintext, and the token is sent in clear text, unless
+         * serverPemPath, or caPemPath with clientPemPath and clientKeyPath, is
+         * set. Without these options, the client trusts the certificate
+         * authorities of the JVM. Not used when a MilvusClient is set with
+         * MilvusConfiguration.setClient().
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder secure(String secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * The name that the client expects in the certificate of the Milvus
+         * server (the authority of the gRPC channel), when it differs from the
+         * host. Only used with serverPemPath, where the host is used if not
+         * set, or with mutual TLS. Not used when a MilvusClient is set with
+         * MilvusConfiguration.setClient().
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverName the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder serverName(String serverName) {
+            doSetProperty("serverName", serverName);
+            return this;
+        }
+        /**
+         * The path of a PEM file with the certificate of the Milvus server, or
+         * of the certificate authority that signed it, that the client trusts
+         * for one-way TLS. Setting it connects with TLS. Not used when a
+         * MilvusClient is set with MilvusConfiguration.setClient().
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverPemPath the value to set
+         * @return the dsl builder
+         */
+        default MilvusEndpointBuilder serverPemPath(String serverPemPath) {
+            doSetProperty("serverPemPath", serverPemPath);
+            return this;
+        }
+        /**
          * The token that the client sends to authenticate with Milvus: a user
          * name and password joined by a colon, or an API key of Zilliz Cloud.
          * If not set, the client sends no credentials. Not used when a
@@ -167,7 +291,7 @@ public interface MilvusEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: security
          * 
          * @param token the value to set
          * @return the dsl builder

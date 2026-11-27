@@ -2,7 +2,7 @@
 :doctitle: Google Cloud Functions
 :shortname: google-functions
 :artifactid: camel-google-functions
-:description: Manage and invoke Google Cloud Functions
+:description: Manage and call functions in Google Cloud Functions.
 :since: 3.9
 :supportlevel: Stable
 :tabs-sync-option:
@@ -630,5 +630,3 @@ YAML::
             uri: mock:result
 ----
 ====
-
-

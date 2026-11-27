@@ -71,9 +71,28 @@ public interface AzureIothubComponentBuilderFactory {
     
         
         /**
+         * Content encoding applied to telemetry messages. Set it to an empty
+         * value to send telemetry without a content encoding, for example for a
+         * binary body such as Avro or Protobuf.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: UTF-8
+         * Group: producer
+         * 
+         * @param contentEncoding the value to set
+         * @return the dsl builder
+         */
+        default AzureIothubComponentBuilder contentEncoding(java.lang.String contentEncoding) {
+            doSetProperty("contentEncoding", contentEncoding);
+            return this;
+        }
+    
+        
+        /**
          * The content type of the telemetry message, which IoT Hub message
-         * routing needs to query the body. The producer always sets the content
-         * encoding to UTF-8.
+         * routing needs to query the body. The contentEncoding option sets the
+         * content encoding.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -157,8 +176,10 @@ public interface AzureIothubComponentBuilderFactory {
         
         /**
          * How long the producer waits for IoT Hub to acknowledge a telemetry
-         * message, and for each device twin request: getting the twin and
-         * updating its reported properties.
+         * message, and for each device twin request: getting the twin, updating
+         * its reported properties, and the subscription to desired properties
+         * when a device client is created. Opening the device client uses the
+         * retry policy of the Azure IoT SDK and is not limited by this timeout.
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
@@ -236,8 +257,9 @@ public interface AzureIothubComponentBuilderFactory {
         /**
          * The connection string of the device, with its HostName, DeviceId and
          * SharedAccessKey. The producer opens one device client per hub, device
-         * and module of the connection string, and reuses it. The
-         * CamelAzureIoTHubConnectionString header replaces this option.
+         * and module of the connection string, and reuses it; an HTTPS endpoint
+         * uses a client of its own. The CamelAzureIoTHubConnectionString header
+         * replaces this option.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -272,6 +294,7 @@ public interface AzureIothubComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((IoTHubComponent) component).setConfiguration((org.apache.camel.component.azure.iothub.IoTHubConfiguration) value); return true;
+            case "contentEncoding": getOrCreateConfiguration((IoTHubComponent) component).setContentEncoding((java.lang.String) value); return true;
             case "contentType": getOrCreateConfiguration((IoTHubComponent) component).setContentType((java.lang.String) value); return true;
             case "deliveryMode": getOrCreateConfiguration((IoTHubComponent) component).setDeliveryMode((org.apache.camel.component.azure.iothub.IoTHubDeliveryMode) value); return true;
             case "lazyStartProducer": ((IoTHubComponent) component).setLazyStartProducer((boolean) value); return true;

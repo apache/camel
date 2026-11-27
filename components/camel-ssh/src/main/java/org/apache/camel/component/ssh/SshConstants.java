@@ -16,28 +16,28 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.io.InputStream;
-
 import org.apache.camel.spi.Metadata;
 
 public interface SshConstants {
 
-    @Metadata(description = "The user name", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The user name that the producer logs in with, instead of the username option. Used only"
+                            + " when allowUsernameAndPasswordFromHeaders=true; otherwise ignored. It applies to every kind"
+                            + " of authentication: with certResource or keyPairProvider, the configured key logs in as"
+                            + " this user.",
+              javaType = "String")
     String USERNAME_HEADER = "CamelSshUsername";
-    @Metadata(description = "The password", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The password that the producer uses for password authentication, instead of the password"
+                            + " option. Used only when allowUsernameAndPasswordFromHeaders=true; otherwise ignored. It is"
+                            + " not used when certResource or keyPairProvider is set.",
+              javaType = "String", secret = true)
     String PASSWORD_HEADER = "CamelSshPassword";
-
-    /**
-     * The value of this header is a {@link InputStream} with the standard error stream of the executable.
-     */
-    @Metadata(javaType = "InputStream")
+    @Metadata(description = "The standard error of the command, as an InputStream.", javaType = "InputStream")
     String STDERR = "CamelSshStderr";
-
-    /**
-     * The value of this header is the exit value that is returned, after the execution. By convention a non-zero status
-     * exit value indicates abnormal termination. <br>
-     * <b>Note that the exit value is OS dependent.</b>
-     */
-    @Metadata(javaType = "Integer", important = true)
+    @Metadata(description = "The exit status of the command. By convention, a value other than 0 means that the command"
+                            + " failed, but the exchange does not fail for it. With channelType=shell it is usually null, as"
+                            + " the shell is still running when the output is read.",
+              javaType = "Integer", important = true)
     String EXIT_VALUE = "CamelSshExitValue";
 }

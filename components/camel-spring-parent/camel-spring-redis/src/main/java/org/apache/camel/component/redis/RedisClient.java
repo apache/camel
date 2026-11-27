@@ -446,6 +446,10 @@ public class RedisClient {
         redisTemplate.opsForZSet().removeRangeByScore(key, start, end);
     }
 
+    public void zremrangebyscore(String key, Double min, Double max) {
+        redisTemplate.opsForZSet().removeRangeByScore(key, min, max);
+    }
+
     public Object zrevrange(String key, Long start, Long end, Boolean withScore) {
         if (withScore != null && withScore) {
             return redisTemplate.opsForZSet().reverseRangeWithScores(key, start, end);

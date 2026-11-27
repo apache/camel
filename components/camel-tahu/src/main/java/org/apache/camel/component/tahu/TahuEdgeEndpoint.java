@@ -40,7 +40,7 @@ import org.eclipse.tahu.message.model.EdgeNodeDescriptor;
 import org.eclipse.tahu.message.model.SparkplugBPayloadMap;
 
 /**
- * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+ * Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT servers using Eclipse Tahu.
  */
 @UriEndpoint(firstVersion = "4.8.0",
              scheme = TahuConstants.EDGE_NODE_SCHEME,
@@ -58,37 +58,46 @@ import org.eclipse.tahu.message.model.SparkplugBPayloadMap;
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilterStrategyAware {
 
-    @UriPath(label = "producer", description = "ID of the group")
+    @UriPath(label = "producer", description = "The Sparkplug group ID of the Edge Node.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME, required = true)
     private final String groupId;
 
-    @UriPath(label = "producer", description = "ID of the edge node")
+    @UriPath(label = "producer", description = "The Sparkplug Edge Node ID. With the groupId, it identifies the Edge Node.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME, required = true)
     private final String edgeNode;
 
-    @UriPath(label = "producer", description = "ID of this edge node device. Applies to the device endpoint only.")
+    @UriPath(label = "producer",
+             description = "The Sparkplug device ID of a Device of the Edge Node. With it, the endpoint is a Device endpoint;"
+                           + " without it, an Edge Node endpoint.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private final String deviceId;
 
     @UriParam(label = "producer",
-              description = "Host ID of the primary host application for this edge node. Applies to the edge node"
-                            + " endpoint only.")
+              description = "The host ID of the primary Host Application of the Edge Node. If set, the Edge Node waits for"
+                            + " the STATE message that says this Host Application is online before it publishes its birth"
+                            + " messages, and disconnects from a server when it goes offline. Used by an Edge Node endpoint"
+                            + " only.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String primaryHostId;
 
     @UriParam(label = "producer",
-              description = "ID of each device connected to this edge node, as a comma-separated list. Applies to the"
-                            + " edge node endpoint only.")
+              description = "The device IDs of the Devices of the Edge Node, as a comma-separated list. Used by an Edge Node"
+                            + " endpoint only.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String deviceIds;
 
     @UriParam(label = "producer",
-              description = "Tahu SparkplugBPayloadMap to configure metric data types for this edge node or device. Note that this payload is used exclusively as a Sparkplug B spec-compliant configuration for all possible edge node or device metric names, aliases, and data types. This configuration is required to publish proper Sparkplug B NBIRTH and DBIRTH payloads.")
+              description = "The Tahu SparkplugBPayloadMap with every metric of the Edge Node or Device: its name, data"
+                            + " type and initial value. The NBIRTH or DBIRTH message has these metrics, and the producer"
+                            + " updates their values with each payload it publishes, so a later birth message has the last"
+                            + " values.")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME, required = true)
     private SparkplugBPayloadMap metricDataTypePayloadMap;
 
     @UriParam(label = "producer,advanced",
-              description = "Flag enabling support for metric aliases. Applies to the edge node endpoint only.",
+              description = "Whether to use metric aliases: Tahu gives each metric a generated alias in the birth"
+                            + " messages, and the data messages carry the alias instead of the name. Used by an Edge Node"
+                            + " endpoint only.",
               defaultValue = "false")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private boolean useAliases = false;
@@ -101,13 +110,18 @@ public class TahuEdgeEndpoint extends TahuDefaultEndpoint implements HeaderFilte
     private volatile HeaderFilterStrategy headerFilterStrategy;
 
     @UriParam(label = "producer,advanced",
-              description = "To use a specific org.eclipse.tahu.message.BdSeqManager implementation to manage edge node birth-death sequence numbers. Applies to the edge node endpoint only.",
+              description = "The org.eclipse.tahu.message.BdSeqManager that keeps the birth-death sequence number (bdSeq)"
+                            + " of the Edge Node from one MQTT session to the next. If not set, a CamelBdSeqManager keeps it"
+                            + " in a file below the bdSeqNumPath directory. Used by an Edge Node endpoint only.",
               defaultValue = "org.apache.camel.component.tahu.CamelBdSeqManager")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private volatile BdSeqManager bdSeqManager;
 
     @UriParam(label = "producer,advanced",
-              description = "Path for Sparkplug B NBIRTH/NDEATH sequence number persistence files. This path will contain files named as the Edge Node ID followed by \"-bdSeqNum\" and must be writable by the executing process' user. Applies to the edge node endpoint only.",
+              description = "The directory in which the default bdSeqManager keeps the next birth-death sequence number"
+                            + " of the Edge Node, in the file groupId/edgeNode-bdSeqNum below it, named after the IDs of the"
+                            + " Edge Node. The process must be able to write to it. Not used when the bdSeqManager option is"
+                            + " set.",
               defaultValue = "${sys:java.io.tmpdir}/CamelTahuTemp")
     @Metadata(applicableFor = TahuConstants.EDGE_NODE_SCHEME)
     private String bdSeqNumPath;

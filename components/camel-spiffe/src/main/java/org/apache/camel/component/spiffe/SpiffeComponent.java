@@ -30,7 +30,7 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("spiffe")
 public class SpiffeComponent extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The shared configuration of the endpoints. Each endpoint starts from a copy of it.")
     private SpiffeConfiguration configuration = new SpiffeConfiguration();
 
     public SpiffeComponent() {
@@ -51,9 +51,6 @@ public class SpiffeComponent extends HealthCheckComponent {
         return endpoint;
     }
 
-    /**
-     * The component configuration.
-     */
     public SpiffeConfiguration getConfiguration() {
         return configuration;
     }

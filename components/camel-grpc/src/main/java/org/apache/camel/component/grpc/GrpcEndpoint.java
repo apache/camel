@@ -31,7 +31,7 @@ import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Expose gRPC endpoints and access external gRPC endpoints.
+ * Expose gRPC services and call remote gRPC services, with Protocol Buffers messages over HTTP/2.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:host:port/service",
              category = { Category.RPC }, headersClass = GrpcConstants.class)

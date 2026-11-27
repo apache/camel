@@ -50,8 +50,10 @@ public class RestPostmanConfiguration implements Cloneable {
     private String collectionSourceType = "auto";
 
     @UriParam(label = "common")
-    @Metadata(description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value"
-                            + " derived from the request URL in the collection.")
+    @Metadata(description = "The base path of the API, for example \"`/v2`\", in front of the path of every request,"
+                            + " and the path the consumer serves the requests under. If not set, the context path of"
+                            + " the REST configuration is used, or else the path that the host of the request URL"
+                            + " carries, such as /v1 when {{baseUrl}} is https://api.example.com/v1.")
     private String basePath = "";
 
     @UriParam(label = "common", prefix = "variable.", multiValue = true)
@@ -60,8 +62,9 @@ public class RestPostmanConfiguration implements Cloneable {
     private Map<String, Object> variables;
 
     @UriParam(label = "common,advanced")
-    @Metadata(description = "Whether to fail if a {{variable}} placeholder used by the selected request cannot be"
-                            + " resolved. When false the placeholder is left as-is.")
+    @Metadata(description = "Whether to fail when a {{variable}} placeholder used by a selected request cannot be"
+                            + " resolved. When false the placeholder is left as-is in headers and bodies, while one"
+                            + " left in the URL, the query parameters, Accept or Content-Type fails anyway.")
     private boolean failOnUnresolvedVariable;
 
     @UriParam(label = "common,security", enums = "auto,enabled,disabled", defaultValue = "auto")
@@ -75,28 +78,30 @@ public class RestPostmanConfiguration implements Cloneable {
     private String resolveVariablesFromProperties = RESOLVE_VARIABLES_FROM_PROPERTIES_AUTO;
 
     @UriParam(label = "producer")
-    @Metadata(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
-                            + " `http[s]://hostname[:port]`. If set overrides any value derived from the collection.")
+    @Metadata(description = "The scheme, host name and port to send the requests to, in the form"
+                            + " `http[s]://hostname[:port]`. If set, it replaces the host of every request URL in the"
+                            + " collection. If not set, the host comes from the request URL, then from the REST"
+                            + " configuration, and for a collection loaded over HTTP from the address it was loaded"
+                            + " from.")
     private String host;
 
     @UriParam(label = "producer,advanced")
-    @Metadata(description = "Name of the Camel component that will perform the requests. The component must be"
-                            + " present in Camel registry and it must implement RestProducerFactory service provider"
-                            + " interface. If not set CLASSPATH is searched for single component that implements"
-                            + " RestProducerFactory SPI.")
+    @Metadata(description = "Name of the Camel component that performs the HTTP requests, which must implement the"
+                            + " RestProducerFactory SPI, as http, vertx-http, undertow and netty-http do. If not set, a"
+                            + " component with that capability already in the Camel context or the registry is used,"
+                            + " or else the first of http, vertx-http, undertow and netty-http on the classpath.")
     private String componentName;
 
     @UriParam(label = "producer,advanced")
-    @Metadata(description = "What payload type this component is capable of consuming. This equates to the value of"
-                            + " the `Accept` HTTP header. A Postman collection does not describe responses, so unlike"
-                            + " an OpenAPI specification there is nothing to infer this from and it is unset by"
-                            + " default.")
+    @Metadata(description = "The media type accepted in the response, sent as the `Accept` HTTP header. If not set,"
+                            + " the Accept header of the request in the collection is used, when it has one. A Postman"
+                            + " collection does not describe responses, so there is nothing else to infer it from.")
     private String consumes;
 
     @UriParam(label = "producer,advanced")
-    @Metadata(description = "What payload type this component is producing. This equates to the value of the"
-                            + " `Content-Type` HTTP header. If not set it is inferred from the body mode of the"
-                            + " request in the collection.")
+    @Metadata(description = "The media type of the request body, sent as the `Content-Type` HTTP header. If not set,"
+                            + " the Content-Type header of the request in the collection is used, or else a type"
+                            + " inferred from its body mode, such as application/json for a raw JSON body.")
     private String produces;
 
     @UriParam(label = "producer,advanced", enums = "placeholder,literal", defaultValue = "placeholder")
@@ -114,44 +119,54 @@ public class RestPostmanConfiguration implements Cloneable {
     private boolean runFailFast = true;
 
     @UriParam(label = "consumer,advanced")
-    @Metadata(description = "Name of the Camel component that will service the requests. The component must be"
-                            + " present in Camel registry and it must be able to service contract-first REST"
-                            + " consumers, as platform-http does. If not set CLASSPATH is searched for a single"
-                            + " component with that capability.")
+    @Metadata(description = "Name of the Camel component that serves the HTTP requests, which must implement the"
+                            + " RestOpenApiConsumerFactory SPI, as platform-http does. If not set, a component with"
+                            + " that capability already in the Camel context is used, or else platform-http.")
     private String consumerComponentName;
 
     @UriParam(label = "consumer", enums = "fail,ignore,mock", defaultValue = "fail")
-    @Metadata(description = "Whether the consumer should fail, ignore or return a mock response for requests in the"
-                            + " collection that are not mapped to a corresponding route.",
+    @Metadata(description = "What the consumer does with a request of the collection that has no route consuming"
+                            + " from the direct endpoint named after the request id, such as direct:getUserById. With fail the route does not start, with ignore a warning is"
+                            + " logged and such a request goes on to the route of this endpoint as is, and with mock"
+                            + " it is answered with a saved example response of the collection, or else a file found"
+                            + " by mockIncludePattern. If not set, it is mock when the Camel profile is dev, and fail"
+                            + " otherwise.",
               defaultValue = "fail")
     private String missingRequest;
 
     @UriParam(label = "consumer,advanced", defaultValue = "classpath:camel-mock/**")
-    @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using"
-                            + " Ant-path style pattern. Multiple patterns can be specified separated by comma."
-                            + " Saved example responses in the collection are preferred over these files.",
+    @Metadata(description = "Comma separated Ant-style patterns of the files that missingRequest=mock answers from,"
+                            + " for a request without a saved example response in the collection. A file is used when"
+                            + " its path without the extension ends with the request path, such as camel-mock/pets/1.json"
+                            + " for GET /pets/1.",
               defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern = "classpath:camel-mock/**";
 
     @UriParam(label = "consumer")
-    @Metadata(description = "Whether to enable validation of the client request. A Postman collection has no schemas,"
-                            + " so this is a best-effort check of required headers, query parameters and body"
-                            + " presence only.")
+    @Metadata(description = "Whether the consumer validates the incoming requests. A Postman collection has no"
+                            + " schemas, so this is a best-effort check: the headers the request declares, the query"
+                            + " parameters that have a value in the collection, a body when the collection has one,"
+                            + " and the media types. It is also enabled by clientRequestValidation of the REST"
+                            + " configuration.")
     private boolean clientRequestValidation;
 
     @UriParam(label = "consumer")
-    @Metadata(description = "Sets the context-path to use for servicing the Postman collection document. The document"
-                            + " is served with all auth blocks and all secret variables removed.")
+    @Metadata(description = "The path, below the base path, on which the consumer serves the collection document as"
+                            + " JSON, for example /postman.json. The auth blocks are removed from the document and"
+                            + " the values of secret variables are replaced. If not set, the document is not served.")
     private String apiContextPath;
 
     @UriParam(label = "consumer,advanced")
-    @Metadata(description = "Filters which requests of the collection are used, as comma separated Ant-style patterns"
-                            + " matched against the folder qualified request id. Prefix a pattern with ! to exclude.")
+    @Metadata(description = "Filters which requests of the collection are used, by the consumer and the producer, as"
+                            + " comma separated Ant-style patterns matched against the folder qualified slug of the"
+                            + " request, such as users/getUserById. Prefix a pattern with ! to exclude; with only"
+                            + " exclusions, every other request is kept.")
     private String requestFilter;
 
     @UriParam(label = "consumer,security", displayName = "OAuth Profile")
     @Metadata(description = "The OAuth profile to use for authenticating the incoming requests. The profile is"
-                            + " enforced by the consumer component servicing the requests.")
+                            + " enforced by the consumer component servicing the requests, and the route fails to"
+                            + " start when that component cannot enforce one.")
     private String oauthProfile;
 
     @UriParam(label = "security", security = "secret")
@@ -192,19 +207,25 @@ public class RestPostmanConfiguration implements Cloneable {
     private long requestTimeout = 30000;
 
     @UriParam(label = "advanced", defaultValue = "-1")
-    @Metadata(description = "How long a loaded collection is cached, in milliseconds. Use -1 to cache for the"
-                            + " lifetime of the component.",
+    @Metadata(description = "How long, in milliseconds, a loaded collection stays in the cache of the component, so"
+                            + " that endpoints over the same collection load it once. A negative value keeps it until"
+                            + " the component stops. The collection is read when a producer or consumer is created, so"
+                            + " a running endpoint does not pick up changes.",
               defaultValue = "-1")
     private long collectionCacheTtl = -1;
 
     @UriParam(label = "security")
-    @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS"
-                            + " parameters set in the Camel context. These parameters are used both when fetching a"
-                            + " collection from the Postman cloud and by the delegate producer.")
+    @Metadata(description = "The TLS configuration used when fetching a collection from the Postman cloud, and set on"
+                            + " the component that performs the requests when this endpoint creates it, as one already"
+                            + " in the Camel context is not changed. If not set, see"
+                            + " useGlobalSslContextParameters.")
     private SSLContextParameters sslContextParameters;
 
     @UriParam(label = "security", defaultValue = "false")
-    @Metadata(description = "Enable usage of global SSL context parameters.", defaultValue = "false")
+    @Metadata(description = "Whether to use the global SSL context parameters of the Camel context when"
+                            + " sslContextParameters is not set, when fetching a collection from the Postman cloud and"
+                            + " for the component that performs the requests when this endpoint creates it.",
+              defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
     public String getCollectionSourceType() {
