@@ -68,7 +68,7 @@ or removes its row.
 | camel-alibaba-sms | alibaba-sms | yes |
 | camel-amqp | amqp |  |
 | camel-apicurio-registry | apicurio-registry |  |
-| camel-arangodb | arangodb |  |
+| camel-arangodb | arangodb | yes |
 | camel-as2 | as2 |  |
 | camel-asterisk | asterisk |  |
 | camel-atmosphere-websocket | atmosphere-websocket |  |

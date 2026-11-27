@@ -242,8 +242,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb when used as a Document Database, or as a
-     * Graph Database
+     * Store, find, update and delete documents, vertices and edges in an
+     * ArangoDB database, and run AQL queries.
      * 
      * Category: database
      * Since: 3.5
