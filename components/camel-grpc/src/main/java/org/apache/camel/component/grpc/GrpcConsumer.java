@@ -17,6 +17,7 @@
 package org.apache.camel.component.grpc;
 
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import io.grpc.BindableService;
@@ -144,7 +145,8 @@ public class GrpcConsumer extends DefaultConsumer {
 
             serverBuilder = serverBuilder.intercept(new JwtServerInterceptor(
                     configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
-                    configuration.getJwtIssuer(), configuration.getJwtSubject()));
+                    configuration.getJwtIssuer(), configuration.getJwtSubject(),
+                    Duration.ofMillis(configuration.getJwtMaxTokenAge())));
         }
 
         // To configure RST_STREAM settings we need valid configuration for both maxRstFramesPerWindow & maxRstPeriodSeconds

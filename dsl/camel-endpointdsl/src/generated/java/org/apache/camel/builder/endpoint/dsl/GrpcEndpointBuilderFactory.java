@@ -840,6 +840,46 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum age of a JSON Web Token that the consumer accepts, in
+         * milliseconds, from its iat (issued at) claim. When set, the consumer
+         * rejects tokens that are older, or that have no iat claim. The
+         * consumer always rejects a token whose exp (expires at) claim has
+         * passed. The default 0 does not check the age, so tokens without an
+         * exp claim are valid until jwtSecret changes. Used when
+         * authenticationType is JWT.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: security
+         * 
+         * @param jwtMaxTokenAge the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder jwtMaxTokenAge(long jwtMaxTokenAge) {
+            doSetProperty("jwtMaxTokenAge", jwtMaxTokenAge);
+            return this;
+        }
+        /**
+         * The maximum age of a JSON Web Token that the consumer accepts, in
+         * milliseconds, from its iat (issued at) claim. When set, the consumer
+         * rejects tokens that are older, or that have no iat claim. The
+         * consumer always rejects a token whose exp (expires at) claim has
+         * passed. The default 0 does not check the age, so tokens without an
+         * exp claim are valid until jwtSecret changes. Used when
+         * authenticationType is JWT.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: security
+         * 
+         * @param jwtMaxTokenAge the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder jwtMaxTokenAge(String jwtMaxTokenAge) {
+            doSetProperty("jwtMaxTokenAge", jwtMaxTokenAge);
+            return this;
+        }
+        /**
          * The secret key of the HMAC algorithm that signs the JSON Web Token on
          * the producer and verifies it on the consumer. Required when
          * authenticationType is JWT.
@@ -1640,6 +1680,46 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder jwtSubject(String jwtSubject) {
             doSetProperty("jwtSubject", jwtSubject);
+            return this;
+        }
+        /**
+         * How long a JSON Web Token that the producer sends is valid, in
+         * milliseconds: the token has the iat (issued at) claim and an exp
+         * (expires at) claim this much later. The producer creates a new token
+         * when less than a tenth of the lifetime, at most one minute, is left.
+         * A value of 0 sends a token without iat and exp claims, which is valid
+         * until jwtSecret changes. Used when authenticationType is JWT.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 3600000
+         * Group: security
+         * 
+         * @param jwtTokenLifetime the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder jwtTokenLifetime(long jwtTokenLifetime) {
+            doSetProperty("jwtTokenLifetime", jwtTokenLifetime);
+            return this;
+        }
+        /**
+         * How long a JSON Web Token that the producer sends is valid, in
+         * milliseconds: the token has the iat (issued at) claim and an exp
+         * (expires at) claim this much later. The producer creates a new token
+         * when less than a tenth of the lifetime, at most one minute, is left.
+         * A value of 0 sends a token without iat and exp claims, which is valid
+         * until jwtSecret changes. Used when authenticationType is JWT.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 3600000
+         * Group: security
+         * 
+         * @param jwtTokenLifetime the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder jwtTokenLifetime(String jwtTokenLifetime) {
+            doSetProperty("jwtTokenLifetime", jwtTokenLifetime);
             return this;
         }
         /**

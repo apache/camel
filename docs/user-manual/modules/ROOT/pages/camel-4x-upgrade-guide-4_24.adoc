@@ -12423,6 +12423,19 @@ With `mimeType` `PAGEABLE`, `PRINTABLE` or `RENDERABLE_IMAGE`, the producer now 
 `java.awt.print.Pageable`, `java.awt.print.Printable` or `java.awt.image.renderable.RenderableImage`, as these doc
 flavors need, instead of a stream. With `sendToPrinter=false`, the body is still written to a file as bytes.
 
+=== camel-grpc - JSON Web Tokens expire after one hour
+
+With `authenticationType=JWT`, the `grpc` producer now sends a token with the `iat` (issued at) and `exp` (expires at)
+claims, valid for the new `jwtTokenLifetime` option (1 hour by default), and creates a new token before the current one
+expires. Before, the producer created one token without these claims at startup, which was valid until `jwtSecret`
+changed. A server that checks `exp` and `iat`, such as a Camel consumer, rejects a token issued in the future, so keep
+the clocks of the hosts in sync (a Camel 4.24 consumer accepts a difference of up to one minute). Set
+`jwtTokenLifetime=0` to send tokens without `iat` and `exp` as before.
+
+The consumer now accepts a clock difference of up to one minute for the `exp` and `iat` claims, and has the new
+`jwtMaxTokenAge` option to reject tokens older than this age (by `iat`). Tokens without `exp` are still accepted by
+default.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:

@@ -17,6 +17,7 @@
 package org.apache.camel.component.grpc;
 
 import java.io.InputStream;
+import java.time.Duration;
 
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -32,7 +33,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
-import org.apache.camel.component.grpc.auth.jwt.JwtHelper;
+import org.apache.camel.component.grpc.auth.jwt.JwtTokenSupplier;
 import org.apache.camel.component.grpc.client.*;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
@@ -102,9 +103,13 @@ public class GrpcProducer extends DefaultAsyncProducer {
             } else if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
                 ObjectHelper.notNull(configuration.getJwtSecret(), "jwtSecret");
 
-                String jwtToken = JwtHelper.createJwtToken(configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
-                        configuration.getJwtIssuer(), configuration.getJwtSubject());
-                callCreds = new JwtCallCredentials(jwtToken);
+                JwtTokenSupplier jwtTokenSupplier = new JwtTokenSupplier(
+                        configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
+                        configuration.getJwtIssuer(), configuration.getJwtSubject(),
+                        Duration.ofMillis(configuration.getJwtTokenLifetime()));
+                // create the first token now, so a wrong configuration fails at startup
+                jwtTokenSupplier.get();
+                callCreds = new JwtCallCredentials(jwtTokenSupplier);
             }
 
             if (configuration.isSynchronous()) {
