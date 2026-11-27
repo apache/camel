@@ -215,6 +215,49 @@ public class PQCDataFormatWireFormatTest extends CamelTestSupport {
         }
     }
 
+    /**
+     * Verifies that the AAD binding is enforced independently of the structural mismatch checks.
+     *
+     * <p>
+     * {@link #tamperedHeaderIsRejected()} tampers byte 4 (KEM alg ID), which changes the ID to a value that is still a
+     * known KEM algorithm — the mismatch check rejects the message before the AEAD tag is ever verified. That means the
+     * test passes even if {@code cipher.updateAAD(headerBytes)} were accidentally removed.
+     *
+     * <p>
+     * This test tampers bytes 4-5 to {@code 0x0000} (the UNKNOWN sentinel). The mismatch guard skips IDs of
+     * {@code 0x0000} (the check is {@code if (kemAlgId != UNKNOWN.getId())}), so the tampered bytes reach
+     * {@code decryptPayload}. The AEAD cipher is then initialised with the correct ciphertext but different AAD (the
+     * tampered header), so tag verification fails with an {@code IOException}, proving that the AAD layer is active and
+     * is the last line of defence for header integrity.
+     */
+    @Test
+    void tamperedHeaderAadIsEnforced() throws Exception {
+        PQCDataFormat fmt = newFormat();
+        fmt.start();
+        try {
+            Exchange exchange = new DefaultExchange(context());
+            byte[] original = PAYLOAD.getBytes(StandardCharsets.UTF_8);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            fmt.marshal(exchange, original, out);
+            byte[] ciphertext = out.toByteArray();
+
+            // Overwrite the KEM algorithm ID bytes (4-5) with 0x0000 (UNKNOWN).
+            // The structural mismatch guard skips UNKNOWN IDs, so the modified header bytes
+            // reach decryptPayload as AAD — the AEAD tag verification catches the tampering.
+            ciphertext[4] = 0x00;
+            ciphertext[5] = 0x00;
+
+            ByteArrayInputStream in = new ByteArrayInputStream(ciphertext);
+            IOException ex = assertThrows(IOException.class, () -> fmt.unmarshal(exchange, in));
+            String msg = ex.getMessage().toLowerCase();
+            assertTrue(msg.contains("authentication") || msg.contains("tamper"),
+                    "Expected an AEAD/authentication error but got: " + ex.getMessage());
+        } finally {
+            fmt.stop();
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Error-path tests: truncated headers
     // -------------------------------------------------------------------------
