@@ -520,6 +520,18 @@ restart is gone. A class that extends `SedaConsumer` and overrides `doRun()` mus
 instead, and should keep the loop condition `isCurrentStart(start) && isRunAllowed()` of the default implementation.
 The new protected method `isCurrentStart(int start)` returns true while no later start of the consumer has happened.
 
+=== camel-disruptor - with multipleConsumers the exchange completes once all consumers are done
+
+With `multipleConsumers=true`, the exchange now completes once, when all consumers are done with it, as with
+`camel-seda`. Before, the first consumer that failed completed it at once, while the other consumers were still
+routing their copy. Only a failure is copied back (the first one), the results of the consumers are not aggregated.
+
+* An `InOut` producer gets the failure of a consumer only once the other consumers are done as well, so its `timeout`
+covers all consumers. Before, a consumer that was still busy with an earlier message could then skip the message, as
+if the producer had timed out.
+* The on completions of the caller, such as the move or rollback of a file consumer, run once all consumers are done,
+and no longer while other consumers are still routing the message.
+
 === camel-resilience4j - a call that times out before it starts is not started later
 
 In asynchronous mode (`asynchronous=true`) with a timeout, the `timeoutCancelRunningFuture` option (`true` by default)

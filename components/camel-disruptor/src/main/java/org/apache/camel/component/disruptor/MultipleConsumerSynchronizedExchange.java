@@ -18,6 +18,7 @@ package org.apache.camel.component.disruptor;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -30,15 +31,16 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
 
     private final int expectedConsumers;
 
-    // the consumers copy this one: the first consumer that fails copies its result into the exchange, which the other
-    // consumers must neither see nor read while it is written
+    // the consumers copy this one, so that none of them sees (or reads while it is written) the result of a failure,
+    // which is copied into the exchange when all consumers are done
     private final Exchange exchangeToCopy;
 
     private final AtomicInteger processedConsumers = new AtomicInteger();
 
     private final AtomicBoolean resultHandled = new AtomicBoolean();
 
-    private final AtomicBoolean failed = new AtomicBoolean();
+    // the result of the first consumer that failed, which is copied back when all consumers are done
+    private final AtomicReference<Exchange> failure = new AtomicReference<>();
 
     public MultipleConsumerSynchronizedExchange(Exchange exchange, int expectedConsumers) {
         super(exchange);
@@ -55,25 +57,24 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
 
     @Override
     public void consumed(Exchange result) {
-        boolean failure = result.getException() != null;
-        if (failure) {
+        if (result.getException() != null) {
             // before this consumer is counted, so that the consumer that is counted last knows of the failure: this
             // write comes before our incrementAndGet in program order, and the last consumer's incrementAndGet on the
-            // same AtomicInteger happens after ours, so its failed.get() sees it
-            failed.set(true);
+            // same AtomicInteger happens after ours, so its failure.get() sees it
+            failure.compareAndSet(null, result);
         }
         int processed = processedConsumers.incrementAndGet();
 
-        // complete the exchange once: at the first failure (the consumers that are still routing then complete
-        // nothing), or when all consumers are done and none of them failed
-        if (failure) {
-            if (!resultHandled.getAndSet(true)) {
+        // complete the exchange once, when all consumers are done (as SEDA): completing it at the first failure would
+        // run the on completions of the caller (such as a rollback of the file consumer, or the reply of an InOut
+        // producer) while the other consumers are still routing it
+        if (processed == expectedConsumers && !resultHandled.getAndSet(true)) {
+            Exchange failed = failure.get();
+            if (failed != null) {
                 // only the result of a failure is copied back (as SEDA, whose multicast to its consumers has no
                 // aggregation strategy)
-                ExchangeHelper.copyResults(getExchange(), result);
-                performSynchronization();
+                ExchangeHelper.copyResults(getExchange(), failed);
             }
-        } else if (processed == expectedConsumers && !failed.get() && !resultHandled.getAndSet(true)) {
             performSynchronization();
         }
     }
