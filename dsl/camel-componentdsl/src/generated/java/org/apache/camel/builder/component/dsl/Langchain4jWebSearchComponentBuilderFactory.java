@@ -235,8 +235,11 @@ public interface Langchain4jWebSearchComponentBuilderFactory {
         }
     
         /**
-         * The WebSearchEngine engine to use. This is mandatory. Use one of the
-         * implementations from Langchain4j web search engines.
+         * The WebSearchEngine engine to use. This is mandatory: set it on the
+         * endpoint or on the component, or bind a single WebSearchEngine in the
+         * registry, which is then autowired. The producer fails to start
+         * without it. Use one of the implementations from Langchain4j web
+         * search engines.
          * 
          * The option is a:
          * &lt;code&gt;dev.langchain4j.web.search.WebSearchEngine&lt;/code&gt;

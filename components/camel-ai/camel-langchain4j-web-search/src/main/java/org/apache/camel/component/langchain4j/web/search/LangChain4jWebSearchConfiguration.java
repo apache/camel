@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.web.search;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import dev.langchain4j.web.search.WebSearchEngine;
@@ -30,7 +31,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class LangChain4jWebSearchConfiguration implements Cloneable {
 
-    @Metadata(required = true, autowired = true)
+    // not required in the catalog: the endpoint, the component or autowiring can give it, and the producer checks it
+    @Metadata(autowired = true)
     @UriParam
     private WebSearchEngine webSearchEngine;
 
@@ -62,8 +64,9 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
     }
 
     /**
-     * The {@link WebSearchEngine} engine to use. This is mandatory. Use one of the implementations from Langchain4j web
-     * search engines.
+     * The {@link WebSearchEngine} engine to use. This is mandatory: set it on the endpoint or on the component, or bind
+     * a single WebSearchEngine in the registry, which is then autowired. The producer fails to start without it. Use
+     * one of the implementations from Langchain4j web search engines.
      */
     public void setWebSearchEngine(WebSearchEngine webSearchEngine) {
         this.webSearchEngine = webSearchEngine;
@@ -184,7 +187,13 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
 
     public LangChain4jWebSearchConfiguration copy() {
         try {
-            return (LangChain4jWebSearchConfiguration) super.clone();
+            LangChain4jWebSearchConfiguration copy = (LangChain4jWebSearchConfiguration) super.clone();
+            if (additionalParams != null) {
+                // each endpoint gets its own map: a key bound on an endpoint must not reach the component and the other
+                // endpoints
+                copy.additionalParams = new HashMap<>(additionalParams);
+            }
+            return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

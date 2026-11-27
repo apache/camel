@@ -121,4 +121,21 @@ public class LangChain4jWebSearchComponentOptionsTest extends CamelTestSupport {
         assertEquals("content", body);
         assertNull(componentEngineRequest.get());
     }
+
+    @Test
+    void anAdditionalParamOfAnEndpointStaysOnThatEndpoint() {
+        LangChain4jWebSearchComponent component
+                = context.getComponent(LangChain4jWebSearchEngine.SCHEME, LangChain4jWebSearchComponent.class);
+        component.getConfiguration().setAdditionalParams(new HashMap<>(Map.of("a", "1")));
+
+        LangChain4jWebSearchEndpoint withB = context.getEndpoint(
+                "langchain4j-web-search:withB?additionalParams[b]=2", LangChain4jWebSearchEndpoint.class);
+        LangChain4jWebSearchEndpoint plain
+                = context.getEndpoint("langchain4j-web-search:plain", LangChain4jWebSearchEndpoint.class);
+
+        assertEquals(Map.of("a", "1", "b", "2"), withB.getConfiguration().getAdditionalParams());
+        // the endpoints shared the map of the component, so b reached the component and every other endpoint
+        assertEquals(Map.of("a", "1"), component.getConfiguration().getAdditionalParams());
+        assertEquals(Map.of("a", "1"), plain.getConfiguration().getAdditionalParams());
+    }
 }
