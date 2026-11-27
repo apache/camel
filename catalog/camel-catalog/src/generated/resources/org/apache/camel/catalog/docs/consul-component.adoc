@@ -58,6 +58,15 @@ The `apiEndpoint` denotes the type of https://www.consul.io/api-docs[consul api]
 | session | ConsulSessionProducer | -
 |===
 
+=== ACL token
+
+The client that the endpoint creates sends the `aclToken` in the `X-Consul-Token` header of each request, never in
+the URL.
+
+When you set your own `consulClient`, the `aclToken` option is not used: configure the token on that client, for
+example with `Consul.builder().withTokenAuth(token)`. The `withAclToken(token)` method of the Consul client adds the
+token to the URL of each request as the `token` query parameter.
+
 == Examples
 
 === Producer Examples
