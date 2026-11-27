@@ -110,6 +110,54 @@ public interface AsteriskEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS (tlsenable and tlsbindaddr in the manager.conf
+         * file), and the port option must be set to its TLS port, usually 5039,
+         * as the default port 5038 is the one of plain TCP. The certificate of
+         * the server is checked with the default SSL socket factory and trust
+         * store of the JVM (javax.net.ssl.trustStore). The host name of the
+         * server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointConsumerBuilder ssl(boolean ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS (tlsenable and tlsbindaddr in the manager.conf
+         * file), and the port option must be set to its TLS port, usually 5039,
+         * as the default port 5038 is the one of plain TCP. The certificate of
+         * the server is checked with the default SSL socket factory and trust
+         * store of the JVM (javax.net.ssl.trustStore). The host name of the
+         * server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointConsumerBuilder ssl(String ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+        /**
          * The name of the AMI user, as defined in the manager.conf file of the
          * Asterisk server. The consumer and the producer each log in with it
          * when they start.
@@ -372,6 +420,54 @@ public interface AsteriskEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS (tlsenable and tlsbindaddr in the manager.conf
+         * file), and the port option must be set to its TLS port, usually 5039,
+         * as the default port 5038 is the one of plain TCP. The certificate of
+         * the server is checked with the default SSL socket factory and trust
+         * store of the JVM (javax.net.ssl.trustStore). The host name of the
+         * server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointProducerBuilder ssl(boolean ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS (tlsenable and tlsbindaddr in the manager.conf
+         * file), and the port option must be set to its TLS port, usually 5039,
+         * as the default port 5038 is the one of plain TCP. The certificate of
+         * the server is checked with the default SSL socket factory and trust
+         * store of the JVM (javax.net.ssl.trustStore). The host name of the
+         * server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointProducerBuilder ssl(String ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+        /**
          * The name of the AMI user, as defined in the manager.conf file of the
          * Asterisk server. The consumer and the producer each log in with it
          * when they start.
@@ -520,6 +616,54 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AsteriskEndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS (tlsenable and tlsbindaddr in the manager.conf
+         * file), and the port option must be set to its TLS port, usually 5039,
+         * as the default port 5038 is the one of plain TCP. The certificate of
+         * the server is checked with the default SSL socket factory and trust
+         * store of the JVM (javax.net.ssl.trustStore). The host name of the
+         * server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointBuilder ssl(boolean ssl) {
+            doSetProperty("ssl", ssl);
+            return this;
+        }
+        /**
+         * Whether to connect to the Asterisk Manager Interface (AMI) over TLS
+         * instead of plain TCP, so that the username, the password, the actions
+         * and the events are not sent in clear text. The Asterisk server must
+         * accept AMI over TLS (tlsenable and tlsbindaddr in the manager.conf
+         * file), and the port option must be set to its TLS port, usually 5039,
+         * as the default port 5038 is the one of plain TCP. The certificate of
+         * the server is checked with the default SSL socket factory and trust
+         * store of the JVM (javax.net.ssl.trustStore). The host name of the
+         * server is not checked against the certificate, and a custom
+         * SSLContext is not supported, as asterisk-java does not offer it.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
+         */
+        default AsteriskEndpointBuilder ssl(String ssl) {
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**

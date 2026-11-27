@@ -44,17 +44,32 @@ public final class AsteriskConnection {
     private final int port;
     private final String username;
     private final String password;
+    private final boolean ssl;
     private ManagerConnection managerConnection;
 
     public AsteriskConnection(String host, String username, String password) {
-        this(host, DEFAULT_PORT, username, password);
+        this(host, DEFAULT_PORT, username, password, false);
     }
 
     public AsteriskConnection(String host, int port, String username, String password) {
+        this(host, port, username, password, false);
+    }
+
+    /**
+     * Creates the connection.
+     *
+     * @param host     the host name of the Asterisk server
+     * @param port     the port of the AMI on the Asterisk server
+     * @param username the name of the AMI user
+     * @param password the secret of the AMI user
+     * @param ssl      whether to connect to the AMI over TLS instead of plain TCP
+     */
+    public AsteriskConnection(String host, int port, String username, String password, boolean ssl) {
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
+        this.ssl = ssl;
     }
 
     AsteriskConnection(ManagerConnection managerConnection) {
@@ -62,15 +77,16 @@ public final class AsteriskConnection {
         this.port = managerConnection.getPort();
         this.username = managerConnection.getUsername();
         this.password = managerConnection.getPassword();
+        this.ssl = managerConnection.isSsl();
         this.managerConnection = managerConnection;
     }
 
     public void connect() {
         if (managerConnection == null) {
-            LOG.debug("asterisk connection attempt to {}:{} username: {}", host, port, username);
+            LOG.debug("asterisk connection attempt to {}:{} username: {} ssl: {}", host, port, username, ssl);
 
             ManagerConnectionFactory factory = new ManagerConnectionFactory(host, port, username, password);
-            managerConnection = factory.createManagerConnection();
+            managerConnection = ssl ? factory.createSecureManagerConnection() : factory.createManagerConnection();
 
             LOG.debug("asterisk connection established!");
         }
@@ -136,6 +152,10 @@ public final class AsteriskConnection {
             throws IllegalArgumentException, IllegalStateException, IOException, TimeoutException {
 
         return managerConnection.sendAction(action);
+    }
+
+    ManagerConnection getManagerConnection() {
+        return managerConnection;
     }
 
     public ResponseEvents sendEventGeneratingAction(EventGeneratingAction action)
