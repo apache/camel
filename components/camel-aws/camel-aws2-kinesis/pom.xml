@@ -32,11 +32,6 @@
     <name>Camel :: AWS2 Kinesis</name>
     <description>Consuming and Producing data to AWS Kinesis Service</description>
 
-    <properties>
-        <!-- the DST tests load the byte code agent of camel-test-dst when the JVM starts (see test-dst.adoc) -->
-        <camel.surefire.fork.additional-vmargs>"-javaagent:${net.bytebuddy:byte-buddy-agent:jar}"</camel.surefire.fork.additional-vmargs>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
