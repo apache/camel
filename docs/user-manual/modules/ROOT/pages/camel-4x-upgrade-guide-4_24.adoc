@@ -13,26 +13,6 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
-=== camel-pqc - PQCDataFormat wire format v2
-
-`PQCDataFormat` now writes an 8-byte self-describing header (wire format v2) instead of the previous 4-byte
-encapsulation-length prefix (wire format v1):
-
-[source]
-----
-v2 header: [0x50 0x51 version format kemAlgId(2B) symAlgId(2B)] [4B encap len] [encap] [12B nonce] [ciphertext]
-----
-
-The header bytes are bound as AAD (additional authenticated data) to the AEAD cipher, ensuring that any
-modification to the header is detected on decryption.
-
-The unmarshal path auto-detects the format: messages produced by Camel 4.22 and 4.23 (v1) continue to decrypt
-without any configuration change. New messages produced from 4.24 onward use v2 and are not readable by earlier
-versions. When upgrading a system where both producers and consumers run independently, upgrade the readers
-(decrypt / unmarshal side) first so they can accept both v1 and v2, then upgrade the writers (encrypt / marshal
-side). Regenerate any stored encrypted data when bidirectional interoperability with an older Camel version
-is required, or keep the old version on the decryption side.
-
 === camel-openapi-java - RestModelConverters is now an interface
 
 `org.apache.camel.openapi.RestModelConverters` is now an interface instead of a concrete class. Applications that
@@ -206,6 +186,26 @@ referred to were renamed or dropped upstream:
 The `HybridSignatureComponents` and `HybridEncapsulationComponents` record constructors changed from 2 arguments
 (`classicalBytes`, `pqcBytes`) to 5 arguments (`classicalBytes`, `pqcBytes`, `classicalAlgorithmId`, `pqcAlgorithmId`,
 `version`). Code that constructs these records directly must be updated.
+
+==== camel-pqc - PQCDataFormat wire format v2
+
+`PQCDataFormat` now writes an 8-byte self-describing header (wire format v2) instead of the previous 4-byte
+encapsulation-length prefix (wire format v1):
+
+[source]
+----
+v2 header: [0x50 0x51 version format kemAlgId(2B) symAlgId(2B)] [4B encap len] [encap] [12B nonce] [ciphertext]
+----
+
+The header bytes are bound as AAD (additional authenticated data) to the AEAD cipher, ensuring that any
+modification to the header is detected on decryption.
+
+The unmarshal path auto-detects the format: messages produced by Camel 4.22 and 4.23 (v1) continue to decrypt
+without any configuration change. New messages produced from 4.24 onward use v2 and are not readable by earlier
+versions. When upgrading a system where both producers and consumers run independently, upgrade the readers
+(decrypt / unmarshal side) first so they can accept both v1 and v2, then upgrade the writers (encrypt / marshal
+side). Regenerate any stored encrypted data when bidirectional interoperability with an older Camel version
+is required, or keep the old version on the decryption side.
 
 === camel-box - Box Java SDK 5
 
