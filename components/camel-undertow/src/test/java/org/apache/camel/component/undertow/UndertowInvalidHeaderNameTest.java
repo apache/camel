@@ -102,9 +102,7 @@ class UndertowInvalidHeaderNameTest extends BaseUndertowTest {
                     "HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nOK".getBytes(UTF_8));
             socket.getOutputStream().flush();
             return head.toString(UTF_8);
-        } catch (
-
-        Exception e) {
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
