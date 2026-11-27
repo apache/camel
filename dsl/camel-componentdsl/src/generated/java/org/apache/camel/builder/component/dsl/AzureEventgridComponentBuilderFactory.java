@@ -177,11 +177,11 @@ public interface AzureEventgridComponentBuilderFactory {
          * azureKeyCredential or accessKey option, TOKEN_CREDENTIAL with the
          * tokenCredential option, or AZURE_IDENTITY with a
          * DefaultAzureCredential of the Azure Identity library (the
-         * tokenCredential option when it is set, else a new one). When
-         * tokenCredential is set, an explicit TOKEN_CREDENTIAL or
-         * AZURE_IDENTITY is kept, else the type is AZURE_IDENTITY for a
-         * DefaultAzureCredential and TOKEN_CREDENTIAL for another credential;
-         * when accessKey or azureKeyCredential is set, it is ACCESS_KEY.
+         * tokenCredential option when it is set, otherwise a new one). With
+         * tokenCredential set and this option left at ACCESS_KEY, Camel uses
+         * AZURE_IDENTITY for a DefaultAzureCredential and TOKEN_CREDENTIAL for
+         * any other credential. With only accessKey or azureKeyCredential set,
+         * Camel uses ACCESS_KEY.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.azure.common.CredentialType&lt;/code&gt; type.
