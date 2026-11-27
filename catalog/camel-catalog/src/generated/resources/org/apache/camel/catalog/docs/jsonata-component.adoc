@@ -2,7 +2,7 @@
 :doctitle: JSONata
 :shortname: jsonata
 :artifactid: camel-jsonata
-:description: Transforms JSON payload using JSONata transformation.
+:description: Transform JSON data with a JSONata expression.
 :since: 3.5
 :supportlevel: Stable
 :tabs-sync-option:

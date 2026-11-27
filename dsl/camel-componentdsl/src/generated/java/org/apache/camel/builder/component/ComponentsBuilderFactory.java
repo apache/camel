@@ -3051,7 +3051,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JSONata (camel-jsonata)
-     * Transforms JSON payload using JSONata transformation.
+     * Transform JSON data with a JSONata expression.
      * 
      * Category: transformation
      * Since: 3.5

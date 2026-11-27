@@ -241,7 +241,7 @@ or removes its row.
 | camel-jsch | scp |  |
 | camel-jslt | jslt |  |
 | camel-json-validator | json-validator |  |
-| camel-jsonata | jsonata |  |
+| camel-jsonata | jsonata | yes |
 | camel-jt400 | jt400 |  |
 | camel-jte | jte |  |
 | camel-kafka | kafka |  |
