@@ -8278,7 +8278,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
-     * To call serverless functions on Huawei Cloud
+     * Invoke serverless functions in Huawei Cloud FunctionGraph.
      * 
      * Category: cloud,serverless
      * Since: 3.11
@@ -8287,7 +8287,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-functiongraph:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to be performed
+     * The operation that the producer performs. Only invokeFunction is
+     * supported. The CamelHwCloudFgOperation exchange property replaces this
+     * option.
      * 
      * @param path operation
      * @return the dsl builder
@@ -8297,7 +8299,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
-     * To call serverless functions on Huawei Cloud
+     * Invoke serverless functions in Huawei Cloud FunctionGraph.
      * 
      * Category: cloud,serverless
      * Since: 3.11
@@ -8306,7 +8308,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>hwcloud-functiongraph:operation</code>
      * 
      * Path parameter: operation (required)
-     * Operation to be performed
+     * The operation that the producer performs. Only invokeFunction is
+     * supported. The CamelHwCloudFgOperation exchange property replaces this
+     * option.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
