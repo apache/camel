@@ -284,8 +284,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AI Tool (camel-ai-tool)
-     * Framework-agnostic consumer endpoint that registers a Camel route as an
-     * LLM tool in the shared AiToolRegistry.
+     * Expose a Camel route as a tool that a model calls through a Camel AI
+     * producer, or that MCP clients call through the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.22
@@ -294,7 +294,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ai-tool:toolName</code>
      * 
      * Path parameter: toolName (required)
-     * The tool name. This is the name the LLM sees and uses to invoke the tool.
+     * The name of the tool, which the model sees and uses to call it, and which
+     * MCP clients see in tools/list. It must not contain a slash. A route whose
+     * tool name is already registered under one of its tags, or in the pool of
+     * tools without tags, fails to start.
      * 
      * @param path toolName
      * @return the dsl builder
@@ -304,8 +307,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AI Tool (camel-ai-tool)
-     * Framework-agnostic consumer endpoint that registers a Camel route as an
-     * LLM tool in the shared AiToolRegistry.
+     * Expose a Camel route as a tool that a model calls through a Camel AI
+     * producer, or that MCP clients call through the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.22
@@ -314,7 +317,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ai-tool:toolName</code>
      * 
      * Path parameter: toolName (required)
-     * The tool name. This is the name the LLM sees and uses to invoke the tool.
+     * The name of the tool, which the model sees and uses to call it, and which
+     * MCP clients see in tools/list. It must not contain a slash. A route whose
+     * tool name is already registered under one of its tags, or in the pool of
+     * tools without tags, fails to start.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

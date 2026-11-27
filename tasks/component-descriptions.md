@@ -57,7 +57,7 @@ or removes its row.
 | camel-activemq6 | activemq6 |  |
 | camel-ai-prompt | ai-prompt | yes |
 | camel-ai-resource | ai-resource |  |
-| camel-ai-tool | ai-tool |  |
+| camel-ai-tool | ai-tool | yes |
 | camel-alibaba-eventbridge | alibaba-eventbridge | yes |
 | camel-alibaba-fc | alibaba-fc | yes |
 | camel-alibaba-kms | alibaba-kms | yes |
