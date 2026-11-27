@@ -3483,7 +3483,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
-     * LangChain4j Web Search Engine
+     * Search the web with a LangChain4j web search engine, such as Tavily or
+     * Google Custom Search.
      * 
      * Category: ai
      * Since: 4.8
