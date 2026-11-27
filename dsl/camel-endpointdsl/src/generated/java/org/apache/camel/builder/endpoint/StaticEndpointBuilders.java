@@ -16033,7 +16033,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with ServiceNow via its REST API.
+     * Query and change records, attachments, import sets and service catalog
+     * items of a ServiceNow instance through its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -16042,7 +16043,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>servicenow:instanceName</code>
      * 
      * Path parameter: instanceName (required)
-     * The ServiceNow instance name
+     * The name of the ServiceNow instance, the first part of its host name
+     * {instanceName}.service-now.com. The producer builds the default apiUrl
+     * and oauthTokenUrl from it.
      * 
      * @param path instanceName
      * @return the dsl builder
@@ -16052,7 +16055,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with ServiceNow via its REST API.
+     * Query and change records, attachments, import sets and service catalog
+     * items of a ServiceNow instance through its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -16061,7 +16065,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>servicenow:instanceName</code>
      * 
      * Path parameter: instanceName (required)
-     * The ServiceNow instance name
+     * The name of the ServiceNow instance, the first part of its host name
+     * {instanceName}.service-now.com. The producer builds the default apiUrl
+     * and oauthTokenUrl from it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

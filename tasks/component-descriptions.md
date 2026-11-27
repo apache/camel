@@ -330,7 +330,7 @@ or removes its row.
 | camel-scheduler | scheduler | yes |
 | camel-schematron | schematron |  |
 | camel-seda | seda |  |
-| camel-servicenow | servicenow |  |
+| camel-servicenow | servicenow | yes |
 | camel-servlet | servlet |  |
 | camel-shell | shell |  |
 | camel-sjms | sjms |  |
