@@ -12297,6 +12297,14 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-jgroups-raft, camel-jgroups - a WARN when the default channel configuration is used
+
+An endpoint without the `channelProperties` option now logs a WARN when it starts: `jgroups-raft` then uses the
+`raft.xml` of the `camel-jgroups-raft` JAR (also the default `jgroupsConfig` of the `JGroupsRaftClusterService`), and
+`jgroups` (without a `channel` on the component) the default `udp.xml` of JGroups. These configurations use UDP
+multicast without authentication or encryption, and are meant for development and tests. Nothing else changes: set
+`channelProperties` to your own JGroups configuration to remove the WARN.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:

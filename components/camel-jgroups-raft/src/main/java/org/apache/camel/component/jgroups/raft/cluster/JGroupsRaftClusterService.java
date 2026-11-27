@@ -46,7 +46,13 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
 
     @Metadata(description = "Unique Raft id", required = true)
     private String id;
-    @Metadata(description = "The path to the JGroups Raft configuration", defaultValue = DEFAULT_JGROUPS_CONFIG)
+    @Metadata(description = "The JGroups XML configuration of the channel, as a file, a URL or a classpath resource. The"
+                            + " default raft.xml in the camel-jgroups-raft JAR is a sample for development and tests (UDP"
+                            + " multicast without authentication or encryption, and A as the only RAFT member), and a WARN"
+                            + " is logged when it is used. In production, set your own configuration, with AUTH and"
+                            + " SYM_ENCRYPT or ASYM_ENCRYPT, and the members of the cluster in the members attribute of"
+                            + " RAFT.",
+              defaultValue = DEFAULT_JGROUPS_CONFIG)
     private String jgroupsConfig;
     @Metadata(description = "The name of the cluster", defaultValue = DEFAULT_JGROUPS_CLUSTERNAME)
     private String jgroupsClusterName;
@@ -164,6 +170,14 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
 
     private RaftHandle createRaftHandle() throws Exception {
         String config = jgroupsConfig != null && !jgroupsConfig.isEmpty() ? jgroupsConfig : DEFAULT_JGROUPS_CONFIG;
+        if (DEFAULT_JGROUPS_CONFIG.equals(config)) {
+            LOG.warn("The JGroupsRaftClusterService with Id {} uses {}, by default the sample configuration in the"
+                     + " camel-jgroups-raft JAR. That configuration is meant for development and tests: it uses UDP"
+                     + " multicast without authentication or encryption, and lists A as the only RAFT member. In"
+                     + " production, set jgroupsConfig to your own JGroups configuration, with AUTH and SYM_ENCRYPT or"
+                     + " ASYM_ENCRYPT, and the members of the cluster in the members attribute of RAFT.",
+                    getId(), config);
+        }
         return new RaftHandle(new JChannel(config), new NopStateMachine()).raftId(getId());
     }
 
