@@ -53,7 +53,10 @@ public interface IbmWatsonxAiComponentBuilderFactory {
     interface IbmWatsonxAiComponentBuilder extends ComponentBuilder<WatsonxAiComponent> {
     
         /**
-         * The watsonx.ai base URL (e.g., https://us-south.ml.cloud.ibm.com).
+         * The watsonx.ai base URL of the region (e.g.,
+         * https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com).
+         * Required but for the utility tools (runTool, listTools), which use
+         * the wxUrl, and processToolCalls, which runs locally.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -64,22 +67,6 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder baseUrl(java.lang.String baseUrl) {
             doSetProperty("baseUrl", baseUrl);
-            return this;
-        }
-    
-        /**
-         * The component configuration.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param configuration the value to set
-         * @return the dsl builder
-         */
-        default IbmWatsonxAiComponentBuilder configuration(org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration configuration) {
-            doSetProperty("configuration", configuration);
             return this;
         }
     
@@ -114,8 +101,9 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
-         * The watsonx.ai WX platform URL for tool operations (e.g.,
-         * https://api.dataplatform.cloud.ibm.com/wx).
+         * The watsonx.ai WX platform URL of the region for tool operations
+         * (e.g., https://api.dataplatform.cloud.ibm.com/wx or
+         * https://api.eu-de.dataplatform.cloud.ibm.com/wx).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -126,6 +114,54 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder wxUrl(java.lang.String wxUrl) {
             doSetProperty("wxUrl", wxUrl);
+            return this;
+        }
+    
+        /**
+         * Whether text extraction and classification correct the rotation of
+         * the pages.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param autoRotationCorrection the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder autoRotationCorrection(java.lang.Boolean autoRotationCorrection) {
+            doSetProperty("autoRotationCorrection", autoRotationCorrection);
+            return this;
+        }
+    
+        /**
+         * How text classification classifies: exact (the document type) or
+         * binary (whether it is one).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param classificationMode the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder classificationMode(java.lang.String classificationMode) {
+            doSetProperty("classificationMode", classificationMode);
+            return this;
+        }
+    
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder configuration(org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     
@@ -190,6 +226,25 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * The detectors, comma separated, in the place of detectPii and
+         * detectHap: hap, pii and granite_guardian for detect,
+         * context_relevance and faithfulness for detectContext (default
+         * context_relevance), answer_relevance for detectGenerated (default
+         * answer_relevance). The detectionThreshold applies to all but pii.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param detectors the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder detectors(java.lang.String detectors) {
+            doSetProperty("detectors", detectors);
+            return this;
+        }
+    
+        /**
          * Whether to detect PII (Personal Identifiable Information).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -235,6 +290,69 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * The languages of the documents of text extraction and classification,
+         * comma separated ISO 639 codes, such as en,fr.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param documentLanguages the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder documentLanguages(java.lang.String documentLanguages) {
+            doSetProperty("documentLanguages", documentLanguages);
+            return this;
+        }
+    
+        /**
+         * What text extraction does with the images of the document.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param embeddedImages the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder embeddedImages(java.lang.String embeddedImages) {
+            doSetProperty("embeddedImages", embeddedImages);
+            return this;
+        }
+    
+        /**
+         * The quality of text extraction: standard or high_quality.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param extractionMode the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder extractionMode(java.lang.String extractionMode) {
+            doSetProperty("extractionMode", extractionMode);
+            return this;
+        }
+    
+        /**
+         * The outputs of text extraction, comma separated: md (the default),
+         * json, html, plain_text, page_images. The operations that return the
+         * text (AndFetch) take one output, but page_images.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param extractionOutputs the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder extractionOutputs(java.lang.String extractionOutputs) {
+            doSetProperty("extractionOutputs", extractionOutputs);
+            return this;
+        }
+    
+        /**
          * Frequency penalty for chat.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -246,6 +364,134 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder frequencyPenalty(java.lang.Double frequencyPenalty) {
             doSetProperty("frequencyPenalty", frequencyPenalty);
+            return this;
+        }
+    
+        /**
+         * The watsonx.governance instance that runs the detectors of
+         * detectContext and detectGenerated (and of detect, in the place of the
+         * project or space), which IBM Cloud requires for them.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param governanceInstanceId the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder governanceInstanceId(java.lang.String governanceInstanceId) {
+            doSetProperty("governanceInstanceId", governanceInstanceId);
+            return this;
+        }
+    
+        /**
+         * Guided decoding of chat: the answer is one of these comma separated
+         * choices.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param guidedChoice the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder guidedChoice(java.lang.String guidedChoice) {
+            doSetProperty("guidedChoice", guidedChoice);
+            return this;
+        }
+    
+        /**
+         * Guided decoding of chat: the answer follows this context free grammar
+         * (EBNF).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param guidedGrammar the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder guidedGrammar(java.lang.String guidedGrammar) {
+            doSetProperty("guidedGrammar", guidedGrammar);
+            return this;
+        }
+    
+        /**
+         * Guided decoding of chat: the answer matches this regular expression.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param guidedRegex the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder guidedRegex(java.lang.String guidedRegex) {
+            doSetProperty("guidedRegex", guidedRegex);
+            return this;
+        }
+    
+        /**
+         * Whether watsonx.ai returns the reasoning of the model, in the
+         * CamelIBMWatsonxAiReasoningContent header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param includeReasoning the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder includeReasoning(java.lang.Boolean includeReasoning) {
+            doSetProperty("includeReasoning", includeReasoning);
+            return this;
+        }
+    
+        /**
+         * A JSON schema (as JSON text) that the chat answer follows (the
+         * json_schema response format).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param jsonSchema the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder jsonSchema(java.lang.String jsonSchema) {
+            doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+    
+        
+        /**
+         * Whether the chat answer must follow the jsonSchema strictly.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param jsonSchemaStrict the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder jsonSchemaStrict(java.lang.Boolean jsonSchemaStrict) {
+            doSetProperty("jsonSchemaStrict", jsonSchemaStrict);
+            return this;
+        }
+    
+        /**
+         * The key-value pair extraction of text extraction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param kvpMode the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder kvpMode(java.lang.String kvpMode) {
+            doSetProperty("kvpMode", kvpMode);
             return this;
         }
     
@@ -305,7 +551,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
-         * Foundation model ID (e.g., ibm/granite-13b-instruct-v2).
+         * Foundation model ID (e.g., ibm/granite-4-h-small).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -316,6 +562,105 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder modelId(java.lang.String modelId) {
             doSetProperty("modelId", modelId);
+            return this;
+        }
+    
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input with Granite
+         * Guardian (watsonx.ai applies it to the input only).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationGraniteGuardian the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder moderationGraniteGuardian(java.lang.Boolean moderationGraniteGuardian) {
+            doSetProperty("moderationGraniteGuardian", moderationGraniteGuardian);
+            return this;
+        }
+    
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input and the answer
+         * for hate, abuse and profanity (HAP).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationHap the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder moderationHap(java.lang.Boolean moderationHap) {
+            doSetProperty("moderationHap", moderationHap);
+            return this;
+        }
+    
+        /**
+         * Chat guardrail: whether watsonx.ai checks the input and the answer
+         * for personal identifiable information (PII).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param moderationPii the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder moderationPii(java.lang.Boolean moderationPii) {
+            doSetProperty("moderationPii", moderationPii);
+            return this;
+        }
+    
+        
+        /**
+         * The threshold (0 to 1) of the HAP and Granite Guardian chat
+         * guardrails.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Float&lt;/code&gt; type.
+         * 
+         * Default: 0.5
+         * Group: producer
+         * 
+         * @param moderationThreshold the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder moderationThreshold(java.lang.Float moderationThreshold) {
+            doSetProperty("moderationThreshold", moderationThreshold);
+            return this;
+        }
+    
+        /**
+         * How many answers chat generates for the request (n). The body is the
+         * first one, and the CamelIBMWatsonxAiAssistantMessages header has them
+         * all.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param numberOfChoices the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder numberOfChoices(java.lang.Integer numberOfChoices) {
+            doSetProperty("numberOfChoices", numberOfChoices);
+            return this;
+        }
+    
+        /**
+         * The optical character recognition of text extraction and
+         * classification: auto, disabled, enabled or forced.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param ocrMode the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder ocrMode(java.lang.String ocrMode) {
+            doSetProperty("ocrMode", ocrMode);
             return this;
         }
     
@@ -336,6 +681,54 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * The resolution of the page images of text extraction.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param outputDpi the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder outputDpi(java.lang.Integer outputDpi) {
+            doSetProperty("outputDpi", outputDpi);
+            return this;
+        }
+    
+        /**
+         * Whether text extraction gives the tokens of the text, with their
+         * positions.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param outputTokens the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder outputTokens(java.lang.Boolean outputTokens) {
+            doSetProperty("outputTokens", outputTokens);
+            return this;
+        }
+    
+        /**
+         * The number of time steps to forecast (forecast and
+         * deploymentForecast). The model forecasts its own default length when
+         * not set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param predictionLength the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder predictionLength(java.lang.Integer predictionLength) {
+            doSetProperty("predictionLength", predictionLength);
+            return this;
+        }
+    
+        /**
          * Presence penalty for chat.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -347,6 +740,72 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder presencePenalty(java.lang.Double presencePenalty) {
             doSetProperty("presencePenalty", presencePenalty);
+            return this;
+        }
+    
+        /**
+         * How long the text extraction and classification operations that wait
+         * (AndFetch) wait for the result, in milliseconds. Defaults to the
+         * timeout of the endpoint.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param processingTimeout the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder processingTimeout(java.lang.Long processingTimeout) {
+            doSetProperty("processingTimeout", processingTimeout);
+            return this;
+        }
+    
+        /**
+         * How much the model of chat reasons: low, medium or high, for the
+         * models that support it.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param reasoningEffort the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder reasoningEffort(java.lang.String reasoningEffort) {
+            doSetProperty("reasoningEffort", reasoningEffort);
+            return this;
+        }
+    
+        /**
+         * Whether the text extraction operations that wait (AndFetch) remove
+         * the output file from Cloud Object Storage once read (asynchronously).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param removeOutputFile the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder removeOutputFile(java.lang.Boolean removeOutputFile) {
+            doSetProperty("removeOutputFile", removeOutputFile);
+            return this;
+        }
+    
+        /**
+         * Whether the operations that upload and wait (UploadAndFetch) remove
+         * the uploaded document from Cloud Object Storage once the result is
+         * read (asynchronously).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param removeUploadedFile the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder removeUploadedFile(java.lang.Boolean removeUploadedFile) {
+            doSetProperty("removeUploadedFile", removeUploadedFile);
             return this;
         }
     
@@ -377,6 +836,22 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder rerankTopN(java.lang.Integer rerankTopN) {
             doSetProperty("rerankTopN", rerankTopN);
+            return this;
+        }
+    
+        /**
+         * The format of the chat answer: text, or json for a JSON object. Set
+         * jsonSchema for an answer that follows a JSON schema.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param responseFormat the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder responseFormat(java.lang.String responseFormat) {
+            doSetProperty("responseFormat", responseFormat);
             return this;
         }
     
@@ -426,6 +901,55 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
+         * The random seed of chat sampling, for repeatable answers.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param seed the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder seed(java.lang.Integer seed) {
+            doSetProperty("seed", seed);
+            return this;
+        }
+    
+        /**
+         * Comma separated sequences that stop the generation of the chat
+         * answer.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param stop the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder stop(java.lang.String stop) {
+            doSetProperty("stop", stop);
+            return this;
+        }
+    
+        /**
+         * The endpoint URI that receives each chunk of chatStreaming as a
+         * message (in the place of the CamelIBMWatsonxAiStreamConsumer header),
+         * such as seda:chunks. The chunks are sent from the threads of the
+         * watsonx.ai SDK.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param streamEndpoint the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder streamEndpoint(java.lang.String streamEndpoint) {
+            doSetProperty("streamEndpoint", streamEndpoint);
+            return this;
+        }
+    
+        /**
          * Temperature for randomness (0.0 to 2.0).
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -437,6 +961,57 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          */
         default IbmWatsonxAiComponentBuilder temperature(java.lang.Double temperature) {
             doSetProperty("temperature", temperature);
+            return this;
+        }
+    
+        /**
+         * Whether the model of chat reasons before it answers, for the models
+         * that support it (chat template thinking).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param thinking the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder thinking(java.lang.Boolean thinking) {
+            doSetProperty("thinking", thinking);
+            return this;
+        }
+    
+        /**
+         * For models that write their reasoning in the answer between tags: the
+         * tag of the reasoning, and optionally the tag of the answer after a
+         * comma, such as think,response. The reasoning goes to the
+         * CamelIBMWatsonxAiReasoningContent header and the answer to the body.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param thinkingTags the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder thinkingTags(java.lang.String thinkingTags) {
+            doSetProperty("thinkingTags", thinkingTags);
+            return this;
+        }
+    
+        /**
+         * How the model chooses the tools of chat: auto (the model decides),
+         * required (the model must call a tool), none (the model must not call
+         * a tool), or the name of the tool the model must call.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param toolChoice the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder toolChoice(java.lang.String toolChoice) {
+            doSetProperty("toolChoice", toolChoice);
             return this;
         }
     
@@ -558,7 +1133,9 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         }
     
         /**
-         * IBM Cloud API key for authentication.
+         * IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for
+         * an access token. Required unless oauthProfile or authenticator is
+         * set, or the operation is processToolCalls, which runs locally.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -574,9 +1151,10 @@ public interface IbmWatsonxAiComponentBuilderFactory {
     
         /**
          * OAuth profile name for obtaining an access token via the OAuth 2.0
-         * Client Credentials grant. When set, the token is acquired from the
-         * configured identity provider and used as apiKey. Requires camel-oauth
-         * on the classpath.
+         * Client Credentials grant. When set, the token of the configured
+         * identity provider is sent to watsonx.ai as a Bearer token instead of
+         * an IBM Cloud API key, and obtained again when it expires. Requires
+         * camel-oauth on the classpath.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -606,6 +1184,26 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             doSetProperty("verifySsl", verifySsl);
             return this;
         }
+    
+        /**
+         * A custom authenticator of the watsonx.ai SDK
+         * (com.ibm.watsonx.ai.core.auth.Authenticator) that gives the token of
+         * every request, such as a CP4DAuthenticator for watsonx.ai software on
+         * Cloud Pak for Data. When set, apiKey and oauthProfile are not used.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.ibm.watsonx.ai.core.auth.Authenticator&lt;/code&gt;
+         * type.
+         * 
+         * Group: security (advanced)
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonxAiComponentBuilder authenticator(com.ibm.watsonx.ai.core.auth.Authenticator authenticator) {
+            doSetProperty("authenticator", authenticator);
+            return this;
+        }
     }
 
     class IbmWatsonxAiComponentBuilderImpl
@@ -628,30 +1226,65 @@ public interface IbmWatsonxAiComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "baseUrl": getOrCreateConfiguration((WatsonxAiComponent) component).setBaseUrl((java.lang.String) value); return true;
-            case "configuration": ((WatsonxAiComponent) component).setConfiguration((org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration) value); return true;
             case "projectId": getOrCreateConfiguration((WatsonxAiComponent) component).setProjectId((java.lang.String) value); return true;
             case "spaceId": getOrCreateConfiguration((WatsonxAiComponent) component).setSpaceId((java.lang.String) value); return true;
             case "wxUrl": getOrCreateConfiguration((WatsonxAiComponent) component).setWxUrl((java.lang.String) value); return true;
+            case "autoRotationCorrection": getOrCreateConfiguration((WatsonxAiComponent) component).setAutoRotationCorrection((java.lang.Boolean) value); return true;
+            case "classificationMode": getOrCreateConfiguration((WatsonxAiComponent) component).setClassificationMode((java.lang.String) value); return true;
+            case "configuration": ((WatsonxAiComponent) component).setConfiguration((org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConfiguration) value); return true;
             case "cosUrl": getOrCreateConfiguration((WatsonxAiComponent) component).setCosUrl((java.lang.String) value); return true;
             case "deploymentId": getOrCreateConfiguration((WatsonxAiComponent) component).setDeploymentId((java.lang.String) value); return true;
             case "detectHap": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectHap((java.lang.Boolean) value); return true;
             case "detectionThreshold": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectionThreshold((java.lang.Double) value); return true;
+            case "detectors": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectors((java.lang.String) value); return true;
             case "detectPii": getOrCreateConfiguration((WatsonxAiComponent) component).setDetectPii((java.lang.Boolean) value); return true;
             case "documentBucket": getOrCreateConfiguration((WatsonxAiComponent) component).setDocumentBucket((java.lang.String) value); return true;
             case "documentConnectionId": getOrCreateConfiguration((WatsonxAiComponent) component).setDocumentConnectionId((java.lang.String) value); return true;
+            case "documentLanguages": getOrCreateConfiguration((WatsonxAiComponent) component).setDocumentLanguages((java.lang.String) value); return true;
+            case "embeddedImages": getOrCreateConfiguration((WatsonxAiComponent) component).setEmbeddedImages((java.lang.String) value); return true;
+            case "extractionMode": getOrCreateConfiguration((WatsonxAiComponent) component).setExtractionMode((java.lang.String) value); return true;
+            case "extractionOutputs": getOrCreateConfiguration((WatsonxAiComponent) component).setExtractionOutputs((java.lang.String) value); return true;
             case "frequencyPenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setFrequencyPenalty((java.lang.Double) value); return true;
+            case "governanceInstanceId": getOrCreateConfiguration((WatsonxAiComponent) component).setGovernanceInstanceId((java.lang.String) value); return true;
+            case "guidedChoice": getOrCreateConfiguration((WatsonxAiComponent) component).setGuidedChoice((java.lang.String) value); return true;
+            case "guidedGrammar": getOrCreateConfiguration((WatsonxAiComponent) component).setGuidedGrammar((java.lang.String) value); return true;
+            case "guidedRegex": getOrCreateConfiguration((WatsonxAiComponent) component).setGuidedRegex((java.lang.String) value); return true;
+            case "includeReasoning": getOrCreateConfiguration((WatsonxAiComponent) component).setIncludeReasoning((java.lang.Boolean) value); return true;
+            case "jsonSchema": getOrCreateConfiguration((WatsonxAiComponent) component).setJsonSchema((java.lang.String) value); return true;
+            case "jsonSchemaStrict": getOrCreateConfiguration((WatsonxAiComponent) component).setJsonSchemaStrict((java.lang.Boolean) value); return true;
+            case "kvpMode": getOrCreateConfiguration((WatsonxAiComponent) component).setKvpMode((java.lang.String) value); return true;
             case "lazyStartProducer": ((WatsonxAiComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxCompletionTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setMaxCompletionTokens((java.lang.Integer) value); return true;
             case "maxNewTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setMaxNewTokens((java.lang.Integer) value); return true;
             case "modelId": getOrCreateConfiguration((WatsonxAiComponent) component).setModelId((java.lang.String) value); return true;
+            case "moderationGraniteGuardian": getOrCreateConfiguration((WatsonxAiComponent) component).setModerationGraniteGuardian((java.lang.Boolean) value); return true;
+            case "moderationHap": getOrCreateConfiguration((WatsonxAiComponent) component).setModerationHap((java.lang.Boolean) value); return true;
+            case "moderationPii": getOrCreateConfiguration((WatsonxAiComponent) component).setModerationPii((java.lang.Boolean) value); return true;
+            case "moderationThreshold": getOrCreateConfiguration((WatsonxAiComponent) component).setModerationThreshold((java.lang.Float) value); return true;
+            case "numberOfChoices": getOrCreateConfiguration((WatsonxAiComponent) component).setNumberOfChoices((java.lang.Integer) value); return true;
+            case "ocrMode": getOrCreateConfiguration((WatsonxAiComponent) component).setOcrMode((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((WatsonxAiComponent) component).setOperation((org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations) value); return true;
+            case "outputDpi": getOrCreateConfiguration((WatsonxAiComponent) component).setOutputDpi((java.lang.Integer) value); return true;
+            case "outputTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setOutputTokens((java.lang.Boolean) value); return true;
+            case "predictionLength": getOrCreateConfiguration((WatsonxAiComponent) component).setPredictionLength((java.lang.Integer) value); return true;
             case "presencePenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setPresencePenalty((java.lang.Double) value); return true;
+            case "processingTimeout": getOrCreateConfiguration((WatsonxAiComponent) component).setProcessingTimeout((java.lang.Long) value); return true;
+            case "reasoningEffort": getOrCreateConfiguration((WatsonxAiComponent) component).setReasoningEffort((java.lang.String) value); return true;
+            case "removeOutputFile": getOrCreateConfiguration((WatsonxAiComponent) component).setRemoveOutputFile((java.lang.Boolean) value); return true;
+            case "removeUploadedFile": getOrCreateConfiguration((WatsonxAiComponent) component).setRemoveUploadedFile((java.lang.Boolean) value); return true;
             case "repetitionPenalty": getOrCreateConfiguration((WatsonxAiComponent) component).setRepetitionPenalty((java.lang.Double) value); return true;
             case "rerankTopN": getOrCreateConfiguration((WatsonxAiComponent) component).setRerankTopN((java.lang.Integer) value); return true;
+            case "responseFormat": getOrCreateConfiguration((WatsonxAiComponent) component).setResponseFormat((java.lang.String) value); return true;
             case "resultBucket": getOrCreateConfiguration((WatsonxAiComponent) component).setResultBucket((java.lang.String) value); return true;
             case "resultConnectionId": getOrCreateConfiguration((WatsonxAiComponent) component).setResultConnectionId((java.lang.String) value); return true;
             case "returnDocuments": getOrCreateConfiguration((WatsonxAiComponent) component).setReturnDocuments((java.lang.Boolean) value); return true;
+            case "seed": getOrCreateConfiguration((WatsonxAiComponent) component).setSeed((java.lang.Integer) value); return true;
+            case "stop": getOrCreateConfiguration((WatsonxAiComponent) component).setStop((java.lang.String) value); return true;
+            case "streamEndpoint": getOrCreateConfiguration((WatsonxAiComponent) component).setStreamEndpoint((java.lang.String) value); return true;
             case "temperature": getOrCreateConfiguration((WatsonxAiComponent) component).setTemperature((java.lang.Double) value); return true;
+            case "thinking": getOrCreateConfiguration((WatsonxAiComponent) component).setThinking((java.lang.Boolean) value); return true;
+            case "thinkingTags": getOrCreateConfiguration((WatsonxAiComponent) component).setThinkingTags((java.lang.String) value); return true;
+            case "toolChoice": getOrCreateConfiguration((WatsonxAiComponent) component).setToolChoice((java.lang.String) value); return true;
             case "topK": getOrCreateConfiguration((WatsonxAiComponent) component).setTopK((java.lang.Integer) value); return true;
             case "topP": getOrCreateConfiguration((WatsonxAiComponent) component).setTopP((java.lang.Double) value); return true;
             case "truncateInputTokens": getOrCreateConfiguration((WatsonxAiComponent) component).setTruncateInputTokens((java.lang.Integer) value); return true;
@@ -662,6 +1295,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
             case "apiKey": getOrCreateConfiguration((WatsonxAiComponent) component).setApiKey((java.lang.String) value); return true;
             case "oauthProfile": getOrCreateConfiguration((WatsonxAiComponent) component).setOauthProfile((java.lang.String) value); return true;
             case "verifySsl": getOrCreateConfiguration((WatsonxAiComponent) component).setVerifySsl((java.lang.Boolean) value); return true;
+            case "authenticator": getOrCreateConfiguration((WatsonxAiComponent) component).setAuthenticator((com.ibm.watsonx.ai.core.auth.Authenticator) value); return true;
             default: return false;
             }
         }

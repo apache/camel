@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 public class MilvusComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(MilvusComponent.class);
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints start from. Each endpoint gets a copy, and its options"
+                            + " replace the values of the copy. It also holds the MilvusClient that MilvusConfiguration.setClient()"
+                            + " sets, which the endpoints share.")
     private MilvusConfiguration configuration;
 
     public MilvusComponent() {
@@ -47,9 +49,6 @@ public class MilvusComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * The configuration;
-     */
     public void setConfiguration(MilvusConfiguration configuration) {
         this.configuration = configuration;
     }

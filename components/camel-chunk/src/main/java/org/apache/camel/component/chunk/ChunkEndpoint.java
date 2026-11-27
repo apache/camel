@@ -53,7 +53,7 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 
 /**
- * Transform messages using Chunk templating engine.
+ * Transform a message into text with a Chunk template.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION }, headersClass = ChunkConstants.class)
@@ -70,17 +70,28 @@ public class ChunkEndpoint extends ResourceEndpoint {
     private Theme theme;
     private Chunk chunk;
 
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the producer uses the template of the CamelChunkResourceUri header or the template text of"
+                            + " the CamelChunkTemplate header instead of the resourceUri. If false, the producer ignores both"
+                            + " headers. Enable it only when the route sets these headers, not a message sender.")
     private boolean allowTemplateFromHeader;
-    @UriParam(description = "Define the encoding of the body")
+    @UriParam(description = "The character encoding of the template files that Chunk loads from the theme folder, for example"
+                            + " ISO-8859-1. If not set, Chunk uses UTF-8, or the value of the chunk.template.charset system"
+                            + " property. It does not apply to a resourceUri with a scheme such as classpath: or file:.")
     private String encoding;
-    @UriParam(description = "Define the themes folder to scan")
+    @UriParam(description = "The folder of the template files, as a path on the classpath that is a directory of the file"
+                            + " system, for example mythemes. Chunk looks up a resourceUri without a scheme, and the templates"
+                            + " that a template includes, in this folder. If not set, Chunk uses the themes folder.")
     private String themeFolder;
-    @UriParam(description = "Define the themes subfolder to scan")
+    @UriParam(description = "The subfolder of themeFolder that holds the template files. Chunk reads it as a comma-separated"
+                            + " list of theme layers, and a later layer takes precedence when several hold the same template."
+                            + " It needs the themeFolder option.")
     private String themeSubfolder;
-    @UriParam(description = "Define the theme layer to elaborate")
+    @UriParam(description = "The name of a subtemplate in the template file, for example example_1 for the part that starts"
+                            + " with the tag {#example_1}. The producer then renders only this part. It applies only to a"
+                            + " resourceUri without a scheme.")
     private String themeLayer;
-    @UriParam(description = "Define the file extension of the template")
+    @UriParam(description = "Not used: Chunk loads the template files of the theme folder with the file extension chtml.")
     private String extension;
 
     public ChunkEndpoint() {
@@ -344,12 +355,6 @@ public class ChunkEndpoint extends ResourceEndpoint {
         return allowTemplateFromHeader;
     }
 
-    /**
-     * Whether to allow to use resource template from header or not (default false).
-     *
-     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
-     * security vulnerability if the header is coming from a malicious user, so use this with care.
-     */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }

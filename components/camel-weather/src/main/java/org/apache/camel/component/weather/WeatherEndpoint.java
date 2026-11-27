@@ -31,7 +31,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 /**
- * Poll the weather information from Open Weather Map.
+ * Query the current weather and weather forecasts from OpenWeatherMap.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name",
              category = { Category.API }, headersClass = WeatherConstants.class)

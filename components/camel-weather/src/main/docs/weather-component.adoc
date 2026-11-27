@@ -2,7 +2,7 @@
 :doctitle: Weather
 :shortname: weather
 :artifactid: camel-weather
-:description: Poll the weather information from Open Weather Map.
+:description: Query the current weather and weather forecasts from OpenWeatherMap.
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:

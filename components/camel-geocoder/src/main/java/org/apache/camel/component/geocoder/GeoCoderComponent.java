@@ -30,7 +30,9 @@ import org.apache.camel.support.DefaultComponent;
 @Component("geocoder")
 public class GeoCoderComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "To use a custom com.google.maps.GeoApiContext for the requests to Google. When it is set, the"
+                            + " apiKey, clientId, clientKey and proxy options of the endpoints are not used.")
     private GeoApiContext geoApiContext;
 
     public GeoCoderComponent() {
@@ -59,11 +61,6 @@ public class GeoCoderComponent extends DefaultComponent {
         return geoApiContext;
     }
 
-    /**
-     * Configuration for Google maps API
-     *
-     * @param geoApiContext
-     */
     public void setGeoApiContext(GeoApiContext geoApiContext) {
         this.geoApiContext = geoApiContext;
     }

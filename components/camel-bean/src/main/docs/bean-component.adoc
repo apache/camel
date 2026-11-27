@@ -2,7 +2,7 @@
 :doctitle: Bean
 :shortname: bean
 :artifactid: camel-bean
-:description: Invoke methods of Java beans stored in Camel registry.
+:description: Invoke a method of a Java bean, looked up by name in the Camel registry or created from a class name.
 :since: 1.0
 :supportlevel: Stable
 :tabs-sync-option:

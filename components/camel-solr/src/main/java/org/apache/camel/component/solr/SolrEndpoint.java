@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Perform operations against Apache Lucene Solr.
+ * Index, search and delete documents in Apache Solr.
  */
 @UriEndpoint(firstVersion = "4.8.0", scheme = "solr", title = "Solr", syntax = "solr:host:port/basePath", producerOnly = true,
              category = { Category.SEARCH, Category.MONITORING }, headersClass = SolrConstants.class)

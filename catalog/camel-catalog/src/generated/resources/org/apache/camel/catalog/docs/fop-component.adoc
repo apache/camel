@@ -2,7 +2,7 @@
 :doctitle: FOP
 :shortname: fop
 :artifactid: camel-fop
-:description: Render messages into PDF and other output formats supported by Apache FOP.
+:description: Render XSL-FO documents into PDF, PostScript, PNG and other output formats with Apache FOP.
 :since: 2.10
 :supportlevel: Stable
 :tabs-sync-option:

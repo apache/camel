@@ -89,14 +89,16 @@ public class LdifProducer extends DefaultProducer {
             URL loc;
             try {
                 loc = URI.create(body).toURL();
-                LOG.debug("Reading from URL: {}", loc);
-                result = processLdif(new InputStreamReader(loc.openStream()));
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException | IllegalArgumentException e) {
+                // URI.create() rejects illegal characters and toURL() a relative URI with an IllegalArgumentException,
+                // toURL() an unknown scheme with a MalformedURLException
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Failed to parse body as URL and LDIF", e);
                 }
-                throw new InvalidPayloadException(exchange, String.class);
+                throw new InvalidPayloadException(exchange, String.class, exchange.getIn(), e);
             }
+            LOG.debug("Reading from URL: {}", loc);
+            result = processLdif(new InputStreamReader(loc.openStream()));
         } else {
             throw new IllegalArgumentException(
                     "LDIF body does not start with '" + LDIF_HEADER

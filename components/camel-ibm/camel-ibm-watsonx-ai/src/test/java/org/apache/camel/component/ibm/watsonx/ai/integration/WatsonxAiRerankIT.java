@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WatsonxAiRerankIT extends WatsonxAiTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatsonxAiRerankIT.class);
-    private static final String RERANK_MODEL = "cross-encoder/ms-marco-minilm-l-12-v2";
+    private static final String RERANK_MODEL = "intfloat/multilingual-e5-large";
 
     @EndpointInject
     private ProducerTemplate template;

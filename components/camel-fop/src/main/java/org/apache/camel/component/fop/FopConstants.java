@@ -22,6 +22,9 @@ public interface FopConstants {
     String CAMEL_FOP_RENDER = "CamelFop.Render.";
     String CAMEL_FOP_ENCRYPT = "CamelFop.Encrypt.";
     String CAMEL_FOP_RENDERER_OPTIONS = "CamelFop.RendererOptions.";
-    @Metadata(description = "The output format", javaType = "String")
+    @Metadata(description = "The output format of this message, which overrides the outputType of the endpoint. Either a"
+                            + " name, such as pdf or png, or a MIME type that Apache FOP supports, such as application/pdf,"
+                            + " which is passed to FOP as is.",
+              javaType = "String")
     String CAMEL_FOP_OUTPUT_FORMAT = "CamelFop.Output.Format";
 }

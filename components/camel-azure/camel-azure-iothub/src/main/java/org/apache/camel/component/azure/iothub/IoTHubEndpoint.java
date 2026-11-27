@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Send device telemetry and device-twin updates to Azure IoT Hub.
+ * Send device-to-cloud telemetry messages and device twin reported properties to Azure IoT Hub.
  */
 @UriEndpoint(firstVersion = "4.24.0", scheme = "azure-iothub", title = "Azure IoT Hub",
              syntax = "azure-iothub:deviceId", producerOnly = true,

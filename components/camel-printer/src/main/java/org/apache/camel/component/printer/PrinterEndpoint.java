@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Send print jobs to printers.
+ * Send documents as print jobs to local or network printers by using the Java Print Service API.
  *
  * Obviously the payload has to be a formatted piece of payload in order for the component to appropriately print it.
  * The objective is to be able to direct specific payloads as jobs to a line printer in a camel flow.
@@ -48,7 +48,9 @@ import org.apache.camel.support.DefaultEndpoint;
            producerOut = @BodyType(Carrier.UNCHANGED))
 public class PrinterEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @Metadata(label = "producer", description = "The name of the job", javaType = "String")
+    @Metadata(label = "producer", description = "The name of the print job, sent to the print service as the JobName"
+                                                + " attribute. If not set, the job is named Camel: lpr.",
+              javaType = "String")
     public static final String JOB_NAME = "PrinterJobName";
 
     @UriParam

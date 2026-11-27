@@ -55,7 +55,7 @@ Consumer] page.
 
 === Exchange Properties
 
-When the timer is fired, it adds the following information as properties
+With `includeMetadata=true`, when the scheduler fires, the consumer adds the following information as properties
 to the `Exchange`:
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -66,6 +66,10 @@ to the `Exchange`:
 
 |`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
 |===
+
+It also sets the `CamelMessageTimestamp` header to the same time, in milliseconds since the epoch.
+
+With the default `includeMetadata=false`, the consumer sets none of these properties, nor the header.
 
 === Forcing the scheduler to trigger immediately when completed
 

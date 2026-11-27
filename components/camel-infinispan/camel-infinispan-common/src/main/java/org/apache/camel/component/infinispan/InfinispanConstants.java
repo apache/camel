@@ -25,26 +25,45 @@ public interface InfinispanConstants {
 
     String CACHE_MANAGER_CURRENT = "current";
 
-    @Metadata(label = "consumer", description = "The type of the received event.", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "The type of the event that the consumer received: the name of the Infinispan event type, or"
+                            + " CacheEntryJoining, CacheEntryUpdated or CacheEntryLeaving for a continuous query.",
+              javaType = "String")
     String EVENT_TYPE = "CamelInfinispanEventType";
     @Metadata(label = "consumer",
               description = "true if the notification is before the event has occurred, false if after the event has occurred.",
               javaType = "boolean", applicableFor = SCHEME_EMBEDDED)
     String IS_PRE = "CamelInfinispanIsPre";
-    @Metadata(description = "The cache participating in the operation or event.", javaType = "String")
+    @Metadata(description = "The name of the cache. The consumer sets it for each event, and for the producer it replaces the"
+                            + " cache name of the endpoint.",
+              javaType = "String")
     String CACHE_NAME = "CamelInfinispanCacheName";
-    @Metadata(description = "The key to perform the operation to or the key generating the event.", javaType = "Object")
+    @Metadata(description = "The key of the entry. The consumer sets it for each event that has one. The producer uses it for"
+                            + " the operations that take a key, unless the key option is set.",
+              javaType = "Object")
     String KEY = "CamelInfinispanKey";
-    @Metadata(label = "producer", description = "The value to use for the operation.", javaType = "Object")
+    @Metadata(label = "producer",
+              description = "The value of the entry for the producer operations that take a value. It replaces the value"
+                            + " option.",
+              javaType = "Object")
     String VALUE = "CamelInfinispanValue";
-    @Metadata(label = "producer", description = "The default value to use for a getOrDefault.", javaType = "Object")
+    @Metadata(label = "producer",
+              description = "The value that the GETORDEFAULT operation returns when the key is not in the cache. It replaces"
+                            + " the defaultValue option.",
+              javaType = "Object")
     String DEFAULT_VALUE = "CamelInfinispanDefaultValue";
-    @Metadata(label = "producer", description = "The old value to use for a replace.", javaType = "Object")
+    @Metadata(label = "producer",
+              description = "The value that the REPLACE and REPLACEASYNC operations compare with the current value of the"
+                            + " entry, to replace the entry only if they are equal. It replaces the oldValue option. The consumer"
+                            + " of infinispan-embedded sets it to the value of the removed entry for a CACHE_ENTRY_REMOVED"
+                            + " event.",
+              javaType = "Object")
     String OLD_VALUE = "CamelInfinispanOldValue";
-    @Metadata(label = "producer", description = "A Map to use in case of `CamelInfinispanOperationPutAll` operation",
+    @Metadata(label = "producer",
+              description = "The java.util.Map of the entries that the PUTALL and PUTALLASYNC operations store.",
               javaType = "Map")
     String MAP = "CamelInfinispanMap";
-    @Metadata(label = "producer", description = "The operation to perform.",
+    @Metadata(label = "producer", description = "The operation that the producer performs. It replaces the operation option.",
               javaType = "org.apache.camel.component.infinispan.InfinispanOperation")
     String OPERATION = "CamelInfinispanOperation";
     @Metadata(label = "producer", description = "The name of the header whose value is the result", javaType = "String",
@@ -52,31 +71,45 @@ public interface InfinispanConstants {
                                 + " the header that carries the result of an operation.")
     @Deprecated
     String RESULT = "CamelInfinispanOperationResult";
-    @Metadata(label = "producer", description = "Store the operation result in a header instead of the message body",
+    @Metadata(label = "producer",
+              description = "The name of the header in which the producer stores the result of the operation, keeping the"
+                            + " message body. It replaces the resultHeader option.",
               javaType = "String")
     String RESULT_HEADER = "CamelInfinispanOperationResultHeader";
     @Metadata(label = "producer",
-              description = "The Lifespan time of a value inside the cache. Negative values are interpreted as infinity.",
+              description = "The lifespan of the entry, after which it expires, for the PUT, PUTALL, PUTIFABSENT and REPLACE"
+                            + " operations and their ASYNC variants. Only used together with the CamelInfinispanTimeUnit"
+                            + " header. A negative value means that the entry does not expire.",
               javaType = "long")
     String LIFESPAN_TIME = "CamelInfinispanLifespanTime";
-    @Metadata(label = "producer", description = "The Time Unit of an entry Lifespan Time.",
+    @Metadata(label = "producer", description = "The java.util.concurrent.TimeUnit of the CamelInfinispanLifespanTime header.",
               javaType = "java.util.concurrent.TimeUnit")
     String LIFESPAN_TIME_UNIT = "CamelInfinispanTimeUnit";
     @Metadata(label = "producer",
-              description = "The maximum amount of time an entry is allowed to be idle for before it is considered as expired.",
+              description = "The maximum time that the entry can stay without being accessed before it expires, for the same"
+                            + " operations as the CamelInfinispanLifespanTime header. Only used together with the"
+                            + " CamelInfinispanMaxIdleTimeUnit header, and only when the CamelInfinispanLifespanTime and"
+                            + " CamelInfinispanTimeUnit headers are set too.",
               javaType = "long")
     String MAX_IDLE_TIME = "CamelInfinispanMaxIdleTime";
-    @Metadata(label = "producer", description = "The Time Unit of an entry Max Idle Time.",
+    @Metadata(label = "producer", description = "The java.util.concurrent.TimeUnit of the CamelInfinispanMaxIdleTime header.",
               javaType = "java.util.concurrent.TimeUnit")
     String MAX_IDLE_TIME_UNIT = "CamelInfinispanMaxIdleTimeUnit";
     @Metadata(label = "producer",
-              description = "Signals that a write operation's return value will be ignored, so reading the existing value from a store or from a remote node is not necessary.",
+              description = "Whether the producer applies the Infinispan IGNORE_RETURN_VALUES flag to the cache, so that a"
+                            + " write operation does not need to read the existing value from a cache store or from another"
+                            + " node. The result of such an operation, for example the previous value for PUT, can then be"
+                            + " null.",
               javaType = "boolean", defaultValue = "false", applicableFor = SCHEME_EMBEDDED)
     String IGNORE_RETURN_VALUES = "CamelInfinispanIgnoreReturnValues";
-    @Metadata(label = "consumer", description = "The event data.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "The value of the entry that the event is about, when the event carries one. For a continuous"
+                            + " query, it is the value of the entry that joins the result or is updated.",
+              javaType = "Object")
     String EVENT_DATA = "CamelInfinispanEventData";
     @Metadata(label = "producer",
-              description = "The QueryBuilder to use for QUERY command, if not present the command defaults to the InfinispanConfiguration one",
+              description = "The org.apache.camel.component.infinispan.InfinispanQueryBuilder that builds the query of the"
+                            + " QUERY operation. It replaces the queryBuilder option.",
               javaType = "org.apache.camel.component.infinispan.InfinispanQueryBuilder")
     String QUERY_BUILDER = "CamelInfinispanQueryBuilder";
     @Metadata(label = "consumer", description = "Provides access to the version of the created cache entry.", javaType = "long",
@@ -95,7 +128,9 @@ public interface InfinispanConstants {
               javaType = "boolean", applicableFor = SCHEME_EMBEDDED)
     String ORIGIN_LOCAL = "CamelInfinispanOriginLocal";
     @Metadata(label = "consumer",
-              description = "True if this event is generated from an existing entry as the listener has Listener.",
+              description = "Whether Infinispan generated the event for an entry that already existed when the listener was"
+                            + " registered, which it does only for a listener whose @Listener annotation sets includeCurrentState"
+                            + " to true.",
               javaType = "boolean", applicableFor = SCHEME_EMBEDDED)
     String CURRENT_STATE = "CamelInfinispanCurrentState";
 

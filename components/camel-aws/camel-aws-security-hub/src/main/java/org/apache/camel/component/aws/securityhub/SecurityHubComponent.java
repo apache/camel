@@ -30,7 +30,8 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("aws-security-hub")
 public class SecurityHubComponent extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of the component start from. Each endpoint uses a copy"
+                            + " of it, in which its own URI options replace the values.")
     private SecurityHubConfiguration configuration = new SecurityHubConfiguration();
 
     public SecurityHubComponent() {
@@ -67,9 +68,6 @@ public class SecurityHubComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(SecurityHubConfiguration configuration) {
         this.configuration = configuration;
     }

@@ -37,7 +37,8 @@ import static org.apache.camel.component.ai.tool.AiTool.SCHEME;
 @Component(SCHEME)
 public class AiToolComponent extends DefaultComponent {
 
-    @Metadata(description = "The component configuration")
+    @Metadata(description = "The configuration that every endpoint starts from. The endpoint copies it, and the"
+                            + " options of the endpoint URI replace its values.")
     private AiToolConfiguration configuration;
 
     public AiToolComponent() {

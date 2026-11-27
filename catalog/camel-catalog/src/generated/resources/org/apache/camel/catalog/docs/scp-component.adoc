@@ -2,7 +2,7 @@
 :doctitle: SCP
 :shortname: scp
 :artifactid: camel-jsch
-:description: Copy files to/from remote hosts using the secure copy protocol (SCP).
+:description: Copy files to remote hosts using the secure copy protocol (SCP).
 :since: 2.10
 :supportlevel: Stable
 :tabs-sync-option:

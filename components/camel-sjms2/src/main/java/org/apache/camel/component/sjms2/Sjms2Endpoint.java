@@ -29,9 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Send and receive messages to/from a JMS Queue or Topic using plain JMS 2.x API.
- *
- * This component uses plain JMS 2.x API, whereas the jms component uses Spring JMS.
+ * Send messages to and receive messages from a JMS queue or topic using the plain JMS 2.x API, without Spring JMS.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "sjms2", extendsScheme = "sjms", title = "Simple JMS2",
              syntax = "sjms2:destinationType:destinationName", category = { Category.MESSAGING },
@@ -84,11 +82,21 @@ import org.apache.camel.spi.UriParam;
                                                  + " expects one (InOut) gets the body of the reply, as the consumer gives it"))
 public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
 
-    @UriParam(label = "consumer", description = "Sets the topic subscription id, required for durable or shared topics.")
+    @UriParam(label = "consumer",
+              description = "The name of the topic subscription that the consumer creates. A durable or shared subscription"
+                            + " needs it: without a name the consumer subscribes to the topic with a plain non-durable,"
+                            + " non-shared consumer. Setting durableSubscriptionName sets this option too. Not used for a queue.")
     private String subscriptionId;
-    @UriParam(label = "consumer", description = "Sets the topic to be durable")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer creates a durable topic subscription, which the JMS broker keeps while the"
+                            + " consumer is offline. Needs subscriptionId, and an unshared durable subscription also needs"
+                            + " clientId. Setting durableSubscriptionName turns this option on. Not used for a queue.")
     private boolean durable;
-    @UriParam(label = "consumer", description = "Sets the topic to be shared")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer creates a shared topic subscription, a JMS 2.0 feature: all consumers of"
+                            + " the subscription, also on other connections, share its messages, and each message goes to"
+                            + " one of them. Needs subscriptionId; combine with durable for a shared durable subscription."
+                            + " Not used for a queue.")
     private boolean shared;
 
     public Sjms2Endpoint() {

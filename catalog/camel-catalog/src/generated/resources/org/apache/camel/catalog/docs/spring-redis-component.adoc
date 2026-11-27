@@ -2,7 +2,7 @@
 :doctitle: Spring Redis
 :shortname: spring-redis
 :artifactid: camel-spring-redis
-:description: Send and receive messages from Redis.
+:description: Send commands to Redis and receive the messages of Redis Pub/Sub channels, using Spring Data Redis.
 :since: 2.11
 :supportlevel: Stable
 :tabs-sync-option:
@@ -481,5 +481,3 @@ Maven users will need to add the following dependency to their pom.xml.
 -----------------------------------------------
 
 where `${camel-version`} must be replaced by the actual version of Camel.
-
-

@@ -27,7 +27,10 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("jira")
 public class JiraComponent extends HealthCheckComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The shared configuration of the endpoints, as an"
+                            + " org.apache.camel.component.jira.JiraConfiguration. Each endpoint starts from a copy of it, and"
+                            + " the options of the endpoint override the copy.")
     private JiraConfiguration configuration = new JiraConfiguration();
 
     public JiraComponent() {
@@ -48,9 +51,6 @@ public class JiraComponent extends HealthCheckComponent {
         return endpoint;
     }
 
-    /**
-     * To use a shared base jira configuration.
-     */
     public JiraConfiguration getConfiguration() {
         return configuration;
     }

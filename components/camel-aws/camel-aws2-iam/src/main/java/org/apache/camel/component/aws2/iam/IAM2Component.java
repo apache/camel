@@ -31,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("aws2-iam")
 public class IAM2Component extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of the component start from. Each endpoint uses a copy"
+                            + " of it, in which its own URI options replace the values.")
     private IAM2Configuration configuration = new IAM2Configuration();
 
     public IAM2Component() {
@@ -63,9 +64,6 @@ public class IAM2Component extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(IAM2Configuration configuration) {
         this.configuration = configuration;
     }
