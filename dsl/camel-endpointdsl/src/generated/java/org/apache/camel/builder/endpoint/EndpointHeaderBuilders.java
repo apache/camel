@@ -217,7 +217,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache Qpid Client.
+     * Send and receive messages over AMQP 1.0 with the Apache Qpid JMS client.
      * 
      * Category: messaging
      * Since: 1.2
@@ -310,7 +310,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Bedrock (camel-aws-bedrock)
-     * Invoke Model of AWS Bedrock service.
+     * Invoke Amazon Bedrock foundation models with the InvokeModel and Converse
+     * APIs, and check content with Bedrock guardrails.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -323,7 +324,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
-     * Operate on AWS Bedrock through its Agent.
+     * Start and list the ingestion jobs that sync a data source into an Amazon
+     * Bedrock knowledge base, and poll the status of one.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -336,7 +338,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
-     * Invoke Model of AWS Bedrock Agent Runtime service.
+     * Query Amazon Bedrock knowledge bases, and invoke Amazon Bedrock agents,
+     * inline agents and flows.
      * 
      * Category: ai,cloud
      * Since: 4.5
@@ -707,7 +710,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to AWS Simple Notification Topic.
+     * Publish messages to a topic of Amazon Simple Notification Service (SNS).
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -774,7 +777,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Timestream (camel-aws2-timestream)
-     * Write records and execute queries on AWS time-series database
+     * Write records to and query the time-series data of Amazon Timestream for
+     * LiveAnalytics, and manage its databases, tables, batch load tasks and
+     * scheduled queries.
      * 
      * Category: cloud,database
      * Since: 4.1
@@ -787,7 +792,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Transcribe (camel-aws2-transcribe)
-     * Automatically convert speech to text using AWS Transcribe service
+     * Transcribe speech in audio and video files in S3 to text with Amazon
+     * Transcribe, and manage its custom vocabularies, vocabulary filters and
+     * language models.
      * 
      * Category: cloud,messaging
      * Since: 4.15
@@ -1054,8 +1061,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * CometD (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
+     * Publish messages to web clients and receive their messages with the
+     * CometD/Bayeux protocol, through an embedded Jetty server.
      * 
      * Category: networking,messaging
      * Since: 2.0
@@ -1068,7 +1075,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
+     * Read, write and watch keys and events in Consul, and query or register
+     * its services, nodes, health checks and sessions.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -1192,7 +1200,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
-     * Capture changes from a DB2 database.
+     * Capture the row changes of tables in an IBM Db2 database with the
+     * Debezium Db2 connector.
      * 
      * Category: database
      * Since: 3.17
@@ -1596,7 +1605,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Google BigQuery (camel-google-bigquery)
-     * Google BigQuery data warehouse for analytics.
+     * Insert rows into Google BigQuery tables.
      * 
      * Category: cloud,bigdata
      * Since: 2.20
@@ -1609,7 +1618,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
-     * Access Google Cloud BigQuery service using SQL queries.
+     * Run SQL queries and statements in Google BigQuery.
      * 
      * Category: cloud,messaging
      * Since: 2.23
@@ -1727,7 +1736,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
-     * Transcribe audio to text using Google Cloud Speech-to-Text API
+     * Transcribe audio to text with the Google Cloud Speech-to-Text API.
      * 
      * Category: cloud,ai
      * Since: 4.19
@@ -1951,8 +1960,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Hibernate (camel-hibernate)
-     * Execute selection and mutation queries and natural-id lookups using
-     * Hibernate ORM.
+     * Run HQL queries, look up, insert and upsert entities, and poll entities
+     * from a relational database with Hibernate ORM.
      * 
      * Category: database
      * Since: 4.24
@@ -2059,8 +2068,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * IBM Watson Language (camel-ibm-watson-language)
-     * Perform natural language processing using IBM Watson Natural Language
-     * Understanding
+     * Analyze text and web pages with IBM Watson Natural Language
+     * Understanding.
      * 
      * Category: ai,cloud
      * Since: 4.16
@@ -2354,7 +2363,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * JGroups raft (camel-jgroups-raft)
-     * Exchange messages with JGroups-raft clusters.
+     * Append data to the replicated log of a JGroups-raft cluster, and receive
+     * the leader and follower role changes of the local member.
      * 
      * Category: clustering,messaging
      * Since: 2.24
@@ -2408,7 +2418,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * JOLT (camel-jolt)
-     * JSON to JSON transformation using JOLT.
+     * Transform JSON to JSON with a JOLT specification.
      * 
      * Category: transformation
      * Since: 2.16
@@ -2787,8 +2797,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Kudu (camel-kudu)
-     * Interact with Apache Kudu, a free and open source column-oriented data
-     * store of the Apache Hadoop ecosystem.
+     * Insert, update, upsert, delete and scan rows of Apache Kudu tables, and
+     * create tables.
      * 
      * Category: database,iot,cloud
      * Since: 3.0
@@ -2936,8 +2946,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * OPC UA Browser (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for browsing the node
-     * tree.
+     * Browse the nodes of an OPC UA server and the references between them.
      * 
      * Category: iot
      * Since: 3.15
@@ -2950,8 +2959,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * OPC UA Client (camel-milo)
-     * Connect to OPC UA servers using the binary protocol for acquiring
-     * telemetry data.
+     * Read, write and monitor the values of nodes, and call methods, on an OPC
+     * UA server.
      * 
      * Category: iot
      * Since: 2.19
@@ -2964,7 +2973,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Milvus (camel-milvus)
-     * Perform operations on the Milvus Vector Database.
+     * Create collections and indexes, and insert, upsert, delete, search and
+     * query entities in the Milvus vector database.
      * 
      * Category: database,ai
      * Since: 4.5
@@ -3043,7 +3053,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
-     * Interact with MongoDB GridFS.
+     * Store, read and remove files in a MongoDB GridFS bucket, and receive the
+     * files that are uploaded to it.
      * 
      * Category: database,file
      * Since: 2.18
@@ -3666,7 +3677,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * RocketMQ (camel-rocketmq)
-     * Send and receive messages from RocketMQ cluster.
+     * Send messages to and receive messages from Apache RocketMQ topics.
      * 
      * Category: messaging
      * Since: 3.20
@@ -3746,7 +3757,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * ServiceNow (camel-servicenow)
-     * Interact with ServiceNow via its REST API.
+     * Query and change records, attachments, import sets and service catalog
+     * items of a ServiceNow instance through its REST API.
      * 
      * Category: api,cloud,management
      * Since: 2.18
@@ -3786,8 +3798,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Simple JMS2 (camel-sjms2)
-     * Send and receive messages to/from a JMS Queue or Topic using plain JMS
-     * 2.x API.
+     * Send messages to and receive messages from a JMS queue or topic using the
+     * plain JMS 2.x API, without Spring JMS.
      * 
      * Category: messaging
      * Since: 2.19
@@ -4294,8 +4306,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
-     * Expose WebSocket endpoints and connect to remote WebSocket servers using
-     * Vert.x
+     * Receive and send WebSocket messages with Vert.x, as a WebSocket server or
+     * as a client of a remote WebSocket server.
      * 
      * Category: http,networking
      * Since: 3.5
@@ -4401,7 +4413,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * XJ (camel-xj)
-     * Transform JSON and XML message using a XSLT.
+     * Transform JSON to XML and XML to JSON with an XSLT stylesheet.
      * 
      * Category: transformation
      * Since: 3.0
@@ -4414,7 +4426,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * XML Security Sign (camel-xmlsecurity)
-     * Sign XML payloads using the XML signature specification.
+     * Sign an XML document or plain text with an enveloped, enveloping or
+     * detached XML signature.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -4427,7 +4440,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * XML Security Verify (camel-xmlsecurity)
-     * Verify XML payloads using the XML signature specification.
+     * Verify the XML signatures of an XML document and return the signed
+     * content.
      * 
      * Category: security,transformation
      * Since: 2.12
@@ -4440,7 +4454,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * XMPP (camel-xmpp)
-     * Send and receive messages to/from an XMPP chat server.
+     * Send and receive XMPP (Jabber) messages, in private chats and in
+     * multi-user chat rooms.
      * 
      * Category: chat,messaging
      * Since: 1.0

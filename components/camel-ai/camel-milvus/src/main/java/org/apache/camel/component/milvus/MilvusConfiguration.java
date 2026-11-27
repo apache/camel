@@ -27,22 +27,29 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class MilvusConfiguration implements Cloneable {
 
-    @UriParam
+    @UriParam(description = "The action to perform. The CamelMilvusAction header, when set, wins over this option.")
     private MilvusAction action;
 
     @Metadata(defaultValue = "localhost")
-    @UriParam
+    @UriParam(description = "The host name or IP address of the Milvus server."
+                            + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
     private String host = "localhost";
 
     @Metadata(defaultValue = "19530")
-    @UriParam
+    @UriParam(description = "The gRPC port of the Milvus server."
+                            + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
     private int port = 19530;
 
     @Metadata(security = "secret")
-    @UriParam
+    @UriParam(description = "The token that the client sends to authenticate with Milvus: a user name and password joined"
+                            + " by a colon, or an API key of Zilliz Cloud. If not set, the client sends"
+                            + " no credentials."
+                            + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
     private String token;
 
-    @UriParam
+    @UriParam(description = "The timeout in milliseconds for connecting to the Milvus server, 10000 if not set. The value"
+                            + " must be greater than 0. It is not a timeout of each request: the requests have no deadline."
+                            + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
     private long timeout = 10000L;
 
     @Metadata(autowired = true)
@@ -52,9 +59,6 @@ public class MilvusConfiguration implements Cloneable {
         return action;
     }
 
-    /**
-     * The action to perform. The CamelMilvusAction header, when set, wins over this option.
-     */
     public void setAction(MilvusAction action) {
         this.action = action;
     }
@@ -63,9 +67,6 @@ public class MilvusConfiguration implements Cloneable {
         return host;
     }
 
-    /**
-     * The host to connect to.
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -74,9 +75,6 @@ public class MilvusConfiguration implements Cloneable {
         return port;
     }
 
-    /**
-     * The port to connect to.
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -85,9 +83,6 @@ public class MilvusConfiguration implements Cloneable {
         return token;
     }
 
-    /**
-     * Sets the API key to use for authentication
-     */
     public void setToken(String token) {
         this.token = token;
     }
@@ -96,9 +91,6 @@ public class MilvusConfiguration implements Cloneable {
         return timeout;
     }
 
-    /**
-     * Sets a default timeout for all requests
-     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

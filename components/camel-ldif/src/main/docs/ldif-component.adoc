@@ -40,11 +40,12 @@ for this component:
 == URI format
 
 ----
-ldif:ldapServerBean[?options]
+ldif:ldapConnectionName[?options]
 ----
 
-The _ldapServerBean_ portion of the URI refers to a
-https://directory.apache.org/api/gen-docs/latest/apidocs/org/apache/directory/ldap/client/api/LdapConnection.html[LdapConnection].
+The _ldapConnectionName_ portion of the URI is the name of a
+https://directory.apache.org/api/gen-docs/latest/apidocs/org/apache/directory/ldap/client/api/LdapConnection.html[LdapConnection]
+bean in the registry.
 This should be constructed from a factory at the point of use to avoid connection timeouts. The LDIF component only supports producer
 endpoints, which means that an `ldif` URI cannot appear in the `from` at
 the start of a route.
@@ -71,11 +72,12 @@ version: 1
 ----
 
 If not, the component reads the body as a URL, but only when the `allowUrlBody` option is enabled.
-By default, such a body is rejected.
+By default, such a body is rejected. With `allowUrlBody` enabled, a body that is not a valid absolute URL
+fails with an `InvalidPayloadException`.
 
 === Result
 
-The result is returned in the Out body as a `ArrayList<java.lang.String>` object.
+The producer sets the result as the message body, a `List<String>`.
 This contains a status for each LDIF entry: either `success`, or for a failed change the LDAP result code,
 the DN of the entry and the message from the server, such as:
 

@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAs
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
 
 /**
- * Invoke Model of AWS Bedrock Agent Runtime service.
+ * Query Amazon Bedrock knowledge bases, and invoke Amazon Bedrock agents, inline agents and flows.
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent-runtime", title = "AWS Bedrock Agent Runtime",
              syntax = "aws-bedrock-agent-runtime:label", producerOnly = true, category = { Category.AI, Category.CLOUD },

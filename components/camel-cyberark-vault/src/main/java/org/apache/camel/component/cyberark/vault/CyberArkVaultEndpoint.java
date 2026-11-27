@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Retrieve secrets from CyberArk Conjur Vault.
+ * Retrieve and store secrets in CyberArk Conjur.
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "cyberark-vault", title = "CyberArk Vault",
              syntax = "cyberark-vault:label", producerOnly = true, category = { Category.CLOUD, Category.SECURITY },

@@ -2,7 +2,7 @@
 :doctitle: CometD
 :shortname: cometd
 :artifactid: camel-cometd
-:description: Offers publish/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD/Bayeux protocol.
+:description: Publish messages to web clients and receive their messages with the CometD/Bayeux protocol, through an embedded Jetty server.
 :since: 2.0
 :supportlevel: Stable
 :tabs-sync-option:

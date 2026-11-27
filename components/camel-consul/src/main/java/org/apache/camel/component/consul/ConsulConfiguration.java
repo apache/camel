@@ -25,7 +25,10 @@ import org.kiwiproject.consul.Consul;
 @UriParams
 public class ConsulConfiguration extends ConsulClientConfiguration {
 
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The Consul client (org.kiwiproject.consul.Consul) to use instead of creating one. When set, the"
+                            + " options that create the client (url, sslContextParameters, userName, password, the"
+                            + " timeouts and pingInstance) are not used.")
     @Metadata(autowired = true)
     private Consul consulClient;
     @UriParam
@@ -36,7 +39,10 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
                       + "NODE_CHECKS,SERVICE_CHECKS,SERVICE_INSTANCES,CREATE,DESTROY,INFO,LIST,RENEW,GET,EXECUTE,FIRE,"
                       + "DATACENTERS,NODES,LEADER,PEERS")
     private String action;
-    @UriParam
+    @UriParam(description = "Whether the values of the kv API are decoded to text: the kv consumer then sets the decoded"
+                            + " value as the body instead of the base64 encoded value, and the GET_VALUE and GET_VALUES"
+                            + " actions return a String (a List of them) instead of Value objects. In a producer, the"
+                            + " CamelConsulValueAsString header overrides it.")
     private boolean valueAsString;
 
     public ConsulConfiguration() {
@@ -62,9 +68,6 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
         return valueAsString;
     }
 
-    /**
-     * Default to transform values retrieved from Consul i.e. on KV endpoint to string.
-     */
     public void setValueAsString(boolean valueAsString) {
         this.valueAsString = valueAsString;
     }
@@ -86,9 +89,6 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
         return consulClient;
     }
 
-    /**
-     * The consul client to use.
-     */
     public void setConsulClient(Consul consulClient) {
         this.consulClient = consulClient;
     }

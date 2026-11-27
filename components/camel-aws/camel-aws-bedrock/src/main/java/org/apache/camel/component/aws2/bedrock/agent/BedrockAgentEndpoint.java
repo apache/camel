@@ -33,7 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
 
 /**
- * Operate on AWS Bedrock through its Agent.
+ * Start and list the ingestion jobs that sync a data source into an Amazon Bedrock knowledge base, and poll the status
+ * of one.
  */
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent", title = "AWS Bedrock Agent",
              syntax = "aws-bedrock-agent:label", category = { Category.AI, Category.CLOUD },

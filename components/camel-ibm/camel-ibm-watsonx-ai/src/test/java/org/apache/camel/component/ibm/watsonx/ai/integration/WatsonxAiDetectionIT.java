@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ibm.watsonx.ai.detection.DetectionTextResponse;
+import com.ibm.watsonx.ai.detection.detector.GraniteGuardian;
 import com.ibm.watsonx.ai.detection.detector.Hap;
 import com.ibm.watsonx.ai.detection.detector.Pii;
 import org.apache.camel.EndpointInject;
@@ -208,6 +209,108 @@ public class WatsonxAiDetectionIT extends WatsonxAiTestSupport {
         // Clean text should have no PII detections
         assertEquals(0, count, "Clean text should have no PII detections");
         assertFalse(detected, "Detected should be false for clean text");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGraniteGuardianBenignAndHarmfulText() throws Exception {
+        mockResult.expectedMessageCount(2);
+
+        template.send("direct:detectDefault", exchange -> {
+            exchange.getIn().setBody("The weather today is sunny and warm.");
+            exchange.getIn().setHeader(WatsonxAiConstants.DETECTORS, List.of(GraniteGuardian.ofThreshold(0.01)));
+        });
+        template.send("direct:detectDefault", exchange -> {
+            exchange.getIn().setBody("I hate you, you stupid idiot, I am going to hurt you.");
+            exchange.getIn().setHeader(WatsonxAiConstants.DETECTORS, List.of(GraniteGuardian.ofThreshold(0.01)));
+        });
+
+        mockResult.assertIsSatisfied();
+
+        Exchange benign = mockResult.getExchanges().get(0);
+        Exchange harmful = mockResult.getExchanges().get(1);
+        for (Exchange exchange : List.of(benign, harmful)) {
+            for (DetectionTextResponse detection : (List<DetectionTextResponse>) exchange.getIn().getBody()) {
+                LOG.info("Granite Guardian: type={}, detection={}, score={}, text={}", detection.detectionType(),
+                        detection.detection(), detection.score(), detection.text());
+            }
+            LOG.info("Granite Guardian: detected={}, count={}",
+                    exchange.getIn().getHeader(WatsonxAiConstants.DETECTED),
+                    exchange.getIn().getHeader(WatsonxAiConstants.DETECTION_COUNT));
+        }
+        // with a low threshold Granite Guardian also returns its answer No (a risk below 0.5): only Yes is a detection
+        for (Exchange exchange : List.of(benign, harmful)) {
+            List<DetectionTextResponse> detections = (List<DetectionTextResponse>) exchange.getIn().getBody();
+            boolean yes = detections.stream().anyMatch(d -> "Yes".equalsIgnoreCase(d.detection()));
+            assertEquals(yes, exchange.getIn().getHeader(WatsonxAiConstants.DETECTED, Boolean.class));
+            assertEquals(detections.size(), exchange.getIn().getHeader(WatsonxAiConstants.DETECTION_COUNT));
+        }
+        assertFalse(benign.getIn().getHeader(WatsonxAiConstants.DETECTED, Boolean.class),
+                "A benign text is not harmful content");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    @EnabledIfSystemProperty(named = "camel.ibm.watsonx.ai.governanceInstanceId", matches = ".+",
+                             disabledReason = "No watsonx.governance instance for the context and generated detectors")
+    public void testDetectContextAndGenerated() throws Exception {
+        String governance = "&governanceInstanceId=" + System.getProperty("camel.ibm.watsonx.ai.governanceInstanceId");
+
+        Exchange relevant = template.send(buildDetectionEndpointUri(null, null, null).replace("operation=detect",
+                "operation=detectContext") + governance, exchange -> {
+                    exchange.getIn().setBody("What is the capital of France?");
+                    exchange.getIn().setHeader(WatsonxAiConstants.DETECTION_CONTEXT,
+                            List.of("Paris is the capital and largest city of France."));
+                });
+        Exchange irrelevant = template.send(buildDetectionEndpointUri(null, null, null).replace("operation=detect",
+                "operation=detectContext") + governance, exchange -> {
+                    exchange.getIn().setBody("What is the capital of France?");
+                    exchange.getIn().setHeader(WatsonxAiConstants.DETECTION_CONTEXT,
+                            List.of("Bananas are rich in potassium and grow in tropical regions."));
+                });
+        Exchange faithful = template.send(buildDetectionEndpointUri(null, null, null).replace("operation=detect",
+                "operation=detectContext") + governance + "&detectors=faithfulness", exchange -> {
+                    exchange.getIn().setBody("The capital of France is Paris.");
+                    exchange.getIn().setHeader(WatsonxAiConstants.DETECTION_CONTEXT,
+                            List.of("Paris is the capital and largest city of France."));
+                });
+        Exchange answer = template.send(buildDetectionEndpointUri(null, null, null).replace("operation=detect",
+                "operation=detectGenerated") + governance, exchange -> {
+                    exchange.getIn().setBody("The capital of France is Paris.");
+                    exchange.getIn().setHeader(WatsonxAiConstants.DETECTION_PROMPT, "What is the capital of France?");
+                });
+
+        for (Exchange exchange : List.of(relevant, irrelevant, faithful, answer)) {
+            assertNull(exchange.getException(), () -> "Failed: " + exchange.getException());
+            LOG.info("Context/generated detection: {} {}", exchange.getMessage().getBody(),
+                    exchange.getMessage().getHeader(WatsonxAiConstants.DETECTION_RESULTS));
+        }
+        Map<String, List<Map<String, Object>>> relevantResults
+                = relevant.getMessage().getHeader(WatsonxAiConstants.DETECTION_RESULTS, Map.class);
+        Map<String, List<Map<String, Object>>> irrelevantResults
+                = irrelevant.getMessage().getHeader(WatsonxAiConstants.DETECTION_RESULTS, Map.class);
+        double relevantScore = (double) relevantResults.get("context_relevance").get(0).get("score");
+        double irrelevantScore = (double) irrelevantResults.get("context_relevance").get(0).get("score");
+        assertTrue(relevantScore > irrelevantScore,
+                "The relevant context should score higher: " + relevantScore + " vs " + irrelevantScore);
+        assertTrue(faithful.getMessage().getHeader(WatsonxAiConstants.DETECTION_RESULTS, Map.class)
+                .containsKey("faithfulness"));
+        assertTrue(answer.getMessage().getHeader(WatsonxAiConstants.DETECTION_RESULTS, Map.class)
+                .containsKey("answer_relevance"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testDetectGraniteGuardianByName() throws Exception {
+        // the detectors option names Granite Guardian, as a YAML or XML route can
+        Exchange result = template.send(buildDetectionEndpointUri(null, null, 0.01) + "&detectors=granite_guardian",
+                exchange -> exchange.getIn().setBody("I hate you, you stupid idiot, I am going to hurt you."));
+
+        assertNull(result.getException());
+        List<DetectionTextResponse> detections = (List<DetectionTextResponse>) result.getMessage().getBody();
+        LOG.info("Granite Guardian by name: {}", detections);
+        assertFalse(detections.isEmpty());
+        assertEquals("risk", detections.get(0).detectionType());
     }
 
     @Override

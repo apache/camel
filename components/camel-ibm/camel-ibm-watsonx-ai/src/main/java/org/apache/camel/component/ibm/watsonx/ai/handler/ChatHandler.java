@@ -16,21 +16,24 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai.handler;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import com.ibm.watsonx.ai.chat.ChatRequest;
 import com.ibm.watsonx.ai.chat.ChatResponse;
 import com.ibm.watsonx.ai.chat.ChatService;
+import com.ibm.watsonx.ai.chat.TextChatResponse;
 import com.ibm.watsonx.ai.chat.model.AssistantMessage;
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
 import com.ibm.watsonx.ai.chat.model.ChatParameters;
 import com.ibm.watsonx.ai.chat.model.PartialChatResponse;
-import com.ibm.watsonx.ai.chat.model.Tool;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiConstants;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiEndpoint;
 import org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations;
@@ -70,119 +73,125 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
 
     @SuppressWarnings("unchecked")
     private WatsonxAiOperationResponse processChat(Exchange exchange) {
-        Message in = exchange.getIn();
-
-        // Get messages from header or body
         List<ChatMessage> messages = getMessages(exchange);
+        ChatRequest request = buildChatRequest(exchange, messages);
 
-        // Get tools from header if present
-        List<Tool> tools = in.getHeader(WatsonxAiConstants.TOOLS, List.class);
-
-        // Build parameters from configuration and headers
-        ChatParameters.Builder paramsBuilder = ChatParameters.builder();
-        applyChatParameters(paramsBuilder, exchange);
-
-        // Call the service with tools if present
         ChatService service = endpoint.getChatService();
-        ChatResponse response = service.chat(messages, paramsBuilder.build(), tools);
+        TextChatResponse response = service.chat(request);
 
-        // Get assistant message
-        AssistantMessage assistantMessage = response.toAssistantMessage();
-        String content = assistantMessage.content();
+        Map<String, Object> headers = chatResponseHeaders(response, messages);
+        return WatsonxAiOperationResponse.create(headers.get(WatsonxAiConstants.GENERATED_TEXT), headers);
+    }
 
-        // Build response headers
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(WatsonxAiConstants.GENERATED_TEXT, content);
-        headers.put(WatsonxAiConstants.ASSISTANT_MESSAGE, assistantMessage);
-        headers.put(WatsonxAiConstants.HAS_TOOL_CALLS, assistantMessage.hasToolCalls());
-
-        // Set tool calls if present
-        if (assistantMessage.hasToolCalls()) {
-            headers.put(WatsonxAiConstants.TOOL_CALLS, assistantMessage.toolCalls());
+    /**
+     * The chat request of the messages, with the tools of the tools header and the parameters, reasoning settings and
+     * guardrails of the options and headers.
+     */
+    @SuppressWarnings("unchecked")
+    private ChatRequest buildChatRequest(Exchange exchange, List<ChatMessage> messages) {
+        Message in = exchange.getIn();
+        ChatParameters.Builder parameters = ChatParameters.builder();
+        applyChatParameters(parameters, exchange);
+        String modelId = in.getHeader(WatsonxAiConstants.MODEL_ID, String.class);
+        if (modelId != null && !modelId.isBlank()) {
+            parameters.modelId(modelId);
         }
-
-        if (response.usage() != null) {
-            headers.put(WatsonxAiConstants.INPUT_TOKEN_COUNT, response.usage().promptTokens());
-            headers.put(WatsonxAiConstants.OUTPUT_TOKEN_COUNT, response.usage().completionTokens());
-        }
-        if (response.finishReason() != null) {
-            headers.put(WatsonxAiConstants.STOP_REASON, response.finishReason().value());
-        }
-
-        return WatsonxAiOperationResponse.create(content, headers);
+        return ChatRequest.builder()
+                .messages(messages)
+                .tools(in.getHeader(WatsonxAiConstants.TOOLS, List.class))
+                .parameters(parameters.build())
+                .thinking(buildThinking(exchange))
+                .moderations(buildModerations())
+                .build();
     }
 
     @SuppressWarnings("unchecked")
     private WatsonxAiOperationResponse processChatStreaming(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
-
-        // Get messages from header or body
         List<ChatMessage> messages = getMessages(exchange);
 
-        // Get the stream consumer from header
+        // The chunks go to the stream consumer of the header, or else to the stream endpoint
         Consumer<String> streamConsumer = in.getHeader(WatsonxAiConstants.STREAM_CONSUMER, Consumer.class);
+        if (streamConsumer == null) {
+            streamConsumer = endpoint.getStreamEndpointConsumer(exchange);
+        }
         if (streamConsumer == null) {
             throw new IllegalArgumentException(
                     "Stream consumer must be provided via header '" + WatsonxAiConstants.STREAM_CONSUMER
-                                               + "' for streaming operations");
+                                               + "' or the streamEndpoint option for streaming operations");
         }
+        Consumer<String> chunks = streamConsumer;
 
-        // Build parameters from configuration and headers
-        ChatParameters.Builder paramsBuilder = ChatParameters.builder();
-        applyChatParameters(paramsBuilder, exchange);
-
-        // Call the streaming service
-        ChatService service = endpoint.getChatService();
-        StringBuilder fullResponse = new StringBuilder();
-        final ChatResponse[] finalResponse = new ChatResponse[1];
-        final Throwable[] errorHolder = new Throwable[1];
-
+        ChatRequest request = buildChatRequest(exchange, messages);
+        StringBuilder text = new StringBuilder();
+        AtomicReference<Throwable> firstError = new AtomicReference<>();
+        AtomicReference<CompletableFuture<ChatResponse>> streamRef = new AtomicReference<>();
         com.ibm.watsonx.ai.chat.ChatHandler handler = new com.ibm.watsonx.ai.chat.ChatHandler() {
             @Override
             public void onPartialResponse(String partialResponse, PartialChatResponse partialChatResponse) {
-                if (partialResponse != null && !partialResponse.isEmpty()) {
-                    fullResponse.append(partialResponse);
-                    streamConsumer.accept(partialResponse);
+                // the chunks of the first answer only (numberOfChoices), and none after an error
+                Integer index = partialChatResponse != null ? partialChatResponse.index() : null;
+                if (firstError.get() == null && partialResponse != null && !partialResponse.isEmpty()
+                        && (index == null || index == 0)) {
+                    text.append(partialResponse);
+                    chunks.accept(partialResponse);
                 }
             }
 
             @Override
-            public void onCompleteResponse(ChatResponse completeResponse) {
-                finalResponse[0] = completeResponse;
+            public void onError(Throwable error) {
+                // an error of the stream, or of the stream consumer (which the SDK reports here, and does not stop the
+                // stream for): the exchange fails with the first one
+                if (firstError.compareAndSet(null, error)) {
+                    // the outcome is known: stop the stream rather than wait for its end
+                    CompletableFuture<ChatResponse> stream = streamRef.get();
+                    if (stream != null) {
+                        stream.cancel(true);
+                    }
+                }
+                LOG.debug("Error during streaming chat", error);
             }
 
             @Override
-            public void onError(Throwable error) {
-                errorHolder[0] = error;
-                LOG.error("Error during streaming chat", error);
+            public boolean failOnFirstError() {
+                return true;
             }
         };
 
-        CompletableFuture<ChatResponse> future = service.chatStreaming(messages, paramsBuilder.build(), handler);
-
-        // Wait for completion
-        future.get();
-
-        // Check for errors
-        if (errorHolder[0] != null) {
-            throw new RuntimeException("Error during streaming chat", errorHolder[0]);
+        ChatService service = endpoint.getChatService();
+        CompletableFuture<ChatResponse> stream = service.chatStreaming(request, handler);
+        streamRef.set(stream);
+        if (firstError.get() != null) {
+            stream.cancel(true);
+        }
+        // the complete answer, with its tool calls and reasoning, once the stream ends
+        ChatResponse response;
+        try {
+            response = awaitStream(stream);
+        } catch (Exception e) {
+            throw firstError.get() instanceof Exception error ? error : e;
+        }
+        if (firstError.get() != null) {
+            throw firstError.get() instanceof Exception error ? error : new RuntimeCamelException(firstError.get());
         }
 
-        // Build response headers
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(WatsonxAiConstants.GENERATED_TEXT, fullResponse.toString());
-
-        // Set additional headers from complete response if available
-        if (finalResponse[0] != null) {
-            if (finalResponse[0].usage() != null) {
-                headers.put(WatsonxAiConstants.INPUT_TOKEN_COUNT, finalResponse[0].usage().promptTokens());
-                headers.put(WatsonxAiConstants.OUTPUT_TOKEN_COUNT, finalResponse[0].usage().completionTokens());
-            }
-            if (finalResponse[0].finishReason() != null) {
-                headers.put(WatsonxAiConstants.STOP_REASON, finalResponse[0].finishReason().value());
+        Map<String, Object> headers = chatResponseHeaders(response, messages);
+        // the answer as its chunks came (without the reasoning that the thinking tags split off): the SDK trims the
+        // content of its complete answer
+        if (!text.isEmpty()) {
+            headers.put(WatsonxAiConstants.GENERATED_TEXT, text.toString());
+            if (headers.get(WatsonxAiConstants.ASSISTANT_MESSAGE) instanceof AssistantMessage answer) {
+                AssistantMessage streamed = new AssistantMessage(
+                        text.toString(), answer.thinking(), answer.name(), answer.refusal(), answer.toolCalls());
+                headers.put(WatsonxAiConstants.ASSISTANT_MESSAGE, streamed);
+                // the first of all the answers (numberOfChoices) is the same answer
+                if (headers.get(WatsonxAiConstants.ASSISTANT_MESSAGES) instanceof List<?> answers && !answers.isEmpty()) {
+                    List<Object> all = new ArrayList<>(answers);
+                    all.set(0, streamed);
+                    headers.put(WatsonxAiConstants.ASSISTANT_MESSAGES, all);
+                }
             }
         }
-
-        return WatsonxAiOperationResponse.create(fullResponse.toString(), headers);
+        return WatsonxAiOperationResponse.create(headers.get(WatsonxAiConstants.GENERATED_TEXT), headers);
     }
 }
