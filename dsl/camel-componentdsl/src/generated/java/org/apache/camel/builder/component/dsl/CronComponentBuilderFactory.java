@@ -103,13 +103,12 @@ public interface CronComponentBuilderFactory {
         }
     
         /**
-         * The CamelCronService to use: the name of a CamelCronService bean in
-         * the registry, or else the id of the cron service of a module on the
-         * classpath, quartz (camel-quartz) or spring (camel-spring). The
-         * component fails to start when neither matches. If not set, the only
-         * CamelCronService in the registry is used. If the registry has none,
-         * the one that a module on the classpath provides is used, such as
-         * camel-quartz or camel-spring.
+         * The CamelCronService to use. When set, it is the name of a
+         * CamelCronService bean in the registry, or the id of a classpath cron
+         * service (quartz for camel-quartz, spring for camel-spring). The
+         * component fails to start when neither matches. When not set, the only
+         * CamelCronService in the registry is used, or else the one from a
+         * classpath module.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

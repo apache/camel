@@ -35,6 +35,9 @@ public final class CronHelper {
      * Without a name, the only {@link CamelCronService} of the registry is used, or else the one that a module on the
      * classpath provides. With a name, the bean of the registry with this name is used, or else the cron service of a
      * module on the classpath whose id is the name, such as quartz or spring. A name that matches neither fails.
+     *
+     * @throws IllegalArgumentException if {@code name} is set but matches neither a registry bean nor a classpath cron
+     *                                  service id
      */
     public static CamelCronService resolveCamelCronService(CamelContext context, String name) {
         // Lookup the registry first
