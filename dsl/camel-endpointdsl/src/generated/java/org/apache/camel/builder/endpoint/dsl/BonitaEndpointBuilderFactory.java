@@ -45,6 +45,23 @@ public interface BonitaEndpointBuilderFactory {
         }
 
         /**
+         * The context path of the Bonita web application on the server, such as
+         * /bonita (the default) or the path that a reverse proxy maps to it.
+         * The REST API, the login and the file uploads are called under it.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: /bonita
+         * Group: producer
+         * 
+         * @param basePath the value to set
+         * @return the dsl builder
+         */
+        default BonitaEndpointBuilder basePath(String basePath) {
+            doSetProperty("basePath", basePath);
+            return this;
+        }
+        /**
          * Hostname where Bonita engine runs.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -79,6 +96,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: producer
          * 
          * @param processName the value to set
@@ -89,10 +107,27 @@ public interface BonitaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The version of the process to start a case of. If not set and the
+         * process is deployed in several versions, the first one that Bonita
+         * returns is used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param processVersion the value to set
+         * @return the dsl builder
+         */
+        default BonitaEndpointBuilder processVersion(String processVersion) {
+            doSetProperty("processVersion", processVersion);
+            return this;
+        }
+        /**
          * Password to authenticate to Bonita engine.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: security
          * 
          * @param password the value to set
@@ -107,6 +142,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Required: true
          * Group: security
          * 
          * @param username the value to set

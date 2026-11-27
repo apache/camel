@@ -10971,6 +10971,18 @@ null`, also when a body was sent. Unmarshal JSON text to a `Map` before the boni
 
 The id of the started case is now set in the `CamelBonitaCaseId` header.
 
+=== camel-bonita - exact process name, and processName, username and password checked at startup
+
+The `startCase` producer now looks up the process with the exact name of `processName` (the `f=name=...` filter of the
+Bonita REST API) instead of searching for it and taking the first result, so a process whose name only contains the
+given name is no longer used. When the process is deployed in several versions, the new `processVersion` option
+selects one; without it the first version that Bonita returns is used, as before, and a WARN is logged once.
+
+A route with a `bonita` endpoint without `processName`, `username` or `password` now fails to start, instead of failing
+every exchange. The context path of the Bonita server can be set with the new `basePath` option (default `/bonita`).
+
+`BonitaConfiguration.setParameters(Map)` is deprecated. Camel does not call it; use the setters.
+
 === camel-camunda - a failed operation fails the exchange, and the JSON uses camelCase property names
 
 The producer caught the error of the Camunda client, and gave a response with `success` set to `false` and the error

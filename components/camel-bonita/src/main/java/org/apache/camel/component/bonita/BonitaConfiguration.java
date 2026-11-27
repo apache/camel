@@ -34,11 +34,18 @@ public class BonitaConfiguration implements Cloneable {
     private String hostname = "localhost";
     @UriParam(defaultValue = "8080")
     private String port = "8080";
+    @UriParam(defaultValue = "/bonita")
+    private String basePath = "/bonita";
     @UriParam
+    @Metadata(required = true)
     private String processName;
+    @UriParam
+    private String processVersion;
     @UriParam(label = "security", security = "secret")
+    @Metadata(required = true)
     private String username;
     @UriParam(label = "security", security = "secret")
+    @Metadata(required = true)
     private String password;
 
     public String getHostname() {
@@ -63,6 +70,30 @@ public class BonitaConfiguration implements Cloneable {
         this.port = port;
     }
 
+    public String getBasePath() {
+        return basePath;
+    }
+
+    /**
+     * The context path of the Bonita web application on the server, such as /bonita (the default) or the path that a
+     * reverse proxy maps to it. The REST API, the login and the file uploads are called under it.
+     */
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    public String getProcessVersion() {
+        return processVersion;
+    }
+
+    /**
+     * The version of the process to start a case of. If not set and the process is deployed in several versions, the
+     * first one that Bonita returns is used.
+     */
+    public void setProcessVersion(String processVersion) {
+        this.processVersion = processVersion;
+    }
+
     public String getProcessName() {
         return processName;
     }
@@ -85,6 +116,13 @@ public class BonitaConfiguration implements Cloneable {
         this.operation = operation;
     }
 
+    /**
+     * Sets hostname, port and processName from a map. Camel does not call this method: the options are set through the
+     * generated configurer.
+     *
+     * @deprecated not used by Camel, and it handles only three of the options. Use the setters.
+     */
+    @Deprecated(since = "4.24.0")
     public void setParameters(Map<String, Object> parameters) {
         if (parameters.get("hostname") != null) {
             this.hostname = (String) parameters.get("hostname");
