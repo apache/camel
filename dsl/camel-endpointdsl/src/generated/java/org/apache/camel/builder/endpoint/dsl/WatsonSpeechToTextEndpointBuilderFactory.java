@@ -46,25 +46,6 @@ public interface WatsonSpeechToTextEndpointBuilderFactory {
         }
 
         /**
-         * The URL of the Speech to Text service instance, for example
-         * https://api.eu-de.speech-to-text.watson.cloud.ibm.com. If not set,
-         * the IBM Watson SDK uses
-         * https://api.us-south.speech-to-text.watson.cloud.ibm.com, unless its
-         * external configuration, such as the SPEECH_TO_TEXT_URL environment
-         * variable, gives a URL.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serviceUrl the value to set
-         * @return the dsl builder
-         */
-        default WatsonSpeechToTextEndpointBuilder serviceUrl(String serviceUrl) {
-            doSetProperty("serviceUrl", serviceUrl);
-            return this;
-        }
-        /**
          * The format (MIME type) of the audio for recognize, for example
          * audio/wav, audio/flac, audio/mp3, audio/ogg or audio/webm. audio/l16,
          * audio/alaw and audio/mulaw also need the sampling rate, as in
@@ -139,6 +120,25 @@ public interface WatsonSpeechToTextEndpointBuilderFactory {
          */
         default WatsonSpeechToTextEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The URL of the Speech to Text service instance, for example
+         * https://api.eu-de.speech-to-text.watson.cloud.ibm.com. If not set,
+         * the IBM Watson SDK uses
+         * https://api.us-south.speech-to-text.watson.cloud.ibm.com, unless its
+         * external configuration, such as the SPEECH_TO_TEXT_URL environment
+         * variable, gives a URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param serviceUrl the value to set
+         * @return the dsl builder
+         */
+        default WatsonSpeechToTextEndpointBuilder serviceUrl(String serviceUrl) {
+            doSetProperty("serviceUrl", serviceUrl);
             return this;
         }
         /**
@@ -484,8 +484,9 @@ public interface WatsonSpeechToTextEndpointBuilderFactory {
             return "CamelIBMWatsonSTTSpeakerLabels";
         }
         /**
-         * The name of the speech model for getModel, or the customization ID of
-         * the custom language model for getCustomModel. If not set, the
+         * The name of the speech model for getModel. getCustomModel reads it as
+         * the customization ID of the custom language model when the
+         * CamelIBMWatsonSTTCustomizationId header is not set. If not set, the
          * producer reads it from the message body.
          * 
          * The option is a: {@code String} type.
@@ -496,6 +497,20 @@ public interface WatsonSpeechToTextEndpointBuilderFactory {
          */
         public String iBMWatsonSTTModelName() {
             return "CamelIBMWatsonSTTModelName";
+        }
+        /**
+         * The customization ID (a GUID) of the custom language model for
+         * getCustomModel. It comes before the CamelIBMWatsonSTTModelName header
+         * and the message body.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonSTTCustomizationId}.
+         */
+        public String iBMWatsonSTTCustomizationId() {
+            return "CamelIBMWatsonSTTCustomizationId";
         }
         /**
          * The language for listCustomModels, for example en-US, to list only

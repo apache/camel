@@ -30,7 +30,7 @@ public class WatsonSpeechToTextConfiguration implements Cloneable {
     @Metadata(required = true)
     private String apiKey;
 
-    @UriParam(label = "common",
+    @UriParam(label = "producer",
               description = "The URL of the Speech to Text service instance, for example"
                             + " https://api.eu-de.speech-to-text.watson.cloud.ibm.com. If not set, the IBM Watson SDK uses"
                             + " https://api.us-south.speech-to-text.watson.cloud.ibm.com, unless its external configuration,"
