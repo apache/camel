@@ -63,7 +63,6 @@ public class SpringCamelContext extends DefaultCamelContext
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
     private ApplicationContext applicationContext;
-    private EventComponent eventComponent;
     private boolean shutdownEager = true;
 
     public SpringCamelContext() {
@@ -107,8 +106,7 @@ public class SpringCamelContext extends DefaultCamelContext
         if (applicationContext instanceof ConfigurableApplicationContext) {
             // only add if not already added
             if (hasComponent("spring-event") == null) {
-                eventComponent = new EventComponent(applicationContext);
-                addComponent("spring-event", eventComponent);
+                addComponent("spring-event", new EventComponent(applicationContext));
             }
         }
     }
@@ -151,7 +149,9 @@ public class SpringCamelContext extends DefaultCamelContext
             start();
         }
 
-        if (eventComponent != null) {
+        // the registered spring-event component gets the events, also when it was added before this context was built
+        // and so was not created by doBuild
+        if (hasComponent("spring-event") instanceof EventComponent eventComponent) {
             eventComponent.onApplicationEvent(event);
         }
     }

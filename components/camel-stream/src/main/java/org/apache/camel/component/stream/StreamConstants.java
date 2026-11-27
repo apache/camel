@@ -20,9 +20,17 @@ import org.apache.camel.spi.Metadata;
 
 public final class StreamConstants {
 
-    @Metadata(label = "consumer", description = "The index", javaType = "long")
+    @Metadata(label = "consumer",
+              description = "The index of the exchange in the stream, starting at 0 and counting each exchange"
+                            + " that the consumer creates: a line, a group of lines, or the bytes of one read. With"
+                            + " scanStream and retry, the count goes on after the stream is opened again.",
+              javaType = "long")
     public static final String STREAM_INDEX = "CamelStreamIndex";
-    @Metadata(label = "consumer", description = "Is complete", javaType = "boolean")
+    @Metadata(label = "consumer",
+              description = "Whether the exchange is the last one of the stream. The consumer reads one line ahead"
+                            + " to know it, except for kind in, where it is true for each line. Always false with"
+                            + " scanStream, as a scanned stream never ends.",
+              javaType = "boolean")
     public static final String STREAM_COMPLETE = "CamelStreamComplete";
 
     private StreamConstants() {

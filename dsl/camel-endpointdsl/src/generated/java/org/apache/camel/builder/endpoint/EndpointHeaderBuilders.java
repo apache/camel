@@ -40,7 +40,8 @@ public class EndpointHeaderBuilders {
 
     /**
      * A2A (camel-a2a)
-     * A2A endpoint for agent-to-agent communication.
+     * Expose a route as an agent and call remote agents with the Agent2Agent
+     * (A2A) protocol.
      * 
      * Category: ai
      * Since: 4.21
@@ -95,8 +96,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AI Tool (camel-ai-tool)
-     * Framework-agnostic consumer endpoint that registers a Camel route as an
-     * LLM tool in the shared AiToolRegistry.
+     * Expose a Camel route as a tool that a model calls through a Camel AI
+     * producer, or that MCP clients call through the Camel MCP server.
      * 
      * Category: ai
      * Since: 4.22
@@ -242,8 +243,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb when used as a Document Database, or as a
-     * Graph Database
+     * Store, find, update and delete documents, vertices and edges in an
+     * ArangoDB database, and run AQL queries.
      * 
      * Category: database
      * Since: 3.5
@@ -400,7 +401,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Security Hub (camel-aws-security-hub)
-     * Manage and interact with AWS Security Hub for security findings.
+     * Import, query and update security findings in AWS Security Hub.
      * 
      * Category: cloud,security
      * Since: 4.18
@@ -479,7 +480,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances.
+     * Launch, start, stop, reboot, terminate, describe, monitor and tag
+     * instances in AWS Elastic Compute Cloud (EC2).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -492,7 +494,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
-     * Manage AWS ECS cluster instances.
+     * Create, describe, list and delete clusters of AWS Elastic Container
+     * Service (ECS).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -532,7 +535,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
-     * Manage AWS IAM instances.
+     * Manage users, groups, roles, managed policies, access keys and instance
+     * profiles in AWS Identity and Access Management (IAM).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -597,7 +601,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS MQ (camel-aws2-mq)
-     * Manage AWS MQ instances.
+     * Create, describe, update, reboot, delete and list brokers in Amazon MQ.
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -636,7 +640,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS RedshiftData (camel-aws2-redshift)
-     * Perform operations on AWS Redshift using Redshift Data API.
+     * Run SQL statements and read database metadata in Amazon Redshift through
+     * the Amazon Redshift Data API.
      * 
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1
@@ -728,7 +733,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
-     * Manage and invoke AWS Step functions.
+     * Manage the state machines and activities of AWS Step Functions, and
+     * start, stop and inspect their executions.
      * 
      * Category: cloud,serverless
      * Since: 4.0
@@ -768,7 +774,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Timestream (camel-aws2-timestream)
-     * Write records and execute queries on AWS time-series database
+     * Write records to and query the time-series data of Amazon Timestream for
+     * LiveAnalytics, and manage its databases, tables, batch load tasks and
+     * scheduled queries.
      * 
      * Category: cloud,database
      * Since: 4.1
@@ -859,7 +867,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Azure IoT Hub (camel-azure-iothub)
-     * Send device telemetry and device-twin updates to Azure IoT Hub.
+     * Send device-to-cloud telemetry messages and device twin reported
+     * properties to Azure IoT Hub.
      * 
      * Category: cloud,iot,messaging
      * Since: 4.24
@@ -924,7 +933,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
-     * Stores and retrieves messages to/from Azure Storage Queue.
+     * Send messages to and receive messages from the queues of Azure Queue
+     * Storage.
      * 
      * Category: cloud,messaging
      * Since: 3.3
@@ -1005,7 +1015,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Chunk (camel-chunk)
-     * Transform messages using Chunk templating engine.
+     * Transform a message into text with a Chunk template.
      * 
      * Category: transformation
      * Since: 2.15
@@ -1103,8 +1113,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
-     * Based on Cassandra Java Driver provided by DataStax.
+     * Query and update an Apache Cassandra database with CQL statements.
      * 
      * Category: database,bigdata
      * Since: 2.15
@@ -1185,7 +1194,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
-     * Capture changes from a DB2 database.
+     * Capture the row changes of tables in an IBM Db2 database with the
+     * Debezium Db2 connector.
      * 
      * Category: database
      * Since: 3.17
@@ -1277,7 +1287,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
+     * Query DNS records and resolve host names to IP addresses, using the
+     * dnsjava library.
      * 
      * Category: networking
      * Since: 2.7
@@ -1385,7 +1396,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to Elasticsearch via Java Client API.
+     * Index, update, get, search and delete documents and indices in
+     * Elasticsearch with the Java API Client.
      * 
      * Category: search,monitoring
      * Since: 3.19
@@ -1412,8 +1424,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Event (camel-event)
-     * Subscribe to Camel internal events such as route started/stopped and
-     * exchange completed/failed.
+     * Receive the internal events of the CamelContext, such as a route that
+     * started or an exchange that failed.
      * 
      * Category: core,monitoring
      * Since: 4.19
@@ -1452,8 +1464,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * File Watch (camel-file-watch)
-     * Get notified about file events in a directory using
-     * java.nio.file.WatchService.
+     * Receive an event when a file or directory is created, modified or deleted
+     * in a directory of the file system.
      * 
      * Category: file
      * Since: 3.0
@@ -1492,8 +1504,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * FOP (camel-fop)
-     * Render messages into PDF and other output formats supported by Apache
-     * FOP.
+     * Render XSL-FO documents into PDF, PostScript, PNG and other output
+     * formats with Apache FOP.
      * 
      * Category: file,transformation
      * Since: 2.10
@@ -1546,8 +1558,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Geocoder (camel-geocoder)
-     * Find geocodes (latitude and longitude) for a given address or the other
-     * way round.
+     * Look up the latitude and longitude of an address, or the address of a
+     * latitude and longitude, with Google or a Nominatim server.
      * 
      * Category: api,search
      * Since: 2.12
@@ -1560,7 +1572,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Git (camel-git)
-     * Perform operations on git repositories.
+     * Run git operations, such as clone, commit, push and pull, on a local
+     * repository with JGit, and receive its commits, branches and tags.
      * 
      * Category: file
      * Since: 2.16
@@ -1638,7 +1651,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Google Firestore (camel-google-firestore)
-     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * Store, retrieve and query documents in Google Cloud Firestore
+     * collections.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -1716,7 +1730,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
-     * Transcribe audio to text using Google Cloud Speech-to-Text API
+     * Transcribe audio to text with the Google Cloud Speech-to-Text API.
      * 
      * Category: cloud,ai
      * Since: 4.19
@@ -1980,8 +1994,9 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Hugging Face (camel-huggingface)
-     * Integration with Hugging Face's Model Hub by using the Deep Java Library
-     * (DJL) Python bridge
+     * Run Hugging Face models for tasks such as text classification,
+     * summarization, chat and speech recognition, in a Python process of Deep
+     * Java Library (DJL).
      * 
      * Category: ai
      * Since: 4.19
@@ -2062,7 +2077,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
-     * Convert speech audio to text using IBM Watson Speech to Text
+     * Transcribe audio to text with IBM Watson Speech to Text, and list or get
+     * its speech models and custom language models.
      * 
      * Category: ai,cloud
      * Since: 4.17
@@ -2102,8 +2118,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * IBM watsonx.data (camel-ibm-watsonx-data)
-     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
-     * engine management.
+     * Manage the catalogs, schemas, tables, engines and storage registrations
+     * of an IBM watsonx.data lakehouse.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -2116,7 +2132,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Iggy (camel-iggy)
-     * Send and receive message to Apache Iggy streaming platform.
+     * Send messages to and receive messages from topics of the Apache Iggy
+     * message streaming platform.
      * 
      * Category: messaging
      * Since: 4.17
@@ -2235,8 +2252,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Infinispan Embedded (camel-infinispan-embedded)
-     * Read and write from/to Infinispan distributed key/value store and data
-     * grid.
+     * Read and write the entries of caches of an Infinispan cache manager
+     * embedded in the application, and receive their events.
      * 
      * Category: cache,clustering
      * Since: 2.13
@@ -2262,7 +2279,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * InfluxDB2 (camel-influxdb2)
-     * Interact with InfluxDB v2, a time series database.
+     * Write time series data to InfluxDB 2.x.
      * 
      * Category: database
      * Since: 3.20
@@ -2353,7 +2370,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Jira (camel-jira)
-     * Interact with JIRA issue tracker.
+     * Create, update and query issues in Atlassian Jira, and poll Jira for new
+     * issues, new comments and changed fields.
      * 
      * Category: document
      * Since: 3.0
@@ -2379,7 +2397,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * JMX (camel-jmx)
-     * Receive JMX notifications.
+     * Receive the notifications of an MBean on a local or remote MBean server,
+     * or of a JMX monitor that observes an MBean attribute.
      * 
      * Category: monitoring
      * Since: 2.6
@@ -2392,7 +2411,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * JOLT (camel-jolt)
-     * JSON to JSON transformation using JOLT.
+     * Transform JSON to JSON with a JOLT specification.
      * 
      * Category: transformation
      * Since: 2.16
@@ -2785,7 +2804,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
-     * LangChain4j Agent component
+     * Send a message to an AI agent of LangChain4j, which can call Camel routes
+     * and MCP servers as tools, and return its answer.
      * 
      * Category: ai
      * Since: 4.14
@@ -2864,7 +2884,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Printer (camel-printer)
-     * Send print jobs to printers.
+     * Send documents as print jobs to local or network printers by using the
+     * Java Print Service API.
      * 
      * Category: document
      * Since: 2.1
@@ -2890,8 +2911,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Metrics (camel-metrics)
-     * Collect various metrics directly from Camel routes using the DropWizard
-     * metrics library.
+     * Update counters, gauges, histograms, meters and timers of a Dropwizard
+     * Metrics registry from Camel routes.
      * 
      * Category: monitoring
      * Since: 2.14
@@ -2946,7 +2967,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Milvus (camel-milvus)
-     * Perform operations on the Milvus Vector Database.
+     * Create collections and indexes, and insert, upsert, delete, search and
+     * query entities in the Milvus vector database.
      * 
      * Category: database,ai
      * Since: 4.5
@@ -3025,7 +3047,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
-     * Interact with MongoDB GridFS.
+     * Store, read and remove files in a MongoDB GridFS bucket, and receive the
+     * files that are uploaded to it.
      * 
      * Category: database,file
      * Since: 2.18
@@ -3053,7 +3076,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Mustache (camel-mustache)
-     * Transform messages using a Mustache template.
+     * Render a Mustache template with the data of the message and use the text
+     * it writes as the new message body.
      * 
      * Category: transformation
      * Since: 2.12
@@ -3500,7 +3524,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * PGVector (camel-pgvector)
-     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * Store, delete and search vector embeddings in a PostgreSQL table with the
+     * pgvector extension.
      * 
      * Category: database,ai
      * Since: 4.19
@@ -3766,8 +3791,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Simple JMS2 (camel-sjms2)
-     * Send and receive messages to/from a JMS Queue or Topic using plain JMS
-     * 2.x API.
+     * Send messages to and receive messages from a JMS queue or topic using the
+     * plain JMS 2.x API, without Spring JMS.
      * 
      * Category: messaging
      * Since: 2.19
@@ -3821,7 +3846,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
+     * Index, search and delete documents in Apache Solr.
      * 
      * Category: search,monitoring
      * Since: 4.8
@@ -3953,7 +3978,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Spring Redis (camel-spring-redis)
-     * Send and receive messages from Redis.
+     * Send commands to Redis and receive the messages of Redis Pub/Sub
+     * channels, using Spring Data Redis.
      * 
      * Category: cache
      * Since: 2.11
@@ -4047,7 +4073,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Stream (camel-stream)
-     * Read from system-in and write to system-out and system-err streams.
+     * Read from System.in, a file or an HTTP URL, and write to System.out,
+     * System.err, a file or an output stream in a message header.
      * 
      * Category: file,core
      * Since: 1.3
@@ -4258,8 +4285,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Vert.x MQTT (camel-vertx-mqtt)
-     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
-     * with the Vert.x MQTT client.
+     * Send and receive messages with an MQTT 3.1.1 or MQTT 5 broker, using the
+     * Vert.x MQTT client.
      * 
      * Category: messaging,iot
      * Since: 4.24
@@ -4300,7 +4327,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Weather (camel-weather)
-     * Poll the weather information from Open Weather Map.
+     * Query the current weather and weather forecasts from OpenWeatherMap.
      * 
      * Category: api
      * Since: 2.12
@@ -4379,7 +4406,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * XJ (camel-xj)
-     * Transform JSON and XML message using a XSLT.
+     * Transform JSON to XML and XML to JSON with an XSLT stylesheet.
      * 
      * Category: transformation
      * Since: 3.0

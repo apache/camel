@@ -2,7 +2,7 @@
 :doctitle: Huawei FunctionGraph
 :shortname: hwcloud-functiongraph
 :artifactid: camel-huaweicloud-functiongraph
-:description: To call serverless functions on Huawei Cloud
+:description: Invoke serverless functions in Huawei Cloud FunctionGraph.
 :since: 3.11
 :supportlevel: Stable
 :tabs-sync-option:
@@ -163,5 +163,3 @@ YAML::
               serviceKeys: "#myServiceKeyConfig"
 ----
 ====
-
-

@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 /**
- * Prints data from the routed message (such as body and headers) to the logger.
+ * Log the exchanges that pass through a route, or their throughput, with an SLF4J logger.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log Data",
              remote = false, internal = true, syntax = "log:loggerName", producerOnly = true,
@@ -57,87 +57,125 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
     private int lineNumber;
     private String location;
 
-    @UriPath(description = "Name of the logging category to use")
+    @UriPath(description = "The name of the SLF4J logger, also called the logging category. It is not used when an"
+                           + " org.slf4j.Logger is given, by the logger URI parameter or as the only Logger bean in the registry,"
+                           + " or when sourceLocationLoggerName resolves a name.")
     @Metadata(required = true)
     private String loggerName;
-    @UriParam(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @UriParam(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
+              description = "The logging level of the log messages. OFF logs nothing.")
     private String level;
-    @UriParam
+    @UriParam(description = "The name of an SLF4J marker to add to each log message.")
     private String marker;
-    @UriParam
+    @UriParam(description = "Turns on throughput logging: instead of each exchange, the endpoint logs statistics (the number"
+                            + " of exchanges and the messages per second) after every groupSize exchanges. It takes precedence"
+                            + " over groupInterval, and the formatting options are not used.")
     private Integer groupSize;
-    @UriParam
+    @UriParam(description = "Turns on throughput logging: instead of each exchange, the endpoint logs statistics (the number"
+                            + " of new and total exchanges and the messages per second) every interval, in milliseconds, from a"
+                            + " background thread. It is not used when groupSize is set.")
     private Long groupInterval;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether the groupInterval throughput logging skips an interval in which no new exchanges"
+                            + " arrived. If false, it logs the statistics every interval.")
     private boolean groupActiveOnly = true;
-    @UriParam
+    @UriParam(description = "The delay, in milliseconds, before the groupInterval throughput logging logs its first"
+                            + " statistics. If not set, 1000 is used.")
     private Long groupDelay;
-    @UriParam
+    @UriParam(description = "Whether to mask sensitive values, such as passwords and passphrases, in the log message. If not"
+                            + " set, the logMask setting of the route, or of the CamelContext, is used. A"
+                            + " org.apache.camel.spi.MaskingFormatter bean named CamelCustomLogMask in the registry replaces the"
+                            + " default masking.")
     private Boolean logMask;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "A custom org.apache.camel.spi.ExchangeFormatter that turns the exchange into the log message."
+                            + " When set, the formatting options of the endpoint are not used. If not set, the exchangeFormatter"
+                            + " of the component, or a bean named logFormatter in the registry, is used.")
     private ExchangeFormatter exchangeFormatter;
     @UriParam(label = "formatting", description = "Show route ID.")
     private boolean showRouteId;
-    @UriParam(label = "formatting", description = "Show route Group.")
+    @UriParam(label = "formatting", description = "Show the group of the route, if the route has one.")
     private boolean showRouteGroup;
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
     @UriParam(label = "formatting",
-              description = "Shows the Message Exchange Pattern (or MEP for short).")
+              description = "Show the exchange pattern (InOnly or InOut). When none of the formatting options is set, the"
+                            + " endpoint uses the default output of the component, which shows the exchange pattern anyway.")
     private boolean showExchangePattern;
     @UriParam(label = "formatting",
               description = "Show the exchange properties (only custom). Use showAllProperties to show both internal and custom properties.")
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show all of the exchange properties (both internal and custom).")
     private boolean showAllProperties;
-    @UriParam(label = "formatting", description = "Show the variables.")
+    @UriParam(label = "formatting", description = "Show the variables of the exchange, if it has any.")
     private boolean showVariables;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
     @UriParam(label = "formatting", defaultValue = "true",
-              description = "Whether to skip line separators when logging the message body."
-                            + " This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
+              description = "Whether to remove the line separators of the operating system from the body, so the body is"
+                            + " logged on one line. If false, the body is logged as is.")
     private boolean skipBodyLineSeparator = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the message body.")
     private boolean showBody = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the body Java type.")
     private boolean showBodyType = true;
     @UriParam(label = "formatting",
-              description = "If the exchange has an exception, show the exception message (no stacktrace)")
+              description = "If the exchange has an exception, show the type and message of the exception (not the stack"
+                            + " trace).")
     private boolean showException;
     @UriParam(label = "formatting",
-              description = "If the exchange has a caught exception, show the exception message (no stack trace)."
-                            + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions.")
+              description = "Show the type and message of the exception of the exchange or, if it has none, of the caught"
+                            + " exception (not the stack trace). Camel stores a caught exception in the CamelExceptionCaught"
+                            + " exchange property, for example when doCatch catches it or onException handles it.")
     private boolean showCaughtException;
     @UriParam(label = "formatting",
-              description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
+              description = "Show the stack trace of the exception that showException, showCaughtException or showAll"
+                            + " shows. It has no effect without one of them.")
     private boolean showStackTrace;
     @UriParam(label = "formatting",
-              description = "Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used)")
+              description = "Show all parts of the exchange: the ID, the route group and route ID, the exchange pattern, all"
+                            + " properties, the variables, the headers, the body type and body, the exception or caught exception,"
+                            + " and its stack trace. It does not change multiline, maxChars, or the stream, file and Future"
+                            + " options.")
     private boolean showAll;
-    @UriParam(label = "formatting", description = "If enabled then each information is outputted on a newline.")
+    @UriParam(label = "formatting", description = "Whether to log each part of the exchange on its own line.")
     private boolean multiline;
     @UriParam(label = "formatting",
-              description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
+              description = "Whether to wait for a java.util.concurrent.Future body to complete and log its result. If false,"
+                            + " the toString() of the Future is logged.")
     private boolean showFuture;
     @UriParam(label = "formatting", defaultValue = "true",
-              description = "Whether Camel should show cached stream bodies or not (org.apache.camel.StreamCache).")
+              description = "Whether to log a body that is an org.apache.camel.StreamCache. The stream cache is reset after"
+                            + " it is read, so the body can be read again later. If false, a placeholder is logged instead,"
+                            + " unless showStreams is true.")
     private boolean showCachedStreams = true;
     @UriParam(label = "formatting",
-              description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
-                            + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
+              description = "Whether to log a body that is a stream, such as a java.io.InputStream or a java.io.Reader, or a"
+                            + " stream cache. If false, a placeholder is logged instead. Beware that logging reads the stream, so"
+                            + " later steps may not be able to read the body; use stream caching to avoid this.")
     private boolean showStreams;
-    @UriParam(label = "formatting", description = "If enabled Camel will output files")
+    @UriParam(label = "formatting",
+              description = "Whether to log the content of a body that is a file, such as a java.io.File, a java.nio.file.Path"
+                            + " or a file of the file or ftp components. If false, a placeholder with the file name is logged"
+                            + " instead.")
     private boolean showFiles;
-    @UriParam(label = "formatting", defaultValue = "10000", description = "Limits the number of characters logged per line.")
+    @UriParam(label = "formatting", defaultValue = "10000",
+              description = "The maximum number of characters to log. A longer body is cut at this length, and so is a longer"
+                            + " log message, or each line of it with multiline. The global option CamelLogDebugBodyMaxChars, when"
+                            + " set, replaces this limit for the body.")
     private int maxChars = 10000;
     @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
-              description = "Sets the outputs style to use.")
+              description = "The layout of the parts of the log message. Default separates them with a comma, as Label:"
+                            + " value. Tab separates them with a tab, as Label: value. Fixed puts each value after a tab and the"
+                            + " label padded to 20 characters.")
     private DefaultExchangeFormatter.OutputStyle style = DefaultExchangeFormatter.OutputStyle.Default;
-    @UriParam(defaultValue = "false", description = "If enabled only the body will be printed out")
+    @UriParam(defaultValue = "false",
+              description = "Whether to log only the body, without the Exchange[...] wrapper and the other parts. The stream,"
+                            + " file and maxChars options still apply to the body.")
     private boolean plain;
-    @UriParam(description = "If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger name, instead"
-                            + " of the given name. However, if the source location is disabled or not possible to resolve then the existing logger name will be used.")
+    @UriParam(description = "Whether to use the source location of the log endpoint in the route, the file or class name and"
+                            + " the line number, as the logger name instead of loggerName. If the source location is not known,"
+                            + " for example because source location is not enabled, loggerName is used.")
     private boolean sourceLocationLoggerName;
 
     public LogEndpoint() {
@@ -326,92 +364,50 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
         return null;
     }
 
-    /**
-     * Logging level to use.
-     * <p/>
-     * The default value is INFO.
-     */
     public String getLevel() {
         return level;
     }
 
-    /**
-     * Logging level to use.
-     * <p/>
-     * The default value is INFO.
-     */
     public void setLevel(String level) {
         this.level = level;
     }
 
-    /**
-     * An optional Marker name to use.
-     */
     public String getMarker() {
         return marker;
     }
 
-    /**
-     * An optional Marker name to use.
-     */
     public void setMarker(String marker) {
         this.marker = marker;
     }
 
-    /**
-     * An integer that specifies a group size for throughput logging.
-     */
     public Integer getGroupSize() {
         return groupSize;
     }
 
-    /**
-     * An integer that specifies a group size for throughput logging.
-     */
     public void setGroupSize(Integer groupSize) {
         this.groupSize = groupSize;
     }
 
-    /**
-     * If specified will group message stats by this time interval (in millis)
-     */
     public Long getGroupInterval() {
         return groupInterval;
     }
 
-    /**
-     * If specified will group message stats by this time interval (in millis)
-     */
     public void setGroupInterval(Long groupInterval) {
         this.groupInterval = groupInterval;
     }
 
-    /**
-     * If true, will hide stats when no new messages have been received for a time interval, if false, show stats
-     * regardless of message traffic.
-     */
     public boolean isGroupActiveOnly() {
         return groupActiveOnly;
     }
 
-    /**
-     * If true, will hide stats when no new messages have been received for a time interval, if false, show stats
-     * regardless of message traffic.
-     */
     public void setGroupActiveOnly(boolean groupActiveOnly) {
         this.groupActiveOnly = groupActiveOnly;
     }
 
-    /**
-     * Set the initial delay for stats (in millis)
-     */
     public Long getGroupDelay() {
         return groupDelay;
     }
 
-    /**
-     * Set the initial delay for stats (in millis)
-     */
     public void setGroupDelay(Long groupDelay) {
         this.groupDelay = groupDelay;
     }
@@ -424,16 +420,10 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
         this.providedLogger = providedLogger;
     }
 
-    /**
-     * The logger name to use
-     */
     public String getLoggerName() {
         return loggerName;
     }
 
-    /**
-     * The logger name to use
-     */
     public void setLoggerName(String loggerName) {
         this.loggerName = loggerName;
     }
@@ -442,9 +432,6 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
         return logMask;
     }
 
-    /**
-     * If true, mask sensitive information like password or passphrase in the log.
-     */
     public void setLogMask(Boolean logMask) {
         this.logMask = logMask;
     }
@@ -453,9 +440,6 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
         return exchangeFormatter;
     }
 
-    /**
-     * To use a custom exchange formatter
-     */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
     }

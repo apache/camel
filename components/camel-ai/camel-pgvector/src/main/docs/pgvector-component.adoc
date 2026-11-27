@@ -2,7 +2,7 @@
 :doctitle: PGVector
 :shortname: pgvector
 :artifactid: camel-pgvector
-:description: Perform operations on the PostgreSQL pgvector Vector Database.
+:description: Store, delete and search vector embeddings in a PostgreSQL table with the pgvector extension.
 :since: 4.19
 :supportlevel: Stable
 :tabs-sync-option:

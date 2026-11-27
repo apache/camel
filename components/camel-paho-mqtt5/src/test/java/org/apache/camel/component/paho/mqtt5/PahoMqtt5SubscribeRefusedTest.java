@@ -151,11 +151,11 @@ class PahoMqtt5SubscribeRefusedTest extends CamelTestSupport {
 
         callback.getValue().messageArrived("test", message);
 
-        // the reconnect subscribes again (refused), the stop of the restart closes the client, and so does the start
-        // that fails
+        // the reconnect closes the client and connects a new one (the same mock here), subscribes again (refused), the
+        // stop of the restart closes the client, and so does the start that fails
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> verify(client).connectWithResult(any(MqttConnectionOptions.class)));
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(client, times(2)).close(true));
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(client, times(3)).close(true));
         verify(client, times(3)).subscribe("test", 1);
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(context.getRouteController().getRouteStatus(ROUTE_ID))

@@ -59,13 +59,13 @@ import org.apache.camel.test.dst.Invariants;
  * manual acknowledgements, or when the broker does not keep the session, its acknowledgement leaves it lost (the
  * consumer's Javadoc of rollback describes it), and the world does not count it.
  * <p>
- * One case is looked at separately. A connect that comes while the callback thread of Paho is still in messageArrived
- * after the connection closed (the reconnect of the consumer after a failed message, or the automatic reconnect, while
- * another message is in the route) never completes, as read in the byte code of Paho 1.2.5 (not reproduced against a
- * broker yet, and the fake leaves out the quiesce of a disconnect, which changes when the thread is busy): the client
- * stays connecting, the consumer delivers nothing more, and the stop cannot close the client. This is CAMEL-27043 (it
- * still needs a reproduction, and may be a Paho issue). When the client of the consumer hangs that way at the end of
- * the run, the world does not check that every message is routed, and a hung client is not checked for being closed;
+ * One case is looked at separately. A connect of a client that comes while the callback thread of that client is still
+ * in messageArrived after the connection closed never completes in Paho 1.2.5 (CAMEL-27043, reproduced against a broker
+ * in PahoMqtt5ConsumerReconnectWhileRoutingTest): the client stays connecting, the consumer delivers nothing more, and
+ * the stop cannot close the client. The reconnect of the consumer after a failed message connects a new client (a new
+ * fake client here, with its own callback state), so only the automatic reconnect of Paho, while another message is in
+ * the route, still hangs that way. When the client of the consumer hangs at the end of the run, the world does not
+ * check that every message is routed, and a hung client is not checked for being closed;
  * {@code -Ddst.paho.strictCallbackThread=true} checks both. The operator also stops the route while the client
  * connects: the close of a connecting client fails in Paho (32110), and the consumer then forces the disconnect before
  * it closes the client again (CAMEL-27041).

@@ -41,7 +41,9 @@ public interface WatsonxAiConstants {
     String GENERATED_TEXT = HEADER_PREFIX + "GeneratedText";
 
     // Model/Deployment
-    @Metadata(label = "producer", description = "The model ID used for the request, reported on the response",
+    @Metadata(label = "producer",
+              description = "The model of chat and chatStreaming for this request, overriding the modelId option; forecast"
+                            + " and deploymentForecast report on the response the model that answered",
               javaType = "String")
     String MODEL_ID = HEADER_PREFIX + "ModelId";
 
@@ -77,7 +79,11 @@ public interface WatsonxAiConstants {
     String REPETITION_PENALTY = HEADER_PREFIX + "RepetitionPenalty";
 
     // Chat
-    @Metadata(description = "The chat messages", javaType = "java.util.List")
+    @Metadata(description = "The chat messages (ChatMessage objects, or Strings as user messages) to send, in the place of"
+                            + " the body. When the model answers chat with tool calls, chat sets it to the messages it sent,"
+                            + " which processToolCalls extends with the tool calls and the tool results, so the next chat"
+                            + " sends the whole conversation",
+              javaType = "java.util.List")
     String MESSAGES = HEADER_PREFIX + "Messages";
 
     @Metadata(description = "The system message for chat (used to build messages if MESSAGES header is not set)",
@@ -91,8 +97,57 @@ public interface WatsonxAiConstants {
     @Metadata(description = "The tools available for function calling", javaType = "java.util.List")
     String TOOLS = HEADER_PREFIX + "Tools";
 
-    @Metadata(description = "Tool choice option (auto, required, none)", javaType = "String")
+    @Metadata(description = "How the model chooses the tools of chat, overriding the toolChoice option: auto, required, none,"
+                            + " or the name of the tool the model must call",
+              javaType = "String")
     String TOOL_CHOICE = HEADER_PREFIX + "ToolChoice";
+
+    // Chat output, reasoning and guardrails
+    @Metadata(description = "The format of the chat answer, overriding the responseFormat and jsonSchema options: text or"
+                            + " json",
+              javaType = "String")
+    String RESPONSE_FORMAT = HEADER_PREFIX + "ResponseFormat";
+
+    @Metadata(description = "The JSON schema the chat answer follows, overriding the jsonSchema and responseFormat options:"
+                            + " JSON text or a Map",
+              javaType = "Object")
+    String JSON_SCHEMA = HEADER_PREFIX + "JsonSchema";
+
+    @Metadata(description = "Guided decoding of chat, overriding the guidedChoice option: the choices of the answer, as a"
+                            + " List or comma separated",
+              javaType = "java.util.List<String>")
+    String GUIDED_CHOICE = HEADER_PREFIX + "GuidedChoice";
+
+    @Metadata(description = "The random seed of chat sampling, overriding the seed option", javaType = "Integer")
+    String SEED = HEADER_PREFIX + "Seed";
+
+    @Metadata(description = "The stop sequences of chat, overriding the stop option: a List, or comma separated",
+              javaType = "java.util.List<String>")
+    String STOP = HEADER_PREFIX + "Stop";
+
+    @Metadata(description = "How much the model of chat reasons, overriding the reasoningEffort option: low, medium or"
+                            + " high",
+              javaType = "String")
+    String REASONING_EFFORT = HEADER_PREFIX + "ReasoningEffort";
+
+    @Metadata(label = "producer", description = "The reasoning of the model that preceded the chat answer, when it gives one",
+              javaType = "String")
+    String REASONING_CONTENT = HEADER_PREFIX + "ReasoningContent";
+
+    @Metadata(label = "producer", description = "The refusal of the model to answer, when it refuses", javaType = "String")
+    String REFUSAL = HEADER_PREFIX + "Refusal";
+
+    @Metadata(label = "producer",
+              description = "All the answers of chat when it generates more than one (numberOfChoices), the body being the"
+                            + " first",
+              javaType = "java.util.List<com.ibm.watsonx.ai.chat.model.AssistantMessage>")
+    String ASSISTANT_MESSAGES = HEADER_PREFIX + "AssistantMessages";
+
+    @Metadata(label = "producer",
+              description = "The findings of the chat guardrails (moderationHap, moderationPii, moderationGraniteGuardian),"
+                            + " by detector",
+              javaType = "java.util.Map")
+    String MODERATION_RESULTS = HEADER_PREFIX + "ModerationResults";
 
     // Embeddings
     @Metadata(description = "The embedding vectors result", javaType = "java.util.List")
@@ -109,7 +164,7 @@ public interface WatsonxAiConstants {
     @Metadata(description = "The token count", javaType = "Integer")
     String TOKEN_COUNT = HEADER_PREFIX + "TokenCount";
 
-    @Metadata(description = "The token IDs", javaType = "java.util.List<Integer>")
+    @Metadata(description = "The tokens of the input text", javaType = "java.util.List<String>")
     String TOKENS = HEADER_PREFIX + "Tokens";
 
     // File Input
@@ -120,8 +175,13 @@ public interface WatsonxAiConstants {
     String FILE_NAME = HEADER_PREFIX + "FileName";
 
     // Text Extraction
-    @Metadata(description = "The file path for extraction or classification (for files already in COS)", javaType = "String")
+    @Metadata(description = "The file path for extraction or classification (for files already in COS), such as"
+                            + " textExtractionAndFetch",
+              javaType = "String")
     String FILE_PATH = HEADER_PREFIX + "FilePath";
+
+    @Metadata(description = "The name of the output file of text extraction, in the result bucket", javaType = "String")
+    String OUTPUT_FILE_NAME = HEADER_PREFIX + "OutputFileName";
 
     @Metadata(description = "The extraction request ID", javaType = "String")
     String EXTRACTION_ID = HEADER_PREFIX + "ExtractionId";
@@ -162,17 +222,29 @@ public interface WatsonxAiConstants {
     String ERROR_CODE = HEADER_PREFIX + "ErrorCode";
 
     // Detection
-    @Metadata(description = "List of detectors to use",
+    @Metadata(description = "List of detectors to use, overriding the detectors option",
               javaType = "java.util.List<com.ibm.watsonx.ai.detection.detector.BaseDetector>")
     String DETECTORS = HEADER_PREFIX + "Detectors";
 
-    @Metadata(description = "Whether harmful content was detected", javaType = "Boolean")
+    @Metadata(description = "The context of detectContext: the documents, as a List of texts or URLs, or one String",
+              javaType = "java.util.List<String>")
+    String DETECTION_CONTEXT = HEADER_PREFIX + "DetectionContext";
+
+    @Metadata(description = "The prompt that the generated text of the body of detectGenerated answers", javaType = "String")
+    String DETECTION_PROMPT = HEADER_PREFIX + "DetectionPrompt";
+
+    @Metadata(description = "Whether harmful content was detected: true when a detector found something, not counting a"
+                            + " Granite Guardian answer of No",
+              javaType = "Boolean")
     String DETECTED = HEADER_PREFIX + "Detected";
 
-    @Metadata(description = "Detection results grouped by type", javaType = "java.util.Map")
+    @Metadata(description = "Detection results grouped by type: the detection, score and text (and start and end for"
+                            + " detect, evidence for detectContext) of each",
+              javaType = "java.util.Map")
     String DETECTION_RESULTS = HEADER_PREFIX + "DetectionResults";
 
-    @Metadata(description = "Count of detections found", javaType = "Integer")
+    @Metadata(description = "Count of the detections that watsonx.ai returned, including Granite Guardian answers of No",
+              javaType = "Integer")
     String DETECTION_COUNT = HEADER_PREFIX + "DetectionCount";
 
     // Streaming
@@ -190,12 +262,24 @@ public interface WatsonxAiConstants {
     String STOP_REASON = HEADER_PREFIX + "StopReason";
 
     // Time Series / Forecast
-    @Metadata(description = "The input schema for time series forecast",
+    @Metadata(description = "The input schema for time series forecast: an InputSchema, or a Map with the keys"
+                            + " timestamp_column, id_columns, freq and target_columns (a List or a comma separated String"
+                            + " for the columns)",
               javaType = "com.ibm.watsonx.ai.timeseries.InputSchema")
     String FORECAST_INPUT_SCHEMA = HEADER_PREFIX + "ForecastInputSchema";
 
-    @Metadata(description = "The forecast data", javaType = "com.ibm.watsonx.ai.timeseries.ForecastData")
+    @Metadata(description = "The forecast data: a ForecastData, or a Map of column name to the List of its values",
+              javaType = "com.ibm.watsonx.ai.timeseries.ForecastData")
     String FORECAST_DATA = HEADER_PREFIX + "ForecastData";
+
+    @Metadata(description = "The number of time steps to forecast, overriding the predictionLength option",
+              javaType = "Integer")
+    String FORECAST_PREDICTION_LENGTH = HEADER_PREFIX + "ForecastPredictionLength";
+
+    @Metadata(description = "The known future values of the exogenous columns, for deploymentForecast only: a ForecastData,"
+                            + " or a Map of column name to the List of its values",
+              javaType = "com.ibm.watsonx.ai.timeseries.ForecastData")
+    String FORECAST_FUTURE_DATA = HEADER_PREFIX + "ForecastFutureData";
 
     @Metadata(description = "The forecast results", javaType = "java.util.List")
     String FORECAST_RESULTS = HEADER_PREFIX + "ForecastResults";
@@ -213,10 +297,13 @@ public interface WatsonxAiConstants {
     @Metadata(description = "List of foundation model tasks", javaType = "java.util.List")
     String FOUNDATION_MODEL_TASKS = HEADER_PREFIX + "FoundationModelTasks";
 
-    @Metadata(description = "Filter for foundation models or tasks", javaType = "String")
+    @Metadata(description = "The filter of listModels, in the syntax of the filters parameter of watsonx.ai, such as"
+                            + " function_text_chat, modelid_ibm/granite-4-h-small or function_rerank,!function_embedding:and"
+                            + " (or a com.ibm.watsonx.ai.foundationmodel.filter.Filter)",
+              javaType = "String")
     String FOUNDATION_MODEL_FILTER = HEADER_PREFIX + "FoundationModelFilter";
 
-    @Metadata(description = "Include tech preview models", javaType = "Boolean")
+    @Metadata(description = "Whether listModels includes the tech preview models", javaType = "Boolean")
     String FOUNDATION_MODEL_TECH_PREVIEW = HEADER_PREFIX + "FoundationModelTechPreview";
 
     // Tool Service
@@ -236,7 +323,7 @@ public interface WatsonxAiConstants {
               javaType = "com.ibm.watsonx.ai.chat.ToolRegistry")
     String TOOL_REGISTRY = HEADER_PREFIX + "ToolRegistry";
 
-    @Metadata(description = "List of tool calls requested by the assistant",
+    @Metadata(description = "List of tool calls requested by the assistant, removed when the answer has none",
               javaType = "java.util.List<com.ibm.watsonx.ai.chat.model.ToolCall>")
     String TOOL_CALLS = HEADER_PREFIX + "ToolCalls";
 

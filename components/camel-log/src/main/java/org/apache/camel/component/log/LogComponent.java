@@ -43,9 +43,14 @@ public class LogComponent extends DefaultComponent {
 
     private ExchangeFormatter defaultExchangeFormatter;
 
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "A custom org.apache.camel.spi.ExchangeFormatter for all log endpoints of this component. When"
+                            + " set, the formatting options of the endpoints are not used. A bean named logFormatter in the"
+                            + " registry takes precedence, and the exchangeFormatter option of an endpoint replaces both.")
     private ExchangeFormatter exchangeFormatter;
-    @Metadata
+    @Metadata(description = "Whether the log endpoints use the source location of the endpoint in the route, the file or class"
+                            + " name and the line number, as the logger name instead of loggerName. The"
+                            + " sourceLocationLoggerName option of an endpoint replaces this option.")
     private boolean sourceLocationLoggerName;
 
     public LogComponent() {
@@ -125,10 +130,6 @@ public class LogComponent extends DefaultComponent {
         return exchangeFormatter;
     }
 
-    /**
-     * Sets a custom {@link ExchangeFormatter} to convert the Exchange to a String suitable for logging. If not
-     * specified, we default to {@link DefaultExchangeFormatter}.
-     */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
     }
@@ -137,11 +138,6 @@ public class LogComponent extends DefaultComponent {
         return sourceLocationLoggerName;
     }
 
-    /**
-     * If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger
-     * name, instead of the given name. However, if the source location is disabled or not possible to resolve then the
-     * existing logger name will be used.
-     */
     public void setSourceLocationLoggerName(boolean sourceLocationLoggerName) {
         this.sourceLocationLoggerName = sourceLocationLoggerName;
     }

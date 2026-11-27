@@ -42,7 +42,11 @@ public class MustacheComponent extends DefaultComponent {
     private boolean allowTemplateFromHeader;
     @Metadata
     private boolean allowContextMapAll;
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use a custom com.github.mustachejava.MustacheFactory, which compiles the templates of all"
+                            + " endpoints of the component and reads the partials that they include. If not set, the"
+                            + " component uses a com.github.mustachejava.DefaultMustacheFactory. The startDelimiter and"
+                            + " endDelimiter options are only applied with a DefaultMustacheFactory.")
     private MustacheFactory mustacheFactory;
 
     public MustacheComponent() {
@@ -72,9 +76,6 @@ public class MustacheComponent extends DefaultComponent {
         return mustacheFactory;
     }
 
-    /**
-     * To use a custom {@link MustacheFactory}
-     */
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }

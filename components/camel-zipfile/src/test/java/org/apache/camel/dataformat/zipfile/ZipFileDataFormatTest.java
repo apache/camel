@@ -27,10 +27,13 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.CamelExecutionException;
@@ -47,7 +50,6 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.Exchange.FILE_NAME;
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -85,7 +87,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
         assertIsInstanceOf(InputStreamCache.class, exchange.getIn().getBody());
-        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getMandatoryBody(byte[].class));
+        assertZipEquals(getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getMandatoryBody(byte[].class),
+                "Get a wrong message content.");
     }
 
     @Test
@@ -99,39 +102,49 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
-        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getBody(byte[].class));
+        assertZipEquals(getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getBody(byte[].class),
+                "Get a wrong message content.");
     }
 
     @Test
     public void testZipWithFileName() throws Exception {
-        getMockEndpoint("mock:zip").expectedBodiesReceived(getZippedText("poem.txt"));
-        getMockEndpoint("mock:zip").expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
+        MockEndpoint mock = getMockEndpoint("mock:zip");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
 
         template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poem.txt");
 
         MockEndpoint.assertIsSatisfied(context);
+        assertZipEquals(getZippedText("poem.txt"), mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class),
+                "Get a wrong message content.");
     }
 
     @Test
     public void testZipWithPathElements() throws Exception {
-        getMockEndpoint("mock:zip").expectedBodiesReceived(getZippedText("poem.txt"));
-        getMockEndpoint("mock:zip").expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
+        MockEndpoint mock = getMockEndpoint("mock:zip");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
 
         template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poems/poem.txt");
 
         MockEndpoint.assertIsSatisfied(context);
+        assertZipEquals(getZippedText("poem.txt"), mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class),
+                "Get a wrong message content.");
     }
 
     @Test
     public void testZipWithPreservedPathElements() throws Exception {
         zip.setPreservePathElements(true);
 
-        getMockEndpoint("mock:zip").expectedBodiesReceived(getZippedTextInFolder("poems/", "poems/poem.txt"));
-        getMockEndpoint("mock:zip").expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
+        MockEndpoint mock = getMockEndpoint("mock:zip");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
 
         template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poems/poem.txt");
 
         MockEndpoint.assertIsSatisfied(context);
+        assertZipEquals(getZippedTextInFolder("poems/", "poems/poem.txt"),
+                mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class), "Get a wrong message content.");
     }
 
     @Test
@@ -247,7 +260,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         Exchange exchange = mock.getReceivedExchanges().get(0);
         File file = new File(TEST_DIR, exchange.getIn().getMessageId() + ".zip");
         assertTrue(file.exists(), "The file should exist.");
-        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), getBytes(file), "Get a wrong message content.");
+        assertZipEquals(getZippedText(exchange.getIn().getMessageId()), getBytes(file), "Get a wrong message content.");
     }
 
     @Test
@@ -269,17 +282,20 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         assertTrue(notify.matches(5, TimeUnit.SECONDS), "The exchange is not done in time.");
 
         assertTrue(file.exists(), "The file should exist.");
-        assertArrayEquals(getZippedText("poem.txt"), getBytes(file), "Get a wrong message content.");
+        assertZipEquals(getZippedText("poem.txt"), getBytes(file), "Get a wrong message content.");
     }
 
     @Test
     public void testDslZip() throws Exception {
-        getMockEndpoint("mock:dslZip").expectedBodiesReceived(getZippedText("poem.txt"));
-        getMockEndpoint("mock:dslZip").expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
+        MockEndpoint mock = getMockEndpoint("mock:dslZip");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(FILE_NAME, "poem.txt.zip");
 
         template.sendBodyAndHeader("direct:dslZip", TEXT, FILE_NAME, "poem.txt");
 
         MockEndpoint.assertIsSatisfied(context);
+        assertZipEquals(getZippedText("poem.txt"), mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class),
+                "Get a wrong message content.");
     }
 
     @Test
@@ -414,6 +430,26 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                         .end();
             }
         };
+    }
+
+    /**
+     * Compares the entries (name and content) of two zip archives, and not their bytes, as the bytes contain the last
+     * modified time of the entries (with a resolution of 2 seconds) which differs when the expected zip is created in
+     * another time slot than the actual one.
+     */
+    private static void assertZipEquals(byte[] expected, byte[] actual, String message) throws IOException {
+        assertEquals(describeZip(expected), describeZip(actual), message);
+    }
+
+    private static List<String> describeZip(byte[] zipped) throws IOException {
+        List<String> entries = new ArrayList<>();
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipped))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                entries.add(entry.getName() + "=" + new String(zis.readAllBytes(), StandardCharsets.UTF_8));
+            }
+        }
+        return entries;
     }
 
     private static byte[] getZippedText(String entryName) throws IOException {

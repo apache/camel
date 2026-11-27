@@ -30,12 +30,15 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConfiguration {
 
-    @UriPath(label = "common", description = "The collection name to use")
+    @UriPath(label = "common",
+             description = "The name of the collection. The consumer reads the documents of this collection, and the"
+                           + " CamelGoogleFirestoreCollectionName header replaces it for the producer.")
     @Metadata(required = true)
     private String collectionName;
 
     @UriParam(label = "common",
-              description = "The Google Cloud project ID. If not specified, it will be determined from the service account key or environment.")
+              description = "The ID of the Google Cloud project. If not set, the Firestore client takes it from the service"
+                            + " account key, or from the environment, such as the GOOGLE_CLOUD_PROJECT environment variable.")
     private String projectId;
 
     @UriParam(label = "common",
@@ -43,23 +46,35 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
     private String databaseId;
 
     @UriParam(label = "common",
-              description = "The Service account key that can be used as credentials for the Firestore client. It can be loaded by default from "
-                            + "classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
+              description = "The service account key file in JSON format that the Firestore client uses as credentials. It is"
+                            + " loaded from the classpath by default, or from another location with the prefix file: or http:."
+                            + " If not set, the client uses Application Default Credentials.")
     private String serviceAccountKey;
 
     @UriParam(label = "producer",
+              description = "The operation that the producer performs. If not set, the producer performs setDocument. The"
+                            + " CamelGoogleFirestoreOperation header replaces this option.",
               enums = "setDocument,getDocumentById,updateDocument,deleteDocument,queryCollection,listDocuments,listCollections,createDocument")
     private GoogleFirestoreOperations operation;
 
-    @UriParam(label = "producer", description = "The document ID to use for document-specific operations")
+    @UriParam(label = "producer",
+              description = "The ID of the document for setDocument, getDocumentById, updateDocument and deleteDocument,"
+                            + " which fail without one. For listCollections it is the document whose subcollections are"
+                            + " listed, and if not set the root collections are listed. The CamelGoogleFirestoreDocumentId"
+                            + " header replaces this option.")
     private String documentId;
 
-    @UriParam
+    @UriParam(description = "To use a custom com.google.cloud.firestore.Firestore client. When this option is set or"
+                            + " autowired, the projectId, databaseId and serviceAccountKey options are not used. The Camel"
+                            + " endpoint does not close a client that is set or autowired.")
     @Metadata(autowired = true)
     private Firestore firestoreClient;
 
     @UriParam(label = "consumer", defaultValue = "false",
-              description = "When true, the consumer will listen for real-time updates on the collection")
+              description = "Whether the consumer listens for realtime changes of the collection with a snapshot listener."
+                            + " The first snapshot reports every existing document as ADDED, and each poll routes the changes"
+                            + " buffered since the previous poll. If false, each poll reads all documents of the collection,"
+                            + " so a document is consumed again in every poll.")
     private boolean realtimeUpdates;
 
     @UriParam(label = "consumer,advanced", defaultValue = "0",
@@ -74,9 +89,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return collectionName;
     }
 
-    /**
-     * The collection name to use for Firestore operations.
-     */
     public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
     }
@@ -85,9 +97,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return projectId;
     }
 
-    /**
-     * The Google Cloud project ID. If not specified, it will be determined from the service account key or environment.
-     */
     public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
@@ -96,9 +105,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return databaseId;
     }
 
-    /**
-     * The Firestore database ID. If not specified, the default database '(default)' will be used.
-     */
     public void setDatabaseId(String databaseId) {
         this.databaseId = databaseId;
     }
@@ -108,11 +114,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return serviceAccountKey;
     }
 
-    /**
-     * The Service account key that can be used as credentials for the Firestore client. It can be loaded by default
-     * from classpath, but you can prefix with "classpath:", "file:", or "http:" to load the resource from different
-     * systems.
-     */
     public void setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
     }
@@ -121,9 +122,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return operation;
     }
 
-    /**
-     * Set the operation for the producer.
-     */
     public void setOperation(GoogleFirestoreOperations operation) {
         this.operation = operation;
     }
@@ -132,9 +130,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return documentId;
     }
 
-    /**
-     * The document ID to use for document-specific operations.
-     */
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
     }
@@ -143,9 +138,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return firestoreClient;
     }
 
-    /**
-     * The Firestore client to use for operations.
-     */
     public void setFirestoreClient(Firestore firestoreClient) {
         this.firestoreClient = firestoreClient;
     }
@@ -154,9 +146,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return realtimeUpdates;
     }
 
-    /**
-     * When true, the consumer will listen for real-time updates on the collection instead of polling.
-     */
     public void setRealtimeUpdates(boolean realtimeUpdates) {
         this.realtimeUpdates = realtimeUpdates;
     }
@@ -165,12 +154,6 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
         return maxPendingChanges;
     }
 
-    /**
-     * Maximum number of realtime document changes buffered between two polls. The changes reported by the snapshot
-     * listener are buffered until the next poll picks them up, so a collection changing faster than the route consumes
-     * it makes that buffer grow. When the buffer is full the oldest buffered change is discarded and a warning is
-     * logged. Use 0 for an unbounded buffer. Only used when realtimeUpdates is enabled.
-     */
     public void setMaxPendingChanges(int maxPendingChanges) {
         this.maxPendingChanges = maxPendingChanges;
     }

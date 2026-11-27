@@ -17,16 +17,14 @@
 package org.apache.camel.pollconsumer.quartz;
 
 import java.nio.file.Path;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.awaitility.Awaitility.await;
 
 public class FileConsumerQuartzSchedulerStartSchedulerTest extends CamelTestSupport {
     @TempDir
@@ -36,11 +34,13 @@ public class FileConsumerQuartzSchedulerStartSchedulerTest extends CamelTestSupp
     public void testStartSchedulerFalseMustNotPoll() throws Exception {
         template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        getMockEndpoint("mock:result").expectedMessageCount(0);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        // the cron fires every 2 seconds, so wait longer than that and verify still no message was received
+        mock.setAssertPeriod(3000);
 
         // startScheduler=false should prevent polling even with scheduler=quartz
-        await().during(3, TimeUnit.SECONDS).atMost(4, TimeUnit.SECONDS)
-                .untilAsserted(() -> getMockEndpoint("mock:result").assertIsSatisfied());
+        mock.assertIsSatisfied();
     }
 
     @Override
