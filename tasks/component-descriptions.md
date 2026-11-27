@@ -169,7 +169,7 @@ or removes its row.
 | camel-ehcache | ehcache |  |
 | camel-elasticsearch | elasticsearch |  |
 | camel-elasticsearch-rest-client | elasticsearch-rest-client |  |
-| camel-event | event |  |
+| camel-event | event | yes |
 | camel-exec | exec |  |
 | camel-fhir | fhir |  |
 | camel-file | file |  |

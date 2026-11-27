@@ -1412,8 +1412,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Event (camel-event)
-     * Subscribe to Camel internal events such as route started/stopped and
-     * exchange completed/failed.
+     * Receive the internal events of the CamelContext, such as a route that
+     * started or an exchange that failed.
      * 
      * Category: core,monitoring
      * Since: 4.19
