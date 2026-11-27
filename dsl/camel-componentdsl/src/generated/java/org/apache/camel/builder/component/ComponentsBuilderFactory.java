@@ -2640,8 +2640,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * IBM Watson Language (camel-ibm-watson-language)
-     * Perform natural language processing using IBM Watson Natural Language
-     * Understanding
+     * Analyze text and web pages with IBM Watson Natural Language
+     * Understanding.
      * 
      * Category: ai,cloud
      * Since: 4.16

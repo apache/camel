@@ -8797,8 +8797,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM Watson Language (camel-ibm-watson-language)
-     * Perform natural language processing using IBM Watson Natural Language
-     * Understanding
+     * Analyze text and web pages with IBM Watson Natural Language
+     * Understanding.
      * 
      * Category: ai,cloud
      * Since: 4.16
@@ -8807,7 +8807,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watson-language:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A name of your choice for the endpoint. The component does not use it.
      * 
      * @param path label
      * @return the dsl builder
@@ -8818,8 +8818,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM Watson Language (camel-ibm-watson-language)
-     * Perform natural language processing using IBM Watson Natural Language
-     * Understanding
+     * Analyze text and web pages with IBM Watson Natural Language
+     * Understanding.
      * 
      * Category: ai,cloud
      * Since: 4.16
@@ -8828,7 +8828,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watson-language:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A name of your choice for the endpoint. The component does not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
