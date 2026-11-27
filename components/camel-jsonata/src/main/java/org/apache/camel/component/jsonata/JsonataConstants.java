@@ -27,6 +27,10 @@ public final class JsonataConstants {
               javaType = "String")
     public static final String JSONATA_RESOURCE_URI = "CamelJsonataResourceUri";
 
+    /**
+     * @deprecated not used: the producer does not read this header.
+     */
+    @Deprecated(since = "4.24.0")
     public static final String JSONATA_CONTEXT = "CamelJsonataContext";
 
     private JsonataConstants() {

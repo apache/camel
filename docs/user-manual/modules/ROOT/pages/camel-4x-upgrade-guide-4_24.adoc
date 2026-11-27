@@ -645,6 +645,15 @@ Before, its lock failed with an `OptimisticLockException`, and the poll was roll
 
 Other JPA providers, and the optimistic lock modes, are not affected.
 
+=== camel-jsonata - allowContextMapAll and CamelJsonataContext are deprecated
+
+The `allowContextMapAll` option of the `jsonata` endpoint is deprecated. It is inherited from the resource endpoints
+of Camel, but jsonata never builds a context map, so the option had no effect. A uri or endpoint DSL code that sets it
+keeps working.
+
+The `JsonataConstants.JSONATA_CONTEXT` constant (`CamelJsonataContext` header) is deprecated, as the producer never
+read that header. Setting it has no effect, as before.
+
 === camel-vertx-http - an https:// address always uses TLS
 
 A `vertx-http` endpoint with an `https://` address now always calls it with TLS, also when no `sslContextParameters`

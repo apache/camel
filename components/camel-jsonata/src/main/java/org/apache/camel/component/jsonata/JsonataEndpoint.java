@@ -35,6 +35,7 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -85,6 +86,11 @@ public class JsonataEndpoint extends ResourceEndpoint {
     private boolean allowTemplateFromHeader;
     @UriParam
     private boolean prettyPrint;
+    // shadows the option of ResourceEndpoint, so it can be marked deprecated for jsonata only
+    @UriParam(defaultValue = "false", description = "Not used by jsonata.")
+    @Metadata(deprecationNote = "The jsonata component builds no context map, so this option has no effect.")
+    @Deprecated(since = "4.24.0")
+    private boolean allowContextMapAll;
 
     public JsonataEndpoint() {
     }
@@ -170,6 +176,29 @@ public class JsonataEndpoint extends ResourceEndpoint {
         this.prettyPrint = prettyPrint;
     }
 
+    /**
+     * Not used by jsonata.
+     *
+     * @deprecated this option has no effect in jsonata
+     */
+    @Deprecated(since = "4.24.0")
+    @Override
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Not used by jsonata. The component builds no context map, so this option has no effect.
+     *
+     * @deprecated this option has no effect in jsonata
+     */
+    @Deprecated(since = "4.24.0")
+    @Override
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        super.setAllowContextMapAll(allowContextMapAll);
+        this.allowContextMapAll = allowContextMapAll;
+    }
+
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         String path = getResourceUri();
@@ -183,7 +212,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
             input = jacksonInput(exchange);
         }
 
-        InputStream is = getResourceAsInputStream();
+        InputStream is = null;
         if (allowTemplateFromHeader) {
             String newResourceUri = exchange.getIn().getHeader(JsonataConstants.JSONATA_RESOURCE_URI, String.class);
             if (newResourceUri != null) {
@@ -194,6 +223,10 @@ public class JsonataEndpoint extends ResourceEndpoint {
                     is = new ByteArrayInputStream(newResourceUri.getBytes());
                 }
             }
+        }
+        if (is == null) {
+            // the resource of the endpoint is opened only when the header does not replace it
+            is = getResourceAsInputStream();
         }
         Jsonata expression;
         try (InputStreamReader inputStreamReader

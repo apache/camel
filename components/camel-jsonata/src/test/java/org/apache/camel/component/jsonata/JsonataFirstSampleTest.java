@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.jsonata;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
@@ -51,17 +47,9 @@ class JsonataFirstSampleTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final Processor processor = exchange -> {
-            Map<String, String> contextMap = new HashMap<>();
-            contextMap.put("contextB", "bb");
-
-            exchange.getIn().setHeader(JsonataConstants.JSONATA_CONTEXT, contextMap);
-        };
-
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                        .process(processor)
                         .to("jsonata:org/apache/camel/component/jsonata/firstSample/expressions.spec?inputType=JsonString&outputType=JsonString")
                         .to("mock:result");
             }
