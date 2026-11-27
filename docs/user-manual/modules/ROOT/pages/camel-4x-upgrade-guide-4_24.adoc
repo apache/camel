@@ -12464,6 +12464,19 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-aws - incomplete session or static credentials fail when the client is created
+
+The AWS components (all that use `camel-aws-common` to create their client, such as `aws2-s3`, `aws2-sqs`,
+`aws2-ecs` and `aws-security-hub`) now fail with an `IllegalArgumentException` that names the missing option when:
+
+* `useSessionCredentials=true` is set, but the `accessKey`, `secretKey` or `sessionToken` is not set (or empty).
+  Before, the client used the default credentials chain of the AWS SDK (environment variables, system properties,
+  `~/.aws` profiles, instance or container role), or the access key and secret key without the session token.
+* only one of `accessKey` and `secretKey` is set (the other one is not set or empty). Before, the client used the
+  default credentials chain of the AWS SDK.
+
+When no credentials option is set at all, the client uses the default credentials chain of the AWS SDK, as before.
+`useDefaultCredentialsProvider` and `useProfileCredentialsProvider` are not changed.
 === camel-geocoder - proxyAuthMethod accepts only Basic
 
 The Google client of the `geocoder` producer authenticates to the proxy only with Basic authentication. Before,
