@@ -41,19 +41,16 @@ public class BeanComponent extends DefaultComponent {
     // for example the bean language using OGNL expression runs much faster reusing the BeanInfo from this cache
     private Map<BeanInfoCacheKey, BeanInfo> beanInfoCache;
 
-    @Metadata(defaultValue = "Singleton", description = "Scope of bean."
-                                                        + " When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint."
-                                                        + " The bean should be thread-safe in case concurrent threads is calling the bean at the same time."
-                                                        + " When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean"
-                                                        + " while processing a request and you want to call the same bean instance multiple times while processing the request."
-                                                        + " The bean does not have to be thread-safe as the instance is only called from the same request."
-                                                        + " When using delegate scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
-                                                        + " to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope."
-                                                        + " so when using prototype then this depends on the delegated registry.")
+    @Metadata(defaultValue = "Singleton",
+              description = "The scope that the endpoints use when they do not set their own scope option. Singleton"
+                            + " looks up or creates the bean once per endpoint, so it must be thread-safe. Request uses one"
+                            + " instance per exchange, and Prototype looks up or creates the bean on each call.")
     private BeanScope scope = BeanScope.Singleton;
 
     @Metadata(label = "advanced", defaultValue = "1000",
-              description = "Maximum cache size of internal cache for bean introspection. Setting a value of 0 or negative will disable the cache.")
+              description = "The maximum number of entries in the cache of bean introspection results (the methods that"
+                            + " Camel finds by reflection on a bean class). The cache of the bean component is also used by"
+                            + " the class component and the bean language. A value of 0 or less disables the cache.")
     private int beanInfoCacheSize = 1000;
 
     public BeanComponent() {

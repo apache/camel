@@ -69,7 +69,15 @@ public class WatsonxAiProducer extends DefaultProducer {
         if (response != null) {
             exchange.getMessage().setBody(response.getBody());
             if (response.getHeaders() != null) {
-                response.getHeaders().forEach((key, value) -> exchange.getMessage().setHeader(key, value));
+                response.getHeaders().forEach((key, value) -> {
+                    if (value == null) {
+                        // a header the operation does not give (any more), such as the tool calls of an answer
+                        // without tool calls, is removed rather than left from an earlier call
+                        exchange.getMessage().removeHeader(key);
+                    } else {
+                        exchange.getMessage().setHeader(key, value);
+                    }
+                });
             }
         }
     }

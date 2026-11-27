@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultMessage;
 
 /**
- * Send and receive messages from <a href="https://rocketmq.apache.org/">RocketMQ</a> cluster.
+ * Send messages to and receive messages from Apache RocketMQ topics.
  */
 @UriEndpoint(firstVersion = "3.20.0", scheme = "rocketmq", syntax = "rocketmq:topicName", title = "RocketMQ",
              category = Category.MESSAGING, headersClass = RocketMQConstants.class)
@@ -52,42 +52,87 @@ import org.apache.camel.support.DefaultMessage;
                                                  + " array"))
 public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
 
-    @UriPath
+    @UriPath(description = "The name of the topic. The consumer subscribes to this topic, and the producer sends to it"
+                           + " unless the CamelRocketMQOverrideTopicName header names another topic.")
     @Metadata(required = true)
     private String topicName;
-    @UriParam(label = "producer")
+    @UriParam(description = "The producer group of the producer. The producer fails to start if it is not set.",
+              label = "producer")
     private String producerGroup;
-    @UriParam(label = "consumer")
+    @UriParam(description = "The consumer group of the consumer. The consumers of a group share the messages of the topic,"
+                            + " and each message goes to one of them. The consumer fails to start if it is not set.",
+              label = "consumer")
     private String consumerGroup;
-    @UriParam(label = "consumer", defaultValue = "tag", enums = "tag,sql")
+    @UriParam(description = "How the consumer selects the messages of the topic that it receives: tag uses the subscribeTags"
+                            + " option, and sql uses the subscribeSql option.",
+              label = "consumer", defaultValue = "tag", enums = "tag,sql")
     private String messageSelectorType = "tag";
-    @UriParam(label = "consumer", defaultValue = "*")
+    @UriParam(description = "The tags of the messages that the consumer receives, when messageSelectorType is tag. Separate"
+                            + " several tags with ||, for example TagA||TagB. The default * receives all messages.",
+              label = "consumer", defaultValue = "*")
     private String subscribeTags = "*";
-    @UriParam(label = "consumer", defaultValue = "1 = 1")
+    @UriParam(description = "The SQL92 expression on the message properties that selects the messages that the consumer"
+                            + " receives, when messageSelectorType is sql. The broker must have enablePropertyFilter set to"
+                            + " true. The default 1 = 1 receives all messages.",
+              label = "consumer", defaultValue = "1 = 1")
     private String subscribeSql = "1 = 1";
-    @UriParam(label = "producer")
+    @UriParam(description = "The tag of each message that the producer sends. The CamelRocketMQOverrideTag header replaces"
+                            + " it. If not set, the messages are sent with an empty tag.",
+              label = "producer")
     private String sendTag = "";
-    @UriParam(label = "producer")
+    @UriParam(description = "The topic on which the producer receives the reply of an InOut exchange. The reply must carry"
+                            + " the keys of the request, one of which the producer generates to match the reply. If not set, an"
+                            + " InOut exchange does not wait for a reply.",
+              label = "producer")
     private String replyToTopic;
-    @UriParam(label = "producer")
+    @UriParam(description = "The consumer group that receives the replies on replyToTopic, required with replyToTopic. Use a"
+                            + " group per producer: in a shared group a reply can reach another producer, which ignores it, and"
+                            + " the exchange times out.",
+              label = "producer")
     private String replyToConsumerGroup;
-    @UriParam(label = "common", defaultValue = "localhost:9876")
+    @UriParam(description = "The address of the RocketMQ name server, as host:port. Separate several name servers with a"
+                            + " semicolon.",
+              label = "common", defaultValue = "localhost:9876")
     private String namesrvAddr = "localhost:9876";
-    @UriParam(label = "common")
+    @UriParam(description = "The namespace of the topics and groups, which the RocketMQ client sends with each request. Set"
+                            + " it for a RocketMQ instance that uses namespaces, such as a serverless instance. The consumer of"
+                            + " replyToTopic does not use it.",
+              label = "common")
     private String namespace;
-    @UriParam(label = "common")
+    @UriParam(description = "Whether the producer and the consumer record message traces, which the RocketMQ client sends to"
+                            + " the trace topic RMQ_SYS_TRACE_TOPIC. The consumer of replyToTopic does not record traces.",
+              label = "common")
     private boolean enableTrace;
-    @UriParam(label = "common", defaultValue = "LOCAL", enums = "LOCAL,CLOUD")
+    @UriParam(description = "The access channel of the RocketMQ client: LOCAL for an Apache RocketMQ cluster, or CLOUD for a"
+                            + " RocketMQ service of a cloud provider. With CLOUD the message traces go to a trace topic per"
+                            + " region, in the format of the cloud service.",
+              label = "common", defaultValue = "LOCAL", enums = "LOCAL,CLOUD")
     private String accessChannel = "LOCAL";
-    @UriParam(label = "advanced", defaultValue = "10000")
+    @UriParam(description = "How long, in milliseconds, the producer waits for the reply of an InOut exchange on replyToTopic"
+                            + " before it fails the exchange with an ExchangeTimedOutException. A value of 0 or less waits for"
+                            + " Integer.MAX_VALUE milliseconds (about 24 days).",
+              label = "advanced", defaultValue = "10000")
     private long requestTimeoutMillis = 10000L;
-    @UriParam(label = "advanced", defaultValue = "1000")
+    @UriParam(description = "How often, in milliseconds, the producer checks for InOut exchanges whose requestTimeoutMillis"
+                            + " has passed. A timeout can be detected up to this interval late.",
+              label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerIntervalMillis = 1000L;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(description = "Whether the producer waits for the send result before the exchange continues. When true, a send"
+                            + " that fails, or whose status is not SEND_OK, fails the exchange. When false, an InOnly exchange"
+                            + " continues as soon as the message is handed to the RocketMQ client, and a failed send is only"
+                            + " logged. An InOut exchange always waits for the send result, and for the reply when replyToTopic"
+                            + " is set.",
+              label = "producer", defaultValue = "true")
     private boolean waitForSendResult = true;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The access key of the RocketMQ ACL credentials. The producer and the consumer sign their"
+                            + " requests only when both accessKey and secretKey are set. The consumer of replyToTopic does not"
+                            + " use it.",
+              label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The secret key of the RocketMQ ACL credentials. The producer and the consumer sign their"
+                            + " requests only when both accessKey and secretKey are set. The consumer of replyToTopic does not"
+                            + " use it.",
+              label = "security", security = "secret")
     private String secretKey;
 
     public RocketMQEndpoint() {
@@ -131,9 +176,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return topicName;
     }
 
-    /**
-     * Topic name of this endpoint.
-     */
     public void setTopicName(String topicName) {
         this.topicName = topicName;
     }
@@ -142,9 +184,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return messageSelectorType;
     }
 
-    /**
-     * Message Selector Type, TAG or SQL [TAG] by default
-     */
     public void setMessageSelectorType(String messageSelectorType) {
         this.messageSelectorType = messageSelectorType;
     }
@@ -153,10 +192,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return subscribeSql;
     }
 
-    /**
-     * Subscribe SQL of consumer. See
-     * https://rocketmq.apache.org/docs/featureBehavior/07messagefilter/#attribute-based-sql-filtering for more details.
-     */
     public void setSubscribeSql(String subscribeSql) {
         this.subscribeSql = subscribeSql;
     }
@@ -165,9 +200,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return subscribeTags;
     }
 
-    /**
-     * Subscribe tags of consumer. Multiple tags could be split by "||", such as "TagA||TagB"
-     */
     public void setSubscribeTags(String subscribeTags) {
         this.subscribeTags = subscribeTags;
     }
@@ -176,9 +208,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return sendTag;
     }
 
-    /**
-     * Each message would be sent with this tag.
-     */
     public void setSendTag(String sendTag) {
         this.sendTag = sendTag;
     }
@@ -187,9 +216,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return namesrvAddr;
     }
 
-    /**
-     * Name server address of RocketMQ cluster.
-     */
     public void setNamesrvAddr(String namesrvAddr) {
         this.namesrvAddr = namesrvAddr;
     }
@@ -198,9 +224,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return namespace;
     }
 
-    /**
-     * Namespace of RocketMQ cluster. You need to specify this if you are using serverless version of RocketMQ.
-     */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
@@ -209,9 +232,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return enableTrace;
     }
 
-    /**
-     * Whether to enable trace.
-     */
     public void setEnableTrace(boolean enableTrace) {
         this.enableTrace = enableTrace;
     }
@@ -220,9 +240,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return accessChannel;
     }
 
-    /**
-     * Access channel of RocketMQ cluster. LOCAL or CLOUD, [LOCAL] by default
-     */
     public void setAccessChannel(String accessChannel) {
         this.accessChannel = accessChannel;
     }
@@ -231,9 +248,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return producerGroup;
     }
 
-    /**
-     * Producer group name.
-     */
     public void setProducerGroup(String producerGroup) {
         this.producerGroup = producerGroup;
     }
@@ -242,9 +256,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return consumerGroup;
     }
 
-    /**
-     * Consumer group name.
-     */
     public void setConsumerGroup(String consumerGroup) {
         this.consumerGroup = consumerGroup;
     }
@@ -253,9 +264,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return replyToTopic;
     }
 
-    /**
-     * Topic used for receiving response when using in-out pattern.
-     */
     public void setReplyToTopic(String replyToTopic) {
         this.replyToTopic = replyToTopic;
     }
@@ -264,9 +272,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return replyToConsumerGroup;
     }
 
-    /**
-     * Consumer group name used for receiving response.
-     */
     public void setReplyToConsumerGroup(String replyToConsumerGroup) {
         this.replyToConsumerGroup = replyToConsumerGroup;
     }
@@ -275,9 +280,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return requestTimeoutMillis;
     }
 
-    /**
-     * Timeout milliseconds of receiving response when using in-out pattern.
-     */
     public void setRequestTimeoutMillis(long requestTimeoutMillis) {
         this.requestTimeoutMillis = requestTimeoutMillis;
     }
@@ -286,9 +288,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return requestTimeoutCheckerIntervalMillis;
     }
 
-    /**
-     * Check interval milliseconds of request timeout.
-     */
     public void setRequestTimeoutCheckerIntervalMillis(long requestTimeoutCheckerIntervalMillis) {
         this.requestTimeoutCheckerIntervalMillis = requestTimeoutCheckerIntervalMillis;
     }
@@ -297,11 +296,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return waitForSendResult;
     }
 
-    /**
-     * Whether waiting for send result before routing to next endpoint. When true, a failed send fails the exchange.
-     * When false, an InOnly exchange continues as soon as the message is handed to the RocketMQ client, and a failed
-     * send is only logged. An InOut exchange always waits for its reply.
-     */
     public void setWaitForSendResult(boolean waitForSendResult) {
         this.waitForSendResult = waitForSendResult;
     }
@@ -310,9 +304,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return accessKey;
     }
 
-    /**
-     * Access key for RocketMQ ACL.
-     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -321,9 +312,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return secretKey;
     }
 
-    /**
-     * Secret key for RocketMQ ACL.
-     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }

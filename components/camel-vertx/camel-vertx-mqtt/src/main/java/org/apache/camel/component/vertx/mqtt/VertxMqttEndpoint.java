@@ -33,18 +33,16 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5, with the Vert.x MQTT client.
+ * Send and receive messages with an MQTT 3.1.1 or MQTT 5 broker, using the Vert.x MQTT client.
  */
 @UriEndpoint(firstVersion = "4.24.0", scheme = VertxMqttConstants.SCHEME, title = "Vert.x MQTT",
              syntax = "vertx-mqtt:topic", category = { Category.MESSAGING, Category.IOT },
              headersClass = VertxMqttConstants.class)
 public class VertxMqttEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    /**
-     * The topic to publish on, or the topic filter to subscribe to. A filter may hold the wildcards + and #, a topic to
-     * publish on may not.
-     */
-    @UriPath
+    @UriPath(description = "The topic that the producer publishes on, or the topic filter that the consumer subscribes to."
+                           + " A filter may hold the wildcards + and #, a topic to publish on may not. The"
+                           + " CamelVertxMqttOverrideTopic header replaces this topic for the producer.")
     @Metadata(required = true)
     private String topic;
 

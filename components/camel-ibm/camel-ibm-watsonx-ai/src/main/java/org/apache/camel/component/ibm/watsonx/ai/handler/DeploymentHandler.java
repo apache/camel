@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ibm.watsonx.ai.chat.ChatResponse;
+import com.ibm.watsonx.ai.chat.TextChatResponse;
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
+import com.ibm.watsonx.ai.chat.model.ChatParameters;
 import com.ibm.watsonx.ai.deployment.DeploymentChatRequest;
 import com.ibm.watsonx.ai.deployment.DeploymentResource;
 import com.ibm.watsonx.ai.deployment.DeploymentService;
@@ -29,9 +30,7 @@ import com.ibm.watsonx.ai.deployment.FindByIdRequest;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationParameters;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationRequest;
 import com.ibm.watsonx.ai.textgeneration.TextGenerationResponse;
-import com.ibm.watsonx.ai.timeseries.ForecastData;
 import com.ibm.watsonx.ai.timeseries.ForecastResponse;
-import com.ibm.watsonx.ai.timeseries.InputSchema;
 import com.ibm.watsonx.ai.timeseries.TimeSeriesRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -90,26 +89,25 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
                                                + "' or endpoint configuration 'deploymentId'");
         }
 
-        // Get space ID from header or configuration (required for findById)
+        // The deployment is looked up in its space (header or configuration), or else in the project
         String spaceId = in.getHeader(WatsonxAiConstants.SPACE_ID, String.class);
         if (spaceId == null || spaceId.isEmpty()) {
             spaceId = config.getSpaceId();
         }
-        if (spaceId == null || spaceId.isEmpty()) {
+        FindByIdRequest.Builder request = FindByIdRequest.builder().deploymentId(deploymentId);
+        if (spaceId != null && !spaceId.isEmpty()) {
+            request.spaceId(spaceId);
+        } else if (config.getProjectId() != null && !config.getProjectId().isEmpty()) {
+            request.projectId(config.getProjectId());
+        } else {
             throw new IllegalArgumentException(
                     "Space ID must be provided via header '" + WatsonxAiConstants.SPACE_ID
-                                               + "' or endpoint configuration 'spaceId'");
+                                               + "' or endpoint configuration 'spaceId', or a project via 'projectId'");
         }
-
-        // Build request
-        FindByIdRequest request = FindByIdRequest.builder()
-                .deploymentId(deploymentId)
-                .spaceId(spaceId)
-                .build();
 
         // Call the service
         DeploymentService service = endpoint.getDeploymentService();
-        DeploymentResource response = service.findById(request);
+        DeploymentResource response = service.findById(request.build());
 
         // Build response headers
         Map<String, Object> headers = new HashMap<>();
@@ -172,6 +170,7 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
         return WatsonxAiOperationResponse.create(response.toText(), headers);
     }
 
+    @SuppressWarnings("unchecked")
     private WatsonxAiOperationResponse processDeploymentChat(Exchange exchange) {
         Message in = exchange.getIn();
         WatsonxAiConfiguration config = getConfiguration();
@@ -190,30 +189,25 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
         // Get messages from header or body
         List<ChatMessage> messages = getMessages(exchange);
 
-        // Build request - deployment chat API only supports 'messages' and optionally
-        // 'context', 'tools', 'tool_choice', 'tool_choice_option' - no parameters allowed
+        // The parameters of the deployment chat API (the deployment gives the model); a prompt template deployment
+        // may fix some of them
+        ChatParameters.Builder parameters = ChatParameters.builder();
+        applyChatParameters(parameters, exchange);
         DeploymentChatRequest request = DeploymentChatRequest.builder()
                 .deploymentId(deploymentId)
                 .messages(messages)
+                .tools(in.getHeader(WatsonxAiConstants.TOOLS, List.class))
+                .parameters(parameters.build())
+                // the SDK turns the thinking of the deployment on for any reasoning setting, so thinking=false sends none
+                .thinking(Boolean.FALSE.equals(getConfiguration().getThinking()) ? null : buildThinking(exchange))
                 .build();
 
         // Call the service
         DeploymentService service = endpoint.getDeploymentService();
-        ChatResponse response = service.chat(request);
+        TextChatResponse response = service.chat(request);
 
-        String content = response.toAssistantMessage().content();
-
-        // Build response headers
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(WatsonxAiConstants.GENERATED_TEXT, content);
-        if (response.usage() != null) {
-            headers.put(WatsonxAiConstants.INPUT_TOKEN_COUNT, response.usage().promptTokens());
-            headers.put(WatsonxAiConstants.OUTPUT_TOKEN_COUNT, response.usage().completionTokens());
-        }
-        if (response.finishReason() != null) {
-            headers.put(WatsonxAiConstants.STOP_REASON, response.finishReason().value());
-        }
-
+        Map<String, Object> headers = chatResponseHeaders(response, messages);
+        Object content = headers.get(WatsonxAiConstants.GENERATED_TEXT);
         return WatsonxAiOperationResponse.create(content, headers);
     }
 
@@ -232,36 +226,7 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
                                                + "' or endpoint configuration 'deploymentId'");
         }
 
-        // Get input schema and data from headers or body
-        InputSchema inputSchema = in.getHeader(WatsonxAiConstants.FORECAST_INPUT_SCHEMA, InputSchema.class);
-        ForecastData forecastData = in.getHeader(WatsonxAiConstants.FORECAST_DATA, ForecastData.class);
-
-        // If not in headers, try to get from body as TimeSeriesRequest
-        if (inputSchema == null || forecastData == null) {
-            Object body = in.getBody();
-            if (body instanceof TimeSeriesRequest request) {
-                inputSchema = request.inputSchema();
-                forecastData = request.data();
-            }
-        }
-
-        if (inputSchema == null) {
-            throw new IllegalArgumentException(
-                    "Input schema must be provided via header '" + WatsonxAiConstants.FORECAST_INPUT_SCHEMA
-                                               + "' or as part of TimeSeriesRequest in body");
-        }
-        if (forecastData == null) {
-            throw new IllegalArgumentException(
-                    "Forecast data must be provided via header '" + WatsonxAiConstants.FORECAST_DATA
-                                               + "' or as part of TimeSeriesRequest in body");
-        }
-
-        // Build request with deployment ID
-        TimeSeriesRequest request = TimeSeriesRequest.builder()
-                .deploymentId(deploymentId)
-                .inputSchema(inputSchema)
-                .data(forecastData)
-                .build();
+        TimeSeriesRequest request = getTimeSeriesRequest(exchange, deploymentId, true);
 
         // Call the service
         DeploymentService service = endpoint.getDeploymentService();

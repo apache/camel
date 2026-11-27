@@ -79,12 +79,10 @@ public interface RestEndpointComponentBuilderFactory {
         }
     
         /**
-         * The Camel Rest component to use for the consumer REST transport, such
-         * as jetty, servlet, undertow. If no component has been explicitly
-         * configured, then Camel will lookup if there is a Camel component that
-         * integrates with the Rest DSL, or if a
-         * org.apache.camel.spi.RestConsumerFactory is registered in the
-         * registry. If either one is found, then that is being used.
+         * The name of the Camel component that runs the REST services, such as
+         * platform-http, servlet or jetty. The consumerComponentName option of
+         * an endpoint replaces it. If neither is set, the component of the rest
+         * configuration is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -99,8 +97,10 @@ public interface RestEndpointComponentBuilderFactory {
         }
     
         /**
-         * The swagger api doc resource to use. The resource is loaded from
-         * classpath by default and must be in JSON format.
+         * The location of the OpenAPI document (JSON or YAML) of the REST
+         * service to call: a file, an http or https URL, or a classpath
+         * resource. The apiDoc option of an endpoint replaces it. If neither is
+         * set, the producerApiDoc of the rest configuration is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -115,8 +115,10 @@ public interface RestEndpointComponentBuilderFactory {
         }
     
         /**
-         * Host and port of HTTP service to use (override host in swagger
-         * schema).
+         * The scheme, host and port of the REST service to call, with an
+         * optional base path, such as http://myserver:8080/foo. The host option
+         * of an endpoint replaces it. If neither is set, the host and port of
+         * the rest configuration are used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -156,12 +158,10 @@ public interface RestEndpointComponentBuilderFactory {
         }
     
         /**
-         * The Camel Rest component to use for the producer REST transport, such
-         * as http, undertow. If no component has been explicitly configured,
-         * then Camel will lookup if there is a Camel component that integrates
-         * with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory
-         * is registered in the registry. If either one is found, then that is
-         * being used.
+         * The name of the Camel component that sends the HTTP requests, such as
+         * http or vertx-http. The producerComponentName option of an endpoint
+         * replaces it. If neither is set, the producerComponent of the rest
+         * configuration is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

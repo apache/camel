@@ -17,10 +17,13 @@
 package org.apache.camel.component.ibm.watsonx.ai.integration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import com.ibm.watsonx.ai.textprocessing.textextraction.TextExtractionResponse;
 import org.apache.camel.EndpointInject;
@@ -38,6 +41,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -267,6 +271,63 @@ public class WatsonxAiTextExtractionIT extends WatsonxAiTestSupport {
         LOG.info("File component extraction - File: {}, Extracted text (first 200 chars): {}",
                 originalFileName,
                 extractedText.length() > 200 ? extractedText.substring(0, 200) + "..." : extractedText);
+    }
+
+    @Test
+    public void testExtractAndFetchFileInCosWithParameters() throws Exception {
+        // a document already in the document bucket, extracted as plain text, its output file removed once read
+        String fileName = "camel-params-" + UUID.randomUUID() + ".pdf";
+        Exchange upload = template.send(buildTextExtractionEndpointUri("textExtractionUploadFile"), exchange -> {
+            exchange.getIn().setBody(Files.readAllBytes(testFile.toPath()));
+            exchange.getIn().setHeader(WatsonxAiConstants.FILE_NAME, fileName);
+        });
+        assertNull(upload.getException());
+        try {
+            Exchange extraction = template.send(buildTextExtractionEndpointUri("textExtractionAndFetch")
+                                                + "&extractionOutputs=plain_text&ocrMode=auto&removeOutputFile=true"
+                                                + "&processingTimeout=120000",
+                    exchange -> exchange.getIn().setBody(fileName));
+            assertNull(extraction.getException(), () -> "Failed: " + extraction.getException());
+            String text = extraction.getMessage().getBody(String.class);
+            LOG.info("Plain text of {}: {}", fileName, text.substring(0, Math.min(200, text.length())));
+            assertFalse(text.isBlank());
+            assertEquals(text, extraction.getMessage().getHeader(WatsonxAiConstants.EXTRACTED_TEXT));
+            // the document stays in the document bucket, as removeUploadedFile is not set
+            Exchange read = template.send(buildTextExtractionEndpointUri("textExtractionReadFile"), exchange -> {
+                exchange.getIn().setHeader(WatsonxAiConstants.BUCKET_NAME, documentBucket);
+                exchange.getIn().setBody(fileName);
+            });
+            assertNull(read.getException(), () -> "Failed: " + read.getException());
+        } finally {
+            template.send(buildTextExtractionEndpointUri("textExtractionDeleteFile"), exchange -> {
+                exchange.getIn().setHeader(WatsonxAiConstants.BUCKET_NAME, documentBucket);
+                exchange.getIn().setBody(fileName);
+            });
+        }
+    }
+
+    @Test
+    public void testUploadExtractAndFetchRemovesTheUploadedFile() throws Exception {
+        String fileName = "camel-remove-" + UUID.randomUUID() + ".pdf";
+        Exchange extraction = template.send(buildTextExtractionEndpointUri("textExtractionUploadAndFetch")
+                                            + "&removeUploadedFile=true&removeOutputFile=true",
+                exchange -> {
+                    exchange.getIn().setBody(Files.readAllBytes(testFile.toPath()));
+                    exchange.getIn().setHeader(WatsonxAiConstants.FILE_NAME, fileName);
+                });
+        assertNull(extraction.getException(), () -> "Failed: " + extraction.getException());
+        assertFalse(extraction.getMessage().getBody(String.class).isBlank());
+
+        // the uploaded document goes from the document bucket (the SDK removes it asynchronously): reading it fails (a
+        // delete would not tell, as Cloud Object Storage deletes a missing file without error)
+        await().atMost(30, TimeUnit.SECONDS).pollInterval(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            Exchange read = template.send(buildTextExtractionEndpointUri("textExtractionReadFile"), exchange -> {
+                exchange.getIn().setHeader(WatsonxAiConstants.BUCKET_NAME, documentBucket);
+                exchange.getIn().setBody(fileName);
+            });
+            LOG.info("Read of the removed upload {}: {}", fileName, read.getException());
+            assertInstanceOf(FileNotFoundException.class, read.getException(), "The uploaded file should have been removed");
+        });
     }
 
     @Override
