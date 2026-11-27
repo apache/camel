@@ -10974,7 +10974,7 @@ The id of the started case is now set in the `CamelBonitaCaseId` header.
 === camel-bonita - exact process name, and processName, username and password checked when the producer starts
 
 The `startCase` producer now looks up the process with the exact name of `processName` (the `f=name=...` filter of the
-Bonita REST API) instead of searching for it and taking the first result, so a process whose name only contains the
+Bonita REST API) instead of searching for it and taking the first result. A process whose name only contains the
 given name is no longer used. When the process is deployed in several versions, the new `processVersion` option
 selects one; without it the first version that Bonita returns is used, as before, and a WARN is logged once.
 

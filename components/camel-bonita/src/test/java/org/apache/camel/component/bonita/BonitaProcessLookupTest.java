@@ -183,6 +183,13 @@ class BonitaProcessLookupTest {
         assertTrue(server.getAllServeEvents().isEmpty(), "no request was sent");
     }
 
+    @Test
+    void producerDoesNotStartWithoutUsername() {
+        Exception e = assertThrows(Exception.class, () -> start("&processName=orders&password=pass"));
+        assertCause(e, "username");
+        assertTrue(server.getAllServeEvents().isEmpty(), "no request was sent");
+    }
+
     private static void assertCause(Throwable e, String option) {
         Throwable cause = e;
         while (cause.getCause() != null && !(cause instanceof IllegalArgumentException)) {
