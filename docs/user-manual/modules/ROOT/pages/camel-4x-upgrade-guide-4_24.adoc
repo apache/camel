@@ -12684,6 +12684,12 @@ ignored without a message. An endpoint with `sslContextParameters`, or with `use
 global `SSLContextParameters`, now fails to start. Remove the option, and configure the trust store (and the key store
 for a client certificate) with the `javax.net.ssl.*` system properties of the JVM.
 
+=== camel-minio - an endpoint with a scheme keeps it when proxyPort is set
+
+When `proxyPort` is set, the scheme of the `endpoint` option is now used: `endpoint=https://host&proxyPort=9000`
+connects with HTTPS, and `endpoint=http://host&proxyPort=9000` with HTTP, also with `secure=true` (a WARN is logged).
+Before, the scheme was ignored and `secure` (false by default) decided, so an `https://` endpoint with `proxyPort`
+connected with plain HTTP. The `secure` option still applies to an endpoint that is a host name without a scheme.
 === camel-avro-rpc - consumers on the same host and port must match, protocolLocation is read, uriAuthority is deprecated
 
 The consumers on the same host and port share one Avro server, which the first consumer that starts creates with its
