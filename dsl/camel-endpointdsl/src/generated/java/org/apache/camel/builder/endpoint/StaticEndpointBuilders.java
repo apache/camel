@@ -792,8 +792,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb when used as a Document Database, or as a
-     * Graph Database
+     * Store, find, update and delete documents, vertices and edges in an
+     * ArangoDB database, and run AQL queries.
      * 
      * Category: database
      * Since: 3.5
@@ -802,7 +802,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>arangodb:database</code>
      * 
      * Path parameter: database (required)
-     * database name
+     * The name of the ArangoDB database that the producer works on. The
+     * producer does not create the database.
      * 
      * @param path database
      * @return the dsl builder
@@ -812,8 +813,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb when used as a Document Database, or as a
-     * Graph Database
+     * Store, find, update and delete documents, vertices and edges in an
+     * ArangoDB database, and run AQL queries.
      * 
      * Category: database
      * Since: 3.5
@@ -822,7 +823,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>arangodb:database</code>
      * 
      * Path parameter: database (required)
-     * database name
+     * The name of the ArangoDB database that the producer works on. The
+     * producer does not create the database.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
