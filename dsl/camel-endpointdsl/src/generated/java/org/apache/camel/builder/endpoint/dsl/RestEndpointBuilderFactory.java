@@ -44,8 +44,11 @@ public interface RestEndpointBuilderFactory {
             return (AdvancedRestEndpointConsumerBuilder) this;
         }
         /**
-         * Media type such as: 'text/xml', or 'application/json' this REST
-         * service accepts. By default we accept all kinds of types.
+         * The media types, separated by comma, that this endpoint takes in,
+         * such as application/json. For the consumer, the media types of the
+         * request body that the REST service accepts. The producer sets it as
+         * the Accept header of the request when the message has no Accept
+         * header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -59,7 +62,9 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * To declare the incoming POJO binding type as a FQN class name.
+         * The class name of the request body, with [] appended for an array.
+         * The consumer stores it in the rest registry. With xml binding, the
+         * producer uses it as the JAXB context of the request body.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -73,7 +78,10 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * To declare the outgoing POJO binding type as a FQN class name.
+         * The class name of the response body, with [] appended for an array.
+         * With a binding mode other than off, the producer reads a JSON or XML
+         * response into this class, and without it the producer does not read
+         * the response. The consumer stores it in the rest registry.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -87,8 +95,11 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Media type such as: 'text/xml', or 'application/json' this REST
-         * service returns.
+         * The media types, separated by comma, that this endpoint sends, such
+         * as application/json. For the consumer, the media types of the
+         * response body that the REST service returns. The producer sets it as
+         * the Content-Type header of the request when the message has no
+         * Content-Type header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -102,7 +113,10 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the route this REST services creates.
+         * The id of the route of this REST service, which the consumer stores
+         * in the rest registry to count the requests of the service. The Rest
+         * DSL sets it to the id of the route that it creates. This option does
+         * not set the id of the route.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -116,12 +130,13 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Camel Rest component to use for the consumer REST transport, such
-         * as jetty, servlet, undertow. If no component has been explicitly
-         * configured, then Camel will lookup if there is a Camel component that
-         * integrates with the Rest DSL, or if a
-         * org.apache.camel.spi.RestConsumerFactory is registered in the
-         * registry. If either one is found, then that is being used.
+         * The name of the Camel component that runs the REST service, such as
+         * platform-http, servlet or jetty. If not set, the component of the
+         * rest configuration is used. If that is not set either, the consumer
+         * takes the first component of the CamelContext that is a
+         * RestConsumerFactory, then platform-http, then a single
+         * RestConsumerFactory in the registry, then servlet, jetty, undertow,
+         * netty-http or coap, whichever is on the classpath.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -135,7 +150,9 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Human description to document this REST service.
+         * A description of this REST service, which the consumer stores in the
+         * rest registry. The Rest DSL sets it from the description of the
+         * route, the verb or the rest.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -289,8 +306,11 @@ public interface RestEndpointBuilderFactory {
         }
 
         /**
-         * Media type such as: 'text/xml', or 'application/json' this REST
-         * service accepts. By default we accept all kinds of types.
+         * The media types, separated by comma, that this endpoint takes in,
+         * such as application/json. For the consumer, the media types of the
+         * request body that the REST service accepts. The producer sets it as
+         * the Accept header of the request when the message has no Accept
+         * header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -304,7 +324,9 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * To declare the incoming POJO binding type as a FQN class name.
+         * The class name of the request body, with [] appended for an array.
+         * The consumer stores it in the rest registry. With xml binding, the
+         * producer uses it as the JAXB context of the request body.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -318,7 +340,10 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * To declare the outgoing POJO binding type as a FQN class name.
+         * The class name of the response body, with [] appended for an array.
+         * With a binding mode other than off, the producer reads a JSON or XML
+         * response into this class, and without it the producer does not read
+         * the response. The consumer stores it in the rest registry.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -332,8 +357,11 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Media type such as: 'text/xml', or 'application/json' this REST
-         * service returns.
+         * The media types, separated by comma, that this endpoint sends, such
+         * as application/json. For the consumer, the media types of the
+         * response body that the REST service returns. The producer sets it as
+         * the Content-Type header of the request when the message has no
+         * Content-Type header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -347,7 +375,10 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the route this REST services creates.
+         * The id of the route of this REST service, which the consumer stores
+         * in the rest registry to count the requests of the service. The Rest
+         * DSL sets it to the id of the route that it creates. This option does
+         * not set the id of the route.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -361,8 +392,12 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * The openapi api doc resource to use. The resource is loaded from
-         * classpath by default and must be in JSON format.
+         * The location of the OpenAPI document (JSON or YAML) of the REST
+         * service to call: a file, an http or https URL, or a classpath
+         * resource. When set, the producer needs camel-openapi-java, and fails
+         * to start if the document has no operation for the method and path. If
+         * not set, the apiDoc option of the component, or else the
+         * producerApiDoc of the rest configuration, is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -376,10 +411,11 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configures the binding mode for the producer. If set to anything
-         * other than 'off' the producer will try to convert the body of the
-         * incoming message from inType to the json or xml, and the response
-         * from json or xml to outType.
+         * The binding mode of the producer, which replaces the bindingMode of
+         * the rest configuration (off by default). With json, xml or json_xml,
+         * the producer writes a POJO body as JSON or XML, and reads the
+         * response into outType. With auto, it chooses from the Content-Type
+         * header, and sends or keeps a body that it cannot bind as it is.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.RestConfiguration.RestBindingMode</code>
@@ -395,10 +431,11 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configures the binding mode for the producer. If set to anything
-         * other than 'off' the producer will try to convert the body of the
-         * incoming message from inType to the json or xml, and the response
-         * from json or xml to outType.
+         * The binding mode of the producer, which replaces the bindingMode of
+         * the rest configuration (off by default). With json, xml or json_xml,
+         * the producer writes a POJO body as JSON or XML, and reads the
+         * response into outType. With auto, it chooses from the Content-Type
+         * header, and sends or keeps a body that it cannot bind as it is.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.RestConfiguration.RestBindingMode</code>
@@ -414,8 +451,11 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Host and port of HTTP service to use (override host in openapi
-         * schema).
+         * The scheme, host and port of the REST service to call, with an
+         * optional base path, such as http://myserver:8080/foo. The scheme is
+         * http when it is not given. If not set, the host option of the
+         * component, or else the host and port of the rest configuration, is
+         * used. The producer fails to start without a host.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -429,12 +469,13 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Camel Rest component to use for the producer REST transport, such
-         * as http, undertow. If no component has been explicitly configured,
-         * then Camel will lookup if there is a Camel component that integrates
-         * with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory
-         * is registered in the registry. If either one is found, then that is
-         * being used.
+         * The name of the Camel component that sends the HTTP request, such as
+         * http or vertx-http. If not set, the producerComponent of the rest
+         * configuration is used. If that is not set either, the producer takes
+         * the first component of the CamelContext that is a
+         * RestProducerFactory, then the component of consumerComponentName,
+         * then a single RestProducerFactory in the registry, then http,
+         * vertx-http, undertow or netty-http, whichever is on the classpath.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -448,9 +489,12 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Query parameters for the HTTP service to call. The query parameters
-         * can contain multiple parameters separated by ampersand such such as
-         * foo=123&amp;bar=456.
+         * The query string of the request, such as foo=123&amp;bar=456. A value
+         * {name} is filled with the header or the exchange variable of that
+         * name, and a parameter with the value {name?} is left out when neither
+         * is set. The endpoint also adds the parameters of its URI that it does
+         * not know, except the options of the component that sends the HTTP
+         * request.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -533,8 +577,11 @@ public interface RestEndpointBuilderFactory {
         }
 
         /**
-         * Media type such as: 'text/xml', or 'application/json' this REST
-         * service accepts. By default we accept all kinds of types.
+         * The media types, separated by comma, that this endpoint takes in,
+         * such as application/json. For the consumer, the media types of the
+         * request body that the REST service accepts. The producer sets it as
+         * the Accept header of the request when the message has no Accept
+         * header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -548,7 +595,9 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * To declare the incoming POJO binding type as a FQN class name.
+         * The class name of the request body, with [] appended for an array.
+         * The consumer stores it in the rest registry. With xml binding, the
+         * producer uses it as the JAXB context of the request body.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -562,7 +611,10 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * To declare the outgoing POJO binding type as a FQN class name.
+         * The class name of the response body, with [] appended for an array.
+         * With a binding mode other than off, the producer reads a JSON or XML
+         * response into this class, and without it the producer does not read
+         * the response. The consumer stores it in the rest registry.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -576,8 +628,11 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Media type such as: 'text/xml', or 'application/json' this REST
-         * service returns.
+         * The media types, separated by comma, that this endpoint sends, such
+         * as application/json. For the consumer, the media types of the
+         * response body that the REST service returns. The producer sets it as
+         * the Content-Type header of the request when the message has no
+         * Content-Type header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -591,7 +646,10 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the route this REST services creates.
+         * The id of the route of this REST service, which the consumer stores
+         * in the rest registry to count the requests of the service. The Rest
+         * DSL sets it to the id of the route that it creates. This option does
+         * not set the id of the route.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -644,16 +702,22 @@ public interface RestEndpointBuilderFactory {
          * Syntax: <code>rest:method:path:uriTemplate</code>
          * 
          * Path parameter: method (required)
-         * HTTP method to use.
+         * The HTTP method of the REST service. The consumer answers requests
+         * with this method, and the producer sends the request with it.
          * There are 9 enums and the value can be one of: get, post, put,
          * delete, patch, head, trace, connect, options
          * 
          * Path parameter: path (required)
-         * The base path, can use &#42; as path suffix to support wildcard HTTP
-         * route matching.
+         * The base path of the REST service, such as users. Without
+         * uriTemplate, it is the whole path, and it can hold {name} path
+         * parameters as in uriTemplate. A consumer can end it with * to match
+         * all the paths that start with it.
          * 
          * Path parameter: uriTemplate
-         * The uri template
+         * The path below the base path, such as {id}, which can hold {name}
+         * path parameters. The consumer sets each path parameter of a request
+         * as a header. The producer fills each {name} with the header of that
+         * name, or else the exchange variable of that name.
          * 
          * @param path method:path:uriTemplate
          * @return the dsl builder
@@ -672,16 +736,22 @@ public interface RestEndpointBuilderFactory {
          * Syntax: <code>rest:method:path:uriTemplate</code>
          * 
          * Path parameter: method (required)
-         * HTTP method to use.
+         * The HTTP method of the REST service. The consumer answers requests
+         * with this method, and the producer sends the request with it.
          * There are 9 enums and the value can be one of: get, post, put,
          * delete, patch, head, trace, connect, options
          * 
          * Path parameter: path (required)
-         * The base path, can use &#42; as path suffix to support wildcard HTTP
-         * route matching.
+         * The base path of the REST service, such as users. Without
+         * uriTemplate, it is the whole path, and it can hold {name} path
+         * parameters as in uriTemplate. A consumer can end it with * to match
+         * all the paths that start with it.
          * 
          * Path parameter: uriTemplate
-         * The uri template
+         * The path below the base path, such as {id}, which can hold {name}
+         * path parameters. The consumer sets each path parameter of a request
+         * as a header. The producer fills each {name} with the header of that
+         * name, or else the exchange variable of that name.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -704,7 +774,9 @@ public interface RestEndpointBuilderFactory {
         public static final RestHeaderNameBuilder INSTANCE = new RestHeaderNameBuilder();
 
         /**
-         * The query parameters for the rest call to be used.
+         * The query string of the request. The producer sets it from the
+         * queryParameters option, with the {name} values filled in. The HTTP
+         * producer uses it in place of the query of its endpoint.
          * 
          * The option is a: {@code String} type.
          * 
@@ -716,7 +788,10 @@ public interface RestEndpointBuilderFactory {
             return "CamelRestHttpQuery";
         }
         /**
-         * The http uri for the rest call to be used.
+         * The URI of the request, with the path parameters filled in. The
+         * producer sets it when it fills a path parameter from a header or a
+         * variable, and then removes the CamelHttpPath header. The HTTP
+         * producer uses it in place of the URI of its endpoint.
          * 
          * The option is a: {@code String} type.
          * 
@@ -728,7 +803,9 @@ public interface RestEndpointBuilderFactory {
             return "CamelRestHttpUri";
         }
         /**
-         * The method should be in upper case.
+         * The HTTP method of the request, in upper case. The producer sets it
+         * from the method of the endpoint, and replaces any value that the
+         * message has.
          * 
          * The option is a: {@code String} type.
          * 
@@ -740,8 +817,9 @@ public interface RestEndpointBuilderFactory {
             return "CamelHttpMethod";
         }
         /**
-         * The media type such as: 'text/xml', or 'application/json' this REST
-         * service returns.
+         * The media type of the request body. The producer sets it to the
+         * produces option when the message has no Content-Type header. With
+         * binding, the producer reads it to choose between JSON and XML.
          * 
          * The option is a: {@code String} type.
          * 
@@ -753,8 +831,8 @@ public interface RestEndpointBuilderFactory {
             return "Content-Type";
         }
         /**
-         * The media type such as: 'text/xml', or 'application/json' this REST
-         * service accepts.
+         * The media types that the response may have. The producer sets it to
+         * the consumes option when the message has no Accept header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -766,7 +844,10 @@ public interface RestEndpointBuilderFactory {
             return "Accept";
         }
         /**
-         * The http response code.
+         * The HTTP status code of the response, which the HTTP producer sets.
+         * With binding, the producer does not read a response with a code of
+         * 300 or more into outType, unless skipBindingOnErrorCode of the rest
+         * configuration is false.
          * 
          * The option is a: {@code Integer} type.
          * 

@@ -2,7 +2,7 @@
 :doctitle: Geocoder
 :shortname: geocoder
 :artifactid: camel-geocoder
-:description: Find geocodes (latitude and longitude) for a given address or the other way round.
+:description: Look up the latitude and longitude of an address, or the address of a latitude and longitude, with Google or a Nominatim server.
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:
@@ -68,6 +68,16 @@ When Google denies the request, the body is left as-is and the `CamelGeoCoderSta
 If the option `headersOnly` is set to `true` then the message body is
 left as-is, and only headers will be added to the
 Exchange.
+
+== Using a proxy
+
+The requests to Google can go through an HTTP proxy, set with `proxyHost` and `proxyPort`. The proxy is not used for
+Nominatim.
+
+When the proxy needs authentication, set `proxyAuthMethod=Basic` with `proxyAuthUsername` and `proxyAuthPassword`.
+Only Basic authentication is supported: the user name and password are sent Base64 encoded in the
+`Proxy-Authorization` header, so use a proxy you reach over a network you trust. Another `proxyAuthMethod`, such as
+`Digest`, fails when the producer starts.
 
 == Examples
 

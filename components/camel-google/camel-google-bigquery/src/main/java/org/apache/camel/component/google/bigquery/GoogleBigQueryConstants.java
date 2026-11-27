@@ -24,27 +24,41 @@ public final class GoogleBigQueryConstants {
     public static final String SCHEME_BIGQUERY_SQL = "google-bigquery-sql";
     public static final String SCHEME_BIGQUERY = "google-bigquery";
 
-    @Metadata(description = "Table suffix to use when inserting data", javaType = "String", applicableFor = SCHEME_BIGQUERY)
+    @Metadata(description = "The suffix of a template table: BigQuery inserts the rows into the table whose ID is the table ID"
+                            + " followed by this suffix, and creates it with the schema of the table ID table if it does not"
+                            + " exist.",
+              javaType = "String", applicableFor = SCHEME_BIGQUERY)
     public static final String TABLE_SUFFIX = "CamelGoogleBigQueryTableSuffix";
-    @Metadata(description = "Table id where data will be submitted. If specified will override endpoint configuration",
+    @Metadata(description = "The ID of the table to insert the rows into. It replaces the tableId of the endpoint. In a grouped"
+                            + " exchange, an exchange without this header goes to the table of the exchange before it.",
               javaType = "String", applicableFor = SCHEME_BIGQUERY)
     public static final String TABLE_ID = "CamelGoogleBigQueryTableId";
-    @Metadata(description = "InsertId to use when inserting data", javaType = "String", applicableFor = SCHEME_BIGQUERY)
+    @Metadata(description = "The insert ID of the row of a Map body, which BigQuery uses to drop duplicate rows on a best-effort"
+                            + " basis. It is not used for a List body, nor when the useAsInsertId option is set.",
+              javaType = "String", applicableFor = SCHEME_BIGQUERY)
     public static final String INSERT_ID = "CamelGoogleBigQueryInsertId";
-    @Metadata(description = "Partition decorator to indicate partition to use when inserting data", javaType = "String",
-              applicableFor = SCHEME_BIGQUERY)
+    @Metadata(description = "The partition of a partitioned table to insert the rows into, such as 20260131 for a day. The"
+                            + " producer appends it to the table ID as table$partition.",
+              javaType = "String", applicableFor = SCHEME_BIGQUERY)
     public static final String PARTITION_DECORATOR = "CamelGoogleBigQueryPartitionDecorator";
-    @Metadata(description = "Preprocessed query text", javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
+    @Metadata(description = "The query that the producer sends to BigQuery, after it has replaced the ${name} placeholders."
+                            + " The producer sets it.",
+              javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String TRANSLATED_QUERY = "CamelGoogleBigQueryTranslatedQuery";
-    @Metadata(description = "A custom `JobId` to use", javaType = "com.google.cloud.bigquery.JobId",
+    @Metadata(description = "The ID of a query job. When set, the producer does not run the query but waits for this job and"
+                            + " returns its result, for example to read the next page with the CamelGoogleBigQueryPageToken"
+                            + " header. The producer sets it after a SELECT with the SELECT_LIST output type.",
+              javaType = "com.google.cloud.bigquery.JobId",
               applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String JOB_ID = "CamelGoogleBigQueryJobId";
-    @Metadata(description = "The page token to retrieve a specific page of results from BigQuery. " +
-                            "If not set, the first page is returned",
+    @Metadata(description = "The token of the page of SELECT results to return, from the CamelGoogleBigQueryNextPageToken"
+                            + " header of a previous call. It replaces the pageToken option. Send it with the"
+                            + " CamelGoogleBigQueryJobId header of that call, so the page is read from the same job.",
               javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String PAGE_TOKEN = "CamelGoogleBigQueryPageToken";
-    @Metadata(description = "The next page token returned by BigQuery. Use this token in the " +
-                            "`CamelGoogleBigQueryPageToken` header of a subsequent request to retrieve the next page of results",
+    @Metadata(description = "The token of the next page of SELECT results, or null for the last page. The producer sets it"
+                            + " with the SELECT_LIST output type. Send it in the CamelGoogleBigQueryPageToken header to read the"
+                            + " next page.",
               javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String NEXT_PAGE_TOKEN = "CamelGoogleBigQueryNextPageToken";
 

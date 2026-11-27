@@ -23,13 +23,16 @@ import org.apache.camel.spi.Metadata;
  */
 public final class RestPostmanConstants {
 
-    @Metadata(description = "The id of the Postman request being invoked or serviced.", javaType = "String")
+    @Metadata(description = "The id of the Postman request being invoked or serviced: its slugified name, qualified"
+                            + " with its folders when the name is not unique in the collection.",
+              javaType = "String")
     public static final String REQUEST_ID = "CamelRestPostmanRequestId";
 
     @Metadata(description = "The name of the Postman request, as written in the collection.", javaType = "String")
     public static final String REQUEST_NAME = "CamelRestPostmanRequestName";
 
-    @Metadata(description = "The folder path of the Postman request, with folders separated by a slash.",
+    @Metadata(description = "The folder path of the Postman request invoked by the producer, with the folder names"
+                            + " separated by a slash. Not set for a request at the top level of the collection.",
               javaType = "String")
     public static final String FOLDER_PATH = "CamelRestPostmanFolderPath";
 
@@ -37,8 +40,9 @@ public final class RestPostmanConstants {
               javaType = "Integer")
     public static final String REQUEST_COUNT = "CamelRestPostmanRequestCount";
 
-    @Metadata(description = "The number of requests that failed when running a folder or a whole collection with"
-                            + " runFailFast disabled.",
+    @Metadata(description = "The number of requests that failed when running a folder or a whole collection. It is"
+                            + " above 0 only with runFailFast disabled, as otherwise the first failure fails the"
+                            + " exchange.",
               javaType = "Integer")
     public static final String FAILED_COUNT = "CamelRestPostmanFailedCount";
 

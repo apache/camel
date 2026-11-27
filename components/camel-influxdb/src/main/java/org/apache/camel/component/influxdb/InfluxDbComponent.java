@@ -28,7 +28,9 @@ import org.influxdb.InfluxDB;
 @Component("influxdb")
 public class InfluxDbComponent extends DefaultComponent {
 
-    @Metadata(autowired = true)
+    @Metadata(autowired = true,
+              description = "The org.influxdb.InfluxDB client that all endpoints of the component use. When it is set or"
+                            + " autowired, the endpoints do not look up the bean named in their URI path.")
     private InfluxDB influxDB;
 
     public InfluxDbComponent() {
@@ -52,9 +54,6 @@ public class InfluxDbComponent extends DefaultComponent {
         return influxDB;
     }
 
-    /**
-     * The shared Influx DB to use for all endpoints
-     */
     public void setInfluxDB(InfluxDB influxDB) {
         this.influxDB = influxDB;
     }

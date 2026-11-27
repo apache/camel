@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 
 /**
- * Interact with JIRA issue tracker.
+ * Create, update and query issues in Atlassian Jira, and poll Jira for new issues, new comments and changed fields.
  * <p>
  * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK. Available endpoint URIs
  * include:
@@ -141,16 +141,33 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
 
     private static final Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);
 
-    @UriPath
+    @UriPath(description = "The operation of the endpoint, case-insensitive. The consumer types are newIssues, newComments"
+                           + " and watchUpdates. The producer types are addIssue, addComment, addIssueLink, addWorkLog, attach,"
+                           + " deleteIssue, fetchComments, fetchIssue, transitionIssue, updateIssue and watchers.")
     @Metadata(required = true)
     private JiraType type;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The JQL query that selects the issues that the consumer reads, for example project=CAMEL AND"
+                            + " status=Open. The newIssues consumer adds a condition on the creation date and ORDER BY created"
+                            + " DESC to it, so the query must not have an ORDER BY clause. Wrap the query in RAW() so that"
+                            + " Camel does not decode it, for example RAW(project in (MYP, COM) AND resolution = Unresolved).")
     private String jql;
-    @UriParam(label = "consumer", defaultValue = "Status,Priority")
+    @UriParam(label = "consumer", defaultValue = "Status,Priority",
+              description = "The comma-separated list of the issue fields that the watchUpdates consumer watches for"
+                            + " changes, without spaces. Each name is the name of a getter of"
+                            + " com.atlassian.jira.rest.client.api.domain.Issue without the get prefix, case-sensitive, for"
+                            + " example Status, Priority, Summary or Assignee.")
     private String watchedFields = "Status,Priority";
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether the watchUpdates consumer sends only the new value of the changed field as the body,"
+                            + " for example a Status, or null when the field was cleared. If false, the body is the whole"
+                            + " updated Issue. Either way, the consumer sends one message per watched field that changed.")
     private boolean sendOnlyUpdatedField = true;
-    @UriParam(label = "consumer", defaultValue = "50")
+    @UriParam(label = "consumer", defaultValue = "50",
+              description = "The maximum number of issues that the consumer reads from the JQL search in one poll, or no"
+                            + " limit if 0 or less: newComments reads the comments of these issues, and watchUpdates watches"
+                            + " them. The newIssues consumer reads every issue created since its previous poll and uses this"
+                            + " value as the page size of the search, at most 50.")
     private Integer maxResults = 50;
     @UriParam
     private JiraConfiguration configuration;
@@ -285,20 +302,10 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
         return type;
     }
 
-    /**
-     * Operation to perform. Consumers: NewIssues, NewComments. Producers: AddIssue, AttachFile, DeleteIssue,
-     * TransitionIssue, UpdateIssue, Watchers. See this class javadoc description for more information.
-     */
     public void setType(JiraType type) {
         this.type = type;
     }
 
-    /**
-     * JQL is the query language from JIRA which allows you to retrieve the data you want. For example
-     * <tt>jql=project=MyProject</tt> Where MyProject is the product key in Jira. It is important to use the RAW() and
-     * set the JQL inside it to prevent camel parsing it, example: RAW(project in (MYP, COM) AND resolution =
-     * Unresolved)
-     */
     public String getJql() {
         return jql;
     }
@@ -325,17 +332,10 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
         return maxResults;
     }
 
-    /**
-     * Max number of issues to search for. The newIssues consumer reads every issue created since its previous poll,
-     * page by page, with this as the page size (at most 50).
-     */
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
     }
 
-    /**
-     * Comma separated list of fields to watch for changes. "Status,Priority" are the defaults.
-     */
     public String getWatchedFields() {
         return watchedFields;
     }
@@ -344,10 +344,6 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
         this.watchedFields = watchChange;
     }
 
-    /**
-     * Indicator for sending only changed fields in exchange body or issue object. By default consumer sends only
-     * changed fields.
-     */
     public boolean isSendOnlyUpdatedField() {
         return sendOnlyUpdatedField;
     }

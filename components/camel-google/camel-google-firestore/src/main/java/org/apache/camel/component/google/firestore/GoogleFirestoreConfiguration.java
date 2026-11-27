@@ -51,7 +51,7 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
                             + " If not set, the client uses Application Default Credentials.")
     private String serviceAccountKey;
 
-    @UriParam(label = "producer",
+    @UriParam(label = "producer", defaultValue = "setDocument",
               description = "The operation that the producer performs. If not set, the producer performs setDocument. The"
                             + " CamelGoogleFirestoreOperation header replaces this option.",
               enums = "setDocument,getDocumentById,updateDocument,deleteDocument,queryCollection,listDocuments,listCollections,createDocument")

@@ -38,7 +38,10 @@ import org.apache.camel.spi.Transformer;
  * database.
  */
 @DataTypeTransformer(name = "pgvector:embeddings",
-                     description = "Prepares the message to become an object writable by PgVector component")
+                     description = "Turns the embedding of camel-langchain4j-embeddings into the message of a pgvector UPSERT:"
+                                   + " the vector of the CamelLangChain4jEmbeddingsVector header becomes the body, as a List"
+                                   + " of Float, and the CamelPgVectorRecordId, CamelPgVectorTextContent and"
+                                   + " CamelPgVectorMetadata headers are set")
 @BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
                                      description = "A LangChain4j TextSegment, or a String the converter of"
                                                    + " camel-langchain4j-embeddings turns into one, whose text and metadata"
@@ -76,26 +79,61 @@ public class PgVectorEmbeddingsDataTypeTransformer extends Transformer {
 
     private static String toJson(Map<String, Object> map) {
         return "{" + map.entrySet().stream()
-                .map(e -> "\"" + escapeJson(String.valueOf(e.getKey())) + "\":" + formatJsonValue(e.getValue()))
+                .map(e -> {
+                    String key = String.valueOf(e.getKey());
+                    return "\"" + escapeJson(rejectNul(key, "name", key)) + "\":" + formatJsonValue(key, e.getValue());
+                })
                 .collect(Collectors.joining(","))
                + "}";
     }
 
-    private static String formatJsonValue(Object value) {
+    private static String formatJsonValue(String key, Object value) {
         if (value == null) {
             return "null";
         }
         if (value instanceof Number || value instanceof Boolean) {
             return String.valueOf(value);
         }
-        return "\"" + escapeJson(String.valueOf(value)) + "\"";
+        return "\"" + escapeJson(rejectNul(key, "value", String.valueOf(value))) + "\"";
     }
 
+    /**
+     * Fails on a NUL character (U+0000) in the name or value of a metadata key. JSON can write it as an escape, but
+     * PostgreSQL jsonb rejects that escape, so the row would be stored and every later metadata::jsonb filter that
+     * reaches it would fail.
+     */
+    private static String rejectNul(String key, String part, String text) {
+        if (text.indexOf('\u0000') >= 0) {
+            throw new IllegalArgumentException(
+                    "The " + part + " of the metadata key '" + key.replace("\u0000", "\\u0000")
+                                               + "' has a NUL character (U+0000), which PostgreSQL jsonb cannot store");
+        }
+        return text;
+    }
+
+    /**
+     * Escapes a string for a JSON string value: the backslash, the double quote, and every control character from
+     * U+0000 to U+001F, which JSON does not allow unescaped.
+     */
     private static String escapeJson(String value) {
-        return value.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+        StringBuilder sb = new StringBuilder(value.length() + 16);
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '"' -> sb.append("\\\"");
+                case '\\' -> sb.append("\\\\");
+                case '\n' -> sb.append("\\n");
+                case '\r' -> sb.append("\\r");
+                case '\t' -> sb.append("\\t");
+                default -> {
+                    if (c < 0x20) {
+                        sb.append("\\u00").append(Character.forDigit(c >> 4, 16)).append(Character.forDigit(c & 0xF, 16));
+                    } else {
+                        sb.append(c);
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
 }

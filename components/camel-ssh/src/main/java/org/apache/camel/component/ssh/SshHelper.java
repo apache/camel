@@ -80,10 +80,10 @@ public final class SshHelper {
             throw new IllegalStateException("Configuration must be set");
         }
 
+        final boolean credentialsFromHeaders = configuration.isAllowUsernameAndPasswordFromHeaders();
         String userName = configuration.getUsername();
-        Object userNameHeaderObj = headers.get(SshConstants.USERNAME_HEADER);
-        if (userNameHeaderObj instanceof String) {
-            userName = (String) headers.get(SshConstants.USERNAME_HEADER);
+        if (credentialsFromHeaders && headers.get(SshConstants.USERNAME_HEADER) instanceof String headerUserName) {
+            userName = headerUserName;
         }
 
         // resolve the host configuration once, and connect with it: the host key is verified against the host that this
@@ -143,10 +143,8 @@ public final class SshHelper {
                 session.addPublicKeyIdentity(pair);
             } else {
                 String password = configuration.getPassword();
-
-                Object passwordHeaderObj = headers.get(SshConstants.PASSWORD_HEADER);
-                if (passwordHeaderObj instanceof String) {
-                    password = (String) headers.get(SshConstants.PASSWORD_HEADER);
+                if (credentialsFromHeaders && headers.get(SshConstants.PASSWORD_HEADER) instanceof String headerPassword) {
+                    password = headerPassword;
                 }
 
                 LOG.debug("Attempting to authenticate username '{}' using a password identity", userName);
@@ -160,7 +158,7 @@ public final class SshHelper {
 
             if (!authResult.isDone() || authResult.isFailure()) {
                 LOG.debug("Failed to authenticate");
-                throw new RuntimeCamelException("Failed to authenticate username " + configuration.getUsername());
+                throw new RuntimeCamelException("Failed to authenticate username " + userName);
             }
 
             InputStream in = null;

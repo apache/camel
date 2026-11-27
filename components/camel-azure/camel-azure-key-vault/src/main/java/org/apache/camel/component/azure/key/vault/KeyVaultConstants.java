@@ -22,14 +22,21 @@ public final class KeyVaultConstants {
     private static final String HEADER_PREFIX = "CamelAzureKeyVault";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Overrides the desired operation to be used in the producer.",
+    @Metadata(label = "producer", description = "The operation that the producer performs. It replaces the operation option.",
               javaType = "org.apache.camel.component.azure.key.vault.KeyVaultOperation")
     public static final String OPERATION = HEADER_PREFIX + "ProducerOperation";
     // headers set by the producer only
-    @Metadata(label = "producer", description = "The secret name to be used in Key Vault",
+    @Metadata(label = "producer",
+              description = "The name of the secret, required by every operation except updateSecretProperties."
+                            + " createSecret adds a new version when the secret already exists, and"
+                            + " getSecret returns the value of the latest version.",
               javaType = "String")
     public static final String SECRET_NAME = HEADER_PREFIX + "SecretName";
-    @Metadata(label = "producer", description = "The secret properties to be used in Key Vault for updating a secret",
+    @Metadata(label = "producer",
+              description = "The SecretProperties for updateSecretProperties, which requires this header. Its name"
+                            + " and its version select the secret. Only the attributes that are set in it, such as"
+                            + " enabled, expiresOn, notBefore, contentType and tags, are changed, and the"
+                            + " value of the secret is not.",
               javaType = "com.azure.security.keyvault.secrets.models.SecretProperties")
     public static final String SECRET_PROPERTIES = HEADER_PREFIX + "SecretProperties";
 

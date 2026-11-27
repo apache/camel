@@ -32,7 +32,10 @@ public enum BackpressurePolicy {
     Drop,
 
     /**
-     * Throw an exception when the queue is full.
+     * Discard the event when the queue is full, and pass an IllegalStateException to the exception handler of the
+     * consumer (logged at WARN level by default, or handled by the error handler of the route with
+     * bridgeErrorHandler=true). An exception thrown to Camel would only be logged and ignored, as Camel ignores the
+     * exceptions of event notifiers.
      */
     Fail
 }

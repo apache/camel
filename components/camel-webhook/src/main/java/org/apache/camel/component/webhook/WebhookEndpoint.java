@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Expose webhook endpoints to receive push notifications for other Camel components.
+ * Receive the push notifications of a webhook provider over HTTP for a Camel component that supports webhooks.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "webhook", title = "Webhook", syntax = "webhook:endpointUri", consumerOnly = true,
              category = { Category.CLOUD }, lenientProperties = true)

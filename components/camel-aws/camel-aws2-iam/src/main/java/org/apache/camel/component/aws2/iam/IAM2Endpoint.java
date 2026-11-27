@@ -33,7 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.iam.IamClient;
 
 /**
- * Manage AWS IAM instances.
+ * Manage users, groups, roles, managed policies, access keys and instance profiles in AWS Identity and Access
+ * Management (IAM).
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-iam", title = "AWS Identity and Access Management (IAM)",
              syntax = "aws2-iam:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },

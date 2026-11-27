@@ -26,10 +26,15 @@ import org.apache.camel.support.DefaultComponent;
 @Component("milo-client")
 public class MiloClientComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The client configuration that holds the default options of the endpoints of this component."
+                            + " Each endpoint uses a copy of it, with the options that are set on the endpoint.")
     private MiloClientConfiguration configuration = new MiloClientConfiguration();
 
-    @Metadata(autowired = true, label = "client", description = "Instance for managing client connections")
+    @Metadata(autowired = true, label = "client",
+              description = "To use a custom org.apache.camel.component.milo.client.MiloClientConnectionManager that creates"
+                            + " and releases the connections to the OPC UA servers. The default one shares a connection"
+                            + " between the endpoints with the same endpoint URI, clientId, requestedPublishingInterval and"
+                            + " validation of the server certificate, and closes it when the last endpoint releases it.")
     private MiloClientConnectionManager miloClientConnectionManager = new MiloClientCachingConnectionManager();
 
     @Override
@@ -51,9 +56,6 @@ public class MiloClientComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * All default options for client configurations
-     */
     public void setConfiguration(final MiloClientConfiguration configuration) {
         this.configuration = configuration;
     }

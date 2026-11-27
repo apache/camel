@@ -31,7 +31,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Perform key-value operations against a pluggable {@link KeyValueRepository} backend.
+ * Store, get and delete key-value entries in a pluggable {@link KeyValueRepository}, such as an in-memory store or a
+ * shared cache.
  *
  * @since 4.23
  */
@@ -62,21 +63,36 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " stream was stored as a byte array, and a Reader as a String"))
 public class StateStoreEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "The name of the state store")
+    @UriPath(description = "The name of the store. The endpoints with the same store name in one CamelContext share one"
+                           + " backend, and the first of them that starts decides which backend it is and whether its"
+                           + " keys are namespaced.")
     @Metadata(required = true)
     private String storeName;
 
-    @UriParam(description = "The default operation to perform", enums = "put,putIfAbsent,get,delete,contains,keys,size,clear")
+    @UriParam(description = "The operation to perform when the message has no CamelStateStoreOperation header. Without"
+                            + " either, the producer fails. All operations except keys, size and clear need the key in"
+                            + " the CamelStateStoreKey header.",
+              enums = "put,putIfAbsent,get,delete,contains,keys,size,clear")
     private StateStoreOperations operation;
 
-    @UriParam(description = "The backend to use. If not set, auto-discovers a single KeyValueRepository from the registry, or falls back to an in-memory store.",
+    @UriParam(description = "The KeyValueRepository that holds the entries. If not set, the backendFactory of the component"
+                            + " creates one for the store name; without a factory, or when it returns null, the single"
+                            + " KeyValueRepository in the registry is used, and with none or several of them, a new"
+                            + " in-memory store.",
               label = "advanced")
     private KeyValueRepository backend;
 
-    @UriParam(description = "Time-to-live in milliseconds for entries. 0 means no expiry.", defaultValue = "0")
+    @UriParam(description = "The time to live in milliseconds of the entries that put and putIfAbsent store. 0 or a"
+                            + " negative value means that the entries do not expire. The CamelStateStoreTtl header"
+                            + " overrides it per message.",
+              defaultValue = "0")
     private long ttl;
 
-    @UriParam(description = "Whether to use a store-specific namespace prefix to isolate keys on a shared backend repository.",
+    @UriParam(description = "Whether to prefix the keys with the store name in a backend set with the backend option or"
+                            + " found in the registry, so that stores sharing one repository do not see each other's"
+                            + " keys. When false, keys, size and clear act on all the entries of the repository. An"
+                            + " in-memory store and a backend from the backendFactory of the component are never"
+                            + " prefixed.",
               defaultValue = "true")
     private boolean namespaced = true;
 

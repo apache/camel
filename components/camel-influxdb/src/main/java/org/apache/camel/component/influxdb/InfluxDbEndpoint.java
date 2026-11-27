@@ -38,8 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a> v1, a time series
- * database.
+ * Write points to and run queries on <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a> v1, a
+ * time series database.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean",
              category = { Category.DATABASE }, producerOnly = true, headersClass = InfluxDbConstants.class)
@@ -75,22 +75,43 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
 
     private InfluxDB influxDB;
 
-    @UriPath
+    @UriPath(description = "The name of the org.influxdb.InfluxDB client bean in the registry that the endpoint uses. The"
+                           + " bean is not looked up when the influxDB component option is set or autowired: that client is"
+                           + " used instead.")
     @Metadata(required = true)
     private String connectionBean;
-    @UriParam
+    @UriParam(description = "The name of the database that the producer writes points to and runs queries on. The"
+                            + " camelInfluxDB.databaseName header replaces this option. If neither is set, the database set"
+                            + " on the InfluxDB client is used. A BatchPoints body carries its own database.")
     private String databaseName;
-    @UriParam(defaultValue = "default")
+    @UriParam(description = "The name of the retention policy that the producer writes a single point to. InfluxDB takes the"
+                            + " value as the name of a policy of the database, so the default works only on a database with a"
+                            + " policy named default (InfluxDB 1.0 and later name the policy they create autogen). The"
+                            + " camelInfluxDB.RetentionPolicy header replaces this option. A BatchPoints body carries its own"
+                            + " retention policy.",
+              defaultValue = "default")
     private String retentionPolicy = "default";
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether the insert operation writes an org.influxdb.dto.BatchPoints body in one request, instead"
+                            + " of a single org.influxdb.dto.Point. The database and the retention policy of the BatchPoints"
+                            + " are used, not the databaseName and retentionPolicy options or their headers.",
+              defaultValue = "false")
     private boolean batch;
-    @UriParam(defaultValue = InfluxDbOperations.INSERT, enums = "insert,query,ping")
+    @UriParam(description = "The operation that the producer performs: insert writes the body to InfluxDB, query runs the"
+                            + " query and gives its QueryResult as the body, and ping gives the Pong of the server as the body."
+                            + " The value is not case-sensitive, and another value fails the start of the endpoint.",
+              defaultValue = InfluxDbOperations.INSERT, enums = "insert,query,ping")
     private String operation = InfluxDbOperations.INSERT;
-    @UriParam
+    @UriParam(description = "The InfluxQL query that the query operation runs. The camelInfluxDB.query header replaces this"
+                            + " option, and the query operation fails if neither is set.")
     private String query;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether to run SHOW DATABASES when the endpoint starts, to check that the database of the"
+                            + " databaseName option exists. It has an effect only together with autoCreateDatabase: on its own"
+                            + " a missing database is neither reported nor created.",
+              defaultValue = "false")
     private boolean checkDatabaseExistence;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether to create the database of the databaseName option when the endpoint starts and the"
+                            + " database does not exist. It is used only when checkDatabaseExistence is true.",
+              defaultValue = "false")
     private boolean autoCreateDatabase;
 
     public InfluxDbEndpoint(String uri, InfluxDbComponent component) {
@@ -126,9 +147,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return influxDB;
     }
 
-    /**
-     * The Influx DB to use
-     */
     public void setInfluxDB(InfluxDB influxDB) {
         this.influxDB = influxDB;
     }
@@ -137,9 +155,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return databaseName;
     }
 
-    /**
-     * The name of the database where the time series will be stored
-     */
     public void setDatabaseName(String databaseName) {
         this.databaseName = databaseName;
     }
@@ -148,9 +163,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return retentionPolicy;
     }
 
-    /**
-     * The string that defines the retention policy to the data created by the endpoint
-     */
     public void setRetentionPolicy(String retentionPolicy) {
         this.retentionPolicy = retentionPolicy;
     }
@@ -159,9 +171,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return connectionBean;
     }
 
-    /**
-     * Connection to the influx database, of class InfluxDB.class
-     */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
     }
@@ -170,9 +179,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return batch;
     }
 
-    /**
-     * Define if this operation is a batch operation or not
-     */
     public void setBatch(boolean batch) {
         this.batch = batch;
     }
@@ -181,9 +187,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return operation;
     }
 
-    /**
-     * Define if this operation is an insert, a query or a ping. The value is not case-sensitive.
-     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -192,9 +195,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return query;
     }
 
-    /**
-     * Define the query in case of operation query
-     */
     public void setQuery(String query) {
         this.query = query;
     }
@@ -203,9 +203,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return checkDatabaseExistence;
     }
 
-    /**
-     * Define if we want to check the database existence while starting the endpoint
-     */
     public void setCheckDatabaseExistence(boolean checkDatabaseExistence) {
         this.checkDatabaseExistence = checkDatabaseExistence;
     }
@@ -214,9 +211,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         return autoCreateDatabase;
     }
 
-    /**
-     * Define if we want to auto create the database if it's not present
-     */
     public void setAutoCreateDatabase(boolean autoCreateDatabase) {
         this.autoCreateDatabase = autoCreateDatabase;
     }

@@ -31,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.transcribe.TranscribeClient;
 
 /**
- * Automatically convert speech to text using AWS Transcribe service
+ * Transcribe speech in audio and video files in S3 to text with Amazon Transcribe, and manage its custom vocabularies,
+ * vocabulary filters and language models.
  */
 @UriEndpoint(firstVersion = "4.15.0", scheme = "aws2-transcribe", title = "AWS Transcribe",
              syntax = "aws2-transcribe:label", category = { Category.CLOUD, Category.MESSAGING },

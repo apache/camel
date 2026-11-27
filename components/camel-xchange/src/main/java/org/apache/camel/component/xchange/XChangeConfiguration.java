@@ -91,8 +91,19 @@ public class XChangeConfiguration {
                             + " endpoint.")
     private Currency currency;
     @UriParam(description = "The currency pair, such as BTC/USDT, for the ticker and currencyPairMetaData methods when"
-                            + " neither the CurrencyPair header nor the message body gives one.")
+                            + " neither the CurrencyPair header nor the message body gives one. A currency that XChange does"
+                            + " not know fails the creation of the endpoint.")
     private String currencyPair;
+    @UriParam(label = "security", security = "secret",
+              description = "The API key of the account at the exchange, for the account service. If not set, the exchange"
+                            + " module of XChange decides, for example the one of Binance reads it from the file"
+                            + " binance-secret.keys.")
+    private String apiKey;
+    @UriParam(label = "security", security = "secret",
+              description = "The secret key of the account at the exchange, for the account service. If not set, the"
+                            + " exchange module of XChange decides, for example the one of Binance reads it from the file"
+                            + " binance-secret.keys.")
+    private String secretKey;
 
     public String getName() {
         return name;
@@ -126,13 +137,25 @@ public class XChangeConfiguration {
         this.currency = currency;
     }
 
+    /**
+     * Sets the currency from its code, or null if XChange does not know the currency.
+     *
+     * @deprecated Camel does not call this method, the currency option is converted with
+     *             {@link XChangeConverters#toCurrency(String)}, which fails for an unknown currency.
+     */
+    @Deprecated(since = "4.24.0")
     public void setCurrency(String curr) {
         this.currency = Currency.getInstanceNoCreate(curr);
     }
 
+    /**
+     * The currency pair option as an XChange {@link CurrencyPair}, or null if the option is not set.
+     *
+     * @throws IllegalArgumentException if a currency of the pair is not known to XChange
+     */
     public CurrencyPair getAsCurrencyPair() {
         if (currencyPair != null) {
-            return new CurrencyPair(currencyPair);
+            return XChangeConverters.toCurrencyPair(currencyPair);
         }
         return null;
     }
@@ -145,4 +168,19 @@ public class XChangeConfiguration {
         this.currencyPair = currencyPair;
     }
 
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
 }

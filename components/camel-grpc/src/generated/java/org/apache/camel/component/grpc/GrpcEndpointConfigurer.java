@@ -52,10 +52,14 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jwtAlgorithm": target.getConfiguration().setJwtAlgorithm(property(camelContext, org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class, value)); return true;
         case "jwtissuer":
         case "jwtIssuer": target.getConfiguration().setJwtIssuer(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtmaxtokenage":
+        case "jwtMaxTokenAge": target.getConfiguration().setJwtMaxTokenAge(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "jwtsecret":
         case "jwtSecret": target.getConfiguration().setJwtSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtsubject":
         case "jwtSubject": target.getConfiguration().setJwtSubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwttokenlifetime":
+        case "jwtTokenLifetime": target.getConfiguration().setJwtTokenLifetime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "keepalivetime":
         case "keepAliveTime": target.getConfiguration().setKeepAliveTime(property(camelContext, long.class, value)); return true;
         case "keepalivetimeout":
@@ -143,10 +147,14 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jwtAlgorithm": return org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class;
         case "jwtissuer":
         case "jwtIssuer": return java.lang.String.class;
+        case "jwtmaxtokenage":
+        case "jwtMaxTokenAge": return long.class;
         case "jwtsecret":
         case "jwtSecret": return java.lang.String.class;
         case "jwtsubject":
         case "jwtSubject": return java.lang.String.class;
+        case "jwttokenlifetime":
+        case "jwtTokenLifetime": return long.class;
         case "keepalivetime":
         case "keepAliveTime": return long.class;
         case "keepalivetimeout":
@@ -235,10 +243,14 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jwtAlgorithm": return target.getConfiguration().getJwtAlgorithm();
         case "jwtissuer":
         case "jwtIssuer": return target.getConfiguration().getJwtIssuer();
+        case "jwtmaxtokenage":
+        case "jwtMaxTokenAge": return target.getConfiguration().getJwtMaxTokenAge();
         case "jwtsecret":
         case "jwtSecret": return target.getConfiguration().getJwtSecret();
         case "jwtsubject":
         case "jwtSubject": return target.getConfiguration().getJwtSubject();
+        case "jwttokenlifetime":
+        case "jwtTokenLifetime": return target.getConfiguration().getJwtTokenLifetime();
         case "keepalivetime":
         case "keepAliveTime": return target.getConfiguration().getKeepAliveTime();
         case "keepalivetimeout":

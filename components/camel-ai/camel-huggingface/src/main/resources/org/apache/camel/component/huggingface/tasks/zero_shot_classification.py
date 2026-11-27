@@ -30,9 +30,9 @@ def handle(inputs: Input):
             logging.debug("Initializing pipeline")
             pipe = pipeline(
                 task='zero-shot-classification',
-                model='%s',
-                revision='%s',
-                device_map='%s'
+                model=%s,
+                revision=%s,
+                device_map=%s
             )
             logging.debug("Pipeline initialized")
 

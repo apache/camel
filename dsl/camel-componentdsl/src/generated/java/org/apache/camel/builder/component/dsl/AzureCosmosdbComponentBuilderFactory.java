@@ -54,9 +54,9 @@ public interface AzureCosmosdbComponentBuilderFactory {
     
         
         /**
-         * Whether to enable client telemetry. This has no effect: the
-         * azure-cosmos SDK ignores this flag, as it can no longer send client
-         * telemetry to the service.
+         * Whether to enable client telemetry. Deprecation note: Has no effect:
+         * the azure-cosmos SDK ignores this flag, as it can no longer send
+         * client telemetry to the service.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -66,6 +66,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * @param clientTelemetryEnabled the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AzureCosmosdbComponentBuilder clientTelemetryEnabled(boolean clientTelemetryEnabled) {
             doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
             return this;
@@ -120,7 +121,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.ConsistencyLevel&lt;/code&gt; type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -602,7 +603,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
          * 
-         * Group:  advanced
+         * Group: producer (advanced)
          * 
          * @param indexingPolicy the value to set
          * @return the dsl builder

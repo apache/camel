@@ -52,22 +52,31 @@ public class PrinterProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        // a body that is not text, bytes, a stream or a file fails, rather than printing a job with no data
-        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+        DocFlavor flavor = printerOperations.getFlavor();
+        PrintDocument printDoc;
+        if (config.isSendToPrinter() && flavor instanceof DocFlavor.SERVICE_FORMATTED) {
+            // the print data of these doc flavors is the Pageable, Printable or RenderableImage itself, not a stream
+            Class<?> type = getEndpoint().getCamelContext().getClassResolver()
+                    .resolveMandatoryClass(flavor.getRepresentationClassName());
+            printDoc = PrintDocument.ofPrintData(exchange.getIn().getMandatoryBody(type), flavor);
+        } else {
+            // a body that is not text, bytes, a stream or a file fails, rather than printing a job with no data
+            InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+            printDoc = new PrintDocument(is, flavor);
+        }
         String jobName = exchange.getIn().getHeader(PrinterEndpoint.JOB_NAME, "Camel: lpr", String.class);
-        print(is, jobName);
+        print(printDoc, jobName);
     }
 
-    private void print(InputStream body, String jobName) throws PrintException {
+    private void print(PrintDocument printDoc, String jobName) throws PrintException {
         PrintService service = printerOperations.getPrintService();
-        DocFlavor flavor = printerOperations.getFlavor();
+        DocFlavor flavor = printDoc.getDocFlavor();
         // fail, as DocPrintJob.print does, rather than skipping the job without an error
         if (!service.isDocFlavorSupported(flavor)) {
             throw new PrintException(
                     "Print service " + service.getName() + " does not support the doc flavor " + flavor
                                      + ". Set the flavor and mimeType options to a doc flavor this print service supports.");
         }
-        PrintDocument printDoc = new PrintDocument(body, flavor);
         printerOperations.print(printDoc, config.isSendToPrinter(), config.getMimeType(), jobName);
     }
 

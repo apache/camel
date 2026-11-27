@@ -45,9 +45,9 @@ public interface CosmosDbEndpointBuilderFactory {
             return (AdvancedCosmosDbEndpointConsumerBuilder) this;
         }
         /**
-         * Whether to enable client telemetry. This has no effect: the
-         * azure-cosmos SDK ignores this flag, as it can no longer send client
-         * telemetry to the service.
+         * Whether to enable client telemetry. Deprecation note: Has no effect:
+         * the azure-cosmos SDK ignores this flag, as it can no longer send
+         * client telemetry to the service.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -57,14 +57,15 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param clientTelemetryEnabled the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default CosmosDbEndpointConsumerBuilder clientTelemetryEnabled(boolean clientTelemetryEnabled) {
             doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
             return this;
         }
         /**
-         * Whether to enable client telemetry. This has no effect: the
-         * azure-cosmos SDK ignores this flag, as it can no longer send client
-         * telemetry to the service.
+         * Whether to enable client telemetry. Deprecation note: Has no effect:
+         * the azure-cosmos SDK ignores this flag, as it can no longer send
+         * client telemetry to the service.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -74,6 +75,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param clientTelemetryEnabled the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default CosmosDbEndpointConsumerBuilder clientTelemetryEnabled(String clientTelemetryEnabled) {
             doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
             return this;
@@ -124,7 +126,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -143,7 +145,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -340,7 +342,6 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param databaseEndpoint the value to set
@@ -820,46 +821,6 @@ public interface CosmosDbEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
-        /**
-         * The com.azure.cosmos.models.IndexingPolicy of a container that the
-         * producer creates, with createContainer or because
-         * createContainerIfNotExists is true. If not set, the container gets
-         * the default indexing policy of Cosmos DB. The
-         * CamelAzureCosmosDbIndexingPolicy header replaces it, and the consumer
-         * does not use it.
-         * 
-         * The option is a: <code>com.azure.cosmos.models.IndexingPolicy</code>
-         * type.
-         * 
-         * Group:  advanced
-         * 
-         * @param indexingPolicy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCosmosDbEndpointConsumerBuilder indexingPolicy(com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
-            doSetProperty("indexingPolicy", indexingPolicy);
-            return this;
-        }
-        /**
-         * The com.azure.cosmos.models.IndexingPolicy of a container that the
-         * producer creates, with createContainer or because
-         * createContainerIfNotExists is true. If not set, the container gets
-         * the default indexing policy of Cosmos DB. The
-         * CamelAzureCosmosDbIndexingPolicy header replaces it, and the consumer
-         * does not use it.
-         * 
-         * The option will be converted to a
-         * <code>com.azure.cosmos.models.IndexingPolicy</code> type.
-         * 
-         * Group:  advanced
-         * 
-         * @param indexingPolicy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCosmosDbEndpointConsumerBuilder indexingPolicy(String indexingPolicy) {
-            doSetProperty("indexingPolicy", indexingPolicy);
-            return this;
-        }
     }
 
     /**
@@ -873,9 +834,9 @@ public interface CosmosDbEndpointBuilderFactory {
         }
 
         /**
-         * Whether to enable client telemetry. This has no effect: the
-         * azure-cosmos SDK ignores this flag, as it can no longer send client
-         * telemetry to the service.
+         * Whether to enable client telemetry. Deprecation note: Has no effect:
+         * the azure-cosmos SDK ignores this flag, as it can no longer send
+         * client telemetry to the service.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -885,14 +846,15 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param clientTelemetryEnabled the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default CosmosDbEndpointProducerBuilder clientTelemetryEnabled(boolean clientTelemetryEnabled) {
             doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
             return this;
         }
         /**
-         * Whether to enable client telemetry. This has no effect: the
-         * azure-cosmos SDK ignores this flag, as it can no longer send client
-         * telemetry to the service.
+         * Whether to enable client telemetry. Deprecation note: Has no effect:
+         * the azure-cosmos SDK ignores this flag, as it can no longer send
+         * client telemetry to the service.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -902,6 +864,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param clientTelemetryEnabled the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default CosmosDbEndpointProducerBuilder clientTelemetryEnabled(String clientTelemetryEnabled) {
             doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
             return this;
@@ -952,7 +915,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -971,7 +934,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -1168,7 +1131,6 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param databaseEndpoint the value to set
@@ -1495,6 +1457,46 @@ public interface CosmosDbEndpointBuilderFactory {
         }
 
         /**
+         * The com.azure.cosmos.models.IndexingPolicy of a container that the
+         * producer creates, with createContainer or because
+         * createContainerIfNotExists is true. If not set, the container gets
+         * the default indexing policy of Cosmos DB. The
+         * CamelAzureCosmosDbIndexingPolicy header replaces it, and the consumer
+         * does not use it.
+         * 
+         * The option is a: <code>com.azure.cosmos.models.IndexingPolicy</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCosmosDbEndpointProducerBuilder indexingPolicy(com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
+         * The com.azure.cosmos.models.IndexingPolicy of a container that the
+         * producer creates, with createContainer or because
+         * createContainerIfNotExists is true. If not set, the container gets
+         * the default indexing policy of Cosmos DB. The
+         * CamelAzureCosmosDbIndexingPolicy header replaces it, and the consumer
+         * does not use it.
+         * 
+         * The option will be converted to a
+         * <code>com.azure.cosmos.models.IndexingPolicy</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param indexingPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCosmosDbEndpointProducerBuilder indexingPolicy(String indexingPolicy) {
+            doSetProperty("indexingPolicy", indexingPolicy);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1540,46 +1542,6 @@ public interface CosmosDbEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
-        /**
-         * The com.azure.cosmos.models.IndexingPolicy of a container that the
-         * producer creates, with createContainer or because
-         * createContainerIfNotExists is true. If not set, the container gets
-         * the default indexing policy of Cosmos DB. The
-         * CamelAzureCosmosDbIndexingPolicy header replaces it, and the consumer
-         * does not use it.
-         * 
-         * The option is a: <code>com.azure.cosmos.models.IndexingPolicy</code>
-         * type.
-         * 
-         * Group:  advanced
-         * 
-         * @param indexingPolicy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCosmosDbEndpointProducerBuilder indexingPolicy(com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
-            doSetProperty("indexingPolicy", indexingPolicy);
-            return this;
-        }
-        /**
-         * The com.azure.cosmos.models.IndexingPolicy of a container that the
-         * producer creates, with createContainer or because
-         * createContainerIfNotExists is true. If not set, the container gets
-         * the default indexing policy of Cosmos DB. The
-         * CamelAzureCosmosDbIndexingPolicy header replaces it, and the consumer
-         * does not use it.
-         * 
-         * The option will be converted to a
-         * <code>com.azure.cosmos.models.IndexingPolicy</code> type.
-         * 
-         * Group:  advanced
-         * 
-         * @param indexingPolicy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCosmosDbEndpointProducerBuilder indexingPolicy(String indexingPolicy) {
-            doSetProperty("indexingPolicy", indexingPolicy);
-            return this;
-        }
     }
 
     /**
@@ -1594,9 +1556,9 @@ public interface CosmosDbEndpointBuilderFactory {
         }
 
         /**
-         * Whether to enable client telemetry. This has no effect: the
-         * azure-cosmos SDK ignores this flag, as it can no longer send client
-         * telemetry to the service.
+         * Whether to enable client telemetry. Deprecation note: Has no effect:
+         * the azure-cosmos SDK ignores this flag, as it can no longer send
+         * client telemetry to the service.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1606,14 +1568,15 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param clientTelemetryEnabled the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default CosmosDbEndpointBuilder clientTelemetryEnabled(boolean clientTelemetryEnabled) {
             doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
             return this;
         }
         /**
-         * Whether to enable client telemetry. This has no effect: the
-         * azure-cosmos SDK ignores this flag, as it can no longer send client
-         * telemetry to the service.
+         * Whether to enable client telemetry. Deprecation note: Has no effect:
+         * the azure-cosmos SDK ignores this flag, as it can no longer send
+         * client telemetry to the service.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1623,6 +1586,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param clientTelemetryEnabled the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default CosmosDbEndpointBuilder clientTelemetryEnabled(String clientTelemetryEnabled) {
             doSetProperty("clientTelemetryEnabled", clientTelemetryEnabled);
             return this;
@@ -1673,7 +1637,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -1692,7 +1656,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -1889,7 +1853,6 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param databaseEndpoint the value to set
@@ -2095,49 +2058,23 @@ public interface CosmosDbEndpointBuilderFactory {
             return (CosmosDbEndpointBuilder) this;
         }
 
-        /**
-         * The com.azure.cosmos.models.IndexingPolicy of a container that the
-         * producer creates, with createContainer or because
-         * createContainerIfNotExists is true. If not set, the container gets
-         * the default indexing policy of Cosmos DB. The
-         * CamelAzureCosmosDbIndexingPolicy header replaces it, and the consumer
-         * does not use it.
-         * 
-         * The option is a: <code>com.azure.cosmos.models.IndexingPolicy</code>
-         * type.
-         * 
-         * Group:  advanced
-         * 
-         * @param indexingPolicy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCosmosDbEndpointBuilder indexingPolicy(com.azure.cosmos.models.IndexingPolicy indexingPolicy) {
-            doSetProperty("indexingPolicy", indexingPolicy);
-            return this;
-        }
-        /**
-         * The com.azure.cosmos.models.IndexingPolicy of a container that the
-         * producer creates, with createContainer or because
-         * createContainerIfNotExists is true. If not set, the container gets
-         * the default indexing policy of Cosmos DB. The
-         * CamelAzureCosmosDbIndexingPolicy header replaces it, and the consumer
-         * does not use it.
-         * 
-         * The option will be converted to a
-         * <code>com.azure.cosmos.models.IndexingPolicy</code> type.
-         * 
-         * Group:  advanced
-         * 
-         * @param indexingPolicy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCosmosDbEndpointBuilder indexingPolicy(String indexingPolicy) {
-            doSetProperty("indexingPolicy", indexingPolicy);
-            return this;
-        }
     }
 
     public interface CosmosDbBuilders {
+        /**
+         * Azure CosmosDB (camel-azure-cosmosdb)
+         * Store, read and query items in Azure Cosmos DB, and receive the
+         * changes of a container from its change feed.
+         * 
+         * Category: cloud,database
+         * Since: 3.10
+         * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
+         * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CosmosDbHeaderNameBuilder azureCosmosdb() {
+            return CosmosDbHeaderNameBuilder.INSTANCE;
+        }
         /**
          * Azure CosmosDB (camel-azure-cosmosdb)
          * Store, read and query items in Azure Cosmos DB, and receive the
@@ -2197,6 +2134,338 @@ public interface CosmosDbEndpointBuilderFactory {
             return CosmosDbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Azure CosmosDB component.
+     */
+    public static class CosmosDbHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final CosmosDbHeaderNameBuilder INSTANCE = new CosmosDbHeaderNameBuilder();
+
+        /**
+         * The name of the database. Replaces the databaseName option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbDatabaseName}.
+         */
+        public String azureCosmosDbDatabaseName() {
+            return "CamelAzureCosmosDbDatabaseName";
+        }
+        /**
+         * The name of the container. Replaces the containerName option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbContainerName}.
+         */
+        public String azureCosmosDbContainerName() {
+            return "CamelAzureCosmosDbContainerName";
+        }
+        /**
+         * The operation that the producer performs. Replaces the operation
+         * option.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.azure.cosmosdb.CosmosDbOperationsDefinition} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbOperation}.
+         */
+        public String azureCosmosDbOperation() {
+            return "CamelAzureCosmosDbOperation";
+        }
+        /**
+         * The SQL query of queryDatabases, queryContainers and queryItems.
+         * Replaces the query option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbQuery}.
+         */
+        public String azureCosmosDbQuery() {
+            return "CamelAzureCosmosDbQuery";
+        }
+        /**
+         * The options of queryDatabases, listContainers, queryContainers,
+         * readAllItems and queryItems. Replaces the queryRequestOptions option.
+         * 
+         * The option is a: {@code
+         * com.azure.cosmos.models.CosmosQueryRequestOptions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbQueryRequestOptions}.
+         */
+        public String azureCosmosDbQueryRequestOptions() {
+            return "CamelAzureCosmosDbQueryRequestOptions";
+        }
+        /**
+         * Whether to create the database when it does not exist. Replaces the
+         * createDatabaseIfNotExists option.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbCreateDatabaseIfNotExist}.
+         */
+        public String azureCosmosDbCreateDatabaseIfNotExist() {
+            return "CamelAzureCosmosDbCreateDatabaseIfNotExist";
+        }
+        /**
+         * Whether to create the container when it does not exist. Replaces the
+         * createContainerIfNotExists option.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbCreateContainerIfNotExist}.
+         */
+        public String azureCosmosDbCreateContainerIfNotExist() {
+            return "CamelAzureCosmosDbCreateContainerIfNotExist";
+        }
+        /**
+         * The indexing policy of a container that the producer creates.
+         * Replaces the indexingPolicy option.
+         * 
+         * The option is a: {@code com.azure.cosmos.models.IndexingPolicy} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbIndexingPolicy}.
+         */
+        public String azureCosmosDbIndexingPolicy() {
+            return "CamelAzureCosmosDbIndexingPolicy";
+        }
+        /**
+         * The throughput of a database or container that the producer creates,
+         * and the new throughput of replaceDatabaseThroughput and
+         * replaceContainerThroughput. Replaces the throughputProperties option.
+         * 
+         * The option is a: {@code com.azure.cosmos.models.ThroughputProperties}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbThroughputProperties}.
+         */
+        public String azureCosmosDbThroughputProperties() {
+            return "CamelAzureCosmosDbThroughputProperties";
+        }
+        /**
+         * The request options of deleteDatabase.
+         * 
+         * The option is a: {@code
+         * com.azure.cosmos.models.CosmosDatabaseRequestOptions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbDatabaseRequestOptions}.
+         */
+        public String azureCosmosDbDatabaseRequestOptions() {
+            return "CamelAzureCosmosDbDatabaseRequestOptions";
+        }
+        /**
+         * The partition key path of a container that the producer creates.
+         * Replaces the containerPartitionKeyPath option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbContainerPartitionKeyPath}.
+         */
+        public String azureCosmosDbContainerPartitionKeyPath() {
+            return "CamelAzureCosmosDbContainerPartitionKeyPath";
+        }
+        /**
+         * The request options of deleteContainer.
+         * 
+         * The option is a: {@code
+         * com.azure.cosmos.models.CosmosContainerRequestOptions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbContainerRequestOptions}.
+         */
+        public String azureCosmosDbContainerRequestOptions() {
+            return "CamelAzureCosmosDbContainerRequestOptions";
+        }
+        /**
+         * The value of the partition key of the item for createItem,
+         * upsertItem, replaceItem, deleteItem and readItem, and of the items
+         * that readAllItems reads. Replaces the itemPartitionKey option. A
+         * com.azure.cosmos.models.PartitionKey is used as it is, for example
+         * for a partition key value that is a number or a boolean; any other
+         * value is converted to a String.
+         * 
+         * The option is a: {@code String or
+         * com.azure.cosmos.models.PartitionKey} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbItemPartitionKey}.
+         */
+        public String azureCosmosDbItemPartitionKey() {
+            return "CamelAzureCosmosDbItemPartitionKey";
+        }
+        /**
+         * The request options of createItem, upsertItem, replaceItem,
+         * deleteItem and readItem.
+         * 
+         * The option is a: {@code
+         * com.azure.cosmos.models.CosmosItemRequestOptions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbItemRequestOptions}.
+         */
+        public String azureCosmosDbItemRequestOptions() {
+            return "CamelAzureCosmosDbItemRequestOptions";
+        }
+        /**
+         * The id of the item for readItem, replaceItem and deleteItem. Replaces
+         * the itemId option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbItemId}.
+         */
+        public String azureCosmosDbItemId() {
+            return "CamelAzureCosmosDbItemId";
+        }
+        /**
+         * The resource id of the database or container, set by the operations
+         * on a database or a container that get its properties back, such as
+         * createDatabase and createContainer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbResourceId}.
+         */
+        public String azureCosmosDbResourceId() {
+            return "CamelAzureCosmosDbResourceId";
+        }
+        /**
+         * The entity tag of the database, container, throughput or item that
+         * the operation returns.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbEtag}.
+         */
+        public String azureCosmosDbEtag() {
+            return "CamelAzureCosmosDbEtag";
+        }
+        /**
+         * The time of the last update of the database, container or throughput
+         * that the operation returns.
+         * 
+         * The option is a: {@code java.time.Instant} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbTimestamp}.
+         */
+        public String azureCosmosDbTimestamp() {
+            return "CamelAzureCosmosDbTimestamp";
+        }
+        /**
+         * The headers of the response of Cosmos DB, for all operations except
+         * listDatabases, queryDatabases, listContainers, queryContainers,
+         * readAllItems and queryItems.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbResponseHeaders}.
+         */
+        public String azureCosmosDbResponseHeaders() {
+            return "CamelAzureCosmosDbResponseHeaders";
+        }
+        /**
+         * The HTTP status code of the response of Cosmos DB, for all operations
+         * except listDatabases, queryDatabases, listContainers,
+         * queryContainers, readAllItems and queryItems.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbStatusCode}.
+         */
+        public String azureCosmosDbStatusCode() {
+            return "CamelAzureCosmosDbStatusCode";
+        }
+        /**
+         * The default time to live of the items of the container, in seconds,
+         * set by the operations on a container that get its properties back,
+         * such as createContainer.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbDefaultTimeToLiveInSeconds}.
+         */
+        public String azureCosmosDbDefaultTimeToLiveInSeconds() {
+            return "CamelAzureCosmosDbDefaultTimeToLiveInSeconds";
+        }
+        /**
+         * The manual throughput, in request units per second, after
+         * replaceDatabaseThroughput or replaceContainerThroughput.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureCosmosDbManualThroughput}.
+         */
+        public String azureCosmosDbManualThroughput() {
+            return "CamelAzureCosmosDbManualThroughput";
+        }
+        /**
+         * The maximum autoscale throughput, in request units per second, after
+         * replaceDatabaseThroughput or replaceContainerThroughput.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureCosmosDbAutoscaleMaxThroughput}.
+         */
+        public String azureCosmosDbAutoscaleMaxThroughput() {
+            return "CamelAzureCosmosDbAutoscaleMaxThroughput";
+        }
     }
     static CosmosDbEndpointBuilder endpointBuilder(String componentName, String path) {
         class CosmosDbEndpointBuilderImpl extends AbstractEndpointBuilder implements CosmosDbEndpointBuilder, AdvancedCosmosDbEndpointBuilder {

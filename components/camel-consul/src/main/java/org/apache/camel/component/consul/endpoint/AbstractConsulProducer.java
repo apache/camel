@@ -116,7 +116,8 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
                 builder::datacenter);
         ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_NEAR_NODE, conf.getNearNode(), String.class),
                 builder::near);
-        ObjectHelper.ifNotEmpty(conf.getAclToken(), builder::token);
+        // the ACL token is not added to the query options: the client sends it in the X-Consul-Token header, and
+        // the query options would add it to the URL as the token query parameter
         ObjectHelper.ifNotEmpty(
                 message.getHeader(ConsulConstants.CONSUL_CONSISTENCY_MODE, conf.getConsistencyMode(), ConsistencyMode.class),
                 builder::consistencyMode);

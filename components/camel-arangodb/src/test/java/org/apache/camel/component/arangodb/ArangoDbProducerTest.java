@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,6 +55,8 @@ class ArangoDbProducerTest extends CamelTestSupport {
     private static final String DOCUMENT_API = "/_db/testDb/_api/document/coll";
 
     private final List<String> requests = new CopyOnWriteArrayList<>();
+    // the endpoints no longer shut down a client from the registry, and ArangoDB is not Closeable: the test does it
+    private final List<ArangoDB> clients = new CopyOnWriteArrayList<>();
     private HttpServer server;
 
     @Override
@@ -66,10 +69,16 @@ class ArangoDbProducerTest extends CamelTestSupport {
 
     @Override
     protected void cleanupResources() throws Exception {
-        if (server != null) {
-            server.stop(0);
+        try {
+            super.cleanupResources();
+        } finally {
+            // each client has a Vert.x instance of its own, with its threads
+            clients.forEach(ArangoDB::shutdown);
+            clients.clear();
+            if (server != null) {
+                server.stop(0);
+            }
         }
-        super.cleanupResources();
     }
 
     @Override
@@ -146,6 +155,86 @@ class ArangoDbProducerTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    void sharedClientKeepsWorkingWhenAnotherEndpointShutsDown() {
+        // the autowired client of the component is shared by every endpoint
+        ArangoDbEndpoint other = context.getEndpoint(
+                "arangodb:testDb?documentCollection=other&operation=SAVE_DOCUMENT", ArangoDbEndpoint.class);
+        other.start();
+        // as for the endpoint of a removed route, or one evicted from the endpoint cache of a toD
+        other.stop();
+        other.shutdown();
+
+        Exchange result = template.request("direct:save", exchange -> exchange.getMessage().setBody(Map.of("name", "foo")));
+
+        // the shut down endpoint closed the shared client, so this send failed
+        assertNull(result.getException(), () -> "the exchange failed with " + result.getException());
+        assertEquals(1, requests.size(), requests::toString);
+    }
+
+    @Test
+    void endpointShutsDownTheClientItBuilt() throws Exception {
+        try (CamelContext camel = new DefaultCamelContext()) {
+            camel.start();
+            ArangoDbEndpoint endpoint = camel.getEndpoint(
+                    "arangodb:testDb?documentCollection=coll&operation=SAVE_DOCUMENT&host=localhost&port="
+                                                          + server.getAddress().getPort(),
+                    ArangoDbEndpoint.class);
+            endpoint.start();
+            assertNotNull(endpoint.getArangoDB());
+
+            endpoint.stop();
+            endpoint.shutdown();
+
+            assertNull(endpoint.getArangoDB());
+        }
+    }
+
+    @Test
+    void hostWithoutPortFailsToStart() throws Exception {
+        // the port was 0, so the endpoint started and failed on the first message
+        assertStartFailsNamingTheOptions("arangodb:testDb?documentCollection=coll&operation=SAVE_DOCUMENT&host=localhost");
+    }
+
+    @Test
+    void noHostNorClientFailsToStart() throws Exception {
+        // the driver failed with "No host has been set!", which names no option
+        assertStartFailsNamingTheOptions("arangodb:testDb?documentCollection=coll&operation=SAVE_DOCUMENT");
+    }
+
+    private static void assertStartFailsNamingTheOptions(String uri) throws Exception {
+        try (CamelContext camel = new DefaultCamelContext()) {
+            camel.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:save").to(uri);
+                }
+            });
+
+            Exception error = assertThrows(Exception.class, camel::start);
+
+            Throwable cause = error;
+            while (cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            assertInstanceOf(IllegalArgumentException.class, cause, () -> "the context failed with " + error);
+            assertTrue(cause.getMessage().startsWith("The host and port options must be set"), cause.getMessage());
+        }
+    }
+
+    @Test
+    void serviceUrlIsNullWithoutHost() {
+        ArangoDbEndpoint withClient = context.getEndpoint(
+                "arangodb:testDb?documentCollection=coll&operation=SAVE_DOCUMENT", ArangoDbEndpoint.class);
+        ArangoDbEndpoint withHost = context.getEndpoint(
+                "arangodb:testDb?documentCollection=coll&operation=SAVE_DOCUMENT&host=db.example.com&port=8529",
+                ArangoDbEndpoint.class);
+
+        // was null:0
+        assertNull(withClient.getServiceUrl());
+        assertEquals("db.example.com:8529", withHost.getServiceUrl());
+    }
+
     /**
      * A route that sends to an arangodb endpoint without the operation option.
      */
@@ -160,10 +249,12 @@ class ArangoDbProducerTest extends CamelTestSupport {
 
     private ArangoDB newClient() {
         // HTTP/1.1, which the JDK HTTP server speaks
-        return new ArangoDB.Builder()
+        ArangoDB client = new ArangoDB.Builder()
                 .host("localhost", server.getAddress().getPort())
                 .protocol(Protocol.HTTP_JSON)
                 .build();
+        clients.add(client);
+        return client;
     }
 
     private void reply(HttpExchange http) throws IOException {

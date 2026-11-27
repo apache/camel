@@ -26,10 +26,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("hivemq")
 public class HiveMQComponent extends DefaultComponent {
 
-    /**
-     * Component configuration.
-     */
-    @Metadata
+    @Metadata(description = "To use a shared HiveMQConfiguration with the default values of the options. Each endpoint"
+                            + " uses a copy of it, in which the options of the endpoint replace its values.")
     private HiveMQConfiguration configuration = new HiveMQConfiguration();
 
     public HiveMQComponent() {
@@ -47,9 +45,6 @@ public class HiveMQComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * To use a shared HiveMQConfiguration.
-     */
     public void setConfiguration(HiveMQConfiguration configuration) {
         this.configuration = configuration;
     }

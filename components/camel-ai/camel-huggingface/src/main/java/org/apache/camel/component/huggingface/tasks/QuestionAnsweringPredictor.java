@@ -90,7 +90,8 @@ public class QuestionAnsweringPredictor extends AbstractTaskPredictor {
 
     @Override
     protected String getPythonScript() {
-        return loadPythonScript("question_answering.py", config.getModelId(), config.getRevision(), config.getDevice());
+        return loadPythonScript("question_answering.py", pythonString(config.getModelId()), pythonString(config.getRevision()),
+                pythonString(config.getDevice()));
     }
 
     @Override
