@@ -45,9 +45,10 @@ public interface TimerEndpointBuilderFactory {
         }
 
         /**
-         * The number of milliseconds to wait before the first event is
-         * generated. Should not be used in conjunction with the time option.
-         * The default value is 1000.
+         * The time in milliseconds to wait before the first fire. The time
+         * option replaces it. A negative value fires the messages one after the
+         * other as fast as possible on a thread of its own, without the timer,
+         * and ignores the period, time and fixedRate options.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -62,9 +63,10 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of milliseconds to wait before the first event is
-         * generated. Should not be used in conjunction with the time option.
-         * The default value is 1000.
+         * The time in milliseconds to wait before the first fire. The time
+         * option replaces it. A negative value fires the messages one after the
+         * other as fast as possible on a thread of its own, without the timer,
+         * and ignores the period, time and fixedRate options.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -79,8 +81,11 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Events take place at approximately regular intervals, separated by
-         * the specified period.
+         * Whether to schedule the fires at a fixed rate instead of with a fixed
+         * delay. At a fixed rate each fire is planned from the time of the
+         * first fire, so the fires after a late one come in quick succession to
+         * catch up. With a fixed delay each fire is planned one period after
+         * the previous fire started.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -95,8 +100,11 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Events take place at approximately regular intervals, separated by
-         * the specified period.
+         * Whether to schedule the fires at a fixed rate instead of with a fixed
+         * delay. At a fixed rate each fire is planned from the time of the
+         * first fire, so the fires after a late one come in quick succession to
+         * catch up. With a fixed delay each fire is planned one period after
+         * the previous fire started.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -149,8 +157,8 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Generate periodic events every period. Must be zero or positive
-         * value. The default value is 1000.
+         * The time in milliseconds between two fires. A value of 0 or less
+         * fires only once, except with fixedRate, which needs a positive value.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -165,8 +173,8 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Generate periodic events every period. Must be zero or positive
-         * value. The default value is 1000.
+         * The time in milliseconds between two fires. A value of 0 or less
+         * fires only once, except with fixedRate, which needs a positive value.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -215,8 +223,9 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The consumer logs a start/complete log line when it polls. This
-         * option allows you to configure the logging level for that.
+         * The logging level of the log lines that the consumer writes when the
+         * timer task of a fire starts and completes. Not used when the delay is
+         * negative.
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
@@ -231,8 +240,9 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The consumer logs a start/complete log line when it polls. This
-         * option allows you to configure the logging level for that.
+         * The logging level of the log lines that the consumer writes when the
+         * timer task of a fire starts and completes. Not used when the delay is
+         * negative.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
@@ -409,8 +419,8 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to specify a custom Date pattern to use for setting the
-         * time option using URI syntax.
+         * The java.text.SimpleDateFormat pattern to parse the time option with,
+         * instead of the default patterns.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -424,7 +434,10 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used.
+         * Whether the consumer processes each exchange synchronously, so the
+         * firing thread waits until the route has completed it. If false, the
+         * next fire can start while an asynchronous step of the route still
+         * processes the previous exchange.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -439,7 +452,10 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used.
+         * Whether the consumer processes each exchange synchronously, so the
+         * firing thread waits until the route has completed it. If false, the
+         * next fire can start while an asynchronous step of the route still
+         * processes the previous exchange.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -454,9 +470,10 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * A java.util.Date the first event should be generated. If using the
-         * URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or
-         * yyyy-MM-dd'T'HH:mm:ss.
+         * The date and time of the first fire, which replaces the delay option.
+         * In a URI the value is parsed in the default time zone of the JVM with
+         * the pattern yyyy-MM-dd'T'HH:mm:ss, or yyyy-MM-dd HH:mm:ss if it has
+         * no T, unless the pattern option is set.
          * 
          * The option is a: <code>java.util.Date</code> type.
          * 
@@ -470,9 +487,10 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * A java.util.Date the first event should be generated. If using the
-         * URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or
-         * yyyy-MM-dd'T'HH:mm:ss.
+         * The date and time of the first fire, which replaces the delay option.
+         * In a URI the value is parsed in the default time zone of the JVM with
+         * the pattern yyyy-MM-dd'T'HH:mm:ss, or yyyy-MM-dd HH:mm:ss if it has
+         * no T, unless the pattern option is set.
          * 
          * The option will be converted to a <code>java.util.Date</code> type.
          * 
@@ -486,7 +504,10 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom Timer.
+         * A custom java.util.Timer to schedule the fires on, instead of the
+         * timer that the component shares between the consumers of the same
+         * timer name. The daemon option is not used, and Camel does not cancel
+         * this timer.
          * 
          * The option is a: <code>java.util.Timer</code> type.
          * 
@@ -500,7 +521,10 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom Timer.
+         * A custom java.util.Timer to schedule the fires on, instead of the
+         * timer that the component shares between the consumers of the same
+         * timer name. The daemon option is not used, and Camel does not cancel
+         * this timer.
          * 
          * The option will be converted to a <code>java.util.Timer</code> type.
          * 
@@ -540,7 +564,9 @@ public interface TimerEndpointBuilderFactory {
          * Syntax: <code>timer:timerName</code>
          * 
          * Path parameter: timerName (required)
-         * The name of the timer
+         * The name of the timer. The consumers with the same timer name and the
+         * same daemon option share one java.util.Timer, whose thread is named
+         * after the timer.
          * 
          * @param path timerName
          * @return the dsl builder
@@ -559,7 +585,9 @@ public interface TimerEndpointBuilderFactory {
          * Syntax: <code>timer:timerName</code>
          * 
          * Path parameter: timerName (required)
-         * The name of the timer
+         * The name of the timer. The consumers with the same timer name and the
+         * same daemon option share one java.util.Timer, whose thread is named
+         * after the timer.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -582,7 +610,8 @@ public interface TimerEndpointBuilderFactory {
         public static final TimerHeaderNameBuilder INSTANCE = new TimerHeaderNameBuilder();
 
         /**
-         * The fired time.
+         * The time when the timer fired. Set only when the includeMetadata
+         * option is enabled.
          * 
          * The option is a: {@code Date} type.
          * 
@@ -594,7 +623,8 @@ public interface TimerEndpointBuilderFactory {
             return "CamelTimerFiredTime";
         }
         /**
-         * The timestamp of the message.
+         * The time when the timer fired, in milliseconds since the epoch. Set
+         * only when the includeMetadata option is enabled.
          * 
          * The option is a: {@code long} type.
          * 

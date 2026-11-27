@@ -18263,7 +18263,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>timer:timerName</code>
      * 
      * Path parameter: timerName (required)
-     * The name of the timer
+     * The name of the timer. The consumers with the same timer name and the
+     * same daemon option share one java.util.Timer, whose thread is named after
+     * the timer.
      * 
      * @param path timerName
      * @return the dsl builder
@@ -18282,7 +18284,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>timer:timerName</code>
      * 
      * Path parameter: timerName (required)
-     * The name of the timer
+     * The name of the timer. The consumers with the same timer name and the
+     * same daemon option share one java.util.Timer, whose thread is named after
+     * the timer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -370,7 +370,7 @@ or removes its row.
 | camel-thrift | thrift |  |
 | camel-thymeleaf | thymeleaf |  |
 | camel-tika | tika |  |
-| camel-timer | timer |  |
+| camel-timer | timer | yes |
 | camel-twilio | twilio |  |
 | camel-twitter | twitter-directmessage, twitter-search, twitter-timeline |  |
 | camel-typesafe-ai | typesafe-ai |  |
