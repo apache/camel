@@ -27,27 +27,33 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class BonitaConfiguration implements Cloneable {
 
-    @UriPath
+    @UriPath(description = "The operation to perform. Only startCase is supported: it starts a case (an instance) of the"
+                           + " process that the processName option names, with the contract inputs from the message body.")
     @Metadata(required = true)
     private BonitaOperation operation;
-    @UriParam(defaultValue = "localhost")
+    @UriParam(description = "The host name of the Bonita server. The producer calls the REST API under the"
+                            + " /bonita context path of this host.",
+              defaultValue = "localhost")
     private String hostname = "localhost";
-    @UriParam(defaultValue = "8080")
+    @UriParam(description = "The HTTP port of the Bonita server.", defaultValue = "8080")
     private String port = "8080";
-    @UriParam
+    @UriParam(description = "The name of the process to start a case of. The producer searches the processes of the Bonita"
+                            + " REST API for this name and uses the first one found, and fails if none is found or the"
+                            + " option is not set.")
     private String processName;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The username of the Bonita account. The producer logs in with it at the loginservice of"
+                            + " Bonita before each request, and fails if it is not set.",
+              label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The password of the Bonita account. The producer logs in with it at the loginservice of"
+                            + " Bonita before each request, and fails if it is not set.",
+              label = "security", security = "secret")
     private String password;
 
     public String getHostname() {
         return hostname;
     }
 
-    /**
-     * Hostname where Bonita engine runs
-     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -56,9 +62,6 @@ public class BonitaConfiguration implements Cloneable {
         return port;
     }
 
-    /**
-     * Port of the server hosting Bonita engine
-     */
     public void setPort(String port) {
         this.port = port;
     }
@@ -67,9 +70,6 @@ public class BonitaConfiguration implements Cloneable {
         return processName;
     }
 
-    /**
-     * Name of the process involved in the operation
-     */
     public void setProcessName(String processName) {
         this.processName = processName;
     }
@@ -78,9 +78,6 @@ public class BonitaConfiguration implements Cloneable {
         return operation;
     }
 
-    /**
-     * Operation to use
-     */
     public void setOperation(BonitaOperation operation) {
         this.operation = operation;
     }
@@ -102,9 +99,6 @@ public class BonitaConfiguration implements Cloneable {
         return username;
     }
 
-    /**
-     * Username to authenticate to Bonita engine.
-     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -113,9 +107,6 @@ public class BonitaConfiguration implements Cloneable {
         return password;
     }
 
-    /**
-     * Password to authenticate to Bonita engine.
-     */
     public void setPassword(String password) {
         this.password = password;
     }

@@ -121,7 +121,7 @@ or removes its row.
 | camel-azure-storage-queue | azure-storage-queue |  |
 | camel-bean | bean, class |  |
 | camel-bean-validator | bean-validator |  |
-| camel-bonita | bonita |  |
+| camel-bonita | bonita | yes |
 | camel-box | box |  |
 | camel-braintree | braintree |  |
 | camel-browse | browse | yes |

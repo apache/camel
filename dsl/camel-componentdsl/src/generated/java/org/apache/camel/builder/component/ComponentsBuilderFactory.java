@@ -1009,7 +1009,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Bonita (camel-bonita)
-     * Communicate with a remote Bonita BPM process engine.
+     * Start cases of processes in a remote Bonita engine through its REST API.
      * 
      * Category: workflow
      * Since: 2.19
