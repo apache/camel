@@ -12187,6 +12187,12 @@ response now leaves out that header and logs it at DEBUG level, instead of faili
 the route has already run. Headers with a valid name are written as before. A route that needs such a value in the
 response must set it in a header with a valid name.
 
+=== camel-ldif - a body that is not a URL fails with InvalidPayloadException
+
+With `allowUrlBody=true`, a body that does not start with `version: 1` and is not a valid absolute URL, such as a text
+with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
+did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
