@@ -41,6 +41,7 @@
         <module>camel-jbang-mcp</module>
         <module>camel-jbang-plugin-generate</module>
         <module>camel-jbang-plugin-edit</module>
+        <module>camel-jbang-plugin-kaoto</module>
         <module>camel-jbang-plugin-kubernetes</module>
         <module>camel-jbang-plugin-mcp</module>
         <module>camel-jbang-plugin-test</module>

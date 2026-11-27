@@ -61,6 +61,7 @@ These commands are provided by plugins. A plugin is installed with `camel plugin
 | Command | Plugin | Description
 | xref:jbang-commands/camel-jbang-edit.adoc[camel edit] | `edit` | Edit Camel with suggestions and diagnostics
 | xref:jbang-commands/camel-jbang-generate.adoc[camel generate] | `generate` | Generate source code
+| xref:jbang-commands/camel-jbang-kaoto.adoc[camel kaoto] | `kaoto` | Kaoto visual route editor
 | xref:jbang-commands/camel-jbang-kubernetes.adoc[camel kubernetes] | `kubernetes` | Manage Camel applications running on Kubernetes
 | xref:jbang-commands/camel-jbang-mcp.adoc[camel mcp] | `mcp` | MCP server for AI coding assistants
 | xref:jbang-commands/camel-jbang-test.adoc[camel test] | `test` | Manage tests for Camel applications

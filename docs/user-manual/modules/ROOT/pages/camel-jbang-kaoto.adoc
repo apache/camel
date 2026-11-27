@@ -1,0 +1,262 @@
+= Camel Kaoto Plugin
+
+*Available as of Camel 4.24*
+
+The Kaoto plugin for Camel CLI brings the https://kaoto.io/[Kaoto] visual route editor directly
+to your development workflow. It serves a self-contained Kaoto web application from an embedded
+web server -- no separate installation, no Docker at runtime, no Node.js required.
+
+With Kaoto you can visually design and edit Camel routes in YAML and XML, using a drag-and-drop
+canvas with full access to the Camel component catalog.
+
+== Getting Started
+
+Install the plugin and start the editor:
+
+[source,bash]
+----
+camel plugin add kaoto
+camel kaoto start
+----
+
+Kaoto opens automatically in your default browser at `http://localhost:8080`.
+It reads and writes route files (`*.camel.yaml`, `*.camel.xml`) from the current directory.
+
+Stop the editor from another terminal:
+
+[source,bash]
+----
+camel kaoto stop
+----
+
+Or press `Ctrl+C` in the terminal where it is running.
+
+== Options
+
+[source,bash]
+----
+camel kaoto start --port=9090                    <1>
+camel kaoto start --dir=src/main/resources       <2>
+camel kaoto start --open-url=false               <3>
+----
+<1> Serve on a different port (default: `8080`)
+<2> Point to a specific directory containing your route files
+<3> Disable automatic browser opening (disabled automatically when no interactive terminal is detected)
+
+See xref:jbang-commands/camel-jbang-kaoto-start.adoc[camel kaoto start] and
+xref:jbang-commands/camel-jbang-kaoto-stop.adoc[camel kaoto stop] for the full command reference.
+
+== How It Works
+
+The plugin bundles the Kaoto web application as a set of static resources inside its JAR.
+When you run `camel kaoto start`, an embedded Vert.x HTTP server starts on `127.0.0.1` and serves:
+
+* The *Kaoto single-page application* -- the visual editor UI
+* A *REST API* -- for reading and writing Camel route files and Citrus test files from the source directory
+
+The server binds to the loopback address only, so it is not accessible from other machines.
+
+A state file (`.camel-jbang/.camel-jbang-kaoto-port`) is written to the working directory so that
+`camel kaoto stop` knows which port to send the shutdown signal to.
+
+=== Catalog Filtering
+
+Kaoto ships a full component catalog covering every version of `camel-main`, `camel-quarkus`,
+`camel-springboot`, and `citrus` it supports. Bundling the entire catalog would make the plugin JAR
+very large (65{plus} MB). To keep the JAR size manageable, the build filters the catalog at build time
+using a whitelist defined in the Maven property `kaoto-catalog-include`:
+
+[source,xml]
+----
+<kaoto-catalog-include>camel-main/latest,camel-quarkus/latest,camel-springboot/latest,citrus/latest</kaoto-catalog-include>
+----
+
+Each entry is a `runtime/version` pair. The special version `latest` resolves automatically to the
+highest version available in the Kaoto catalog for that runtime, so the plugin stays up to date when
+the Kaoto image is upgraded. Pinned versions (e.g. `camel-main/4.23.0`) are also supported and are
+validated at build time -- the build fails if a pinned version is not present in the catalog.
+
+== REST API
+
+The embedded server exposes a JSON REST API that Kaoto uses to interact with the local file system.
+All endpoints are available at `http://localhost:<port>/api/`.
+
+=== Routes
+
+[cols="1,2,4",options="header"]
+|===
+| Method | Path | Description
+
+| `GET`
+| `/api/routes`
+| Lists all Camel route files (`*.camel.yaml`, `*.camel.xml`) in the source directory. Returns a JSON array of file objects with `name`, `size`, `lastModified`, and `running` fields. The `running` field is `true` when a process launched via the run endpoint is still active.
+
+| `GET`
+| `/api/routes/\{filename}`
+| Returns the content of a single route file as a JSON object with `name` and `content` fields.
+
+| `PUT`
+| `/api/routes/\{filename}`
+| Saves a route file. Expects a JSON body with a `content` field containing the file content.
+
+| `POST`
+| `/api/routes/run/\{filename}`
+| Runs the given route file using the Camel CLI `run` command. The command is executed asynchronously in the background. If a process is already running for this file, it is stopped first. Returns a JSON object with `command`, `file`, and `started` fields. The command output is saved to `.camel-jbang/<name>.log`.
+
+| `POST`
+| `/api/routes/stop/\{filename}`
+| Stops the process running the given route file. Returns a JSON object with `file` and `stopped` fields. `stopped` is `true` if a running process was found and killed, `false` if no process was running for this file.
+
+| `GET`
+| `/api/routes/log/\{filename}`
+| Returns the log output from a previous route run. Reads from `.camel-jbang/<name>.log` where `<name>` is the filename without its last extension. Returns the log as `text/plain`. Returns `204 No Content` if no log file exists yet.
+|===
+
+=== Tests
+
+[cols="1,2,4",options="header"]
+|===
+| Method | Path | Description
+
+| `GET`
+| `/api/tests`
+| Lists all Citrus test files in the source directory and its `test` subdirectory. Matches `*.citrus.yaml`, `*.citrus.xml`, `*.citrus.it.yaml`, and `*.citrus.it.xml`. Returns a JSON array of file objects with `name`, `size`, `lastModified`, and `running` fields. The `running` field is `true` when a process launched via the run endpoint is still active. Files from both directories are returned with just their filename (no directory prefix).
+
+| `GET`
+| `/api/tests/\{filename}`
+| Returns the content of a single test file as a JSON object with `name` and `content` fields. The server looks for the file in the source directory first, then falls back to the `test` subdirectory automatically.
+
+| `PUT`
+| `/api/tests/\{filename}`
+| Saves a test file. Expects a JSON body with a `content` field. If the file already exists (in the source directory or `test` subdirectory), it is updated in place. New files are created in the source directory.
+
+| `POST`
+| `/api/tests/run/\{filename}`
+| Runs the given test file using the Camel CLI `test run` command. The command is executed asynchronously in the background. If a process is already running for this file, it is stopped first. The server resolves the file from the source directory or `test` subdirectory automatically. Returns a JSON object with `command`, `file`, and `started` fields. The command output is saved to `.citrus-jbang/<name>.log`.
+
+| `POST`
+| `/api/tests/stop/\{filename}`
+| Stops the process running the given test file. Returns a JSON object with `file` and `stopped` fields. `stopped` is `true` if a running process was found and killed, `false` if no process was running for this file.
+
+| `GET`
+| `/api/tests/log/\{filename}`
+| Returns the log output from a previous test run. Reads from `.citrus-jbang/<name>.log` where `<name>` is the filename without its last extension. Returns the log as `text/plain`. Returns `204 No Content` if no log file exists yet.
+
+| `GET`
+| `/api/tests/results/\{filename}`
+| Returns the flow.json test results for the given test file. The server reads the test name from the source file (`name:` field in YAML, `name` attribute in XML) and searches `.citrus-jbang/citrus-reports/` for a matching flow report (e.g. `my-test-flow.json` for a test with `name: my-test`). When multiple timestamped reports exist, returns the latest one. The response body is the raw flow.json content. Returns `204 No Content` if no results exist yet.
+|===
+
+=== Server Control
+
+[cols="1,2,4",options="header"]
+|===
+| Method | Path | Description
+
+| `POST`
+| `/api/shutdown`
+| Initiates a graceful shutdown of the Kaoto server. This is the endpoint used by `camel kaoto stop`.
+|===
+
+=== Example Requests
+
+List all route files:
+
+[source,bash]
+----
+$ curl http://localhost:8080/api/routes
+[{"name":"my-route.camel.yaml","size":245,"lastModified":1730000000000,"running":false}]
+----
+
+Read a route file:
+
+[source,bash]
+----
+$ curl http://localhost:8080/api/routes/my-route.camel.yaml
+{"name":"my-route.camel.yaml","content":"- from:\n    uri: timer:tick\n    steps:\n      - log: hello"}
+----
+
+Save a route file:
+
+[source,bash]
+----
+$ curl -X PUT http://localhost:8080/api/routes/my-route.camel.yaml \
+  -H 'Content-Type: application/json' \
+  -d '{"content":"- from:\n    uri: timer:tick\n    steps:\n      - log: updated"}'
+{"name":"my-route.camel.yaml","saved":true}
+----
+
+Run a route file:
+
+[source,bash]
+----
+$ curl -X POST http://localhost:8080/api/routes/run/my-route.camel.yaml
+{"command":"run","file":"my-route.camel.yaml","started":true}
+----
+
+Run a test file:
+
+[source,bash]
+----
+$ curl -X POST http://localhost:8080/api/tests/run/my-test.citrus.yaml
+{"command":"test run","file":"my-test.citrus.yaml","started":true}
+----
+
+Stop a running route:
+
+[source,bash]
+----
+$ curl -X POST http://localhost:8080/api/routes/stop/my-route.camel.yaml
+{"file":"my-route.camel.yaml","stopped":true}
+----
+
+Stop a running test:
+
+[source,bash]
+----
+$ curl -X POST http://localhost:8080/api/tests/stop/my-test.citrus.yaml
+{"file":"my-test.citrus.yaml","stopped":true}
+----
+
+Get route log:
+
+[source,bash]
+----
+$ curl http://localhost:8080/api/routes/log/my-route.camel.yaml
+2026-10-31 10:00:00 Route started ...
+----
+
+Get test log:
+
+[source,bash]
+----
+$ curl http://localhost:8080/api/tests/log/my-test.citrus.yaml
+2026-10-31 10:00:00 Test started ...
+----
+
+Get test results:
+
+[source,bash]
+----
+$ curl http://localhost:8080/api/tests/results/my-test.citrus.yaml
+[{"name":"my-test","result":{"result":"SUCCESS","duration":2000},"actions":[...]}]
+----
+
+== Security
+
+The embedded server adds the following security headers to all responses:
+
+* `X-Frame-Options: DENY` -- prevents embedding in iframes
+* `Content-Security-Policy: frame-ancestors 'none'` -- prevents framing by other sites
+
+The server binds to `127.0.0.1` and is intended for local development only.
+It provides no authentication or authorization -- any process on the same machine
+can access the API. Do not expose it to a network.
+
+Path traversal attacks on both the file API and static resources are rejected.
+
+== See Also
+
+* https://kaoto.io/[Kaoto] -- the upstream Kaoto project
+* xref:camel-jbang-tui.adoc[Camel TUI] -- terminal dashboard for developing and monitoring Camel integrations
+* xref:camel-jbang-managing.adoc[Managing Integrations] -- managing running integrations from the CLI
