@@ -174,6 +174,22 @@ class WatsonxAiAuthenticationTest extends CamelTestSupport {
     }
 
     @Test
+    void processToolCallsEndpointAuthenticatesTheOperationOfAHeader() {
+        context.getRegistry().bind("testAuthenticator", FakeWatsonxServer.TEST_AUTHENTICATOR);
+        Exchange result = template.send(
+                "ibm-watsonx-ai:switch?authenticator=#testAuthenticator&baseUrl=" + server.baseUrl()
+                                        + "&projectId=my-project&modelId=model&operation=processToolCalls",
+                e -> {
+                    e.getIn().setBody("What is the capital of France?");
+                    e.getIn().setHeader(WatsonxAiConstants.OPERATION, "chat");
+                });
+
+        assertNull(result.getException());
+        assertEquals("Paris", result.getMessage().getBody());
+        assertEquals("Bearer test-token", server.lastRequest("/ml/v1/text/chat").authorization());
+    }
+
+    @Test
     void customAuthenticatorIsUsedAsItIs() throws Exception {
         context.getRegistry().bind("testAuthenticator", FakeWatsonxServer.TEST_AUTHENTICATOR);
         Exchange result = template.send(

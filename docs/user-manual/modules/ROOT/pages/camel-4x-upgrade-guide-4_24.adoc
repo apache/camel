@@ -870,7 +870,8 @@ as a `Bearer` token, and asked from `camel-oauth` again for every request, so it
 identity provider must therefore issue tokens that watsonx.ai accepts. `apiKey` is no longer marked as required in the
 catalog, as `oauthProfile` or the new `authenticator` option can take its place; an endpoint without any of the three
 still fails to start. `baseUrl` is no longer marked as required either, as the utility tools (`runTool`, `listTools`)
-use the `wxUrl` instead; the other operations still fail to start without it.
+use the `wxUrl` instead; the other operations still fail to start without it. `processToolCalls`, which runs the tools
+locally, still needs neither credentials nor `baseUrl`, and no longer asks its `oauthProfile` for a token at startup.
 
 With `apiKey`, all the services of an endpoint now share one IBM Cloud IAM authenticator, which obtains its token with
 the `verifySsl` and `timeout` options of the endpoint: `verifySsl=false` now also applies to the IAM request that
@@ -916,7 +917,9 @@ writes JSON through a binding module, and the component now depends on `com.ibm.
 binding for Jackson 3, with the Jackson 3 version that Camel manages. The SDK fails when it finds no binding, or more
 than one, so do not add `com.ibm.watsonx:watsonx-ai-jackson2` next to the component. The component no longer brings
 Jackson 2 (`com.fasterxml.jackson.core:jackson-databind`), which the SDK 0.40.0 depended on: an application that uses
-Jackson 2 must declare it itself.
+Jackson 2 must declare it itself. The SDK's `WatsonxJacksonModule` is now the Jackson 3 module of the binding: an
+application that registers it on its own Jackson 2 `ObjectMapper` must move that mapper to Jackson 3, or exclude
+`watsonx-ai-jackson3` from the component and add `watsonx-ai-jackson2` instead.
 
 The SDK sends the API version `2026-10-28` with every request instead of `2026-08-19`. Some classes of the SDK that
 operations give in the body changed, such as `TextClassificationResponse.ClassificationResult`, which no longer has

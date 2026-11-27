@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai.handler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -180,8 +181,15 @@ public class ChatHandler extends AbstractWatsonxAiHandler {
         if (!text.isEmpty()) {
             headers.put(WatsonxAiConstants.GENERATED_TEXT, text.toString());
             if (headers.get(WatsonxAiConstants.ASSISTANT_MESSAGE) instanceof AssistantMessage answer) {
-                headers.put(WatsonxAiConstants.ASSISTANT_MESSAGE, new AssistantMessage(
-                        text.toString(), answer.thinking(), answer.name(), answer.refusal(), answer.toolCalls()));
+                AssistantMessage streamed = new AssistantMessage(
+                        text.toString(), answer.thinking(), answer.name(), answer.refusal(), answer.toolCalls());
+                headers.put(WatsonxAiConstants.ASSISTANT_MESSAGE, streamed);
+                // the first of all the answers (numberOfChoices) is the same answer
+                if (headers.get(WatsonxAiConstants.ASSISTANT_MESSAGES) instanceof List<?> answers && !answers.isEmpty()) {
+                    List<Object> all = new ArrayList<>(answers);
+                    all.set(0, streamed);
+                    headers.put(WatsonxAiConstants.ASSISTANT_MESSAGES, all);
+                }
             }
         }
         return WatsonxAiOperationResponse.create(headers.get(WatsonxAiConstants.GENERATED_TEXT), headers);

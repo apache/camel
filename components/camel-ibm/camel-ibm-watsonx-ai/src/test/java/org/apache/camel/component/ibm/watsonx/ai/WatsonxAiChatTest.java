@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
+import com.ibm.watsonx.ai.chat.model.AssistantMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -155,8 +157,41 @@ class WatsonxAiChatTest extends CamelTestSupport {
         assertNull(result.getException());
         chunks.assertIsSatisfied();
         assertEquals("  code\n", result.getMessage().getBody());
+        // the answer is the same in all the headers that carry it
+        assertEquals("  code\n", result.getMessage().getHeader(WatsonxAiConstants.ASSISTANT_MESSAGE, AssistantMessage.class)
+                .content());
+        List<?> answers = result.getMessage().getHeader(WatsonxAiConstants.ASSISTANT_MESSAGES, List.class);
+        assertEquals(2, answers.size());
+        assertEquals("  code\n", ((AssistantMessage) answers.get(0)).content());
         // the chunks carry the exchange that streams them
         assertEquals(result.getExchangeId(), chunks.getExchanges().get(0).getIn().getHeader(Exchange.CORRELATION_ID));
+    }
+
+    @Test
+    void aStoppedEndpointSendsNoChunks() throws Exception {
+        WatsonxAiEndpoint endpoint = context.getEndpoint(uri("chatStreaming", "streamEndpoint=mock:chunks"),
+                WatsonxAiEndpoint.class);
+        Exchange exchange = endpoint.createExchange();
+        assertNotNull(endpoint.getStreamEndpointConsumer(exchange));
+
+        endpoint.stop();
+        // an exchange still in flight creates no template that nothing would stop
+        IllegalStateException e
+                = assertThrows(IllegalStateException.class, () -> endpoint.getStreamEndpointConsumer(exchange));
+        assertTrue(e.getMessage().contains("is not started"), e.getMessage());
+        // the URIs can carry credentials
+        assertFalse(e.getMessage().contains("mock:chunks"), e.getMessage());
+        assertFalse(e.getMessage().contains("ibm-watsonx-ai:"), e.getMessage());
+    }
+
+    @Test
+    void aStoppedEndpointCreatesNoClientThatARestartWouldKeep() throws Exception {
+        WatsonxAiEndpoint endpoint = context.getEndpoint(uri("chat", ""), WatsonxAiEndpoint.class);
+        endpoint.stop();
+        assertThrows(IllegalStateException.class, endpoint::getChatService);
+
+        endpoint.start();
+        assertNotNull(endpoint.getChatService());
     }
 
     @Test

@@ -21,7 +21,11 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
+import com.ibm.watsonx.ai.core.exception.WatsonxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -33,7 +37,9 @@ import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -100,6 +106,51 @@ class WatsonxAiRequestMappingTest extends CamelTestSupport {
     JsonNode chatRequest(String options, Map<String, Object> headers) {
         send(uri("chat", options), "What is the capital of France?", headers);
         return server.lastRequest(CHAT).json();
+    }
+
+    // text generation
+
+    @Test
+    void textGenerationStreamingFailsWithTheExceptionOfTheSdk() {
+        server.respond("/ml/v1/text/generation_stream", 400, "application/json", """
+                {"errors":[{"code":"invalid_input_argument","message":"Invalid input argument"}],"trace":"t",
+                 "status_code":400}""");
+        List<String> chunks = new CopyOnWriteArrayList<>();
+        Exchange result = template.send(uri("textGenerationStreaming", ""), e -> {
+            e.getIn().setBody("Hello");
+            e.getIn().setHeader(WatsonxAiConstants.STREAM_CONSUMER, (Consumer<String>) chunks::add);
+        });
+
+        // not the CompletionException that wraps it
+        WatsonxException e = assertInstanceOf(WatsonxException.class, result.getException());
+        assertEquals(400, e.statusCode());
+        assertTrue(chunks.isEmpty());
+    }
+
+    @Test
+    void textGenerationStreamingFailsWithTheExceptionOfTheStreamConsumer() {
+        server.respondStream("/ml/v1/text/generation_stream", """
+                id: 1
+                event: message
+                data: {"model_id":"model","created_at":"2026-01-01T00:00:00.000Z","results":[{"generated_text":"Hel",\
+                "generated_token_count":1,"input_token_count":1,"stop_reason":"not_finished"}]}
+
+                id: 2
+                event: message
+                data: {"model_id":"model","created_at":"2026-01-01T00:00:00.000Z","results":[{"generated_text":"lo",\
+                "generated_token_count":2,"input_token_count":1,"stop_reason":"eos_token"}]}
+
+                """);
+        CompletionException refused = new CompletionException("chunk refused", new IllegalStateException("refused"));
+        Exchange result = template.send(uri("textGenerationStreaming", ""), e -> {
+            e.getIn().setBody("Hello");
+            e.getIn().setHeader(WatsonxAiConstants.STREAM_CONSUMER, (Consumer<String>) chunk -> {
+                throw refused;
+            });
+        });
+
+        // the exception of the consumer as it is, even a CompletionException
+        assertSame(refused, result.getException());
     }
 
     // tool choice

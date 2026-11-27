@@ -18,6 +18,7 @@ package org.apache.camel.component.ibm.watsonx.ai.handler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 
 import com.ibm.watsonx.ai.textgeneration.TextGenerationParameters;
@@ -151,7 +152,11 @@ public class TextGenerationHandler extends AbstractWatsonxAiHandler {
         try {
             awaitStream(service.generateStreaming(input, paramsBuilder.build(), handler));
         } catch (Exception e) {
-            if (errorHolder[0] instanceof Exception error) {
+            // on an HTTP failure, the SDK passes the CompletionException of the request to onError and fails the stream
+            // with its cause, the exception of the SDK: the exchange fails with the latter. Any other error (of the
+            // stream consumer, for example) is the one onError got
+            if (errorHolder[0] instanceof Exception error
+                    && !(error instanceof CompletionException && error.getCause() == e)) {
                 throw error;
             }
             throw e;

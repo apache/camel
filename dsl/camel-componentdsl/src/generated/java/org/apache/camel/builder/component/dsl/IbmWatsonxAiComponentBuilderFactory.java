@@ -56,7 +56,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
          * The watsonx.ai base URL of the region (e.g.,
          * https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com).
          * Required but for the utility tools (runTool, listTools), which use
-         * the wxUrl.
+         * the wxUrl, and processToolCalls, which runs locally.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1135,7 +1135,7 @@ public interface IbmWatsonxAiComponentBuilderFactory {
         /**
          * IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for
          * an access token. Required unless oauthProfile or authenticator is
-         * set.
+         * set, or the operation is processToolCalls, which runs locally.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

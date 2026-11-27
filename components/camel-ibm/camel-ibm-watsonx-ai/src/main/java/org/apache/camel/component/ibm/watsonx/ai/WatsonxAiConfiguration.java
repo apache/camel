@@ -30,7 +30,8 @@ public class WatsonxAiConfiguration implements Cloneable {
     // Authentication
     @UriParam(label = "security", security = "secret",
               description = "IBM Cloud API key for authentication, exchanged at IBM Cloud IAM for an access token. Required"
-                            + " unless oauthProfile or authenticator is set.")
+                            + " unless oauthProfile or authenticator is set, or the operation is processToolCalls, which runs"
+                            + " locally.")
     private String apiKey;
 
     @UriParam(label = "security",
@@ -49,7 +50,8 @@ public class WatsonxAiConfiguration implements Cloneable {
     // Connection
     @UriParam(label = "common",
               description = "The watsonx.ai base URL of the region (e.g., https://us-south.ml.cloud.ibm.com or https://eu-de.ml.cloud.ibm.com)."
-                            + " Required but for the utility tools (runTool, listTools), which use the wxUrl")
+                            + " Required but for the utility tools (runTool, listTools), which use the wxUrl, and"
+                            + " processToolCalls, which runs locally")
     private String baseUrl;
 
     @UriParam(label = "common",
