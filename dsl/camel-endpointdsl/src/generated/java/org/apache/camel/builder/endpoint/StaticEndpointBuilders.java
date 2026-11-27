@@ -11672,7 +11672,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * LDIF (camel-ldif)
-     * Perform updates on an LDAP server from an LDIF body content.
+     * Apply the changes of an LDIF message body to an LDAP server.
      * 
      * Category: database,security
      * Since: 2.20
@@ -11681,11 +11681,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ldif:ldapConnectionName</code>
      * 
      * Path parameter: ldapConnectionName (required)
-     * The name of the LdapConnection bean to pull from the registry. Note that
-     * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out. The connection is closed after
-     * each message, and bound again with its configured name and credentials
-     * when it is used for the next message.
+     * The name of the org.apache.directory.ldap.client.api.LdapConnection bean
+     * in the registry. The producer looks it up for each message, binds it with
+     * its configured name and credentials when it is not authenticated, and
+     * closes it after the message. Use a bean of scope prototype, so that
+     * concurrent messages do not share a connection.
      * 
      * @param path ldapConnectionName
      * @return the dsl builder
@@ -11695,7 +11695,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * LDIF (camel-ldif)
-     * Perform updates on an LDAP server from an LDIF body content.
+     * Apply the changes of an LDIF message body to an LDAP server.
      * 
      * Category: database,security
      * Since: 2.20
@@ -11704,11 +11704,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ldif:ldapConnectionName</code>
      * 
      * Path parameter: ldapConnectionName (required)
-     * The name of the LdapConnection bean to pull from the registry. Note that
-     * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out. The connection is closed after
-     * each message, and bound again with its configured name and credentials
-     * when it is used for the next message.
+     * The name of the org.apache.directory.ldap.client.api.LdapConnection bean
+     * in the registry. The producer looks it up for each message, binds it with
+     * its configured name and credentials when it is not authenticated, and
+     * closes it after the message. Use a bean of scope prototype, so that
+     * concurrent messages do not share a connection.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

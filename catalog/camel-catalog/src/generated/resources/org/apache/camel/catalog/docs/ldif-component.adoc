@@ -2,7 +2,7 @@
 :doctitle: LDIF
 :shortname: ldif
 :artifactid: camel-ldif
-:description: Perform updates on an LDAP server from an LDIF body content.
+:description: Apply the changes of an LDIF message body to an LDAP server.
 :since: 2.20
 :supportlevel: Stable
 :tabs-sync-option:

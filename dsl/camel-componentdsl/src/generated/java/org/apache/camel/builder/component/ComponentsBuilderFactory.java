@@ -3522,7 +3522,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * LDIF (camel-ldif)
-     * Perform updates on an LDAP server from an LDIF body content.
+     * Apply the changes of an LDIF message body to an LDAP server.
      * 
      * Category: database,security
      * Since: 2.20
