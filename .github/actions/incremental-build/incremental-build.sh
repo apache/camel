@@ -108,6 +108,19 @@ filterExclusions() {
   echo "$result"
 }
 
+# Count the modules a build would test: the -amd reactor of the changed modules
+# plus the dependency-detected modules (grep + Scalpel), without duplicates.
+# The dependency-detected modules are added to -pl next to the -amd reactor, so the
+# threshold must count them too. Otherwise a change to a module with many
+# downstream modules in Scalpel's graph (camel-catalog, camel-endpointdsl, ...)
+# passes the threshold with its few -amd dependents and then tests ~700 modules.
+# Args: $1=reactor artifact IDs (newline-separated), $2=dep_module_ids (":id,:id,...")
+countTestableModules() {
+  local reactor="$1"
+  local deps="$2"
+  { echo "$reactor"; echo "$deps" | tr ',' '\n' | sed 's/^://'; } | grep . | sort -u | grep -c . || true
+}
+
 # Check whether a PR label exists
 hasLabel() {
   local issueNumber=${1}
@@ -939,7 +952,7 @@ main() {
       local totalTestableProjects
       reactor_ids=$(./mvnw -B -q -amd exec:exec -Dexec.executable="echo" \
         -Dexec.args='${project.artifactId}' -pl "$threshold_pl" 2>/dev/null || true)
-      totalTestableProjects=$(echo "$reactor_ids" | grep -c . || true)
+      totalTestableProjects=$(countTestableModules "$reactor_ids" "$dep_module_ids")
 
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]]; then
         echo "Too many dependent modules (${totalTestableProjects} > ${maxNumberOfTestableProjects}), testing only the affected modules"

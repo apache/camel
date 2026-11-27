@@ -21,29 +21,33 @@ import org.apache.camel.spi.Metadata;
 public final class StitchConstants {
     private static final String HEADER_PREFIX = "CamelStitch";
     // headers evaluated by producer
-    @Metadata(label = "producer", description = "The name of the destination table the data is being pushed to. " +
-                                                "Table names must be unique in each destination schema, or loading issues will occur. "
-                                                +
-                                                "Note: The number of characters in the table name should be within the destinations allowed limits or data will rejected.",
+    @Metadata(label = "producer", description = "The name of the destination table that the records are loaded into. It"
+                                                + " overrides the table name of the endpoint URI.",
               javaType = "String")
     public static final String TABLE_NAME = HEADER_PREFIX + "TableName";
-    @Metadata(label = "producer", description = "The schema that describes the Stitch message",
+    @Metadata(label = "producer",
+              description = "The JSON schema that describes the records, as a StitchSchema or as a Map of JSON schema"
+                            + " keywords. It overrides the stitchSchema option; a value of another type is ignored.",
               javaType = "org.apache.camel.component.stitch.client.models.StitchSchema or Map")
     public static final String SCHEMA = HEADER_PREFIX + "Schema";
     @Metadata(label = "producer",
-              description = "A collection of strings representing the Primary Key fields in the source table. " +
-                            "Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner.",
+              description = "The Primary Key fields of the source table, as a comma separated String without spaces. It"
+                            + " overrides the keyNames option.",
               javaType = "Collection<String>")
     public static final String KEY_NAMES = HEADER_PREFIX + "KeyNames";
     // headers set by producer
-    @Metadata(label = "producer", description = "HTTP Status code that is returned from Stitch Import HTTP API.",
+    @Metadata(label = "producer",
+              description = "The HTTP status code of the response of the Stitch Import API. Set only when the request"
+                            + " succeeds: a status code of 300 or more fails the exchange with a StitchException.",
               javaType = "Integer")
     public static final String CODE = HEADER_PREFIX + "Code";
-    @Metadata(label = "producer", description = "HTTP headers that are returned from Stitch Import HTTP API.",
+    @Metadata(label = "producer", description = "The HTTP headers of the response of the Stitch Import API, by header name."
+                                                + " Set only when the request succeeds.",
               javaType = "Map<String, Object>")
     public static final String HEADERS = HEADER_PREFIX + "Headers";
     @Metadata(label = "producer",
-              description = "The status message that Stitch returns after sending the data through Stitch Import API.",
+              description = "The status field of the JSON response of the Stitch Import API, empty when the response has"
+                            + " none. Set only when the request succeeds.",
               javaType = "String")
     public static final String STATUS = HEADER_PREFIX + "Status";
 

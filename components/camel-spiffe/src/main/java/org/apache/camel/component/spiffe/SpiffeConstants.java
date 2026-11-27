@@ -35,11 +35,14 @@ public final class SpiffeConstants {
               javaType = "String")
     public static final String AUDIENCE = HEADER_PREFIX + "Audience";
 
-    @Metadata(label = "producer", description = "The JWT-SVID token to validate, for the validateJwtSvid operation.",
+    @Metadata(label = "producer", description = "The JWT-SVID to validate with the validateJwtSvid operation. It takes"
+                                                + " precedence over an Authorization: Bearer header and over the message"
+                                                + " body.",
               javaType = "String")
     public static final String TOKEN = HEADER_PREFIX + "Token";
 
-    @Metadata(label = "producer", description = "The SPIFFE ID of the returned SVID.", javaType = "String")
+    @Metadata(label = "producer", description = "The SPIFFE ID of the SVID that the operation fetched or validated.",
+              javaType = "String")
     public static final String SPIFFE_ID = HEADER_PREFIX + "SpiffeId";
 
     @Metadata(label = "producer",

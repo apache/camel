@@ -25,9 +25,16 @@ public final class MiloConstants {
     public static final String SCHEME_CLIENT = "milo-client";
     public static final String SCHEME_SERVER = "milo-server";
 
-    @Metadata(label = "producer", description = "The node ids.", javaType = "List")
+    @Metadata(label = "producer",
+              description = "A List of node IDs. The milo-client producer reads the values of these nodes instead of"
+                            + " writing the body. The milo-browse producer browses from these nodes instead of the node"
+                            + " option, and sets the header to the List of the node IDs that it found.",
+              javaType = "List")
     public static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
-    @Metadata(label = "producer", description = "The \"await\" setting for writes.", javaType = "Boolean",
+    @Metadata(label = "producer",
+              description = "Whether the producer waits for the outcome of the write, method call or read, and sets it as"
+                            + " the body. It replaces the defaultAwaitWrites option.",
+              javaType = "Boolean",
               applicableFor = SCHEME_CLIENT)
     public static final String HEADER_AWAIT = "CamelMiloAwait";
     @Metadata(label = "consumer",

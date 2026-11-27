@@ -30,21 +30,55 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
 
-    @UriParam
+    @UriParam(description = "The javax.xml.crypto.KeySelector that provides the key to validate each Signature element with."
+                            + " Required: the verifier fails without it. DefaultKeySelector of the package"
+                            + " org.apache.camel.component.xmlsecurity.api returns the public key of the certificate of an alias in"
+                            + " a java.security.KeyStore, regardless of the KeyInfo of the signature.")
     private KeySelector keySelector;
-    @UriParam
+    @UriParam(description = "A bean that implements org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker, which the"
+                            + " verifier calls for each Signature element before its core validation, to check that the signature"
+                            + " covers the content that the route expects (see"
+                            + " http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed). An exception that it throws fails"
+                            + " the exchange. If not set, no such check is done.")
     private XmlSignatureChecker xmlSignatureChecker;
-    @UriParam
+    @UriParam(description = "Maps the verified document to the body of the output message. The default"
+                            + " DefaultXmlSignature2Message selects the output node with outputNodeSearchType, outputNodeSearch and"
+                            + " removeSignatureElements. Its Default search returns the content of the single referenced Object"
+                            + " element of an enveloping signature, and the whole document without its Signature elements for an enveloped or"
+                            + " detached signature, which can contain content that no reference covers unless its"
+                            + " enforceReferenceCoverage is set.")
     private XmlSignature2Message xmlSignature2Message = new DefaultXmlSignature2Message();
-    @UriParam
+    @UriParam(description = "Called when the core validation of a signature fails or throws an XMLSignatureException. The default"
+                            + " DefaultValidationFailedHandler throws an XmlSignatureInvalidValueException when the signature value"
+                            + " is invalid, an XmlSignatureInvalidContentHashException when the digest of a reference or of a"
+                            + " manifest reference does not match, and an XmlSignatureInvalidKeyException or XmlSignatureException for an XMLSignatureException."
+                            + " If a custom handler returns true from ignoreCoreValidationFailure, the verifier treats the signature"
+                            + " as valid.")
     private ValidationFailedHandler validationFailedHandler = new DefaultValidationFailedHandler();
-    @UriParam
+    @UriParam(description = "The value that the output node search of outputNodeSearchType uses: for ElementName a String in the"
+                            + " form {namespace}localName, or localName for an element without a namespace, and for XPath a"
+                            + " javax.xml.crypto.dsig.spec.XPathFilterParameterSpec. The search must find exactly one node. Not used"
+                            + " by the Default search.")
     private Object outputNodeSearch;
-    @UriParam(defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
+    @UriParam(defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT,
+              description = "How the default xmlSignature2Message finds the node that becomes the output body: Default,"
+                            + " ElementName (the element that outputNodeSearch names) or XPath (the element, text or document node"
+                            + " that the XPath of outputNodeSearch selects). Default returns the content of the single referenced"
+                            + " Object element of an enveloping signature, and the whole document without its Signature elements for an"
+                            + " enveloped or detached signature.")
     private String outputNodeSearchType = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the default xmlSignature2Message removes all Signature elements of the namespace"
+                            + " http://www.w3.org/2000/09/xmldsig# from the document before the output node is serialized. For the"
+                            + " ElementName and XPath searches of an enveloped signature; the Default search always removes them for"
+                            + " an enveloped or detached signature.")
     private Boolean removeSignatureElements = Boolean.FALSE;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether the verifier sets the properties org.apache.jcp.xml.dsig.secureValidation and"
+                            + " org.jcp.xml.dsig.secureValidation to true, which makes the XML signature provider reject, for"
+                            + " example, MD5 algorithms, more than 30 references and more than 5 transforms per reference. If false,"
+                            + " the verifier does not set them and the default of the provider applies, which for the Apache"
+                            + " Santuario provider is also secure validation.")
     private Boolean secureValidation = Boolean.TRUE;
 
     public XmlVerifierConfiguration() {
@@ -58,9 +92,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         }
     }
 
-    /**
-     * Provides the key for validating the XML signature.
-     */
     public void setKeySelector(KeySelector keySelector) {
         this.keySelector = keySelector;
     }
@@ -73,10 +104,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         return xmlSignatureChecker;
     }
 
-    /**
-     * This interface allows the application to check the XML signature before the validation is executed. This step is
-     * recommended in http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
-     */
     public void setXmlSignatureChecker(XmlSignatureChecker xmlSignatureChecker) {
         this.xmlSignatureChecker = xmlSignatureChecker;
     }
@@ -85,21 +112,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         return xmlSignature2Message;
     }
 
-    /**
-     * Bean which maps the XML signature to the output-message after the validation. How this mapping should be done can
-     * be configured by the options outputNodeSearchType, outputNodeSearch, and removeSignatureElements. The default
-     * implementation offers three possibilities which are related to the three output node search types "Default",
-     * "ElementName", and "XPath". The default implementation determines a node which is then serialized and set to the
-     * body of the output message If the search type is "ElementName" then the output node (which must be in this case
-     * an element) is determined by the local name and namespace defined in the search value (see option
-     * outputNodeSearch). If the search type is "XPath" then the output node is determined by the XPath specified in the
-     * search value (in this case the output node can be of type "Element", "TextNode" or "Document"). If the output
-     * node search type is "Default" then the following rules apply: In the enveloped XML signature case (there is a
-     * reference with URI="" and transform "http://www.w3.org/2000/09/xmldsig#enveloped-signature"), the incoming XML
-     * document without the Signature element is set to the output message body. In the non-enveloped XML signature
-     * case, the message body is determined from a referenced Object; this is explained in more detail in chapter
-     * "Output Node Determination in Enveloping XML Signature Case".
-     */
     public void setXmlSignature2Message(XmlSignature2Message xmlSignature2Message) {
         this.xmlSignature2Message = xmlSignature2Message;
     }
@@ -108,13 +120,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         return validationFailedHandler;
     }
 
-    /**
-     * Handles the different validation failed situations. The default implementation throws specific exceptions for the
-     * different situations (All exceptions have the package name org.apache.camel.component.xmlsecurity.api and are a
-     * sub-class of XmlSignatureInvalidException. If the signature value validation fails, a
-     * XmlSignatureInvalidValueException is thrown. If a reference validation fails, a
-     * XmlSignatureInvalidContentHashException is thrown. For more detailed information, see the JavaDoc.
-     */
     public void setValidationFailedHandler(ValidationFailedHandler validationFailedHandler) {
         this.validationFailedHandler = validationFailedHandler;
     }
@@ -123,11 +128,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         return outputNodeSearch;
     }
 
-    /**
-     * Sets the output node search value for determining the node from the XML signature document which shall be set to
-     * the output message body. The class of the value depends on the type of the output node search. The output node
-     * search is forwarded to {@link XmlSignature2Message}.
-     */
     public void setOutputNodeSearch(Object outputNodeSearch) {
         this.outputNodeSearch = outputNodeSearch;
     }
@@ -136,11 +136,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         return outputNodeSearchType;
     }
 
-    /**
-     * Determines the search type for determining the output node which is serialized into the output message bodyF. See
-     * {@link #setOutputNodeSearch(Object)}. The supported default search types you can find in
-     * {@link DefaultXmlSignature2Message}.
-     */
     public void setOutputNodeSearchType(String outputNodeSearchType) {
         this.outputNodeSearchType = outputNodeSearchType;
     }
@@ -149,15 +144,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         return removeSignatureElements;
     }
 
-    /**
-     * Indicator whether the XML signature elements (elements with local name "Signature" and namespace
-     * ""http://www.w3.org/2000/09/xmldsig#"") shall be removed from the document set to the output message. Normally,
-     * this is only necessary, if the XML signature is enveloped. The default value is {@link Boolean#FALSE}. This
-     * parameter is forwarded to {@link XmlSignature2Message}.
-     * <p>
-     * This indicator has no effect if the output node search is of type
-     * {@link DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT}.F
-     */
     public void setRemoveSignatureElements(Boolean removeSignatureElements) {
         this.removeSignatureElements = removeSignatureElements;
     }
@@ -166,9 +152,6 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         return secureValidation;
     }
 
-    /**
-     * Enables secure validation. If true then secure validation is enabled.
-     */
     public void setSecureValidation(Boolean secureValidation) {
         this.secureValidation = secureValidation;
     }

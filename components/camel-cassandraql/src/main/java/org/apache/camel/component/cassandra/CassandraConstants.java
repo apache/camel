@@ -27,7 +27,7 @@ public final class CassandraConstants {
               description = "The CQL statement that the producer executes instead of the cql option: a String, or a"
                             + " com.datastax.oss.driver.api.core.cql.SimpleStatement. An empty String uses the cql option."
                             + " With prepareStatements, the statement is prepared for each message.",
-              javaType = "String")
+              javaType = "Object")
     public static final String CQL_QUERY = "CamelCqlQuery";
 
     @Metadata(label = "consumer",

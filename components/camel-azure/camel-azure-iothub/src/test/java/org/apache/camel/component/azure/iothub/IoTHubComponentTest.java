@@ -41,6 +41,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class IoTHubComponentTest extends CamelTestSupport {
@@ -171,6 +172,50 @@ class IoTHubComponentTest extends CamelTestSupport {
                 "BOTH delivery requires twin properties via the CamelAzureIoTHubTwinProperties header before dispatching telemetry",
                 ex.getMessage());
         verify(client, never()).sendEvent(any(Message.class), anyInt());
+    }
+
+    @Test
+    void testHeaderConnectionStringWithAnotherKeyDoesNotUseClientOfOtherEndpoint() throws Exception {
+        String good = "HostName=h;DeviceId=myDevice;SharedAccessKey=good";
+        String other = "HostName=h;DeviceId=myDevice;SharedAccessKey=other";
+
+        DeviceClient client = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        // like IoT Hub, open a client only for the right key
+        pool.setDeviceClientFactory((cs, protocol) -> {
+            if (!cs.equals(good)) {
+                throw new IllegalStateException("Unauthorized");
+            }
+            return client;
+        });
+
+        IoTHubComponent component = new IoTHubComponent();
+        component.setCamelContext(context);
+        setField(component, "clientPool", pool);
+
+        // an endpoint configured with the key of the device opens a client for it
+        IoTHubConfiguration configured = new IoTHubConfiguration();
+        configured.setDeviceId("myDevice");
+        configured.setConnectionString(good);
+        IoTHubProducer producer = new IoTHubProducer(new IoTHubEndpoint("azure-iothub:myDevice", component, configured));
+        producer.start();
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("hello");
+        producer.process(exchange);
+
+        // an endpoint of the same component that takes the device and connection string from headers
+        IoTHubConfiguration dynamic = new IoTHubConfiguration();
+        dynamic.setDeviceId("placeholder");
+        IoTHubProducer dynamicProducer
+                = new IoTHubProducer(new IoTHubEndpoint("azure-iothub:placeholder", component, dynamic));
+        dynamicProducer.start();
+        Exchange headerExchange = new DefaultExchange(context);
+        headerExchange.getIn().setHeader(IoTHubConstants.DEVICE_ID, "myDevice");
+        headerExchange.getIn().setHeader(IoTHubConstants.CONNECTION_STRING, other);
+        headerExchange.getIn().setBody("hello");
+
+        assertThrows(RuntimeException.class, () -> dynamicProducer.process(headerExchange));
+        verify(client, times(1)).sendEvent(any(Message.class), anyInt());
     }
 
     private static void setField(Object target, String fieldName, Object value) throws Exception {

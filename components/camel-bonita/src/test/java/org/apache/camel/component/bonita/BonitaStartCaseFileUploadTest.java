@@ -184,7 +184,7 @@ class BonitaStartCaseFileUploadTest {
         server.stubFor(post(urlEqualTo(LOGIN))
                 .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=session-" + id,
                         "X-Bonita-API-Token=token-" + id)));
-        server.stubFor(get(urlPathEqualTo(PROCESS)).withQueryParam("s", equalTo("orders"))
+        server.stubFor(get(urlPathEqualTo(PROCESS)).withQueryParam("f", equalTo("name=orders"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBody("[{\"id\":\"7\",\"name\":\"orders\",\"version\":\"1.0\"}]")));
         server.stubFor(post(urlEqualTo(UPLOAD))
@@ -230,9 +230,18 @@ class BonitaStartCaseFileUploadTest {
         String received = "requests received by the Bonita server on port " + server.port();
         assertEquals(uploads, count(requests, UPLOAD), "file uploads among the " + received);
         assertEquals(cases, count(requests, INSTANTIATION), "case creations among the " + received);
-        assertEquals(lookups, count(requests, PROCESS + "?s=orders"), "process lookups among the " + received);
+        assertEquals(lookups, countLookups(requests), "process lookups among the " + received);
         assertEquals(logins, count(requests, LOGIN), "logins among the " + received);
         assertEquals(logins + lookups + uploads + cases, requests.size(), received);
+    }
+
+    /**
+     * The lookups of the process named exactly orders (the f=name=orders filter of the Bonita REST API).
+     */
+    private static long countLookups(List<LoggedRequest> requests) {
+        return requests.stream()
+                .filter(r -> r.getUrl().startsWith(PROCESS + "?") && r.queryParameter("f").containsValue("name=orders"))
+                .count();
     }
 
     private static long count(List<LoggedRequest> requests, String url) {

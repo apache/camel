@@ -40,11 +40,10 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Manage secrets and keys in Azure Key Vault Service
+ * Create, get, update, delete and purge secrets in Azure Key Vault.
  */
 @UriEndpoint(firstVersion = "3.17.0", scheme = "azure-key-vault", title = "Azure Key Vault",
-             syntax = "azure-key-vault:vaultName", category = {
-                     Category.CLOUD, Category.CLOUD },
+             syntax = "azure-key-vault:vaultName", category = { Category.CLOUD },
              producerOnly = true,
              headersClass = KeyVaultConstants.class)
 @Metadata(annotations = {
@@ -105,8 +104,7 @@ public class KeyVaultEndpoint extends DefaultEndpoint implements EndpointService
 
     private SecretClient createSecretClient() {
         SecretClient localClient;
-        // Build key vault URI
-        String keyVaultUri = "https://" + getConfiguration().getVaultName() + ".vault.azure.net";
+        String keyVaultUri = vaultUrl(getConfiguration().getVaultName());
 
         TokenCredential credential = null;
         // Credential
@@ -163,10 +161,18 @@ public class KeyVaultEndpoint extends DefaultEndpoint implements EndpointService
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(configuration.getTenantId())) {
-            return configuration.getTenantId();
+        SecretClient client = secretClient != null ? secretClient : configuration.getSecretClient();
+        if (client != null) {
+            return client.getVaultUrl();
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getVaultName())) {
+            return vaultUrl(configuration.getVaultName());
         }
         return null;
+    }
+
+    private static String vaultUrl(String vaultName) {
+        return "https://" + vaultName + ".vault.azure.net";
     }
 
     @Override

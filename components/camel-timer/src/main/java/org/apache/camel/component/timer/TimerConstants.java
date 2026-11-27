@@ -21,9 +21,12 @@ import org.apache.camel.spi.Metadata;
 
 public final class TimerConstants {
 
-    @Metadata(description = "The fired time", javaType = "Date")
+    @Metadata(description = "The time when the timer fired. Set only when the includeMetadata option is enabled.",
+              javaType = "Date")
     public static final String HEADER_FIRED_TIME = Exchange.TIMER_FIRED_TIME;
-    @Metadata(description = "The timestamp of the message", javaType = "long")
+    @Metadata(description = "The time when the timer fired, in milliseconds since the epoch. Set only when the"
+                            + " includeMetadata option is enabled.",
+              javaType = "long")
     public static final String HEADER_MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
     private TimerConstants() {

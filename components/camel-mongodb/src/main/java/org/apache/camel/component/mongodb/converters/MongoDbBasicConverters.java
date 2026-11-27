@@ -168,8 +168,12 @@ public final class MongoDbBasicConverters {
     }
 
     private static boolean isArrayNotation(String value) {
-        return value != null && !value.isEmpty() && value.length() > 1 && value.charAt(0) == '['
-                && value.charAt(value.length() - 1) == ']';
+        if (value == null) {
+            return false;
+        }
+        // a JSON array from a file or a Kafka record often ends with a newline
+        String text = value.strip();
+        return text.length() > 1 && text.charAt(0) == '[' && text.charAt(text.length() - 1) == ']';
     }
 
 }
