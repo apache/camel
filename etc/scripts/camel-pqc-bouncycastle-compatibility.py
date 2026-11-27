@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 """Run camel-pqc against the minimum, pinned and latest stable BC releases.
 
 The pinned dependency in parent/pom.xml is never changed. Latest is resolved
