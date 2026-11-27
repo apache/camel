@@ -2000,8 +2000,8 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiToolChoice";
         }
         /**
-         * The format of the chat answer, overriding the responseFormat option:
-         * text or json.
+         * The format of the chat answer, overriding the responseFormat and
+         * jsonSchema options: text or json.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2014,9 +2014,9 @@ public interface WatsonxAiEndpointBuilderFactory {
         }
         /**
          * The JSON schema the chat answer follows, overriding the jsonSchema
-         * option: JSON text or a Map.
+         * and responseFormat options: JSON text or a Map.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code Object} type.
          * 
          * Group: producer
          * 

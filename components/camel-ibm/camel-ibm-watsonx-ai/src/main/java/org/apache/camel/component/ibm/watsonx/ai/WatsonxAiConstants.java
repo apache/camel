@@ -103,12 +103,14 @@ public interface WatsonxAiConstants {
     String TOOL_CHOICE = HEADER_PREFIX + "ToolChoice";
 
     // Chat output, reasoning and guardrails
-    @Metadata(description = "The format of the chat answer, overriding the responseFormat option: text or json",
+    @Metadata(description = "The format of the chat answer, overriding the responseFormat and jsonSchema options: text or"
+                            + " json",
               javaType = "String")
     String RESPONSE_FORMAT = HEADER_PREFIX + "ResponseFormat";
 
-    @Metadata(description = "The JSON schema the chat answer follows, overriding the jsonSchema option: JSON text or a Map",
-              javaType = "String")
+    @Metadata(description = "The JSON schema the chat answer follows, overriding the jsonSchema and responseFormat options:"
+                            + " JSON text or a Map",
+              javaType = "Object")
     String JSON_SCHEMA = HEADER_PREFIX + "JsonSchema";
 
     @Metadata(description = "Guided decoding of chat, overriding the guidedChoice option: the choices of the answer, as a"

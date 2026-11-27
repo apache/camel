@@ -142,6 +142,19 @@ class WatsonxAiChatOptionsTest extends CamelTestSupport {
     }
 
     @Test
+    void aResponseFormatHeaderWinsOverBothOptions() {
+        // a message asks for text from an endpoint whose answers follow a JSON schema
+        assertEquals("text", chat("jsonSchema=RAW({\"type\":\"object\"})",
+                Map.of(WatsonxAiConstants.RESPONSE_FORMAT, "text")).get("response_format").get("type").asString());
+        assertEquals("json_schema", chat("responseFormat=text",
+                Map.of(WatsonxAiConstants.JSON_SCHEMA, Map.of("type", "object"))).get("response_format").get("type")
+                .asString());
+        // a blank header is no header
+        assertEquals("json_schema", chat("jsonSchema=RAW({\"type\":\"object\"})",
+                Map.of(WatsonxAiConstants.RESPONSE_FORMAT, " ")).get("response_format").get("type").asString());
+    }
+
+    @Test
     void guidedDecodingSeedStopAndChoices() {
         JsonNode request = chat("guidedChoice=Paris, Rome&guidedRegex=RAW([A-Z][a-z]+)&guidedGrammar=root ::= \"yes\""
                                 + "&seed=42&stop=END,STOP&numberOfChoices=2",

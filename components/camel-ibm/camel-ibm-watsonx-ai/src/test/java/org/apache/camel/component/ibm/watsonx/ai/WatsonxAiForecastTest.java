@@ -211,4 +211,30 @@ class WatsonxAiForecastTest extends CamelTestSupport {
         assertTrue(e.getMessage().contains("deploymentForecast only"), e.getMessage());
         assertTrue(server.requests(FORECAST).isEmpty());
     }
+
+    @Test
+    void deploymentForecastSendsItsBodyWhateverAFutureDataHeaderHolds() {
+        TimeSeriesRequest body = TimeSeriesRequest.builder().inputSchema(schema()).data(data()).build();
+        Exchange result = template.send("direct:deploymentForecast", e -> {
+            e.getIn().setBody(body);
+            e.getIn().setHeader(WatsonxAiConstants.FORECAST_FUTURE_DATA, "left over from an earlier step");
+        });
+
+        assertNull(result.getException());
+        assertFalse(server.lastRequest(DEPLOYMENT_FORECAST).json().has("future_data"));
+    }
+
+    @Test
+    void forecastRefusesTheFutureDataOfARequestBody() {
+        TimeSeriesRequest body = TimeSeriesRequest.builder()
+                .inputSchema(schema())
+                .data(data())
+                .parameters(TimeSeriesParameters.builder().futureData(ForecastData.create().add("price", 3)).build())
+                .build();
+        Exchange result = template.send("direct:forecast", e -> e.getIn().setBody(body));
+
+        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
+        assertTrue(e.getMessage().contains("deploymentForecast only"), e.getMessage());
+        assertTrue(server.requests(FORECAST).isEmpty());
+    }
 }

@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * How the endpoint authenticates: the access token of an OAuth profile is sent as a Bearer token and obtained again for
@@ -108,7 +109,7 @@ class WatsonxAiAuthenticationTest extends CamelTestSupport {
     }
 
     @Test
-    void oauthProfileReplacesTheApiKeyAtStartup() throws Exception {
+    void oauthProfileGivesABearerAuthenticatorThatAsksATokenAtStartup() throws Exception {
         WatsonxAiEndpoint endpoint = context.getEndpoint(
                 "ibm-watsonx-ai:start?oauthProfile=other&baseUrl=" + server.baseUrl() + "&operation=chat",
                 WatsonxAiEndpoint.class);
@@ -149,6 +150,24 @@ class WatsonxAiAuthenticationTest extends CamelTestSupport {
                     "ibm-watsonx-ai:empty?oauthProfile=empty&baseUrl=" + server.baseUrl() + "&operation=chat"));
             assertInstanceOf(IllegalStateException.class, e.getCause());
             assertEquals("The OAuth profile empty gave no access token", e.getCause().getMessage());
+        } finally {
+            TestOAuthClientAuthenticationFactory.tokens = WatsonxAiAuthenticationTest::token;
+        }
+    }
+
+    @Test
+    void processToolCallsAsksNoTokenAtStartup() throws Exception {
+        // processToolCalls runs the tools locally: an oauthProfile it inherits, from the component for example, must not
+        // contact the identity provider
+        TestOAuthClientAuthenticationFactory.tokens = profile -> {
+            throw new IllegalStateException("the identity provider was contacted for " + profile);
+        };
+        try {
+            WatsonxAiEndpoint endpoint = context.getEndpoint(
+                    "ibm-watsonx-ai:tools?oauthProfile=other&operation=processToolCalls", WatsonxAiEndpoint.class);
+            assertTrue(endpoint.isStarted());
+            assertNull(endpoint.getAuthenticator());
+            assertTrue(TestOAuthClientAuthenticationFactory.PROFILES.isEmpty());
         } finally {
             TestOAuthClientAuthenticationFactory.tokens = WatsonxAiAuthenticationTest::token;
         }

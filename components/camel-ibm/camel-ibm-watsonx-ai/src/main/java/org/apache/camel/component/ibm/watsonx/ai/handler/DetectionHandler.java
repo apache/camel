@@ -81,8 +81,11 @@ public class DetectionHandler extends AbstractWatsonxAiHandler {
         // Build detectors list from configuration or header
         List<BaseDetector> detectors = in.getHeader(WatsonxAiConstants.DETECTORS, List.class);
 
-        if (detectors == null && config.getDetectors() != null) {
-            detectors = namedDetectors(config.getDetectors(), config.getDetectionThreshold());
+        if (detectors == null) {
+            List<BaseDetector> named = namedDetectors(config.getDetectors(), config.getDetectionThreshold());
+            if (!named.isEmpty()) {
+                detectors = named;
+            }
         }
         if (detectors == null) {
             detectors = new ArrayList<>();
@@ -244,16 +247,21 @@ public class DetectionHandler extends AbstractWatsonxAiHandler {
             return detectors;
         }
         WatsonxAiConfiguration config = getConfiguration();
-        return namedDetectors(config.getDetectors() != null ? config.getDetectors() : defaultDetector,
-                config.getDetectionThreshold());
+        List<BaseDetector> named = namedDetectors(config.getDetectors(), config.getDetectionThreshold());
+        return named.isEmpty() ? namedDetectors(defaultDetector, config.getDetectionThreshold()) : named;
     }
 
     /**
-     * The detectors of their names, comma separated, with the threshold for all but pii.
+     * The detectors of their names, comma separated, with the threshold for all but pii; none for no names (an empty
+     * detectors option), so that the operation uses its default detectors.
      */
     static List<BaseDetector> namedDetectors(String names, Double threshold) {
         List<BaseDetector> detectors = new ArrayList<>();
-        for (String name : toList(null, names)) {
+        List<String> list = toList(null, names);
+        if (list == null) {
+            return detectors;
+        }
+        for (String name : list) {
             detectors.add(switch (name.toLowerCase(Locale.ROOT)) {
                 case "hap" -> threshold != null ? Hap.ofThreshold(threshold) : Hap.ofDefaults();
                 case "pii" -> Pii.ofDefaults();

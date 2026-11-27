@@ -224,6 +224,10 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     protected void doStart() throws Exception {
         super.doStart();
         validateConfiguration();
+        if (configuration.getOperation() == WatsonxAiOperations.processToolCalls) {
+            // a local operation: no authenticator, so an inherited oauthProfile does not contact its identity provider
+            return;
+        }
         Authenticator created = WatsonxAiServiceFactory.createAuthenticator(configuration, getCamelContext());
         synchronized (this) {
             authenticator = created;
@@ -235,13 +239,22 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     }
 
     @Override
-    protected synchronized void doStop() throws Exception {
+    protected void doStop() throws Exception {
         super.doStop();
-        authenticator = null;
-        if (streamTemplate != null) {
-            streamTemplate.stop();
+        ProducerTemplate template;
+        synchronized (this) {
+            template = streamTemplate;
             streamTemplate = null;
+            authenticator = null;
+            clearServices();
         }
+        // outside the lock: a stream may still be sending its chunks with the template
+        if (template != null) {
+            template.stop();
+        }
+    }
+
+    private void clearServices() {
         textGenerationService = null;
         chatService = null;
         embeddingService = null;

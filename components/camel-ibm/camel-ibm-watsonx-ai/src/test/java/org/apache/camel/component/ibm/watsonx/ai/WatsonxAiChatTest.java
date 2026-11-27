@@ -22,10 +22,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import com.ibm.watsonx.ai.timeseries.ForecastData;
-import com.ibm.watsonx.ai.timeseries.InputSchema;
-import com.ibm.watsonx.ai.timeseries.TimeSeriesParameters;
-import com.ibm.watsonx.ai.timeseries.TimeSeriesRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -38,16 +34,15 @@ import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Streaming failures and content, stale headers, literal stop sequences, deployment reasoning and forecast future data,
- * as the independent review of the change asked.
+ * Chat and deploymentChat against a fake watsonx.ai: the failures and the content of a stream, the headers of an
+ * earlier answer, literal stop sequences and the thinking of deploymentChat.
  */
-class WatsonxAiReviewFixesTest extends CamelTestSupport {
+class WatsonxAiChatTest extends CamelTestSupport {
 
     private static final String CHAT = "/ml/v1/text/chat";
     private static final String CHAT_STREAM = "/ml/v1/text/chat_stream";
@@ -180,35 +175,5 @@ class WatsonxAiReviewFixesTest extends CamelTestSupport {
         JsonNode request = server.lastRequest(DEPLOYMENT_CHAT).json();
         assertFalse(request.has("chat_template_kwargs"), request::toString);
         assertFalse(request.has("include_reasoning"), request::toString);
-    }
-
-    @Test
-    void deploymentForecastSendsItsBodyWhateverAFutureDataHeaderHolds() {
-        server.respond("/ml/v1/deployments/my-deployment/time_series/forecast", """
-                {"model_id":"ttm","created_at":"2026-01-01T00:00:00.000Z","results":[],"input_data_points":1,
-                 "output_data_points":0}""");
-        TimeSeriesRequest body = TimeSeriesRequest.builder()
-                .inputSchema(InputSchema.builder().timestampColumn("date").build())
-                .data(ForecastData.create().add("date", "2024-01-01T00:00:00").add("value", 1.0))
-                .build();
-        Exchange result = send("deploymentForecast", "", body,
-                Map.of(WatsonxAiConstants.FORECAST_FUTURE_DATA, "left over from an earlier step"));
-
-        assertNull(result.getException());
-        assertFalse(server.lastRequest("/ml/v1/deployments/my-deployment/time_series/forecast").json().has("future_data"));
-    }
-
-    @Test
-    void forecastRefusesTheFutureDataOfARequestBody() {
-        TimeSeriesRequest body = TimeSeriesRequest.builder()
-                .inputSchema(InputSchema.builder().timestampColumn("date").build())
-                .data(ForecastData.create().add("date", "2024-01-01T00:00:00").add("value", 1.0))
-                .parameters(TimeSeriesParameters.builder().futureData(ForecastData.create().add("price", 3)).build())
-                .build();
-        Exchange result = send("forecast", "", body, Map.of());
-
-        IllegalArgumentException e = assertInstanceOf(IllegalArgumentException.class, result.getException());
-        assertTrue(e.getMessage().contains("deploymentForecast only"), e.getMessage());
-        assertTrue(server.requests().isEmpty());
     }
 }

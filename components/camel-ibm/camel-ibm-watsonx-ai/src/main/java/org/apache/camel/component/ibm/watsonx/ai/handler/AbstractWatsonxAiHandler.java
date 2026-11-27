@@ -486,10 +486,16 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         }
     }
 
+    /**
+     * The response format of the headers, or else of the options: a header wins over both options, so that a message
+     * can ask for text from an endpoint with a jsonSchema. Of two headers, or two options, the JSON schema wins.
+     */
     private static void applyResponseFormat(ChatParameters.Builder builder, Message in, WatsonxAiConfiguration config) {
         Object jsonSchema = in.getHeader(WatsonxAiConstants.JSON_SCHEMA);
-        if (jsonSchema == null) {
+        String format = in.getHeader(WatsonxAiConstants.RESPONSE_FORMAT, String.class);
+        if (isUnset(jsonSchema) && isUnset(format)) {
             jsonSchema = config.getJsonSchema();
+            format = config.getResponseFormat();
         }
         boolean strict = !Boolean.FALSE.equals(config.getJsonSchemaStrict());
         if (jsonSchema instanceof Map<?, ?> map) {
@@ -497,12 +503,11 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             Map<String, Object> schema = (Map<String, Object>) map;
             builder.responseAsJsonSchema(JSON_SCHEMA_NAME, schema, strict);
             return;
-        } else if (jsonSchema != null && !jsonSchema.toString().isBlank()) {
+        } else if (!isUnset(jsonSchema)) {
             builder.responseAsJsonSchema(JSON_SCHEMA_NAME, jsonSchema.toString(), strict);
             return;
         }
-        String format = in.getHeader(WatsonxAiConstants.RESPONSE_FORMAT, config.getResponseFormat(), String.class);
-        if (format == null || format.isBlank()) {
+        if (isUnset(format)) {
             return;
         }
         switch (format.trim().toLowerCase(Locale.ROOT)) {
@@ -511,6 +516,10 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             default -> throw new IllegalArgumentException(
                     "The response format must be text or json (set jsonSchema for a JSON schema), but it is " + format);
         }
+    }
+
+    private static boolean isUnset(Object value) {
+        return value == null || value instanceof CharSequence text && text.toString().isBlank();
     }
 
     /**

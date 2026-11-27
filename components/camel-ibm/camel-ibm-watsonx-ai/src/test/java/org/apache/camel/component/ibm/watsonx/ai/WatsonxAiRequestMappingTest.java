@@ -210,6 +210,25 @@ class WatsonxAiRequestMappingTest extends CamelTestSupport {
     }
 
     @Test
+    void emptyDetectorsUseTheDefaultDetectors() {
+        server.respond(DETECTION, """
+                {"detections":[]}""");
+        server.respond(DETECTION + "/generated", """
+                {"detections":[]}""");
+
+        Exchange result = send(uri("detect", "detectors="), "Hello", Map.of());
+        assertNull(result.getException());
+        JsonNode detectors = server.lastRequest(DETECTION).json().get("detectors");
+        assertTrue(detectors.has("hap"));
+        assertTrue(detectors.has("pii"));
+
+        result = send(uri("detectGenerated", "detectors= , "), "The capital of France is Paris.",
+                Map.of(WatsonxAiConstants.DETECTION_PROMPT, "What is the capital of France?"));
+        assertNull(result.getException());
+        assertTrue(server.lastRequest(DETECTION + "/generated").json().get("detectors").has("answer_relevance"));
+    }
+
+    @Test
     void detectWithGraniteGuardianByName() {
         server.respond(DETECTION, """
                 {"detections":[]}""");
