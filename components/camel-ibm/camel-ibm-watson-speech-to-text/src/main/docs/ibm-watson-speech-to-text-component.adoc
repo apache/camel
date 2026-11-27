@@ -60,7 +60,7 @@ If you don't specify an operation explicitly, you must set it via the `operation
 === Health check
 
 The producer registers a health check that lists the models of the service, so it is down when Speech to Text cannot
-be reached or rejects the credentials. Like the other producer health checks of Camel, it runs only when producer
+be reached or rejects the request. Like the other producer health checks of Camel, it runs only when producer
 health checks are enabled, for example with `camel.health.producersEnabled=true`, and the
 `healthCheckProducerEnabled` option of the component turns it off.
 
