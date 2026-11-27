@@ -208,8 +208,9 @@ public class MinioEndpoint extends ScheduledPollEndpoint implements EndpointServ
     }
 
     /**
-     * The MinIO client replaces the scheme of the endpoint with the secure flag when a port is given. An endpoint with
-     * a scheme keeps its scheme; the secure option applies only to a host name without a scheme.
+     * Determines the secure flag to pass to MinioClient.Builder.endpoint(endpoint, port, secure). An endpoint with a
+     * scheme keeps its scheme; the secure option applies only to a host name without a scheme. This works around the
+     * MinIO client replacing the scheme of the endpoint with the secure flag when a port is given.
      */
     static boolean isSecureForProxyPort(String endpoint, boolean secure) {
         String lower = endpoint.trim().toLowerCase(Locale.ROOT);
