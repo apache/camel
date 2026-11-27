@@ -19258,7 +19258,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XMPP (camel-xmpp)
-     * Send and receive messages to/from an XMPP chat server.
+     * Send and receive XMPP (Jabber) messages, in private chats and in
+     * multi-user chat rooms.
      * 
      * Category: chat,messaging
      * Since: 1.0
@@ -19267,18 +19268,21 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmpp:host:port/participant</code>
      * 
      * Path parameter: host (required)
-     * Hostname for the chat server
+     * The host name or IP address of the XMPP server. It is also the XMPP
+     * domain when the serviceName option is not set. Not used when the
+     * connectionConfig option is set.
      * 
      * Path parameter: port
-     * Port number for the chat server
+     * The TCP port of the XMPP server for client connections. Not used when the
+     * connectionConfig option is set.
      * Default value: 5222
      * 
      * Path parameter: participant
-     * JID (Jabber ID) of the person to chat with: the producer sends the
-     * messages to this person, and the consumer only routes the chat messages
-     * from this person (without a participant, the consumer routes the chat
-     * messages of every sender). room parameter has precedence over
-     * participant.
+     * The JID (Jabber ID) of the person to chat with: the producer sends the
+     * chat messages to it, and the consumer routes only the chat messages from
+     * it (or of every sender, without a participant). The consumer adds the
+     * XMPP domain of the server to a name without a domain, while the producer
+     * needs the full JID. The room option takes precedence over this option.
      * 
      * @param path host:port/participant
      * @return the dsl builder
@@ -19288,7 +19292,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XMPP (camel-xmpp)
-     * Send and receive messages to/from an XMPP chat server.
+     * Send and receive XMPP (Jabber) messages, in private chats and in
+     * multi-user chat rooms.
      * 
      * Category: chat,messaging
      * Since: 1.0
@@ -19297,18 +19302,21 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xmpp:host:port/participant</code>
      * 
      * Path parameter: host (required)
-     * Hostname for the chat server
+     * The host name or IP address of the XMPP server. It is also the XMPP
+     * domain when the serviceName option is not set. Not used when the
+     * connectionConfig option is set.
      * 
      * Path parameter: port
-     * Port number for the chat server
+     * The TCP port of the XMPP server for client connections. Not used when the
+     * connectionConfig option is set.
      * Default value: 5222
      * 
      * Path parameter: participant
-     * JID (Jabber ID) of the person to chat with: the producer sends the
-     * messages to this person, and the consumer only routes the chat messages
-     * from this person (without a participant, the consumer routes the chat
-     * messages of every sender). room parameter has precedence over
-     * participant.
+     * The JID (Jabber ID) of the person to chat with: the producer sends the
+     * chat messages to it, and the consumer routes only the chat messages from
+     * it (or of every sender, without a participant). The consumer adds the
+     * XMPP domain of the server to a name without a domain, while the producer
+     * needs the full JID. The room option takes precedence over this option.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -5615,7 +5615,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * XMPP (camel-xmpp)
-     * Send and receive messages to/from an XMPP chat server.
+     * Send and receive XMPP (Jabber) messages, in private chats and in
+     * multi-user chat rooms.
      * 
      * Category: chat,messaging
      * Since: 1.0

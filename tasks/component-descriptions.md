@@ -392,7 +392,7 @@ or removes its row.
 | camel-xchange | xchange | yes |
 | camel-xj | xj | yes |
 | camel-xmlsecurity | xmlsecurity-sign, xmlsecurity-verify |  |
-| camel-xmpp | xmpp |  |
+| camel-xmpp | xmpp | yes |
 | camel-xslt | xslt |  |
 | camel-xslt-saxon | xslt-saxon |  |
 | camel-zendesk | zendesk |  |
