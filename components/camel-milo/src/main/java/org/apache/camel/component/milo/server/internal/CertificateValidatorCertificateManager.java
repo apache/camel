@@ -37,6 +37,10 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
  * <p>
  * With Eclipse Milo 1.x, the server validates the certificate of a client with the validator of the certificate group
  * of the server certificate, see {@link CertificateGroup#getCertificateValidator()}.
+ * <p>
+ * The default methods {@code getDefaultApplicationGroup}, {@code getDefaultUserTokenGroup} and
+ * {@code getDefaultHttpsGroup} of {@link CertificateManager} are not overridden: they call
+ * {@link #getCertificateGroup(NodeId)}, which wraps the group.
  */
 public final class CertificateValidatorCertificateManager implements CertificateManager {
 
