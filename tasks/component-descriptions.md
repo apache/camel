@@ -159,7 +159,7 @@ or removes its row.
 | camel-direct | direct |  |
 | camel-disruptor | disruptor, disruptor-vm |  |
 | camel-djl | djl |  |
-| camel-dns | dns |  |
+| camel-dns | dns | yes |
 | camel-docker | docker |  |
 | camel-docling | docling |  |
 | camel-drill | drill |  |

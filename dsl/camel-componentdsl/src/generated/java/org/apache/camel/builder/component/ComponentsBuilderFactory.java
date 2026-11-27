@@ -1652,7 +1652,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
+     * Query DNS records and resolve host names to IP addresses, using the
+     * dnsjava library.
      * 
      * Category: networking
      * Since: 2.7

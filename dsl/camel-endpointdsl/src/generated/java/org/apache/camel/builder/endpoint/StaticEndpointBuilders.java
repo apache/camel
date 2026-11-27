@@ -5415,7 +5415,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
+     * Query DNS records and resolve host names to IP addresses, using the
+     * dnsjava library.
      * 
      * Category: networking
      * Since: 2.7
@@ -5424,7 +5425,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup. The wikipedia type is deprecated, as the
+     * The operation to run: ip resolves the host name in the CamelDnsDomain
+     * header to an IP address with the resolver of the JVM; lookup runs a
+     * dnsjava lookup of the CamelDnsName header and returns the records of the
+     * answer; dig sends one query for the CamelDnsName header to a DNS server
+     * and returns the whole response. The wikipedia type is deprecated, as the
      * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
@@ -5436,7 +5441,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * DNS (camel-dns)
-     * Perform DNS queries using DNSJava.
+     * Query DNS records and resolve host names to IP addresses, using the
+     * dnsjava library.
      * 
      * Category: networking
      * Since: 2.7
@@ -5445,7 +5451,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>dns:dnsType</code>
      * 
      * Path parameter: dnsType (required)
-     * The type of the lookup. The wikipedia type is deprecated, as the
+     * The operation to run: ip resolves the host name in the CamelDnsDomain
+     * header to an IP address with the resolver of the JVM; lookup runs a
+     * dnsjava lookup of the CamelDnsName header and returns the records of the
+     * answer; dig sends one query for the CamelDnsName header to a DNS server
+     * and returns the whole response. The wikipedia type is deprecated, as the
      * Wikipedia over DNS service it queries is no longer available.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
