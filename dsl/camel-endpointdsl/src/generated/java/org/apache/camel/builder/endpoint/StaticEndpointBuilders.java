@@ -3114,7 +3114,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
-     * Stores and retrieves messages to/from Azure Storage Queue.
+     * Send messages to and receive messages from the queues of Azure Queue
+     * Storage.
      * 
      * Category: cloud,messaging
      * Since: 3.3
@@ -3123,11 +3124,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-storage-queue:accountName/queueName</code>
      * 
      * Path parameter: accountName
-     * Azure account name to be used for authentication with azure queue
-     * services
+     * The name of the Azure Storage account, which gives the address
+     * https://accountName.queue.core.windows.net of its queue service. If the
+     * credentials option is set, the account name of those credentials gives
+     * the address instead. Not used when serviceClient is set.
      * 
      * Path parameter: queueName
-     * The queue resource name
+     * The name of the queue. Required for the consumer and for each producer
+     * operation except listQueues. The CamelAzureStorageQueueName header
+     * replaces this option for the producer.
      * 
      * @param path accountName/queueName
      * @return the dsl builder
@@ -3137,7 +3142,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
-     * Stores and retrieves messages to/from Azure Storage Queue.
+     * Send messages to and receive messages from the queues of Azure Queue
+     * Storage.
      * 
      * Category: cloud,messaging
      * Since: 3.3
@@ -3146,11 +3152,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-storage-queue:accountName/queueName</code>
      * 
      * Path parameter: accountName
-     * Azure account name to be used for authentication with azure queue
-     * services
+     * The name of the Azure Storage account, which gives the address
+     * https://accountName.queue.core.windows.net of its queue service. If the
+     * credentials option is set, the account name of those credentials gives
+     * the address instead. Not used when serviceClient is set.
      * 
      * Path parameter: queueName
-     * The queue resource name
+     * The name of the queue. Required for the consumer and for each producer
+     * operation except listQueues. The CamelAzureStorageQueueName header
+     * replaces this option for the producer.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
