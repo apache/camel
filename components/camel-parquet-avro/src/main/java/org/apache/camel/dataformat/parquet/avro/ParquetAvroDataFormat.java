@@ -19,10 +19,12 @@ package org.apache.camel.dataformat.parquet.avro;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
@@ -54,9 +56,10 @@ import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
 
 @Dataformat("parquetAvro")
 @BodyTypes(marshalIn = @BodyType(value = { Carrier.LIST, Carrier.ITERATOR, Carrier.POJO },
-                                 description = "The records: a List, another Collection, an array or an Iterator of Avro"
-                                               + " GenericRecords, or of objects of the class unmarshalType names, or a"
-                                               + " single such record. An empty body fails without unmarshalType"),
+                                 description = "The records: a List, another Collection, an array, an Iterator or a"
+                                               + " Stream of Avro GenericRecords, or of objects of the class"
+                                               + " unmarshalType names, or a single such record. Without unmarshalType,"
+                                               + " the records must be GenericRecords, and an empty body fails"),
            marshalOut = @BodyType(value = Carrier.STREAM, format = "binary",
                                   description = "The Parquet file in the stream cache, or a byte array when stream caching is"
                                                 + " off"),
@@ -95,7 +98,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
                 DEFAULT_UUID_GENERATOR.generateUuid(),
                 parquetOutput);
 
-        List<Object> records = toRecords(graph);
+        List<?> records = toRecords(graph);
 
         Schema schema = null;
         GenericData model = null;
@@ -108,7 +111,14 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
             }
         }
         if (schema == null) {
-            schema = GenericContainer.class.cast(records.get(0)).getSchema();
+            if (records.isEmpty() || !(records.get(0) instanceof GenericContainer first)) {
+                throw new IllegalArgumentException(
+                        "parquetAvro marshal needs the unmarshalType option, or Avro GenericRecords as the records, to"
+                                                   + " know the schema; the body has "
+                                                   + (records.isEmpty()
+                                                           ? "no records" : "a " + records.get(0).getClass().getName()));
+            }
+            schema = first.getSchema();
             model = GenericData.get();
         }
 
@@ -126,17 +136,23 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     }
 
     /**
-     * The records to write: the elements of an Iterable (such as a List or another Collection), of an array or of an
-     * Iterator, or the body itself as a single record.
+     * The records to write: a List as is, the elements of another Iterable (such as a Set), of an array, of an Iterator
+     * or of a Stream, or the body itself as a single record. A Path is a single value, although it is an Iterable of
+     * its names.
      */
-    private static List<Object> toRecords(Object graph) {
+    private static List<?> toRecords(Object graph) {
+        if (graph instanceof List<?> list) {
+            return list;
+        }
         List<Object> records = new ArrayList<>();
-        if (graph instanceof Iterable<?> iterable) {
+        if (graph instanceof Iterable<?> iterable && !(graph instanceof Path)) {
             iterable.forEach(records::add);
         } else if (graph instanceof Object[] array) {
             Collections.addAll(records, array);
         } else if (graph instanceof Iterator<?> iterator) {
             iterator.forEachRemaining(records::add);
+        } else if (graph instanceof Stream<?> stream) {
+            stream.forEach(records::add);
         } else if (graph != null) {
             records.add(graph);
         }

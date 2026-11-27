@@ -18,15 +18,21 @@ package org.apache.camel.dataformat.parquet.avro;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Marshal accepts other bodies than a List: a single record, an array, another Collection and an Iterator.
+ * Marshal accepts other bodies than a List: a single record, an array, another Collection, an Iterator and a Stream.
+ * Without unmarshalType, it needs Avro GenericRecords to know the schema.
  */
 class ParquetAvroMarshalBodyTypesTest extends CamelTestSupport {
 
@@ -53,6 +59,27 @@ class ParquetAvroMarshalBodyTypesTest extends CamelTestSupport {
         assertEquals(List.of(AIRPORT, PENGUIN), roundTrip(List.of(AIRPORT, PENGUIN).iterator()));
     }
 
+    @Test
+    void stream() {
+        assertEquals(List.of(AIRPORT, PENGUIN), roundTrip(Stream.of(AIRPORT, PENGUIN)));
+    }
+
+    @Test
+    void emptyBodyWithoutUnmarshalTypeFails() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:noUnmarshalType", List.of()));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("no records"), cause.getMessage());
+    }
+
+    @Test
+    void pojoWithoutUnmarshalTypeFails() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:noUnmarshalType", List.of(AIRPORT)));
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(cause.getMessage().contains(Pojo.class.getName()), cause.getMessage());
+    }
+
     private List<?> roundTrip(Object body) {
         Object marshalled = template.requestBody("direct:in", body);
         return template.requestBody("direct:back", marshalled, List.class);
@@ -67,6 +94,7 @@ class ParquetAvroMarshalBodyTypesTest extends CamelTestSupport {
                 format.setUnmarshalType(Pojo.class);
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format);
+                from("direct:noUnmarshalType").marshal(new ParquetAvroDataFormat());
             }
         };
     }
