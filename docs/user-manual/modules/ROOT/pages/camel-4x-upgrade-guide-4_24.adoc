@@ -4142,7 +4142,7 @@ left a directory named after the part before it. A NUL character failed the exch
 OpenSSH server before 10.6, cut the name short there. Remove or replace these characters in the `CamelFileName` header
 or in the `fileName` option before the message reaches the producer.
 
-=== camel-jsch - a missing user known hosts file, keyboard-interactive login and the JSch logger
+=== camel-jsch - a missing user known hosts file, keyboard-interactive login, the JSch logger and ciphers
 
 The `scp` producer has these changes:
 
@@ -4155,6 +4155,9 @@ The `scp` producer has these changes:
   question, so a server that offers only `keyboard-interactive` for passwords could not be used.
 * The JSch messages of the sessions of the `scp` component are logged with a logger of each JSch instance. Before, the
   component set the static JSch logger when it started, which applies to every user of JSch in the JVM.
+* The `ciphers` option now applies to the session of the endpoint. Before, it set the ciphers of JSch for the whole
+  JVM, so an `scp` endpoint with `ciphers` changed the ciphers of every later JSch session, including the `sftp`
+  sessions of camel-ftp that do not set `ciphers`. Set `ciphers` on each endpoint that needs them.
 * A `chmod` value that is not three octal digits is still replaced by 664, and is now logged at WARN.
 * The `certUri` option is deprecated: use `certFile`, which loads the certificate in the same way and takes
   precedence. The `knownHostsFile`, `certFile`, `certUri`, `certBytes` and `preferredAuthentications` options are no

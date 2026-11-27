@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Hashtable;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -329,14 +328,6 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             if (endpoint.getComponent() instanceof ScpComponent scp && scp.getJschLogger() != null) {
                 jsch.setInstanceLogger(scp.getJschLogger());
             }
-            // get from configuration
-            if (ObjectHelper.isNotEmpty(config.getCiphers())) {
-                LOG.trace("Using ciphers: {}", config.getCiphers());
-                Hashtable<String, String> ciphers = new Hashtable<>();
-                ciphers.put("cipher.s2c", config.getCiphers());
-                ciphers.put("cipher.c2s", config.getCiphers());
-                JSch.setConfig(ciphers);
-            }
             // Resolve certificate bytes once — used for both identity loading and key type detection
             byte[] certData = resolveCertificateBytes(config);
 
@@ -402,6 +393,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             session = jsch.getSession(config.getUsername(), config.getHost(), config.getPort());
             session.setTimeout(config.getTimeout());
             session.setUserInfo(new SessionUserInfo(config));
+            if (ObjectHelper.isNotEmpty(config.getCiphers())) {
+                // on the session: JSch.setConfig would change the ciphers of every JSch session in the JVM
+                LOG.trace("Using ciphers: {}", config.getCiphers());
+                session.setConfig("cipher.s2c", config.getCiphers());
+                session.setConfig("cipher.c2s", config.getCiphers());
+            }
             if (config.getPassword() != null) {
                 // JSch answers a keyboard-interactive password prompt only with the password of the session
                 session.setPassword(config.getPassword());
