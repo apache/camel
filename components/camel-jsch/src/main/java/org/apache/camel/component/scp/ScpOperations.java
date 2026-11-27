@@ -400,7 +400,10 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 session.setConfig("cipher.c2s", config.getCiphers());
             }
             if (config.getPassword() != null) {
-                // JSch answers a keyboard-interactive password prompt only with the password of the session
+                // JSch answers a keyboard-interactive password prompt only with the password of the session:
+                // a request of one question that is not echoed and contains "password:" is answered with it, without
+                // calling SessionUserInfo.promptKeyboardInteractive(). Any other request goes to that method, which
+                // returns null to cancel it, so the password is never sent as the answer to another question.
                 session.setPassword(config.getPassword());
             }
 
@@ -667,6 +670,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             LOG.debug(instruction);
             // Called for either SSH_MSG_USERAUTH_INFO_REQUEST or SSH_MSG_USERAUTH_PASSWD_CHANGEREQ
             // The most secure choice (especially for the second case) is to return null
+            // A keyboard-interactive password prompt does not come here: JSch answers it with the password set on the
+            // session in createSession(), so returning null only cancels the other questions (do not return the password)
             return null;
         }
     }

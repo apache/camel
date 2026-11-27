@@ -74,9 +74,10 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
     }
 
     /**
-     * The logger that the JSch instance of each session of the endpoints of this component logs with.
+     * Returns the logger set on the JSch instance of each session created by this component's endpoints, or null when
+     * {@link #initJsch()} has not created one (the sessions then log with the static JSch logger).
      */
-    public Logger getJschLogger() {
+    Logger getJschLogger() {
         return jschLogger;
     }
 
