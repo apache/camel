@@ -28,29 +28,54 @@ import org.infinispan.manager.EmbeddedCacheManager;
 @UriParams
 public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration implements Cloneable {
 
+    private static final String COMPONENT_ONLY
+            = " Read on the component only, as the cache manager is shared by all the endpoints of the component: set on an"
+              + " endpoint, this option is not used.";
+
     @Metadata(autowired = true)
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The org.infinispan.configuration.cache.Configuration of the default cache, named default, of the"
+                            + " cache manager that Camel creates when cacheContainer is not set. When set, configurationUri is"
+                            + " not used." + COMPONENT_ONLY)
     private Configuration cacheContainerConfiguration;
     @Metadata(autowired = true)
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom org.infinispan.manager.EmbeddedCacheManager as the cache manager. When set or"
+                            + " autowired, the cacheContainerConfiguration and configurationUri options are not used, and Camel"
+                            + " does not stop the cache manager." + COMPONENT_ONLY)
     private EmbeddedCacheManager cacheContainer;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether Infinispan calls the listener of the consumer synchronously, so the cache operation that"
+                            + " caused the event waits until the route has processed it. If false, Infinispan calls the listener"
+                            + " in a thread of its own. Not used when customListener or queryBuilder is set.")
     private boolean sync = true;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether the consumer registers its listener as an Infinispan clustered listener, which receives"
+                            + " the events of the changes made on all the nodes of the cluster, not only on the local node. A"
+                            + " clustered listener receives only the events after a change, and only for entries that are"
+                            + " created, modified, removed or expired. Not used when customListener or queryBuilder is set.")
     private boolean clusteredListener;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The comma-separated names of the Infinispan event types that the consumer passes on to the route,"
+                            + " for example CACHE_ENTRY_CREATED,CACHE_ENTRY_REMOVED. If not set, the consumer passes on all"
+                            + " events. Its listener receives only the events of the types CACHE_ENTRY_ACTIVATED,"
+                            + " CACHE_ENTRY_CREATED, CACHE_ENTRY_EXPIRED, CACHE_ENTRY_INVALIDATED, CACHE_ENTRY_LOADED,"
+                            + " CACHE_ENTRY_MODIFIED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_REMOVED and CACHE_ENTRY_VISITED."
+                            + " Not used when customListener or queryBuilder is set.")
     private String eventTypes;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "To use a custom listener, a subclass of"
+                            + " org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener annotated with"
+                            + " the Infinispan @Listener annotation, that the consumer registers on the cache in place of its"
+                            + " own listener. The eventTypes, sync and clusteredListener options are not used then. Not used"
+                            + " when queryBuilder is set.")
     private InfinispanEmbeddedCustomListener customListener;
-    @UriParam(label = "advanced", javaType = "java.lang.String")
+    @UriParam(label = "advanced", javaType = "java.lang.String",
+              description = "A comma-separated list of names of org.infinispan.context.Flag, for example"
+                            + " SKIP_CACHE_LOAD,SKIP_CACHE_STORE, that the endpoints apply to each cache that they use."
+                            + COMPONENT_ONLY)
     private Flag[] flags;
 
-    /**
-     * Specifies the cache Container to connect
-     * <p/>
-     * Read on the component only, as the cache manager is shared by all the endpoints of the component: set on an
-     * endpoint, this option is not used.
-     */
     public EmbeddedCacheManager getCacheContainer() {
         return cacheContainer;
     }
@@ -63,19 +88,10 @@ public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration imp
         return cacheContainerConfiguration;
     }
 
-    /**
-     * The CacheContainer configuration. Used if the cacheContainer is not defined.
-     * <p/>
-     * Read on the component only, as the cache manager is shared by all the endpoints of the component: set on an
-     * endpoint, this option is not used.
-     */
     public void setCacheContainerConfiguration(Configuration cacheContainerConfiguration) {
         this.cacheContainerConfiguration = cacheContainerConfiguration;
     }
 
-    /**
-     * If true, the consumer will receive notifications synchronously
-     */
     public boolean isSync() {
         return sync;
     }
@@ -84,9 +100,6 @@ public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration imp
         this.sync = sync;
     }
 
-    /**
-     * If true, the listener will be installed for the entire cluster
-     */
     public boolean isClusteredListener() {
         return clusteredListener;
     }
@@ -99,21 +112,10 @@ public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration imp
         return eventTypes;
     }
 
-    /**
-     * Specifies the set of event types to register by the consumer.Multiple event can be separated by comma.
-     * <p/>
-     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED,
-     * CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED,
-     * TRANSACTION_COMPLETED, TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, CACHE_ENTRY_EXPIRED, DATA_REHASHED,
-     * TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED, PERSISTENCE_AVAILABILITY_CHANGED
-     */
     public void setEventTypes(String eventTypes) {
         this.eventTypes = eventTypes;
     }
 
-    /**
-     * Returns the custom listener in use, if provided
-     */
     public InfinispanEmbeddedCustomListener getCustomListener() {
         return customListener;
     }
@@ -130,12 +132,6 @@ public class InfinispanEmbeddedConfiguration extends InfinispanConfiguration imp
         return flags;
     }
 
-    /**
-     * A comma separated list of org.infinispan.context.Flag to be applied by default on each cache invocation
-     * <p/>
-     * Read on the component only, as the cache manager is shared by all the endpoints of the component: set on an
-     * endpoint, this option is not used.
-     */
     public void setFlags(String flagsAsString) {
         String[] flagsArray = flagsAsString.split(",");
         this.flags = new Flag[flagsArray.length];

@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.elasticsearch.client.RestClient;
 
 /**
- * Send requests to Elasticsearch via Java Client API.
+ * Index, update, get, search and delete documents and indices in Elasticsearch with the Java API Client.
  */
 @UriEndpoint(firstVersion = "3.19.0", scheme = "elasticsearch", title = "Elasticsearch",
              syntax = "elasticsearch:clusterName", producerOnly = true,

@@ -2,7 +2,7 @@
 :doctitle: Azure IoT Hub
 :shortname: azure-iothub
 :artifactid: camel-azure-iothub
-:description: Send device telemetry and device-twin updates to Azure IoT Hub.
+:description: Send device-to-cloud telemetry messages and device twin reported properties to Azure IoT Hub.
 :since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:

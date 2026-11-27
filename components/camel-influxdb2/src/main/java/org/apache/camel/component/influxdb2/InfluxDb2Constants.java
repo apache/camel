@@ -19,9 +19,12 @@ package org.apache.camel.component.influxdb2;
 import org.apache.camel.spi.Metadata;
 
 public final class InfluxDb2Constants {
-    @Metadata(description = "The name of measurement", javaType = "String")
+    @Metadata(description = "The key of the measurement name in a Map body, which the producer converts to a Point whose"
+                            + " fields are the other entries of the Map. The producer does not read a message header of this"
+                            + " name.",
+              javaType = "String")
     public static final String MEASUREMENT = "CamelInfluxDB2MeasurementName";
-    @Metadata(description = "The string that defines the retention policy to the data created by the endpoint",
+    @Metadata(description = "The name of a retention policy, which InfluxDB 1.x has and InfluxDB 2.x does not.",
               javaType = "String",
               deprecationNote = "Never read by the component: the InfluxDB 2.x write API has no retention policy,"
                                 + " retention is a property of the bucket")
@@ -33,7 +36,9 @@ public final class InfluxDb2Constants {
     @Metadata(description = "The name of the bucket to write to, overriding the bucket option on the endpoint.",
               javaType = "String")
     public static final String BUCKET = "CamelInfluxDB2Bucket";
-    @Metadata(description = "InfluxDb Write precision.", javaType = "com.influxdb.client.domain.WritePrecision")
+    @Metadata(description = "The precision of the timestamps in a Measurement, Record, Measurements or Records body, which"
+                            + " replaces the writePrecision option. It does not apply to a Point, a Map or a Points body.",
+              javaType = "com.influxdb.client.domain.WritePrecision")
     public static final String WRITE_PRECISION = "CamelInfluxDB2WritePrecision";
 
     private InfluxDb2Constants() {

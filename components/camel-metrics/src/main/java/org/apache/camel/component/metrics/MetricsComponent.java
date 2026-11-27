@@ -45,7 +45,10 @@ public class MetricsComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The Dropwizard MetricRegistry that holds the metrics. If not set, the component uses the bean"
+                            + " named metricRegistry, or the only MetricRegistry bean, of the Camel registry, and else creates"
+                            + " a registry whose Slf4jReporter logs the metrics at DEBUG level every 60 seconds.")
     private MetricRegistry metricRegistry;
 
     public MetricsComponent() {
@@ -66,9 +69,6 @@ public class MetricsComponent extends DefaultComponent {
         return metricRegistry;
     }
 
-    /**
-     * To use a custom configured MetricRegistry.
-     */
     public void setMetricRegistry(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
     }

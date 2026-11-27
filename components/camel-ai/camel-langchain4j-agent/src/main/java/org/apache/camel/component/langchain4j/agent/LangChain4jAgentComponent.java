@@ -32,7 +32,7 @@ import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHE
 
 @Component(SCHEME)
 public class LangChain4jAgentComponent extends DefaultComponent {
-    @Metadata
+    @Metadata(description = "The configuration shared by the endpoints. Each endpoint starts from a copy of it.")
     LangChain4jAgentConfiguration configuration;
 
     private final Map<LangChain4jModelFactory.ModelSpec, ChatModel> models = new ConcurrentHashMap<>();
@@ -50,11 +50,6 @@ public class LangChain4jAgentComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * The configuration
-     *
-     * @param configuration
-     */
     public void setConfiguration(LangChain4jAgentConfiguration configuration) {
         this.configuration = configuration;
     }
