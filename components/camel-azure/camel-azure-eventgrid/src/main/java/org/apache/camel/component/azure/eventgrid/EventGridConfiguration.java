@@ -39,7 +39,7 @@ public class EventGridConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private AzureKeyCredential azureKeyCredential;
 
-    @UriParam(label = "security", security = "secret",
+    @UriParam(label = "security", secret = true,
               description = "The com.azure.core.credential.TokenCredential that authenticates the producer with Microsoft"
                             + " Entra ID, such as a DefaultAzureCredential built with a managed identity client id or a"
                             + " tenant id; this instance is used as it is, also with credentialType AZURE_IDENTITY. When it"

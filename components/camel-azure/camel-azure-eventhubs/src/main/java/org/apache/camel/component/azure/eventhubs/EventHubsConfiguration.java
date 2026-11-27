@@ -362,8 +362,8 @@ public class EventHubsConfiguration implements Cloneable {
     /**
      * Determines the credential strategy to adopt: CONNECTION_STRING, TOKEN_CREDENTIAL with the tokenCredential option,
      * or AZURE_IDENTITY with a DefaultAzureCredential: the tokenCredential option when it is set, otherwise a new one.
-     * When not set, it is TOKEN_CREDENTIAL (or AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
-     * set, else CONNECTION_STRING.
+     * When tokenCredential is set, the component sets AZURE_IDENTITY for a DefaultAzureCredential and TOKEN_CREDENTIAL
+     * for any other credential; otherwise the default is CONNECTION_STRING.
      */
     public void setCredentialType(CredentialType credentialType) {
         this.credentialType = credentialType;

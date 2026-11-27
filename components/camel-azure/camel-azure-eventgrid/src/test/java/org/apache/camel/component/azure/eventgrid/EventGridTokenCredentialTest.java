@@ -22,8 +22,7 @@ import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.eventgrid.EventGridPublisherClientBuilder;
 import org.apache.camel.Producer;
-import org.apache.camel.component.azure.common.CredentialType;
-import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 

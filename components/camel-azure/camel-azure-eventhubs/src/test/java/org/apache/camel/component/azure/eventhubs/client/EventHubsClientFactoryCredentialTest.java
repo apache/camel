@@ -19,10 +19,10 @@ package org.apache.camel.component.azure.eventhubs.client;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.eventhubs.EventHubClientBuilder;
-import org.apache.camel.component.azure.common.CredentialType;
+import org.apache.camel.component.azure.eventhubs.CredentialType;
 import org.apache.camel.component.azure.eventhubs.EventHubsConfiguration;
 import org.apache.camel.component.azure.eventhubs.EventHubsEndpoint;
-import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 

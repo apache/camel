@@ -19,7 +19,7 @@ package org.apache.camel.component.azure.servicebus.client;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
-import org.apache.camel.component.azure.common.CredentialType;
+import org.apache.camel.component.azure.servicebus.CredentialType;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
