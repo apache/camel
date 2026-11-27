@@ -2,7 +2,7 @@
 :doctitle: Geocoder
 :shortname: geocoder
 :artifactid: camel-geocoder
-:description: Find geocodes (latitude and longitude) for a given address or the other way round.
+:description: Look up the latitude and longitude of an address, or the address of a latitude and longitude, with Google or a Nominatim server.
 :since: 2.12
 :supportlevel: Stable
 :tabs-sync-option:

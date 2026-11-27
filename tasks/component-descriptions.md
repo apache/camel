@@ -180,7 +180,7 @@ or removes its row.
 | camel-fop | fop |  |
 | camel-freemarker | freemarker |  |
 | camel-ftp | ftp, ftps, sftp |  |
-| camel-geocoder | geocoder |  |
+| camel-geocoder | geocoder | yes |
 | camel-git | git |  |
 | camel-github2 | github2 |  |
 | camel-google-bigquery | google-bigquery, google-bigquery-sql |  |

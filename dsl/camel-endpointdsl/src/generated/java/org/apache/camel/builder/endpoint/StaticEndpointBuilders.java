@@ -6467,8 +6467,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Geocoder (camel-geocoder)
-     * Find geocodes (latitude and longitude) for a given address or the other
-     * way round.
+     * Look up the latitude and longitude of an address, or the address of a
+     * latitude and longitude, with Google or a Nominatim server.
      * 
      * Category: api,search
      * Since: 2.12
@@ -6477,10 +6477,17 @@ public class StaticEndpointBuilders {
      * Syntax: <code>geocoder:address:latlng</code>
      * 
      * Path parameter: address
-     * The geo address which should be prefixed with address:
+     * The address to look up the latitude and longitude of, such as Paris,
+     * France, written after address: in the URI. With Google, the address
+     * current looks up the location of the IP address that the request comes
+     * from. The CamelGeoCoderAddress header replaces this option.
      * 
      * Path parameter: latlng
-     * The geo latitude and longitude which should be prefixed with latlng:
+     * The latitude and longitude to look up the address of, written after
+     * latlng: in the URI as two decimal numbers separated by a comma, such as
+     * 48.8566,2.3522. The CamelGeoCoderLatlng header replaces this option. A
+     * latitude and longitude, from this option or the header, takes precedence
+     * over an address.
      * 
      * @param path address:latlng
      * @return the dsl builder
@@ -6490,8 +6497,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Geocoder (camel-geocoder)
-     * Find geocodes (latitude and longitude) for a given address or the other
-     * way round.
+     * Look up the latitude and longitude of an address, or the address of a
+     * latitude and longitude, with Google or a Nominatim server.
      * 
      * Category: api,search
      * Since: 2.12
@@ -6500,10 +6507,17 @@ public class StaticEndpointBuilders {
      * Syntax: <code>geocoder:address:latlng</code>
      * 
      * Path parameter: address
-     * The geo address which should be prefixed with address:
+     * The address to look up the latitude and longitude of, such as Paris,
+     * France, written after address: in the URI. With Google, the address
+     * current looks up the location of the IP address that the request comes
+     * from. The CamelGeoCoderAddress header replaces this option.
      * 
      * Path parameter: latlng
-     * The geo latitude and longitude which should be prefixed with latlng:
+     * The latitude and longitude to look up the address of, written after
+     * latlng: in the URI as two decimal numbers separated by a comma, such as
+     * 48.8566,2.3522. The CamelGeoCoderLatlng header replaces this option. A
+     * latitude and longitude, from this option or the header, takes precedence
+     * over an address.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
