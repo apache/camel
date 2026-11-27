@@ -28,7 +28,10 @@ import org.apache.camel.support.DefaultComponent;
 @Component("influxdb2")
 public class InfluxDb2Component extends DefaultComponent {
 
-    @Metadata(autowired = true)
+    @Metadata(autowired = true,
+              description = "The com.influxdb.client.InfluxDBClient that all endpoints use. When it is set or autowired,"
+                            + " the connectionBean of an endpoint is not looked up in the registry. The component does not"
+                            + " close this client.")
     private InfluxDBClient influxDBClient;
 
     public InfluxDb2Component() {
@@ -51,11 +54,6 @@ public class InfluxDb2Component extends DefaultComponent {
         return influxDBClient;
     }
 
-    /**
-     * The shared Influx DB to use for all endpoints
-     *
-     * @param influxDBClient
-     */
     public void setInfluxDBClient(InfluxDBClient influxDBClient) {
         this.influxDBClient = influxDBClient;
     }

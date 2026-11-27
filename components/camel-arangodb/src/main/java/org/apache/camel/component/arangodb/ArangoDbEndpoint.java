@@ -37,7 +37,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
+ * Store, find, update and delete documents, vertices and edges in an ArangoDB database, and run AQL queries.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database",
              category = { Category.DATABASE }, producerOnly = true, headersClass = ArangoDbConstants.class)
@@ -112,14 +112,21 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " a query that returns nothing; and true for a delete of a vertex or edge"))
 public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath(description = "database name")
+    @UriPath(description = "The name of the ArangoDB database that the producer works on. The producer does not create the"
+                           + " database.")
     @Metadata(required = true)
     private String database;
     @UriParam
     private ArangoDbConfiguration configuration;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom com.arangodb.ArangoDB client. When it is set, or set on the component, the host,"
+                            + " port, user, password and vertx options are not used. The endpoint shuts the client down when"
+                            + " it shuts down.")
     private ArangoDB arangoDB;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom io.vertx.core.Vertx instance for the HTTP connections of the ArangoDB client that"
+                            + " the endpoint creates. If not set, the ArangoDB driver creates its own Vert.x instance. Not used"
+                            + " when the arangoDB option sets a client.")
     private Vertx vertx;
 
     public ArangoDbEndpoint() {
@@ -166,9 +173,6 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
         return arangoDB;
     }
 
-    /**
-     * To use an existing ArangDB client.
-     */
     public void setArangoDB(ArangoDB arangoDB) {
         this.arangoDB = arangoDB;
     }
@@ -177,9 +181,6 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
         return vertx;
     }
 
-    /**
-     * To use an existing Vertx instance in the ArangoDB client.
-     */
     public void setVertx(Vertx vertx) {
         this.vertx = vertx;
     }

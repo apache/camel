@@ -20,29 +20,43 @@ import org.apache.camel.spi.Metadata;
 
 public interface ElasticsearchConstants {
 
-    @Metadata(description = "The operation to perform",
+    @Metadata(description = "The operation that the producer performs. It replaces the operation option. A request of the"
+                            + " Elasticsearch Java API Client in the body sets the operation by its type and replaces both.",
               javaType = "org.apache.camel.component.es.ElasticsearchOperation")
     String PARAM_OPERATION = "CamelElasticsearchOperation";
-    @Metadata(description = "The id of the indexed document.", javaType = "String")
+    @Metadata(description = "The id of the document for Index and Update. If it is not set for Index, Elasticsearch"
+                            + " generates the id.",
+              javaType = "String")
     String PARAM_INDEX_ID = "CamelElasticsearchIndexId";
-    @Metadata(description = "The name of the index to act against", javaType = "String")
+    @Metadata(description = "The name of the index that the operation acts on. It replaces the indexName option.",
+              javaType = "String")
     String PARAM_INDEX_NAME = "CamelElasticsearchIndexName";
-    @Metadata(description = "The full qualified name of the class of the document to unmarshall", javaType = "Class",
-              defaultValue = "ObjectNode")
+    @Metadata(description = "The class to which the documents in the responses of GetById, MultiGet, Search and MultiSearch"
+                            + " are deserialized. It replaces the documentClass option.",
+              javaType = "Class", defaultValue = "ObjectNode")
     String PARAM_DOCUMENT_CLASS = "CamelElasticsearchDocumentClass";
-    @Metadata(description = "The index creation waits for the write consistency number of shards to be available",
+    @Metadata(description = "The number of active shard copies that Index and Update wait for before they write. It replaces"
+                            + " the waitForActiveShards option.",
               javaType = "Integer")
     String PARAM_WAIT_FOR_ACTIVE_SHARDS = "CamelElasticsearchWaitForActiveShards";
-    @Metadata(description = "Time in ms during which Elasticsearch will keep the search context alive", javaType = "Integer")
+    @Metadata(description = "The time in milliseconds that Elasticsearch keeps the search context of a scroll alive between"
+                            + " two scroll requests. It replaces the scrollKeepAliveMs option.",
+              javaType = "Integer")
     String PARAM_SCROLL_KEEP_ALIVE_MS = "CamelElasticsearchScrollKeepAliveMs";
-    @Metadata(description = "Set to true to enable scroll usage", javaType = "Boolean")
+    @Metadata(description = "Whether Search reads all the hits with the scroll API. It replaces the useScroll option.",
+              javaType = "Boolean")
     String PARAM_SCROLL = "CamelElasticsearchUseScroll";
-    @Metadata(description = "The size of the response.", javaType = "Integer")
+    @Metadata(description = "The maximum number of hits that Search returns when the body is JSON text or a Map. It replaces"
+                            + " the size option.",
+              javaType = "Integer")
     String PARAM_SIZE = "CamelElasticsearchSize";
-    @Metadata(description = "The starting index of the response.", javaType = "Integer")
+    @Metadata(description = "The offset of the first hit that Search returns when the body is JSON text or a Map. It replaces"
+                            + " the from option.",
+              javaType = "Integer")
     String PARAM_FROM = "CamelElasticsearchFrom";
-    @Metadata(description = "Indicates whether the body of the message contains only documents.", javaType = "Boolean",
-              defaultValue = "false")
+    @Metadata(description = "Whether the body of Update is only the partial document to merge into the document. It replaces"
+                            + " the enableDocumentOnlyMode option.",
+              javaType = "Boolean", defaultValue = "false")
     String PARAM_DOCUMENT_MODE = "CamelElasticsearchEnableDocumentOnlyMode";
 
     String PROPERTY_SCROLL_ES_QUERY_COUNT = "CamelElasticsearchScrollQueryCount";

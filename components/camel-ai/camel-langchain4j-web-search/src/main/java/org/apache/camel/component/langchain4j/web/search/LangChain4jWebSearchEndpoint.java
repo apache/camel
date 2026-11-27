@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * LangChain4j Web Search Engine
+ * Search the web with a LangChain4j web search engine, such as Tavily or Google Custom Search.
  */
 @UriEndpoint(firstVersion = "4.8.0", scheme = LangChain4jWebSearchEngine.SCHEME, title = "LangChain4j Web Search",
              syntax = "langchain4j-web-search:searchId", producerOnly = true, category = {
@@ -53,7 +53,7 @@ import org.apache.camel.support.DefaultEndpoint;
 public class LangChain4jWebSearchEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
-    @UriPath(description = "The id")
+    @UriPath(description = "A name that identifies the endpoint. The producer does not use it.")
     private final String searchId;
 
     @UriParam

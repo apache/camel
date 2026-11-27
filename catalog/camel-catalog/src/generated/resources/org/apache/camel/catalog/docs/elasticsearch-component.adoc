@@ -2,7 +2,7 @@
 :doctitle: Elasticsearch
 :shortname: elasticsearch
 :artifactid: camel-elasticsearch
-:description: Send requests to Elasticsearch via Java Client API.
+:description: Index, update, get, search and delete documents and indices in Elasticsearch with the Java API Client.
 :since: 3.19
 :supportlevel: Stable
 :tabs-sync-option:
