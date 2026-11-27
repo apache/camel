@@ -18,39 +18,51 @@ package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
 
+import org.apache.camel.component.pqc.BouncyCastlePqcCompatibility;
+import org.apache.camel.component.pqc.BouncyCastleSupport;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.jcajce.spec.XMSSMTParameterSpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 public class PQCDefaultXMSSMTMaterial {
-    public static final KeyPair keyPair;
-    public static final Signature signer;
+    private static KeyPair keyPair;
+    private static Signature signer;
 
-    static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
+    private static boolean initialized;
+
+    /** Initializes the default key material on first use and preserves the original failure as an exception. */
+    public static synchronized void initialize() throws Exception {
+        if (initialized) {
+            return;
         }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastlePQCProvider());
-        }
+        BouncyCastleSupport.ensureProviders();
         KeyPairGenerator generator;
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
             signer = Signature.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
-                    PQCSignatureAlgorithms.XMSSMT.getBcProvider());
+                    PQCSignatureAlgorithms.XMSSMT.getBcProvider("Signature"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        initialized = true;
     }
 
     protected static KeyPairGenerator prepareKeyPair()
-            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+            throws GeneralSecurityException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSSMT.getBcProvider());
-        kpGen.initialize(XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256, SecureRandomHelper.getSecureRandom());
+                PQCSignatureAlgorithms.XMSSMT.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(BouncyCastlePqcCompatibility.xmssMtParameterSpec(20, 2, "SHA256"),
+                SecureRandomHelper.getSecureRandom());
         return kpGen;
+    }
+
+    public static KeyPair getKeyPair() throws Exception {
+        initialize();
+        return keyPair;
+    }
+
+    public static Signature getSigner() throws Exception {
+        initialize();
+        return signer;
     }
 }

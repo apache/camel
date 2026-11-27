@@ -34,9 +34,8 @@ public class PQCInputValidationTest extends CamelTestSupport {
 
     private final List<PQCEndpoint> createdEndpoints = new ArrayList<>();
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public PQCInputValidationTest() {
+        testConfiguration().withUseRouteBuilder(false);
     }
 
     @AfterEach

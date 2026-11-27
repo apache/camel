@@ -69,7 +69,7 @@ class PQCKemConcurrentExtractionIsolationTest extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
         kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
         keyPair = kpg.generateKeyPair();
         registry.bind("kemKeyPair", keyPair);
@@ -95,7 +95,7 @@ class PQCKemConcurrentExtractionIsolationTest extends CamelTestSupport {
             for (int t = 0; t < THREADS; t++) {
                 work.add(() -> {
                     KeyGenerator sender = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                            PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                            PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyGenerator"));
                     int matching = 0;
                     for (int i = 0; i < MESSAGES_PER_THREAD; i++) {
                         sender.init(new KEMGenerateSpec(keyPair.getPublic(), "AES", 256), new SecureRandom());

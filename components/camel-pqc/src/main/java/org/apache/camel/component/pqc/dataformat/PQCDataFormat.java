@@ -21,7 +21,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Provider;
+import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Set;
 
@@ -34,6 +39,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.pqc.BouncyCastleKemSupport;
+import org.apache.camel.component.pqc.BouncyCastleSupport;
 import org.apache.camel.component.pqc.PQCKemLocks;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
@@ -46,10 +53,6 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
-import org.bouncycastle.jcajce.spec.KEMExtractSpec;
-import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,19 +179,14 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
         try {
             // Generate KEM encapsulation and the fresh shared secret
-            KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            SecretKeyWithEncapsulation secretKey;
-            synchronized (PQCKemLocks.lockFor(kg, kp.getPublic())) {
-                kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength),
-                        SecureRandomHelper.getSecureRandom());
-                secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
-            }
-            byte[] encapsulation = secretKey.getEncapsulation();
+            BouncyCastleKemSupport.EncapsulationResult encapsulated = encapsulateKem(
+                    kemAlg, kp.getPublic(), symAlg);
+            byte[] encapsulation = encapsulated.encapsulation();
 
             // Encrypt the payload with an authenticated cipher using a fresh random nonce
             byte[] nonce = new byte[NONCE_LENGTH_BYTES];
             SecureRandomHelper.getSecureRandom().nextBytes(nonce);
-            Cipher cipher = initAeadCipher(Cipher.ENCRYPT_MODE, symAlg, secretKey.getEncoded(), nonce);
+            Cipher cipher = initAeadCipher(Cipher.ENCRYPT_MODE, symAlg, encapsulated.secretKey().getEncoded(), nonce);
             byte[] ciphertext = cipher.doFinal(plaintext);
 
             // Write encapsulation length, encapsulation, nonce and the authenticated ciphertext
@@ -238,13 +236,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
             byte[] ciphertext = dataIn.readAllBytes();
 
             // Extract the shared secret from the encapsulation
-            KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            SecretKeyWithEncapsulation secretKey;
-            synchronized (PQCKemLocks.lockFor(kg, kp.getPrivate())) {
-                kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength),
-                        SecureRandomHelper.getSecureRandom());
-                secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
-            }
+            SecretKey secretKey = decapsulateKem(kemAlg, kp.getPrivate(), encapsulation, symAlg);
 
             // Decrypt. doFinal() verifies the authentication tag and throws on tampering; this must not be done with
             // CipherInputStream, which can silently swallow an AEAD tag failure and return truncated plaintext.
@@ -276,8 +268,9 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         }
 
         if (keyEncapsulationAlgorithm != null && keyGenerator == null) {
-            // Fail fast on an unknown algorithm or provider. The instance is not kept, see getOrCreateKeyGenerator()
-            createKeyGenerator(keyEncapsulationAlgorithm);
+            // Validate the selected standard KEM or legacy KeyGenerator service without requiring the latter
+            // when the provider implements only the Java 21 KEM API.
+            resolveKemProvider(keyEncapsulationAlgorithm);
         }
     }
 
@@ -297,7 +290,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         AlgorithmParameterSpec spec
                 = chacha ? new IvParameterSpec(nonce) : new GCMParameterSpec(GCM_TAG_LENGTH_BITS, nonce);
 
-        String cipherProvider = provider != null ? provider : BouncyCastleProvider.PROVIDER_NAME;
+        String cipherProvider = provider != null ? provider : BouncyCastleSupport.getProviderName("Cipher", transformation);
         LOG.debug("Using AEAD transformation {} (provider {})", transformation, cipherProvider);
 
         Cipher cipher = Cipher.getInstance(transformation, cipherProvider);
@@ -347,28 +340,67 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Returns the KeyGenerator for one marshal or unmarshal operation. A KEM {@code KeyGenerator} keeps the spec passed
-     * to {@code init()} until {@code generateKey()} reads it and is not thread-safe, so a new one is created for every
-     * operation. A configured KeyGenerator is returned as-is and shared by all operations, which serialize on it.
+     * Runs a KEM encapsulation. An explicitly supplied KeyGenerator remains supported; otherwise the configured
+     * provider is resolved for the standard Java 21 KEM service first and the legacy KeyGenerator service second.
      */
-    private KeyGenerator getOrCreateKeyGenerator(String kemAlgorithm) throws Exception {
+    private BouncyCastleKemSupport.EncapsulationResult encapsulateKem(
+            String kemAlgorithm, java.security.PublicKey publicKey, String symmetricAlgorithm)
+            throws Exception {
         if (keyGenerator != null) {
-            return keyGenerator;
+            synchronized (PQCKemLocks.lockFor(keyGenerator, publicKey)) {
+                return BouncyCastleKemSupport.encapsulate(
+                        keyGenerator, publicKey, symmetricAlgorithm, symmetricKeyLength, SecureRandomHelper.getSecureRandom());
+            }
         }
-        return createKeyGenerator(kemAlgorithm);
+        PQCKeyEncapsulationAlgorithms algorithm = PQCKeyEncapsulationAlgorithms.valueOf(kemAlgorithm);
+        return BouncyCastleKemSupport.encapsulate(
+                algorithm.getAlgorithm(), resolveKemProvider(kemAlgorithm), publicKey,
+                symmetricAlgorithm, symmetricKeyLength, SecureRandomHelper.getSecureRandom());
     }
 
-    private KeyGenerator createKeyGenerator(String kemAlgorithm) throws Exception {
-        PQCKeyEncapsulationAlgorithms kemEnum = PQCKeyEncapsulationAlgorithms.valueOf(kemAlgorithm);
-        String algorithm = kemEnum.getAlgorithm();
-        String bcProvider = kemEnum.getBcProvider();
+    /** Runs a KEM decapsulation, preserving the configured custom KeyGenerator path. */
+    private SecretKey decapsulateKem(
+            String kemAlgorithm, java.security.PrivateKey privateKey, byte[] encapsulation, String symmetricAlgorithm)
+            throws Exception {
+        if (keyGenerator != null) {
+            synchronized (PQCKemLocks.lockFor(keyGenerator, privateKey)) {
+                return BouncyCastleKemSupport.decapsulate(
+                        keyGenerator, privateKey, encapsulation, symmetricAlgorithm,
+                        symmetricKeyLength, SecureRandomHelper.getSecureRandom());
+            }
+        }
+        PQCKeyEncapsulationAlgorithms algorithm = PQCKeyEncapsulationAlgorithms.valueOf(kemAlgorithm);
+        return BouncyCastleKemSupport.decapsulate(
+                algorithm.getAlgorithm(), resolveKemProvider(kemAlgorithm), privateKey, encapsulation,
+                symmetricAlgorithm, symmetricKeyLength, SecureRandomHelper.getSecureRandom());
+    }
 
+    /**
+     * Resolves the configured provider without assuming that it also implements KeyGenerator. A provider with a
+     * standard KEM service is sufficient; BIKE/SABER and older providers fall back to KeyGenerator.
+     */
+    private Provider resolveKemProvider(String kemAlgorithm) throws GeneralSecurityException {
+        PQCKeyEncapsulationAlgorithms algorithm = PQCKeyEncapsulationAlgorithms.valueOf(kemAlgorithm);
+        String jceAlgorithm = algorithm.getAlgorithm();
         if (provider != null) {
-            return KeyGenerator.getInstance(algorithm, provider);
-        } else if (bcProvider != null) {
-            return KeyGenerator.getInstance(algorithm, bcProvider);
-        } else {
-            return KeyGenerator.getInstance(algorithm);
+            Provider selected = Security.getProvider(provider);
+            if (selected == null) {
+                throw new NoSuchProviderException("Configured PQC provider '" + provider + "' is not installed");
+            }
+            if (selected.getService("KEM", jceAlgorithm) == null
+                    && selected.getService("KeyGenerator", jceAlgorithm) == null) {
+                throw new NoSuchAlgorithmException(
+                        "Configured provider '" + provider
+                                                   + "' advertises neither KEM nor KeyGenerator for '" + jceAlgorithm + "'");
+            }
+            return selected;
+        }
+
+        BouncyCastleSupport.ensureProviders();
+        try {
+            return BouncyCastleSupport.getProvider("KEM", jceAlgorithm);
+        } catch (NoSuchAlgorithmException noStandardKem) {
+            return BouncyCastleSupport.getProvider("KeyGenerator", jceAlgorithm);
         }
     }
 
@@ -428,7 +460,8 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Sets the JCE security provider to use. If not set, will use the provider from the KEM algorithm enum.
+     * Sets the JCE security provider to use for both KEM and symmetric-cipher operations. For KEM, the provider may
+     * expose the standard Java 21 KEM service or the legacy KeyGenerator service.
      */
     public void setProvider(String provider) {
         this.provider = provider;
@@ -439,8 +472,10 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Sets a custom KeyGenerator for KEM operations. If not set, a new one is created for every operation based on the
-     * KEM algorithm. A configured KeyGenerator is shared by all operations, which then run one at a time on it.
+     * Sets a custom KeyGenerator for KEM operations. When configured, this exact generator is always used instead of
+     * automatic Java 21 KEM service selection. Its init()/generateKey() sequence is serialized when shared by
+     * concurrent exchanges. When no generator is configured, the data format selects the standard KEM service when
+     * available and falls back to the provider's legacy KeyGenerator service otherwise.
      */
     public void setKeyGenerator(KeyGenerator keyGenerator) {
         this.keyGenerator = keyGenerator;

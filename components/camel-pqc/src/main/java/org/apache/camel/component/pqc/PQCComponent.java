@@ -18,7 +18,6 @@ package org.apache.camel.component.pqc;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.Security;
 import java.security.Signature;
 import java.security.spec.AlgorithmParameterSpec;
 import java.time.Duration;
@@ -39,8 +38,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,48 +114,48 @@ public class PQCComponent extends HealthCheckComponent {
             if (ObjectHelper.isNotEmpty(configuration.getSignatureAlgorithm())) {
                 switch (configuration.getSignatureAlgorithm()) {
                     case "MLDSA":
-                        configuration.setSigner(PQCDefaultMLDSAMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultMLDSAMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultMLDSAMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultMLDSAMaterial.getKeyPair());
                         break;
                     case "SLHDSA":
-                        configuration.setSigner(PQCDefaultSLHDSAMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultSLHDSAMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultSLHDSAMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultSLHDSAMaterial.getKeyPair());
                         break;
                     case "LMS":
-                        configuration.setSigner(PQCDefaultLMSMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultLMSMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultLMSMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultLMSMaterial.getKeyPair());
                         break;
                     case "XMSS":
-                        configuration.setSigner(PQCDefaultXMSSMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultXMSSMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultXMSSMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultXMSSMaterial.getKeyPair());
                         break;
                     case "XMSSMT":
-                        configuration.setSigner(PQCDefaultXMSSMTMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultXMSSMTMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultXMSSMTMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultXMSSMTMaterial.getKeyPair());
                         break;
                     case "HSS":
-                        configuration.setSigner(PQCDefaultHSSMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultHSSMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultHSSMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultHSSMaterial.getKeyPair());
                         break;
                     case "FALCON":
-                        configuration.setSigner(PQCDefaultFalconMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultFalconMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultFalconMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultFalconMaterial.getKeyPair());
                         break;
                     case "SNOVA":
-                        configuration.setSigner(PQCDefaultSNOVAMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultSNOVAMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultSNOVAMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultSNOVAMaterial.getKeyPair());
                         break;
                     case "MAYO":
-                        configuration.setSigner(PQCDefaultMAYOMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultMAYOMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultMAYOMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultMAYOMaterial.getKeyPair());
                         break;
                     case "DILITHIUM":
-                        configuration.setSigner(PQCDefaultDILITHIUMMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultDILITHIUMMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultDILITHIUMMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultDILITHIUMMaterial.getKeyPair());
                         break;
                     case "SPHINCSPLUS":
-                        configuration.setSigner(PQCDefaultSPHINCSPLUSMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultSPHINCSPLUSMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultSPHINCSPLUSMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultSPHINCSPLUSMaterial.getKeyPair());
                         break;
                     default:
                         break;
@@ -171,44 +168,44 @@ public class PQCComponent extends HealthCheckComponent {
             if (ObjectHelper.isNotEmpty(configuration.getKeyEncapsulationAlgorithm())) {
                 switch (configuration.getKeyEncapsulationAlgorithm()) {
                     case "MLKEM":
-                        configuration.setKeyGenerator(PQCDefaultMLKEMMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultMLKEMMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultMLKEMMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultMLKEMMaterial.getKeyPair());
                         break;
                     case "BIKE":
-                        configuration.setKeyGenerator(PQCDefaultBIKEMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultBIKEMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultBIKEMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultBIKEMaterial.getKeyPair());
                         break;
                     case "HQC":
-                        configuration.setKeyGenerator(PQCDefaultHQCMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultHQCMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultHQCMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultHQCMaterial.getKeyPair());
                         break;
                     case "CMCE":
-                        configuration.setKeyGenerator(PQCDefaultCMCEMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultCMCEMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultCMCEMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultCMCEMaterial.getKeyPair());
                         break;
                     case "SABER":
-                        configuration.setKeyGenerator(PQCDefaultSABERMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultSABERMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultSABERMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultSABERMaterial.getKeyPair());
                         break;
                     case "FRODO":
-                        configuration.setKeyGenerator(PQCDefaultFRODOMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultFRODOMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultFRODOMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultFRODOMaterial.getKeyPair());
                         break;
                     case "NTRU":
-                        configuration.setKeyGenerator(PQCDefaultNTRUMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultNTRUMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultNTRUMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultNTRUMaterial.getKeyPair());
                         break;
                     case "NTRULPRime":
-                        configuration.setKeyGenerator(PQCDefaultNTRULPRimeMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultNTRULPRimeMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultNTRULPRimeMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultNTRULPRimeMaterial.getKeyPair());
                         break;
                     case "SNTRUPrime":
-                        configuration.setKeyGenerator(PQCDefaultSNTRUPrimeMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultSNTRUPrimeMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultSNTRUPrimeMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultSNTRUPrimeMaterial.getKeyPair());
                         break;
                     case "KYBER":
-                        configuration.setKeyGenerator(PQCDefaultKYBERMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultKYBERMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultKYBERMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultKYBERMaterial.getKeyPair());
                         break;
                     default:
                         break;
@@ -246,12 +243,7 @@ public class PQCComponent extends HealthCheckComponent {
             return;
         }
 
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastlePQCProvider());
-        }
+        BouncyCastleSupport.ensureProviders();
 
         String spec = configuration.getParameterSpec();
         String signatureAlgorithm = configuration.getSignatureAlgorithm();
@@ -260,17 +252,18 @@ public class PQCComponent extends HealthCheckComponent {
         if (ObjectHelper.isNotEmpty(signatureAlgorithm)) {
             PQCSignatureAlgorithms algorithm = PQCSignatureAlgorithms.valueOf(signatureAlgorithm);
             configuration.setKeyPair(
-                    resolveKeyPair(signatureAlgorithm, spec, algorithm.getAlgorithm(), algorithm.getBcProvider()));
+                    resolveKeyPair(signatureAlgorithm, spec, algorithm.getAlgorithm(),
+                            algorithm.getBcProvider("KeyPairGenerator")));
             if (ObjectHelper.isEmpty(configuration.getSigner())) {
-                configuration.setSigner(Signature.getInstance(algorithm.getAlgorithm(), algorithm.getBcProvider()));
+                configuration.setSigner(Signature.getInstance(algorithm.getAlgorithm(), algorithm.getBcProvider("Signature")));
             }
         } else if (ObjectHelper.isNotEmpty(kemAlgorithm)) {
             PQCKeyEncapsulationAlgorithms algorithm = PQCKeyEncapsulationAlgorithms.valueOf(kemAlgorithm);
             configuration.setKeyPair(
-                    resolveKeyPair(kemAlgorithm, spec, algorithm.getAlgorithm(), algorithm.getBcProvider()));
+                    resolveKeyPair(kemAlgorithm, spec, algorithm.getAlgorithm(), algorithm.getBcProvider("KeyPairGenerator")));
             if (ObjectHelper.isEmpty(configuration.getKeyGenerator())) {
                 configuration.setKeyGenerator(
-                        KeyGenerator.getInstance(algorithm.getAlgorithm(), algorithm.getBcProvider()));
+                        KeyGenerator.getInstance(algorithm.getAlgorithm(), algorithm.getBcProvider("KeyGenerator")));
             }
         } else {
             throw new IllegalArgumentException(
@@ -312,7 +305,8 @@ public class PQCComponent extends HealthCheckComponent {
     /**
      * Auto-configures hybrid signature materials based on classical and PQC algorithm settings.
      */
-    private void configureHybridSignatureMaterial(PQCConfiguration configuration, boolean pqcMaterialSupplied) {
+    private void configureHybridSignatureMaterial(PQCConfiguration configuration, boolean pqcMaterialSupplied)
+            throws Exception {
         // Only configure if hybrid signature operations and classical algorithm is specified
         if (configuration.getOperation() != PQCOperations.hybridSign
                 && configuration.getOperation() != PQCOperations.hybridVerify) {
@@ -324,16 +318,16 @@ public class PQCComponent extends HealthCheckComponent {
             if (ObjectHelper.isNotEmpty(configuration.getSignatureAlgorithm())) {
                 switch (configuration.getSignatureAlgorithm()) {
                     case "MLDSA":
-                        configuration.setSigner(PQCDefaultMLDSAMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultMLDSAMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultMLDSAMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultMLDSAMaterial.getKeyPair());
                         break;
                     case "SLHDSA":
-                        configuration.setSigner(PQCDefaultSLHDSAMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultSLHDSAMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultSLHDSAMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultSLHDSAMaterial.getKeyPair());
                         break;
                     case "DILITHIUM":
-                        configuration.setSigner(PQCDefaultDILITHIUMMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultDILITHIUMMaterial.keyPair);
+                        configuration.setSigner(PQCDefaultDILITHIUMMaterial.getSigner());
+                        configuration.setKeyPair(PQCDefaultDILITHIUMMaterial.getKeyPair());
                         break;
                     default:
                         break;
@@ -350,18 +344,18 @@ public class PQCComponent extends HealthCheckComponent {
 
                 // Use pre-built hybrid materials for common combinations
                 if ("ECDSA_P256".equals(classicalAlg) && "MLDSA".equals(pqcAlg)) {
-                    configuration.setClassicalSigner(PQCDefaultECDSAMLDSAMaterial.classicalSigner);
-                    configuration.setClassicalKeyPair(PQCDefaultECDSAMLDSAMaterial.classicalKeyPair);
+                    configuration.setClassicalSigner(PQCDefaultECDSAMLDSAMaterial.getClassicalSigner());
+                    configuration.setClassicalKeyPair(PQCDefaultECDSAMLDSAMaterial.getClassicalKeyPair());
                     if (!pqcMaterialSupplied) {
-                        configuration.setSigner(PQCDefaultECDSAMLDSAMaterial.pqcSigner);
-                        configuration.setKeyPair(PQCDefaultECDSAMLDSAMaterial.pqcKeyPair);
+                        configuration.setSigner(PQCDefaultECDSAMLDSAMaterial.getPqcSigner());
+                        configuration.setKeyPair(PQCDefaultECDSAMLDSAMaterial.getPqcKeyPair());
                     }
                 } else if ("ED25519".equals(classicalAlg) && "MLDSA".equals(pqcAlg)) {
-                    configuration.setClassicalSigner(PQCDefaultEd25519MLDSAMaterial.classicalSigner);
-                    configuration.setClassicalKeyPair(PQCDefaultEd25519MLDSAMaterial.classicalKeyPair);
+                    configuration.setClassicalSigner(PQCDefaultEd25519MLDSAMaterial.getClassicalSigner());
+                    configuration.setClassicalKeyPair(PQCDefaultEd25519MLDSAMaterial.getClassicalKeyPair());
                     if (!pqcMaterialSupplied) {
-                        configuration.setSigner(PQCDefaultEd25519MLDSAMaterial.pqcSigner);
-                        configuration.setKeyPair(PQCDefaultEd25519MLDSAMaterial.pqcKeyPair);
+                        configuration.setSigner(PQCDefaultEd25519MLDSAMaterial.getPqcSigner());
+                        configuration.setKeyPair(PQCDefaultEd25519MLDSAMaterial.getPqcKeyPair());
                     }
                 }
             }
@@ -371,7 +365,7 @@ public class PQCComponent extends HealthCheckComponent {
     /**
      * Auto-configures hybrid KEM materials based on classical and PQC algorithm settings.
      */
-    private void configureHybridKEMMaterial(PQCConfiguration configuration, boolean pqcMaterialSupplied) {
+    private void configureHybridKEMMaterial(PQCConfiguration configuration, boolean pqcMaterialSupplied) throws Exception {
         // Only configure if hybrid KEM operations and classical algorithm is specified
         if (configuration.getOperation() != PQCOperations.hybridGenerateSecretKeyEncapsulation
                 && configuration.getOperation() != PQCOperations.hybridExtractSecretKeyEncapsulation
@@ -384,8 +378,8 @@ public class PQCComponent extends HealthCheckComponent {
             if (ObjectHelper.isNotEmpty(configuration.getKeyEncapsulationAlgorithm())) {
                 switch (configuration.getKeyEncapsulationAlgorithm()) {
                     case "MLKEM":
-                        configuration.setKeyGenerator(PQCDefaultMLKEMMaterial.keyGenerator);
-                        configuration.setKeyPair(PQCDefaultMLKEMMaterial.keyPair);
+                        configuration.setKeyGenerator(PQCDefaultMLKEMMaterial.getKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultMLKEMMaterial.getKeyPair());
                         break;
                     default:
                         break;
@@ -402,18 +396,18 @@ public class PQCComponent extends HealthCheckComponent {
 
                 // Use pre-built hybrid materials for common combinations
                 if ("X25519".equals(classicalAlg) && "MLKEM".equals(pqcAlg)) {
-                    configuration.setClassicalKeyAgreement(PQCDefaultX25519MLKEMMaterial.classicalKeyAgreement);
-                    configuration.setClassicalKeyPair(PQCDefaultX25519MLKEMMaterial.classicalKeyPair);
+                    configuration.setClassicalKeyAgreement(PQCDefaultX25519MLKEMMaterial.getClassicalKeyAgreement());
+                    configuration.setClassicalKeyPair(PQCDefaultX25519MLKEMMaterial.getClassicalKeyPair());
                     if (!pqcMaterialSupplied) {
-                        configuration.setKeyGenerator(PQCDefaultX25519MLKEMMaterial.pqcKeyGenerator);
-                        configuration.setKeyPair(PQCDefaultX25519MLKEMMaterial.pqcKeyPair);
+                        configuration.setKeyGenerator(PQCDefaultX25519MLKEMMaterial.getPqcKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultX25519MLKEMMaterial.getPqcKeyPair());
                     }
                 } else if ("ECDH_P256".equals(classicalAlg) && "MLKEM".equals(pqcAlg)) {
-                    configuration.setClassicalKeyAgreement(PQCDefaultECDHMLKEMMaterial.classicalKeyAgreement);
-                    configuration.setClassicalKeyPair(PQCDefaultECDHMLKEMMaterial.classicalKeyPair);
+                    configuration.setClassicalKeyAgreement(PQCDefaultECDHMLKEMMaterial.getClassicalKeyAgreement());
+                    configuration.setClassicalKeyPair(PQCDefaultECDHMLKEMMaterial.getClassicalKeyPair());
                     if (!pqcMaterialSupplied) {
-                        configuration.setKeyGenerator(PQCDefaultECDHMLKEMMaterial.pqcKeyGenerator);
-                        configuration.setKeyPair(PQCDefaultECDHMLKEMMaterial.pqcKeyPair);
+                        configuration.setKeyGenerator(PQCDefaultECDHMLKEMMaterial.getPqcKeyGenerator());
+                        configuration.setKeyPair(PQCDefaultECDHMLKEMMaterial.getPqcKeyPair());
                     }
                 }
             }

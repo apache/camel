@@ -66,7 +66,7 @@ class HybridKEMSharedEngineIsolationTest {
             PQCKeyEncapsulationAlgorithms kem)
             throws Exception {
         KeyPair classical = KeyPairGenerator.getInstance("X25519", "BC").generateKeyPair();
-        KeyPair pqc = KeyPairGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider()).generateKeyPair();
+        KeyPair pqc = KeyPairGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider("KeyPairGenerator")).generateKeyPair();
         InterleavingProbe probe = new InterleavingProbe();
 
         HybridKEM.HybridEncapsulationResult other = HybridKEM.encapsulate(classical.getPublic(), pqc.getPublic(),
@@ -104,6 +104,6 @@ class HybridKEMSharedEngineIsolationTest {
     }
 
     private static KeyGenerator newKeyGenerator(PQCKeyEncapsulationAlgorithms kem) throws Exception {
-        return KeyGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider());
+        return KeyGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider("KeyGenerator"));
     }
 }

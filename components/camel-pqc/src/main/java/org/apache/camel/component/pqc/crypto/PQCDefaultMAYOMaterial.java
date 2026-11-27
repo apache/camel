@@ -18,39 +18,50 @@ package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
 
+import org.apache.camel.component.pqc.BouncyCastleSupport;
+import org.apache.camel.component.pqc.PQCParameterSpecResolver;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
 
 public class PQCDefaultMAYOMaterial {
-    public static final KeyPair keyPair;
-    public static final Signature signer;
+    private static KeyPair keyPair;
+    private static Signature signer;
 
-    static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
+    private static boolean initialized;
+
+    /** Initializes the default key material on first use and preserves the original failure as an exception. */
+    public static synchronized void initialize() throws Exception {
+        if (initialized) {
+            return;
         }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastlePQCProvider());
-        }
+        BouncyCastleSupport.ensureProviders();
         KeyPairGenerator generator;
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
             signer = Signature.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm(),
-                    PQCSignatureAlgorithms.MAYO.getBcProvider());
+                    PQCSignatureAlgorithms.MAYO.getBcProvider("Signature"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        initialized = true;
     }
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm(),
-                PQCSignatureAlgorithms.MAYO.getBcProvider());
-        kpGen.initialize(MayoParameterSpec.mayo5, SecureRandomHelper.getSecureRandom());
+                PQCSignatureAlgorithms.MAYO.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(PQCParameterSpecResolver.resolve("MAYO", "mayo5"), SecureRandomHelper.getSecureRandom());
         return kpGen;
+    }
+
+    public static KeyPair getKeyPair() throws Exception {
+        initialize();
+        return keyPair;
+    }
+
+    public static Signature getSigner() throws Exception {
+        initialize();
+        return signer;
     }
 }

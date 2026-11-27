@@ -91,7 +91,7 @@ public class PQCNTRUGenerateEncapsulationAESTest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRU.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider("KeyPairGenerator"));
         kpg.initialize(NTRUParameterSpec.ntruhps2048509, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
         return kp;
@@ -101,7 +101,7 @@ public class PQCNTRUGenerateEncapsulationAESTest extends CamelTestSupport {
     public KeyGenerator setKeyGenerator()
             throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRU.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider("KeyGenerator"));
         return kg;
     }
 }

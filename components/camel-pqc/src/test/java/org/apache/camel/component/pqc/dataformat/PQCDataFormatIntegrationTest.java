@@ -168,7 +168,7 @@ public class PQCDataFormatIntegrationTest extends CamelTestSupport {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                 PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
         kpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
         return kpg.generateKeyPair();
     }

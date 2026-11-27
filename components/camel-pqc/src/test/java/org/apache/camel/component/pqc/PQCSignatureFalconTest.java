@@ -83,7 +83,7 @@ public class PQCSignatureFalconTest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm(),
-                PQCSignatureAlgorithms.FALCON.getBcProvider());
+                PQCSignatureAlgorithms.FALCON.getBcProvider("KeyPairGenerator"));
         kpGen.initialize(FalconParameterSpec.falcon_1024);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
@@ -92,7 +92,7 @@ public class PQCSignatureFalconTest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
         Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm(),
-                PQCSignatureAlgorithms.FALCON.getBcProvider());
+                PQCSignatureAlgorithms.FALCON.getBcProvider("Signature"));
         return mlDsa;
     }
 }

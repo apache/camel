@@ -18,11 +18,10 @@ package org.apache.camel.component.pqc.crypto.hybrid;
 
 import java.security.*;
 
+import org.apache.camel.component.pqc.BouncyCastleSupport;
+import org.apache.camel.component.pqc.PQCParameterSpecResolver;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 /**
  * Default hybrid signature material combining Ed25519 with ML-DSA-65. This combination provides fast classical
@@ -30,35 +29,36 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
  */
 public class PQCDefaultEd25519MLDSAMaterial {
 
-    public static final KeyPair classicalKeyPair;
-    public static final Signature classicalSigner;
-    public static final KeyPair pqcKeyPair;
-    public static final Signature pqcSigner;
-    public static final PQCHybridSignatureMaterial material;
+    private static KeyPair classicalKeyPair;
+    private static Signature classicalSigner;
+    private static KeyPair pqcKeyPair;
+    private static Signature pqcSigner;
+    private static PQCHybridSignatureMaterial material;
 
-    static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastlePQCProvider());
-        }
+    private static boolean initialized;
 
+    /** Initializes the default key material on first use and preserves the original failure as an exception. */
+    public static synchronized void initialize() throws Exception {
+        if (initialized) {
+            return;
+        }
+        BouncyCastleSupport.ensureProviders();
         try {
             // Generate Ed25519 key pair
-            KeyPairGenerator edKpg = KeyPairGenerator.getInstance("Ed25519", "BC");
+            KeyPairGenerator edKpg
+                    = KeyPairGenerator.getInstance("Ed25519", BouncyCastleSupport.getProvider("KeyPairGenerator", "Ed25519"));
             classicalKeyPair = edKpg.generateKeyPair();
-            classicalSigner = Signature.getInstance("Ed25519", "BC");
+            classicalSigner = Signature.getInstance("Ed25519", BouncyCastleSupport.getProvider("Signature", "Ed25519"));
 
             // Generate ML-DSA-65 key pair
             KeyPairGenerator mldsaKpg = KeyPairGenerator.getInstance(
                     PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
-                    PQCSignatureAlgorithms.MLDSA.getBcProvider());
-            mldsaKpg.initialize(MLDSAParameterSpec.ml_dsa_65, SecureRandomHelper.getSecureRandom());
+                    PQCSignatureAlgorithms.MLDSA.getBcProvider("KeyPairGenerator"));
+            mldsaKpg.initialize(PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-65"), SecureRandomHelper.getSecureRandom());
             pqcKeyPair = mldsaKpg.generateKeyPair();
             pqcSigner = Signature.getInstance(
                     PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
-                    PQCSignatureAlgorithms.MLDSA.getBcProvider());
+                    PQCSignatureAlgorithms.MLDSA.getBcProvider("Signature"));
 
             // Create the material container
             material = new PQCHybridSignatureMaterial(
@@ -72,9 +72,35 @@ public class PQCDefaultEd25519MLDSAMaterial {
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize hybrid Ed25519 + ML-DSA material", e);
         }
+        initialized = true;
     }
 
     private PQCDefaultEd25519MLDSAMaterial() {
         // Static access only
+    }
+
+    public static KeyPair getClassicalKeyPair() throws Exception {
+        initialize();
+        return classicalKeyPair;
+    }
+
+    public static Signature getClassicalSigner() throws Exception {
+        initialize();
+        return classicalSigner;
+    }
+
+    public static KeyPair getPqcKeyPair() throws Exception {
+        initialize();
+        return pqcKeyPair;
+    }
+
+    public static Signature getPqcSigner() throws Exception {
+        initialize();
+        return pqcSigner;
+    }
+
+    public static PQCHybridSignatureMaterial getMaterial() throws Exception {
+        initialize();
+        return material;
     }
 }

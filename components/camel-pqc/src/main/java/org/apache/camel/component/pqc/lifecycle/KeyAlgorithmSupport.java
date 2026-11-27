@@ -20,26 +20,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.spec.AlgorithmParameterSpec;
 
+import org.apache.camel.component.pqc.BouncyCastlePqcCompatibility;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCParameterSpecResolver;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.crypto.params.LMOtsParameters;
-import org.bouncycastle.crypto.params.LMSigParameters;
-import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
-import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
-import org.bouncycastle.jcajce.spec.LMSKeyGenParameterSpec;
-import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
-import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
-import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
-import org.bouncycastle.jcajce.spec.XMSSMTParameterSpec;
-import org.bouncycastle.jcajce.spec.XMSSParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,11 +84,15 @@ public final class KeyAlgorithmSupport {
      * The BouncyCastle provider for the given algorithm, or {@code null} when the algorithm is unknown.
      */
     public static String determineProvider(String algorithm) {
+        return determineProvider(algorithm, "KeyPairGenerator");
+    }
+
+    public static String determineProvider(String algorithm, String serviceType) {
         try {
-            return PQCSignatureAlgorithms.valueOf(algorithm).getBcProvider();
+            return PQCSignatureAlgorithms.valueOf(algorithm).getBcProvider(serviceType);
         } catch (IllegalArgumentException e1) {
             try {
-                return PQCKeyEncapsulationAlgorithms.valueOf(algorithm).getBcProvider();
+                return PQCKeyEncapsulationAlgorithms.valueOf(algorithm).getBcProvider(serviceType);
             } catch (IllegalArgumentException e2) {
                 return null;
             }
@@ -133,46 +122,47 @@ public final class KeyAlgorithmSupport {
             switch (algorithm) {
                 case "DILITHIUM":
                 case "MLDSA":
-                    return MLDSAParameterSpec.ml_dsa_44;
+                    return PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-44");
                 case "SLHDSA":
                 case "SPHINCSPLUS":
-                    return SLHDSAParameterSpec.slh_dsa_sha2_128s;
+                    return PQCParameterSpecResolver.resolve("SLHDSA", "SLH-DSA-SHA2-128S");
                 case "FALCON":
-                    return FalconParameterSpec.falcon_512;
+                    return PQCParameterSpecResolver.resolve("FALCON", "FALCON-512");
                 case "XMSS":
-                    return new XMSSParameterSpec(10, XMSSParameterSpec.SHA256);
+                    return BouncyCastlePqcCompatibility.xmssParameterSpec(10, "SHA256");
                 case "XMSSMT":
-                    return XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
+                    return BouncyCastlePqcCompatibility.xmssMtParameterSpec(20, 2, "SHA256");
                 case "LMS":
                 case "HSS":
-                    return new LMSKeyGenParameterSpec(
-                            LMSigParameters.lms_sha256_n32_h10,
-                            LMOtsParameters.sha256_n32_w4);
+                    return BouncyCastlePqcCompatibility.lmsKeyGenParameterSpec(
+                            "lms_sha256_n32_h10", "sha256_n32_w4");
                 case "MLKEM":
                 case "KYBER":
-                    return MLKEMParameterSpec.ml_kem_768;
+                    return PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-768");
                 case "NTRU":
-                    return NTRUParameterSpec.ntruhps2048509;
+                    return PQCParameterSpecResolver.resolve("NTRU", "ntruhps2048509");
                 case "NTRULPRime":
-                    return NTRULPRimeParameterSpec.ntrulpr653;
+                    return PQCParameterSpecResolver.resolve("NTRULPRime", "ntrulpr653");
                 case "SNTRUPrime":
-                    return SNTRUPrimeParameterSpec.sntrup761;
+                    return PQCParameterSpecResolver.resolve("SNTRUPrime", "sntrup761");
                 case "SABER":
-                    return SABERParameterSpec.lightsaberkem128r3;
+                    return PQCParameterSpecResolver.resolve("SABER", "lightsaberkem128r3");
                 case "FRODO":
-                    return FrodoKEMParameterSpec.frodokem976aes;
+                    return PQCParameterSpecResolver.resolve("FRODO", "frodokem976aes");
                 case "BIKE":
-                    return BIKEParameterSpec.bike128;
+                    return PQCParameterSpecResolver.resolve("BIKE", "bike128");
                 case "HQC":
-                    return HQCParameterSpec.hqc128;
+                    return PQCParameterSpecResolver.resolve("HQC", "hqc128");
                 case "CMCE":
-                    return CMCEParameterSpec.mceliece460896;
+                    return PQCParameterSpecResolver.resolve("CMCE", "mceliece460896");
                 default:
                     return null;
             }
         } catch (Exception e) {
-            LOG.warn("Failed to create default parameter spec for algorithm: {}", algorithm, e);
-            return null;
+            LOG.error("Failed to create default parameter spec for algorithm: {}", algorithm, e);
+            throw new IllegalStateException(
+                    "Failed to resolve the configured Bouncy Castle default parameter set for " + algorithm, e);
         }
     }
+
 }

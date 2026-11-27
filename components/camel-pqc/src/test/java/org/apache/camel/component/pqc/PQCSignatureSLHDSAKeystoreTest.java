@@ -102,7 +102,7 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException,
             CertificateException, IOException, OperatorCreationException, UnrecoverableKeyException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm(),
-                PQCSignatureAlgorithms.SLHDSA.getBcProvider());
+                PQCSignatureAlgorithms.SLHDSA.getBcProvider("KeyPairGenerator"));
         kpGen.initialize(SLHDSAParameterSpec.slh_dsa_shake_192s);
         KeyPair kp = kpGen.generateKeyPair();
 
@@ -124,7 +124,7 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
                 kp.getPublic());
 
         ContentSigner contentSigner = new JcaContentSignerBuilder(PQCSignatureAlgorithms.SLHDSA.getAlgorithm())
-                .setProvider(PQCSignatureAlgorithms.SLHDSA.getBcProvider())
+                .setProvider(PQCSignatureAlgorithms.SLHDSA.getBcProvider("Signature"))
                 .build(kp.getPrivate());
 
         X509Certificate certificate = new JcaX509CertificateConverter()
@@ -146,7 +146,7 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
         Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm(),
-                PQCSignatureAlgorithms.SLHDSA.getBcProvider());
+                PQCSignatureAlgorithms.SLHDSA.getBcProvider("Signature"));
         return mlDsa;
     }
 }

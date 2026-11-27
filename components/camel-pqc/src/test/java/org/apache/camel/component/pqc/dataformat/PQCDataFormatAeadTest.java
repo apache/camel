@@ -57,7 +57,7 @@ public class PQCDataFormatAeadTest extends CamelTestSupport {
     private KeyPair mlkemKeyPair() throws Exception {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                 PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
         kpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
         return kpg.generateKeyPair();
     }

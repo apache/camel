@@ -20,25 +20,25 @@ import java.security.*;
 
 import javax.crypto.KeyGenerator;
 
+import org.apache.camel.component.pqc.BouncyCastleSupport;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCParameterSpecResolver;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 
 public class PQCDefaultSABERMaterial {
 
-    public static final KeyPair keyPair;
-    public static final KeyGenerator keyGenerator;
-    public static final KeyPairGenerator generator;
+    private static KeyPair keyPair;
+    private static KeyGenerator keyGenerator;
+    private static KeyPairGenerator generator;
 
-    static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
+    private static boolean initialized;
+
+    /** Initializes the default key material on first use and preserves the original failure as an exception. */
+    public static synchronized void initialize() throws Exception {
+        if (initialized) {
+            return;
         }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastlePQCProvider());
-        }
+        BouncyCastleSupport.ensureProviders();
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
@@ -46,19 +46,35 @@ public class PQCDefaultSABERMaterial {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        initialized = true;
     }
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.SABER.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.SABER.getBcProvider());
-        kpg.initialize(SABERParameterSpec.lightsaberkem256r3, SecureRandomHelper.getSecureRandom());
+                PQCKeyEncapsulationAlgorithms.SABER.getBcProvider("KeyPairGenerator"));
+        kpg.initialize(PQCParameterSpecResolver.resolve("SABER", "lightsaberkem256r3"), SecureRandomHelper.getSecureRandom());
         return kpg;
     }
 
     protected static KeyGenerator prepareKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.SABER.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.SABER.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.SABER.getBcProvider("KeyGenerator"));
         return kg;
+    }
+
+    public static KeyPair getKeyPair() throws Exception {
+        initialize();
+        return keyPair;
+    }
+
+    public static KeyGenerator getKeyGenerator() throws Exception {
+        initialize();
+        return keyGenerator;
+    }
+
+    public static KeyPairGenerator getGenerator() throws Exception {
+        initialize();
+        return generator;
     }
 }

@@ -77,7 +77,7 @@ public class PQCSignatureSNOVATest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm(),
-                PQCSignatureAlgorithms.SNOVA.getBcProvider());
+                PQCSignatureAlgorithms.SNOVA.getBcProvider("KeyPairGenerator"));
         kpGen.initialize(SnovaParameterSpec.SNOVA_24_5_5_SHAKE_SSK);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
@@ -86,7 +86,7 @@ public class PQCSignatureSNOVATest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
         Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm(),
-                PQCSignatureAlgorithms.SNOVA.getBcProvider());
+                PQCSignatureAlgorithms.SNOVA.getBcProvider("Signature"));
         return mlDsa;
     }
 }

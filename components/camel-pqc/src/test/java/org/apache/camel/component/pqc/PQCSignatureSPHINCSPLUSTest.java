@@ -77,7 +77,7 @@ public class PQCSignatureSPHINCSPLUSTest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(),
-                PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider());
+                PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider("KeyPairGenerator"));
         kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s, new SecureRandom());
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
@@ -86,7 +86,7 @@ public class PQCSignatureSPHINCSPLUSTest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
         Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(),
-                PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider());
+                PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider("Signature"));
         return mlDsa;
     }
 }

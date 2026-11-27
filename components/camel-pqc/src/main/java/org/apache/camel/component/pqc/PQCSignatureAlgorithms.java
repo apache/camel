@@ -19,34 +19,43 @@ package org.apache.camel.component.pqc;
 public enum PQCSignatureAlgorithms {
 
     // Standardized and implemented
-    MLDSA("ML-DSA", "BC"),
-    SLHDSA("SLH-DSA", "BC"),
-    LMS("LMS", "BC"),
-    HSS("LMS", "BC"),
-    XMSS("XMSS", "BCPQC"),
-    XMSSMT("XMSSMT", "BCPQC"),
-    DILITHIUM("ML-DSA", "BC"),
+    MLDSA("ML-DSA"),
+    SLHDSA("SLH-DSA"),
+    LMS("LMS"),
+    HSS("LMS"),
+    XMSS("XMSS"),
+    XMSSMT("XMSSMT"),
+    DILITHIUM("ML-DSA"),
 
     // Experimental and non-standardized
-    FALCON("FALCON", "BCPQC"),
-    SNOVA("Snova", "BCPQC"),
-    MAYO("Mayo", "BCPQC"),
-    SPHINCSPLUS("SLH-DSA", "BC");
+    FALCON("FALCON"),
+    SNOVA("Snova"),
+    MAYO("Mayo"),
+    SPHINCSPLUS("SLH-DSA");
 
     private final String algorithm;
-    private final String bcProvider;
 
-    PQCSignatureAlgorithms(String algorithm, String bcProvider) {
+    PQCSignatureAlgorithms(String algorithm) {
         this.algorithm = algorithm;
-        this.bcProvider = bcProvider;
     }
 
     public String getAlgorithm() {
         return algorithm;
     }
 
+    /** Resolves the provider which implements the requested JCA service for this algorithm. */
+    public String getBcProvider(String serviceType) {
+        try {
+            return BouncyCastleSupport.getProviderName(serviceType, algorithm);
+        } catch (java.security.GeneralSecurityException e) {
+            throw new IllegalStateException("No Bouncy Castle provider for " + serviceType + "/" + algorithm, e);
+        }
+    }
+
+    /** @deprecated use {@link #getBcProvider(String)} with the JCA service being requested. */
+    @Deprecated
     public String getBcProvider() {
-        return bcProvider;
+        return getBcProvider("KeyPairGenerator");
     }
 
 }

@@ -57,6 +57,13 @@ class PQCParameterSpecResolverTest {
     }
 
     @Test
+    void testResolveMayoAndSnovaParameterSets() {
+        // These parameter specs are supported, but are not part of the older ML-DSA/SLH-DSA test group.
+        assertNotNull(PQCParameterSpecResolver.resolve("MAYO", "mayo5"));
+        assertNotNull(PQCParameterSpecResolver.resolve("SNOVA", "SNOVA_24_5_5_SHAKE_SSK"));
+    }
+
+    @Test
     void testNamesAreCaseInsensitiveAndAcceptUnderscoreAlias() {
         assertNotNull(PQCParameterSpecResolver.resolve("MLDSA", "ml-dsa-65"));
         // the underscore form matching the BouncyCastle constant names is accepted as an alias
@@ -79,12 +86,12 @@ class PQCParameterSpecResolverTest {
     @ParameterizedTest
     @CsvSource({
             "MLDSA, ML-DSA-65", "SLHDSA, SLH-DSA-SHA2-128S", "FALCON, FALCON-512", "DILITHIUM, ML-DSA-65",
-            "SPHINCSPLUS, SLH-DSA-SHA2-128S" })
+            "SPHINCSPLUS, SLH-DSA-SHA2-128S", "MAYO, mayo5", "SNOVA, SNOVA_24_5_5_SHAKE_SSK" })
     void testResolvedSignatureSpecInitializesTheAlgorithmKeyPairGenerator(String algorithm, String parameterSpec)
             throws Exception {
         PQCSignatureAlgorithms signatureAlgorithm = PQCSignatureAlgorithms.valueOf(algorithm);
         KeyPairGenerator generator = KeyPairGenerator.getInstance(signatureAlgorithm.getAlgorithm(),
-                signatureAlgorithm.getBcProvider());
+                signatureAlgorithm.getBcProvider("KeyPairGenerator"));
 
         assertDoesNotThrow(() -> generator.initialize(PQCParameterSpecResolver.resolve(algorithm, parameterSpec)));
     }
@@ -98,7 +105,7 @@ class PQCParameterSpecResolverTest {
             throws Exception {
         PQCKeyEncapsulationAlgorithms kemAlgorithm = PQCKeyEncapsulationAlgorithms.valueOf(algorithm);
         KeyPairGenerator generator = KeyPairGenerator.getInstance(kemAlgorithm.getAlgorithm(),
-                kemAlgorithm.getBcProvider());
+                kemAlgorithm.getBcProvider("KeyPairGenerator"));
 
         assertDoesNotThrow(() -> generator.initialize(PQCParameterSpecResolver.resolve(algorithm, parameterSpec)));
     }

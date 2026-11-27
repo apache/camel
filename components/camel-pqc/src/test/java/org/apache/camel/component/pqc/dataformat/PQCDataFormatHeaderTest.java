@@ -59,11 +59,11 @@ public class PQCDataFormatHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void setupResources() throws Exception {
         // Create key pair for testing
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                 PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
         kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
         keyPair = kpg.generateKeyPair();
     }

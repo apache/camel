@@ -77,7 +77,7 @@ public class PQCSignatureMAYOTest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm(),
-                PQCSignatureAlgorithms.MAYO.getBcProvider());
+                PQCSignatureAlgorithms.MAYO.getBcProvider("KeyPairGenerator"));
         kpGen.initialize(MayoParameterSpec.mayo5);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
@@ -86,7 +86,7 @@ public class PQCSignatureMAYOTest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
         Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm(),
-                PQCSignatureAlgorithms.MAYO.getBcProvider());
+                PQCSignatureAlgorithms.MAYO.getBcProvider("Signature"));
         return mlDsa;
     }
 }

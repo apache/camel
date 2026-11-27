@@ -91,7 +91,7 @@ public class PQCFRODOGenerateEncapsulationAESTest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.FRODO.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.FRODO.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.FRODO.getBcProvider("KeyPairGenerator"));
         kpg.initialize(FrodoKEMParameterSpec.frodokem976aes, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
         return kp;
@@ -101,7 +101,7 @@ public class PQCFRODOGenerateEncapsulationAESTest extends CamelTestSupport {
     public KeyGenerator setKeyGenerator()
             throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.FRODO.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.FRODO.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.FRODO.getBcProvider("KeyGenerator"));
         return kg;
     }
 }

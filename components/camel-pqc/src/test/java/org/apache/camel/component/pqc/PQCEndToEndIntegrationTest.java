@@ -77,7 +77,7 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     private KeyPair ntruKeyPair;
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void setupResources() throws Exception {
         // Ensure providers are registered BEFORE any key operations
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
@@ -404,12 +404,12 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws Exception {
         return Signature.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
-                PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
+                PQCSignatureAlgorithms.DILITHIUM.getBcProvider("Signature"));
     }
 
     @BindToRegistry("KeyGenerator")
     public KeyGenerator getKeyGenerator() throws Exception {
         return KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRU.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider("KeyGenerator"));
     }
 }

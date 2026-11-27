@@ -112,7 +112,7 @@ class PQCDataFormatConcurrencyTest extends CamelTestSupport {
         InterleavingProbe probe = new InterleavingProbe();
         PQCDataFormat dataFormat = startedDataFormat(keyPair, ProbedKeyGenerator.wrap(
                 KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                        PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider()),
+                        PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyGenerator")),
                 probe));
 
         probe.holdNextResult();
@@ -138,7 +138,7 @@ class PQCDataFormatConcurrencyTest extends CamelTestSupport {
 
     private static KeyPair newKeyPair() throws Exception {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
         kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
         return kpg.generateKeyPair();
     }

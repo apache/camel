@@ -16,24 +16,11 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.security.GeneralSecurityException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Set;
 
 import org.apache.camel.util.ObjectHelper;
-import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
-import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
-import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
-import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
-import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
 
 /**
  * Resolves the BouncyCastle {@link AlgorithmParameterSpec} for a PQC algorithm from the parameter-set name configured
@@ -122,45 +109,55 @@ public final class PQCParameterSpecResolver {
         switch (algorithm) {
             // Signature algorithms
             case "MLDSA":
-                return MLDSAParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("MLDSAParameterSpec", parameterSpec);
             case "SLHDSA":
-                return SLHDSAParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("SLHDSAParameterSpec", parameterSpec);
             case "FALCON":
-                return FalconParameterSpec.fromName(parameterSpec);
-            // DILITHIUM and SPHINCSPLUS generate ML-DSA and SLH-DSA keys (see PQCSignatureAlgorithms), so they take the
-            // standardized parameter sets
+                return namedParameterSpec("FalconParameterSpec", parameterSpec);
+            // DILITHIUM and SPHINCSPLUS are aliases for the standardized algorithms.
             case "DILITHIUM":
-                return MLDSAParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("MLDSAParameterSpec", parameterSpec);
             case "SPHINCSPLUS":
-                return SLHDSAParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("SLHDSAParameterSpec", parameterSpec);
             case "MAYO":
-                return MayoParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("MayoParameterSpec", parameterSpec);
             case "SNOVA":
-                return SnovaParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("SnovaParameterSpec", parameterSpec);
             // Key encapsulation algorithms
             case "MLKEM":
             case "KYBER":
-                // KYBER generates ML-KEM keys (see PQCKeyEncapsulationAlgorithms)
-                return MLKEMParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("MLKEMParameterSpec", parameterSpec);
             case "NTRU":
-                return NTRUParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("NTRUParameterSpec", parameterSpec);
             case "NTRULPRime":
-                return NTRULPRimeParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("NTRULPRimeParameterSpec", parameterSpec);
             case "SNTRUPrime":
-                return SNTRUPrimeParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("SNTRUPrimeParameterSpec", parameterSpec);
             case "BIKE":
-                return BIKEParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("BIKEParameterSpec", parameterSpec);
             case "HQC":
-                return HQCParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("HQCParameterSpec", parameterSpec);
             case "CMCE":
-                return CMCEParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("CMCEParameterSpec", parameterSpec);
             case "FRODO":
-                return FrodoKEMParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("FrodoKEMParameterSpec", parameterSpec);
             case "SABER":
-                return SABERParameterSpec.fromName(parameterSpec);
+                return namedParameterSpec("SABERParameterSpec", parameterSpec);
             default:
-                // Guarded by isSupported above
+                // Guarded by isSupported above.
                 throw new IllegalStateException("Unsupported algorithm: " + algorithm);
         }
     }
+
+    private static AlgorithmParameterSpec namedParameterSpec(String typeName, String parameterSpec) {
+        try {
+            return BouncyCastlePqcCompatibility.namedParameterSpec(typeName, parameterSpec);
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException(
+                    "Could not resolve Bouncy Castle parameter spec " + typeName + " for parameter set "
+                                            + parameterSpec,
+                    e);
+        }
+    }
+
 }

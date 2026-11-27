@@ -23,24 +23,18 @@ import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.XECPublicKey;
 import java.security.spec.NamedParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.camel.component.pqc.BouncyCastleKemSupport;
 import org.apache.camel.component.pqc.PQCAlgorithmId;
 import org.apache.camel.component.pqc.PQCKemLocks;
 import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.SHA384Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
-import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
-import org.bouncycastle.crypto.params.HKDFParameters;
-import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
-import org.bouncycastle.jcajce.spec.KEMExtractSpec;
-import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 
 /**
  * Utility class for hybrid Key Encapsulation Mechanism (KEM) operations combining classical key agreement (e.g., ECDH,
@@ -141,15 +135,13 @@ public final class HybridKEM {
         byte[] classicalEncapsulation = ephemeralKeyPair.getPublic().getEncoded();
 
         // Perform PQC KEM encapsulation
-        SecretKeyWithEncapsulation pqcResult;
+        BouncyCastleKemSupport.EncapsulationResult pqcResult;
         synchronized (PQCKemLocks.lockFor(pqcKemGenerator, pqcPublicKey)) {
-            pqcKemGenerator.init(
-                    new KEMGenerateSpec(pqcPublicKey, symmetricAlgorithm, keyLength),
-                    SecureRandomHelper.getSecureRandom());
-            pqcResult = (SecretKeyWithEncapsulation) pqcKemGenerator.generateKey();
+            pqcResult = BouncyCastleKemSupport.encapsulate(
+                    pqcKemGenerator, pqcPublicKey, symmetricAlgorithm, keyLength, SecureRandomHelper.getSecureRandom());
         }
-        byte[] pqcSharedSecret = pqcResult.getEncoded();
-        byte[] pqcEncapsulation = pqcResult.getEncapsulation();
+        byte[] pqcSharedSecret = pqcResult.secretKey().getEncoded();
+        byte[] pqcEncapsulation = pqcResult.encapsulation();
 
         // Combine shared secrets using HKDF
         byte[] combinedSecret = combineSecrets(
@@ -227,12 +219,11 @@ public final class HybridKEM {
         }
 
         // Perform PQC KEM extraction
-        SecretKeyWithEncapsulation pqcResult;
+        SecretKey pqcResult;
         synchronized (PQCKemLocks.lockFor(pqcKemGenerator, pqcPrivateKey)) {
-            pqcKemGenerator.init(
-                    new KEMExtractSpec(pqcPrivateKey, components.pqcEncapsulation(), symmetricAlgorithm, keyLength),
+            pqcResult = BouncyCastleKemSupport.decapsulate(
+                    pqcKemGenerator, pqcPrivateKey, components.pqcEncapsulation(), symmetricAlgorithm, keyLength,
                     SecureRandomHelper.getSecureRandom());
-            pqcResult = (SecretKeyWithEncapsulation) pqcKemGenerator.generateKey();
         }
         byte[] pqcSharedSecret = pqcResult.getEncoded();
 
@@ -433,35 +424,17 @@ public final class HybridKEM {
             String info)
             throws Exception {
 
-        // Concatenate the secrets as input key material
-        byte[] ikm = new byte[secret1.length + secret2.length];
-        System.arraycopy(secret1, 0, ikm, 0, secret1.length);
-        System.arraycopy(secret2, 0, ikm, secret1.length, secret2.length);
+        // Concatenate the secrets as input key material, preserving the existing hybrid KEM combiner.
+        byte[] inputKeyMaterial = new byte[secret1.length + secret2.length];
+        System.arraycopy(secret1, 0, inputKeyMaterial, 0, secret1.length);
+        System.arraycopy(secret2, 0, inputKeyMaterial, secret1.length, secret2.length);
 
-        // Use HKDF to derive the final key
-        HKDFBytesGenerator hkdf = createHKDF(kdfAlgorithm);
-        hkdf.init(new HKDFParameters(ikm, null, info.getBytes(StandardCharsets.UTF_8)));
-
-        byte[] output = new byte[outputLength];
-        hkdf.generateBytes(output, 0, outputLength);
-
-        return output;
-    }
-
-    /**
-     * Creates an HKDF instance based on the algorithm name.
-     */
-    private static HKDFBytesGenerator createHKDF(String algorithm) {
-        return switch (algorithm) {
-            case "HKDF-SHA256" -> new HKDFBytesGenerator(new SHA256Digest());
-            case "HKDF-SHA384" -> new HKDFBytesGenerator(new SHA384Digest());
-            case "HKDF-SHA512" -> new HKDFBytesGenerator(new SHA512Digest());
-            // Falling back to SHA-256 here would let a typo derive a different key on each side of the exchange,
-            // with both ends reporting success
-            default -> throw new IllegalArgumentException(
-                    "Unsupported hybrid KDF algorithm: " + algorithm
-                                                          + ". Supported values are HKDF-SHA256, HKDF-SHA384 and HKDF-SHA512");
-        };
+        try {
+            // The info bytes are deliberately unchanged: they are part of the established wire compatibility.
+            return Hkdf.derive(kdfAlgorithm, inputKeyMaterial, info.getBytes(StandardCharsets.UTF_8), outputLength);
+        } finally {
+            Arrays.fill(inputKeyMaterial, (byte) 0);
+        }
     }
 
     /**

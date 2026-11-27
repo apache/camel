@@ -52,7 +52,7 @@ KeyLifecycleManager keyManager = new FileBasedKeyLifecycleManager("/secure/keys"
 
 // Generate a new Dilithium key
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
-    MLDSAParameterSpec.ml_dsa_44);
+    PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-44"));
 
 // Use the key
 KeyMetadata metadata = keyManager.getKeyMetadata("app-signing-key");
@@ -166,7 +166,7 @@ public HashicorpVaultKeyLifecycleManager createKeyManager() {
 
 // Generate a Dilithium key stored in Vault
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
-    MLDSAParameterSpec.ml_dsa_44);
+    PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-44"));
 
 // Key is stored in Vault at: secret/data/pqc/keys/app-signing-key
 ----
@@ -471,7 +471,7 @@ public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
 
 // Generate a Dilithium key stored in AWS Secrets Manager
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
-    MLDSAParameterSpec.ml_dsa_44);
+    PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-44"));
 
 // Keys are stored as: pqc/keys/app-signing-key/private, /public, /metadata
 ----
@@ -836,7 +836,7 @@ KeyPair mldsaKey = keyManager.generateKeyPair("MLDSA", "mldsa-key");
 
 // Dilithium with specific parameter
 KeyPair dilithiumKey = keyManager.generateKeyPair("DILITHIUM", "dilithium-key",
-    MLDSAParameterSpec.ml_dsa_65);
+    PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-65"));
 
 // Falcon (uses default Falcon-512)
 KeyPair falconKey = keyManager.generateKeyPair("FALCON", "falcon-key");
@@ -1133,7 +1133,7 @@ public KeyLifecycleManager createKeyManager() throws IOException {
 public KeyPair createSigningKey() throws Exception {
     KeyLifecycleManager manager = createKeyManager();
     return manager.generateKeyPair("DILITHIUM", "route-signing-key",
-        MLDSAParameterSpec.ml_dsa_44);
+        PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-44"));
 }
 ----
 
@@ -1153,7 +1153,7 @@ camel:
       scriptLanguage: groovy
       script: |
         def manager = new org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager('/secure/keys')
-        def spec = org.bouncycastle.jcajce.spec.MLDSAParameterSpec.ml_dsa_44
+        def spec = org.apache.camel.component.pqc.PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-44")
         manager.generateKeyPair('DILITHIUM', 'route-signing-key', spec)
 ----
 ====
@@ -1381,7 +1381,7 @@ for (int i = 0; i < 100; i++) {
     executor.submit(() -> {
         try {
             keyManager.generateKeyPair("DILITHIUM", "key-" + index,
-                MLDSAParameterSpec.ml_dsa_44);
+                PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-44"));
         } catch (Exception e) {
             logger.error("Key generation failed", e);
         }

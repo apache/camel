@@ -143,18 +143,18 @@ public class KeyFormatConverter {
      * know.
      */
     private static String bouncyCastleProviderFor(String algorithm) {
-        String provider = KeyAlgorithmSupport.determineProvider(algorithm);
+        String provider = KeyAlgorithmSupport.determineProvider(algorithm, "KeyFactory");
         if (provider != null) {
             return provider;
         }
         for (PQCSignatureAlgorithms candidate : PQCSignatureAlgorithms.values()) {
             if (candidate.getAlgorithm().equalsIgnoreCase(algorithm)) {
-                return candidate.getBcProvider();
+                return candidate.getBcProvider("KeyFactory");
             }
         }
         for (PQCKeyEncapsulationAlgorithms candidate : PQCKeyEncapsulationAlgorithms.values()) {
             if (candidate.getAlgorithm().equalsIgnoreCase(algorithm)) {
-                return candidate.getBcProvider();
+                return candidate.getBcProvider("KeyFactory");
             }
         }
         return null;

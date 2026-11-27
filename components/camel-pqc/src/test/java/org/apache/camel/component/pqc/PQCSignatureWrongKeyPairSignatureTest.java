@@ -82,7 +82,7 @@ public class PQCSignatureWrongKeyPairSignatureTest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
-                PQCSignatureAlgorithms.SLHDSA.getBcProvider());
+                PQCSignatureAlgorithms.SLHDSA.getBcProvider("KeyPairGenerator"));
         kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;

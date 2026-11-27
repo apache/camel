@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.pqc;
 
-import java.security.InvalidAlgorithmParameterException;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +32,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.bouncycastle.jcajce.spec.XMSSParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
@@ -82,10 +81,10 @@ public class PQCSignatureXMSSTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    public KeyPair setKeyPair() throws GeneralSecurityException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.XMSS.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSS.getBcProvider());
-        kpGen.initialize(new XMSSParameterSpec(10, XMSSParameterSpec.SHA256), new SecureRandom());
+                PQCSignatureAlgorithms.XMSS.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(BouncyCastlePqcCompatibility.xmssParameterSpec(10, "SHA256"), new SecureRandom());
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
     }
@@ -93,7 +92,7 @@ public class PQCSignatureXMSSTest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
         Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.XMSS.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSS.getBcProvider());
+                PQCSignatureAlgorithms.XMSS.getBcProvider("Signature"));
         return mlDsa;
     }
 }

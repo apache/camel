@@ -67,7 +67,8 @@ class PQCDataFormatSharedEngineIsolationTest {
     @EnumSource(PQCKeyEncapsulationAlgorithms.class)
     void overlappingMarshalAndUnmarshalOnDifferentKeyGeneratorsKeepTheirOwnSecrets(PQCKeyEncapsulationAlgorithms kem)
             throws Exception {
-        KeyPair keyPair = KeyPairGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider()).generateKeyPair();
+        KeyPair keyPair
+                = KeyPairGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider("KeyPairGenerator")).generateKeyPair();
         InterleavingProbe probe = new InterleavingProbe();
         PQCDataFormat marshaller = startedDataFormat(kem, keyPair, probe);
         PQCDataFormat unmarshaller = startedDataFormat(kem, keyPair, probe);
@@ -101,7 +102,8 @@ class PQCDataFormatSharedEngineIsolationTest {
         PQCDataFormat dataFormat = new PQCDataFormat(kem.name(), "AES", keyPair);
         if (probe != null) {
             dataFormat.setKeyGenerator(
-                    ProbedKeyGenerator.wrap(KeyGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider()), probe));
+                    ProbedKeyGenerator.wrap(KeyGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider("KeyGenerator")),
+                            probe));
         }
         dataFormat.start();
         return dataFormat;
