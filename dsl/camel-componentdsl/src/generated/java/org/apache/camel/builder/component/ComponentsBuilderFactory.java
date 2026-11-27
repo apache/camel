@@ -3633,8 +3633,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Metrics (camel-metrics)
-     * Collect various metrics directly from Camel routes using the DropWizard
-     * metrics library.
+     * Update counters, gauges, histograms, meters and timers of a Dropwizard
+     * Metrics registry from Camel routes.
      * 
      * Category: monitoring
      * Since: 2.14
