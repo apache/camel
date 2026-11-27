@@ -12464,6 +12464,15 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-ssh - the user name and password headers need the allowUsernameAndPasswordFromHeaders option
+
+The producer took the user name from the `CamelSshUsername` header, and for password authentication the password from
+the `CamelSshPassword` header, over the `username` and `password` options of the endpoint. The header user was also used
+with public key authentication (`certResource` or `keyPairProvider`), so the configured key logged in as the user that
+the header named. The producer now logs in with the `username` and `password` of the endpoint, and ignores these
+headers, unless the endpoint sets the new `allowUsernameAndPasswordFromHeaders=true` option (disabled by default), or
+the component sets `camel.component.ssh.allowUsernameAndPasswordFromHeaders=true`. A route that relies on these headers
+must set this option.
 === camel-jgroups-raft, camel-jgroups - a WARN when the default channel configuration is used
 
 An endpoint without the `channelProperties` option now logs a WARN when it starts: `jgroups-raft` then uses the

@@ -40,12 +40,22 @@ public class SshConfiguration implements Cloneable {
     @UriPath(defaultValue = "" + DEFAULT_SSH_PORT, description = "The port of the SSH server.")
     private int port = DEFAULT_SSH_PORT;
     @UriParam(label = "security", security = "secret",
-              description = "The user name to log in with. The CamelSshUsername header replaces it for the producer.")
+              description = "The user name to log in with. With allowUsernameAndPasswordFromHeaders=true, the"
+                            + " CamelSshUsername header replaces it for the producer.")
     private String username;
     @UriParam(label = "security", security = "secret",
               description = "The password for password authentication, which is used only when neither certResource nor"
-                            + " keyPairProvider is set. The CamelSshPassword header replaces it for the producer.")
+                            + " keyPairProvider is set. With allowUsernameAndPasswordFromHeaders=true, the CamelSshPassword"
+                            + " header replaces it for the producer.")
     private String password;
+    @UriParam(label = "producer,security",
+              description = "Whether the producer may take the user name and the password from the CamelSshUsername and"
+                            + " CamelSshPassword headers, in place of the username and password options. The"
+                            + " CamelSshUsername header is then also used with public key authentication (certResource or"
+                            + " keyPairProvider): the configured key logs in as the user that the header names. This is"
+                            + " disabled by default, and the headers are then ignored. Enable it only when the route sets"
+                            + " these headers itself.")
+    private boolean allowUsernameAndPasswordFromHeaders;
     @UriParam(label = "consumer",
               description = "The command that the consumer runs on the SSH server at each poll. The consumer needs it, as"
                             + " each poll fails without it. Some servers need the command to end with a newline, which is"
@@ -233,6 +243,14 @@ public class SshConfiguration implements Cloneable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isAllowUsernameAndPasswordFromHeaders() {
+        return allowUsernameAndPasswordFromHeaders;
+    }
+
+    public void setAllowUsernameAndPasswordFromHeaders(boolean allowUsernameAndPasswordFromHeaders) {
+        this.allowUsernameAndPasswordFromHeaders = allowUsernameAndPasswordFromHeaders;
     }
 
     public String getPollCommand() {
