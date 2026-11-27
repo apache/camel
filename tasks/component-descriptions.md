@@ -251,7 +251,7 @@ or removes its row.
 | camel-knative | knative |  |
 | camel-kserve | kserve |  |
 | camel-kubernetes | kubernetes-config-maps, kubernetes-cronjob, kubernetes-custom-resources, kubernetes-deployments, kubernetes-events, kubernetes-hpa, kubernetes-job, kubernetes-namespaces, kubernetes-nodes, kubernetes-persistent-volumes, kubernetes-persistent-volumes-claims, kubernetes-pods, kubernetes-replication-controllers, kubernetes-resources-quota, kubernetes-secrets, kubernetes-service-accounts, kubernetes-services, openshift-build-configs, openshift-builds, openshift-deploymentconfigs |  |
-| camel-kudu | kudu |  |
+| camel-kudu | kudu | yes |
 | camel-langchain4j-agent | langchain4j-agent | yes |
 | camel-langchain4j-chat | langchain4j-chat |  |
 | camel-langchain4j-embeddings | langchain4j-embeddings |  |

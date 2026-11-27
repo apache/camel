@@ -3429,8 +3429,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Kudu (camel-kudu)
-     * Interact with Apache Kudu, a free and open source column-oriented data
-     * store of the Apache Hadoop ecosystem.
+     * Insert, update, upsert, delete and scan rows of Apache Kudu tables, and
+     * create tables.
      * 
      * Category: database,iot,cloud
      * Since: 3.0

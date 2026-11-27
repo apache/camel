@@ -11506,8 +11506,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Kudu (camel-kudu)
-     * Interact with Apache Kudu, a free and open source column-oriented data
-     * store of the Apache Hadoop ecosystem.
+     * Insert, update, upsert, delete and scan rows of Apache Kudu tables, and
+     * create tables.
      * 
      * Category: database,iot,cloud
      * Since: 3.0
@@ -11516,13 +11516,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kudu:host:port/tableName</code>
      * 
      * Path parameter: host (required)
-     * Host of the server to connect to
+     * The host name or IP address of the Kudu master. The endpoint creates its
+     * Kudu client for this host and port, unless the kuduClient component
+     * option is set.
      * 
      * Path parameter: port (required)
-     * Port of the server to connect to
+     * The RPC port of the Kudu master, which is 7051 in a default Kudu
+     * installation.
      * 
      * Path parameter: tableName
-     * Table to connect to
+     * The name of the Kudu table that the operation reads, writes or creates.
      * 
      * @param path host:port/tableName
      * @return the dsl builder
@@ -11532,8 +11535,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Kudu (camel-kudu)
-     * Interact with Apache Kudu, a free and open source column-oriented data
-     * store of the Apache Hadoop ecosystem.
+     * Insert, update, upsert, delete and scan rows of Apache Kudu tables, and
+     * create tables.
      * 
      * Category: database,iot,cloud
      * Since: 3.0
@@ -11542,13 +11545,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>kudu:host:port/tableName</code>
      * 
      * Path parameter: host (required)
-     * Host of the server to connect to
+     * The host name or IP address of the Kudu master. The endpoint creates its
+     * Kudu client for this host and port, unless the kuduClient component
+     * option is set.
      * 
      * Path parameter: port (required)
-     * Port of the server to connect to
+     * The RPC port of the Kudu master, which is 7051 in a default Kudu
+     * installation.
      * 
      * Path parameter: tableName
-     * Table to connect to
+     * The name of the Kudu table that the operation reads, writes or creates.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
