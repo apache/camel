@@ -4401,7 +4401,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * XJ (camel-xj)
-     * Transform JSON and XML message using a XSLT.
+     * Transform JSON to XML and XML to JSON with an XSLT stylesheet.
      * 
      * Category: transformation
      * Since: 3.0

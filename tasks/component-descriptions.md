@@ -390,7 +390,7 @@ or removes its row.
 | camel-wordpress | wordpress |  |
 | camel-workday | workday |  |
 | camel-xchange | xchange | yes |
-| camel-xj | xj |  |
+| camel-xj | xj | yes |
 | camel-xmlsecurity | xmlsecurity-sign, xmlsecurity-verify |  |
 | camel-xmpp | xmpp |  |
 | camel-xslt | xslt |  |
