@@ -710,7 +710,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to AWS Simple Notification Topic.
+     * Publish messages to a topic of Amazon Simple Notification Service (SNS).
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1

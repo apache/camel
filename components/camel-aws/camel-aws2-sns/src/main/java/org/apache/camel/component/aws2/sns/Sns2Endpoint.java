@@ -48,7 +48,7 @@ import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sns.model.Topic;
 
 /**
- * Send messages to AWS Simple Notification Topic.
+ * Publish messages to a topic of Amazon Simple Notification Service (SNS).
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS Simple Notification System (SNS)",
              syntax = "aws2-sns:topicNameOrArn", producerOnly = true,
@@ -70,12 +70,16 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     private SnsClient snsClient;
 
-    @UriPath(description = "Topic name or ARN")
+    @UriPath(description = "The name of the topic, or its ARN in the form arn:aws:sns:region:account:name. For a name, the"
+                           + " endpoint looks up the ARN of the topic in the region when it starts, and creates the topic if"
+                           + " autoCreateTopic is true and none exists. A topic whose name ends with .fifo is a FIFO topic.")
     @Metadata(required = true)
     private String topicNameOrArn; // to support component docs
     @UriParam
     private final Sns2Configuration configuration;
-    @UriParam
+    @UriParam(description = "To use a custom HeaderFilterStrategy to choose which headers the producer sends as message"
+                            + " attributes. The default skips the headers that start with Camel or camel, and breadcrumbId."
+                            + " A header is sent only if its value is a String, Number, Date, byte[], ByteBuffer or List.")
     private HeaderFilterStrategy headerFilterStrategy;
 
     public Sns2Endpoint(String uri, Component component, Sns2Configuration configuration) {
@@ -88,9 +92,6 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return headerFilterStrategy;
     }
 
-    /**
-     * To use a custom HeaderFilterStrategy to map headers to/from Camel.
-     */
     @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;

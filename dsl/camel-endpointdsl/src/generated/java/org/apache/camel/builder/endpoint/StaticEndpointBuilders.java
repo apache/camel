@@ -2338,7 +2338,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to AWS Simple Notification Topic.
+     * Publish messages to a topic of Amazon Simple Notification Service (SNS).
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -2347,7 +2347,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-sns:topicNameOrArn</code>
      * 
      * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
+     * The name of the topic, or its ARN in the form
+     * arn:aws:sns:region:account:name. For a name, the endpoint looks up the
+     * ARN of the topic in the region when it starts, and creates the topic if
+     * autoCreateTopic is true and none exists. A topic whose name ends with
+     * .fifo is a FIFO topic.
      * 
      * @param path topicNameOrArn
      * @return the dsl builder
@@ -2357,7 +2361,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
-     * Send messages to AWS Simple Notification Topic.
+     * Publish messages to a topic of Amazon Simple Notification Service (SNS).
      * 
      * Category: cloud,messaging,mobile
      * Since: 3.1
@@ -2366,7 +2370,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-sns:topicNameOrArn</code>
      * 
      * Path parameter: topicNameOrArn (required)
-     * Topic name or ARN
+     * The name of the topic, or its ARN in the form
+     * arn:aws:sns:region:account:name. For a name, the endpoint looks up the
+     * ARN of the topic in the region when it starts, and creates the topic if
+     * autoCreateTopic is true and none exists. A topic whose name ends with
+     * .fifo is a FIFO topic.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

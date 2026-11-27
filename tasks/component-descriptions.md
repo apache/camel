@@ -100,7 +100,7 @@ or removes its row.
 | camel-aws2-s3 | aws2-s3 |  |
 | camel-aws2-s3-vectors | aws2-s3-vectors |  |
 | camel-aws2-ses | aws2-ses |  |
-| camel-aws2-sns | aws2-sns |  |
+| camel-aws2-sns | aws2-sns | yes |
 | camel-aws2-sqs | aws2-sqs |  |
 | camel-aws2-step-functions | aws2-step-functions | yes |
 | camel-aws2-sts | aws2-sts |  |
