@@ -290,7 +290,7 @@ or removes its row.
 | camel-odata | odata |  |
 | camel-olingo2 | olingo2 (deprecated) |  |
 | camel-olingo4 | olingo4 (deprecated) |  |
-| camel-once | once |  |
+| camel-once | once | yes |
 | camel-opa | opa |  |
 | camel-openai | llm, openai |  |
 | camel-openfeature | openfeature |  |

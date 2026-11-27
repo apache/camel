@@ -13438,8 +13438,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Once (camel-once)
-     * Trigger a single message only once at startup (useful for development and
-     * testing purposes).
+     * Send a single message to the route once, after the route starts, which is
+     * useful for development and testing.
      * 
      * Category: core,scheduling
      * Since: 4.17
@@ -13448,7 +13448,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>once:name</code>
      * 
      * Path parameter: name (required)
-     * The logical name
+     * A name of your choice for the endpoint. The consumer also uses it in the
+     * name of the thread that sends the message.
      * 
      * @param path name
      * @return the dsl builder
@@ -13458,8 +13459,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Once (camel-once)
-     * Trigger a single message only once at startup (useful for development and
-     * testing purposes).
+     * Send a single message to the route once, after the route starts, which is
+     * useful for development and testing.
      * 
      * Category: core,scheduling
      * Since: 4.17
@@ -13468,7 +13469,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>once:name</code>
      * 
      * Path parameter: name (required)
-     * The logical name
+     * A name of your choice for the endpoint. The consumer also uses it in the
+     * name of the thread that sends the message.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

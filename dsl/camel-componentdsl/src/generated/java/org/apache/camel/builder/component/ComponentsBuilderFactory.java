@@ -3996,8 +3996,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Once (camel-once)
-     * Trigger a single message only once at startup (useful for development and
-     * testing purposes).
+     * Send a single message to the route once, after the route starts, which is
+     * useful for development and testing.
      * 
      * Category: core,scheduling
      * Since: 4.17
