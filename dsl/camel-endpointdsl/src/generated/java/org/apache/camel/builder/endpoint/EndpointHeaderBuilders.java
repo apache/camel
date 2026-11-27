@@ -480,7 +480,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances.
+     * Launch, start, stop, reboot, terminate, describe, monitor and tag
+     * instances in AWS Elastic Compute Cloud (EC2).
      * 
      * Category: cloud,management
      * Since: 3.1

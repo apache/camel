@@ -1620,7 +1620,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances.
+     * Launch, start, stop, reboot, terminate, describe, monitor and tag
+     * instances in AWS Elastic Compute Cloud (EC2).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1629,7 +1630,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-ec2:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name for the endpoint, of your choice. The component does not
+     * use it.
      * 
      * @param path label
      * @return the dsl builder
@@ -1639,7 +1641,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
-     * Manage AWS EC2 instances.
+     * Launch, start, stop, reboot, terminate, describe, monitor and tag
+     * instances in AWS Elastic Compute Cloud (EC2).
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -1648,7 +1651,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-ec2:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name for the endpoint, of your choice. The component does not
+     * use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
