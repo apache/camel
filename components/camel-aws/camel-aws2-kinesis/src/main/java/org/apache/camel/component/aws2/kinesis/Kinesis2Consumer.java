@@ -105,7 +105,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     // The failure of the last ListShards of the shard monitor, null once a ListShards succeeded. While the shards have
     // not been listed, poll() reports it, so that a consumer that cannot list the shards (no permission, no such
     // stream) is not seen healthy while it reads nothing.
-    private volatile Exception shardListError;
+    private volatile Throwable shardListError;
 
     private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
@@ -138,7 +138,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         List<Shard> shardList = getCurrentShardList();
         if (shardList.isEmpty()) {
             // the shard monitor has not listed the shards yet, so there is nothing to read
-            Exception error = shardListError;
+            Throwable error = shardListError;
             if (error != null) {
                 throw new IllegalStateException(
                         "Cannot list the shards of stream " + getEndpoint().getConfiguration().getStreamName() + ": "
@@ -717,8 +717,21 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                     trackChildShards(latestShardList);
                     setCurrentShardList(latestShardList);
                 }
-            } catch (Exception e) {
-                LOG.warn("Exception getting latest shard list", e);
+            } catch (VirtualMachineError e) {
+                // a JVM-level failure, not a failure of the monitor: the consumer stops consuming until the route is
+                // restarted, and its health check is DOWN with the error (CAMEL-27515). Thrown on, which ends the
+                // scheduled task: the consumer no longer polls (isRunAllowed() is false), so listing the shards again
+                // has no use, and a restart schedules a new monitor
+                LOG.error("Fatal error listing the shards of stream {}. The consumer stops consuming until the route is"
+                          + " restarted.",
+                        getEndpoint().getConfiguration().getStreamName(), e);
+                handleFatalError(e);
+                throw e;
+            } catch (Exception | Error e) {
+                // an Exception, or another Error (such as a NoClassDefFoundError), only fails this run: an Error thrown
+                // on would end the scheduled task without a log line, and the shards created by a later split or merge
+                // would never be listed
+                LOG.warn("Error getting latest shard list", e);
                 shardListError = e;
             }
         }
