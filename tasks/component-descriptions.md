@@ -389,7 +389,7 @@ or removes its row.
 | camel-whatsapp | whatsapp |  |
 | camel-wordpress | wordpress |  |
 | camel-workday | workday |  |
-| camel-xchange | xchange |  |
+| camel-xchange | xchange | yes |
 | camel-xj | xj |  |
 | camel-xmlsecurity | xmlsecurity-sign, xmlsecurity-verify |  |
 | camel-xmpp | xmpp |  |

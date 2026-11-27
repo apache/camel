@@ -18651,7 +18651,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XChange (camel-xchange)
-     * Access market data and trade on Bitcoin and Altcoin exchanges.
+     * Query the market data, the currency metadata and the account data of
+     * cryptocurrency exchanges with XChange.
      * 
      * Category: blockchain
      * Since: 2.21
@@ -18660,7 +18661,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xchange:name</code>
      * 
      * Path parameter: name (required)
-     * The exchange to connect to
+     * The name of the exchange in XChange, for example binance, for which the
+     * component loads the class org.knowm.xchange.binance.BinanceExchange. The
+     * XChange module of the exchange must be on the classpath, and
+     * camel-xchange includes only the one of Binance.
      * 
      * @param path name
      * @return the dsl builder
@@ -18670,7 +18674,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * XChange (camel-xchange)
-     * Access market data and trade on Bitcoin and Altcoin exchanges.
+     * Query the market data, the currency metadata and the account data of
+     * cryptocurrency exchanges with XChange.
      * 
      * Category: blockchain
      * Since: 2.21
@@ -18679,7 +18684,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>xchange:name</code>
      * 
      * Path parameter: name (required)
-     * The exchange to connect to
+     * The name of the exchange in XChange, for example binance, for which the
+     * component loads the class org.knowm.xchange.binance.BinanceExchange. The
+     * XChange module of the exchange must be on the classpath, and
+     * camel-xchange includes only the one of Binance.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

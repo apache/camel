@@ -2,7 +2,7 @@
 :doctitle: XChange
 :shortname: xchange
 :artifactid: camel-xchange
-:description: Access market data and trade on Bitcoin and Altcoin exchanges.
+:description: Query the market data, the currency metadata and the account data of cryptocurrency exchanges with XChange.
 :since: 2.21
 :supportlevel: Stable
 :tabs-sync-option:

@@ -4364,7 +4364,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * XChange (camel-xchange)
-     * Access market data and trade on Bitcoin and Altcoin exchanges.
+     * Query the market data, the currency metadata and the account data of
+     * cryptocurrency exchanges with XChange.
      * 
      * Category: blockchain
      * Since: 2.21
