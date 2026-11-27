@@ -44,8 +44,8 @@ public interface TelegramEndpointBuilderFactory {
             return (AdvancedTelegramEndpointConsumerBuilder) this;
         }
         /**
-         * Limit on the number of updates that can be received in a single
-         * polling request.
+         * The maximum number of updates that the consumer receives in one
+         * getUpdates request. Telegram accepts values from 1 to 100.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -60,8 +60,8 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * Limit on the number of updates that can be received in a single
-         * polling request.
+         * The maximum number of updates that the consumer receives in one
+         * getUpdates request. Telegram accepts values from 1 to 100.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -109,9 +109,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in seconds for long polling. Put 0 for short polling or a
-         * bigger number for long polling. Long polling produces shorter
-         * response time.
+         * The time in seconds that Telegram holds a getUpdates request of the
+         * consumer open while no update is available (long polling). With 0,
+         * Telegram answers at once (short polling).
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -126,9 +126,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in seconds for long polling. Put 0 for short polling or a
-         * bigger number for long polling. Long polling produces shorter
-         * response time.
+         * The time in seconds that Telegram holds a getUpdates request of the
+         * consumer open while no update is available (long polling). With 0,
+         * Telegram answers at once (short polling).
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -144,7 +144,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy host which could be used when sending out the message.
+         * The host name of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyPort is set
+         * too, and not when the client option is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -158,7 +160,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy port which could be used when sending out the message.
+         * The port of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyHost is set
+         * too, and not when the client option is set.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -172,7 +176,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy port which could be used when sending out the message.
+         * The port of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyHost is set
+         * too, and not when the client option is set.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -187,7 +193,8 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy type which could be used when sending out the message.
+         * The type of the proxy. The value is not used: the component always
+         * connects through an HTTP proxy, so SOCKS4 and SOCKS5 have no effect.
          * 
          * The option is a:
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
@@ -204,7 +211,8 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy type which could be used when sending out the message.
+         * The type of the proxy. The value is not used: the component always
+         * connects through an HTTP proxy, so SOCKS4 and SOCKS5 have no effect.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
@@ -720,7 +728,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authorization token for using the bot (ask the BotFather).
+         * The token of the bot, which BotFather gives when the bot is created.
+         * Every call to the Bot API carries it in the request URL. If not set,
+         * the authorizationToken of the component is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -958,8 +968,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * Can be used to set an alternative base URI, e.g. when you want to
-         * test the component against a mock Telegram API.
+         * The base URI of the Telegram Bot API, for example of a local Bot API
+         * server or of a mock in tests. If not set, the baseUri of the
+         * component is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1007,7 +1018,10 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClient.
+         * To use a custom java.net.http.HttpClient for the calls to the Bot
+         * API. When set, the proxyHost, proxyPort and proxyType options are not
+         * used. If not set, the client of the component is used, or else a new
+         * client is created.
          * 
          * The option is a: <code>java.net.http.HttpClient</code> type.
          * 
@@ -1021,7 +1035,10 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClient.
+         * To use a custom java.net.http.HttpClient for the calls to the Bot
+         * API. When set, the proxyHost, proxyPort and proxyType options are not
+         * used. If not set, the client of the component is used, or else a new
+         * client is created.
          * 
          * The option will be converted to a
          * <code>java.net.http.HttpClient</code> type.
@@ -1048,12 +1065,11 @@ public interface TelegramEndpointBuilderFactory {
         }
 
         /**
-         * The identifier of the chat that will receive the produced messages.
-         * Chat ids can be first obtained from incoming messages (eg. when a
-         * telegram user starts a conversation with a bot, its client sends
-         * automatically a '/start' message containing the chat id). It is an
-         * optional parameter, as the chat id can be set dynamically for each
-         * outgoing message (using body or headers).
+         * The identifier of the chat, or the username of a channel, to which
+         * the producer sends a message. It is used when neither the message in
+         * the body nor the CamelTelegramChatId header sets a chat id. The
+         * consumer sets the CamelTelegramChatId header of every message it
+         * receives from a chat.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1067,7 +1083,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy host which could be used when sending out the message.
+         * The host name of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyPort is set
+         * too, and not when the client option is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1081,7 +1099,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy port which could be used when sending out the message.
+         * The port of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyHost is set
+         * too, and not when the client option is set.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1095,7 +1115,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy port which could be used when sending out the message.
+         * The port of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyHost is set
+         * too, and not when the client option is set.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1110,7 +1132,8 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy type which could be used when sending out the message.
+         * The type of the proxy. The value is not used: the component always
+         * connects through an HTTP proxy, so SOCKS4 and SOCKS5 have no effect.
          * 
          * The option is a:
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
@@ -1127,7 +1150,8 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy type which could be used when sending out the message.
+         * The type of the proxy. The value is not used: the component always
+         * connects through an HTTP proxy, so SOCKS4 and SOCKS5 have no effect.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
@@ -1144,7 +1168,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authorization token for using the bot (ask the BotFather).
+         * The token of the bot, which BotFather gives when the bot is created.
+         * Every call to the Bot API carries it in the request URL. If not set,
+         * the authorizationToken of the component is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1215,8 +1241,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * Can be used to set an alternative base URI, e.g. when you want to
-         * test the component against a mock Telegram API.
+         * The base URI of the Telegram Bot API, for example of a local Bot API
+         * server or of a mock in tests. If not set, the baseUri of the
+         * component is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1264,7 +1291,10 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClient.
+         * To use a custom java.net.http.HttpClient for the calls to the Bot
+         * API. When set, the proxyHost, proxyPort and proxyType options are not
+         * used. If not set, the client of the component is used, or else a new
+         * client is created.
          * 
          * The option is a: <code>java.net.http.HttpClient</code> type.
          * 
@@ -1278,7 +1308,10 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClient.
+         * To use a custom java.net.http.HttpClient for the calls to the Bot
+         * API. When set, the proxyHost, proxyPort and proxyType options are not
+         * used. If not set, the client of the component is used, or else a new
+         * client is created.
          * 
          * The option will be converted to a
          * <code>java.net.http.HttpClient</code> type.
@@ -1306,7 +1339,9 @@ public interface TelegramEndpointBuilderFactory {
         }
 
         /**
-         * HTTP proxy host which could be used when sending out the message.
+         * The host name of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyPort is set
+         * too, and not when the client option is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1320,7 +1355,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy port which could be used when sending out the message.
+         * The port of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyHost is set
+         * too, and not when the client option is set.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1334,7 +1371,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy port which could be used when sending out the message.
+         * The port of the HTTP proxy for the calls of the consumer and the
+         * producer to the Bot API. The proxy is used only when proxyHost is set
+         * too, and not when the client option is set.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1349,7 +1388,8 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy type which could be used when sending out the message.
+         * The type of the proxy. The value is not used: the component always
+         * connects through an HTTP proxy, so SOCKS4 and SOCKS5 have no effect.
          * 
          * The option is a:
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
@@ -1366,7 +1406,8 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP proxy type which could be used when sending out the message.
+         * The type of the proxy. The value is not used: the component always
+         * connects through an HTTP proxy, so SOCKS4 and SOCKS5 have no effect.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
@@ -1383,7 +1424,9 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authorization token for using the bot (ask the BotFather).
+         * The token of the bot, which BotFather gives when the bot is created.
+         * Every call to the Bot API carries it in the request URL. If not set,
+         * the authorizationToken of the component is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1411,8 +1454,9 @@ public interface TelegramEndpointBuilderFactory {
         }
 
         /**
-         * Can be used to set an alternative base URI, e.g. when you want to
-         * test the component against a mock Telegram API.
+         * The base URI of the Telegram Bot API, for example of a local Bot API
+         * server or of a mock in tests. If not set, the baseUri of the
+         * component is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1460,7 +1504,10 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClient.
+         * To use a custom java.net.http.HttpClient for the calls to the Bot
+         * API. When set, the proxyHost, proxyPort and proxyType options are not
+         * used. If not set, the client of the component is used, or else a new
+         * client is created.
          * 
          * The option is a: <code>java.net.http.HttpClient</code> type.
          * 
@@ -1474,7 +1521,10 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HttpClient.
+         * To use a custom java.net.http.HttpClient for the calls to the Bot
+         * API. When set, the proxyHost, proxyPort and proxyType options are not
+         * used. If not set, the client of the component is used, or else a new
+         * client is created.
          * 
          * The option will be converted to a
          * <code>java.net.http.HttpClient</code> type.
@@ -1559,11 +1609,10 @@ public interface TelegramEndpointBuilderFactory {
         public static final TelegramHeaderNameBuilder INSTANCE = new TelegramHeaderNameBuilder();
 
         /**
-         * This header is used by the producer endpoint in order to resolve the
-         * chat id that will receive the message. The recipient chat id can be
-         * placed (in order of priority) in message body, in the
-         * CamelTelegramChatId header or in the endpoint configuration (chatId
-         * option). This header is also present in all incoming messages.
+         * The identifier of the chat. The consumer sets it for a received
+         * message or channel post. The producer sends to this chat when the
+         * message in the body has no chat id, and uses the chatId option when
+         * this header is not set either.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -1575,10 +1624,11 @@ public interface TelegramEndpointBuilderFactory {
             return "CamelTelegramChatId";
         }
         /**
-         * This header is used to identify the media type when the outgoing
-         * message is composed of pure binary data. Possible values are strings
-         * or enum values belonging to the
-         * org.apache.camel.component.telegram.TelegramMediaType enumeration.
+         * The type of the media that the producer sends from a body of binary
+         * data, such as a byte array, a stream or a file: TEXT, PHOTO_PNG,
+         * PHOTO_JPG, AUDIO, VIDEO or DOCUMENT, as a TelegramMediaType or its
+         * name. Without this header, a byte array fails, and a stream or a file
+         * is sent as text.
          * 
          * The option is a: {@code
          * org.apache.camel.component.telegram.TelegramMediaType or String}
@@ -1592,8 +1642,9 @@ public interface TelegramEndpointBuilderFactory {
             return "CamelTelegramMediaType";
         }
         /**
-         * This header is used to provide a caption or title for outgoing binary
-         * messages.
+         * The caption of a photo, video or document, or the title of an audio,
+         * that the producer sends from a body of binary data as the
+         * CamelTelegramMediaType header sets.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1605,7 +1656,9 @@ public interface TelegramEndpointBuilderFactory {
             return "CamelTelegramMediaTitleCaption";
         }
         /**
-         * The reply markup.
+         * The reply markup, such as an inline keyboard, of a photo, audio,
+         * video or document that the producer sends from a body of binary data.
+         * It is not used for a text message.
          * 
          * The option is a: {@code
          * org.apache.camel.component.telegram.model.ReplyMarkup} type.
@@ -1618,7 +1671,11 @@ public interface TelegramEndpointBuilderFactory {
             return "CamelTelegramMediaMarkup";
         }
         /**
-         * This header is used to format text messages using HTML or Markdown.
+         * The parse mode, HTML or MARKDOWN, of a text message that the producer
+         * creates from the body, as a TelegramParseMode or its name. MARKDOWN
+         * is the legacy Markdown style of Telegram, not MarkdownV2. It is not
+         * used when the body is already a Telegram message, such as an
+         * OutgoingTextMessage.
          * 
          * The option is a: {@code
          * org.apache.camel.component.telegram.TelegramParseMode} type.
@@ -1631,7 +1688,8 @@ public interface TelegramEndpointBuilderFactory {
             return "CamelTelegramParseMode";
         }
         /**
-         * The message timestamp.
+         * The date of a received message or channel post, in milliseconds since
+         * the epoch. The consumer sets it.
          * 
          * The option is a: {@code long} type.
          * 

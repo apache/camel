@@ -364,7 +364,7 @@ or removes its row.
 | camel-stripe | stripe |  |
 | camel-stub | stub |  |
 | camel-tahu | tahu-edge, tahu-host |  |
-| camel-telegram | telegram |  |
+| camel-telegram | telegram | yes |
 | camel-tensorflow-serving | tensorflow-serving |  |
 | camel-test-citrus | citrus |  |
 | camel-thrift | thrift |  |
