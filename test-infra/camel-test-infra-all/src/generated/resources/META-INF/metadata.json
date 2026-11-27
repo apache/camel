@@ -243,7 +243,7 @@
   "version" : "4.18.6-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.minio.services.MinioInfraService",
-  "description" : "MinIO Object Storage, S3 compatible",
+  "description" : "MinIO is a high-performance S3 compatible object storage",
   "implementation" : "org.apache.camel.test.infra.minio.services.MinioLocalContainerInfraService",
   "alias" : [ "minio" ],
   "aliasImplementation" : [ ],
