@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
 import static org.apache.camel.component.weather.WeatherMode.JSON;
@@ -72,13 +71,11 @@ public class WeatherConfiguration {
     @UriParam(label = "filter")
     private Integer cnt;
     @UriParam(label = "security", security = "secret")
-    @Metadata(required = true)
     private String geolocationAccessKey;
     @UriParam(label = "security")
-    @Metadata(required = true)
     private String geolocationRequestHostIP;
     @UriParam(label = "advanced")
-    private CloseableHttpClient httpClient = HttpClients.createDefault();
+    private CloseableHttpClient httpClient;
     @UriParam(label = "advanced")
     private GeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(this);
 

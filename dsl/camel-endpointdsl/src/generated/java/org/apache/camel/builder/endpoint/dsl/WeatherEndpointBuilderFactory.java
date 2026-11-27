@@ -504,7 +504,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: 500
+         * Default: 3600000
          * Group: scheduler
          * 
          * @param delay the value to set
@@ -519,7 +519,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 500
+         * Default: 3600000
          * Group: scheduler
          * 
          * @param delay the value to set
@@ -920,7 +920,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationAccessKey the value to set
@@ -936,7 +935,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationRequestHostIP the value to set
@@ -1536,7 +1534,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationAccessKey the value to set
@@ -1552,7 +1549,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationRequestHostIP the value to set
@@ -2045,7 +2041,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationAccessKey the value to set
@@ -2061,7 +2056,6 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param geolocationRequestHostIP the value to set

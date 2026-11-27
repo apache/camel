@@ -28,6 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 /**
  * Poll the weather information from Open Weather Map.
@@ -48,15 +49,24 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
                                                  + " unchanged"))
 public class WeatherEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
+    @UriParam(defaultValue = "" + WeatherConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",
+              label = "consumer,scheduler",
+              description = "Milliseconds before the next poll.")
+    private long delay = WeatherConsumer.DEFAULT_CONSUMER_DELAY;
+
     @UriParam
     private final WeatherConfiguration configuration;
 
     private final WeatherQuery weatherQuery;
+    private CloseableHttpClient createdHttpClient;
 
     public WeatherEndpoint(String uri, WeatherComponent component, WeatherConfiguration properties) {
         super(uri, component);
         this.configuration = properties;
         this.weatherQuery = new WeatherQuery(getConfiguration());
+        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling the weather, so we
+        // override with a new default value. End user can override this value by providing a delay parameter
+        setDelay(WeatherConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
     @Override
@@ -72,10 +82,6 @@ public class WeatherEndpoint extends DefaultPollingEndpoint implements EndpointS
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         WeatherConsumer answer = new WeatherConsumer(this, processor);
-
-        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed, so we override
-        // with a new default value. End user can override this value by providing a consumer.delay parameter
-        answer.setDelay(WeatherConsumer.DEFAULT_CONSUMER_DELAY);
         configureConsumer(answer);
         return answer;
     }
@@ -93,12 +99,47 @@ public class WeatherEndpoint extends DefaultPollingEndpoint implements EndpointS
         return this.weatherQuery;
     }
 
+    /**
+     * Milliseconds before the next poll.
+     */
+    @Override
+    public void setDelay(long delay) {
+        super.setDelay(delay);
+        this.delay = delay;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        // the producer builds its query, which may call the geolocation provider, when it is created
+        createHttpClientIfNotSet();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // again after a stop, which closed the client the endpoint created
+        createHttpClientIfNotSet();
+    }
+
+    private void createHttpClientIfNotSet() {
+        if (getConfiguration().getHttpClient() == null) {
+            createdHttpClient = HttpClients.createDefault();
+            getConfiguration().setHttpClient(createdHttpClient);
+        }
+    }
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        CloseableHttpClient client = getConfiguration().getHttpClient();
+        // close only the client that the endpoint created: a client that is set may be shared
+        CloseableHttpClient client = createdHttpClient;
+        createdHttpClient = null;
         if (client != null) {
+            if (getConfiguration().getHttpClient() == client) {
+                getConfiguration().setHttpClient(null);
+            }
             client.close();
         }
     }

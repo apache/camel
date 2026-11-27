@@ -12187,6 +12187,18 @@ response now leaves out that header and logs it at DEBUG level, instead of faili
 the route has already run. Headers with a valid name are written as before. A route that needs such a value in the
 response must set it in a header with a valid name.
 
+=== camel-weather - the consumer polls once an hour, and weatherApi Hourly and Daily query the forecast
+
+A `weather` consumer without a `delay` option now polls once an hour, as its documentation says. The default delay of
+the scheduled poll consumer (500 milliseconds) replaced the one hour default before, so the consumer called
+OpenWeatherMap twice a second. Set `delay` to keep a shorter interval.
+
+`weatherApi=Hourly` and `weatherApi=Daily` without `period` now query the hourly or the daily forecast, with the length
+that OpenWeatherMap uses by default. Before, they queried the current weather.
+
+A `weather` endpoint no longer closes an `httpClient` that is set on it when it stops; it closes only the client it
+created itself, and creates a new one when it is started again.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
