@@ -216,7 +216,7 @@ or removes its row.
 | camel-ibm-secrets-manager | ibm-secrets-manager |  |
 | camel-ibm-watson-discovery | ibm-watson-discovery |  |
 | camel-ibm-watson-language | ibm-watson-language |  |
-| camel-ibm-watson-speech-to-text | ibm-watson-speech-to-text |  |
+| camel-ibm-watson-speech-to-text | ibm-watson-speech-to-text | yes |
 | camel-ibm-watson-text-to-speech | ibm-watson-text-to-speech |  |
 | camel-ibm-watsonx-ai | ibm-watsonx-ai |  |
 | camel-ibm-watsonx-data | ibm-watsonx-data |  |

@@ -8646,7 +8646,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
-     * Convert speech audio to text using IBM Watson Speech to Text
+     * Transcribe audio to text with IBM Watson Speech to Text, and list or get
+     * its speech models and custom language models.
      * 
      * Category: ai,cloud
      * Since: 4.17
@@ -8655,7 +8656,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watson-speech-to-text:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name for the endpoint, for example to tell endpoints apart. The
+     * component does not use it.
      * 
      * @param path label
      * @return the dsl builder
@@ -8665,7 +8667,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
-     * Convert speech audio to text using IBM Watson Speech to Text
+     * Transcribe audio to text with IBM Watson Speech to Text, and list or get
+     * its speech models and custom language models.
      * 
      * Category: ai,cloud
      * Since: 4.17
@@ -8674,7 +8677,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watson-speech-to-text:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name for the endpoint, for example to tell endpoints apart. The
+     * component does not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
