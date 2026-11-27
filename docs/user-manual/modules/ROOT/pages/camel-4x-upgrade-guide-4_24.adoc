@@ -1242,6 +1242,16 @@ Also, when the value of an entry expires (TTL) Cassandra can leave the row behin
 entry stored with a TTL that replaces an existing entry or that is stored by `replace`. Such a row is now considered
 absent: `contains`, `keys` and `size` no longer report it, and `putIfAbsent` can store a value for it.
 
+=== camel-cassandraql - an unknown name in extraTypeCodecs fails the start of the endpoint
+
+An unknown name in the `extraTypeCodecs` option of a `cql` endpoint, for example a typo such as `BLOB_TO_ARAY`, now
+fails the start of the endpoint with an `IllegalArgumentException` that lists the possible names. Before, the name was
+ignored, no codec was registered, and the error came only later, when a row was read or written. Empty names, as after
+a trailing comma, are still ignored.
+
+The `clusterName` option is deprecated. It has had no effect since Camel 3.5, when the component moved to the Cassandra
+Java Driver 4.x: the component does not pass it to the driver, whose session builder has no cluster name setting.
+
 === camel-mongodb - the change streams consumer stores the post batch resume token
 
 While no change of its collection arrives, the change streams consumer now takes the post batch resume token of the
