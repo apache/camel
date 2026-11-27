@@ -86,7 +86,8 @@ public class SummarizationPredictor extends AbstractTaskPredictor {
     protected String getPythonScript() {
         String doSample = config.getTemperature() > 0 ? "True" : "False";
         float temperature = config.getTemperature() > 0 ? config.getTemperature() : 1.0f;
-        return loadPythonScript("summarization.py", config.getModelId(), config.getRevision(), config.getDevice(),
+        return loadPythonScript("summarization.py", pythonString(config.getModelId()), pythonString(config.getRevision()),
+                pythonString(config.getDevice()),
                 config.getMinLength(),
                 config.getMaxTokens(), doSample, temperature);
     }

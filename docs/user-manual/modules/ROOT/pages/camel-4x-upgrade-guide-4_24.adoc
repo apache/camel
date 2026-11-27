@@ -12297,6 +12297,14 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-huggingface - the token is given to the Python process as an environment variable
+
+The `authToken` (or the token from the `oauthProfile`) is no longer written into the generated Python handler: it is
+given to the Python process as the `HF_TOKEN` environment variable, through the `env` option of the DJL Python engine.
+That option is a comma separated list, so a token with a comma now fails when the producer starts. The protected
+method `withAuthToken` of `AbstractTaskPredictor` is removed. The `modelId`, `revision` and `device` values are now
+written into the handler as escaped Python string literals.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:

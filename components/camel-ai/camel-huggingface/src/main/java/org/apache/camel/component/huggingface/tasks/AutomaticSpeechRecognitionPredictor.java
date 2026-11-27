@@ -102,8 +102,9 @@ public class AutomaticSpeechRecognitionPredictor extends AbstractTaskPredictor {
 
     @Override
     protected String getPythonScript() {
-        return loadPythonScript("automatic_speech_recognition.py", config.getModelId(), config.getRevision(),
-                config.getDevice());
+        return loadPythonScript("automatic_speech_recognition.py", pythonString(config.getModelId()),
+                pythonString(config.getRevision()),
+                pythonString(config.getDevice()));
     }
 
     @Override
