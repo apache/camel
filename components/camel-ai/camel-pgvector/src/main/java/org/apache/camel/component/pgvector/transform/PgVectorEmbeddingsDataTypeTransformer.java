@@ -38,7 +38,10 @@ import org.apache.camel.spi.Transformer;
  * database.
  */
 @DataTypeTransformer(name = "pgvector:embeddings",
-                     description = "Prepares the message to become an object writable by PgVector component")
+                     description = "Turns the embedding of camel-langchain4j-embeddings into the message of a pgvector UPSERT:"
+                                   + " the vector of the CamelLangChain4jEmbeddingsVector header becomes the body, as a List"
+                                   + " of Float, and the CamelPgVectorRecordId, CamelPgVectorTextContent and"
+                                   + " CamelPgVectorMetadata headers are set")
 @BodyTypes(transformerIn = @BodyType(value = Carrier.ANY,
                                      description = "A LangChain4j TextSegment, or a String the converter of"
                                                    + " camel-langchain4j-embeddings turns into one, whose text and metadata"
@@ -91,11 +94,29 @@ public class PgVectorEmbeddingsDataTypeTransformer extends Transformer {
         return "\"" + escapeJson(String.valueOf(value)) + "\"";
     }
 
+    /**
+     * Escapes a string for a JSON string value: the backslash, the double quote, and every control character from
+     * U+0000 to U+001F, which JSON does not allow unescaped.
+     */
     private static String escapeJson(String value) {
-        return value.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+        StringBuilder sb = new StringBuilder(value.length() + 16);
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '"' -> sb.append("\\\"");
+                case '\\' -> sb.append("\\\\");
+                case '\n' -> sb.append("\\n");
+                case '\r' -> sb.append("\\r");
+                case '\t' -> sb.append("\\t");
+                default -> {
+                    if (c < 0x20) {
+                        sb.append("\\u00").append(Character.forDigit(c >> 4, 16)).append(Character.forDigit(c & 0xF, 16));
+                    } else {
+                        sb.append(c);
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
 }
