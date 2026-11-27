@@ -819,6 +819,20 @@ public class EndpointHeaderBuilders {
         return Translate2EndpointBuilderFactory.Translate2HeaderNameBuilder.INSTANCE;
     }
     /**
+     * Azure CosmosDB (camel-azure-cosmosdb)
+     * Store, read and query items in Azure Cosmos DB, and receive the changes
+     * of a container from its change feed.
+     * 
+     * Category: cloud,database
+     * Since: 3.10
+     * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static CosmosDbEndpointBuilderFactory.CosmosDbHeaderNameBuilder azureCosmosdb() {
+        return CosmosDbEndpointBuilderFactory.CosmosDbHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Azure Event Grid (camel-azure-eventgrid)
      * Send events to Azure Event Grid topics.
      * 

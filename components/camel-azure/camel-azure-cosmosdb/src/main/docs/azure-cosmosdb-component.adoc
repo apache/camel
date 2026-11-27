@@ -21,7 +21,7 @@ component interacts with Azure CosmosDB through Azure SQL API.
 
 Prerequisites
 
-You must have a valid Windows Azure Storage account. More information is available at
+You must have a valid Azure Cosmos DB account. More information is available at
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
 
@@ -85,43 +85,6 @@ DOWN with the failure of the last attempt and the number of failed attempts (`fa
 and UP once it has started. It does not follow what the change feed processor does after it started. As for any
 consumer check, camel-health asks it only for a route that starts with the CamelContext, and
 `camel.health.exclude-pattern=consumer:<routeId>` leaves it out.
-
-=== Message headers evaluated by the component producer
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelAzureCosmosDbDatabaseName`| `CosmosDbConstants.DATABASE_NAME`|`String`| Overrides the database name which is the name of the Cosmos database that component should connect to. In case you are producing data and have createDatabaseIfNotExists=true, the component will automatically auto create a Cosmos database.
-|`CamelAzureCosmosDbContainerName`| `CosmosDbConstants.CONTAINER_NAME`|`String`| Overrides the container name which is the name of the Cosmos container that component should connect to. In case you are producing data and have createContainerIfNotExists=true, the component will automatically auto create a Cosmos container.
-|`CamelAzureCosmosDbOperation`| `CosmosDbConstants.OPERATION`|`CosmosDbOperationsDefinition`| Set the producer operation which can be used to execute a specific operation on the producer.
-|`CamelAzureCosmosDbQuery`| `CosmosDbConstants.QUERY`|`String`| Set the SQL query to execute on a given producer query operations.
-|`CamelAzureCosmosDbQueryRequestOptions`| `CosmosDbConstants.QUERY_REQUEST_OPTIONS`|`CosmosQueryRequestOptions`| Set additional QueryRequestOptions that can be used with queryItems, queryContainers, queryDatabases, listDatabases, listItems, listContainers operations.
-|`CamelAzureCosmosDbCreateDatabaseIfNotExist`| `CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST`|`boolean`| Sets if the component should create the Cosmos database automatically in case it doesn't exist in the Cosmos account.
-|`CamelAzureCosmosDbCreateContainerIfNotExist`| `CosmosDbConstants.CREATE_CONTAINER_IF_NOT_EXIST`|`boolean`| Sets if the component should create Cosmos container automatically in case it doesn't exist in the Cosmos account.
-|`CamelAzureCosmosDbThroughputProperties`| `CosmosDbConstants.THROUGHPUT_PROPERTIES`|`ThroughputProperties`| Sets throughput of the resources in the Azure Cosmos DB service.
-|`CamelAzureCosmosDbDatabaseRequestOptions`| `CosmosDbConstants.DATABASE_REQUEST_OPTIONS`|`CosmosDatabaseRequestOptions`| Sets additional options to execute on database operations.
-|`CamelAzureCosmosDbContainerPartitionKeyPath`| `CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH`|`String`| Set the container partition key path.
-|`CamelAzureCosmosDbContainerRequestOptions`| `CosmosDbConstants.CONTAINER_REQUEST_OPTIONS`|`CosmosContainerRequestOptions`| Set additional options to execute on container operations.
-|`CamelAzureCosmosDbItemPartitionKey`| `CosmosDbConstants.ITEM_PARTITION_KEY`|`String`|  Set the partition key. Represents a partition key value in the Azure Cosmos DB database service. A partition key identifies the partition where the item is stored in.
-|`CamelAzureCosmosDbItemRequestOptions`| `CosmosDbConstants.ITEM_REQUEST_OPTIONS`|`CosmosItemRequestOptions`|  Set additional options to execute on item operations.
-|`CamelAzureCosmosDbItemId`| `CosmosDbConstants.ITEM_ID`|`String`|  Set the itemId in case needed for operation on item like _delete_, _replace_.
-|=======================================================================
-
-
-=== Message headers set by the component producer
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelAzureCosmosDbRecourseId`| `CosmosDbConstants.RESOURCE_ID`|`String`| The resource ID of the requested resource.
-|`CamelAzureCosmosDbEtag`| `CosmosDbConstants.E_TAG`|`String`| The Etag ID of the requested resource.
-|`CamelAzureCosmosDbTimestamp`| `CosmosDbConstants.TIMESTAMP`|`String`| The timestamp of the requested resource.
-|`CamelAzureCosmosDbResponseHeaders`| `CosmosDbConstants.RESPONSE_HEADERS`|`Map`| The response headers of the requested resource.
-|`CamelAzureCosmosDbStatusCode`| `CosmosDbConstants.STATUS_CODE`|`Integer`| The status code of the requested resource.
-|`CamelAzureCosmosDbDefaultTimeToLiveInSeconds`| `CosmosDbConstants.DEFAULT_TIME_TO_LIVE_SECONDS`|`Integer`| The TTL of the requested resource.
-|`CamelAzureCosmosDbManualThroughput`| `CosmosDbConstants.MANUAL_THROUGHPUT`|`Integer`| The manual throughput of the requested resource.
-|`CamelAzureCosmosDbAutoscaleMaxThroughput`| `CosmosDbConstants.AUTOSCALE_MAX_THROUGHPUT`|`Integer`| The AutoscaleMaxThroughput of the requested resource.
-|=======================================================================
 
 === Azure CosmosDB Producer operations
 
