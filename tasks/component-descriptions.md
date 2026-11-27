@@ -206,7 +206,7 @@ or removes its row.
 | camel-http | http, https |  |
 | camel-huaweicloud-dms | hwcloud-dms |  |
 | camel-huaweicloud-frs | hwcloud-frs |  |
-| camel-huaweicloud-functiongraph | hwcloud-functiongraph |  |
+| camel-huaweicloud-functiongraph | hwcloud-functiongraph | yes |
 | camel-huaweicloud-iam | hwcloud-iam |  |
 | camel-huaweicloud-imagerecognition | hwcloud-imagerecognition |  |
 | camel-huaweicloud-obs | hwcloud-obs |  |

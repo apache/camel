@@ -2509,7 +2509,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
-     * To call serverless functions on Huawei Cloud
+     * Invoke serverless functions in Huawei Cloud FunctionGraph.
      * 
      * Category: cloud,serverless
      * Since: 3.11
