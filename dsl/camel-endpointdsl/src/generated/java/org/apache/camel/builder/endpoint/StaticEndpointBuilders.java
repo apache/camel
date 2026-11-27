@@ -17309,7 +17309,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stream (camel-stream)
-     * Read from system-in and write to system-out and system-err streams.
+     * Read from System.in, a file or an HTTP URL, and write to System.out,
+     * System.err, a file or an output stream in a message header.
      * 
      * Category: file,core
      * Since: 1.3
@@ -17318,8 +17319,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stream:kind</code>
      * 
      * Path parameter: kind (required)
-     * Kind of stream to use such as System.in, System.out, a file, or a http
-     * url.
+     * The kind of stream. The consumer reads from in (System.in), file (the
+     * file of fileName) or http (the URL of httpUrl). The producer writes to
+     * out (System.out), err (System.err), file (the file of fileName) or header
+     * (the java.io.OutputStream in the stream header of the message). Any other
+     * kind fails when the consumer or producer is created.
      * There are 6 enums and the value can be one of: in, out, err, header,
      * file, http
      * 
@@ -17331,7 +17335,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Stream (camel-stream)
-     * Read from system-in and write to system-out and system-err streams.
+     * Read from System.in, a file or an HTTP URL, and write to System.out,
+     * System.err, a file or an output stream in a message header.
      * 
      * Category: file,core
      * Since: 1.3
@@ -17340,8 +17345,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stream:kind</code>
      * 
      * Path parameter: kind (required)
-     * Kind of stream to use such as System.in, System.out, a file, or a http
-     * url.
+     * The kind of stream. The consumer reads from in (System.in), file (the
+     * file of fileName) or http (the URL of httpUrl). The producer writes to
+     * out (System.out), err (System.err), file (the file of fileName) or header
+     * (the java.io.OutputStream in the stream header of the message). Any other
+     * kind fails when the consumer or producer is created.
      * There are 6 enums and the value can be one of: in, out, err, header,
      * file, http
      * 
