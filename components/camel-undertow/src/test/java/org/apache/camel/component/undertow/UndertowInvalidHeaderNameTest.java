@@ -51,6 +51,8 @@ class UndertowInvalidHeaderNameTest extends BaseUndertowTest {
         String body = FIELD.replace(' ', '+');
         String response;
         try (Socket socket = new Socket("localhost", getPort())) {
+            // fail fast instead of hanging if the connection stays open
+            socket.setSoTimeout(10_000);
             OutputStream out = socket.getOutputStream();
             out.write(("POST /form HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n"
                        + "Content-Type: application/x-www-form-urlencoded\r\nContent-Length: " + body.length()
@@ -88,6 +90,7 @@ class UndertowInvalidHeaderNameTest extends BaseUndertowTest {
 
     private static String readRequestAndReply(ServerSocket server) {
         try (Socket socket = server.accept()) {
+            socket.setSoTimeout(10_000);
             InputStream in = socket.getInputStream();
             ByteArrayOutputStream head = new ByteArrayOutputStream();
             // the request head ends with an empty line
