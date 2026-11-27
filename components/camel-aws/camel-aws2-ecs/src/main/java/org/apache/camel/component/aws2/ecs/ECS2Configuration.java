@@ -53,7 +53,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
               label = "security", security = "secret")
     private String sessionToken;
     @UriParam(description = "The operation that the producer performs. The CamelAwsECSOperation header replaces this option.")
-    @Metadata(required = true)
     private ECS2Operations operation;
     @UriParam(description = "The protocol of the proxy through which the ECS client sends its requests. It is used only when"
                             + " proxyHost and proxyPort are set.",

@@ -31,9 +31,9 @@ def handle(inputs: Input):
             logging.debug("Initializing pipeline")
             pipe = pipeline(
                 task='text-classification',
-                model='%s',
-                revision='%s',
-                device_map='%s',
+                model=%s,
+                revision=%s,
+                device_map=%s,
                 top_k=%s
             )
             logging.debug("Pipeline initialized")

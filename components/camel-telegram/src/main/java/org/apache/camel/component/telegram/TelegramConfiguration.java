@@ -186,7 +186,8 @@ public class TelegramConfiguration {
     public String toString() {
         final StringBuilder sb = new StringBuilder("TelegramConfiguration{");
         sb.append("type='").append(type).append('\'');
-        sb.append(", authorizationToken='").append(authorizationToken).append('\'');
+        // the token is a secret, so it is masked
+        sb.append(", authorizationToken='").append(authorizationToken != null ? "xxxxxx" : null).append('\'');
         sb.append(", chatId='").append(chatId).append('\'');
         sb.append(", timeout=").append(timeout);
         sb.append(", limit=").append(limit);

@@ -415,6 +415,29 @@ public interface SshComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether the producer may take the user name and the password from the
+         * CamelSshUsername and CamelSshPassword headers, in place of the
+         * username and password options. The CamelSshUsername header is then
+         * also used with public key authentication (certResource or
+         * keyPairProvider): the configured key logs in as the user that the
+         * header names. This is disabled by default, and the headers are then
+         * ignored. Enable it only when the route sets these headers itself.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUsernameAndPasswordFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder allowUsernameAndPasswordFromHeaders(boolean allowUsernameAndPasswordFromHeaders) {
+            doSetProperty("allowUsernameAndPasswordFromHeaders", allowUsernameAndPasswordFromHeaders);
+            return this;
+        }
+    
         /**
          * The resource with the private key for public key authentication, in
          * OpenSSH or PEM format, for example classpath:id_ed25519 or
@@ -587,8 +610,9 @@ public interface SshComponentBuilderFactory {
     
         /**
          * The password for password authentication, which is used only when
-         * neither certResource nor keyPairProvider is set. The CamelSshPassword
-         * header replaces it for the producer.
+         * neither certResource nor keyPairProvider is set. With
+         * allowUsernameAndPasswordFromHeaders=true, the CamelSshPassword header
+         * replaces it for the producer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -621,8 +645,9 @@ public interface SshComponentBuilderFactory {
         }
     
         /**
-         * The user name to log in with. The CamelSshUsername header replaces it
-         * for the producer.
+         * The user name to log in with. With
+         * allowUsernameAndPasswordFromHeaders=true, the CamelSshUsername header
+         * replaces it for the producer.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -675,6 +700,7 @@ public interface SshComponentBuilderFactory {
             case "sleepForShellPrompt": getOrCreateConfiguration((SshComponent) component).setSleepForShellPrompt((long) value); return true;
             case "healthCheckConsumerEnabled": ((SshComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((SshComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "allowUsernameAndPasswordFromHeaders": getOrCreateConfiguration((SshComponent) component).setAllowUsernameAndPasswordFromHeaders((boolean) value); return true;
             case "certResource": getOrCreateConfiguration((SshComponent) component).setCertResource((java.lang.String) value); return true;
             case "certResourcePassword": getOrCreateConfiguration((SshComponent) component).setCertResourcePassword((java.lang.String) value); return true;
             case "ciphers": getOrCreateConfiguration((SshComponent) component).setCiphers((java.lang.String) value); return true;

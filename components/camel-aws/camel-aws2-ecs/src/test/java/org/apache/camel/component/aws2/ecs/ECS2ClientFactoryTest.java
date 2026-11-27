@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.ecs.EcsClient;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ECS2ClientFactoryTest {
 
@@ -55,5 +57,40 @@ public class ECS2ClientFactoryTest {
         EcsClient ecsClient = ECS2ClientFactory.getEcsClient(configuration);
         assertNotNull(ecsClient);
         ecsClient.close();
+    }
+
+    @Test
+    public void getEcsClientWithSessionCredentials() {
+        ECS2Configuration configuration = new ECS2Configuration();
+        configuration.setUseSessionCredentials(true);
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setSessionToken("testSessionToken");
+        configuration.setRegion("eu-west-1");
+        EcsClient ecsClient = ECS2ClientFactory.getEcsClient(configuration);
+        assertNotNull(ecsClient);
+        ecsClient.close();
+    }
+
+    @Test
+    public void getEcsClientWithSessionCredentialsWithoutSessionToken() {
+        ECS2Configuration configuration = new ECS2Configuration();
+        configuration.setUseSessionCredentials(true);
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        IllegalArgumentException e
+                = assertThrows(IllegalArgumentException.class, () -> ECS2ClientFactory.getEcsClient(configuration));
+        assertTrue(e.getMessage().contains("sessionToken"), e.getMessage());
+    }
+
+    @Test
+    public void getEcsClientWithSessionCredentialsWithoutKeys() {
+        ECS2Configuration configuration = new ECS2Configuration();
+        configuration.setUseSessionCredentials(true);
+        configuration.setRegion("eu-west-1");
+        IllegalArgumentException e
+                = assertThrows(IllegalArgumentException.class, () -> ECS2ClientFactory.getEcsClient(configuration));
+        assertTrue(e.getMessage().contains("accessKey, secretKey, sessionToken"), e.getMessage());
     }
 }

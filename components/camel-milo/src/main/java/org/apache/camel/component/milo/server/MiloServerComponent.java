@@ -41,6 +41,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.server.internal.CamelNamespace;
+import org.apache.camel.component.milo.server.internal.CertificateValidatorCertificateManager;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -114,8 +115,9 @@ public class MiloServerComponent extends DefaultComponent {
     private Boolean enableAnonymousAuthentication;
     @Metadata(label = "security",
               description = "To use a custom org.eclipse.milo.opcua.stack.core.security.CertificateManager that holds the"
-                            + " certificate and the key pair of the server. Not used when certificateValidator or"
-                            + " defaultCertificateValidator is set.")
+                            + " certificate and the key pair of the server. Not used when defaultCertificateValidator is"
+                            + " set. When certificateValidator is set, the certificate groups of this certificate manager"
+                            + " validate the certificates of the clients with that validator.")
     private CertificateManager certificateManager;
     @Metadata(label = "security",
               description = "A comma-separated list of the security policies of the endpoints of the server, as URIs or as"
@@ -145,7 +147,11 @@ public class MiloServerComponent extends DefaultComponent {
                             + " Rejected certificates are put in rejected/certs. The directories are created if they do not"
                             + " exist.")
     private String defaultCertificateValidator;
-    @Metadata(label = "security")
+    @Metadata(label = "security",
+              description = "To use a custom org.eclipse.milo.opcua.stack.core.security.CertificateValidator that validates"
+                            + " the certificates of the OPC UA clients, instead of the validators of the certificate groups"
+                            + " of certificateManager. Requires certificateManager, which holds the certificate of the"
+                            + " server. Cannot be used together with defaultCertificateValidator.")
     private CertificateValidator certificateValidator;
     @Metadata(label = "security",
               description = "The certificate of the server, as a java.security.cert.X509Certificate, which the endpoints of"
@@ -158,6 +164,8 @@ public class MiloServerComponent extends DefaultComponent {
     // FIXME - migration to CertificateGroup
     @Metadata(label = "security")
     private CertificateGroup certificateGroup;
+    // the validator of the file based trust list of defaultCertificateValidator
+    private CertificateValidator trustListCertificateValidator;
 
     public MiloServerComponent() {
         this.opcServerConfig = null;
@@ -202,6 +210,13 @@ public class MiloServerComponent extends DefaultComponent {
 
         //        this.certificateGroup = createCertificateGroup();
 
+        if (certificateValidator != null && defaultCertificateValidator != null) {
+            throw new IllegalArgumentException(
+                    "The options certificateValidator and defaultCertificateValidator of the milo-server component cannot"
+                                               + " be used together. Use certificateValidator with certificateManager,"
+                                               + " or defaultCertificateValidator alone.");
+        }
+
         OpcUaServerConfigBuilder serverConfig
                 = this.opcServerConfig != null ? this.opcServerConfig : createDefaultConfiguration();
 
@@ -233,26 +248,48 @@ public class MiloServerComponent extends DefaultComponent {
             serverConfig.setEndpoints(createEndpointConfigs(null, securityPolicies));
         }
 
-        if (certificateValidator != null) {
-            LOG.debug("Using validator: {}", certificateValidator);
-            if (certificateValidator instanceof Closeable closeable) {
-                runOnStop(() -> {
-                    try {
-                        LOG.debug("Closing: {}", certificateValidator);
-                        closeable.close();
-                    } catch (IOException e) {
-                        LOG.debug("Failed to close. This exception is ignored.", e);
-                    }
-                });
-            }
-            //            serverConfig.setCertificateValidator(certificateValidator);
-            //            // FIXME - moved to certificateManager
+        if (trustListCertificateValidator != null) {
+            // the file based trust list of defaultCertificateValidator
+            LOG.debug("Using validator: {}", trustListCertificateValidator);
+            closeOnStop(trustListCertificateValidator);
             serverConfig.setCertificateManager(
                     new DefaultCertificateManager(this.certificateQuarantine, this.certificateGroup));
         }
 
         // build final configuration
-        return serverConfig.build();
+        final OpcUaServerConfig config = serverConfig.build();
+
+        if (certificateValidator == null) {
+            return config;
+        }
+
+        // with Milo 1.x, the server validates the certificate of a client with the validator of the certificate
+        // group of the server certificate, so the certificate groups of the certificate manager use the custom
+        // validator
+        final CertificateManager baseCertificateManager = config.getCertificateManager();
+        if (baseCertificateManager == null) {
+            throw new IllegalArgumentException(
+                    "The option certificateValidator of the milo-server component requires the option certificateManager,"
+                                               + " which holds the certificate of the server.");
+        }
+        LOG.debug("Using validator: {}", certificateValidator);
+        closeOnStop(certificateValidator);
+        final CertificateManager validatingCertificateManager
+                = new CertificateValidatorCertificateManager(baseCertificateManager, certificateValidator);
+        return OpcUaServerConfig.copy(config, builder -> builder.setCertificateManager(validatingCertificateManager));
+    }
+
+    private void closeOnStop(final CertificateValidator validator) {
+        if (validator instanceof Closeable closeable) {
+            runOnStop(() -> {
+                try {
+                    LOG.debug("Closing: {}", validator);
+                    closeable.close();
+                } catch (IOException e) {
+                    LOG.debug("Failed to close. This exception is ignored.", e);
+                }
+            });
+        }
     }
 
     private OpcUaServerConfigBuilder createDefaultConfiguration() {
@@ -625,7 +662,8 @@ public class MiloServerComponent extends DefaultComponent {
 
             this.certificateQuarantine = this.createCertificateQuarantine(certificateConfigurationPath);
 
-            this.certificateValidator = new DefaultServerCertificateValidator(trustListManager, certificateQuarantine);
+            this.trustListCertificateValidator
+                    = new DefaultServerCertificateValidator(trustListManager, certificateQuarantine);
 
             this.certificateGroup = DefaultApplicationGroup.createAndInitialize(
                     trustListManager,
@@ -636,7 +674,7 @@ public class MiloServerComponent extends DefaultComponent {
                             return new X509Certificate[] { certificate };
                         }
                     },
-                    certificateValidator);
+                    trustListCertificateValidator);
 
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
