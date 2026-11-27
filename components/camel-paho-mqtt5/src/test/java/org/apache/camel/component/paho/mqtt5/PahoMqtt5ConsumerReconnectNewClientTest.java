@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.service.ServiceHelper;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttClient;
@@ -39,6 +40,7 @@ import org.eclipse.paho.mqttv5.common.MqttPersistenceException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -61,6 +63,10 @@ class PahoMqtt5ConsumerReconnectNewClientTest {
 
     private final Deque<Object> clients = new ArrayDeque<>();
     private final List<String> events = new CopyOnWriteArrayList<>();
+    // the exchanges that reached the route
+    private final List<Exchange> routed = new CopyOnWriteArrayList<>();
+    // runs once when the callback hands the next message to the consumer, before the consumer creates its exchange
+    private volatile Runnable beforeExchange;
     private CamelContext context;
     private PahoMqtt5Consumer consumer;
 
@@ -75,8 +81,17 @@ class PahoMqtt5ConsumerReconnectNewClientTest {
         configuration.setSessionExpiryInterval(60);
         PahoMqtt5Endpoint endpoint = new PahoMqtt5Endpoint(
                 "paho-mqtt5:test", "test", context.getComponent("paho-mqtt5", PahoMqtt5Component.class), configuration);
-        consumer = new PahoMqtt5Consumer(endpoint, exchange -> {
-        }) {
+        consumer = new PahoMqtt5Consumer(endpoint, routed::add) {
+            @Override
+            void onMessageArrived(MqttClient receivingClient, String topic, MqttMessage message) {
+                Runnable hook = beforeExchange;
+                beforeExchange = null;
+                if (hook != null) {
+                    hook.run();
+                }
+                super.onMessageArrived(receivingClient, topic, message);
+            }
+
             @Override
             MqttClient createClient() throws MqttException {
                 events.add("create");
@@ -97,6 +112,8 @@ class PahoMqtt5ConsumerReconnectNewClientTest {
 
     @AfterEach
     void tearDown() {
+        // leaves no entry of the consumer in the static callbacks of the clients
+        ServiceHelper.stopService(consumer);
         context.stop();
     }
 
@@ -138,6 +155,32 @@ class PahoMqtt5ConsumerReconnectNewClientTest {
         complete(consumer.createExchange(message(9), "test"));
         verify(second).messageArrivedComplete(9, 1);
         assertThat(consumer.getFailedMessageReconnects()).isZero();
+    }
+
+    @Test
+    void messageTakenBeforeTheClientIsReplacedKeepsTheClientItArrivedOn() throws Exception {
+        MqttClient first = addClient("1");
+        MqttClient second = addClient("2");
+        consumer.start();
+        ArgumentCaptor<MqttCallback> firstCallback = ArgumentCaptor.forClass(MqttCallback.class);
+        verify(first).setCallback(firstCallback.capture());
+        // the callback thread of the first client has taken message 8 and handed it to the consumer, and another
+        // exchange fails and replaces the client before the consumer creates the exchange of message 8
+        beforeExchange = () -> {
+            fail(consumer.createExchange(message(7), "test"));
+            await().atMost(10, TimeUnit.SECONDS)
+                    .until(() -> consumer.getClient() == second && events.contains("connect 2"));
+        };
+
+        firstCallback.getValue().messageArrived("test", message(8));
+        assertThat(routed).hasSize(1);
+        complete(routed.get(0));
+
+        // packet id 8 belongs to the closed connection of the first client: acknowledging it on the second client
+        // would acknowledge the copy that the broker sends again on the resumed session
+        verify(first, never()).messageArrivedComplete(anyInt(), anyInt());
+        verify(second, never()).messageArrivedComplete(anyInt(), anyInt());
+        assertThat(consumer.getFailedMessageReconnects()).isOne();
     }
 
     @Test

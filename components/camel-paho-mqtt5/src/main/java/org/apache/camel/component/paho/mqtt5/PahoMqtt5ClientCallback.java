@@ -126,7 +126,7 @@ final class PahoMqtt5ClientCallback implements MqttCallback {
         PahoMqtt5Consumer[] current = consumers.toArray(new PahoMqtt5Consumer[0]);
         if (ownedClient && current.length == 1) {
             // the own client of a consumer: it is the only one that subscribed, so it gets every message, as before
-            current[0].onMessageArrived(topic, message);
+            current[0].onMessageArrived(client, topic, message);
             return;
         }
         // a shared client: a stopped consumer can leave its subscription on the client (cleanStart / cleanSession
@@ -134,7 +134,7 @@ final class PahoMqtt5ClientCallback implements MqttCallback {
         boolean delivered = false;
         for (PahoMqtt5Consumer consumer : current) {
             if (matches(consumer.getEndpoint().getTopic(), topic)) {
-                consumer.onMessageArrived(topic, message);
+                consumer.onMessageArrived(client, topic, message);
                 delivered = true;
             }
         }

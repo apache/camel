@@ -288,8 +288,15 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         }
     }
 
-    void onMessageArrived(String topic, MqttMessage message) {
-        Exchange exchange = createExchange(message, topic);
+    /**
+     * Routes a message of the client callback.
+     *
+     * @param receivingClient the client the message arrived on, which the callback passes in: a reconnect after a
+     *                        failed exchange can replace the client of the consumer while this message is on its way to
+     *                        the route, and its packet id is only valid on the client it arrived on
+     */
+    void onMessageArrived(MqttClient receivingClient, String topic, MqttMessage message) {
+        Exchange exchange = createExchange(message, topic, receivingClient);
 
         // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
@@ -580,7 +587,14 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         return (PahoMqtt5Endpoint) super.getEndpoint();
     }
 
+    /**
+     * Creates the exchange of a message that arrived on the current client of the consumer.
+     */
     public Exchange createExchange(MqttMessage mqttMessage, String topic) {
+        return createExchange(mqttMessage, topic, client);
+    }
+
+    private Exchange createExchange(MqttMessage mqttMessage, String topic, MqttClient receivingClient) {
         Exchange exchange = createExchange(true);
 
         PahoMqtt5Message paho = new PahoMqtt5Message(exchange.getContext(), mqttMessage);
@@ -594,7 +608,6 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             // the message is acknowledged on the client it arrived on: once the consumer stopped or reconnected after a
             // failed exchange, that client is closed (and replaced by a new client), and its packet id means nothing to
             // another client
-            MqttClient receivingClient = client;
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
