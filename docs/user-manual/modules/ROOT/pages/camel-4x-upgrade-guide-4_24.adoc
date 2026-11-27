@@ -12322,6 +12322,21 @@ is, which a client or server may reject, and camel-vertx-http failed the exchang
 ("a header name cannot contain some prohibited characters") after the route had run. Headers with a valid name are
 written as before.
 
+=== camel-ssh - idleTimeout, channelOpenTimeout, and endpoints that cannot work fail to start
+
+The `idleTimeout` option now has the default value 600000 (10 minutes), the idle timeout that Apache MINA SSHD used before
+when the option was not set, and a value of 0 or less now turns the idle timeout off. Before, 0 or less also gave the 10
+minutes of Apache MINA SSHD, and there was no way to turn the idle timeout off. A route that sets `idleTimeout=0` and
+relies on the session being closed after 10 minutes without traffic must set `idleTimeout=600000` instead.
+
+The `channelOpenTimeout` option now limits how long the component waits for the channel that runs the command, instead
+of the `timeout` option, when it is set. Before, it had no effect on that channel.
+
+An endpoint with a `channelType` other than `exec` or `shell` now fails to start, and so does a consumer without a
+`pollCommand`. Before, each exchange or poll failed after connecting and authenticating. A channel that does not open
+within the timeout, and a `certResource` or `keyPairProvider` that gives no key pair (or none of the `keyType`), now
+fail the exchange with an exception that says so, instead of a `NullPointerException`.
+
 === camel-pinecone - the pinecone:embeddings transformer leaves the index name unset
 
 The `pinecone:embeddings` data type transformer no longer sets the `CamelPineconeIndexName` header to

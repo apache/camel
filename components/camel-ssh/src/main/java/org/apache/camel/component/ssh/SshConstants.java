@@ -27,9 +27,11 @@ public interface SshConstants {
                             + " option. It is not used when certResource or keyPairProvider is set.",
               javaType = "String")
     String PASSWORD_HEADER = "CamelSshPassword";
-    @Metadata(description = "The standard error of the command, as an InputStream.", javaType = "InputStream")
+    @Metadata(label = "common", description = "The standard error of the command, as an InputStream.",
+              javaType = "InputStream")
     String STDERR = "CamelSshStderr";
-    @Metadata(description = "The exit status of the command. By convention, a value other than 0 means that the command"
+    @Metadata(label = "common",
+              description = "The exit status of the command. By convention, a value other than 0 means that the command"
                             + " failed, but the exchange does not fail for it. With channelType=shell it is usually null, as"
                             + " the shell is still running when the output is read.",
               javaType = "Integer", important = true)

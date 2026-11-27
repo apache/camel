@@ -139,6 +139,14 @@ public final class SshHelper {
                 } else {
                     pair = keyPairProvider.loadKey(session, configuration.getKeyType());
                 }
+                if (pair == null) {
+                    // addPublicKeyIdentity would fail with a NullPointerException "No key-pair to add"
+                    String source = certResource != null ? "certResource " + certResource : "keyPairProvider";
+                    throw new RuntimeCamelException(
+                            configuration.getKeyType() != null
+                                    ? "No key pair of type " + configuration.getKeyType() + " found in " + source
+                                    : "No key pair found in " + source);
+                }
 
                 session.addPublicKeyIdentity(pair);
             } else {
@@ -176,6 +184,10 @@ public final class SshHelper {
                 // this approach is used to send the command and evaluate the response
                 channel = session.createChannel(Channel.CHANNEL_SHELL);
                 in = new PipedInputStream(reply);
+            } else {
+                // SshEndpoint rejects other values when it starts
+                throw new IllegalArgumentException(
+                        "Unsupported channelType " + endpoint.getChannelType() + ": use exec or shell");
             }
 
             channel.setIn(in);
@@ -186,17 +198,24 @@ public final class SshHelper {
             ByteArrayOutputStream err = new ByteArrayOutputStream();
             channel.setErr(err);
             OpenFuture openFuture = channel.open();
-            openFuture.await(configuration.getTimeout());
+            // channelOpenTimeout, when set, limits the wait for the channel instead of timeout
+            long channelOpenTimeout = configuration.getChannelOpenTimeout() > 0
+                    ? configuration.getChannelOpenTimeout() : configuration.getTimeout();
+            openFuture.await(channelOpenTimeout);
+            if (!openFuture.isOpened()) {
+                throw new RuntimeCamelException(
+                        "Failed to open the " + endpoint.getChannelType() + " channel to " + configuration.getHost() + ":"
+                                                + configuration.getPort() + " within timeout " + channelOpenTimeout + "ms",
+                        openFuture.getException());
+            }
             SshResult result = null;
             if (Channel.CHANNEL_EXEC.equals(endpoint.getChannelType())) {
-                if (openFuture.isOpened()) {
-                    Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
-                    if (!events.contains(ClientChannelEvent.TIMEOUT)) {
-                        result = new SshResult(
-                                command, channel.getExitStatus(),
-                                new ByteArrayInputStream(out.toByteArray()),
-                                new ByteArrayInputStream(err.toByteArray()));
-                    }
+                Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
+                if (!events.contains(ClientChannelEvent.TIMEOUT)) {
+                    result = new SshResult(
+                            command, channel.getExitStatus(),
+                            new ByteArrayInputStream(out.toByteArray()),
+                            new ByteArrayInputStream(err.toByteArray()));
                 }
             } else if (Channel.CHANNEL_SHELL.equals(endpoint.getChannelType())) {
                 getPrompt(channel, out, endpoint);
