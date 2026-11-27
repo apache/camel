@@ -727,7 +727,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
-     * Manage and invoke AWS Step functions.
+     * Manage the state machines and activities of AWS Step Functions, and
+     * start, stop and inspect their executions.
      * 
      * Category: cloud,serverless
      * Since: 4.0

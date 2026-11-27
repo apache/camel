@@ -2348,7 +2348,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
-     * Manage and invoke AWS Step functions.
+     * Manage the state machines and activities of AWS Step Functions, and
+     * start, stop and inspect their executions.
      * 
      * Category: cloud,serverless
      * Since: 4.0
@@ -2357,7 +2358,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-step-functions:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of the endpoint, which you choose freely. The producer
+     * does not use it: the state machine, activity or execution to act on is
+     * given in headers.
      * 
      * @param path label
      * @return the dsl builder
@@ -2367,7 +2370,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
-     * Manage and invoke AWS Step functions.
+     * Manage the state machines and activities of AWS Step Functions, and
+     * start, stop and inspect their executions.
      * 
      * Category: cloud,serverless
      * Since: 4.0
@@ -2376,7 +2380,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-step-functions:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of the endpoint, which you choose freely. The producer
+     * does not use it: the state machine, activity or execution to act on is
+     * given in headers.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
