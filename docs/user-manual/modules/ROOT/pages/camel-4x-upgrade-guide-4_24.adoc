@@ -12297,6 +12297,12 @@ With `allowUrlBody=true`, a body that does not start with `version: 1` and is no
 with a space or a relative name, now fails with an `InvalidPayloadException`, as a URL with an unknown scheme already
 did. Before, it failed with an `IllegalArgumentException`. A URL that cannot be fetched keeps its own exception.
 
+=== camel-weather - the CamelWeatherQuery header has the appid masked
+
+The `CamelWeatherQuery` header that the consumer and the producer set has the value of the `APPID` query parameter
+masked as `xxxxxx`, and so do the log and the error messages that show the request URL. The request to OpenWeatherMap
+still sends the real `appid`. A route that read the API key from this header must use the `appid` option instead.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
