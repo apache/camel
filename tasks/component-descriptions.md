@@ -261,7 +261,7 @@ or removes its row.
 | camel-language | language |  |
 | camel-ldap | ldap |  |
 | camel-ldif | ldif | yes |
-| camel-log | log |  |
+| camel-log | log | yes |
 | camel-lucene | lucene |  |
 | camel-lumberjack | lumberjack |  |
 | camel-mail | imap, imaps, pop3, pop3s, smtp, smtps |  |

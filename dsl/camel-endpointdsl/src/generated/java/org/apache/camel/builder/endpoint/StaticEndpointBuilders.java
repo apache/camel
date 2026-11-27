@@ -11968,8 +11968,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Log Data (camel-log)
-     * Prints data from the routed message (such as body and headers) to the
-     * logger.
+     * Log the exchanges that pass through a route, or their throughput, with an
+     * SLF4J logger.
      * 
      * Category: core,monitoring
      * Since: 1.1
@@ -11978,7 +11978,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>log:loggerName</code>
      * 
      * Path parameter: loggerName (required)
-     * Name of the logging category to use
+     * The name of the SLF4J logger, also called the logging category. It is not
+     * used when an org.slf4j.Logger is given, by the logger URI parameter or as
+     * the only Logger bean in the registry, or when sourceLocationLoggerName
+     * resolves a name.
      * 
      * @param path loggerName
      * @return the dsl builder
@@ -11988,8 +11991,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Log Data (camel-log)
-     * Prints data from the routed message (such as body and headers) to the
-     * logger.
+     * Log the exchanges that pass through a route, or their throughput, with an
+     * SLF4J logger.
      * 
      * Category: core,monitoring
      * Since: 1.1
@@ -11998,7 +12001,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>log:loggerName</code>
      * 
      * Path parameter: loggerName (required)
-     * Name of the logging category to use
+     * The name of the SLF4J logger, also called the logging category. It is not
+     * used when an org.slf4j.Logger is given, by the logger URI parameter or as
+     * the only Logger bean in the registry, or when sourceLocationLoggerName
+     * resolves a name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

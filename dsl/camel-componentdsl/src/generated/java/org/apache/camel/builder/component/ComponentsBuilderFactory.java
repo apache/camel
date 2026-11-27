@@ -3574,8 +3574,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Log Data (camel-log)
-     * Prints data from the routed message (such as body and headers) to the
-     * logger.
+     * Log the exchanges that pass through a route, or their throughput, with an
+     * SLF4J logger.
      * 
      * Category: core,monitoring
      * Since: 1.1
