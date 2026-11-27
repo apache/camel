@@ -2,7 +2,7 @@
 :doctitle: IBM watsonx.data
 :shortname: ibm-watsonx-data
 :artifactid: camel-ibm-watsonx-data
-:description: Interact with IBM watsonx.data lakehouse for catalog, schema, table, and engine management.
+:description: Manage the catalogs, schemas, tables, engines and storage registrations of an IBM watsonx.data lakehouse.
 :since: 4.19
 :supportlevel: Stable
 :tabs-sync-option:

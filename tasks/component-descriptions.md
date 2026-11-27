@@ -219,7 +219,7 @@ or removes its row.
 | camel-ibm-watson-speech-to-text | ibm-watson-speech-to-text | yes |
 | camel-ibm-watson-text-to-speech | ibm-watson-text-to-speech |  |
 | camel-ibm-watsonx-ai | ibm-watsonx-ai |  |
-| camel-ibm-watsonx-data | ibm-watsonx-data |  |
+| camel-ibm-watsonx-data | ibm-watsonx-data | yes |
 | camel-iggy | iggy | yes |
 | camel-ignite | ignite-cache, ignite-compute, ignite-events, ignite-idgen, ignite-messaging, ignite-queue, ignite-set |  |
 | camel-infinispan | infinispan |  |

@@ -8862,8 +8862,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM watsonx.data (camel-ibm-watsonx-data)
-     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
-     * engine management.
+     * Manage the catalogs, schemas, tables, engines and storage registrations
+     * of an IBM watsonx.data lakehouse.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -8872,7 +8872,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watsonx-data:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name for the endpoint
+     * A logical name of your choice for the endpoint. It is not sent to
+     * watsonx.data.
      * 
      * @param path label
      * @return the dsl builder
@@ -8882,8 +8883,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * IBM watsonx.data (camel-ibm-watsonx-data)
-     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
-     * engine management.
+     * Manage the catalogs, schemas, tables, engines and storage registrations
+     * of an IBM watsonx.data lakehouse.
      * 
      * Category: cloud,database
      * Since: 4.19
@@ -8892,7 +8893,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>ibm-watsonx-data:label</code>
      * 
      * Path parameter: label (required)
-     * Logical name for the endpoint
+     * A logical name of your choice for the endpoint. It is not sent to
+     * watsonx.data.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
