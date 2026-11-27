@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -98,7 +99,7 @@ public class SshHeaderCredentialsTest extends SshComponentTestSupport {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedMessageCount(0);
 
-        Map<String, Object> headers = new ConcurrentHashMap<>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(SshConstants.USERNAME_HEADER, username);
         if (password != null) {
             headers.put(SshConstants.PASSWORD_HEADER, password);
