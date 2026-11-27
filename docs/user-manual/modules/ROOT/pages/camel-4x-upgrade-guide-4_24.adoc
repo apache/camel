@@ -12187,6 +12187,16 @@ response now leaves out that header and logs it at DEBUG level, instead of faili
 the route has already run. Headers with a valid name are written as before. A route that needs such a value in the
 response must set it in a header with a valid name.
 
+=== camel-arangodb - the endpoint shuts down only a client it built, and checks host and port at startup
+
+An `arangodb` endpoint no longer shuts down an `arangoDB` client that was set on the endpoint, set on the component or
+autowired from the registry, as that client is shared by all the endpoints of the component. The application that
+created the client shuts it down. A client that the endpoint built from `host` and `port` is shut down with the
+endpoint, as before.
+
+Without an `arangoDB` client, an endpoint now fails to start when `host` or `port` is not set. Before, `host` without
+`port` connected to port 0, so each message failed.
+
 === Kamelets - removed Kamelets
 
 The Kamelet catalog (camel-kamelets 4.24) removes Kamelets that could not work on Camel 4.23 or 4.24:
