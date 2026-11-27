@@ -28,7 +28,8 @@ public class StaticEndpointBuilders {
 
     /**
      * A2A (camel-a2a)
-     * A2A endpoint for agent-to-agent communication.
+     * Expose a route as an agent and call remote agents with the Agent2Agent
+     * (A2A) protocol.
      * 
      * Category: ai
      * Since: 4.21
@@ -37,8 +38,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>a2a:agentCardSource</code>
      * 
      * Path parameter: agentCardSource (required)
-     * The agent card source (classpath:, file:, http://, https://, or plain
-     * name)
+     * Where the agent card comes from: a JSON file on the classpath
+     * (classpath:) or in the file system (file:), an http:// or https:// URL
+     * that the endpoint downloads the card from when it starts, or a plain
+     * name, which is the agent name when no card gives one. A URL that does not
+     * end with .json gets the path /.well-known/agent-card.json. The consumer
+     * serves the card as its own. The producer calls the URL that the card
+     * gives for protocolBinding, or this URL without the well-known path when
+     * the card gives none or when apiKey, bearerToken or oauthProfile is set.
      * 
      * @param path agentCardSource
      * @return the dsl builder
@@ -48,7 +55,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * A2A (camel-a2a)
-     * A2A endpoint for agent-to-agent communication.
+     * Expose a route as an agent and call remote agents with the Agent2Agent
+     * (A2A) protocol.
      * 
      * Category: ai
      * Since: 4.21
@@ -57,8 +65,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>a2a:agentCardSource</code>
      * 
      * Path parameter: agentCardSource (required)
-     * The agent card source (classpath:, file:, http://, https://, or plain
-     * name)
+     * Where the agent card comes from: a JSON file on the classpath
+     * (classpath:) or in the file system (file:), an http:// or https:// URL
+     * that the endpoint downloads the card from when it starts, or a plain
+     * name, which is the agent name when no card gives one. A URL that does not
+     * end with .json gets the path /.well-known/agent-card.json. The consumer
+     * serves the card as its own. The producer calls the URL that the card
+     * gives for protocolBinding, or this URL without the well-known path when
+     * the card gives none or when apiKey, bearerToken or oauthProfile is set.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

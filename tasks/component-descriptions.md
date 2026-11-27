@@ -52,7 +52,7 @@ or removes its row.
 
 | Artifact | Schemes | Done |
 |---|---|---|
-| camel-a2a | a2a |  |
+| camel-a2a | a2a | yes |
 | camel-activemq | activemq |  |
 | camel-activemq6 | activemq6 |  |
 | camel-ai-prompt | ai-prompt | yes |
