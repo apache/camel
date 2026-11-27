@@ -27,7 +27,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component(PgVector.SCHEME)
 public class PgVectorComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration shared by the endpoints of the component. Each endpoint uses a copy of it,"
+                            + " which its own options then change.")
     private PgVectorConfiguration configuration;
 
     public PgVectorComponent() {
@@ -44,9 +45,6 @@ public class PgVectorComponent extends DefaultComponent {
         return configuration;
     }
 
-    /**
-     * The configuration;
-     */
     public void setConfiguration(PgVectorConfiguration configuration) {
         this.configuration = configuration;
     }

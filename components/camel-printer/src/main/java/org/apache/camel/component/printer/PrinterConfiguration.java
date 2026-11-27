@@ -38,32 +38,65 @@ public class PrinterConfiguration {
     private Sides internalSides;
     private OrientationRequested internalOrientation;
 
-    @UriPath
+    @UriPath(description = "The host name of the printer. With localhost, the producer looks up a printer of this machine "
+                           + "by printername alone, or uses the default printer of this machine when printername is default. "
+                           + "With another host, it looks up the printer by hostname/printername.")
     @Metadata(required = true)
     private String hostname;
-    @UriPath
+    @UriPath(description = "The port of the printer. The producer does not use it, as it looks up the printer by name. It "
+                           + "is only part of the service location of the endpoint.")
     private int port;
-    @UriPath
+    @UriPath(description = "The name of the printer, for example default or sales/salesprinter, as the print services of "
+                           + "this machine (javax.print.PrintServiceLookup) know it, so a remote printer must be installed on "
+                           + "this machine. A print service matches when its name ends with the looked-up name or the other "
+                           + "way round, ignoring case and treating / and \\ alike. The producer fails to start when no print "
+                           + "service matches.")
     private String printername;
-    @UriParam
+    @UriParam(description = "A text that the producer puts before hostname/printername to form the name of the printer to "
+                            + "look up. It is not used when the host is localhost.")
     private String printerPrefix;
-    @UriParam(defaultValue = "1")
+    @UriParam(defaultValue = "1",
+              description = "The number of copies to print, sent as the Copies attribute of the print request. The producer "
+                            + "fails to start when the value is less than 1.")
     private int copies = 1;
-    @UriParam
+    @UriParam(description = "The representation class of the doc flavor, as the name of a nested class of "
+                            + "javax.print.DocFlavor: DocFlavor.BYTE_ARRAY, DocFlavor.INPUT_STREAM or DocFlavor.URL, and for "
+                            + "the mimeType TEXT_HTML or TEXT_PLAIN DocFlavor.CHAR_ARRAY, DocFlavor.READER or "
+                            + "DocFlavor.STRING. If not set, DocFlavor.BYTE_ARRAY is used. Together with mimeType it selects "
+                            + "the doc flavor, and a combination that the component does not know selects "
+                            + "DocFlavor.BYTE_ARRAY.AUTOSENSE.")
     private String flavor;
-    @UriParam
+    @UriParam(description = "The doc flavor as a javax.print.DocFlavor, for example a reference to a bean. When set, it "
+                            + "replaces the doc flavor that the flavor and mimeType options select.")
     private DocFlavor docFlavor;
-    @UriParam
+    @UriParam(description = "The format of the document, as the name of a doc flavor constant of javax.print.DocFlavor, for "
+                            + "example AUTOSENSE, PDF, POSTSCRIPT, PCL, GIF, JPEG, TEXT_PLAIN_UTF_8 or TEXT_HTML. If not set, "
+                            + "AUTOSENSE is used, which lets the print service detect the format. With sendToPrinter set to "
+                            + "false, it also selects the extension of the written file.")
     private String mimeType;
-    @UriParam(defaultValue = "na-letter")
+    @UriParam(defaultValue = "na-letter",
+              description = "The paper size, as the name that javax.print.attribute.standard.MediaSizeName gives it, for "
+                            + "example na-letter, na-legal, iso-a4 or japanese-postcard. Case is ignored and _ may be used for "
+                            + "-, so ISO_A4 works too. An unknown size fails the creation of the endpoint.")
     private String mediaSize;
-    @UriParam(defaultValue = "one-sided", enums = "one-sided,duplex,tumble,two-sided-short-edge,two-sided-long-edge")
+    @UriParam(defaultValue = "one-sided", enums = "one-sided,duplex,tumble,two-sided-short-edge,two-sided-long-edge",
+              description = "Whether to print on one side or on both sides of the paper, as a value of "
+                            + "javax.print.attribute.standard.Sides. The value duplex is the same as two-sided-long-edge, and "
+                            + "tumble the same as two-sided-short-edge.")
     private String sides;
-    @UriParam(defaultValue = "portrait", enums = "portrait,landscape,reverse-portrait,reverse-landscape")
+    @UriParam(defaultValue = "portrait", enums = "portrait,landscape,reverse-portrait,reverse-landscape",
+              description = "The orientation of the printed pages, as a value of "
+                            + "javax.print.attribute.standard.OrientationRequested.")
     private String orientation;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Whether to send the print job to the printer. If false, the producer writes the document to a "
+                            + "file named PrintOutput_ followed by a random UUID in the target directory of the working "
+                            + "directory, with the extension gif, jpeg, pdf or txt that matches mimeType. The producer still "
+                            + "looks up the printer when it starts, and the printer must support the doc flavor.")
     private boolean sendToPrinter = true;
-    @UriParam
+    @UriParam(description = "The name of the input tray to take the paper from, as javax.print.attribute.standard.MediaTray "
+                            + "gives it with spaces replaced by _, for example top, middle, bottom or manual. The name must "
+                            + "match, with the same case, a tray that the printer reports, or the producer fails to start.")
     private String mediaTray;
 
     public PrinterConfiguration() {
@@ -244,9 +277,6 @@ public class PrinterConfiguration {
         return hostname;
     }
 
-    /**
-     * Hostname of the printer
-     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -255,9 +285,6 @@ public class PrinterConfiguration {
         return port;
     }
 
-    /**
-     * Port number of the printer
-     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -266,9 +293,6 @@ public class PrinterConfiguration {
         return printername;
     }
 
-    /**
-     * Name of the printer
-     */
     public void setPrintername(String printername) {
         this.printername = printername;
     }
@@ -277,9 +301,6 @@ public class PrinterConfiguration {
         return copies;
     }
 
-    /**
-     * Number of copies to print
-     */
     public void setCopies(int copies) {
         this.copies = copies;
     }
@@ -288,9 +309,6 @@ public class PrinterConfiguration {
         return flavor;
     }
 
-    /**
-     * Sets DocFlavor to use.
-     */
     public void setFlavor(String flavor) {
         this.flavor = flavor;
     }
@@ -299,9 +317,6 @@ public class PrinterConfiguration {
         return docFlavor;
     }
 
-    /**
-     * Sets DocFlavor to use.
-     */
     public void setDocFlavor(DocFlavor docFlavor) {
         this.docFlavor = docFlavor;
     }
@@ -310,11 +325,6 @@ public class PrinterConfiguration {
         return mediaSize;
     }
 
-    /**
-     * Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API. The
-     * default setting is to use North American Letter sized stationary. The value's case is ignored, e.g. values of
-     * iso_a4 and ISO_A4 may be used.
-     */
     public void setMediaSize(String mediaSize) {
         this.mediaSize = mediaSize;
     }
@@ -323,9 +333,6 @@ public class PrinterConfiguration {
         return sides;
     }
 
-    /**
-     * Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API
-     */
     public void setSides(String sides) {
         this.sides = sides;
     }
@@ -358,9 +365,6 @@ public class PrinterConfiguration {
         return orientation;
     }
 
-    /**
-     * Sets the page orientation.
-     */
     public void setOrientation(String orientation) {
         this.orientation = orientation;
     }
@@ -369,9 +373,6 @@ public class PrinterConfiguration {
         return mimeType;
     }
 
-    /**
-     * Sets mimeTypes supported by the javax.print.DocFlavor API
-     */
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
@@ -380,9 +381,6 @@ public class PrinterConfiguration {
         return sendToPrinter;
     }
 
-    /**
-     * etting this option to false prevents sending of the print data to the printer
-     */
     public void setSendToPrinter(boolean sendToPrinter) {
         this.sendToPrinter = sendToPrinter;
     }
@@ -391,9 +389,6 @@ public class PrinterConfiguration {
         return mediaTray;
     }
 
-    /**
-     * Sets MediaTray supported by the javax.print.DocFlavor API, for example upper,middle etc.
-     */
     public void setMediaTray(String mediaTray) {
         this.mediaTray = mediaTray;
     }
@@ -402,9 +397,6 @@ public class PrinterConfiguration {
         return printerPrefix;
     }
 
-    /**
-     * Sets the prefix name of the printer, it is useful when the printer name does not start with //hostname/printer
-     */
     public void setPrinterPrefix(String printerPrefix) {
         this.printerPrefix = printerPrefix;
     }

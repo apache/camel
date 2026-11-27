@@ -210,9 +210,9 @@ public interface BrowseEndpointBuilderFactory {
         }
         /**
          * A predicate that the producer tests on each message: true keeps the
-         * message for browsing, false skips it. A skipped message is also not
-         * passed to the route that consumes from the endpoint. If not set,
-         * every message is kept.
+         * message for browsing, false skips it. The filter only chooses what is
+         * browsed: the route that consumes from the endpoint gets every
+         * message. If not set, every message is kept.
          * 
          * The option is a:
          * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
@@ -228,9 +228,9 @@ public interface BrowseEndpointBuilderFactory {
         }
         /**
          * A predicate that the producer tests on each message: true keeps the
-         * message for browsing, false skips it. A skipped message is also not
-         * passed to the route that consumes from the endpoint. If not set,
-         * every message is kept.
+         * message for browsing, false skips it. The filter only chooses what is
+         * browsed: the route that consumes from the endpoint gets every
+         * message. If not set, every message is kept.
          * 
          * The option will be converted to a
          * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
@@ -350,9 +350,9 @@ public interface BrowseEndpointBuilderFactory {
         }
         /**
          * A predicate that the producer tests on each message: true keeps the
-         * message for browsing, false skips it. A skipped message is also not
-         * passed to the route that consumes from the endpoint. If not set,
-         * every message is kept.
+         * message for browsing, false skips it. The filter only chooses what is
+         * browsed: the route that consumes from the endpoint gets every
+         * message. If not set, every message is kept.
          * 
          * The option is a:
          * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
@@ -368,9 +368,9 @@ public interface BrowseEndpointBuilderFactory {
         }
         /**
          * A predicate that the producer tests on each message: true keeps the
-         * message for browsing, false skips it. A skipped message is also not
-         * passed to the route that consumes from the endpoint. If not set,
-         * every message is kept.
+         * message for browsing, false skips it. The filter only chooses what is
+         * browsed: the route that consumes from the endpoint gets every
+         * message. If not set, every message is kept.
          * 
          * The option will be converted to a
          * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
@@ -448,9 +448,9 @@ public interface BrowseEndpointBuilderFactory {
         }
         /**
          * A predicate that the producer tests on each message: true keeps the
-         * message for browsing, false skips it. A skipped message is also not
-         * passed to the route that consumes from the endpoint. If not set,
-         * every message is kept.
+         * message for browsing, false skips it. The filter only chooses what is
+         * browsed: the route that consumes from the endpoint gets every
+         * message. If not set, every message is kept.
          * 
          * The option is a:
          * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
@@ -466,9 +466,9 @@ public interface BrowseEndpointBuilderFactory {
         }
         /**
          * A predicate that the producer tests on each message: true keeps the
-         * message for browsing, false skips it. A skipped message is also not
-         * passed to the route that consumes from the endpoint. If not set,
-         * every message is kept.
+         * message for browsing, false skips it. The filter only chooses what is
+         * browsed: the route that consumes from the endpoint gets every
+         * message. If not set, every message is kept.
          * 
          * The option will be converted to a
          * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.

@@ -2,7 +2,7 @@
 :doctitle: Event
 :shortname: event
 :artifactid: camel-event
-:description: Subscribe to Camel internal events such as route started/stopped and exchange completed/failed.
+:description: Receive the internal events of the CamelContext, such as a route that started or an exchange that failed.
 :since: 4.19
 :supportlevel: Stable
 :tabs-sync-option:

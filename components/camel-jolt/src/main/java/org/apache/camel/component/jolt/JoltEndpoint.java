@@ -47,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
 import tools.jackson.databind.JsonNode;
 
 /**
- * JSON to JSON transformation using JOLT.
+ * Transform JSON to JSON with a JOLT specification.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "jolt", title = "JOLT", syntax = "jolt:resourceUri", producerOnly = true,
              remote = false, category = { Category.TRANSFORMATION }, headersClass = JoltConstants.class)
@@ -75,16 +75,31 @@ public class JoltEndpoint extends ResourceEndpoint {
 
     private JoltTransform transform;
 
-    @UriParam(defaultValue = "Hydrated")
+    @UriParam(defaultValue = "Hydrated",
+              description = "Whether the producer sets the body to the result of the transform as it is or to its JSON text."
+                            + " With Hydrated, the body is the result as it is, which is a Map for a JSON object and a List for"
+                            + " a JSON array. With JsonString, the body is the result written as a JSON String.")
     private JoltInputOutputType outputType;
 
-    @UriParam(defaultValue = "Hydrated")
+    @UriParam(defaultValue = "Hydrated",
+              description = "Whether the producer parses the body as JSON or uses it as it is. With Hydrated, a body that is"
+                            + " JSON text (its first non-whitespace character is { or [), bytes, a stream or a file is parsed"
+                            + " as JSON, and any other body, such as a Map or a List, is used as it is. With JsonString, the"
+                            + " body is always parsed as JSON. With both types, a Jackson JsonNode body is converted to a Map"
+                            + " or a List.")
     private JoltInputOutputType inputType;
 
-    @UriParam(defaultValue = "Chainr")
+    @UriParam(defaultValue = "Chainr",
+              description = "The JOLT transform that the producer builds from the spec of resourceUri. Chainr: the spec is a"
+                            + " JSON array of operations, each with an operation name (such as shift, default, remove, sort,"
+                            + " cardinality or modify-overwrite-beta) and its spec. Shiftr, Defaultr and Removr: the spec of"
+                            + " that one operation. Sortr: sorts the keys of the JSON objects and reads no spec. Not used when"
+                            + " the transform option of the component is set.")
     private JoltTransformType transformDsl = JoltTransformType.Chainr;
 
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the producer reads the CamelJoltResourceUri and CamelJoltContext headers. If false, the"
+                            + " producer ignores both headers. Enable it only when the headers come from a trusted source.")
     private boolean allowTemplateFromHeader;
 
     public JoltEndpoint() {
@@ -166,9 +181,6 @@ public class JoltEndpoint extends ResourceEndpoint {
         return outputType;
     }
 
-    /**
-     * Specifies if the output should be hydrated JSON or a JSON String.
-     */
     public void setOutputType(JoltInputOutputType outputType) {
         this.outputType = outputType;
     }
@@ -177,11 +189,6 @@ public class JoltEndpoint extends ResourceEndpoint {
         return inputType;
     }
 
-    /**
-     * Specifies if the input is hydrated JSON or a JSON String. With Hydrated, a body that is JSON text (its first
-     * non-whitespace character is { or [), bytes, a stream or a file is parsed as JSON, and any other body, such as a
-     * Map or a List, is used as it is. With JsonString, the body is always parsed as JSON.
-     */
     public void setInputType(JoltInputOutputType inputType) {
         this.inputType = inputType;
     }
@@ -190,9 +197,6 @@ public class JoltEndpoint extends ResourceEndpoint {
         return transformDsl;
     }
 
-    /**
-     * Specifies the Transform DSL of the endpoint resource. If none is specified <code>Chainr</code> will be used.
-     */
     public void setTransformDsl(JoltTransformType transformType) {
         this.transformDsl = transformType;
     }
@@ -201,12 +205,6 @@ public class JoltEndpoint extends ResourceEndpoint {
         return allowTemplateFromHeader;
     }
 
-    /**
-     * Whether to allow to use resource template from header or not (default false).
-     *
-     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
-     * security vulnerability if the header is coming from a malicious user, so use this with care.
-     */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }

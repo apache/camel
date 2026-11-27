@@ -34,7 +34,9 @@ import org.apache.camel.util.StringHelper;
 @Component("scp")
 public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
-    @Metadata
+    @Metadata(description = "Whether to log the INFO messages of JSch at INFO level. JSch logs much at INFO level, so by"
+                            + " default the component logs these messages at DEBUG level. The component passes the JSch log"
+                            + " messages, with the [JSCH] prefix, to its own logger.")
     private boolean verboseLogging;
 
     public ScpComponent() {
@@ -66,10 +68,6 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
         return verboseLogging;
     }
 
-    /**
-     * JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But
-     * setting this option to <tt>true</tt> turns on the verbose logging again.
-     */
     public void setVerboseLogging(boolean verboseLogging) {
         this.verboseLogging = verboseLogging;
     }

@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Invoke methods of Java beans stored in Camel registry.
+ * Invoke a method of a Java bean, looked up by name in the Camel registry or created from a class name.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true,
              remote = false, category = { Category.CORE, Category.SCRIPT })
@@ -50,23 +50,31 @@ import org.apache.camel.util.ObjectHelper;
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;
-    @UriPath(label = "common", description = "Sets the name of the bean to invoke")
+    @UriPath(label = "common",
+             description = "The name of the bean to invoke. The bean component looks it up in the Camel registry and,"
+                           + " when no bean has that name, takes it as a class name and creates an instance."
+                           + " The class component takes it as the fully qualified class name.")
     @Metadata(required = true)
     private String beanName;
-    @UriParam(label = "common", description = "Sets the name of the method to invoke on the bean")
+    @UriParam(label = "common",
+              description = "The name of the method to invoke on the bean. When not set, Camel chooses the method with"
+                            + " the bean binding rules, for example the method annotated with @Handler or the method"
+                            + " whose parameter matches the message body. Parameters can follow in parentheses, as types"
+                            + " to choose among overloaded methods, such as foo(String), or as values to bind, such as"
+                            + " foo(${body}, true).")
     private String method;
-    @UriParam(label = "common", defaultValue = "Singleton", description = "Scope of bean."
-                                                                          + " When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint."
-                                                                          + " The bean should be thread-safe in case concurrent threads is calling the bean at the same time."
-                                                                          + " When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean"
-                                                                          + " while processing a request and you want to call the same bean instance multiple times while processing the request."
-                                                                          + " The bean does not have to be thread-safe as the instance is only called from the same request."
-                                                                          + " When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
-                                                                          + " to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope."
-                                                                          + " so when using prototype then this depends on the delegated registry.")
+    @UriParam(label = "common", defaultValue = "Singleton",
+              description = "How long a bean instance is reused. Singleton: the bean is looked up or created once and"
+                            + " used for the lifetime of the endpoint, so it must be thread-safe. Request: one instance per"
+                            + " exchange, so the bean can keep state while the same exchange calls it several times."
+                            + " Prototype: the bean is looked up or created on each call, and a bean from a registry such as"
+                            + " Spring or CDI is a new instance only when that registry creates one.")
     private BeanScope scope = BeanScope.Singleton;
-    @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean",
-              multiValue = true)
+    @UriParam(prefix = "bean.", label = "advanced", multiValue = true,
+              description = "Properties to set on the bean, each given with the bean. prefix: bean.timeout=5000 calls"
+                            + " setTimeout(5000) on the bean. The properties are set each time the bean is looked up or"
+                            + " created, once for Singleton scope, so a bean from the registry is changed for every user"
+                            + " of it.")
     private Map<String, Object> parameters;
 
     public BeanEndpoint() {

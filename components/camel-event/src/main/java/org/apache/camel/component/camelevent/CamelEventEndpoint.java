@@ -39,7 +39,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Subscribe to Camel internal events such as route started/stopped and exchange completed/failed.
+ * Receive the internal events of the CamelContext, such as a route that started or an exchange that failed.
  *
  * The URI path specifies comma-separated event types to subscribe to. Event types correspond to
  * {@link org.apache.camel.spi.CamelEvent.Type} enum values (case-insensitive), for example:
@@ -58,41 +58,36 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " batchSize above 1, a List of the events"))
 public class CamelEventEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Comma-separated list of event types to subscribe to."
-                           + " Event types correspond to CamelEvent.Type enum values (case-insensitive),"
-                           + " for example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed."
-                           + " Wildcard patterns are supported using a * suffix,"
-                           + " for example: Route* matches all route events, Exchange* matches all exchange events,"
-                           + " and * matches all events.")
+    @UriPath(description = "A comma-separated list of the event types to consume, as names of the CamelEvent.Type enum,"
+                           + " ignoring case, for example RouteStarted,ExchangeFailed. A name that ends with * matches every"
+                           + " type that starts with the text before it: Route* matches RouteStarted and also RoutesStarted,"
+                           + " and * matches all types. An unknown name fails the creation of the endpoint.")
     @Metadata(required = true)
     private String events;
 
-    @UriParam(description = "Comma-separated list of route IDs to include."
-                            + " For route events, this matches the route ID."
-                            + " For exchange events, this matches the route ID of the exchange."
-                            + " Only events matching one of the specified route IDs will be accepted.")
+    @UriParam(description = "A comma-separated list of route IDs. The consumer drops a route event of another route, and an"
+                            + " exchange event of an exchange that another route created. Events without a route, such as"
+                            + " CamelContext and service events, are always consumed.")
     private String include;
 
-    @UriParam(description = "Comma-separated list of route IDs to exclude."
-                            + " For route events, this excludes by route ID."
-                            + " For exchange events, this excludes by the route ID of the exchange."
-                            + " Events matching any of the specified route IDs will be rejected."
-                            + " This option can be used together with the include option.")
+    @UriParam(description = "A comma-separated list of route IDs. The consumer drops a route event of one of these routes,"
+                            + " and an exchange event of an exchange that one of these routes created. It applies after the"
+                            + " include option, and does not affect events without a route.")
     private String exclude;
 
-    @UriParam(description = "Fully qualified class name of a custom event class to filter on."
-                            + " When set, only events that are instances of the specified class will be accepted."
-                            + " This is useful for subscribing to custom user-defined events.")
+    @UriParam(description = "The fully qualified name of an event class. The consumer drops an event that is not an instance"
+                            + " of this class, in addition to the event types of the path. Use it with the Custom event type to"
+                            + " consume only your own events of this class.")
     private String customEventClass;
 
-    @UriParam(description = "Whether to process events asynchronously using a thread pool."
-                            + " When enabled, the event notifier thread is not blocked while the event exchange is processed."
-                            + " Use asyncPoolSize to control the maximum number of concurrent event processing threads.",
+    @UriParam(description = "Whether to put the events in a bounded queue that a pool of threads routes, so the thread that"
+                            + " fires an event does not wait for the route. If false, the event is routed on the thread that"
+                            + " fires it.",
               defaultValue = "false")
     private boolean async;
 
-    @UriParam(description = "The maximum number of threads in the pool for async event processing."
-                            + " Only used when the async option is enabled.",
+    @UriParam(description = "The number of threads that take the events from the queue and route them. Only used when async"
+                            + " is true.",
               defaultValue = "10")
     private int asyncPoolSize = 10;
 
@@ -102,22 +97,21 @@ public class CamelEventEndpoint extends DefaultEndpoint {
               defaultValue = "1000")
     private int asyncQueueSize = 1000;
 
-    @UriParam(description = "The backpressure policy when the async event queue is full."
-                            + " Supported values: Block (block the event notifier thread until space is available),"
-                            + " Drop (silently discard the event), Fail (discard the event and pass an"
-                            + " IllegalStateException to the exception handler of the consumer, which logs it at WARN"
-                            + " level by default, or hands it to the error handler of the route with bridgeErrorHandler=true).",
+    @UriParam(description = "What happens to an event when the async queue is full. Block makes the thread that fires the"
+                            + " event wait for space, Drop discards the event with a DEBUG log, and Fail discards the event and"
+                            + " passes an IllegalStateException to the exception handler of the consumer, which logs it at"
+                            + " WARN by default, or with bridgeErrorHandler=true hands it to the error handler of the route.",
               defaultValue = "Block")
     private BackpressurePolicy backpressurePolicy = BackpressurePolicy.Block;
 
-    @UriParam(description = "Enables event batching. When set to a value greater than 1, events are collected"
-                            + " into a java.util.List and dispatched as a single exchange when the batch is full"
-                            + " or the batchTimeout expires. The exchange body will be a list of CamelEvent objects.",
+    @UriParam(description = "The number of events to collect into one exchange, whose body is a java.util.List of the events."
+                            + " A batch is sent when it is full, and every batchTimeout with the events collected so far. With 0"
+                            + " or 1, each event is its own exchange, with the event as the body.",
               defaultValue = "0")
     private int batchSize;
 
-    @UriParam(description = "The maximum time in milliseconds to wait for a batch to fill before dispatching"
-                            + " a partial batch. Only used when batchSize is greater than 1.",
+    @UriParam(description = "The interval in milliseconds at which a timer sends the events collected so far, even if the batch"
+                            + " is not full. Only used when batchSize is greater than 1.",
               defaultValue = "1000")
     private long batchTimeout = 1000;
 
@@ -238,12 +232,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return events;
     }
 
-    /**
-     * Comma-separated list of event types to subscribe to. Event types correspond to CamelEvent.Type enum values
-     * (case-insensitive), for example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed. Wildcard patterns
-     * are supported using a * suffix, for example: Route* matches all route events, Exchange* matches all exchange
-     * events, and * matches all events.
-     */
     public void setEvents(String events) {
         this.events = events;
     }
@@ -252,10 +240,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return include;
     }
 
-    /**
-     * Comma-separated list of route IDs to include. For route events, this matches the route ID. For exchange events,
-     * this matches the route ID of the exchange. Only events matching one of the specified route IDs will be accepted.
-     */
     public void setInclude(String include) {
         this.include = include;
     }
@@ -264,11 +248,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return exclude;
     }
 
-    /**
-     * Comma-separated list of route IDs to exclude. For route events, this excludes by route ID. For exchange events,
-     * this excludes by the route ID of the exchange. Events matching any of the specified route IDs will be rejected.
-     * This option can be used together with the include option.
-     */
     public void setExclude(String exclude) {
         this.exclude = exclude;
     }
@@ -277,10 +256,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return customEventClass;
     }
 
-    /**
-     * Fully qualified class name of a custom event class to filter on. When set, only events that are instances of the
-     * specified class will be accepted. This is useful for subscribing to custom user-defined events.
-     */
     public void setCustomEventClass(String customEventClass) {
         this.customEventClass = customEventClass;
     }
@@ -289,11 +264,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return async;
     }
 
-    /**
-     * Whether to process events asynchronously using a thread pool. When enabled, the event notifier thread is not
-     * blocked while the event exchange is processed. Use asyncPoolSize to control the maximum number of concurrent
-     * event processing threads.
-     */
     public void setAsync(boolean async) {
         this.async = async;
     }
@@ -302,9 +272,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return asyncPoolSize;
     }
 
-    /**
-     * The maximum number of threads in the pool for async event processing. Only used when the async option is enabled.
-     */
     public void setAsyncPoolSize(int asyncPoolSize) {
         this.asyncPoolSize = asyncPoolSize;
     }
@@ -313,10 +280,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return asyncQueueSize;
     }
 
-    /**
-     * The capacity of the bounded event queue used when async is enabled. When the queue is full, the backpressure
-     * policy determines the behavior. Only used when the async option is enabled.
-     */
     public void setAsyncQueueSize(int asyncQueueSize) {
         this.asyncQueueSize = asyncQueueSize;
     }
@@ -325,12 +288,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return backpressurePolicy;
     }
 
-    /**
-     * The backpressure policy when the async event queue is full. Supported values: Block (block the event notifier
-     * thread until space is available), Drop (silently discard the event), Fail (discard the event and pass an
-     * IllegalStateException to the exception handler of the consumer, which logs it at WARN level by default, or hands
-     * it to the error handler of the route with bridgeErrorHandler=true).
-     */
     public void setBackpressurePolicy(BackpressurePolicy backpressurePolicy) {
         this.backpressurePolicy = backpressurePolicy;
     }
@@ -339,11 +296,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return batchSize;
     }
 
-    /**
-     * Enables event batching. When set to a value greater than 1, events are collected into a java.util.List and
-     * dispatched as a single exchange when the batch is full or the batchTimeout expires. The exchange body will be a
-     * List&lt;CamelEvent&gt;.
-     */
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
     }
@@ -352,10 +304,6 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return batchTimeout;
     }
 
-    /**
-     * The maximum time in milliseconds to wait for a batch to fill before dispatching a partial batch. Only used when
-     * batchSize is greater than 1.
-     */
     public void setBatchTimeout(long batchTimeout) {
         this.batchTimeout = batchTimeout;
     }

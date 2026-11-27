@@ -21,41 +21,38 @@ import org.apache.camel.spi.Metadata;
 
 public final class FileWatchConstants {
 
-    @Metadata(description = "Type of event. Possible values: CREATE, DELETE, MODIFY.", javaType = "String")
+    @Metadata(description = "The type of the event: CREATE, MODIFY or DELETE.", javaType = "String")
     public static final String EVENT_TYPE_HEADER = "CamelFileEventType";
     @Metadata(description = "Only the file name (the name with no leading paths).", javaType = "String")
     public static final String FILE_NAME_ONLY = Exchange.FILE_NAME_ONLY;
-    @Metadata(description = """
-            A `boolean` option specifying whether the consumed file denotes an
-            absolute path or not. Should normally be `false` for relative paths.
-            Absolute paths should normally not be used but we added to the move
-            option to allow moving files to absolute paths. But can be used
-            elsewhere as well.""",
+    @Metadata(description = "Always true, as the CamelFileAbsolutePath and CamelFilePath headers hold an absolute path.",
               javaType = "Boolean")
     public static final String FILE_ABSOLUTE = "CamelFileAbsolute";
-    @Metadata(description = """
-            The absolute path to the file. For relative files this path holds the
-            relative path instead.""",
+    @Metadata(description = "The absolute path of the file or directory of the event, normalized and with / as separator.",
               javaType = "String")
     public static final String FILE_ABSOLUTE_PATH = "CamelFileAbsolutePath";
-    @Metadata(description = """
-            The file path. For relative files this is the starting directory + the
-            relative filename. For absolute files this is the absolute path.""",
+    @Metadata(description = "The absolute path of the file or directory of the event, the same value as the"
+                            + " CamelFileAbsolutePath header.",
               javaType = "String")
     public static final String FILE_PATH = Exchange.FILE_PATH;
-    @Metadata(description = """
-            Name of the consumed file as a relative file path with offset from the
-            starting directory configured on the endpoint.""",
+    @Metadata(description = "The path of the file or directory of the event relative to the directory of the path option, with"
+                            + " / as separator.",
               javaType = "String", important = true)
     public static final String FILE_NAME = Exchange.FILE_NAME;
-    @Metadata(description = "The relative path.", javaType = "String")
+    @Metadata(description = "The path relative to the directory of the path option, the same value as the CamelFileName"
+                            + " header.",
+              javaType = "String")
     public static final String FILE_RELATIVE_PATH = "CamelFileRelativePath";
-    @Metadata(description = "The name of the file that has been consumed", javaType = "String")
+    @Metadata(description = "The path relative to the directory of the path option, the same value as the CamelFileName"
+                            + " header.",
+              javaType = "String")
     public static final String FILE_NAME_CONSUMED = Exchange.FILE_NAME_CONSUMED;
-    @Metadata(description = "The parent path.", javaType = "String")
+    @Metadata(description = "The absolute path of the directory that holds the file or directory of the event, with / as"
+                            + " separator.",
+              javaType = "String")
     public static final String FILE_PARENT = Exchange.FILE_PARENT;
-    @Metadata(description = "A `Long` value containing the last modified timestamp of the file."
-                            + " Not set when the file no longer exists, such as for a DELETE event.",
+    @Metadata(description = "The last modified time of the file or directory, in milliseconds since the epoch. Not set when"
+                            + " the file no longer exists, such as for a DELETE event.",
               javaType = "long")
     public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
 

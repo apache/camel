@@ -35,7 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Read from system-in and write to system-out and system-err streams.
+ * Read from System.in, a file or an HTTP URL, and write to System.out, System.err, a file or an output stream in a
+ * message header.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind",
              category = { Category.FILE, Category.CORE }, headersClass = StreamConstants.class)
@@ -56,46 +57,115 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     private transient Charset charset;
 
-    @UriPath(enums = "in,out,err,header,file,http")
+    @UriPath(enums = "in,out,err,header,file,http",
+             description = "The kind of stream. The consumer reads from in (System.in), file (the file of"
+                           + " fileName) or http (the URL of httpUrl). The producer writes to out (System.out), err"
+                           + " (System.err), file (the file of fileName) or header (the java.io.OutputStream in the"
+                           + " stream header of the message). Any other kind fails when the consumer or producer is"
+                           + " created.")
     @Metadata(required = true)
     private String kind;
-    @UriParam
+    @UriParam(description = "The path of the file that kind file reads or writes. The consumer reads the file from"
+                            + " the beginning; without scanStream, a file that cannot be read fails the start of the"
+                            + " consumer. The producer appends to the file, and creates it and its parent directories"
+                            + " when they do not exist.")
     private String fileName;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The URL that kind http reads from, which the consumer opens with"
+                            + " java.net.URLConnection. Without scanStream, the consumer opens it when it starts, so a"
+                            + " URL that cannot be reached fails the start.")
     private String httpUrl;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The request headers that the consumer sends to httpUrl, as a comma-separated list of"
+                            + " name=value or name:value pairs, for example Accept:application/json. Whitespace around"
+                            + " each name and value is removed. A value that contains a comma, = or : is not"
+                            + " supported.")
     private String httpHeaders;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer keeps reading the stream after its end, like the Unix tail -f"
+                            + " command, and waits scanStreamDelay each time it finds no new data. The consumer opens"
+                            + " the stream in its reading thread, so a file that does not exist yet or a URL that"
+                            + " cannot be reached does not fail the start, and is opened again later only with retry."
+                            + " A scanned stream never completes, so the CamelStreamComplete header is always false.")
     private boolean scanStream;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer opens the stream again at its end and after it failed to open or"
+                            + " read it, somewhat like tail --retry. Only used with scanStream. A file is then read"
+                            + " again from the beginning, and the request to httpUrl is sent again. Without"
+                            + " fileWatcher this happens at each end of the stream, so enable fileWatcher to read a"
+                            + " file again only after it changed.")
     private boolean retry;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "Whether the consumer watches the directory of fileName with the JDK WatchService for"
+                            + " the creation or modification of the file, for example when it is overwritten or rolled"
+                            + " over. Only for kind file, and only used with scanStream and retry: the consumer then"
+                            + " opens the file again at its end only when it changed. A fileName without a directory"
+                            + " is not watched.")
     private boolean fileWatcher;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "Whether the producer closes the file of kind file after the last message of a"
+                            + " Splitter, which is the message with the exchange property CamelSplitComplete set to"
+                            + " true. The next message opens the file again. Without it and autoCloseCount, the"
+                            + " producer keeps the file open until it stops.")
     private boolean closeOnDone;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The delay in milliseconds before the consumer reads again when it finds no new data in"
+                            + " the stream. Only used with scanStream. After the stream could not be opened or read,"
+                            + " the consumer waits at least one second.")
     private long scanStreamDelay;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The delay in milliseconds before the producer writes each message.")
     private long delay;
-    @UriParam
+    @UriParam(description = "The name of the charset of text, for example UTF-8. The consumer uses it to read lines"
+                            + " with kind in or file, reads lines of kind http with the JVM default charset, and does"
+                            + " not use it with readLine=false. The producer uses it to write a body that is a String"
+                            + " or that cannot be converted to byte[]. If not set, the JVM default charset is used.")
     private String encoding;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The text that the consumer prints to System.out before it reads each line from"
+                            + " System.in, for example Enter a command: (no new line is added). Only printed for kind"
+                            + " in, and not with scanStream.")
     private String promptMessage;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The delay in milliseconds before each prompt of promptMessage, except the first one"
+                            + " when initialPromptDelay is set.")
     private long promptDelay;
-    @UriParam(label = "consumer", defaultValue = "2000")
+    @UriParam(label = "consumer", defaultValue = "2000",
+              description = "The delay in milliseconds before the first prompt of promptMessage, used in place of"
+                            + " promptDelay. It keeps the prompt apart from the log output that is written to"
+                            + " System.out while the application starts. If 0, the first prompt waits promptDelay.")
     private long initialPromptDelay = 2000;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The number of lines that the consumer puts in one exchange, whose body is the result"
+                            + " of groupStrategy, by default a List of the lines. If 0, each line is one exchange."
+                            + " Without scanStream, the lines left at the end of the stream are sent as a smaller"
+                            + " group, and with scanStream a group is sent only when it is full. With kind in and"
+                            + " without scanStream, each line is sent alone. Not used with readLine=false.")
     private int groupLines;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether the consumer reads the stream line by line and creates an exchange with a"
+                            + " String body for each line, or for each group of groupLines lines. If false, the"
+                            + " consumer reads the stream to its end and creates one exchange with all the bytes as"
+                            + " byte[] body; with scanStream, each exchange holds the bytes read in one scan.")
     private boolean readLine = true;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Whether the producer writes the line separator of the operating system"
+                            + " (System.lineSeparator()) after each message body.")
     private boolean appendNewLine = true;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The number of messages after which the producer closes the file of kind file. The next"
+                            + " message opens the file again for another batch of messages. If 0, the producer keeps"
+                            + " the file open until it stops. System.out and System.err are never closed, and the"
+                            + " stream of kind header is closed after each message.")
     private int autoCloseCount;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "The org.apache.camel.component.stream.GroupStrategy that turns a group of lines into"
+                            + " the message body. Only used when groupLines is set. The default returns the List of"
+                            + " the lines as is.")
     private GroupStrategy groupStrategy = new DefaultGroupStrategy();
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Not used: the component applies no read timeout to any stream, including the"
+                            + " connection to httpUrl.")
     private int readTimeout;
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {
@@ -124,9 +194,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return kind;
     }
 
-    /**
-     * Kind of stream to use such as System.in, System.out, a file, or a http url.
-     */
     public void setKind(String kind) {
         this.kind = kind;
     }
@@ -135,9 +202,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return fileName;
     }
 
-    /**
-     * When using the stream:file URI format, this option specifies the filename to stream to/from.
-     */
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
@@ -146,9 +210,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return httpUrl;
     }
 
-    /**
-     * When using stream:http format, this option specifies the http url to stream from.
-     */
     public void setHttpUrl(String httpUrl) {
         this.httpUrl = httpUrl;
     }
@@ -157,11 +218,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return httpHeaders;
     }
 
-    /**
-     * When using stream:http format, this option specifies optional http headers, such as Accept: application/json.
-     * Multiple headers can be separated by comma. The format of headers can be either "HEADER=VALUE" or "HEADER:VALUE".
-     * In accordance with the HTTP/1.1 specification, leading and/or trailing whitespace is ignored
-     */
     public void setHttpHeaders(String httpHeaders) {
         this.httpHeaders = httpHeaders;
     }
@@ -170,9 +226,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return delay;
     }
 
-    /**
-     * Initial delay in milliseconds before producing the stream.
-     */
     public void setDelay(long delay) {
         this.delay = delay;
     }
@@ -181,10 +234,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return encoding;
     }
 
-    /**
-     * You can configure the encoding (is a charset name) to use text-based streams (for example, message body is a
-     * String object). If not provided, Camel uses the JVM default Charset.
-     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -193,9 +242,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return promptMessage;
     }
 
-    /**
-     * Message prompt to use when reading from stream:in; for example, you could set this to Enter a command:
-     */
     public void setPromptMessage(String promptMessage) {
         this.promptMessage = promptMessage;
     }
@@ -204,9 +250,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return promptDelay;
     }
 
-    /**
-     * Optional delay in milliseconds before showing the message prompt.
-     */
     public void setPromptDelay(long promptDelay) {
         this.promptDelay = promptDelay;
     }
@@ -215,10 +258,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return initialPromptDelay;
     }
 
-    /**
-     * Initial delay in milliseconds before showing the message prompt. This delay occurs only once. Can be used during
-     * system startup to avoid message prompts being written while other logging is done to the system out.
-     */
     public void setInitialPromptDelay(long initialPromptDelay) {
         this.initialPromptDelay = initialPromptDelay;
     }
@@ -227,9 +266,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return scanStream;
     }
 
-    /**
-     * To be used for continuously reading a stream such as the unix tail command.
-     */
     public void setScanStream(boolean scanStream) {
         this.scanStream = scanStream;
     }
@@ -238,9 +274,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return groupStrategy;
     }
 
-    /**
-     * Allows to use a custom GroupStrategy to control how to group lines.
-     */
     public void setGroupStrategy(GroupStrategy strategy) {
         this.groupStrategy = strategy;
     }
@@ -249,11 +282,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return retry;
     }
 
-    /**
-     * Will retry opening the stream if it's overwritten, somewhat like tail --retry
-     * <p/>
-     * If reading from files then you should also enable the fileWatcher option, to make it work reliable.
-     */
     public void setRetry(boolean retry) {
         this.retry = retry;
     }
@@ -262,10 +290,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return fileWatcher;
     }
 
-    /**
-     * To use JVM file watcher to listen for file change events to support re-loading files that may be overwritten,
-     * somewhat like tail --retry
-     */
     public void setFileWatcher(boolean fileWatcher) {
         this.fileWatcher = fileWatcher;
     }
@@ -274,11 +298,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return closeOnDone;
     }
 
-    /**
-     * This option is used in combination with Splitter and streaming to the same file. The idea is to keep the stream
-     * open and only close when the Splitter is done, to improve performance. Mind this requires that you only stream to
-     * the same file, and not 2 or more files.
-     */
     public void setCloseOnDone(boolean closeOnDone) {
         this.closeOnDone = closeOnDone;
     }
@@ -287,9 +306,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return scanStreamDelay;
     }
 
-    /**
-     * Delay in milliseconds between read attempts when using scanStream.
-     */
     public void setScanStreamDelay(long scanStreamDelay) {
         this.scanStreamDelay = scanStreamDelay;
     }
@@ -298,10 +314,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return groupLines;
     }
 
-    /**
-     * To group X number of lines in the consumer. For example to group 10 lines and therefore only spit out an Exchange
-     * with 10 lines, instead of 1 Exchange per line.
-     */
     public void setGroupLines(int groupLines) {
         this.groupLines = groupLines;
     }
@@ -310,10 +322,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return readLine;
     }
 
-    /**
-     * Whether to read the input stream in line mode (terminate by line breaks). Setting this to false, will instead
-     * read until the end of the stream. With scanStream, each exchange holds the bytes read in one scan.
-     */
     public void setReadLine(boolean readLine) {
         this.readLine = readLine;
     }
@@ -322,10 +330,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return autoCloseCount;
     }
 
-    /**
-     * Number of messages to process before closing stream on Producer side. Never close stream by default (only when
-     * Producer is stopped). If more messages are sent, the stream is reopened for another autoCloseCount batch.
-     */
     public void setAutoCloseCount(int autoCloseCount) {
         this.autoCloseCount = autoCloseCount;
     }
@@ -334,9 +338,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return appendNewLine;
     }
 
-    /**
-     * Whether to append a new line character at end of output.
-     */
     public void setAppendNewLine(boolean appendNewLine) {
         this.appendNewLine = appendNewLine;
     }
@@ -349,12 +350,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         return readTimeout;
     }
 
-    /**
-     * Sets the read timeout to a specified timeout, in milliseconds. A non-zero value specifies the timeout when
-     * reading from Input stream when a connection is established to a resource. If the timeout expires before there is
-     * data available for read, a java.net.SocketTimeoutException is raised. A timeout of zero is interpreted as an
-     * infinite timeout.
-     */
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }

@@ -31,40 +31,54 @@ import org.apache.camel.spi.UriParams;
 public class LangChain4jWebSearchConfiguration implements Cloneable {
 
     @Metadata(required = true, autowired = true)
-    @UriParam
+    @UriParam(description = "The dev.langchain4j.web.search.WebSearchEngine that runs the search, for example a"
+                            + " TavilyWebSearchEngine or a GoogleCustomWebSearchEngine of the LangChain4j web search engine"
+                            + " modules. If not set, the single instance in the registry is used, and the producer fails to"
+                            + " start when there is none.")
     private WebSearchEngine webSearchEngine;
 
     @Metadata(required = true, defaultValue = "CONTENT")
-    @UriParam
+    @UriParam(description = "What the producer returns for each result: CONTENT its content as a String, or its snippet when"
+                            + " the result has no content (as some engines give none), SNIPPET its snippet, or"
+                            + " LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT the dev.langchain4j.web.search.WebSearchOrganicResult."
+                            + " The body is a single value when the request asks for one result, otherwise a List, and null"
+                            + " when there is no result.")
     private LangChain4jWebSearchResultType resultType = LangChain4jWebSearchResultType.CONTENT;
 
     @Metadata(required = true, defaultValue = "1")
-    @UriParam
+    @UriParam(description = "The number of results that the producer asks the search engine for. With 1 the body is a single"
+                            + " result, otherwise a List. An engine can return fewer results and can have its own maximum.")
     private Integer maxResults = 1;
-    @UriParam
+    @UriParam(description = "The language of the search results, in the format that the search engine expects. The Tavily"
+                            + " engine ignores it.")
     private String language;
-    @UriParam
+    @UriParam(description = "The geographic location of the search results, such as a country code, in the format that the"
+                            + " search engine expects. The Tavily engine ignores it.")
     private String geoLocation;
-    @UriParam
+    @UriParam(description = "The page number of the search results to return. If not set, LangChain4j uses 1. The Tavily"
+                            + " engine ignores it.")
     private Integer startPage;
-    @UriParam
+    @UriParam(description = "The index of the first search result to return, in the numbering that the search engine uses."
+                            + " The Tavily engine ignores it.")
     private Integer startIndex;
-    @UriParam
+    @UriParam(description = "Whether the search engine filters explicit content out of the results. If not set, LangChain4j"
+                            + " uses true. The Tavily engine ignores it.")
     private Boolean safeSearch;
-    @UriParam
+    @UriParam(description = "More parameters for the search engine, as a Map of names to values, such as the parameters of"
+                            + " the search API that no option covers. Which names are used depends on the engine, and the"
+                            + " Tavily engine ignores them.")
     private Map<String, Object> additionalParams;
 
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "A dev.langchain4j.web.search.WebSearchRequest that the producer sends as it is. When set, the"
+                            + " producer does not read the message body and does not use the other search options, and"
+                            + " only a maxResults of 1 in this request gives a single result instead of a List.")
     private WebSearchRequest webSearchRequest;
 
     public WebSearchEngine getWebSearchEngine() {
         return webSearchEngine;
     }
 
-    /**
-     * The {@link WebSearchEngine} engine to use. This is mandatory. Use one of the implementations from Langchain4j web
-     * search engines.
-     */
     public void setWebSearchEngine(WebSearchEngine webSearchEngine) {
         this.webSearchEngine = webSearchEngine;
     }
@@ -73,24 +87,10 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
         return resultType;
     }
 
-    /**
-     * The {@link #resultType} is the result type of the request. Valid values are
-     * LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT, CONTENT, or SNIPPET. CONTENT is the default value; it will return a list
-     * of String . You can also specify to return either the Langchain4j Web Search Organic Result object (using
-     * `LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT`) or snippet (using `SNIPPET`) for each result. With CONTENT, a result
-     * without content returns its snippet, as some engines give no content. If {@link #maxResults} is equal to 1, the
-     * response will be a single object instead of a list.
-     */
     public void setResultType(LangChain4jWebSearchResultType resultType) {
         this.resultType = resultType;
     }
 
-    /**
-     * The {@link #maxResults} is the expected number of results to be found if the search request were made. Each
-     * search engine may have a different limit for the maximum number of results that can be returned.
-     *
-     * @return
-     */
     public Integer getMaxResults() {
         return maxResults;
     }
@@ -99,12 +99,6 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
         this.maxResults = maxResults;
     }
 
-    /**
-     * The {@link #language} is the desired language for search results. The expected values may vary depending on the
-     * search engine.
-     *
-     * @return
-     */
     public String getLanguage() {
         return language;
     }
@@ -117,10 +111,6 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
         return geoLocation;
     }
 
-    /**
-     * The {@link #geoLocation} is the desired geolocation for search results. Each search engine may have a different
-     * set of supported geolocations.
-     */
     public void setGeoLocation(String geoLocation) {
         this.geoLocation = geoLocation;
     }
@@ -129,9 +119,6 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
         return startPage;
     }
 
-    /**
-     * The {@link #startPage} is the start page number for search results
-     */
     public void setStartPage(Integer startPage) {
         this.startPage = startPage;
     }
@@ -140,9 +127,6 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
         return startIndex;
     }
 
-    /**
-     * The {@link #startIndex} is the start index for search results, which may vary depending on the search engine.
-     */
     public void setStartIndex(Integer startIndex) {
         this.startIndex = startIndex;
     }
@@ -151,9 +135,6 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
         return safeSearch;
     }
 
-    /**
-     * The {@link #safeSearch} is the safe search flag, indicating whether to enable or disable safe search.
-     */
     public void setSafeSearch(Boolean safeSearch) {
         this.safeSearch = safeSearch;
     }
@@ -162,10 +143,6 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
         return additionalParams;
     }
 
-    /**
-     * The {@link #additionalParams} is the additional parameters for the search request are a map of key-value pairs
-     * that represent additional parameters for the search request.
-     */
     public void setAdditionalParams(Map<String, Object> additionalParams) {
         this.additionalParams = additionalParams;
     }
@@ -174,10 +151,6 @@ public class LangChain4jWebSearchConfiguration implements Cloneable {
         return webSearchRequest;
     }
 
-    /**
-     * The {@link #webSearchRequest} is the custom WebSearchRequest - advanced. When set, the message body and the other
-     * search options are not used.
-     */
     public void setWebSearchRequest(WebSearchRequest webSearchRequest) {
         this.webSearchRequest = webSearchRequest;
     }
