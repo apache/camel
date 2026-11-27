@@ -1387,7 +1387,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Elasticsearch (camel-elasticsearch)
-     * Send requests to Elasticsearch via Java Client API.
+     * Index, update, get, search and delete documents and indices in
+     * Elasticsearch with the Java API Client.
      * 
      * Category: search,monitoring
      * Since: 3.19

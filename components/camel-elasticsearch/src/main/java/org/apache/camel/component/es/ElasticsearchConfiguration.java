@@ -34,57 +34,101 @@ public class ElasticsearchConfiguration {
     private String password;
     private String apiKey;
 
-    @UriPath
+    @UriPath(description = "The name of the Elasticsearch cluster. The producer uses it only in its log messages: the"
+                           + " hostAddresses option or the client option of the component sets the nodes to connect to.")
     @Metadata(required = true)
     private String clusterName;
-    @UriParam
+    @UriParam(description = "The operation that the producer performs. The CamelElasticsearchOperation header replaces this"
+                            + " option. A request of the Elasticsearch Java API Client in the body, such as an IndexRequest or"
+                            + " a SearchRequest, sets the operation by its type and replaces both.")
     private ElasticsearchOperation operation;
-    @UriParam
+    @UriParam(description = "The maximum number of hits that Search returns when the body is JSON text or a Map. It replaces"
+                            + " the size of the body, and the CamelElasticsearchSize header replaces this option.")
     private Integer size;
-    @UriParam
+    @UriParam(description = "The offset of the first hit that Search returns when the body is JSON text or a Map. It replaces"
+                            + " the from of the body, and the CamelElasticsearchFrom header replaces this option.")
     private Integer from;
-    @UriParam
+    @UriParam(description = "The name of the index that the operation acts on. Bulk uses it as the default index of its"
+                            + " operations, and DeleteIndex deletes this index instead of the one named by the body. The"
+                            + " CamelElasticsearchIndexName header replaces this option, and a request of the Elasticsearch Java"
+                            + " API Client in the body keeps its own index.")
     private String indexName;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS,
+              description = "The number of active shard copies that Index and Update wait for before they write. The default"
+                            + " of 1 waits only for the primary shard. The CamelElasticsearchWaitForActiveShards header replaces"
+                            + " this option.")
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
-    @UriParam
+    @UriParam(description = "The comma-separated list of the nodes to connect to, each as host:port, for example"
+                            + " es1:9200,es2:9200. The port is 9200 if not set, and the scheme is https when enableSSL is set."
+                            + " Required unless the client option of the component is set.")
     private String hostAddresses;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT)
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT,
+              description = "The socket timeout in milliseconds: the longest time that the client waits for data from a node"
+                            + " before the request fails. Not used when the client option of the component is set.")
     private int socketTimeout = ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT;
     @Deprecated
     @UriParam(defaultValue = "" + ElasticsearchConstants.MAX_RETRY_TIMEOUT,
               description = "Deprecated: this option has no effect. It was used by the old low-level REST client and is"
                             + " ignored by the current client.")
     private int maxRetryTimeout = ElasticsearchConstants.MAX_RETRY_TIMEOUT;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT)
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT,
+              description = "The connect timeout in milliseconds: the longest time that the client waits to establish the"
+                            + " connection to a node. Not used when the client option of the component is set.")
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the body of Update is only the partial document to merge into the document. If false,"
+                            + " the body is the request body of the Update API, such as {\"doc\": {...}} or a script. Only JSON"
+                            + " text, bytes, a stream, a file or a Map is read this way. The CamelElasticsearchEnableDocumentOnlyMode"
+                            + " header replaces this option.")
     private boolean enableDocumentOnlyMode;
-    @UriParam
+    @UriParam(description = "Whether the producer creates the client for each exchange and closes it when the exchange is"
+                            + " done, instead of keeping one client from its start to its stop. Not used when the client"
+                            + " option of the component is set.")
     private boolean disconnect;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether to connect to the nodes of hostAddresses with HTTPS instead of HTTP. The default"
+                            + " SSLContext of the JVM is used unless sslContextParameters or certificatePath is set.")
     private boolean enableSSL;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The CA certificate, in X.509 format, that the client trusts for HTTPS instead of the default"
+                            + " trust store of the JVM. It is loaded from the classpath by default, or with the prefix"
+                            + " classpath:, file: or http:. It needs enableSSL, and sslContextParameters takes precedence.")
     @Metadata(supportFileReference = true)
     private String certificatePath;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "To configure security using SSLContextParameters, which sets the protocols, cipher suites, named"
+                            + " groups and signature schemes of the HTTPS connection. It takes precedence over certificatePath,"
+                            + " and it needs enableSSL.")
     private SSLContextParameters sslContextParameters;
-    @UriParam
+    @UriParam(description = "Whether Search reads all the hits with the scroll API. The body is then an"
+                            + " ElasticsearchScrollRequestIterator of the hits, which sends the scroll requests while it is"
+                            + " read and is to be closed after use. The CamelElasticsearchUseScroll header replaces this option.")
     private boolean useScroll;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS,
+              description = "The time in milliseconds that Elasticsearch keeps the search context of a scroll alive between"
+                            + " two scroll requests, when useScroll is set. The CamelElasticsearchScrollKeepAliveMs header"
+                            + " replaces this option.")
     private int scrollKeepAliveMs = ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Whether to start the Sniffer of the Elasticsearch REST client, which reads the nodes of the"
+                            + " cluster from its Nodes Info API at an interval and updates the nodes that the client uses. Not used"
+                            + " when the client option of the component is set or autowired, as Spring Boot does.")
     private boolean enableSniffer;
-    @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
+    @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL,
+              description = "The interval in milliseconds between two reads of the nodes of the cluster, when enableSniffer"
+                            + " is set.")
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
-    @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
+    @UriParam(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY,
+              description = "The delay in milliseconds of the read of the nodes that the Sniffer schedules after a failed"
+                            + " request. The component does not register the client listener that reports failures to the"
+                            + " Sniffer, so this option has no effect.")
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
-    @UriParam(label = "advanced", defaultValue = "ObjectNode")
+    @UriParam(label = "advanced", defaultValue = "ObjectNode",
+              description = "The class to which the documents in the responses of GetById, MultiGet, Search and MultiSearch"
+                            + " are deserialized. The default is the Jackson ObjectNode. The CamelElasticsearchDocumentClass"
+                            + " header replaces this option.")
     private Class<?> documentClass = ObjectNode.class;
 
-    /**
-     * Starting index of the response.
-     */
     public Integer getFrom() {
         return from;
     }
@@ -93,9 +137,6 @@ public class ElasticsearchConfiguration {
         this.from = from;
     }
 
-    /**
-     * Size of the response.
-     */
     public Integer getSize() {
         return size;
     }
@@ -104,9 +145,6 @@ public class ElasticsearchConfiguration {
         this.size = size;
     }
 
-    /**
-     * Name of the cluster
-     */
     public String getClusterName() {
         return clusterName;
     }
@@ -115,9 +153,6 @@ public class ElasticsearchConfiguration {
         this.clusterName = clusterName;
     }
 
-    /**
-     * What operation to perform
-     */
     public ElasticsearchOperation getOperation() {
         return operation;
     }
@@ -126,9 +161,6 @@ public class ElasticsearchConfiguration {
         this.operation = operation;
     }
 
-    /**
-     * The name of the index to act against
-     */
     public String getIndexName() {
         return indexName;
     }
@@ -137,9 +169,6 @@ public class ElasticsearchConfiguration {
         this.indexName = indexName;
     }
 
-    /**
-     * Comma separated list with ip:port formatted remote transport addresses to use.
-     */
     public String getHostAddresses() {
         return hostAddresses;
     }
@@ -148,9 +177,6 @@ public class ElasticsearchConfiguration {
         this.hostAddresses = hostAddresses;
     }
 
-    /**
-     * Index creation waits for the write consistency number of shards to be available
-     */
     public int getWaitForActiveShards() {
         return waitForActiveShards;
     }
@@ -167,9 +193,6 @@ public class ElasticsearchConfiguration {
         this.hostAddressesList = hostAddressesList;
     }
 
-    /**
-     * The timeout in ms to wait before the socket will time out.
-     */
     public int getSocketTimeout() {
         return socketTimeout;
     }
@@ -178,9 +201,6 @@ public class ElasticsearchConfiguration {
         this.socketTimeout = socketTimeout;
     }
 
-    /**
-     * The time in ms to wait before connection will time out.
-     */
     public int getConnectionTimeout() {
         return connectionTimeout;
     }
@@ -189,9 +209,6 @@ public class ElasticsearchConfiguration {
         this.connectionTimeout = connectionTimeout;
     }
 
-    /**
-     * Basic authenticate user
-     */
     public String getUser() {
         return user;
     }
@@ -200,9 +217,6 @@ public class ElasticsearchConfiguration {
         this.user = user;
     }
 
-    /**
-     * Password for authenticating
-     */
     public String getPassword() {
         return password;
     }
@@ -211,9 +225,6 @@ public class ElasticsearchConfiguration {
         this.password = password;
     }
 
-    /**
-     * API key to authenticate with, instead of a user and password
-     */
     public String getApiKey() {
         return apiKey;
     }
@@ -222,9 +233,6 @@ public class ElasticsearchConfiguration {
         this.apiKey = apiKey;
     }
 
-    /**
-     * Enable SSL
-     */
     public boolean isEnableSSL() {
         return enableSSL;
     }
@@ -233,10 +241,6 @@ public class ElasticsearchConfiguration {
         this.enableSSL = enableSSL;
     }
 
-    /**
-     * The certificate that can be used to access the ES Cluster. It can be loaded by default from classpath, but you
-     * can prefix with classpath:, file:, or http: to load the resource from different systems.
-     */
     public String getCertificatePath() {
         return certificatePath;
     }
@@ -249,18 +253,11 @@ public class ElasticsearchConfiguration {
         return sslContextParameters;
     }
 
-    /**
-     * To configure security using SSLContextParameters. When configured, this takes precedence over the
-     * {@code certificatePath} option. This allows configuring named groups, signature schemes, cipher suites, and
-     * protocols for the TLS connection.
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
     /**
-     * The time in ms before retry
-     *
      * @deprecated this option has no effect and is ignored by the current client
      */
     @Deprecated
@@ -273,9 +270,6 @@ public class ElasticsearchConfiguration {
         this.maxRetryTimeout = maxRetryTimeout;
     }
 
-    /**
-     * Disconnect after it finish calling the producer
-     */
     public boolean isDisconnect() {
         return disconnect;
     }
@@ -284,10 +278,6 @@ public class ElasticsearchConfiguration {
         this.disconnect = disconnect;
     }
 
-    /**
-     * Enable automatically discover nodes from a running Elasticsearch cluster. If this option is used in conjunction
-     * with Spring Boot, then it's managed by the Spring Boot configuration (see: Disable Sniffer in Spring Boot).
-     */
     public boolean isEnableSniffer() {
         return enableSniffer;
     }
@@ -296,10 +286,6 @@ public class ElasticsearchConfiguration {
         this.enableSniffer = enableSniffer;
     }
 
-    /**
-     * The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure
-     * is disabled or when there are no failures between consecutive sniff executions
-     */
     public int getSnifferInterval() {
         return snifferInterval;
     }
@@ -308,9 +294,6 @@ public class ElasticsearchConfiguration {
         this.snifferInterval = snifferInterval;
     }
 
-    /**
-     * The delay of a sniff execution scheduled after a failure (in milliseconds)
-     */
     public int getSniffAfterFailureDelay() {
         return sniffAfterFailureDelay;
     }
@@ -319,9 +302,6 @@ public class ElasticsearchConfiguration {
         this.sniffAfterFailureDelay = sniffAfterFailureDelay;
     }
 
-    /**
-     * Enable scroll usage
-     */
     public boolean isUseScroll() {
         return useScroll;
     }
@@ -330,9 +310,6 @@ public class ElasticsearchConfiguration {
         this.useScroll = useScroll;
     }
 
-    /**
-     * Time in ms during which elasticsearch will keep search context alive
-     */
     public int getScrollKeepAliveMs() {
         return scrollKeepAliveMs;
     }
@@ -341,9 +318,6 @@ public class ElasticsearchConfiguration {
         this.scrollKeepAliveMs = scrollKeepAliveMs;
     }
 
-    /**
-     * The class to use when deserializing the documents.
-     */
     public Class<?> getDocumentClass() {
         return documentClass;
     }
@@ -352,13 +326,6 @@ public class ElasticsearchConfiguration {
         this.documentClass = documentClass;
     }
 
-    /**
-     * Indicates whether the body of the message contains only documents. By default, it is set to false to be able to
-     * do the same requests as what the Document API supports (see
-     * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the
-     * migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the
-     * mode, especially if your routes do update operations.
-     */
     public boolean isEnableDocumentOnlyMode() {
         return enableDocumentOnlyMode;
     }

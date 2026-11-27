@@ -167,7 +167,7 @@ or removes its row.
 | camel-duckdb | duckdb |  |
 | camel-dynamic-router | dynamic-router, dynamic-router-control |  |
 | camel-ehcache | ehcache |  |
-| camel-elasticsearch | elasticsearch |  |
+| camel-elasticsearch | elasticsearch | yes |
 | camel-elasticsearch-rest-client | elasticsearch-rest-client |  |
 | camel-event | event | yes |
 | camel-exec | exec |  |
