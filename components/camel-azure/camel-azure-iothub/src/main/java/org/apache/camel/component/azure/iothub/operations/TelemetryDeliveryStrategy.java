@@ -35,10 +35,19 @@ public class TelemetryDeliveryStrategy implements DeliveryStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(TelemetryDeliveryStrategy.class);
 
     private final String contentType;
+    private final String contentEncoding;
     private final Duration sendTimeout;
 
     public TelemetryDeliveryStrategy(String contentType, Duration sendTimeout) {
+        this(contentType, StandardCharsets.UTF_8.name(), sendTimeout);
+    }
+
+    /**
+     * @param contentEncoding the content encoding of the messages, or null or empty to not set one
+     */
+    public TelemetryDeliveryStrategy(String contentType, String contentEncoding, Duration sendTimeout) {
         this.contentType = contentType;
+        this.contentEncoding = contentEncoding;
         this.sendTimeout = sendTimeout;
     }
 
@@ -53,7 +62,10 @@ public class TelemetryDeliveryStrategy implements DeliveryStrategy {
 
         Message msg = new Message(payload);
         msg.setContentType(contentType);
-        msg.setContentEncoding(StandardCharsets.UTF_8.name());
+        // a binary body is not text: an empty contentEncoding sends the message without one
+        if (contentEncoding != null && !contentEncoding.isEmpty()) {
+            msg.setContentEncoding(contentEncoding);
+        }
         msg.setMessageId(UUID.randomUUID().toString());
 
         int timeoutMillis = Math.toIntExact(sendTimeout.toMillis());

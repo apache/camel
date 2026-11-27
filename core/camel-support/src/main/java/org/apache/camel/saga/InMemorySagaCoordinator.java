@@ -197,12 +197,15 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         Finalization current = finalization;
         boolean finalizing = sagaId.equals(FINALIZING_ON_THREAD.get())
                 || exchange != null && sagaId.equals(exchange.getProperty(FINALIZING_SAGA, String.class));
-        if (current == null || current.kind() != running || current.outcome().isDone() || finalizing) {
+        if (current == null || current.kind() != running || finalizing) {
             return statusAnswer(running, succeeded, action);
         }
-        // the status is set to the final one before the outcome is completed (see doCompensate and doComplete)
-        return current.outcome().handle((res, ex) -> null)
-                .thenCompose(ignored -> statusAnswer(running, succeeded, action));
+        // the status is set to the final one before the outcome is completed (see doCompensate and doComplete), so a
+        // failed outcome with the status still running is a finalization aborted by the stop of the saga service
+        return current.outcome().handle((res, ex) -> ex)
+                .thenCompose(ex -> ex != null && currentStatus.get() == running
+                        ? CompletableFuture.<Void> failedFuture(ex)
+                        : statusAnswer(running, succeeded, action));
     }
 
     private CompletableFuture<Void> statusAnswer(Status running, Status succeeded, String action) {
@@ -214,7 +217,8 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     /**
-     * Completes the outcome of the finalization that ended the saga with the result of the compensation or completion.
+     * Completes the outcome of the finalization that ended the saga with the result of the compensation or completion,
+     * and returns the outcome, which {@link #abortFinalization(Throwable)} may complete first.
      */
     private CompletableFuture<Boolean> finish(CompletableFuture<Boolean> result) {
         CompletableFuture<Boolean> outcome = finalization.outcome();
@@ -225,7 +229,20 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
                 outcome.complete(res);
             }
         });
-        return result;
+        return outcome;
+    }
+
+    /**
+     * Fails the outcome of the compensation or completion that is still running when the saga service stops: its
+     * retries no longer run, so the callers that wait for it would otherwise never get an answer. A finalization that
+     * ends afterwards no longer changes the outcome. A finalization that already set its final status is not failed, as
+     * its outcome is about to be completed with its result.
+     */
+    void abortFinalization(Throwable cause) {
+        Finalization current = finalization;
+        if (current != null && currentStatus.get() == current.kind()) {
+            current.outcome().completeExceptionally(cause);
+        }
     }
 
     /**
@@ -329,13 +346,19 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             } else {
                 CompletableFuture<Boolean> future = new CompletableFuture<>();
                 sagaService.getExecutorService().schedule(() -> {
-                    doFinalize(target, endpoint, enlistment, currentAttempt, description).whenComplete((res, ex) -> {
-                        if (ex != null) {
-                            future.completeExceptionally(ex);
-                        } else {
-                            future.complete(res);
-                        }
-                    });
+                    try {
+                        doFinalize(target, endpoint, enlistment, currentAttempt, description).whenComplete((res, ex) -> {
+                            if (ex != null) {
+                                future.completeExceptionally(ex);
+                            } else {
+                                future.complete(res);
+                            }
+                        });
+                    } catch (Exception e) {
+                        // such as the executor of the saga service rejecting the attempt: the scheduled task would
+                        // swallow the exception, and the attempt would never end
+                        future.completeExceptionally(e);
+                    }
                 }, sagaService.getRetryDelayInMilliseconds(), TimeUnit.MILLISECONDS);
                 return future;
             }

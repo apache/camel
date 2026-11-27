@@ -79,8 +79,11 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private String raftId;
     @UriParam(description = "The JGroups XML configuration of the JChannel that the endpoint creates, as a file, a URL or a"
                             + " classpath resource. If not set, the channelProperties of the component is used, else the"
-                            + " raft.xml in the camel-jgroups-raft JAR, which lists A as the only RAFT member. Not used when"
-                            + " the raftHandle option is set.")
+                            + " raft.xml in the camel-jgroups-raft JAR, and a WARN is logged when the endpoint starts. That"
+                            + " raft.xml is a sample for development and tests: it uses UDP multicast without authentication"
+                            + " or encryption, and lists A as the only RAFT member. In production, set your own"
+                            + " configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT, and the members of the cluster in"
+                            + " the members attribute of RAFT. Not used when the raftHandle option is set.")
     @Metadata(defaultValue = "raft.xml")
     private String channelProperties;
     @UriParam(description = "To use a custom org.jgroups.raft.RaftHandle for this endpoint instead of the raftHandle of the"
@@ -214,6 +217,12 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             JChannel channel = new JChannel(channelProperties).name(raftId); // NOSONAR
             return new RaftHandle(channel, stateMachine).raftId(raftId);
         }
+        LOG.warn("The JGroups-raft endpoint {} has no channelProperties, so its channel uses {}, by default the sample"
+                 + " configuration in the camel-jgroups-raft JAR. That configuration is meant for development and tests:"
+                 + " it uses UDP multicast without authentication or encryption, and lists A as the only RAFT member. In"
+                 + " production, set channelProperties to your own JGroups configuration, with AUTH and SYM_ENCRYPT or"
+                 + " ASYM_ENCRYPT, and the members of the cluster in the members attribute of RAFT.",
+                getEndpointUri(), JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG);
         LOG.trace("Raft Handle created with defaults: {}, {},", JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG, stateMachine);
         @SuppressWarnings("resource")
         // NOTE: channel will be closed by this endpoint during

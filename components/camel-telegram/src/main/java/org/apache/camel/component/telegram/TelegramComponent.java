@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.URISupport;
 
 @Component("telegram")
 public class TelegramComponent extends HealthCheckComponent {
@@ -56,7 +57,8 @@ public class TelegramComponent extends HealthCheckComponent {
         configuration.setType(remaining);
 
         if (!remaining.equals(TelegramConfiguration.ENDPOINT_TYPE_BOTS)) {
-            throw new IllegalArgumentException("Unsupported endpoint type for uri " + uri + ", remaining " + remaining);
+            throw new IllegalArgumentException(
+                    "Unsupported endpoint type for uri " + URISupport.sanitizeUri(uri) + ", remaining " + remaining);
         }
         if (configuration.getBaseUri() == null) {
             configuration.setBaseUri(baseUri);
@@ -68,7 +70,8 @@ public class TelegramComponent extends HealthCheckComponent {
 
         if (endpoint.getConfiguration().getAuthorizationToken() == null) {
             throw new IllegalArgumentException(
-                    "AuthorizationToken must be configured on either component or endpoint for telegram: " + uri);
+                    "AuthorizationToken must be configured on either component or endpoint for telegram: "
+                                               + URISupport.sanitizeUri(uri));
         }
 
         return endpoint;

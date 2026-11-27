@@ -520,6 +520,18 @@ restart is gone. A class that extends `SedaConsumer` and overrides `doRun()` mus
 instead, and should keep the loop condition `isCurrentStart(start) && isRunAllowed()` of the default implementation.
 The new protected method `isCurrentStart(int start)` returns true while no later start of the consumer has happened.
 
+=== camel-disruptor - with multipleConsumers the exchange completes once all consumers are done
+
+With `multipleConsumers=true`, the exchange now completes once, when all consumers are done with it, as with
+`camel-seda`. Before, the first consumer that failed completed it at once, while the other consumers were still
+routing their copy. Only a failure is copied back (the first one), the results of the consumers are not aggregated.
+
+* An `InOut` producer gets the failure of a consumer only once the other consumers are done as well, so its `timeout`
+covers all consumers. Before, a consumer that was still busy with an earlier message could then skip the message, as
+if the producer had timed out.
+* The on completions of the caller, such as the move or rollback of a file consumer, run once all consumers are done,
+and no longer while other consumers are still routing the message.
+
 === camel-resilience4j - a call that times out before it starts is not started later
 
 In asynchronous mode (`asynchronous=true`) with a timeout, the `timeoutCancelRunningFuture` option (`true` by default)
@@ -1241,6 +1253,16 @@ repository no longer uses these statements.
 Also, when the value of an entry expires (TTL) Cassandra can leave the row behind without a value, which happened for an
 entry stored with a TTL that replaces an existing entry or that is stored by `replace`. Such a row is now considered
 absent: `contains`, `keys` and `size` no longer report it, and `putIfAbsent` can store a value for it.
+
+=== camel-cassandraql - an unknown name in extraTypeCodecs fails the start of the endpoint
+
+An unknown name in the `extraTypeCodecs` option of a `cql` endpoint, for example a typo such as `BLOB_TO_ARAY`, now
+fails the start of the endpoint with an `IllegalArgumentException` that lists the possible names. Before, the name was
+ignored, no codec was registered, and the error came only later, when a row was read or written. Empty names, as after
+a trailing comma, are still ignored.
+
+The `clusterName` option is deprecated. It has had no effect since Camel 3.5, when the component moved to the Cassandra
+Java Driver 4.x: the component does not pass it to the driver, whose session builder has no cluster name setting.
 
 === camel-mongodb - the change streams consumer stores the post batch resume token
 
@@ -2036,6 +2058,16 @@ Before, the route became `Suspended`, and a later `startRoute` or `resumeRoute` 
 consumer, so it consumed nothing. Code that checks the status of a route after `suspendRoute` now sees `Stopped` for
 such a route. The last error of such a route, for example from a failed start, is kept.
 
+=== camel-core - starting or resuming a route that is already started leaves it as it is
+
+`startRoute` or `resumeRoute` on a route that is already started, from the `RouteController`, JMX, the control bus or
+the CLI, is now a no-op: it no longer starts the consumer of the route again, and route policies get no `onStart` for
+it. The same applies to the started routes of `startAllRoutes` and `startRouteGroup`. Before, a consumer that a route
+policy stopped while the route stayed started (such as the master route policy of `camel-zookeeper-master` on a node
+that is not the master, `HazelcastRoutePolicy`, `ThrottlingInflightRoutePolicy`, `ThrottlingExceptionRoutePolicy` or a
+`ScheduledRoutePolicy` that suspended the route) was started again, bypassing the route policy. To start the consumer
+of a started route again, stop and start the route. A suspended route is still resumed, and a stopped route started.
+
 === camel-core - Routing Slip and Dynamic Router fire the sent event of a step before the next step
 
 The `ExchangeSentEvent` of a step of a `routingSlip` or `dynamicRouter` is now fired when that step is done, before the
@@ -2138,6 +2170,10 @@ fails (`Cannot compensate: status is FAILED`). Before, it reported success at on
 failed. The exchanges that compensate or complete a step carry the exchange property `CamelInMemorySagaFinalizing`
 with the id of their saga; a call for its own saga from such an exchange, or from the thread that calls the
 compensation or completion endpoint (also after `removeProperties("*")`), is answered at once, as before.
+
+When the in-memory saga service stops while a compensation or completion is still running (for example waiting for a
+retry), the caller that started it and the callers that wait for its outcome now fail with a
+`RejectedExecutionException`. Before, they waited for a retry that no longer runs.
 
 === camel-core - Loop EIP breakOnShutdown
 
@@ -3682,6 +3718,17 @@ another service, such as `service=marketdata&method=currencies`. Before, its pro
 unchanged. The `Currency` and `CurrencyPair` headers and the body can now be text such as `BTC` and `BTC/USDT`; text
 with a currency that XChange does not know fails the exchange.
 
+=== camel-xchange - the currencyPair option is checked when the endpoint is created, and apiKey and secretKey options
+
+A `currencyPair` option with a currency that XChange does not know, such as `BTC/USTD`, now fails the creation of the
+endpoint, in the same way as the `currency` option. Before, the pair was parsed for each message, which registered the
+unknown currency in XChange and sent the request to the exchange. The check runs after the exchange is created, so
+the currencies that the exchange module registers are accepted.
+
+The new `apiKey` and `secretKey` options set the API keys of the account on the exchange, for example from property
+placeholders or a vault. Without them the exchange module decides, as before. The deprecated
+`XChangeConfiguration.setCurrency(String)` is not called by Camel and sets null for an unknown currency.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
@@ -4017,6 +4064,17 @@ default). It fails with a `java.util.concurrent.TimeoutException` when RabbitMQ 
 and with an `org.springframework.amqp.AmqpTimeoutException` when RabbitMQ does not confirm it within `confirmTimeout`.
 Set `confirm=disabled` to send without waiting, as before.
 
+=== camel-spring-redis - ZREMRANGEBYSCORE takes the score range from CamelRedis.Min and CamelRedis.Max
+
+The `ZREMRANGEBYSCORE` command now reads the score range from the `CamelRedis.Min` and `CamelRedis.Max` headers, as a
+`Double`, as `ZCOUNT`, `ZRANGEBYSCORE` and `ZREVRANGEBYSCORE` do. Before, it read the `CamelRedis.Start` and
+`CamelRedis.End` headers as a `Long`, so a fractional score could not be given, and a route that set `CamelRedis.Min`
+and `CamelRedis.Max` failed with a `NullPointerException`. When `CamelRedis.Min` or `CamelRedis.Max` is not set,
+`CamelRedis.Start` or `CamelRedis.End` is used, so existing routes keep working.
+
+In the Endpoint DSL, `channels` is now an option of the consumer builders only, and `redisTemplate` of the producer
+builders only, as the producer does not use `channels` and the consumer does not use `redisTemplate`.
+
 === camel-stream - a scanning consumer keeps going after the stream cannot be opened or read
 
 A `stream` consumer with `scanStream=true` no longer ends its reading thread when the stream cannot be opened (for
@@ -4107,6 +4165,22 @@ the initial state (`camel.health.initial-state`, DOWN by default) while the firs
 the change feed processor cannot start, with the failure of the last attempt; before, it was UP. To leave
 the check out, as before, set `camel.health.exclude-pattern=consumer:<routeId>`.
 
+=== camel-azure-cosmosdb - the CamelAzureCosmosDbRecourseId header is renamed to CamelAzureCosmosDbResourceId
+
+The header that the producer sets to the resource id of a database or container is renamed from
+`CamelAzureCosmosDbRecourseId` to `CamelAzureCosmosDbResourceId`. Code that uses the Java constant
+`CosmosDbConstants.RESOURCE_ID` is not affected. Routes that use the header name as text, for example in XML or YAML
+routes or in a Simple expression, must use the new name.
+
+The headers of the component are now in the catalog and the Endpoint DSL, with the method `azureCosmosDbResourceId()`
+for the renamed header. Other changes:
+
+* A `com.azure.cosmos.models.PartitionKey` in the `CamelAzureCosmosDbItemPartitionKey` header is used as it is, for
+  example for a partition key value that is a number. Before, it was converted to its JSON text, which then was used
+  as a String partition key value. Other header values are still converted to a String.
+* The `clientTelemetryEnabled` option is deprecated, as the azure-cosmos SDK ignores it.
+* In the Endpoint DSL, `indexingPolicy` is now an option of the producer builders only, as the consumer does not use it.
+
 === camel-vertx-websocket - a consumeAsClient consumer routes the messages in the order they are received
 
 A `vertx-websocket` consumer with `consumeAsClient=true` used to route the received messages in parallel, on the
@@ -4140,6 +4214,15 @@ The `QUEUE_STATUS` and `SIP_PEERS` actions of the `asterisk` producer now wait f
 events, such as `QueueParamsEvent`, `QueueMemberEvent` and `PeerEntryEvent`. Before, the body was only the
 `ManagerResponse` saying that the list will follow, and the events were lost. A route that read that response from
 the body now finds it in `${body.response}`. `EXTENSION_STATE` still sets the `ManagerResponse` as the body.
+
+=== camel-asterisk - the producer logs in without events, and a port option
+
+The `asterisk` producer now logs in to the Asterisk Manager Interface with the event mask `off`, as it has no event
+listener: Asterisk no longer sends it the events of the PBX. The answers to its actions, such as the events of the
+`QUEUE_STATUS` list, are not affected. The consumer still logs in with the event mask `on`.
+
+The new `port` option (default 5038, the port that was used before) sets the AMI port. The `name` path is now set on
+the endpoint, and `username` and `password` are in the `security` group of the catalog and the docs.
 
 === camel-jbang - camel export no longer deletes the files of a directory that no export created
 
@@ -10087,6 +10170,13 @@ With `contentCache=false`, the template is now read and compiled for each exchan
 Previously it was compiled once, and only the JMX operation `clearContentCache` read it again. The default,
 `contentCache=true`, is unchanged.
 
+=== camel-mustache - startDelimiter or endDelimiter set alone is used
+
+A `mustache` endpoint that sets only one of `startDelimiter` and `endDelimiter` now compiles its templates with that
+delimiter, and the default (`{{` or `}}`) for the other one. Before, the option was ignored unless both were set. When
+delimiters other than the defaults are set but the `mustacheFactory` of the component is not a
+`DefaultMustacheFactory`, which cannot apply them, the endpoint logs a WARN.
+
 === camel-clickhouse - the database and table headers need the allowDatabaseAndTableFromHeaders option
 
 The `CamelClickHouseDatabase` and `CamelClickHouseTable` headers took the place of the database and the table of the
@@ -10573,6 +10663,22 @@ is known, and `strictHostKeyChecking` decides whether to connect.
 The `aws-cloudtrail:application-cloudevents` data type now sets the content type `application/json`, as the body is
 the JSON of the event. It was `text/plain`.
 
+=== camel-aws2-redshift - listStatements filters, batch parameters and new headers
+
+In header mode, `listStatements` now passes the `CamelAwsRedshiftDataClusterIdentifier`,
+`CamelAwsRedshiftDataWorkGroupName` and `CamelAwsRedshiftDataDatabase` headers to the request as filters, as the other
+operations do, and `batchExecuteStatement` now passes the `CamelAwsRedshiftDataSqlParameterList` header as the
+parameters of its statements. Before, these operations ignored those headers. Remove the headers before such a step
+if a route sets them for another step.
+
+The new `CamelAwsRedshiftDataNextToken` header asks the list operations, `describeTable` and `getStatementResult` for
+the next page (the `nextToken` of the previous response). New headers set the `WaitTimeSeconds`, `ResultFormat`,
+`SessionId` and `SessionKeepAliveSeconds` of `executeStatement` and `batchExecuteStatement`, the `ExecutionMode` of
+`batchExecuteStatement` and the `WaitTimeSeconds` of `getStatementResult`.
+
+An exchange without the `CamelAwsRedshiftDataOperation` header and without the `operation` option now fails with an
+`IllegalArgumentException` that says so, instead of a `NullPointerException`.
+
 === camel-python - a script gives the Java value of its result
 
 The `python` language (Jython) now gives the Java value of what a script returns, instead of its Python text from
@@ -10672,6 +10778,15 @@ exception as before.
 Commons Codec 1.23.0 changed how a `quoted-printable` part is decoded. The line breaks (CRLF) that a partner writes into
 the part are now kept in the decoded payload, as RFC 2045 says. Before, every CR and LF was dropped. A soft line break
 written as `=CR` without the LF is now rejected with a `DecoderException`. Messages that Camel encodes are not affected.
+
+=== camel-event - backpressurePolicy=Fail reports a full queue to the exception handler of the consumer
+
+With `async=true` and `backpressurePolicy=Fail`, an event that did not fit in the full queue was thrown as an
+`IllegalStateException` to Camel, which logged it at WARN level and ignored it. The consumer now drops the event and
+passes the `IllegalStateException` to its exception handler. By default it is still logged at WARN level. With
+`bridgeErrorHandler=true` the error handler of the route handles it, and a custom `exceptionHandler` gets it. Code that
+calls `ManagementStrategy.notify()` itself no longer gets the exception. The events fired while a full queue is
+reported, such as those of the exchange that `bridgeErrorHandler` routes, are dropped without a report of their own.
 
 === camel-file-watch - CamelFileLastModified is the last modified time of the file
 
@@ -11074,6 +11189,19 @@ be converted to a `Map`, such as JSON text. Before, it failed with `IllegalArgum
 null`, also when a body was sent. Unmarshal JSON text to a `Map` before the bonita endpoint.
 
 The id of the started case is now set in the `CamelBonitaCaseId` header.
+
+=== camel-bonita - exact process name, and processName, username and password checked when the producer starts
+
+The `startCase` producer now looks up the process with the exact name of `processName` (the `f=name=...` filter of the
+Bonita REST API) instead of searching for it and taking the first result. A process whose name only contains the
+given name is no longer used. When the process is deployed in several versions, the new `processVersion` option
+selects one; without it the first version that Bonita returns is used, as before, and a WARN is logged once.
+
+A `bonita` producer without `processName`, `username` or `password` now fails when it starts (with
+`lazyStartProducer=true`, on its first exchange), instead of failing every exchange. The context path of the Bonita
+server can be set with the new `basePath` option (default `/bonita`).
+
+`BonitaConfiguration.setParameters(Map)` is deprecated. Camel does not call it; use the setters.
 
 === camel-camunda - a failed operation fails the exchange, and the JSON uses camelCase property names
 
@@ -11848,6 +11976,19 @@ Both are now deprecated with a note that says so. Remove `retentionPolicy` from 
 header: they are silently ignored. To control how long the data is kept, set the retention period on the bucket the
 endpoint writes to.
 
+=== camel-influxdb2 - a ping endpoint does not look up or create the organization and the bucket
+
+An `influxdb2` endpoint with `operation=PING` no longer looks up, or creates, the organization of the `org` option and
+the bucket of the `bucket` option when it starts. A ping uses neither, so such an endpoint now starts without them and
+does not call InfluxDB at startup. Before, it failed to start without an `org`, unless `autoCreateOrg` and
+`autoCreateBucket` were both false. Create the organization and the bucket with an `INSERT` endpoint, or in InfluxDB,
+if a route relied on a ping endpoint to create them.
+
+The `org` and `bucket` options are no longer marked as required. An `INSERT` endpoint still needs them when it creates
+a missing organization or bucket at startup, which it does by default. Leave them out of an `INSERT` endpoint only with
+`autoCreateOrg` and `autoCreateBucket` set to false, and name the organization and the bucket of each write with the
+`CamelInfluxDB2Org` and `CamelInfluxDB2Bucket` headers.
+
 === camel-language - the CamelLanguageScript header is used once and removed
 
 With `allowTemplateFromHeader=true`, a script from the `CamelLanguageScript` header is now used for that message only.
@@ -12199,6 +12340,20 @@ that reads objects from one bucket and uploads them to another now keeps the sto
 before the objects got the default of the destination bucket. To keep the previous behaviour, remove the header before
 the upload, for example with `removeHeader("CamelGoogleCloudStorageStorageClass")`.
 
+=== camel-google-firestore - realtime listener errors and nested merge fields
+
+A consumer with `realtimeUpdates=true` now fails to start when the first event of the snapshot listener is an error,
+for example missing permissions or a database that does not exist. Before, the error was only logged, the start waited
+30 seconds, and the route ran with a listener that Firestore had already closed. An error that comes after the start
+now goes to the exception handler of the consumer (or the routing error handler with `bridgeErrorHandler=true`)
+instead of only being logged at ERROR level.
+
+A name in the `CamelGoogleFirestoreMergeFields` header is now a dot-separated field path, as for `updateDocument`:
+`address.city` merges the field `city` of the map `address`. Before, it was taken as one top-level field named
+`address.city`. To merge a top-level field whose name contains a dot, put a `com.google.cloud.firestore.FieldPath`
+(`FieldPath.of("address.city")`) in the list instead of the String. A name that is not a valid dot-separated path,
+because it contains `~`, `*`, `/`, `[` or `]` or has an empty segment (as in `a..b`), is still one top-level field.
+
 === camel-http-common, camel-netty-http, camel-http - a form field without =, and a header whose name is not a token
 
 A consumer that maps the fields of an `application/x-www-form-urlencoded` request to headers (camel-servlet,
@@ -12291,6 +12446,18 @@ response now leaves out that header and logs it at DEBUG level, instead of faili
 the route has already run. Headers with a valid name are written as before. A route that needs such a value in the
 response must set it in a header with a valid name.
 
+=== camel-elasticsearch - without hostAddresses the producer fails when it starts, and a scroll is closed at its end
+
+A producer of an elasticsearch endpoint that has neither `hostAddresses` nor a `client` set on the component now fails
+when it starts (with `lazyStartProducer=true`, on its first exchange), instead of starting with a WARN and failing
+every exchange. Without `lazyStartProducer=true`, a route with such an endpoint that is never used, for example one
+switched off by configuration, now stops the application from starting: give it `hostAddresses`, set a `client` on
+the component, or leave the route out.
+
+With `useScroll=true`, the `ElasticsearchScrollRequestIterator` now closes itself once its last page is read, which
+clears the scroll on the node and, with `disconnect=true`, closes the client the scroll was read with. Close the
+iterator yourself when you stop reading before the end.
+
 === camel-ldif - a body that is not a URL fails with InvalidPayloadException
 
 With `allowUrlBody=true`, a body that does not start with `version: 1` and is not a valid absolute URL, such as a text
@@ -12306,6 +12473,127 @@ the header named. The producer now logs in with the `username` and `password` of
 headers, unless the endpoint sets the new `allowUsernameAndPasswordFromHeaders=true` option (disabled by default), or
 the component sets `camel.component.ssh.allowUsernameAndPasswordFromHeaders=true`. A route that relies on these headers
 must set this option.
+=== camel-jgroups-raft, camel-jgroups - a WARN when the default channel configuration is used
+
+An endpoint without the `channelProperties` option now logs a WARN when it starts: `jgroups-raft` then uses the
+`raft.xml` of the `camel-jgroups-raft` JAR (also the default `jgroupsConfig` of the `JGroupsRaftClusterService`), and
+`jgroups` (without a `channel` on the component) the default `udp.xml` of JGroups. These configurations use UDP
+multicast without authentication or encryption, and are meant for development and tests. Nothing else changes: set
+`channelProperties` to your own JGroups configuration to remove the WARN.
+=== camel-aws-bedrock - guardrailTrace no longer switches converseStream to asynchronous guardrail processing
+
+For the `converseStream` operation with the guardrail of the `guardrailIdentifier` option, `guardrailTrace=true` used
+to also set the processing mode of the guardrail on the stream to `async`, so Bedrock sent the response chunks before
+the guardrail had checked them. Now `guardrailTrace` only asks for the trace, and the processing mode is the new
+`guardrailStreamProcessingMode` option, with default `sync`: Bedrock checks the chunks with the guardrail before it
+sends them. Set `guardrailStreamProcessingMode=async` to keep the old behavior. A
+`CamelAwsBedrockGuardrailConfig` header is used as before.
+=== camel-slack - webhookUrl is a secret option
+
+The `webhookUrl` option of the endpoint and the component, and the `token` option of the component, are now secret
+options. The URL of a Slack incoming webhook lets anyone who has it post to the channel. It is now shown as `xxxxxx` in
+the endpoint URI in logs, in the dev consoles and in tooling, like the `token`. In the documentation and tooling these
+options are now in the `security` group.
+
+The `camel.security.secretPolicy` check now also reports `webhookUrl` (such as
+`camel.component.slack.webhookUrl`) when it is configured as plain text: a warning by default, and the startup fails
+with `camel.main.profile=prod`. Configure it with a property placeholder or a vault reference instead.
+=== camel-rest - the options of the producer component are not sent as query parameters
+
+A `rest` producer sends the parameters of its endpoint URI that are not `rest` options as query parameters of the
+request, except the options of the component that sends the request (such as `authUsername` and `authPassword` of
+`http`). These options are now left out of the query parameters also when the producer component is set with the
+`producerComponent` of the rest configuration, or is detected automatically. Before, they were left out only when the
+`producerComponentName` option was set on the endpoint or on the `rest` component: otherwise they were applied to the
+producer and also sent in the query string of the request URL.
+
+A query parameter that has the same name as an option of the producer component must be set in the `queryParameters`
+option.
+=== camel-huggingface - the token is given to the Python process as an environment variable
+
+The `authToken` (or the token from the `oauthProfile`) is no longer written into the generated Python handler: it is
+given to the Python process as the `HF_TOKEN` environment variable, through the `env` option of the DJL Python engine.
+That option is a comma separated list, so a token with a comma now fails when the producer starts. The protected
+method `withAuthToken` of `AbstractTaskPredictor` is removed. The `modelId`, `revision` and `device` values are now
+written into the handler as escaped Python string literals.
+
+DJL logs the options of the Python engine at DEBUG level, the `env` option included, so with the
+`ai.djl.python.engine` logger at DEBUG the token is written to the log. Keep that logger above DEBUG in production.
+=== camel-solr - certificatePath and sslContextParameters need enableSSL
+
+The client that Camel creates connects with plain HTTP unless `enableSSL=true`, so the `certificatePath` and
+`sslContextParameters` options were ignored without `enableSSL`. Now, when `certificatePath`, or the
+`sslContextParameters` of the endpoint or the component, is set and `enableSSL` is not enabled, the endpoint fails at
+startup with a message to set `enableSSL=true`. Enable `enableSSL` to connect with HTTPS, or remove the options that are
+not used. The global SSL context parameters (`useGlobalSslContextParameters=true`) only log a WARN in that case.
+
+The `certificatePath` option now refuses an `http:` URL. Load the certificate from the classpath, or with the
+`classpath:`, `file:` or `https:` prefix.
+=== camel-aws - incomplete session or static credentials fail when the client is created
+
+The AWS components (all that use `camel-aws-common` to create their client, such as `aws2-s3`, `aws2-sqs`,
+`aws2-ecs` and `aws-security-hub`) now fail with an `IllegalArgumentException` that names the missing option when:
+
+* `useSessionCredentials=true` is set, but the `accessKey`, `secretKey` or `sessionToken` is not set (or empty).
+  Before, the client used the default credentials chain of the AWS SDK (environment variables, system properties,
+  `~/.aws` profiles, instance or container role), or the access key and secret key without the session token.
+* only one of `accessKey` and `secretKey` is set (the other one is not set or empty). Before, the client used the
+  default credentials chain of the AWS SDK.
+
+When no credentials option is set at all, the client uses the default credentials chain of the AWS SDK, as before.
+`useDefaultCredentialsProvider` and `useProfileCredentialsProvider` are not changed.
+=== camel-geocoder - proxyAuthMethod accepts only Basic
+
+The Google client of the `geocoder` producer authenticates to the proxy only with Basic authentication. Before,
+`proxyAuthMethod=Digest` was accepted, but the producer still sent the user name and password as Basic credentials,
+Base64 encoded in clear text in the `Proxy-Authorization` header. Now any `proxyAuthMethod` other than `Basic`, such as
+`Digest`, fails when the producer starts with an `IllegalArgumentException`. Use `proxyAuthMethod=Basic` (over a
+connection to the proxy you trust), or leave `proxyAuthMethod` out for a proxy without authentication. The constant
+`AuthenticationMethod.Digest` is deprecated.
+=== camel-weather - the consumer polls once an hour, and weatherApi Hourly and Daily query the forecast
+
+A `weather` consumer without a `delay` option now polls once an hour, as its documentation says. The default delay of
+the scheduled poll consumer (500 milliseconds) replaced the one hour default before, so the consumer called
+OpenWeatherMap twice a second. Set `delay` to keep a shorter interval.
+
+`weatherApi=Hourly` and `weatherApi=Daily` without `period` now query the hourly or the daily forecast, with the length
+that OpenWeatherMap uses by default. Before, they queried the current weather. The daily forecast
+(`/data/2.5/forecast/daily`) needs a paid OpenWeatherMap subscription, so with a free API key `weatherApi=Daily` now
+fails with HTTP 401: use `weatherApi=Hourly`, or leave `weatherApi` unset for the current weather.
+
+A `weather` endpoint no longer closes an `httpClient` that is set on it when it stops; it closes only the client it
+created itself, and creates a new one when it is started again.
+
+=== camel-printer - an unknown flavor or mimeType fails the endpoint
+
+An `lpr` endpoint now fails to be created when the `flavor` or the `mimeType` option has a value the component does not
+know, or when the two together name no doc flavor, such as the default `flavor` `DocFlavor.BYTE_ARRAY` with
+`mimeType=TEXT_PLAIN` (`TEXT_PLAIN` and `TEXT_HTML` need `DocFlavor.CHAR_ARRAY`, `DocFlavor.READER` or
+`DocFlavor.STRING`). Before, such an endpoint printed with the doc flavor `DocFlavor.BYTE_ARRAY.AUTOSENSE` without an
+error. Use a `mimeType` with a charset, such as `TEXT_PLAIN_UTF_8`, or remove the `flavor` and `mimeType` options to
+keep printing as before.
+
+`mimeType=TEXT_HTML_UTF_8` and `mimeType=TEXT_HTML` now select the `text/html` doc flavor; they selected the
+`text/plain` doc flavor before.
+
+With `mimeType` `PAGEABLE`, `PRINTABLE` or `RENDERABLE_IMAGE`, the producer now prints the body as a
+`java.awt.print.Pageable`, `java.awt.print.Printable` or `java.awt.image.renderable.RenderableImage`, as these doc
+flavors need, instead of a stream. With `sendToPrinter=false`, the body is still written to a file as bytes.
+
+=== camel-weather - the CamelWeatherQuery header has the appid masked
+
+The `CamelWeatherQuery` header that the consumer and the producer set has the value of the `APPID` query parameter
+masked as `xxxxxx`, and so do the log and the error messages that show the request URL. The request to OpenWeatherMap
+still sends the real `appid`. A route that read the API key from this header must use the `appid` option instead.
+
+=== camel-tahu - sslContextParameters fails the endpoint
+
+The `sslContextParameters` option of `tahu-edge` and `tahu-host`, and `useGlobalSslContextParameters` of their
+components, never had an effect: Eclipse Tahu creates its MQTT clients without these TLS settings, so an `ssl://`
+server was checked with the default trust store of the JVM, and a configured trust store or client certificate was
+ignored without a message. An endpoint with `sslContextParameters`, or with `useGlobalSslContextParameters=true` and a
+global `SSLContextParameters`, now fails to start. Remove the option, and configure the trust store (and the key store
+for a client certificate) with the `javax.net.ssl.*` system properties of the JVM.
 
 === Kamelets - removed Kamelets
 

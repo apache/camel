@@ -41,7 +41,8 @@ public class MilvusConfiguration implements Cloneable {
     private int port = 19530;
 
     @Metadata(security = "secret")
-    @UriParam(description = "The token that the client sends to authenticate with Milvus: a user name and password joined"
+    @UriParam(label = "security",
+              description = "The token that the client sends to authenticate with Milvus: a user name and password joined"
                             + " by a colon, or an API key of Zilliz Cloud. If not set, the client sends"
                             + " no credentials."
                             + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
@@ -51,6 +52,43 @@ public class MilvusConfiguration implements Cloneable {
                             + " must be greater than 0. It is not a timeout of each request: the requests have no deadline."
                             + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
     private long timeout = 10000L;
+
+    @UriParam(label = "security", description = "Whether to connect to the Milvus server with TLS. If not set, the"
+                                                + " connection is plaintext, and the token is sent in clear text, unless"
+                                                + " serverPemPath, or caPemPath with clientPemPath and clientKeyPath, is"
+                                                + " set. Without these options, the client trusts the certificate"
+                                                + " authorities of the JVM."
+                                                + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
+    private boolean secure;
+
+    @UriParam(label = "security", description = "The path of a PEM file with the certificate of the Milvus server, or of"
+                                                + " the certificate authority that signed it, that the client trusts for"
+                                                + " one-way TLS. Setting it connects with TLS."
+                                                + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
+    private String serverPemPath;
+
+    @UriParam(label = "security", description = "The name that the client expects in the certificate of the Milvus server"
+                                                + " (the authority of the gRPC channel), when it differs from the host."
+                                                + " Only used with serverPemPath, where the host is used if not set,"
+                                                + " or with mutual TLS."
+                                                + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
+    private String serverName;
+
+    @UriParam(label = "security", description = "The path of a PEM file with the certificate authority that the client"
+                                                + " trusts for mutual TLS. Set it together with clientPemPath and"
+                                                + " clientKeyPath; for one-way TLS use serverPemPath instead."
+                                                + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
+    private String caPemPath;
+
+    @UriParam(label = "security", description = "The path of a PEM file with the certificate of the client for mutual TLS."
+                                                + " Set it together with caPemPath and clientKeyPath."
+                                                + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
+    private String clientPemPath;
+
+    @UriParam(label = "security", description = "The path of a PEM file with the private key (PKCS#8) of the client for"
+                                                + " mutual TLS. Set it together with caPemPath and clientPemPath."
+                                                + " Not used when a MilvusClient is set with MilvusConfiguration.setClient().")
+    private String clientKeyPath;
 
     @Metadata(autowired = true)
     private MilvusClient client;
@@ -93,6 +131,54 @@ public class MilvusConfiguration implements Cloneable {
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
+
+    public String getServerPemPath() {
+        return serverPemPath;
+    }
+
+    public void setServerPemPath(String serverPemPath) {
+        this.serverPemPath = serverPemPath;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getCaPemPath() {
+        return caPemPath;
+    }
+
+    public void setCaPemPath(String caPemPath) {
+        this.caPemPath = caPemPath;
+    }
+
+    public String getClientPemPath() {
+        return clientPemPath;
+    }
+
+    public void setClientPemPath(String clientPemPath) {
+        this.clientPemPath = clientPemPath;
+    }
+
+    public String getClientKeyPath() {
+        return clientKeyPath;
+    }
+
+    public void setClientKeyPath(String clientKeyPath) {
+        this.clientKeyPath = clientKeyPath;
     }
 
     public MilvusClient getClient() {

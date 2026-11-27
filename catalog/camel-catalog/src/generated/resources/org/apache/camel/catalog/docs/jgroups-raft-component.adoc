@@ -45,6 +45,36 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Channel configuration
+
+The `channelProperties` option (of the endpoint or the component) sets the JGroups XML configuration of the channel,
+as a file, a URL or a classpath resource. When it is not set, the endpoint uses `raft.xml`, which is the configuration
+in the `camel-jgroups-raft` JAR unless the application has its own `raft.xml` first on the classpath. The
+`jgroupsConfig` option of the `JGroupsRaftClusterService` has the same default.
+
+The `raft.xml` in the JAR is a sample for development and tests:
+
+* it uses UDP multicast (`228.5.5.5`), without authentication or encryption. Any host on the same network that uses
+the same cluster name can join the cluster and take part in the Raft log, and the messages are sent in clear text;
+* it lists `A` as the only member in the `members` attribute of `RAFT`.
+
+A WARN is logged when an endpoint (or the cluster service) starts with this default. In production, use your own
+JGroups configuration, under another name, with:
+
+* the `AUTH` protocol, and `SYM_ENCRYPT` or `ASYM_ENCRYPT`, so that only trusted members join the cluster and the
+messages are encrypted;
+* the Raft IDs of all the members of the cluster in the `members` attribute of `RAFT` (for example
+`members="node1,node2,node3"`), and the `raft_id` of each member;
+* a transport that fits the network, such as TCP with a list of the members, when multicast is not wanted.
+
+[source,java]
+----
+from("direct:start").to("jgroups-raft:clusterName?raftId=node1&channelProperties=my-raft.xml");
+----
+
+See the http://belaban.github.io/jgroups-raft/[JGroups-raft] and http://www.jgroups.org/[JGroups] documentation for
+the protocols.
+
 == Usage
 
 Using `jgroups-raft` component with `enableRoleChangeEvents=true` on the consumer side of the route will capture

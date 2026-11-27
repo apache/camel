@@ -18,10 +18,13 @@ package org.apache.camel.component.file.watch;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -31,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.methvin.watcher.DirectoryChangeEvent;
 import io.methvin.watcher.DirectoryChangeListener;
 import io.methvin.watcher.DirectoryWatcher;
+import io.methvin.watcher.visitor.FileTreeVisitor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -75,8 +79,18 @@ public class FileWatchConsumer extends DefaultConsumer {
         super.doInit();
 
         for (String event : getEndpoint().getEvents().split(",")) {
-            FileEventEnum fe = FileEventEnum.valueOf(event);
-            events.add(fe);
+            String name = event.trim();
+            if (name.isEmpty()) {
+                continue;
+            }
+            try {
+                events.add(FileEventEnum.valueOf(name.toUpperCase(Locale.ROOT)));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(
+                        "Unknown event '" + name + "' in the events option, the accepted values are "
+                                                   + Arrays.toString(FileEventEnum.values()),
+                        e);
+            }
         }
     }
 
@@ -110,6 +124,11 @@ public class FileWatchConsumer extends DefaultConsumer {
             // We need per FileSystem WatchService, to allow monitoring on machine with multiple file systems.
             // Keep default for macOS
             watcherBuilder.watchService(this.baseDirectory.getFileSystem().newWatchService());
+        }
+
+        if (!getEndpoint().isRecursive()) {
+            // only the base directory is watched (and its files hashed), not the whole tree below it
+            watcherBuilder.fileTreeVisitor(new BaseDirectoryVisitor(baseDirectory));
         }
 
         watcherBuilder.fileHashing(getEndpoint().isUseFileHashing());
@@ -180,7 +199,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         if (lastModified != null) {
             message.setHeader(FileWatchConstants.FILE_LAST_MODIFIED, lastModified);
         }
-        message.setHeader(Exchange.MESSAGE_TIMESTAMP, event.getEventDate());
+        message.setHeader(FileWatchConstants.MESSAGE_TIMESTAMP, event.getEventDate());
 
         return exchange;
     }
@@ -251,6 +270,49 @@ public class FileWatchConsumer extends DefaultConsumer {
                     fileEvent.getEventType(), fileEvent.getEventPath());
         }
         return false;
+    }
+
+    /**
+     * Visits only the base directory and the entries directly in it, so that a non-recursive watch does not register
+     * (or hash the files of) a subdirectory, also not one created later. directory-watcher calls the visitor to hash
+     * the tree at start, to register the directories, and (except with the watch service of macOS) to report a created
+     * directory. So a subdirectory directly in the base directory is passed to onFile, never to onDirectory: it is
+     * hashed, which gives the DELETE event of a deleted subdirectory, and a created one is reported as CREATE, but it
+     * is not registered. The events from deeper levels that a platform reports anyway (the watch services of macOS and
+     * Windows watch the whole tree) are dropped by {@link #matchFilters(FileEvent)}.
+     */
+    static final class BaseDirectoryVisitor implements FileTreeVisitor {
+        private final Path baseDirectory;
+
+        BaseDirectoryVisitor(Path baseDirectory) {
+            this.baseDirectory = baseDirectory;
+        }
+
+        @Override
+        public void recursiveVisitFiles(Path file, Callback onDirectory, Callback onFile) throws IOException {
+            if (isBaseDirectory(file)) {
+                onDirectory.call(file);
+                try (DirectoryStream<Path> entries = Files.newDirectoryStream(file)) {
+                    for (Path entry : entries) {
+                        onFile.call(entry);
+                    }
+                }
+            } else if (file.getParent() != null && isBaseDirectory(file.getParent())) {
+                onFile.call(file);
+            }
+        }
+
+        private boolean isBaseDirectory(Path path) {
+            if (path.equals(baseDirectory)) {
+                return true;
+            }
+            try {
+                return Files.isSameFile(path, baseDirectory);
+            } catch (IOException e) {
+                // such as a directory that was removed right after it was created
+                return false;
+            }
+        }
     }
 
     class FileWatchDirectoryChangeListener implements DirectoryChangeListener {

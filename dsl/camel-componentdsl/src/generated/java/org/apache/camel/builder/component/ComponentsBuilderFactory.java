@@ -331,7 +331,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Avro RPC (camel-avro-rpc)
-     * Produce or consume Apache Avro RPC services.
+     * Call and expose Apache Avro RPC services over HTTP or Netty.
      * 
      * Category: rpc
      * Since: 2.10
@@ -386,7 +386,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS CloudTrail (camel-aws-cloudtrail)
-     * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
+     * Receive the management events of an AWS account from Amazon CloudTrail.
      * 
      * Category: cloud,management,monitoring
      * Since: 3.19
@@ -894,7 +894,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Files (camel-azure-files)
-     * Send and receive files to Azure storage file share
+     * Read files from and write files to a file share in Azure Files.
      * 
      * Category: cloud,file
      * Since: 3.22
@@ -934,9 +934,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Azure Key Vault (camel-azure-key-vault)
-     * Manage secrets and keys in Azure Key Vault Service
+     * Create, get, update, delete and purge secrets in Azure Key Vault.
      * 
-     * Category: cloud,cloud
+     * Category: cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
      * 
@@ -1395,8 +1395,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Crypto (JCE) (camel-crypto)
-     * Sign and verify exchanges using the Signature Service of the Java
-     * Cryptographic Extension (JCE).
+     * Sign message bodies and verify their signatures with
+     * java.security.Signature of the Java Cryptography Architecture.
      * 
      * Category: security,transformation
      * Since: 2.3
@@ -1463,7 +1463,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Data Format (camel-dataformat)
-     * Use a Camel Data Format as a regular Camel Component.
+     * Marshal or unmarshal the message body with a Camel data format, such as
+     * JAXB, CSV or JSON.
      * 
      * Category: core,transformation
      * Since: 2.12
@@ -2095,7 +2096,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Cloud Functions (camel-google-functions)
-     * Manage and invoke Google Cloud Functions
+     * Manage and call functions in Google Cloud Functions.
      * 
      * Category: cloud
      * Since: 3.9
@@ -2266,7 +2267,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * gRPC (camel-grpc)
-     * Expose gRPC endpoints and access external gRPC endpoints.
+     * Expose gRPC services and call remote gRPC services, with Protocol Buffers
+     * messages over HTTP/2.
      * 
      * Category: rpc
      * Since: 2.19
@@ -2451,7 +2453,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * HiveMQ (camel-hivemq)
-     * Camel HiveMQ MQTT Client support
+     * Send messages to and receive messages from an MQTT broker with the HiveMQ
+     * MQTT Client.
      * 
      * Category: messaging,iot
      * Since: 4.23
@@ -2588,8 +2591,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
-     * To broadcast messages and connect cloud services through notifications on
-     * Huawei Cloud
+     * Publish messages to topics of Huawei Cloud Simple Message Notification
+     * (SMN).
      * 
      * Category: cloud,messaging
      * Since: 3.8
@@ -2682,8 +2685,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
-     * Interact with IBM watsonx.ai foundation models for text generation, chat,
-     * embeddings, and more.
+     * Generate text, chat, embed, rerank and tokenize text, extract and
+     * classify documents, detect harmful content and forecast time series with
+     * the foundation models and deployments of IBM watsonx.ai.
      * 
      * Category: ai,cloud
      * Since: 4.18
@@ -2870,7 +2874,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with InfluxDB v1, a time series database.
+     * Write points to and run queries on InfluxDB v1, a time series database.
      * 
      * Category: database
      * Since: 2.18
@@ -4483,8 +4487,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Ref (camel-ref)
-     * Route messages to an endpoint looked up dynamically by name in the Camel
-     * Registry.
+     * Send messages to, or receive messages from, an endpoint that is looked up
+     * by name in the Camel registry.
      * 
      * Category: core
      * Since: 1.2
@@ -4537,7 +4541,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * REST Postman (camel-rest-postman)
-     * To call and expose REST services using a Postman Collection as contract.
+     * Call the REST APIs described by a Postman Collection, or serve its
+     * requests as a contract-first REST service.
      * 
      * Category: rest,api
      * Since: 4.23
@@ -4965,7 +4970,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring Batch (camel-spring-batch)
-     * Send messages to Spring Batch for further processing.
+     * Launch Spring Batch jobs, with the message headers as the job parameters.
      * 
      * Category: workflow
      * Since: 2.10
@@ -5098,8 +5103,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * State Store (camel-state-store)
-     * Perform key-value operations against a pluggable KeyValueRepository
-     * backend.
+     * Store, get and delete key-value entries in a pluggable
+     * KeyValueRepository, such as an in-memory store or a shared cache.
      * 
      * Category: cache
      * Since: 4.23
@@ -5126,8 +5131,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Stitch (camel-stitch)
-     * Stitch is a cloud ETL service that integrates various data sources into a
-     * central data warehouse through various integrations.
+     * Send batches of records to the Stitch Import API, which loads them into a
+     * table of the destination data warehouse.
      * 
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
@@ -5193,7 +5198,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Tahu Edge Node / Device (camel-tahu)
-     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * Publish the Sparkplug B messages of Edge Nodes and Devices to MQTT
+     * servers using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8
@@ -5206,7 +5212,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Tahu Host Application (camel-tahu)
-     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * Receive Sparkplug B messages and metrics from MQTT servers as a Host
+     * Application using Eclipse Tahu.
      * 
      * Category: messaging,iot,monitoring
      * Since: 4.8

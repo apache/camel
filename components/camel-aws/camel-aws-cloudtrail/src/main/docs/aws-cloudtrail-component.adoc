@@ -2,7 +2,7 @@
 :doctitle: AWS CloudTrail
 :shortname: aws-cloudtrail
 :artifactid: camel-aws-cloudtrail
-:description: Consume events from Amazon CloudTrail using AWS SDK version 2.x.
+:description: Receive the management events of an AWS account from Amazon CloudTrail.
 :since: 3.19
 :supportlevel: Stable
 :tabs-sync-option:

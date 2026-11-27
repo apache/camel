@@ -370,6 +370,10 @@ try (ElasticsearchScrollRequestIterator response = template.requestBody("direct:
 }
 ----
 
+The iterator sends a scroll request for each page while it is read, and clears the scroll when it is closed. It
+closes itself once `hasNext()` returns `false` at the end of the scroll. When you stop reading before the end, close
+the iterator, as above: with `disconnect=true` it holds the client of the exchange until it is closed.
+
 xref:eips:split-eip.adoc[Split EIP] can also be used.
 
 [tabs]

@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 
 /**
- * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
+ * Receive the management events of an AWS account from Amazon CloudTrail.
  */
 @UriEndpoint(firstVersion = "3.19.0", scheme = "aws-cloudtrail", title = "AWS CloudTrail", syntax = "aws-cloudtrail:label",
              consumerOnly = true,
