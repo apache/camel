@@ -279,7 +279,7 @@ or removes its row.
 | camel-mongodb | mongodb |  |
 | camel-mongodb-gridfs | mongodb-gridfs |  |
 | camel-mtconnect | mtconnect |  |
-| camel-mustache | mustache |  |
+| camel-mustache | mustache | yes |
 | camel-mvel | mvel |  |
 | camel-mybatis | mybatis, mybatis-bean |  |
 | camel-nats | nats |  |

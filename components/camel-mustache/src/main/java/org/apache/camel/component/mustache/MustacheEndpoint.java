@@ -43,7 +43,7 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RES
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEMPLATE;
 
 /**
- * Transform messages using a Mustache template.
+ * Render a Mustache template with the data of the message and use the text it writes as the new message body.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri",
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION },
@@ -65,11 +65,22 @@ public class MustacheEndpoint extends ResourceEndpoint {
 
     @UriParam
     private boolean allowTemplateFromHeader;
-    @UriParam
+    @UriParam(description = "The name of the character encoding (charset) that the producer uses to read the template"
+                            + " resource of resourceUri, for example UTF-8. If not set, the default charset of the JVM is"
+                            + " used. Not used for the template of the CamelMustacheTemplate header, which is already text,"
+                            + " nor for partials, which the mustacheFactory reads.")
     private String encoding;
-    @UriParam(defaultValue = "{{")
+    @UriParam(defaultValue = "{{",
+              description = "The characters that start a tag in the template, in place of {{. Only applied when endDelimiter"
+                            + " is set too and the mustacheFactory of the component is a"
+                            + " com.github.mustachejava.DefaultMustacheFactory, which it is by default. Also applied to the"
+                            + " template of the CamelMustacheTemplate header.")
     private String startDelimiter;
-    @UriParam(defaultValue = "}}")
+    @UriParam(defaultValue = "}}",
+              description = "The characters that end a tag in the template, in place of }}. Only applied when startDelimiter"
+                            + " is set too and the mustacheFactory of the component is a"
+                            + " com.github.mustachejava.DefaultMustacheFactory, which it is by default. Also applied to the"
+                            + " template of the CamelMustacheTemplate header.")
     private String endDelimiter;
 
     public MustacheEndpoint() {
@@ -191,9 +202,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return mustacheFactory;
     }
 
-    /**
-     * To use a custom {@link MustacheFactory}
-     */
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }
@@ -202,9 +210,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
-    /**
-     * Character encoding of the resource content.
-     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -219,9 +224,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return startDelimiter;
     }
 
-    /**
-     * Characters used to mark template code beginning.
-     */
     public void setStartDelimiter(String startDelimiter) {
         this.startDelimiter = startDelimiter;
     }
@@ -230,9 +232,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return endDelimiter;
     }
 
-    /**
-     * Characters used to mark template code end.
-     */
     public void setEndDelimiter(String endDelimiter) {
         this.endDelimiter = endDelimiter;
     }
