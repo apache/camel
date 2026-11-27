@@ -28,7 +28,7 @@ public class WatsonSpeechToTextConfiguration implements Cloneable {
     @Metadata(required = true)
     private String apiKey;
 
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private String serviceUrl;
 
     @UriParam(label = "producer")

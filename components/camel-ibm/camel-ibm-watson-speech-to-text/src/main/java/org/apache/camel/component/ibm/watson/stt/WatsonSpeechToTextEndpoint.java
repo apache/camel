@@ -48,9 +48,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                                          carriers = Carrier.TEXT) },
                                   description = "The audio to recognize in the format of contentType (audio/wav by default), as"
                                                 + " bytes, a stream or a file, unless the CamelIBMWatsonSTTAudioFile header gives a"
-                                                + " file. No body or a Map fails, and text is sent as its bytes. getModel and"
-                                                + " getCustomModel read the model name or ID as text unless the"
-                                                + " CamelIBMWatsonSTTModelName header gives it"),
+                                                + " file. No body or a Map fails, and text is sent as its bytes. getModel reads the"
+                                                + " model name as text unless the CamelIBMWatsonSTTModelName header gives it, and"
+                                                + " getCustomModel the customization ID unless the"
+                                                + " CamelIBMWatsonSTTCustomizationId or CamelIBMWatsonSTTModelName header"
+                                                + " gives it"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    javaType = "com.ibm.watson.speech_to_text.v1.model.SpeechRecognitionResults",
                                    byOption = {
@@ -117,6 +119,11 @@ public class WatsonSpeechToTextEndpoint extends DefaultEndpoint implements Endpo
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    @Override
+    public WatsonSpeechToTextComponent getComponent() {
+        return (WatsonSpeechToTextComponent) super.getComponent();
     }
 
     public WatsonSpeechToTextConfiguration getConfiguration() {

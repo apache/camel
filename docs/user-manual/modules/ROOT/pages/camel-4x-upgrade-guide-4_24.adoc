@@ -862,6 +862,16 @@ expires; the endpoint fails to start when the profile gives no token. The identi
 that watsonx.data accepts. `apiKey` is no longer marked as required in the catalog, as `oauthProfile` can take its
 place; an endpoint with neither still fails to start.
 
+=== camel-ibm-watson-speech-to-text - a producer health check, and a header for the customization ID
+
+The producer now registers a health check that lists the models of Speech to Text. It runs only when producer health
+checks are enabled (`camel.health.producersEnabled=true`), and then reports DOWN while the service cannot be reached
+or rejects the request. Set the `healthCheckProducerEnabled` option of the component to `false` to turn it off.
+
+`getCustomModel` reads the customization ID of the custom language model from the new
+`CamelIBMWatsonSTTCustomizationId` header, and from `CamelIBMWatsonSTTModelName` when the new header is not set, as
+before. The `serviceUrl` option and the headers are in the `producer` group of the catalog and the docs.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the

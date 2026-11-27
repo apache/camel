@@ -66,22 +66,6 @@ public interface IbmWatsonSpeechToTextComponentBuilderFactory {
             return this;
         }
     
-        /**
-         * The service endpoint URL. If not specified, the default URL will be
-         * used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serviceUrl the value to set
-         * @return the dsl builder
-         */
-        default IbmWatsonSpeechToTextComponentBuilder serviceUrl(java.lang.String serviceUrl) {
-            doSetProperty("serviceUrl", serviceUrl);
-            return this;
-        }
-    
         
         /**
          * The audio format (MIME type). Default is audio/wav. Supported
@@ -157,6 +141,22 @@ public interface IbmWatsonSpeechToTextComponentBuilderFactory {
          */
         default IbmWatsonSpeechToTextComponentBuilder operation(org.apache.camel.component.ibm.watson.stt.WatsonSpeechToTextOperations operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+    
+        /**
+         * The service endpoint URL. If not specified, the default URL will be
+         * used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param serviceUrl the value to set
+         * @return the dsl builder
+         */
+        default IbmWatsonSpeechToTextComponentBuilder serviceUrl(java.lang.String serviceUrl) {
+            doSetProperty("serviceUrl", serviceUrl);
             return this;
         }
     
@@ -309,11 +309,11 @@ public interface IbmWatsonSpeechToTextComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((WatsonSpeechToTextComponent) component).setConfiguration((org.apache.camel.component.ibm.watson.stt.WatsonSpeechToTextConfiguration) value); return true;
-            case "serviceUrl": getOrCreateConfiguration((WatsonSpeechToTextComponent) component).setServiceUrl((java.lang.String) value); return true;
             case "contentType": getOrCreateConfiguration((WatsonSpeechToTextComponent) component).setContentType((java.lang.String) value); return true;
             case "lazyStartProducer": ((WatsonSpeechToTextComponent) component).setLazyStartProducer((boolean) value); return true;
             case "model": getOrCreateConfiguration((WatsonSpeechToTextComponent) component).setModel((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((WatsonSpeechToTextComponent) component).setOperation((org.apache.camel.component.ibm.watson.stt.WatsonSpeechToTextOperations) value); return true;
+            case "serviceUrl": getOrCreateConfiguration((WatsonSpeechToTextComponent) component).setServiceUrl((java.lang.String) value); return true;
             case "speakerLabels": getOrCreateConfiguration((WatsonSpeechToTextComponent) component).setSpeakerLabels((boolean) value); return true;
             case "timestamps": getOrCreateConfiguration((WatsonSpeechToTextComponent) component).setTimestamps((boolean) value); return true;
             case "wordConfidence": getOrCreateConfiguration((WatsonSpeechToTextComponent) component).setWordConfidence((boolean) value); return true;

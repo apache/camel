@@ -34,6 +34,9 @@ import com.ibm.watson.speech_to_text.v1.model.SpeechRecognitionResult;
 import com.ibm.watson.speech_to_text.v1.model.SpeechRecognitionResults;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -42,6 +45,9 @@ import org.slf4j.LoggerFactory;
 public class WatsonSpeechToTextProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatsonSpeechToTextProducer.class);
+
+    private HealthCheck producerHealthCheck;
+    private WritableHealthCheckRepository healthCheckRepository;
 
     public WatsonSpeechToTextProducer(WatsonSpeechToTextEndpoint endpoint) {
         super(endpoint);
@@ -70,6 +76,28 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
+        if (healthCheckRepository != null) {
+            producerHealthCheck = new WatsonSpeechToTextProducerHealthCheck(getEndpoint(), getEndpoint().getId());
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (healthCheckRepository != null && producerHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck = null;
+        }
+        super.doStop();
     }
 
     @Override
@@ -238,7 +266,11 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
             throw new IllegalStateException("STT client not initialized");
         }
 
-        String modelId = exchange.getIn().getHeader(WatsonSpeechToTextConstants.MODEL_NAME, String.class);
+        String modelId = exchange.getIn().getHeader(WatsonSpeechToTextConstants.CUSTOMIZATION_ID, String.class);
+        if (modelId == null) {
+            // the header that getModel uses, which was the only one before the customization ID header
+            modelId = exchange.getIn().getHeader(WatsonSpeechToTextConstants.MODEL_NAME, String.class);
+        }
         if (modelId == null) {
             modelId = exchange.getIn().getBody(String.class);
         }

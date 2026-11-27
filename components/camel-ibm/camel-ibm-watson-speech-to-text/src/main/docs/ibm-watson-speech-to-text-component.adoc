@@ -57,6 +57,13 @@ The IBM Watson Speech to Text component provides the following operations:
 
 If you don't specify an operation explicitly, you must set it via the `operation` parameter.
 
+=== Health check
+
+The producer registers a health check that lists the models of the service, so it is down when Speech to Text cannot
+be reached or rejects the credentials. Like the other producer health checks of Camel, it runs only when producer
+health checks are enabled, for example with `camel.health.producersEnabled=true`, and the
+`healthCheckProducerEnabled` option of the component turns it off.
+
 === Audio input
 
 The `recognize` operation reads the audio from the file of the `CamelIBMWatsonSTTAudioFile` header, or from the
@@ -418,7 +425,7 @@ Get detailed information about a custom model:
 [source,java]
 ----
 from("direct:getCustomModel")
-  .setHeader("CamelIBMWatsonSTTModelName", constant("your-custom-model-guid"))
+  .setHeader("CamelIBMWatsonSTTCustomizationId", constant("your-custom-model-guid"))
   .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=getCustomModel")
   .process(exchange -> {
       LanguageModel model = exchange.getMessage().getBody(LanguageModel.class);

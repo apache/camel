@@ -45,21 +45,6 @@ public interface WatsonSpeechToTextEndpointBuilderFactory {
         }
 
         /**
-         * The service endpoint URL. If not specified, the default URL will be
-         * used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serviceUrl the value to set
-         * @return the dsl builder
-         */
-        default WatsonSpeechToTextEndpointBuilder serviceUrl(String serviceUrl) {
-            doSetProperty("serviceUrl", serviceUrl);
-            return this;
-        }
-        /**
          * The audio format (MIME type). Default is audio/wav. Supported
          * formats: audio/wav, audio/mp3, audio/flac, audio/ogg, audio/webm.
          * 
@@ -120,6 +105,21 @@ public interface WatsonSpeechToTextEndpointBuilderFactory {
          */
         default WatsonSpeechToTextEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The service endpoint URL. If not specified, the default URL will be
+         * used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param serviceUrl the value to set
+         * @return the dsl builder
+         */
+        default WatsonSpeechToTextEndpointBuilder serviceUrl(String serviceUrl) {
+            doSetProperty("serviceUrl", serviceUrl);
             return this;
         }
         /**
@@ -442,7 +442,9 @@ public interface WatsonSpeechToTextEndpointBuilderFactory {
             return "CamelIBMWatsonSTTSpeakerLabels";
         }
         /**
-         * The name of the model to retrieve.
+         * The name of the model to retrieve. getCustomModel also reads it as
+         * the customization ID when the CamelIBMWatsonSTTCustomizationId header
+         * is not set.
          * 
          * The option is a: {@code String} type.
          * 
@@ -452,6 +454,19 @@ public interface WatsonSpeechToTextEndpointBuilderFactory {
          */
         public String iBMWatsonSTTModelName() {
             return "CamelIBMWatsonSTTModelName";
+        }
+        /**
+         * The customization ID (a GUID) of the custom language model to
+         * retrieve with getCustomModel.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IBMWatsonSTTCustomizationId}.
+         */
+        public String iBMWatsonSTTCustomizationId() {
+            return "CamelIBMWatsonSTTCustomizationId";
         }
         /**
          * The language for filtering models.

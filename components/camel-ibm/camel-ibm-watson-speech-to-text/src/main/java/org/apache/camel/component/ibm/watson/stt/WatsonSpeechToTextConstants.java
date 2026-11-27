@@ -23,30 +23,38 @@ import org.apache.camel.spi.Metadata;
  */
 public interface WatsonSpeechToTextConstants {
 
-    @Metadata(description = "The operation to perform", javaType = "String")
+    @Metadata(label = "producer", description = "The operation to perform", javaType = "String")
     String OPERATION = "CamelIBMWatsonSTTOperation";
 
     // Recognition headers
-    @Metadata(description = "The audio file to transcribe", javaType = "java.io.File")
+    @Metadata(label = "producer", description = "The audio file to transcribe", javaType = "java.io.File")
     String AUDIO_FILE = "CamelIBMWatsonSTTAudioFile";
-    @Metadata(description = "The language model to use for recognition", javaType = "String")
+    @Metadata(label = "producer", description = "The language model to use for recognition", javaType = "String")
     String MODEL = "CamelIBMWatsonSTTModel";
-    @Metadata(description = "The audio format (e.g., audio/wav, audio/mp3, audio/flac)", javaType = "String")
+    @Metadata(label = "producer", description = "The audio format (e.g., audio/wav, audio/mp3, audio/flac)",
+              javaType = "String")
     String CONTENT_TYPE = "CamelIBMWatsonSTTContentType";
-    @Metadata(description = "Whether to include timestamps in the transcription", javaType = "Boolean")
+    @Metadata(label = "producer", description = "Whether to include timestamps in the transcription", javaType = "Boolean")
     String TIMESTAMPS = "CamelIBMWatsonSTTTimestamps";
-    @Metadata(description = "Whether to include word confidence scores", javaType = "Boolean")
+    @Metadata(label = "producer", description = "Whether to include word confidence scores", javaType = "Boolean")
     String WORD_CONFIDENCE = "CamelIBMWatsonSTTWordConfidence";
-    @Metadata(description = "Whether to identify different speakers", javaType = "Boolean")
+    @Metadata(label = "producer", description = "Whether to identify different speakers", javaType = "Boolean")
     String SPEAKER_LABELS = "CamelIBMWatsonSTTSpeakerLabels";
 
     // Model headers
-    @Metadata(description = "The name of the model to retrieve", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The name of the model to retrieve. getCustomModel also reads it as the customization ID"
+                            + " when the CamelIBMWatsonSTTCustomizationId header is not set",
+              javaType = "String")
     String MODEL_NAME = "CamelIBMWatsonSTTModelName";
-    @Metadata(description = "The language for filtering models", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The customization ID (a GUID) of the custom language model to retrieve with getCustomModel",
+              javaType = "String")
+    String CUSTOMIZATION_ID = "CamelIBMWatsonSTTCustomizationId";
+    @Metadata(label = "producer", description = "The language for filtering models", javaType = "String")
     String LANGUAGE = "CamelIBMWatsonSTTLanguage";
 
     // Output headers
-    @Metadata(description = "The transcription result text", javaType = "String")
+    @Metadata(label = "producer", description = "The transcription result text", javaType = "String")
     String TRANSCRIPT = "CamelIBMWatsonSTTTranscript";
 }
