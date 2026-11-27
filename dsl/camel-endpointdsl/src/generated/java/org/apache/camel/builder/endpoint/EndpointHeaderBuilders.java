@@ -1146,8 +1146,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Crypto (JCE) (camel-crypto)
-     * Sign and verify exchanges using the Signature Service of the Java
-     * Cryptographic Extension (JCE).
+     * Sign message bodies and verify their signatures with
+     * java.security.Signature of the Java Cryptography Architecture.
      * 
      * Category: security,transformation
      * Since: 2.3

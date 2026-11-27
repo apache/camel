@@ -4592,8 +4592,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Crypto (JCE) (camel-crypto)
-     * Sign and verify exchanges using the Signature Service of the Java
-     * Cryptographic Extension (JCE).
+     * Sign message bodies and verify their signatures with
+     * java.security.Signature of the Java Cryptography Architecture.
      * 
      * Category: security,transformation
      * Since: 2.3
@@ -4602,12 +4602,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>crypto:cryptoOperation:name</code>
      * 
      * Path parameter: cryptoOperation (required)
-     * Set the Crypto operation from that supplied after the crypto scheme in
-     * the endpoint uri e.g. crypto:sign sets sign as the operation.
+     * The operation: sign creates a signature of the message body, and verify
+     * checks the signature of the message body. It is the part of the URI after
+     * crypto:, as in crypto:sign:name.
      * There are 2 enums and the value can be one of: sign, verify
      * 
      * Path parameter: name (required)
-     * The logical name of this operation.
+     * A name of your choice that tells the endpoints apart, as in
+     * crypto:sign:name. The component does not use it.
      * 
      * @param path cryptoOperation:name
      * @return the dsl builder
@@ -4617,8 +4619,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Crypto (JCE) (camel-crypto)
-     * Sign and verify exchanges using the Signature Service of the Java
-     * Cryptographic Extension (JCE).
+     * Sign message bodies and verify their signatures with
+     * java.security.Signature of the Java Cryptography Architecture.
      * 
      * Category: security,transformation
      * Since: 2.3
@@ -4627,12 +4629,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>crypto:cryptoOperation:name</code>
      * 
      * Path parameter: cryptoOperation (required)
-     * Set the Crypto operation from that supplied after the crypto scheme in
-     * the endpoint uri e.g. crypto:sign sets sign as the operation.
+     * The operation: sign creates a signature of the message body, and verify
+     * checks the signature of the message body. It is the part of the URI after
+     * crypto:, as in crypto:sign:name.
      * There are 2 enums and the value can be one of: sign, verify
      * 
      * Path parameter: name (required)
-     * The logical name of this operation.
+     * A name of your choice that tells the endpoints apart, as in
+     * crypto:sign:name. The component does not use it.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

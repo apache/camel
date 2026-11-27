@@ -141,7 +141,7 @@ or removes its row.
 | camel-couchbase | couchbase |  |
 | camel-couchdb | couchdb |  |
 | camel-cron | cron | yes |
-| camel-crypto | crypto |  |
+| camel-crypto | crypto | yes |
 | camel-cxf-rest | cxfrs | yes |
 | camel-cxf-soap | cxf | yes |
 | camel-cyberark-vault | cyberark-vault | yes |
