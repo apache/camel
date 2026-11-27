@@ -702,6 +702,10 @@ keeps working.
 The `JsonataConstants.JSONATA_CONTEXT` constant (`CamelJsonataContext` header) is deprecated, as the producer never
 read that header. Setting it has no effect, as before.
 
+The producer now opens the resource of the endpoint only when the `CamelJsonataResourceUri` header does not replace
+it. With `allowTemplateFromHeader=true`, an exchange that brings its expression in that header no longer fails when
+the resource of the endpoint cannot be found.
+
 === camel-vertx-http - an https:// address always uses TLS
 
 A `vertx-http` endpoint with an `https://` address now always calls it with TLS, also when no `sslContextParameters`

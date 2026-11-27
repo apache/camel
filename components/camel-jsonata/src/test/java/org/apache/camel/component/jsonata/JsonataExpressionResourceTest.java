@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * When the producer opens the resource of the endpoint, and the allowContextMapAll option that jsonata does not use.
+ * Tests that the producer opens the resource of the endpoint only when no header replaces it, and that the deprecated
+ * allowContextMapAll option, which jsonata never uses, still works.
  */
 class JsonataExpressionResourceTest extends CamelTestSupport {
 
