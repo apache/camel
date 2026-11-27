@@ -42,6 +42,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doAnswer;
@@ -139,5 +141,21 @@ class MailConsumerCommitErrorWithoutLockTest {
         assertEquals(1, lockedInHandler.size(), "the failed open is reported once");
         assertFalse(lockedInHandler.get(0), "the exception handler ran while the folder lock was held");
         verify(repository).remove(KEY);
+    }
+
+    @Test
+    void markThatFailsIsReportedAlsoWhenTheRepositoryThrows() throws Exception {
+        when(folder.isOpen()).thenReturn(true);
+        doThrow(new MessageRemovedException("expunged")).when(mail).setFlag(any(Flags.Flag.class), anyBoolean());
+        IllegalStateException down = new IllegalStateException("repository down");
+        doThrow(down).when(repository).remove(KEY);
+
+        IllegalStateException thrown
+                = assertThrows(IllegalStateException.class, () -> consumer.commit(mail, 5L, 7L, 0, exchange));
+
+        assertSame(down, thrown, "the exception of the repository still propagates");
+        assertEquals(1, lockedInHandler.size(), "the failed mark is reported although the repository threw");
+        assertFalse(lockedInHandler.get(0), "the exception handler ran while the folder lock was held");
+        assertFalse(folderLock.isLocked(), "the folder lock is released");
     }
 }

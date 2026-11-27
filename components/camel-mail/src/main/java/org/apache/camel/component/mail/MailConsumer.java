@@ -413,13 +413,17 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      * consumer is stopped, the mail is not marked and its idempotent key is settled as on commit: nothing opens the
      * folder or connects after a stop. An error of the mark is passed to the exception handler after the lock is
      * released: with bridgeErrorHandler=true the handler routes it, and the next poll and doStop must not wait for
-     * that.
+     * that. The error is passed also when settling the idempotent key then throws (an idempotentRepository that is
+     * down): that exception is thrown once the recorded error was passed.
      */
     void commit(Message mail, Long uid, long uidValidity, int batchOpen, Exchange exchange) {
         List<CommitError> errors;
+        RuntimeException failure = null;
         folderLock.lock();
         try {
             commitLocked(mail, uid, uidValidity, batchOpen, exchange);
+        } catch (RuntimeException e) {
+            failure = e;
         } finally {
             errors = new ArrayList<>(commitErrors);
             commitErrors.clear();
@@ -427,6 +431,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
         for (CommitError error : errors) {
             getExceptionHandler().handleException(error.message(), error.exchange(), error.cause());
+        }
+        if (failure != null) {
+            throw failure;
         }
     }
 
