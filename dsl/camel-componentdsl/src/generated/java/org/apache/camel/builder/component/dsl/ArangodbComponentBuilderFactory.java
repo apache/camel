@@ -217,8 +217,8 @@ public interface ArangodbComponentBuilderFactory {
         /**
          * To use a custom com.arangodb.ArangoDB client for all the endpoints of
          * the component. When it is set or autowired, the host, port, user,
-         * password and vertx options are not used. Each endpoint shuts the
-         * client down when it shuts down.
+         * password and vertx options are not used, and the endpoints do not
+         * shut the client down.
          * 
          * The option is a: &lt;code&gt;com.arangodb.ArangoDB&lt;/code&gt; type.
          * 

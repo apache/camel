@@ -12458,6 +12458,17 @@ With `useScroll=true`, the `ElasticsearchScrollRequestIterator` now closes itsel
 clears the scroll on the node and, with `disconnect=true`, closes the client the scroll was read with. Close the
 iterator yourself when you stop reading before the end.
 
+=== camel-arangodb - the endpoint shuts down only a client it built, and checks host and port at startup
+
+An `arangodb` endpoint no longer shuts down an `arangoDB` client that was set on the endpoint, set on the component or
+autowired from the registry, as that client is shared by all the endpoints of the component. The application that
+created the client shuts it down, for example with `@BindToRegistry(destroyMethod = "shutdown")` on the method that
+creates it (Spring already calls `shutdown` on an `ArangoDB` `@Bean`). A client that the endpoint built from `host`
+and `port` is shut down with the endpoint, as before.
+
+Without an `arangoDB` client, an endpoint now fails to start when `host` or `port` is not set. Before, `host` without
+`port` connected to port 0, so each message failed.
+
 === camel-ldif - a body that is not a URL fails with InvalidPayloadException
 
 With `allowUrlBody=true`, a body that does not start with `version: 1` and is not a valid absolute URL, such as a text
