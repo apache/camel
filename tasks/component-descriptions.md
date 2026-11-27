@@ -192,7 +192,7 @@ or removes its row.
 | camel-google-pubsub | google-pubsub |  |
 | camel-google-secret-manager | google-secret-manager |  |
 | camel-google-sheets | google-sheets, google-sheets-stream |  |
-| camel-google-speech-to-text | google-speech-to-text |  |
+| camel-google-speech-to-text | google-speech-to-text | yes |
 | camel-google-storage | google-storage |  |
 | camel-google-text-to-speech | google-text-to-speech |  |
 | camel-google-vertexai | google-vertexai |  |

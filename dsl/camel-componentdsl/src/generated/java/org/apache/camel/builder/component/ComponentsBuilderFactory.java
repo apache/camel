@@ -2177,7 +2177,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
-     * Transcribe audio to text using Google Cloud Speech-to-Text API
+     * Transcribe audio to text with the Google Cloud Speech-to-Text API.
      * 
      * Category: cloud,ai
      * Since: 4.19

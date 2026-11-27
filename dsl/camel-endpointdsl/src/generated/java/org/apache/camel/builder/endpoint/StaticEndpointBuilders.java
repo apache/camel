@@ -7301,7 +7301,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
-     * Transcribe audio to text using Google Cloud Speech-to-Text API
+     * Transcribe audio to text with the Google Cloud Speech-to-Text API.
      * 
      * Category: cloud,ai
      * Since: 4.19
@@ -7310,7 +7310,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-speech-to-text:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation name
+     * The operation to perform. The only operation is recognize, which sends
+     * the audio in one synchronous call, so it suits short audio (the service
+     * accepts up to one minute). The CamelGoogleCloudSpeechToTextOperation
+     * header overrides it, and with pojoRequest=true it is ignored.
      * 
      * @param path operation
      * @return the dsl builder
@@ -7320,7 +7323,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
-     * Transcribe audio to text using Google Cloud Speech-to-Text API
+     * Transcribe audio to text with the Google Cloud Speech-to-Text API.
      * 
      * Category: cloud,ai
      * Since: 4.19
@@ -7329,7 +7332,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>google-speech-to-text:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation name
+     * The operation to perform. The only operation is recognize, which sends
+     * the audio in one synchronous call, so it suits short audio (the service
+     * accepts up to one minute). The CamelGoogleCloudSpeechToTextOperation
+     * header overrides it, and with pojoRequest=true it is ignored.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
