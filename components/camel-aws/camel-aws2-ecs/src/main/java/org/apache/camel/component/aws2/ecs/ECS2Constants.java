@@ -22,23 +22,25 @@ import org.apache.camel.spi.Metadata;
  * Constants used in Camel AWS2 ECS module
  */
 public interface ECS2Constants {
-    @Metadata(description = "The operation we want to perform", javaType = "String")
+    @Metadata(label = "producer", description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsECSOperation";
-    @Metadata(description = "The limit number of results while listing clusters", javaType = "Integer")
+    @Metadata(label = "producer", description = "The limit number of results while listing clusters", javaType = "Integer")
     String MAX_RESULTS = "CamelAwsECSMaxResults";
-    @Metadata(description = "The cluster name", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The cluster name, for createCluster, describeCluster and deleteCluster", javaType = "String")
     String CLUSTER_NAME = "CamelAwsECSClusterName";
 
     // Pagination constants
-    @Metadata(label = "listClusters",
-              description = "The token for the next set of results.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The token for the next set of results of listClusters.", javaType = "String")
     String NEXT_TOKEN = "CamelAwsECSNextToken";
-    @Metadata(label = "listClusters",
-              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    @Metadata(label = "producer",
+              description = "Whether the response of listClusters has more results (is truncated).", javaType = "Boolean")
     String IS_TRUNCATED = "CamelAwsECSIsTruncated";
 
     // Response metadata
-    @Metadata(label = "createCluster describeCluster deleteCluster",
-              description = "The ARN of the cluster.", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The ARN of the cluster, set by createCluster, describeCluster and deleteCluster.",
+              javaType = "String")
     String CLUSTER_ARN = "CamelAwsECSClusterArn";
 }

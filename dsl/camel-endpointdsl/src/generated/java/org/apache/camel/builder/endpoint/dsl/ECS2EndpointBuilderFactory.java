@@ -50,7 +50,6 @@ public interface ECS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
@@ -66,7 +65,6 @@ public interface ECS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
@@ -616,7 +614,8 @@ public interface ECS2EndpointBuilderFactory {
             return "CamelAwsECSMaxResults";
         }
         /**
-         * The cluster name.
+         * The cluster name, for createCluster, describeCluster and
+         * deleteCluster.
          * 
          * The option is a: {@code String} type.
          * 
@@ -628,11 +627,11 @@ public interface ECS2EndpointBuilderFactory {
             return "CamelAwsECSClusterName";
         }
         /**
-         * The token for the next set of results.
+         * The token for the next set of results of listClusters.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: listClusters
+         * Group: producer
          * 
          * @return the name of the header {@code AwsECSNextToken}.
          */
@@ -640,11 +639,11 @@ public interface ECS2EndpointBuilderFactory {
             return "CamelAwsECSNextToken";
         }
         /**
-         * Whether the response has more results (is truncated).
+         * Whether the response of listClusters has more results (is truncated).
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: listClusters
+         * Group: producer
          * 
          * @return the name of the header {@code AwsECSIsTruncated}.
          */
@@ -652,11 +651,12 @@ public interface ECS2EndpointBuilderFactory {
             return "CamelAwsECSIsTruncated";
         }
         /**
-         * The ARN of the cluster.
+         * The ARN of the cluster, set by createCluster, describeCluster and
+         * deleteCluster.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: createCluster describeCluster deleteCluster
+         * Group: producer
          * 
          * @return the name of the header {@code AwsECSClusterArn}.
          */

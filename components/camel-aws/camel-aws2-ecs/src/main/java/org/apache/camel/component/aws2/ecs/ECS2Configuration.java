@@ -42,7 +42,6 @@ public class ECS2Configuration implements Cloneable, AwsCommonConfiguration {
     @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam
-    @Metadata(required = true)
     private ECS2Operations operation;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
