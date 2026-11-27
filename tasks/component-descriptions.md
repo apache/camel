@@ -352,7 +352,7 @@ or removes its row.
 | camel-spring-jdbc | spring-jdbc |  |
 | camel-spring-ldap | spring-ldap |  |
 | camel-spring-rabbitmq | spring-rabbitmq |  |
-| camel-spring-redis | spring-redis |  |
+| camel-spring-redis | spring-redis | yes |
 | camel-spring-ws | spring-ws | yes |
 | camel-sql | sql, sql-stored |  |
 | camel-ssh | ssh |  |

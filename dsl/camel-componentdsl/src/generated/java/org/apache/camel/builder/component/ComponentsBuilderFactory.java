@@ -4997,7 +4997,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Spring Redis (camel-spring-redis)
-     * Send and receive messages from Redis.
+     * Send commands to Redis and receive the messages of Redis Pub/Sub
+     * channels, using Spring Data Redis.
      * 
      * Category: cache
      * Since: 2.11
