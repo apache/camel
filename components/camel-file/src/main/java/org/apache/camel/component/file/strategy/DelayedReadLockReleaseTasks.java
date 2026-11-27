@@ -58,21 +58,30 @@ final class DelayedReadLockReleaseTasks {
     /**
      * Runs the release tasks that have not run yet in the calling thread. A task runs only once, here or in the thread
      * pool.
+     *
+     * @return the number of releases this call ran (and that did not fail)
      */
-    void runPending() {
+    int runPending() {
         if (pending.isEmpty()) {
-            return;
+            return 0;
         }
-        LOG.info("Releasing {} idempotent read locks now, before their readLockIdempotentReleaseDelay, as the read lock"
-                 + " is stopping",
-                pending.size());
+        // counts the tasks released here: a task that the thread pool runs meanwhile is skipped, and is not counted
+        int released = 0;
         for (Task task : pending) {
             try {
-                task.runNow();
+                if (task.runNow()) {
+                    released++;
+                }
             } catch (Exception e) {
                 LOG.warn("Error during releasing exclusive read lock on stop. This exception is ignored.", e);
             }
         }
+        if (released > 0) {
+            LOG.info("Released {} idempotent read locks at once, before their readLockIdempotentReleaseDelay, as the"
+                     + " read lock is stopping",
+                    released);
+        }
+        return released;
     }
 
     private final class Task implements Runnable {
@@ -87,21 +96,37 @@ final class DelayedReadLockReleaseTasks {
 
         @Override
         public void run() {
+            runOnce();
+        }
+
+        /**
+         * Runs the release, unless it has already run (or is running) in another thread.
+         *
+         * @return true when this call ran the release
+         */
+        private boolean runOnce() {
             if (started.compareAndSet(false, true)) {
                 try {
                     release.run();
                 } finally {
                     pending.remove(this);
                 }
+                return true;
             }
+            return false;
         }
 
-        void runNow() {
+        /**
+         * Runs the release in the calling thread, unless it has already run (or is running) in the thread pool.
+         *
+         * @return true when this call ran the release
+         */
+        boolean runNow() {
             Future<?> f = future;
             if (f != null) {
                 f.cancel(false);
             }
-            run();
+            return runOnce();
         }
     }
 }

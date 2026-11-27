@@ -1571,7 +1571,7 @@ its key stayed in the idempotent repository, so the file was never picked up aga
 repository, not even after a restart). With `readLockRemoveOnCommit=true`, the keys of the files a stopping node
 committed in the last `readLockIdempotentReleaseDelay` millis are now removed before the delay is over.
 This also applies with a `readLockIdempotentReleaseExecutorService` of your own, which Camel does not shut down:
-there nothing was dropped before, and the pending releases now run at the stop instead of when their delay is over.
+there, nothing was dropped before, and the pending releases now run at the stop instead of when their delay is over.
 
 === camel-spring-rabbitmq - the consumer starts while RabbitMQ is down, and declares again on a new connection
 

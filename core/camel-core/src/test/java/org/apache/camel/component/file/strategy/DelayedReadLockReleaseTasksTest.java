@@ -46,9 +46,12 @@ class DelayedReadLockReleaseTasksTest {
                     () -> tasks.schedule(rejecting, rejected::incrementAndGet, 60000));
 
             // the stop runs the pending release that was scheduled, and not the one that was rejected
-            tasks.runPending();
+            assertEquals(1, tasks.runPending(), "The stop did not count the one release it ran");
             assertEquals(1, scheduled.get(), "The scheduled release did not run at the stop");
             assertEquals(0, rejected.get(), "The rejected release was kept and ran at the stop");
+            // a release runs once: nothing is left for a second stop
+            assertEquals(0, tasks.runPending(), "A release ran or was counted twice");
+            assertEquals(1, scheduled.get(), "The scheduled release ran twice");
         } finally {
             accepting.shutdownNow();
         }
