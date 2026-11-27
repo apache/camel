@@ -235,7 +235,7 @@ or removes its row.
 | camel-jira | jira | yes |
 | camel-jms | jms |  |
 | camel-jmx | jmx | yes |
-| camel-jolt | jolt |  |
+| camel-jolt | jolt | yes |
 | camel-jooq | jooq | yes |
 | camel-jpa | jpa |  |
 | camel-jsch | scp | yes |

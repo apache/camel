@@ -9918,7 +9918,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JOLT (camel-jolt)
-     * JSON to JSON transformation using JOLT.
+     * Transform JSON to JSON with a JOLT specification.
      * 
      * Category: transformation
      * Since: 2.16
@@ -9943,7 +9943,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JOLT (camel-jolt)
-     * JSON to JSON transformation using JOLT.
+     * Transform JSON to JSON with a JOLT specification.
      * 
      * Category: transformation
      * Since: 2.16
