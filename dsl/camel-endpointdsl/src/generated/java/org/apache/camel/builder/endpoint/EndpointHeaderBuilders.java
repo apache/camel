@@ -2061,7 +2061,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
-     * Convert speech audio to text using IBM Watson Speech to Text
+     * Transcribe audio to text with IBM Watson Speech to Text, and list or get
+     * its speech models and custom language models.
      * 
      * Category: ai,cloud
      * Since: 4.17
