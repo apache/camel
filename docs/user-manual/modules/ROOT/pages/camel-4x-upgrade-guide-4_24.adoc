@@ -12199,6 +12199,20 @@ that reads objects from one bucket and uploads them to another now keeps the sto
 before the objects got the default of the destination bucket. To keep the previous behaviour, remove the header before
 the upload, for example with `removeHeader("CamelGoogleCloudStorageStorageClass")`.
 
+=== camel-google-firestore - realtime listener errors and nested merge fields
+
+A consumer with `realtimeUpdates=true` now fails to start when the first event of the snapshot listener is an error,
+for example missing permissions or a database that does not exist. Before, the error was only logged, the start waited
+30 seconds, and the route ran with a listener that Firestore had already closed. An error that comes after the start
+now goes to the exception handler of the consumer (or the routing error handler with `bridgeErrorHandler=true`)
+instead of only being logged at ERROR level.
+
+A name in the `CamelGoogleFirestoreMergeFields` header is now a dot-separated field path, as for `updateDocument`:
+`address.city` merges the field `city` of the map `address`. Before, it was taken as one top-level field named
+`address.city`. To merge a top-level field whose name contains a dot, put a `com.google.cloud.firestore.FieldPath`
+(`FieldPath.of("address.city")`) in the list instead of the String. A name that is not a valid dot-separated path,
+because it contains `~`, `*`, `/`, `[` or `]` or has an empty segment (as in `a..b`), is still one top-level field.
+
 === camel-http-common, camel-netty-http, camel-http - a form field without =, and a header whose name is not a token
 
 A consumer that maps the fields of an `application/x-www-form-urlencoded` request to headers (camel-servlet,
