@@ -17,17 +17,18 @@
 package org.apache.camel.component.xmpp;
 
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,6 +45,10 @@ class XmppConsumerStopDuringDelayedStartTest {
 
     private static final String ROOM = "dev@conference." + FakeXmppServer.DOMAIN;
 
+    // nothing listens on the port when the route starts: the test server binds it later
+    @RegisterExtension
+    AvailablePortFinder.Port serverPort = AvailablePortFinder.find();
+
     private DefaultCamelContext context;
     private FakeXmppServer server;
 
@@ -59,7 +64,7 @@ class XmppConsumerStopDuringDelayedStartTest {
 
     @Test
     void chatConsumerStoppedWhileItsDelayedStartWaitsForTheLockIsNotStarted() throws Exception {
-        int port = freePort();
+        int port = serverPort.getPort();
         stopWhileTheDelayedStartWaitsForTheLock(port, "xmpp://127.0.0.1:" + port + "/bob@" + FakeXmppServer.DOMAIN
                                                       + "?connectionConfig=#connectionConfig&connectionPollDelay=3"
                                                       + "&testConnectionOnStartup=false");
@@ -67,7 +72,7 @@ class XmppConsumerStopDuringDelayedStartTest {
 
     @Test
     void roomConsumerStoppedWhileItsDelayedStartWaitsForTheLockIsNotStarted() throws Exception {
-        int port = freePort();
+        int port = serverPort.getPort();
         stopWhileTheDelayedStartWaitsForTheLock(port, "xmpp://127.0.0.1:" + port + "?room=" + ROOM + "&nickname=camel"
                                                       + "&connectionConfig=#connectionConfig&connectionPollDelay=3"
                                                       + "&testConnectionOnStartup=false");
@@ -101,7 +106,8 @@ class XmppConsumerStopDuringDelayedStartTest {
                 && component.connectionUsers(endpoint) == 0);
         await().atMost(10, TimeUnit.SECONDS).until(() -> server.boundSessions() == 0);
         await().atMost(10, TimeUnit.SECONDS).until(() -> Thread.getAllStackTraces().keySet().stream()
-                .noneMatch(t -> t.isAlive() && t.getName().contains("connectionPoll")));
+                .noneMatch(t -> t.isAlive() && t.getName().startsWith("Camel (" + context.getName() + ")")
+                        && t.getName().endsWith("connectionPoll")));
         assertNull(consumer.connection, "the stopped consumer holds a connection");
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("in"));
     }
@@ -124,11 +130,5 @@ class XmppConsumerStopDuringDelayedStartTest {
         });
         // nothing listens on the port yet, so the consumer starts in the background
         context.start();
-    }
-
-    private static int freePort() throws Exception {
-        try (ServerSocket socket = new ServerSocket(0, 50, InetAddress.getLoopbackAddress())) {
-            return socket.getLocalPort();
-        }
     }
 }
