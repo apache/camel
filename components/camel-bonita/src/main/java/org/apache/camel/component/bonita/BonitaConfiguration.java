@@ -23,6 +23,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 @UriParams
 public class BonitaConfiguration implements Cloneable {
@@ -31,6 +32,12 @@ public class BonitaConfiguration implements Cloneable {
                            + " process that the processName option names, with the contract inputs from the message body.")
     @Metadata(required = true)
     private BonitaOperation operation;
+    @UriParam(description = "The protocol of the REST API of the Bonita server: http, or https to send the login, the"
+                            + " session cookies and the requests over TLS. With https, set the port to the HTTPS port of"
+                            + " the server, and the sslContextParameters option when the JVM does not trust the"
+                            + " certificate of the server.",
+              enums = "http,https", defaultValue = "http")
+    private String protocol = "http";
     @UriParam(description = "The host name of the Bonita server. The producer calls the REST API under the context path"
                             + " of the basePath option on this host.",
               defaultValue = "localhost")
@@ -62,6 +69,11 @@ public class BonitaConfiguration implements Cloneable {
               label = "security", security = "secret")
     @Metadata(required = true)
     private String password;
+    @UriParam(description = "The SSL configuration of the HTTPS connections to the Bonita server, such as the trust store"
+                            + " with the certificate of the server. It is used only when the protocol is https; without it"
+                            + " the default SSL context of the JVM is used.",
+              label = "security")
+    private SSLContextParameters sslContextParameters;
 
     public String getHostname() {
         return hostname;
@@ -69,6 +81,14 @@ public class BonitaConfiguration implements Cloneable {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     public String getPort() {
@@ -145,6 +165,14 @@ public class BonitaConfiguration implements Cloneable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
 }

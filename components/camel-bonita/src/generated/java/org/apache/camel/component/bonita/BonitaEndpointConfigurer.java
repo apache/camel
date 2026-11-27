@@ -35,6 +35,9 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "processName": target.getConfiguration().setProcessName(property(camelContext, java.lang.String.class, value)); return true;
         case "processversion":
         case "processVersion": target.getConfiguration().setProcessVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "protocol": target.getConfiguration().setProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -54,6 +57,9 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "processName": return java.lang.String.class;
         case "processversion":
         case "processVersion": return java.lang.String.class;
+        case "protocol": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -74,6 +80,9 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "processName": return target.getConfiguration().getProcessName();
         case "processversion":
         case "processVersion": return target.getConfiguration().getProcessVersion();
+        case "protocol": return target.getConfiguration().getProtocol();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

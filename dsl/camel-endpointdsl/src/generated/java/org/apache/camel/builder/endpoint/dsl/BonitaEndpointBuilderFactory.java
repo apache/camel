@@ -129,6 +129,25 @@ public interface BonitaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The protocol of the REST API of the Bonita server: http, or https to
+         * send the login, the session cookies and the requests over TLS. With
+         * https, set the port to the HTTPS port of the server, and the
+         * sslContextParameters option when the JVM does not trust the
+         * certificate of the server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: http
+         * Group: producer
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
+         */
+        default BonitaEndpointBuilder protocol(String protocol) {
+            doSetProperty("protocol", protocol);
+            return this;
+        }
+        /**
          * The password of the Bonita account. The producer logs in with it at
          * the loginservice of Bonita before each request, and fails when it
          * starts if the option is not set.
@@ -143,6 +162,42 @@ public interface BonitaEndpointBuilderFactory {
          */
         default BonitaEndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The SSL configuration of the HTTPS connections to the Bonita server,
+         * such as the trust store with the certificate of the server. It is
+         * used only when the protocol is https; without it the default SSL
+         * context of the JVM is used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default BonitaEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * The SSL configuration of the HTTPS connections to the Bonita server,
+         * such as the trust store with the certificate of the server. It is
+         * used only when the protocol is https; without it the default SSL
+         * context of the JVM is used.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default BonitaEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**

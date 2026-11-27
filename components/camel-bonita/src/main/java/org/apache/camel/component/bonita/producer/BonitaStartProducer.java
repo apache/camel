@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -34,6 +33,7 @@ import org.apache.camel.component.bonita.api.BonitaAPIBuilder;
 import org.apache.camel.component.bonita.api.model.CaseCreationResponse;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
@@ -55,7 +55,6 @@ public class BonitaStartProducer extends BonitaProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        // Setup access type (HTTP on local host)
         String hostname = this.configuration.getHostname();
         String port = this.configuration.getPort();
         String username = this.configuration.getUsername();
@@ -72,7 +71,14 @@ public class BonitaStartProducer extends BonitaProducer {
         }
         BonitaAPIConfig bonitaAPIConfig
                 = new BonitaAPIConfig(hostname, port, username, password, this.configuration.getBasePath());
-        client = ClientBuilder.newBuilder().build();
+        // fails the start for a protocol that is not http or https
+        bonitaAPIConfig.setProtocol(this.configuration.getProtocol());
+        SSLContextParameters sslContextParameters = this.configuration.getSslContextParameters();
+        if (BonitaAPIConfig.HTTPS.equals(bonitaAPIConfig.getProtocol()) && sslContextParameters != null) {
+            // the client of the producer and the clients of the logins use this SSL context
+            bonitaAPIConfig.setSslContext(sslContextParameters.createSSLContext(getEndpoint().getCamelContext()));
+        }
+        client = bonitaAPIConfig.newClient();
         bonitaApi = BonitaAPIBuilder.build(bonitaAPIConfig, client);
     }
 
