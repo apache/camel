@@ -2357,7 +2357,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * JGroups raft (camel-jgroups-raft)
-     * Exchange messages with JGroups-raft clusters.
+     * Append data to the replicated log of a JGroups-raft cluster, and receive
+     * the leader and follower role changes of the local member.
      * 
      * Category: clustering,messaging
      * Since: 2.24

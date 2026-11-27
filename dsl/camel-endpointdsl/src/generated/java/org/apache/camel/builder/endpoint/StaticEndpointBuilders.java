@@ -9754,7 +9754,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JGroups raft (camel-jgroups-raft)
-     * Exchange messages with JGroups-raft clusters.
+     * Append data to the replicated log of a JGroups-raft cluster, and receive
+     * the leader and follower role changes of the local member.
      * 
      * Category: clustering,messaging
      * Since: 2.24
@@ -9763,7 +9764,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jgroups-raft:clusterName</code>
      * 
      * Path parameter: clusterName (required)
-     * The name of the JGroupsraft cluster the component should connect to.
+     * The name of the JGroups cluster that the channel of the RaftHandle
+     * connects to. All the members of the Raft cluster use the same name.
      * 
      * @param path clusterName
      * @return the dsl builder
@@ -9773,7 +9775,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JGroups raft (camel-jgroups-raft)
-     * Exchange messages with JGroups-raft clusters.
+     * Append data to the replicated log of a JGroups-raft cluster, and receive
+     * the leader and follower role changes of the local member.
      * 
      * Category: clustering,messaging
      * Since: 2.24
@@ -9782,7 +9785,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jgroups-raft:clusterName</code>
      * 
      * Path parameter: clusterName (required)
-     * The name of the JGroupsraft cluster the component should connect to.
+     * The name of the JGroups cluster that the channel of the RaftHandle
+     * connects to. All the members of the Raft cluster use the same name.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

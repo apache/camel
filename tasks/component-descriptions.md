@@ -231,7 +231,7 @@ or removes its row.
 | camel-jdbc | jdbc |  |
 | camel-jetty | jetty |  |
 | camel-jgroups | jgroups |  |
-| camel-jgroups-raft | jgroups-raft |  |
+| camel-jgroups-raft | jgroups-raft | yes |
 | camel-jira | jira | yes |
 | camel-jms | jms |  |
 | camel-jmx | jmx | yes |
