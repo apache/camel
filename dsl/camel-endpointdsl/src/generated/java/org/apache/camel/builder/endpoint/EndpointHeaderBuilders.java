@@ -1075,7 +1075,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
+     * Read, write and watch keys and events in Consul, and query or register
+     * its services, nodes, health checks and sessions.
      * 
      * Category: cloud,api
      * Since: 2.18

@@ -4234,7 +4234,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
+     * Read, write and watch keys and events in Consul, and query or register
+     * its services, nodes, health checks and sessions.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -4243,7 +4244,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>consul:apiEndpoint</code>
      * 
      * Path parameter: apiEndpoint (required)
-     * The API endpoint
+     * The Consul API to use: kv, event, agent, catalog, health, session,
+     * preparedQuery, coordinates or status. Only kv and event have a consumer,
+     * the others only a producer; any other value is used as kv.
      * 
      * @param path apiEndpoint
      * @return the dsl builder
@@ -4253,7 +4256,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Consul (camel-consul)
-     * Integrate with Consul service discovery and configuration store.
+     * Read, write and watch keys and events in Consul, and query or register
+     * its services, nodes, health checks and sessions.
      * 
      * Category: cloud,api
      * Since: 2.18
@@ -4262,7 +4266,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>consul:apiEndpoint</code>
      * 
      * Path parameter: apiEndpoint (required)
-     * The API endpoint
+     * The Consul API to use: kv, event, agent, catalog, health, session,
+     * preparedQuery, coordinates or status. Only kv and event have a consumer,
+     * the others only a producer; any other value is used as kv.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

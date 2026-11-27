@@ -136,7 +136,7 @@ or removes its row.
 | camel-cm-sms | cm-sms |  |
 | camel-coap | coap, coap+tcp, coaps, coaps+tcp |  |
 | camel-cometd | cometd, cometds | yes |
-| camel-consul | consul |  |
+| camel-consul | consul | yes |
 | camel-controlbus | controlbus |  |
 | camel-couchbase | couchbase |  |
 | camel-couchdb | couchdb |  |
