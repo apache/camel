@@ -4270,7 +4270,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * PGVector (camel-pgvector)
-     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * Store, delete and search vector embeddings in a PostgreSQL table with the
+     * pgvector extension.
      * 
      * Category: database,ai
      * Since: 4.19

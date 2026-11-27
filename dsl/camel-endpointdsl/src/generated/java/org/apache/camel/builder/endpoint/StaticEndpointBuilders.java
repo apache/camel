@@ -14302,7 +14302,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * PGVector (camel-pgvector)
-     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * Store, delete and search vector embeddings in a PostgreSQL table with the
+     * pgvector extension.
      * 
      * Category: database,ai
      * Since: 4.19
@@ -14311,7 +14312,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>pgvector:collection</code>
      * 
      * Path parameter: collection (required)
-     * The collection (table) name
+     * The name of the table that holds the records. It must be a plain SQL
+     * identifier of letters, digits and underscores that does not start with a
+     * digit. CREATE_INDEX names the index after the table, followed by
+     * _embedding_idx.
      * 
      * @param path collection
      * @return the dsl builder
@@ -14321,7 +14325,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * PGVector (camel-pgvector)
-     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * Store, delete and search vector embeddings in a PostgreSQL table with the
+     * pgvector extension.
      * 
      * Category: database,ai
      * Since: 4.19
@@ -14330,7 +14335,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>pgvector:collection</code>
      * 
      * Path parameter: collection (required)
-     * The collection (table) name
+     * The name of the table that holds the records. It must be a plain SQL
+     * identifier of letters, digits and underscores that does not start with a
+     * digit. CREATE_INDEX names the index after the table, followed by
+     * _embedding_idx.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

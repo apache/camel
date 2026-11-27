@@ -304,7 +304,7 @@ or removes its row.
 | camel-pdf | pdf |  |
 | camel-pg-replication-slot | pg-replication-slot |  |
 | camel-pgevent | pgevent |  |
-| camel-pgvector | pgvector |  |
+| camel-pgvector | pgvector | yes |
 | camel-pinecone | pinecone |  |
 | camel-platform-http | platform-http |  |
 | camel-plc4x | plc4x |  |
