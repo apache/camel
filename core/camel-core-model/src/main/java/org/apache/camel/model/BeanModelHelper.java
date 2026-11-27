@@ -208,7 +208,11 @@ public final class BeanModelHelper {
                         if (text != null) {
                             Expression exp = lan.createExpression(text);
                             Object local = exp.evaluate(dummy, clazz);
-                            postCreateBean(camelContext, def, local, props, routeTemplateContext);
+                            try {
+                                postCreateBean(camelContext, def, local, props, routeTemplateContext);
+                            } catch (Exception e) {
+                                throw RuntimeCamelException.wrapRuntimeException(e);
+                            }
                             return local;
                         } else {
                             return null;
@@ -429,11 +433,7 @@ public final class BeanModelHelper {
             PropertyBindingSupport.setPropertiesOnTarget(camelContext, bean, props);
         }
         if (def.getInitMethod() != null) {
-            try {
-                ObjectHelper.invokeMethodSafe(def.getInitMethod(), bean);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
+            ObjectHelper.invokeMethodSafe(def.getInitMethod(), bean);
         }
         if (def.getDestroyMethod() != null && routeTemplateContext != null) {
             routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
