@@ -9762,7 +9762,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JOOQ (camel-jooq)
-     * Store and retrieve Java objects from an SQL database using JOOQ.
+     * Store and consume jOOQ records in an SQL database, and run jOOQ or plain
+     * SQL queries.
      * 
      * Category: database
      * Since: 3.0
@@ -9771,7 +9772,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jooq:entityType</code>
      * 
      * Path parameter: entityType
-     * JOOQ entity class
+     * The fully qualified name of the jOOQ generated record class (an
+     * org.jooq.UpdatableRecord) of the table. The consumer reads the rows of
+     * its table, and the producer stores records of this class for the NONE
+     * operation. The operation can follow after a slash, for example
+     * jooq:com.foo.BookRecord/fetch.
      * 
      * @param path entityType
      * @return the dsl builder
@@ -9781,7 +9786,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * JOOQ (camel-jooq)
-     * Store and retrieve Java objects from an SQL database using JOOQ.
+     * Store and consume jOOQ records in an SQL database, and run jOOQ or plain
+     * SQL queries.
      * 
      * Category: database
      * Since: 3.0
@@ -9790,7 +9796,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>jooq:entityType</code>
      * 
      * Path parameter: entityType
-     * JOOQ entity class
+     * The fully qualified name of the jOOQ generated record class (an
+     * org.jooq.UpdatableRecord) of the table. The consumer reads the rows of
+     * its table, and the producer stores records of this class for the NONE
+     * operation. The operation can follow after a slash, for example
+     * jooq:com.foo.BookRecord/fetch.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
