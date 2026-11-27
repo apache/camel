@@ -277,7 +277,7 @@ or removes its row.
 | camel-mllp | mllp |  |
 | camel-mock | mock |  |
 | camel-mongodb | mongodb |  |
-| camel-mongodb-gridfs | mongodb-gridfs |  |
+| camel-mongodb-gridfs | mongodb-gridfs | yes |
 | camel-mtconnect | mtconnect |  |
 | camel-mustache | mustache | yes |
 | camel-mvel | mvel |  |

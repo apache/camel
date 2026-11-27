@@ -12842,7 +12842,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
-     * Interact with MongoDB GridFS.
+     * Store, read and remove files in a MongoDB GridFS bucket, and receive the
+     * files that are uploaded to it.
      * 
      * Category: database,file
      * Since: 2.18
@@ -12851,7 +12852,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>mongodb-gridfs:connectionBean</code>
      * 
      * Path parameter: connectionBean (required)
-     * Name of com.mongodb.client.MongoClient to use.
+     * The name of the com.mongodb.client.MongoClient bean in the registry that
+     * connects to MongoDB. The endpoint closes this client when it shuts down.
      * 
      * @param path connectionBean
      * @return the dsl builder
@@ -12861,7 +12863,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
-     * Interact with MongoDB GridFS.
+     * Store, read and remove files in a MongoDB GridFS bucket, and receive the
+     * files that are uploaded to it.
      * 
      * Category: database,file
      * Since: 2.18
@@ -12870,7 +12873,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>mongodb-gridfs:connectionBean</code>
      * 
      * Path parameter: connectionBean (required)
-     * Name of com.mongodb.client.MongoClient to use.
+     * The name of the com.mongodb.client.MongoClient bean in the registry that
+     * connects to MongoDB. The endpoint closes this client when it shuts down.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
