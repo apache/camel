@@ -59,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BoxEventsConsumerTest {
 
     private static final String REALTIME_URL = "https://realtime.box.test/subscribe?channel=1";
+    private static final long NETWORK_ERROR_DELAY = 500;
 
     /** The events of the account, in order: the stream position is the index in this list. */
     private final List<String> events = Collections.synchronizedList(new ArrayList<>());
@@ -192,15 +193,15 @@ class BoxEventsConsumerTest {
                 return json(request, new JsonObject().add("message", "new_change"));
             }
             // a long poll waits for a change: answer after a while that there was none
-            try {
-                new CountDownLatch(1).await(50, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            pause(50);
             return json(request, new JsonObject().add("message", "reconnect"));
         }
         eventRequestPositions.add(String.valueOf(position));
         if (failingEventRequests.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
+            // A network error takes a while to happen. The Box SDK EventStream marks itself as started after it has
+            // started its poller thread: a failure that happens before, as it does when the connection answers at
+            // once, cannot stop the stream and is never notified to the listener.
+            pause(NETWORK_ERROR_DELAY);
             throw new BoxAPIException(
                     "Couldn't connect to the Box API due to a network error. Request\n" + url,
                     new IOException("Connection refused"));
@@ -216,6 +217,14 @@ class BoxEventsConsumerTest {
         }
         return json(request, new JsonObject().add("chunk_size", entries.size())
                 .add("next_stream_position", next).add("entries", entries));
+    }
+
+    private static void pause(long millis) {
+        try {
+            new CountDownLatch(1).await(millis, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private static BoxJSONResponse json(BoxAPIRequest request, JsonObject body) {
