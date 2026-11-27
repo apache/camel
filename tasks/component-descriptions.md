@@ -340,7 +340,7 @@ or removes its row.
 | camel-smooks | smooks |  |
 | camel-smpp | smpp, smpps |  |
 | camel-snmp | snmp |  |
-| camel-solr | solr |  |
+| camel-solr | solr | yes |
 | camel-spiffe | spiffe |  |
 | camel-splunk-hec | splunk-hec |  |
 | camel-spring | spring-event | yes |
