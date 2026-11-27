@@ -2530,7 +2530,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Timestream (camel-aws2-timestream)
-     * Write records and execute queries on AWS time-series database
+     * Write records to and query the time-series data of Amazon Timestream for
+     * LiveAnalytics, and manage its databases, tables, batch load tasks and
+     * scheduled queries.
      * 
      * Category: cloud,database
      * Since: 4.1
@@ -2539,11 +2541,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-timestream:clientType:label</code>
      * 
      * Path parameter: clientType (required)
-     * Type of client - write/query
+     * The type of the client: write for the databases, tables, batch load tasks
+     * and records of the Write API of Amazon Timestream for LiveAnalytics, or
+     * query for the queries and scheduled queries of its Query API.
+     * describeEndpoints is an operation of both.
      * There are 2 enums and the value can be one of: write, query
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of the endpoint, which you choose freely. The producer
+     * does not use it: the database, table or query to act on is given in
+     * headers.
      * 
      * @param path clientType:label
      * @return the dsl builder
@@ -2553,7 +2560,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * AWS Timestream (camel-aws2-timestream)
-     * Write records and execute queries on AWS time-series database
+     * Write records to and query the time-series data of Amazon Timestream for
+     * LiveAnalytics, and manage its databases, tables, batch load tasks and
+     * scheduled queries.
      * 
      * Category: cloud,database
      * Since: 4.1
@@ -2562,11 +2571,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>aws2-timestream:clientType:label</code>
      * 
      * Path parameter: clientType (required)
-     * Type of client - write/query
+     * The type of the client: write for the databases, tables, batch load tasks
+     * and records of the Write API of Amazon Timestream for LiveAnalytics, or
+     * query for the queries and scheduled queries of its Query API.
+     * describeEndpoints is an operation of both.
      * There are 2 enums and the value can be one of: write, query
      * 
      * Path parameter: label (required)
-     * Logical name
+     * A logical name of the endpoint, which you choose freely. The producer
+     * does not use it: the database, table or query to act on is given in
+     * headers.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
