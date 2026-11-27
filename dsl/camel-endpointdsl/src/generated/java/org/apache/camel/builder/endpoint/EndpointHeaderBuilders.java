@@ -858,7 +858,8 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Azure IoT Hub (camel-azure-iothub)
-     * Send device telemetry and device-twin updates to Azure IoT Hub.
+     * Send device-to-cloud telemetry messages and device twin reported
+     * properties to Azure IoT Hub.
      * 
      * Category: cloud,iot,messaging
      * Since: 4.24

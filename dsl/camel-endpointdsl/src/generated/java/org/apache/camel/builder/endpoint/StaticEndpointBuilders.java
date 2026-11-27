@@ -2844,7 +2844,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure IoT Hub (camel-azure-iothub)
-     * Send device telemetry and device-twin updates to Azure IoT Hub.
+     * Send device-to-cloud telemetry messages and device twin reported
+     * properties to Azure IoT Hub.
      * 
      * Category: cloud,iot,messaging
      * Since: 4.24
@@ -2853,8 +2854,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-iothub:deviceId</code>
      * 
      * Path parameter: deviceId
-     * Default device id used when the message does not carry a device id
-     * header.
+     * The ID of the device that sends the message. It must match the DeviceId
+     * of the connection string. The CamelAzureIoTHubDeviceId header replaces
+     * this option.
      * 
      * @param path deviceId
      * @return the dsl builder
@@ -2864,7 +2866,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Azure IoT Hub (camel-azure-iothub)
-     * Send device telemetry and device-twin updates to Azure IoT Hub.
+     * Send device-to-cloud telemetry messages and device twin reported
+     * properties to Azure IoT Hub.
      * 
      * Category: cloud,iot,messaging
      * Since: 4.24
@@ -2873,8 +2876,9 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-iothub:deviceId</code>
      * 
      * Path parameter: deviceId
-     * Default device id used when the message does not carry a device id
-     * header.
+     * The ID of the device that sends the message. It must match the DeviceId
+     * of the connection string. The CamelAzureIoTHubDeviceId header replaces
+     * this option.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
