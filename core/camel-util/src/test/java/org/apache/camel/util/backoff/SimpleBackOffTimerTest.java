@@ -232,7 +232,9 @@ public class SimpleBackOffTimerTest {
                     backOff,
                     context -> {
                         timerThread.set(Thread.currentThread());
-                        ownerHoldsLock.await();
+                        if (!ownerHoldsLock.await(10, TimeUnit.SECONDS)) {
+                            throw new IllegalStateException("the owner never took the lock");
+                        }
                         // done, so the task completes
                         return false;
                     });

@@ -72,7 +72,7 @@ public class StatisticMinimumMaximumTest {
             for (int t = 0; t < THREADS; t++) {
                 final int thread = t;
                 futures.add(executor.submit(() -> {
-                    start.await();
+                    assertTrue(start.await(10, TimeUnit.SECONDS), "the start gate was never opened");
                     for (int i = 0; i < UPDATES; i++) {
                         max.updateValue((long) i * THREADS + thread + 1);
                         min.updateValue((long) (UPDATES - i) * THREADS - thread);

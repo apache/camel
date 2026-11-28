@@ -198,7 +198,7 @@ public class ManagedPerformanceCounterTest {
             for (int t = 0; t < THREADS; t++) {
                 final long time = t + 1L;
                 futures.add(executor.submit(() -> {
-                    start.await();
+                    assertTrue(start.await(10, TimeUnit.SECONDS), "the start gate was never opened");
                     Exchange exchange = new DefaultExchange(context);
                     for (int i = 0; i < UPDATES; i++) {
                         counter.processExchange(exchange, "processor");
