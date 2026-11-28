@@ -61,69 +61,86 @@ public class PahoConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        connectOptions = PahoEndpoint.createMqttConnectOptions(getEndpoint().getConfiguration());
+        stopClient = client == null;
+        try {
+            connectOptions = PahoEndpoint.createMqttConnectOptions(getEndpoint().getConfiguration());
 
-        if (client == null) {
-            clientId = getEndpoint().getConfiguration().getClientId();
-            if (clientId == null) {
-                clientId = "camel-" + MqttClient.generateClientId();
+            if (stopClient) {
+                clientId = getEndpoint().getConfiguration().getClientId();
+                if (clientId == null) {
+                    clientId = "camel-" + MqttClient.generateClientId();
+                }
+                client = createClient();
+                LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+                if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
+                    client.setManualAcks(true);
+                }
+                client.connect(connectOptions);
             }
-            stopClient = true;
-            client = createClient();
-            LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
-            if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
-                client.setManualAcks(true);
-            }
-            client.connect(connectOptions);
-        }
 
-        MqttClient callbackClient = client;
-        boolean isOwnedClient = stopClient;
-        callbackClient.setCallback(new MqttCallbackExtended() {
+            MqttClient callbackClient = client;
+            boolean isOwnedClient = stopClient;
+            callbackClient.setCallback(new MqttCallbackExtended() {
 
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-                if (reconnect && isRunAllowed() && callbackClient == client) {
-                    try {
-                        callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
-                    } catch (MqttException e) {
-                        if (isOwnedClient) {
-                            LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
-                                    e.getMessage(), e);
-                            restartRouteAsync();
-                        } else {
-                            LOG.error(
-                                    "MQTT resubscribe failed on reconnect with externally provided client,"
-                                      + " route will not be auto-restarted: {}",
-                                    e.getMessage(), e);
+                @Override
+                public void connectComplete(boolean reconnect, String serverURI) {
+                    if (reconnect && isRunAllowed() && callbackClient == client) {
+                        try {
+                            callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+                        } catch (MqttException e) {
+                            if (isOwnedClient) {
+                                LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
+                                        e.getMessage(), e);
+                                restartRouteAsync();
+                            } else {
+                                LOG.error(
+                                        "MQTT resubscribe failed on reconnect with externally provided client,"
+                                          + " route will not be auto-restarted: {}",
+                                        e.getMessage(), e);
+                            }
                         }
                     }
                 }
+
+                @Override
+                public void connectionLost(Throwable cause) {
+                    LOG.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
+                }
+
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    LOG.debug("Message arrived on topic: {} -> {}", topic, message);
+                    Exchange exchange = createExchange(message, topic);
+
+                    // use default consumer callback
+                    AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                    getAsyncProcessor().process(exchange, cb);
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                    LOG.debug("Delivery complete. Token: {}", token);
+                }
+            });
+
+            LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
+            callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+        } catch (Exception startException) {
+            MqttClient ownedClient = stopClient ? client : null;
+            if (ownedClient != null) {
+                client = null;
+                stopClient = false;
+                if (ownedClient.isConnected()) {
+                    try {
+                        ownedClient.disconnect();
+                    } catch (Exception disconnectException) {
+                        startException.addSuppressed(disconnectException);
+                    }
+                }
+                closeOwnedClient(ownedClient, startException);
             }
-
-            @Override
-            public void connectionLost(Throwable cause) {
-                LOG.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
-                LOG.debug("Message arrived on topic: {} -> {}", topic, message);
-                Exchange exchange = createExchange(message, topic);
-
-                // use default consumer callback
-                AsyncCallback cb = defaultConsumerCallback(exchange, true);
-                getAsyncProcessor().process(exchange, cb);
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-                LOG.debug("Delivery complete. Token: {}", token);
-            }
-        });
-
-        LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
-        callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+            throw startException;
+        }
     }
 
     MqttClient createClient() throws MqttException {
@@ -179,13 +196,12 @@ public class PahoConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        MqttClient ownedClient = stopClient ? client : null;
+        Exception stopException = null;
+        try {
+            super.doStop();
 
-        if (stopClient && client != null) {
-            MqttClient ownedClient = client;
-            client = null;
-            stopClient = false;
-            if (ownedClient.isConnected()) {
+            if (ownedClient != null && ownedClient.isConnected()) {
                 String topic = getEndpoint().getTopic();
                 // only unsubscribe if we are not durable
                 if (getEndpoint().getConfiguration().isCleanSession()) {
@@ -198,10 +214,30 @@ public class PahoConsumer extends DefaultConsumer {
                         getEndpoint().getConfiguration().getBrokerUrl());
                 ownedClient.disconnect();
             }
-            ownedClient.close(true);
-        } else {
+        } catch (Exception e) {
+            stopException = e;
+        } finally {
             client = null;
+            stopClient = false;
+            if (ownedClient != null) {
+                stopException = closeOwnedClient(ownedClient, stopException);
+            }
         }
+        if (stopException != null) {
+            throw stopException;
+        }
+    }
+
+    private Exception closeOwnedClient(MqttClient ownedClient, Exception primaryException) {
+        try {
+            ownedClient.close(true);
+        } catch (Exception closeException) {
+            if (primaryException == null) {
+                return closeException;
+            }
+            primaryException.addSuppressed(closeException);
+        }
+        return primaryException;
     }
 
     @Override
