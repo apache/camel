@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -75,7 +77,8 @@ public class SshConfigurationErrorsTest extends SshComponentTestSupport {
 
     @Test
     public void testChannelThatDoesNotOpenInTimeFailsWithChannelOpenTimeout() throws Exception {
-        // a server that takes 3 seconds to open the session channel
+        // a server that does not open the session channel until the test releases it
+        CountDownLatch release = new CountDownLatch(1);
         SshServer slow = SshServer.setUpDefaultServer();
         slow.setPort(0);
         slow.setKeyPairProvider(new FileKeyPairProvider(Paths.get(getHostKey())));
@@ -90,7 +93,7 @@ public class SshConfigurationErrorsTest extends SshComponentTestSupport {
             @Override
             public Channel createChannel(Session session) throws IOException {
                 try {
-                    Thread.sleep(3000);
+                    release.await(30, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -107,6 +110,7 @@ public class SshConfigurationErrorsTest extends SshComponentTestSupport {
             Throwable cause = causeStartingWith(e, "Failed to open the exec channel to localhost:");
             assertTrue(cause.getMessage().endsWith(" within timeout 500ms"), cause.getMessage());
         } finally {
+            release.countDown();
             slow.stop(true);
         }
     }
