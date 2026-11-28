@@ -371,7 +371,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // Configure fresh mode (update policy)
         if (fresh) {
-            overridesBuilder.snapshotUpdatePolicy(ContextOverrides.SnapshotUpdatePolicy.ALWAYS);
+            overridesBuilder.artifactUpdatePolicy(ContextOverrides.UpdatePolicy.ALWAYS)
+                    .metadataUpdatePolicy(ContextOverrides.UpdatePolicy.ALWAYS);
         }
 
         // Create MIMA context - this replaces ~650 lines of DIRegistry code!
@@ -871,10 +872,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     /**
-     * Sets the defaults of Camel (unless configured, such as with the aether.connector.requestTimeout system property):
-     * the request timeout, and the breadth-first dependency collector, which downloads the POMs in parallel (it
-     * resolves the same dependencies as the depth-first default of Maven Resolver). And stops using a repository that
-     * cannot be connected to.
+     * Sets the defaults of Camel (unless configured, such as with the aether.transport.http.requestTimeout system
+     * property): the request timeout, and the breadth-first dependency collector, which downloads the POMs in parallel
+     * (it resolves the same dependencies as the depth-first default of Maven Resolver). And stops using a repository
+     * that cannot be connected to.
      */
     private RepositorySystemSession withCamelDefaults(RepositorySystemSession session) {
         DefaultRepositorySystemSession answer = new DefaultRepositorySystemSession(session);
@@ -928,9 +929,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     return t;
                 }
                 // the connect timeout of an HTTP client, by name to need none of them on the classpath:
-                // org.apache.http.conn.ConnectTimeoutException (HttpClient 4, the transport of Maven Resolver 1.x),
-                // org.apache.hc.client5.http.ConnectTimeoutException (HttpClient 5), whose message is not
-                // "Connect timed out", and java.net.http.HttpConnectTimeoutException (the JDK HTTP client)
+                // org.apache.hc.client5.http.ConnectTimeoutException (HttpClient 5, the transport of Maven Resolver 2.x),
+                // whose message is not "Connect timed out", and java.net.http.HttpConnectTimeoutException (JDK HTTP client)
                 if (t.getClass().getSimpleName().endsWith("ConnectTimeoutException")) {
                     return t;
                 }
@@ -945,7 +945,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     /**
      * The request timeout in millis: how long to wait for data from a Maven repository before failing (default 60
-     * seconds). The aether.connector.requestTimeout system property overrides it.
+     * seconds). The aether.transport.http.requestTimeout system property overrides it.
      */
     public void setRequestTimeout(int requestTimeout) {
         this.requestTimeout = requestTimeout;

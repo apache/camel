@@ -76,7 +76,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
-            <artifactId>maven-resolver-transport-http</artifactId>
+            <artifactId>maven-resolver-transport-apache</artifactId>
             <version>${maven-resolver-version}</version>
         </dependency>
 

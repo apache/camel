@@ -1260,13 +1260,17 @@ class MavenDownloaderImplTest {
             downloader.build();
 
             Map<String, Object> config = downloader.getRepositorySystemSession().getConfigProperties();
-            assertCamelDefault("60000", config, "aether.connector.requestTimeout");
+            assertCamelDefault("60000", config, "aether.transport.http.requestTimeout");
             assertCamelDefault("bf", config, "aether.dependencyCollector.impl");
             assertCamelDefault("10", config, "aether.dependencyCollector.bf.threads");
         }
     }
 
-    // a system property wins over the default of Camel (the CI build sets aether.connector.requestTimeout=300000)
+    // a system property wins over the default of Camel; the CI build sets aether.connector.requestTimeout=300000,
+    // which Resolver 2.x no longer reads (the new key is aether.transport.http.requestTimeout), so it has no effect
+    // on the config property that Camel sets. The assertCamelDefault helper falls back to System.getProperty(key,
+    // expected): since the CI flag uses the old key name, System.getProperty("aether.transport.http.requestTimeout")
+    // returns null and the assertion correctly checks "60000" here.
     private static void assertCamelDefault(String expected, Map<String, Object> config, String key) {
         assertEquals(System.getProperty(key, expected), String.valueOf(config.get(key)), key);
     }
