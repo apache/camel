@@ -322,7 +322,7 @@ and Camel does not recover from it".
 The `withPlaceholder` and `withReference` options of `PropertyBindingSupport.build()` now apply to the values as
 documented, both when binding via reflection and via a property configurer:
 
-* With `withPlaceholder(false)` a property placeholder in a value (such as `{{myKey}}` or `prefix-{{myKey}}`) is bound
+* With `withPlaceholder(false)` a property placeholder in a value (such as `+{{myKey}}+` or `+prefix-{{myKey}}+`) is bound
   as given, and a placeholder in a `#property:` key or a `#class:` value is not resolved either. Before, only the keys
   were left as given.
 * With `withReference(false)` a value that starts with `#` (`#bean:`, `#name`, `#type:`, `#class:`, `#property:`,
