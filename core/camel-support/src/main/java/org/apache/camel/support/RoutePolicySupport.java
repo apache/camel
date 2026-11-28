@@ -144,6 +144,43 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
                 && !status.isStopped();
     }
 
+    /**
+     * Whether this policy keeps the consumer of the route suspended (or stopped), because it has suspended the consumer
+     * itself and still wants it suspended (for example while a circuit breaker is open).
+     * <p>
+     * Another policy of the same route does not resume or start the consumer while this returns <code>true</code>, see
+     * {@link #isConsumerKeptSuspendedByAnotherPolicy(Route)}. This policy then resumes the consumer when it lets go of
+     * it. A policy that lets go of the consumer must make this return <code>false</code> before it checks the other
+     * policies, so that when two policies let go at the same time, at least one of them resumes the consumer. When the
+     * answer depends on more than one field, read the one that marks letting go first, so that a let go that happens
+     * between the reads is not missed.
+     * <p>
+     * Returns <code>false</code> by default.
+     *
+     * @param  route the route
+     * @return       <code>true</code> if this policy keeps the consumer of the route suspended
+     */
+    protected boolean isConsumerKeptSuspended(Route route) {
+        return false;
+    }
+
+    /**
+     * Whether another policy of the route keeps the consumer of the route suspended (or stopped), and so this policy
+     * must not resume or start it.
+     *
+     * @param  route the route
+     * @return       <code>true</code> if another {@link RoutePolicySupport} of the route keeps the consumer suspended
+     * @see          #isConsumerKeptSuspended(Route)
+     */
+    protected boolean isConsumerKeptSuspendedByAnotherPolicy(Route route) {
+        for (RoutePolicy policy : route.getRoutePolicyList()) {
+            if (policy != this && policy instanceof RoutePolicySupport other && other.isConsumerKeptSuspended(route)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void startRoute(Route route) throws Exception {
         controller(route).startRoute(route.getId());
     }

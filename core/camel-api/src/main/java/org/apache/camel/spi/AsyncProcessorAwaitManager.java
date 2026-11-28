@@ -163,6 +163,9 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * Though if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to
      * count-down so the blocked thread can continue. An exception is set on the exchange which allows Camel's error
      * handler to deal with this malfunctioned exchange.
+     * <p>
+     * When more than one thread waits for the exchange, only the thread whose
+     * {@link #process(AsyncProcessor, Exchange)} call started last is released, see {@link #interrupt(Exchange)}.
      *
      * @param exchangeId the exchange id to interrupt.
      */
@@ -176,6 +179,14 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * Though if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to
      * count-down so the blocked thread can continue. An exception is set on the exchange which allows Camel's error
      * handler to deal with this malfunctioned exchange.
+     * <p>
+     * When more than one thread waits for the exchange, only the thread whose
+     * {@link #process(AsyncProcessor, Exchange)} call started last is released. This happens in a nested wait. One
+     * thread waits for the exchange. On another thread, the exchange then enters a step that waits for it too (such as
+     * {@code ProducerTemplate.send(uri, exchange)}). The released inner thread goes on with the failed exchange to the
+     * end of its route, and the callback then releases the outer thread. So an interrupt never releases both threads of
+     * a nested wait. Stopping the manager, with {@link #isInterruptThreadsWhileStopping()}, releases every blocked
+     * thread.
      *
      * @param exchange the exchange to interrupt.
      */

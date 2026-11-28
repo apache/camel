@@ -41,6 +41,8 @@ public class MNSProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    // RECEIVE_MESSAGE is deprecated, but its error message stays until the constant is removed
+    @SuppressWarnings("deprecation")
     @Override
     public void process(Exchange exchange) throws Exception {
         MNSEndpoint endpoint = getEndpoint();

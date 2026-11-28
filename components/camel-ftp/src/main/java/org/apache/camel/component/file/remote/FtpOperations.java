@@ -51,6 +51,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.function.ThrowingRunnable;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -1559,17 +1560,41 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    /**
+     * Runs the check, such as the noop of the producer health check, unless another thread holds the lock, such as an
+     * upload, which holds it for the whole transfer. The check runs with the lock held, so an upload that starts
+     * meanwhile waits for it.
+     */
+    @Override
+    public boolean runIfIdle(ThrowingRunnable<Exception> check) throws Exception {
+        if (!lock.tryLock()) {
+            return false;
+        }
+        try {
+            check.run();
+            return true;
+        } finally {
+            lock.unlock();
+        }
+    }
+
     @Override
     public boolean isRecentlyUsed() {
         long last = lastCompletedNanos;
         return last != 0 && System.nanoTime() - last < RECENTLY_USED_NANOS;
     }
 
+    /**
+     * Connects again before a rename or delete when the connection is no longer valid. By default a noop checks that
+     * the connection still works, as the server may have closed it while a long-running route processed the file. With
+     * sendNoop=false only the connection state of the client is checked, as before each poll and before an upload, so
+     * the rename or delete fails if the server has closed the connection meanwhile.
+     */
     private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
         boolean reconnectRequired;
         try {
             boolean connected = isConnected();
-            if (connected && !sendNoop()) {
+            if (connected && endpoint.getConfiguration().isSendNoop() && !sendNoop()) {
                 reconnectRequired = true;
             } else {
                 reconnectRequired = !connected;

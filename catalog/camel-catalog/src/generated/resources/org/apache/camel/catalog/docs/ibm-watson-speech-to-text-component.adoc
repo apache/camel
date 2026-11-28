@@ -2,7 +2,7 @@
 :doctitle: IBM Watson Speech to Text
 :shortname: ibm-watson-speech-to-text
 :artifactid: camel-ibm-watson-speech-to-text
-:description: Convert speech audio to text using IBM Watson Speech to Text
+:description: Transcribe audio to text with IBM Watson Speech to Text, and list or get its speech models and custom language models.
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:
@@ -56,6 +56,13 @@ The IBM Watson Speech to Text component provides the following operations:
 - getCustomModel - Get information about a custom language model
 
 If you don't specify an operation explicitly, you must set it via the `operation` parameter.
+
+=== Health check
+
+The producer registers a health check that lists the models of the service, so it is down when Speech to Text cannot
+be reached or rejects the request. Like the other producer health checks of Camel, it runs only when producer
+health checks are enabled, for example with `camel.health.producersEnabled=true`, and the
+`healthCheckProducerEnabled` option of the component turns it off.
 
 === Audio input
 
@@ -418,7 +425,7 @@ Get detailed information about a custom model:
 [source,java]
 ----
 from("direct:getCustomModel")
-  .setHeader("CamelIBMWatsonSTTModelName", constant("your-custom-model-guid"))
+  .setHeader("CamelIBMWatsonSTTCustomizationId", constant("your-custom-model-guid"))
   .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=getCustomModel")
   .process(exchange -> {
       LanguageModel model = exchange.getMessage().getBody(LanguageModel.class);
@@ -610,4 +617,3 @@ Maven users will need to add the following dependency to their `pom.xml`.
 ----
 
 where `x.x.x` is the version number of Camel.
-

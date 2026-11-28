@@ -197,7 +197,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 43 options, which are listed below.
+The camel.server supports 61 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -206,6 +206,13 @@ The camel.server supports 43 options, which are listed below.
 | `camel.server.authenticationPath` | Set HTTP url path of embedded server that is protected by authentication configuration. |  | String
 | `camel.server.authenticationRealm` | Sets the authentication realm |  | String
 | `camel.server.basicPropertiesFile` | Name of the file that contains basic authentication info for Vert.x file auth provider. |  | String
+| `camel.server.corsAccessControlMaxAge` | How long (in seconds) a browser may cache the answer of a preflight request, sent as the Access-Control-Max-Age header. When not set, the header is not sent. |  | Long
+| `camel.server.corsEnabled` | Whether the embedded HTTP server handles CORS (Cross-Origin Resource Sharing): it answers preflight requests and adds the Access-Control-* headers to the responses of requests with an Origin header. | false | boolean
+| `camel.server.corsExposedHeaders` | Comma-separated list of the HTTP response headers a browser may expose to the calling script, sent as the Access-Control-Expose-Headers header. |  | String
+| `camel.server.corsHeaders` | Comma-separated list of the HTTP headers allowed in a CORS request. When not set, the headers of the Access-Control-Request-Headers header of the preflight request are allowed. |  | String
+| `camel.server.corsMethods` | Comma-separated list of the HTTP methods (such as GET,POST) allowed in a CORS request. When not set, the methods of the Access-Control-Request-Method header of the preflight request are allowed. |  | String
+| `camel.server.corsOrigins` | Comma-separated list of origins (such as \https://app.example.com) allowed to call the embedded HTTP server. A request from an origin in the list is answered with Access-Control-Allow-Origin and Access-Control-Allow-Credentials=true. When not set, the origin of every request is allowed (reflected back), without credentials. |  | String
+| `camel.server.deleteUploadedFilesOnEnd` | Whether the uploaded files are deleted from the file upload directory when the response has been sent. | true | boolean
 | `camel.server.enabled` | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
 | `camel.server.fileUploadDirectory` | Directory to temporary store file uploads while Camel routes the incoming request. If no directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory. |  | String
 | `camel.server.fileUploadEnabled` | Whether to enable file uploads being supported (such as POST multipart/form-data) and stored into a temporary directory. | true | boolean
@@ -239,8 +246,19 @@ The camel.server supports 43 options, which are listed below.
 | `camel.server.mcpTags` | Comma-separated list of tag patterns selecting ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts. Matching is case-insensitive and supports exact match, wildcard prefix ( foo* ), and * to match all tags. Only routes registered under a matching tag are exposed; the untagged default pools are never exposed. When not set, nothing is exposed. |  | String
 | `camel.server.mcpToolTimeout` | Per-call MCP tool execution timeout in milliseconds. A call exceeding the timeout returns an error result to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
 | `camel.server.mcpTransport` | MCP transport selection: http (streamable HTTP on the embedded server, serving tools, resources and prompts) or stdio (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and prompts only). | http | String
+| `camel.server.mergeFormAttributes` | Whether the form attributes of a request (application/x-www-form-urlencoded or multipart/form-data) are merged into the request parameters. | true | boolean
 | `camel.server.path` | Context-path to use for embedded HTTP server | / | String
 | `camel.server.port` | Port to use for binding embedded HTTP server. Use 0 to dynamic assign a free random port number. | 8080 | int
+| `camel.server.preallocateBodyBuffer` | Whether the buffer for the request body is pre-allocated, using the Content-Length header of the request to size it. | true | boolean
+| `camel.server.sessionCookieHttpOnly` | Whether the session cookie has the HttpOnly flag, so scripts in the browser cannot read it. | true | boolean
+| `camel.server.sessionCookieName` | The name of the session cookie. | vertx-web.session | String
+| `camel.server.sessionCookiePath` | The path of the session cookie. | / | String
+| `camel.server.sessionCookieSameSite` | The SameSite attribute of the session cookie: strict, lax or none. | strict | String
+| `camel.server.sessionCookieSecure` | Whether the session cookie has the Secure flag, so browsers only send it over HTTPS. | false | boolean
+| `camel.server.sessionEnabled` | Whether the embedded HTTP server keeps a session for each client, identified by a session cookie. | false | boolean
+| `camel.server.sessionIdMinLength` | The minimum length of the session id. | 16 | int
+| `camel.server.sessionStoreType` | Where the sessions are stored: local (in memory of this application) or clustered (in the cluster of a clustered Vert.x instance, which must be provided in the registry). | local | String
+| `camel.server.sessionTimeout` | The time in milliseconds after which a session without activity expires. | 1800000 | long
 | `camel.server.staticContextPath` | The context-path to use for serving static content. By default, the root path is used. And if there is an index.html page then this is automatically loaded. | / | String
 | `camel.server.staticEnabled` | Whether serving static files is enabled. If enabled then Camel can host html/js and other web files that makes it possible to include small web applications. | false | boolean
 | `camel.server.staticSourceDir` | Additional directory that holds static content when static is enabled. |  | String
@@ -611,7 +629,7 @@ The camel.vault.cyberark supports 9 options, which are listed below.
 | `camel.vault.cyberark.secrets` | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | `camel.vault.cyberark.url` | The CyberArk Conjur instance URL |  | String
 | `camel.vault.cyberark.username` | The username for authentication |  | String
-| `camel.vault.cyberark.verifySsl` | Whether to verify SSL certificates | false | boolean
+| `camel.vault.cyberark.verifySsl` | Whether to verify SSL certificates | true | boolean
 |===
 
 
@@ -936,7 +954,7 @@ The camel.cluster.jgroups-raft supports 5 options, which are listed below.
 | `camel.cluster.jgroups-raft.enabled` | Whether to enable this cluster service. | true | boolean
 | `camel.cluster.jgroups-raft.id` | Unique Raft id |  | String
 | `camel.cluster.jgroups-raft.jgroupsClusterName` | The name of the cluster | jgroupsraft-master | String
-| `camel.cluster.jgroups-raft.jgroupsConfig` | The path to the JGroups Raft configuration | raft.xml | String
+| `camel.cluster.jgroups-raft.jgroupsConfig` | The JGroups XML configuration of the channel, as a file, a URL or a classpath resource. The default raft.xml in the camel-jgroups-raft JAR is a sample for development and tests (UDP multicast without authentication or encryption, and A as the only RAFT member), and a WARN is logged when it is used. In production, set your own configuration, with AUTH and SYM_ENCRYPT or ASYM_ENCRYPT, and the members of the cluster in the members attribute of RAFT. | raft.xml | String
 | `camel.cluster.jgroups-raft.raftHandle` | To use a custom RaftHandler |  | RaftHandle
 |===
 

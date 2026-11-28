@@ -22,6 +22,13 @@ public interface ApicurioRegistryInfraService extends InfrastructureService {
 
     String getApicurioRegistryUrl();
 
+    /**
+     * The registryUrl option of camel-apicurio-registry.
+     */
+    default String registryUrl() {
+        return getApicurioRegistryUrl();
+    }
+
     String host();
 
     int port();

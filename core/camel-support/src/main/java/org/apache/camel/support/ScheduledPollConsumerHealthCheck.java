@@ -26,7 +26,9 @@ import org.apache.camel.util.URISupport;
 
 /**
  * {@link HealthCheck} that uses the last polling state from {@link ScheduledPollConsumer} when reporting the health,
- * and the poll in progress when it runs longer than {@link ScheduledPollConsumer#getHealthCheckMaxPollDuration()}.
+ * and the poll in progress when it runs longer than {@link ScheduledPollConsumer#getHealthCheckMaxPollDuration()}. It
+ * is DOWN after a {@link VirtualMachineError} stopped the consumer (see {@link DefaultConsumer#getFatalError()}) until
+ * the consumer is restarted.
  */
 public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
@@ -90,6 +92,17 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
             builder.message("Disabled");
             builder.detail(CHECK_ENABLED, false);
             return builder.unknown().build();
+        }
+
+        // a VirtualMachineError stopped the consumer: it polls no more, also with scheduler.concurrentConsumers > 1, until it
+        // is restarted (CAMEL-27515)
+        Throwable fatalError = consumer.getFatalError();
+        if (fatalError != null) {
+            builder.down();
+            builder.error(fatalError);
+            String msg = "Consumer stopped polling due to a fatal error (restart the route to poll again) route: %s (%s)";
+            builder.message(String.format(msg, consumer.getRouteId(), sanitizedBaseUri));
+            return builder.build();
         }
 
         // a poll that hangs (such as in a read without timeout on a connection that went silent) is not done, so the

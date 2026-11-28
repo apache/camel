@@ -35,9 +35,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Perform operations on the Milvus Vector Database.
+ * Create collections and indexes, and insert, upsert, delete, search and query entities in the Milvus vector database.
  */
 @UriEndpoint(
              firstVersion = "4.5.0",
@@ -96,7 +97,9 @@ import org.apache.camel.support.DefaultEndpoint;
 public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)
-    @UriPath(description = "The collection Name")
+    @UriPath(description = "The name of the collection that the producer loads into memory before SEARCH, QUERY and DELETE."
+                           + " The request in the message body names the collection that the action works on, so it must"
+                           + " name the same collection.")
     private final String collection;
 
     @UriParam
@@ -183,7 +186,10 @@ public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLo
     }
 
     private MilvusClient createClient() {
+        return new MilvusServiceClient(createConnectParam());
+    }
 
+    ConnectParam createConnectParam() {
         ConnectParam.Builder parameters = ConnectParam.newBuilder().withHost(configuration.getHost())
                 .withPort(configuration.getPort()).withConnectTimeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
 
@@ -191,6 +197,44 @@ public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLo
             parameters.withToken(configuration.getToken());
         }
 
-        return new MilvusServiceClient(parameters.build());
+        parameters.withSecure(configuration.isSecure());
+
+        String caPemPath = configuration.getCaPemPath();
+        String clientPemPath = configuration.getClientPemPath();
+        String clientKeyPath = configuration.getClientKeyPath();
+        boolean mutualTls = ObjectHelper.isNotEmpty(caPemPath) || ObjectHelper.isNotEmpty(clientPemPath)
+                || ObjectHelper.isNotEmpty(clientKeyPath);
+        if (mutualTls && (ObjectHelper.isEmpty(caPemPath) || ObjectHelper.isEmpty(clientPemPath)
+                || ObjectHelper.isEmpty(clientKeyPath))) {
+            // the SDK ignores them unless all three are set
+            throw new IllegalArgumentException(
+                    "The options caPemPath, clientPemPath and clientKeyPath must be set together for mutual TLS");
+        }
+        if (mutualTls && ObjectHelper.isNotEmpty(configuration.getServerPemPath())) {
+            // the SDK uses serverPemPath and ignores the client certificate
+            throw new IllegalArgumentException(
+                    "The option serverPemPath (one-way TLS) cannot be set together with caPemPath, clientPemPath and"
+                                               + " clientKeyPath (mutual TLS)");
+        }
+
+        if (ObjectHelper.isNotEmpty(configuration.getServerPemPath())) {
+            parameters.withServerPemPath(configuration.getServerPemPath());
+            // the SDK always overrides the authority with the server name for one-way TLS
+            parameters.withServerName(ObjectHelper.isNotEmpty(configuration.getServerName())
+                    ? configuration.getServerName() : configuration.getHost());
+        } else if (ObjectHelper.isNotEmpty(configuration.getServerName())) {
+            if (!mutualTls) {
+                // the SDK ignores it without serverPemPath or mutual TLS
+                throw new IllegalArgumentException(
+                        "The option serverName can only be used with serverPemPath, or with caPemPath, clientPemPath"
+                                                   + " and clientKeyPath");
+            }
+            parameters.withServerName(configuration.getServerName());
+        }
+        if (mutualTls) {
+            parameters.withCaPemPath(caPemPath).withClientPemPath(clientPemPath).withClientKeyPath(clientKeyPath);
+        }
+
+        return parameters.build();
     }
 }

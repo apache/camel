@@ -27,12 +27,19 @@ import org.apache.camel.support.ResourceHelper;
 @Component("jsonata")
 public class JsonataComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    @Metadata(defaultValue = "true",
+              description = "Whether the endpoints keep the content of their resource in memory after the first load,"
+                            + " instead of reading it again for each exchange. It is the default of the contentCache option"
+                            + " of each endpoint.")
     private boolean contentCache = true;
-    @Metadata
+    @Metadata(description = "Whether the endpoints take the JSONata expression from the CamelJsonataResourceUri header, when"
+                            + " the header is set, instead of from their resource. It is the default of the"
+                            + " allowTemplateFromHeader option of each endpoint. Enable it only when the header comes from a"
+                            + " trusted source.")
     private boolean allowTemplateFromHeader;
     @Metadata(label = "advanced",
-              description = "To configure custom frame bindings and inject user functions.")
+              description = "A JsonataFrameBinding that binds custom functions and variables to the Jsonata.Frame of each"
+                            + " evaluation. It is used by the endpoints that do not set their own frameBinding option.")
     protected JsonataFrameBinding frameBinding;
 
     public JsonataComponent() {
@@ -67,9 +74,6 @@ public class JsonataComponent extends DefaultComponent {
         return contentCache;
     }
 
-    /**
-     * Sets whether to use resource content cache or not
-     */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
     }
@@ -78,19 +82,10 @@ public class JsonataComponent extends DefaultComponent {
         return allowTemplateFromHeader;
     }
 
-    /**
-     * Whether to allow to use resource template from header or not (default false).
-     *
-     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
-     * security vulnerability if the header is coming from a malicious user, so use this with care.
-     */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
-    /**
-     * To use the custom JsonataFrameBinding to perform configuration of custom functions that will be used.
-     */
     public void setFrameBinding(JsonataFrameBinding frameBinding) {
         this.frameBinding = frameBinding;
     }

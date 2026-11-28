@@ -148,6 +148,12 @@
             <artifactId>spring-ai-ollama</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Spring AI OpenAI for integration tests against OpenAI-compatible servers -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-openai</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- Ollama test infrastructure -->
         <dependency>
             <groupId>org.apache.camel</groupId>

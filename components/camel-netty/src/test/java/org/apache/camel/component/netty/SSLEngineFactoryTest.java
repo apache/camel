@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class SSLEngineFactoryTest {
 
@@ -95,6 +96,39 @@ class SSLEngineFactoryTest {
         assertNotNull(protocols);
         assertEquals(1, protocols.length);
         assertEquals("TLSv1.3", protocols[0]);
+    }
+
+    @Test
+    void testApplyPqcNamedGroupsReordersAnOrderThatDoesNotLeadWithAHybrid() throws Exception {
+        SSLEngine engine = engineWithNamedGroups("x25519", "secp256r1", "X25519MLKEM768", "secp384r1", "ffdhe2048");
+
+        SSLEngineFactory.applyPqcNamedGroups(engine);
+
+        assertEquals(List.of("X25519MLKEM768", "x25519", "secp256r1", "secp384r1", "ffdhe2048"),
+                List.of(engine.getSSLParameters().getNamedGroups()));
+    }
+
+    @Test
+    void testApplyPqcNamedGroupsLeavesAnOrderThatLeadsWithAHybridAlone() throws Exception {
+        // such as a CNSA 2.0 order chosen with jdk.tls.namedGroups, the same as SSLContextParameters keeps
+        SSLEngine engine = engineWithNamedGroups("SecP384r1MLKEM1024", "x25519", "X25519MLKEM768", "secp384r1");
+
+        SSLEngineFactory.applyPqcNamedGroups(engine);
+
+        assertEquals(List.of("SecP384r1MLKEM1024", "x25519", "X25519MLKEM768", "secp384r1"),
+                List.of(engine.getSSLParameters().getNamedGroups()));
+    }
+
+    private static SSLEngine engineWithNamedGroups(String... groups) throws Exception {
+        SSLContext context = SSLContext.getInstance("TLSv1.3");
+        context.init(null, null, null);
+        SSLEngine engine = context.createSSLEngine();
+        SSLParameters params = engine.getSSLParameters();
+        params.setNamedGroups(groups);
+        engine.setSSLParameters(params);
+        // the JVM keeps the named groups as they are set, also the ones it does not know
+        assumeTrue(List.of(groups).equals(List.of(engine.getSSLParameters().getNamedGroups())));
+        return engine;
     }
 
     @Test

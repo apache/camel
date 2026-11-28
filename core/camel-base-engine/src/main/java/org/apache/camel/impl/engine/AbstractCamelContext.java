@@ -1471,9 +1471,16 @@ public abstract class AbstractCamelContext extends BaseService
     public void startRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
         lock.lock();
         try {
+            RouteService routeService = routeServices.get(routeId);
+            if (routeService != null && routeService.getStatus().isStarted()) {
+                // starting a route that is already started is a no-op: its consumer is not started again, as a route
+                // policy may keep the consumer stopped while the route is started (such as the master route policy)
+                LOG.debug("Route: {} is not started as it is already started", routeId);
+                return;
+            }
+
             DefaultRouteError.reset(this, routeId);
 
-            RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
                 try {
                     startRouteService(routeService, false);
@@ -1495,6 +1502,14 @@ public abstract class AbstractCamelContext extends BaseService
     public void resumeRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
         lock.lock();
         try {
+            RouteService routeService = routeServices.get(routeId);
+            if (routeService != null && routeService.getStatus().isStarted()) {
+                // resuming a route that is already started is a no-op (as starting it): only a suspended route is
+                // resumed, and a stopped route is started
+                LOG.debug("Route: {} is not resumed as it is already started", routeId);
+                return;
+            }
+
             DefaultRouteError.reset(this, routeId);
 
             try {
@@ -1504,7 +1519,6 @@ public abstract class AbstractCamelContext extends BaseService
                     return;
                 }
 
-                RouteService routeService = routeServices.get(routeId);
                 if (routeService != null) {
                     resumeRouteService(routeService);
                     // must resume the route as well
@@ -3082,36 +3096,19 @@ public abstract class AbstractCamelContext extends BaseService
             routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder));
             for (RouteStartupOrder order : routeStartupOrder) {
                 total++;
-                String id = order.getRoute().getRouteId();
+                Route route = order.getRoute();
+                String id = route.getRouteId();
                 String status = getRouteStatus(id).name();
-                if (order.getRoute().isCreatedByKamelet()) {
-                    kamelets++;
-                } else if (order.getRoute().isCreatedByRouteTemplate()) {
-                    templates++;
-                } else if (order.getRoute().isCreatedByRestDsl()) {
-                    rests++;
-                }
-                boolean skip = (!registerKamelets && order.getRoute().isCreatedByKamelet())
-                        || (!registerTemplates && order.getRoute().isCreatedByRouteTemplate());
+                kamelets += route.isCreatedByKamelet() ? 1 : 0;
+                templates += (!route.isCreatedByKamelet() && route.isCreatedByRouteTemplate()) ? 1 : 0;
+                rests += (!route.isCreatedByKamelet() && !route.isCreatedByRouteTemplate() && route.isCreatedByRestDsl())
+                        ? 1 : 0;
+                boolean skip = (!registerKamelets && route.isCreatedByKamelet())
+                        || (!registerTemplates && route.isCreatedByRouteTemplate());
                 if (!skip && ServiceStatus.Started.name().equals(status)) {
                     started++;
                 }
-
-                // use basic endpoint uri to not log verbose details or potential sensitive data
-                String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
-                uri = URISupport.sanitizeUri(uri);
-                String loc = order.getRoute().getSourceLocationShort();
-                if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
-                    lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
-                } else {
-                    if (!skip) {
-                        lines.add(String.format("    %s %s (%s)", status, id, uri));
-                    }
-                }
-                String cid = order.getRoute().getConfigurationId();
-                if (cid != null) {
-                    configs.add(String.format("    %s (%s)", id, cid));
-                }
+                collectRouteLine(route, status, skip, lines, configs);
             }
             for (Route route : routes) {
                 if (!route.isAutoStartup()) {
@@ -3122,72 +3119,81 @@ public abstract class AbstractCamelContext extends BaseService
                     if (ServiceStatus.Stopped.name().equals(status)) {
                         status = "Disabled";
                     }
-                    if (route.isCreatedByKamelet()) {
-                        kamelets++;
-                    } else if (route.isCreatedByRouteTemplate()) {
-                        templates++;
-                    } else if (route.isCreatedByRestDsl()) {
-                        rests++;
-                    }
+                    kamelets += route.isCreatedByKamelet() ? 1 : 0;
+                    templates += (!route.isCreatedByKamelet() && route.isCreatedByRouteTemplate()) ? 1 : 0;
+                    rests += (!route.isCreatedByKamelet() && !route.isCreatedByRouteTemplate() && route.isCreatedByRestDsl())
+                            ? 1 : 0;
                     boolean skip = (!registerKamelets && route.isCreatedByKamelet())
                             || (!registerTemplates && route.isCreatedByRouteTemplate());
-                    // use basic endpoint uri to not log verbose details or potential sensitive data
-                    String uri = route.getEndpoint().getEndpointBaseUri();
-                    uri = URISupport.sanitizeUri(uri);
-                    String loc = route.getSourceLocationShort();
-                    if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
-                        lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
-                    } else {
-                        if (!skip) {
-                            lines.add(String.format("    %s %s (%s)", status, id, uri));
-                        }
-                    }
+                    collectRouteLine(route, status, skip, lines, configs);
+                }
+            }
+            logRouteSummary(total, started, kamelets, templates, rests, disabled,
+                    registerKamelets, registerTemplates, lines, configs);
+        }
 
-                    String cid = route.getConfigurationId();
-                    if (cid != null) {
-                        configs.add(String.format("    %s (%s)", id, cid));
-                    }
-                }
+        logStartupTiming();
+    }
+
+    private void collectRouteLine(Route route, String status, boolean skip, List<String> lines, List<String> configs) {
+        String uri = route.getEndpoint().getEndpointBaseUri();
+        uri = URISupport.sanitizeUri(uri);
+        String loc = route.getSourceLocationShort();
+        String id = route.getRouteId();
+        if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
+            lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
+        } else if (!skip) {
+            lines.add(String.format("    %s %s (%s)", status, id, uri));
+        }
+        String cid = route.getConfigurationId();
+        if (cid != null) {
+            configs.add(String.format("    %s (%s)", id, cid));
+        }
+    }
+
+    private void logRouteSummary(
+            int total, int started, int kamelets, int templates, int rests, int disabled,
+            boolean registerKamelets, boolean registerTemplates, List<String> lines, List<String> configs) {
+        int newTotal = total;
+        if (!registerKamelets) {
+            newTotal -= kamelets;
+        }
+        if (!registerTemplates) {
+            newTotal -= templates;
+        }
+        StringJoiner sj = new StringJoiner(" ");
+        sj.add("total:" + newTotal);
+        if (total != started) {
+            sj.add("started:" + started);
+        }
+        if (kamelets > 0) {
+            sj.add("kamelets:" + kamelets);
+        }
+        if (templates > 0) {
+            sj.add("templates:" + templates);
+        }
+        if (rests > 0) {
+            sj.add("rest-dsl:" + rests);
+        }
+        if (disabled > 0) {
+            sj.add("disabled:" + disabled);
+        }
+        LOG.info("Routes startup ({})", sj);
+        // if we are default/verbose then log each route line
+        if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
+            for (String line : lines) {
+                LOG.info(line);
             }
-            int newTotal = total;
-            if (!registerKamelets) {
-                newTotal -= kamelets;
-            }
-            if (!registerTemplates) {
-                newTotal -= templates;
-            }
-            StringJoiner sj = new StringJoiner(" ");
-            sj.add("total:" + newTotal);
-            if (total != started) {
-                sj.add("started:" + started);
-            }
-            if (kamelets > 0) {
-                sj.add("kamelets:" + kamelets);
-            }
-            if (templates > 0) {
-                sj.add("templates:" + templates);
-            }
-            if (rests > 0) {
-                sj.add("rest-dsl:" + rests);
-            }
-            if (disabled > 0) {
-                sj.add("disabled:" + disabled);
-            }
-            LOG.info("Routes startup ({})", sj);
-            // if we are default/verbose then log each route line
-            if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
-                for (String line : lines) {
+            if (startupSummaryLevel == StartupSummaryLevel.Verbose && !configs.isEmpty()) {
+                LOG.info("Routes configuration:");
+                for (String line : configs) {
                     LOG.info(line);
-                }
-                if (startupSummaryLevel == StartupSummaryLevel.Verbose && !configs.isEmpty()) {
-                    LOG.info("Routes configuration:");
-                    for (String line : configs) {
-                        LOG.info(line);
-                    }
                 }
             }
         }
+    }
 
+    private void logStartupTiming() {
         if (startupSummaryLevel != StartupSummaryLevel.Off && LOG.isInfoEnabled()) {
             long taken = stopWatch.taken();
             long max = buildTaken + initTaken + taken;

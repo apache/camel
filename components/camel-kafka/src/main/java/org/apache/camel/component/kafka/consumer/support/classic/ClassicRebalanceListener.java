@@ -79,6 +79,8 @@ public class ClassicRebalanceListener implements ConsumerRebalanceListener {
             partitions.forEach(p -> LOG.debug("onPartitionsAssigned: {} from {}", threadId, p.topic()));
         }
 
-        assignmentAdapter.handlePartitionAssignment();
+        // only the partitions assigned by this rebalance: with a cooperative assignor (or the consumer group protocol)
+        // the consumer keeps the partitions it already had, and their position must not be moved
+        assignmentAdapter.handlePartitionAssignment(partitions);
     }
 }

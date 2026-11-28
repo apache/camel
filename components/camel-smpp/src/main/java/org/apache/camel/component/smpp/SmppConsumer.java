@@ -18,6 +18,8 @@ package org.apache.camel.component.smpp;
 
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Processor;
@@ -33,6 +35,7 @@ import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
 import org.slf4j.Logger;
@@ -41,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.smpp.SmppUtils.createExecutor;
 import static org.apache.camel.component.smpp.SmppUtils.isServiceStopping;
 import static org.apache.camel.component.smpp.SmppUtils.isSessionClosed;
+import static org.apache.camel.component.smpp.SmppUtils.isSessionLost;
 import static org.apache.camel.component.smpp.SmppUtils.newReconnectTask;
 import static org.apache.camel.component.smpp.SmppUtils.shutdownReconnectService;
 
@@ -57,12 +61,24 @@ public class SmppConsumer extends DefaultConsumer {
     private final SessionStateListener internalSessionStateListener;
 
     private final ReentrantLock reconnectLock = new ReentrantLock();
+    // the session whose connectAndBind runs on this thread: jsmpp closes a session whose bind fails on the thread that
+    // called connectAndBind, and calls the session state listeners there before connectAndBind throws
+    private final ThreadLocal<Session> bindingSession = new ThreadLocal<>();
     // created again by a start after a stop, as the stop shuts it down
     private volatile ScheduledExecutorService reconnectService;
 
-    private SMPPSession session;
+    private volatile SMPPSession session;
     // the reconnect task that the thread which reported the lost session waits for, so that a stop can release it
     private volatile BackgroundTask reconnectTask;
+    // set by the loss of the session in use before it tries reconnectLock, and looked at again by the thread that holds
+    // it when it is done: a session lost while another thread holds the lock is reconnected too
+    private final AtomicBoolean reconnectRequested = new AtomicBoolean();
+    // the session and the generation are changed together under this lock, so that a reconnect attempt, a lost
+    // session and a stop do not replace or close each other's session
+    private final Object sessionLock = new Object();
+    // incremented by every stop: a reconnect belongs to the start it was requested in, ends when that start is
+    // stopped, and never touches the session of a later start
+    private final AtomicInteger generation = new AtomicInteger();
 
     /**
      * The constructor which gets a smpp endpoint, a smpp configuration and a processor
@@ -79,11 +95,19 @@ public class SmppConsumer extends DefaultConsumer {
             }
 
             if (newState.equals(SessionState.UNBOUND) || newState.equals(SessionState.CLOSED)) {
+                if (source != null && source == bindingSession.get()) {
+                    // the bind of this session failed on this thread, and connectAndBind throws to its caller (the
+                    // start, a reconnect attempt or a lazy session creation), which handles it. Reconnecting here
+                    // would run the whole reconnect on that thread: inside start(), under the lock stop() needs too
+                    LOG.debug("The bind to {} failed", getEndpoint().getConnectionString());
+                    return;
+                }
                 LOG.warn(newState.equals(SessionState.UNBOUND)
                         ? "Session to {} was unbound - trying to reconnect" : "Lost connection to: {} - trying to reconnect...",
                         getEndpoint().getConnectionString());
-                closeSession();
-                reconnect();
+                if (closeLostSession(source)) {
+                    reconnect();
+                }
             }
         };
         this.messageReceiverListener
@@ -96,7 +120,7 @@ public class SmppConsumer extends DefaultConsumer {
         restartReconnectService();
 
         super.doStart();
-        session = createSession();
+        setNewSession(createSession());
 
         LOG.info("Connected to: {}", getEndpoint().getConnectionString());
     }
@@ -109,13 +133,18 @@ public class SmppConsumer extends DefaultConsumer {
         newSession.setQueueCapacity(this.configuration.getPduProcessorQueueCapacity());
         newSession.addSessionStateListener(internalSessionStateListener);
         newSession.setMessageReceiverListener(messageReceiverListener);
-        newSession.connectAndBind(this.configuration.getHost(), this.configuration.getPort(),
-                new BindParameter(
-                        BindType.BIND_RX, this.configuration.getSystemId(),
-                        this.configuration.getPassword(), this.configuration.getSystemType(),
-                        TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN,
-                        configuration.getAddressRange(),
-                        configuration.getInterfaceVersionByte()));
+        bindingSession.set(newSession);
+        try {
+            newSession.connectAndBind(this.configuration.getHost(), this.configuration.getPort(),
+                    new BindParameter(
+                            BindType.BIND_RX, this.configuration.getSystemId(),
+                            this.configuration.getPassword(), this.configuration.getSystemType(),
+                            TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN,
+                            configuration.getAddressRange(),
+                            configuration.getInterfaceVersionByte()));
+        } finally {
+            bindingSession.remove();
+        }
 
         return newSession;
     }
@@ -147,6 +176,10 @@ public class SmppConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
+        synchronized (sessionLock) {
+            generation.incrementAndGet();
+        }
+        reconnectRequested.set(false);
         shutdownReconnectService(reconnectService);
         // the shut down reconnect service no longer runs the reconnect task, so nothing else would release the thread
         // that waits for it
@@ -164,23 +197,81 @@ public class SmppConsumer extends DefaultConsumer {
     }
 
     private void closeSession() {
-        if (session != null) {
-            session.removeSessionStateListener(this.internalSessionStateListener);
-            session.unbindAndClose();
-            // clear session as we closed it successfully
+        SMPPSession current;
+        synchronized (sessionLock) {
+            current = session;
             session = null;
+        }
+        if (current != null) {
+            current.removeSessionStateListener(this.internalSessionStateListener);
+            current.unbindAndClose();
         }
     }
 
-    private boolean doReconnect() {
+    /**
+     * Closes the session that was lost, and returns whether it was the session in use: only that loss asks for a
+     * reconnect. The field is cleared only when it holds that session: it may hold the session of a later reconnect or
+     * start, or none when the lost session was never set (its bind failed, which jsmpp reports on its reader thread
+     * when the SMSC closes the connection after its bind_resp, or the SMSC dropped it before it was set). A state
+     * change with no source is taken as the loss of the session in use.
+     */
+    private boolean closeLostSession(Session source) {
+        Session lost;
+        boolean inUse;
+        synchronized (sessionLock) {
+            lost = source != null ? source : session;
+            inUse = lost != null && session == lost;
+            if (inUse) {
+                session = null;
+            }
+        }
+        if (lost != null) {
+            lost.removeSessionStateListener(this.internalSessionStateListener);
+            lost.unbindAndClose();
+        }
+        return inUse;
+    }
+
+    /**
+     * Sets the session that the start bound, unless the SMSC dropped it already: its loss asked for no reconnect, as it
+     * was not in use yet, so the start fails as for a failed bind.
+     * <p/>
+     * A reconnect attempt can have set its own session while the start was binding, in the generation of the start: a
+     * stop and a start that run between the reconnect request and the generation that the attempt reads give this. The
+     * start keeps its session and closes the one of the attempt, which no stop would close otherwise; when the start
+     * sets its session first, the attempt keeps it too.
+     */
+    private void setNewSession(SMPPSession newSession) throws IOException {
+        boolean lost;
+        SMPPSession replaced = null;
+        synchronized (sessionLock) {
+            lost = isSessionLost(newSession);
+            if (!lost) {
+                replaced = session;
+                session = newSession;
+            }
+        }
+        SMPPSession toClose = lost ? newSession : replaced;
+        if (toClose != null) {
+            toClose.removeSessionStateListener(this.internalSessionStateListener);
+            toClose.unbindAndClose();
+        }
+        if (lost) {
+            throw new IOException(
+                    "Lost the connection to " + getEndpoint().getConnectionString() + " right after the bind");
+        }
+    }
+
+    private boolean doReconnect(int startGeneration) {
         try {
             LOG.info("Trying to reconnect to {}", getEndpoint().getConnectionString());
-            if (isServiceStopping(this)) {
+            if (isServiceStopping(this) || startGeneration != generation.get()) {
+                // the start this reconnect belongs to was stopped
                 return true;
             }
 
             if (isSessionClosed(session)) {
-                return tryCreateSession();
+                return tryCreateSession(startGeneration);
             }
 
             LOG.info("Nothing to do: the session is not closed");
@@ -192,41 +283,73 @@ public class SmppConsumer extends DefaultConsumer {
         return true;
     }
 
-    private boolean tryCreateSession() {
+    private boolean tryCreateSession(int startGeneration) {
+        SMPPSession newSession;
         try {
             LOG.info("Creating a new session to {}", getEndpoint().getConnectionString());
-            session = createSession();
-            LOG.info("Reconnected to {}", getEndpoint().getConnectionString());
-            return true;
+            newSession = createSession();
         } catch (IOException e) {
+            // the failed bind closed the new session; the session in the field is not this attempt's to close, as it
+            // may belong to a later start
             LOG.warn("Failed to reconnect to {}", getEndpoint().getConnectionString());
-            closeSession();
-
             return false;
         }
+
+        boolean lost;
+        synchronized (sessionLock) {
+            // a start that began after the request of this attempt can have set its own session meanwhile, in the same
+            // generation: that session is kept, as replacing it would leave it bound and never closed
+            boolean needed = startGeneration == generation.get() && isSessionClosed(session);
+            if (needed && !isSessionLost(newSession)) {
+                session = newSession;
+                LOG.info("Reconnected to {}", getEndpoint().getConnectionString());
+                return true;
+            }
+            lost = needed;
+        }
+        newSession.removeSessionStateListener(this.internalSessionStateListener);
+        newSession.unbindAndClose();
+        if (lost) {
+            // the SMSC dropped the new session before it was set, and its loss asked for no reconnect: try again
+            LOG.warn("Failed to reconnect to {}: the new session was lost", getEndpoint().getConnectionString());
+            return false;
+        }
+        // the consumer was stopped while this attempt connected, or has a session again: the new one is not needed
+        return true;
     }
 
     private void reconnect() {
-        if (reconnectLock.tryLock()) {
-            BackgroundTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
-                    configuration.getInitialReconnectDelay(),
-                    configuration.getReconnectDelay(),
-                    configuration.getMaxReconnect());
-
-            reconnectTask = task;
+        reconnectRequested.set(true);
+        // a thread that does not get the lock leaves its request to the thread that holds it, which looks for a request
+        // again once it is done, so that no request is lost
+        while (reconnectRequested.get() && !isServiceStopping(this) && reconnectLock.tryLock()) {
             try {
-                // a stop that began before the task was published does not cancel it, and the task would never run
-                // on the shut down reconnect service
-                if (!isServiceStopping(this)) {
-                    task.run(getEndpoint().getCamelContext(), this::doReconnect);
+                // a request whose session was replaced already (by the reconnect of another request) needs nothing
+                if (reconnectRequested.getAndSet(false) && isSessionClosed(session)) {
+                    runReconnectTask();
                 }
             } finally {
-                reconnectTask = null;
                 reconnectLock.unlock();
             }
-        } else {
-            LOG.warn("Thread {} could not acquire a lock for creating the session during consumer reconnection",
-                    Thread.currentThread().threadId());
+        }
+    }
+
+    private void runReconnectTask() {
+        int startGeneration = generation.get();
+        BackgroundTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
+                configuration.getInitialReconnectDelay(),
+                configuration.getReconnectDelay(),
+                configuration.getMaxReconnect());
+
+        reconnectTask = task;
+        try {
+            // a stop that began before the task was published does not cancel it, and the task would never run
+            // on the shut down reconnect service
+            if (!isServiceStopping(this)) {
+                task.run(getEndpoint().getCamelContext(), () -> doReconnect(startGeneration));
+            }
+        } finally {
+            reconnectTask = null;
         }
     }
 

@@ -80,6 +80,25 @@ final class JwtTokenValidator {
             int readTimeoutMs,
             Set<String> allowedAlgorithms,
             String expectedTokenType) {
+        return validate(
+                token, jwksEndpoint, jwksCacheTtlSeconds, expectedIssuer, expectedAudiences, clockSkewSeconds,
+                requireExpiration, connectTimeoutMs, readTimeoutMs, allowedAlgorithms, expectedTokenType, null, 0);
+    }
+
+    static OAuthTokenValidationResult validate(
+            String token,
+            String jwksEndpoint,
+            long jwksCacheTtlSeconds,
+            String expectedIssuer,
+            Set<String> expectedAudiences,
+            int clockSkewSeconds,
+            boolean requireExpiration,
+            int connectTimeoutMs,
+            int readTimeoutMs,
+            Set<String> allowedAlgorithms,
+            String expectedTokenType,
+            Set<String> requiredAcr,
+            int maxAuthAgeSeconds) {
 
         SignedJWT signedJWT;
         try {
@@ -189,8 +208,66 @@ final class JwtTokenValidator {
 
         Map<String, Object> allClaims = claims.getClaims();
 
+        OAuthTokenValidationResult stepUpResult
+                = checkStepUpClaims(claims, now, requiredAcr, maxAuthAgeSeconds, clockSkewSeconds);
+        if (stepUpResult != null) {
+            return stepUpResult;
+        }
+
         LOG.debug("JWT validated successfully: sub={}, iss={}, exp={}", subject, issuer, expiresAt);
         return OAuthTokenValidationResult.valid(subject, issuer, audience, scopes, allClaims, expiresAt);
+    }
+
+    /**
+     * Validates RFC 9470 step-up authentication claims: acr (Authentication Context Class Reference) and auth_time
+     * (user authentication timestamp).
+     *
+     * @param  claims            the JWT claims
+     * @param  now               the current time in epoch seconds
+     * @param  requiredAcr       accepted acr values; null or empty means no check
+     * @param  maxAuthAgeSeconds maximum authentication age in seconds; 0 means no check
+     * @param  clockSkewSeconds  clock skew leeway in seconds for the auth_time check
+     * @return                   an invalid result when step-up requirements are not met, or null when they pass
+     */
+    private static OAuthTokenValidationResult checkStepUpClaims(
+            JWTClaimsSet claims, long now, Set<String> requiredAcr, int maxAuthAgeSeconds, int clockSkewSeconds) {
+        if (requiredAcr != null && !requiredAcr.isEmpty()) {
+            Object acrClaim = claims.getClaim("acr");
+            String acr = acrClaim instanceof String ? (String) acrClaim : null;
+            if (acr == null || !requiredAcr.contains(acr)) {
+                return OAuthTokenValidationResult.invalid(
+                        ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
+                        "Insufficient authentication context: acr claim " + acr
+                                                                    + " does not satisfy required values " + requiredAcr);
+            }
+        }
+
+        if (maxAuthAgeSeconds > 0) {
+            Object authTimeClaim = claims.getClaim("auth_time");
+            if (authTimeClaim == null) {
+                return OAuthTokenValidationResult.invalid(
+                        ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
+                        "Insufficient authentication context: auth_time claim is missing (max-auth-age-seconds="
+                                                                    + maxAuthAgeSeconds + ")");
+            }
+            long authTime;
+            if (authTimeClaim instanceof Number number) {
+                authTime = number.longValue();
+            } else {
+                return OAuthTokenValidationResult.invalid(
+                        ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
+                        "Insufficient authentication context: auth_time claim is not a number");
+            }
+            if (now - authTime > maxAuthAgeSeconds + clockSkewSeconds) {
+                return OAuthTokenValidationResult.invalid(
+                        ErrorCode.INSUFFICIENT_USER_AUTHENTICATION,
+                        "Insufficient authentication context: user authentication is too old (auth_time="
+                                                                    + authTime + ", max-auth-age-seconds=" + maxAuthAgeSeconds
+                                                                    + ")");
+            }
+        }
+
+        return null;
     }
 
     /**

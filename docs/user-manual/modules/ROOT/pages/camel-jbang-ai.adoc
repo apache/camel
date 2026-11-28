@@ -167,11 +167,20 @@ a project directory, read from the route sources (no running integration needed)
   (with the file and line) and where it sends failures, the routes with error handling of their own (such as
   a dead letter channel) and where it sends failures, and the routes with `noErrorHandler`, whose failures go
   back to their caller, or to their own consumer when no route calls them;
+* the *message bodies*: where the body of each YAML route comes from. It is the consumer (with *no body* for a
+  `timer`, `cron` and the like), a REST operation (a `GET`, `DELETE` or `HEAD` carries no body, also an operation of
+  an OpenAPI contract beside the route), the routes that call it, the failed message of a dead letter channel or an
+  `onException`, an `onCompletion`, or a saga that compensates or completes. For a route that starts with no body,
+  the first step that may set one. This is the analysis of the body check of `camel validate`, made the same way:
+  per file, and only for a file that passes the schema, so a caller in another file is named but its body is not
+  followed;
 * the *external systems* grouped by category (AI, databases, messaging, files, email, HTTP, cloud), taken
   from the component labels of the Camel catalog;
 * *findings*: a `direct`, `seda` or `disruptor` endpoint that no route consumes (by the same rules as
   `camel validate`), also when a dead letter channel or an `onException` sends there, routes that call each
-  other in a cycle, duplicate route ids, routes without a description, and mistakes in the error handling:
+  other in a cycle, duplicate route ids, routes without a description, a step that reads a body the route can
+  never have (`body-never-set`, such as a `jsonpath` or an `unmarshal` in a route a timer calls, with the same message
+  as `camel validate`), and mistakes in the error handling:
   a route that receives the failures of an error handler and uses that error handler too (a failure in it
   goes back to it), and a route with `noErrorHandler` that no route calls (its failures go back to its own
   consumer, and no error handler acts on them);

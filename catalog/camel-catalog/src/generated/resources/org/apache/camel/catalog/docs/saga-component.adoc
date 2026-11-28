@@ -2,7 +2,7 @@
 :doctitle: Saga
 :shortname: saga
 :artifactid: camel-saga
-:description: Execute custom actions within a route using the Saga EIP.
+:description: Complete or compensate the saga that an exchange takes part in through the Saga EIP.
 :since: 2.21
 :supportlevel: Stable
 :tabs-sync-option:

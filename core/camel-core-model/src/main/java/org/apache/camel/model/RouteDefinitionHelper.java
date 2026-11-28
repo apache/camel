@@ -452,10 +452,8 @@ public final class RouteDefinitionHelper {
                 interceptSendToEndpointDefinitions);
         // then on completion
         initOnCompletions(route, abstracts, upper, onCompletions);
-        // then sagas
-        initSagas(abstracts, lower);
-        // then transactions
-        initTransacted(abstracts, lower);
+        // then sagas and transactions
+        initSagaAndTransacted(route.getOutputs(), abstracts, lower);
         // then on exception
         initOnExceptions(abstracts, upper, onExceptions);
 
@@ -793,8 +791,11 @@ public final class RouteDefinitionHelper {
         upper.addAll(completions);
     }
 
-    private static void initSagas(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> lower) {
+    private static void initSagaAndTransacted(
+            List<ProcessorDefinition<?>> outputs, List<ProcessorDefinition<?>> abstracts,
+            List<ProcessorDefinition<?>> lower) {
         SagaDefinition saga = null;
+        TransactedDefinition transacted = null;
 
         // add to correct type
         for (ProcessorDefinition<?> type : abstracts) {
@@ -804,24 +805,7 @@ public final class RouteDefinitionHelper {
                 } else {
                     throw new IllegalArgumentException("The route can only have one saga defined");
                 }
-            }
-        }
-
-        if (saga != null) {
-            // the outputs should be moved to the transacted policy
-            saga.getOutputs().addAll(0, lower);
-            // and add it as the single output
-            lower.clear();
-            lower.add(saga);
-        }
-    }
-
-    private static void initTransacted(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> lower) {
-        TransactedDefinition transacted = null;
-
-        // add to correct type
-        for (ProcessorDefinition<?> type : abstracts) {
-            if (type instanceof TransactedDefinition transactedDefinition) {
+            } else if (type instanceof TransactedDefinition transactedDefinition) {
                 if (transacted == null) {
                     transacted = transactedDefinition;
                 } else {
@@ -830,13 +814,37 @@ public final class RouteDefinitionHelper {
             }
         }
 
-        if (transacted != null) {
-            // the outputs should be moved to the start of the transacted policy
-            transacted.getOutputs().addAll(0, lower);
-            // and add it as the single output
-            lower.clear();
-            lower.add(transacted);
+        if (saga == null && transacted == null) {
+            return;
         }
+
+        // the saga and transacted wrap the entire route, so the regular outputs are moved into them, and they keep
+        // the order they are written in: the outputs before the saga or transacted, then its own nested outputs
+        // (the XML and YAML DSL can have nested steps), then the outputs after it
+        List<ProcessorDefinition<?>> steps = new ArrayList<>();
+        for (ProcessorDefinition<?> output : outputs) {
+            if (output == saga || output == transacted) {
+                steps.addAll(output.getOutputs());
+            } else if (!output.isAbstract()) {
+                steps.add(output);
+            }
+        }
+
+        // the saga is inside the transacted policy
+        if (saga != null) {
+            saga.getOutputs().clear();
+            saga.getOutputs().addAll(steps);
+            steps = List.of(saga);
+        }
+        if (transacted != null) {
+            transacted.getOutputs().clear();
+            transacted.getOutputs().addAll(steps);
+            steps = List.of(transacted);
+        }
+
+        // and add it as the single output
+        lower.clear();
+        lower.addAll(steps);
     }
 
     /**

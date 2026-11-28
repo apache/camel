@@ -1927,6 +1927,119 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testSpringWsEndpointPropertiesConsumer() throws Exception {
+        // a path that starts with a type prefix is the type and the lookupKey (the rest, which may contain colons)
+        Map<String, String> map = catalog.endpointProperties("spring-ws:soapaction:urn:GetFoo");
+        assertEquals(2, map.size());
+        assertEquals("soapaction", map.get("type"));
+        assertEquals("urn:GetFoo", map.get("lookupKey"));
+
+        map = catalog.endpointProperties("spring-ws:beanname:myDispatcher");
+        assertEquals(2, map.size());
+        assertEquals("beanname", map.get("type"));
+        assertEquals("myDispatcher", map.get("lookupKey"));
+
+        map = catalog.endpointProperties("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#m");
+        assertEquals(3, map.size());
+        assertEquals("rootqname", map.get("type"));
+        assertEquals("{http://example.com/}GetFoo", map.get("lookupKey"));
+        assertEquals("#m", map.get("endpointMapping"));
+
+        map = catalog.endpointProperties("spring-ws:action:http://example.com/GetFoo?endpointMapping=#m");
+        assertEquals("action", map.get("type"));
+        assertEquals("http://example.com/GetFoo", map.get("lookupKey"));
+        assertNull(map.get("webServiceEndpointUri"));
+
+        map = catalog.endpointProperties("spring-ws:xpathresult:abc?expression=//foo&endpointMapping=#m");
+        assertEquals("xpathresult", map.get("type"));
+        assertEquals("abc", map.get("lookupKey"));
+        assertEquals("//foo", map.get("expression"));
+
+        // the type prefix is case-insensitive, as in the component
+        map = catalog.endpointProperties("spring-ws:SoapAction:urn:GetFoo");
+        assertEquals("SoapAction", map.get("type"));
+        assertEquals("urn:GetFoo", map.get("lookupKey"));
+
+        // a placeholder in the lookupKey
+        map = catalog.endpointProperties("spring-ws:uripath:{{env:WS_PATH:/ws/foo}}");
+        assertEquals("uripath", map.get("type"));
+        assertEquals("{{env:WS_PATH:/ws/foo}}", map.get("lookupKey"));
+    }
+
+    @Test
+    public void testSpringWsEndpointPropertiesProducer() throws Exception {
+        // a path that does not start with a type prefix is the address of the producer
+        Map<String, String> map = catalog.endpointProperties("spring-ws:http://localhost/ws");
+        assertEquals(1, map.size());
+        assertEquals("http://localhost/ws", map.get("webServiceEndpointUri"));
+
+        map = catalog.endpointProperties("spring-ws:http://localhost:8080/ws");
+        assertEquals(1, map.size());
+        assertEquals("http://localhost:8080/ws", map.get("webServiceEndpointUri"));
+
+        map = catalog.endpointProperties("spring-ws:https://host:8443/a/b?soapAction=x");
+        assertEquals(2, map.size());
+        assertEquals("https://host:8443/a/b", map.get("webServiceEndpointUri"));
+        assertEquals("x", map.get("soapAction"));
+
+        map = catalog.endpointProperties("spring-ws:{{env:WS_URL:http://localhost:8080/ws}}");
+        assertEquals(1, map.size());
+        assertEquals("{{env:WS_URL:http://localhost:8080/ws}}", map.get("webServiceEndpointUri"));
+    }
+
+    @Test
+    public void testSpringWsValidateEndpointProperties() {
+        // the port of the address is not taken as the lookupKey, and the scheme of the address not as the type
+        EndpointValidationResult result = catalog.validateEndpointProperties("spring-ws:http://localhost:8080/ws");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties("spring-ws:https://host:8443/a/b?soapAction=x", false, false, true);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#m",
+                false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties("spring-ws:beanname:myDispatcher", false, true, false);
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // a producer option on a consumer uri is still reported
+        result = catalog.validateEndpointProperties("spring-ws:soapaction:urn:GetFoo?endpointMapping=#m&soapAction=x",
+                false, true, false);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getNotConsumerOnly().contains("soapAction"));
+    }
+
+    @Test
+    public void testSpringWsAsEndpointUriRoundTrip() throws Exception {
+        String[] uris = {
+                "spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#m",
+                "spring-ws:soapaction:urn:GetFoo",
+                "spring-ws:beanname:myDispatcher",
+                "spring-ws:xpathresult:abc?expression=//foo&endpointMapping=#m",
+                "spring-ws:action:http://example.com/GetFoo?endpointMapping=#m",
+                "spring-ws:http://localhost/ws",
+                "spring-ws:http://localhost:8080/ws",
+                "spring-ws:https://host:8443/a/b?soapAction=x" };
+        for (String uri : uris) {
+            Map<String, String> map = catalog.endpointProperties(uri);
+            assertEquals(uri, catalog.asEndpointUri("spring-ws", map, false));
+        }
+
+        // build from the options
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("type", "soapaction");
+        map.put("lookupKey", "urn:GetFoo");
+        map.put("endpointMapping", "#m");
+        assertEquals("spring-ws:soapaction:urn:GetFoo?endpointMapping=#m", catalog.asEndpointUri("spring-ws", map, false));
+
+        map = new LinkedHashMap<>();
+        map.put("webServiceEndpointUri", "http://localhost:8080/ws");
+        map.put("soapAction", "x");
+        assertEquals("spring-ws:http://localhost:8080/ws?soapAction=x", catalog.asEndpointUri("spring-ws", map, false));
+    }
+
+    @Test
     public void testNettyHttpDynamicToIssue() throws Exception {
         String uri = "netty-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
         Map<String, String> params = catalog.endpointProperties(uri);

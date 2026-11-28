@@ -2,7 +2,7 @@
 :doctitle: AI Tool
 :shortname: ai-tool
 :artifactid: camel-ai-tool
-:description: Framework-agnostic consumer endpoint that registers a Camel route as an LLM tool in the shared AiToolRegistry.
+:description: Expose a Camel route as a tool that a model calls through a Camel AI producer, or that MCP clients call through the Camel MCP server.
 :since: 4.22
 :supportlevel: Preview
 :tabs-sync-option:
@@ -640,6 +640,9 @@ context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
 
 The event is emitted best-effort: when no `EventNotifier` is registered nothing is published, and a failure to notify
 never affects the refusal returned to the model.
+
+On Camel Main and Camel JBang, a client of the xref:others:mcp-server.adoc[MCP server] can tell a refused call from a
+tool error as well: the result of the call carries a mark in its `_meta` field, see the Security section of that page.
 
 === Tool search visibility
 

@@ -37,7 +37,7 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true"
+                     + "?username=admin&password=admin&disconnect=true"
                      + "&recursive=true&antInclude=hello.txt"
                      + "&knownHostsFile="
                      + service.getKnownHostsFile()).to("mock:result");
@@ -68,7 +68,7 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true"
+                     + "?username=admin&password=admin&disconnect=true"
                      + "&recursive=true&antInclude=hello.txt"
                      + "&knownHostsFile="
                      + service.getKnownHostsFile()).to("mock:result");
@@ -99,7 +99,7 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true"
+                     + "?username=admin&password=admin&disconnect=true"
                      + "&recursive=true&antInclude=subdir/hello.txt"
                      + "&knownHostsFile="
                      + service.getKnownHostsFile()).to("mock:result");

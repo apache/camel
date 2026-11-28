@@ -33,4 +33,20 @@ public interface McpResourceTemplateReadHandler {
      * @return             sanitized resource read result
      */
     McpResourceReadResult read(String resourceUri);
+
+    /**
+     * Reads the supplied concrete URI on behalf of the transport-supplied caller, so the resource route can check who
+     * is asking. The default ignores the context and calls {@link #read(String)}; the bridge overrides it to stamp the
+     * caller identity onto the resource exchange, as for a tool call. Engines that can determine a caller identity
+     * (such as the Vert.x streamable HTTP transport) call this overload; others keep calling {@link #read(String)}.
+     *
+     * @param  resourceUri concrete URI sent in {@code resources/read}
+     * @param  context     the transport-supplied caller context, never null (use {@link McpToolCallContext#EMPTY} when
+     *                     there is no caller identity)
+     * @return             sanitized resource read result
+     * @since              4.24
+     */
+    default McpResourceReadResult read(String resourceUri, McpToolCallContext context) {
+        return read(resourceUri);
+    }
 }

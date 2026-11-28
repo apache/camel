@@ -586,6 +586,87 @@ DEBUG GenericFileConverter           - Read file /Users/davsclaus/workspace/came
 DEBUG FileOperations                 - Using Reader to write file: target/charset/output.txt with charset: iso-8859-1
 ----
 
+==== Characters the charset cannot read or write
+
+By default, Camel fails when the content of a file does not fit the charset:
+
+* Reading a file whose bytes are not valid in the charset fails with a `MalformedInputException`, for example a
+  file in ISO-8859-1 that is read as UTF-8.
+* Reading a byte the charset does not map to a character fails with an `UnmappableCharacterException`, for example
+  the byte `0x81` in windows-1252.
+* Writing a character the charset cannot encode fails with an `UnmappableCharacterException`, for example the euro
+  sign (`€`) written as ISO-8859-1.
+
+The `charsetErrorAction` option decides what happens instead:
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Value |Description
+|`REPORT` |Fail with the exception. This is the default.
+|`REPLACE` |Replace the character with the replacement of the charset: `U+FFFD` when reading, and `?` when writing
+ISO-8859-1, for example.
+|`IGNORE` |Drop the character.
+|===
+
+When the option applies:
+
+* On the consumer, when the file content is read as text, such as a `String` or a `Reader` (`convertBodyTo`, a
+  bean that takes a `String`, and so on). This also applies without the `charset` option: the file is then read with
+  the charset of the exchange or the default charset. When the content is read as an `InputStream` or a `byte[]`,
+  the option applies only when the `charset` option is set: without it, Camel reads the bytes of the file as they are,
+  and decodes nothing.
+* Not on a consumer with the `preMove` option: the message body is then the moved file as a `java.io.File`, which
+  Camel reads with the `charset`, but without this option.
+* On the producer, only when the `charset` option is set: Camel then encodes the message body with that charset when
+  writing the file.
+
+NOTE: `REPLACE` and `IGNORE` change the data. With `IGNORE` the content is also shorter than the file, which matters
+for formats with fixed-width records. Use them only when losing these characters is acceptable.
+
+The option is only on the `file` component. The FTP, SFTP and SMB components replace these characters already.
+
+For example, to read files in UTF-8 and write them in ISO-8859-1, with a replacement character where a character
+cannot be read or written:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inbox?charset=utf-8&charsetErrorAction=REPLACE")
+  .to("file:outbox?charset=iso-8859-1&charsetErrorAction=REPLACE");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:inbox?charset=utf-8&amp;charsetErrorAction=REPLACE"/>
+  <to uri="file:outbox?charset=iso-8859-1&amp;charsetErrorAction=REPLACE"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      parameters:
+        charset: utf-8
+        charsetErrorAction: REPLACE
+      steps:
+        - to:
+            uri: file:outbox
+            parameters:
+              charset: iso-8859-1
+              charsetErrorAction: REPLACE
+----
+====
+
 === Common gotchas with folder and filenames
 
 When Camel is producing files (writing files), there are a few gotchas

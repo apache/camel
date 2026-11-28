@@ -42,6 +42,18 @@ directory than the one it lists. With `handleDirectoryParserAbsoluteResult=true`
 path that the server lists is checked. A backslash is a valid character in the name of a directory on a server on
 Linux: to poll such a directory, set `stepwise=false`.
 
+=== camel-azure-eventgrid, camel-azure-servicebus, camel-azure-eventhubs - a DefaultAzureCredential set as tokenCredential is used
+
+With `credentialType` `AZURE_IDENTITY`, which these components also choose when the `tokenCredential` option is a
+`DefaultAzureCredential`, the clients now authenticate with the configured `tokenCredential` instance. Before, they
+built a new `DefaultAzureCredential` with the default settings, so a credential built with
+`managedIdentityClientId(...)`, `tenantId(...)` or other settings was not used. Without `tokenCredential`,
+`AZURE_IDENTITY` still builds a new `DefaultAzureCredential`. In camel-azure-eventgrid, an explicit `credentialType`
+`TOKEN_CREDENTIAL` or `AZURE_IDENTITY` is no longer replaced when `tokenCredential` is set. In camel-azure-servicebus
+and camel-azure-eventhubs on 4.18.x, the components still choose the `credentialType` from `tokenCredential` when it
+is set, also over an explicit `credentialType`: `AZURE_IDENTITY` for a `DefaultAzureCredential` and
+`TOKEN_CREDENTIAL` for any other credential. Both use the `tokenCredential` instance.
+
 == Upgrading from 4.18.5 to 4.18.6
 
 === camel-aws2-sns - string array message attributes

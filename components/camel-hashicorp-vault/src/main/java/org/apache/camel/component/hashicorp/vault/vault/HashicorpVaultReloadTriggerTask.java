@@ -49,6 +49,8 @@ import org.springframework.vault.support.VaultResponse;
 public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultReloadTriggerTask.class);
+    // how many reloads in a row an update triggers when they fail, one per run, before it is marked as seen anyway
+    static final int MAX_RELOAD_ATTEMPTS = 10;
 
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
@@ -62,6 +64,8 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
     private final Map<String, Integer> versionsMap = new HashMap<>();
     private boolean cloud;
     private String namespace;
+    // the reloads in a row that failed for the updates not marked as seen yet
+    private int failedReloads;
 
     public HashicorpVaultReloadTriggerTask() {
     }
@@ -157,6 +161,7 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
         client = null;
         updates.clear();
         versionsMap.clear();
+        failedReloads = 0;
     }
 
     @Override
@@ -168,6 +173,10 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
         }
         lastCheckTime = Instant.now();
         boolean triggerReloading = false;
+        // the new versions this check found, stored in versionsMap when they are marked as seen. When the check
+        // triggers a reload, that is only once the reload succeeded, so that after a failed reload the next run sees
+        // the new versions again and reloads again
+        Map<String, Integer> newVersions = new HashMap<>();
 
         try {
             // Get set of secrets to check
@@ -207,7 +216,7 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
                                     LOG.debug("Tracking secret {} at version {}", secretName, currentVersion);
                                 } else if (!currentVersion.equals(lastKnownVersion)) {
                                     // Version changed, trigger reload
-                                    versionsMap.put(secretName, currentVersion);
+                                    newVersions.put(secretName, currentVersion);
                                     updates.put(secretName, Instant.now());
                                     if (isReloadEnabled()) {
                                         LOG.info(
@@ -236,9 +245,37 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
             if (reload != null) {
                 // trigger reload
                 lastReloadTime = Instant.now();
-                reload.onReload(this);
+                if (!reload(reload)) {
+                    failedReloads++;
+                    if (failedReloads < MAX_RELOAD_ATTEMPTS) {
+                        LOG.warn("Reloading CamelContext after an update of Hashicorp Vault secrets failed (attempt {} of {})."
+                                 + " The update is not marked as seen, so the next run sees it and reloads again.",
+                                failedReloads, MAX_RELOAD_ATTEMPTS);
+                        return;
+                    }
+                    LOG.warn("Reloading CamelContext after an update of Hashicorp Vault secrets failed {} times in a row."
+                             + " The update is marked as seen: no reload is tried again until the next update.",
+                            failedReloads);
+                }
+                failedReloads = 0;
             }
         }
+        versionsMap.putAll(newVersions);
+    }
+
+    /**
+     * Reloads the CamelContext, and tells whether the reload succeeded: the reload strategy logs and counts a failed
+     * reload, it does not throw it.
+     */
+    private boolean reload(ContextReloadStrategy reload) {
+        int failed = reload.getFailedCounter();
+        try {
+            reload.onReload(this);
+        } catch (Exception e) {
+            LOG.warn("Error reloading CamelContext due to {}", e.getMessage(), e);
+            return false;
+        }
+        return reload.getFailedCounter() == failed;
     }
 
     protected boolean matchSecret(String name) {

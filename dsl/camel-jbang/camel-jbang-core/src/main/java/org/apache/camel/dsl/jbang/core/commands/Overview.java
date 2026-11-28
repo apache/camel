@@ -186,7 +186,8 @@ public class Overview extends CamelCommand {
         }
         printer().printDiagnostic("Explaining " + overview.flows().size() + " routes with " + client.model() + " ("
                                   + client.apiType() + ")...");
-        String answer = client.generate(system, user);
+        LlmClient.GenerateResponse generateResponse = client.generate(system, user);
+        String answer = generateResponse != null ? generateResponse.text() : null;
         if (answer == null || answer.isBlank()) {
             throw CliException.failure("Failed to get an answer from the LLM");
         }

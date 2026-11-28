@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -39,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview.Overview;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview.SystemUse;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Endpoint;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Route;
+import org.apache.camel.dsl.yaml.validator.BodyOrigin;
 import org.apache.camel.util.SensitiveUtils;
 
 /**
@@ -470,6 +472,8 @@ public final class IntegrationSummary {
             sb.append('\n');
         }
 
+        renderBodies(sb, overview);
+
         if (!overview.systems().isEmpty()) {
             sb.append("## External systems\n\n");
             Map<String, Map<String, Set<String>[]>> byCategory = new TreeMap<>();
@@ -505,6 +509,60 @@ public final class IntegrationSummary {
             sb.append('\n');
         }
         return sb.toString();
+    }
+
+    /**
+     * Where the message body of each YAML route comes from, as camel validate reads it (CAMEL-25200): per file, so a
+     * route called from another file says so, without following the body there.
+     */
+    static void renderBodies(StringBuilder sb, Overview overview) {
+        List<Route> routes = overview.flows().stream().filter(r -> overview.bodies().containsKey(r.key())).toList();
+        if (routes.isEmpty()) {
+            return;
+        }
+        sb.append("## Message bodies\n\n");
+        sb.append("Where the body of each YAML route comes from, read from the source as camel validate checks it:"
+                  + " the routes of each file; a caller in another file is not followed.\n\n");
+        sb.append("| Route | Body from | First step that sets it |\n|---|---|---|\n");
+        for (Route r : routes) {
+            BodyOrigin body = overview.bodies().get(r.key());
+            String setBy = !body.noBody() ? "" : body.setBy() != null
+                    ? "`" + body.setBy() + "` (step " + body.setAt() + ")" : "-";
+            sb.append("| `").append(cell(r.key())).append("` | ")
+                    .append(cell(bodyFrom(overview, r, body))).append(" | ")
+                    .append(setBy).append(" |\n");
+        }
+        sb.append('\n');
+    }
+
+    /** Where the body of a route comes from, in words. */
+    static String bodyFrom(Overview overview, Route route, BodyOrigin body) {
+        String none = body.noBody() ? ": **no body**" : "";
+        String callers = String.join(", ", body.callers().stream().map(c -> "`" + c + "`").toList());
+        return switch (body.origin()) {
+            case BodyOrigin.CONSUMER -> "consumer " + (route.from() != null ? "`" + route.from().uri() + "`" : "")
+                                        + none;
+            case BodyOrigin.REST -> (body.via() != null ? "REST `" + body.via() + "`" : "an OpenAPI operation") + none;
+            case BodyOrigin.CALLER -> "called by " + callers + " over `" + body.via() + "`" + none;
+            case BodyOrigin.ERROR_HANDLER -> "the failed message, from "
+                                             + ("onException".equals(body.via()) ? "an onException" : "a dead letter channel")
+                                             + (callers.isEmpty() ? "" : " of " + callers);
+            case BodyOrigin.ON_COMPLETION -> "the completed message, from an onCompletion"
+                                             + (callers.isEmpty() ? "" : " of " + callers);
+            case BodyOrigin.SAGA -> "the saga service, to " + ("completion".equals(body.via()) ? "complete" : "compensate")
+                                    + (callers.isEmpty() ? "" : " " + callers);
+            default -> {
+                // called over an endpoint of a route in another file: the overview links them, the body is not followed
+                List<String> elsewhere = overview.links().stream()
+                        .filter(l -> l.to().equals(route.key()))
+                        .map(l -> overview.route(l.from()))
+                        .filter(from -> from != null && !Objects.equals(from.file(), route.file()))
+                        .map(from -> "`" + from.key() + "`").distinct().toList();
+                yield elsewhere.isEmpty()
+                        ? "not known: no route of this file calls it (a route of another file, or code, may)"
+                        : "called from another file by " + String.join(", ", elsewhere);
+            }
+        };
     }
 
     /**

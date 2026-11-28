@@ -25,9 +25,20 @@ public class MilvusConfigurationConfigurer extends org.apache.camel.support.comp
         org.apache.camel.component.milvus.MilvusConfiguration target = (org.apache.camel.component.milvus.MilvusConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, org.apache.camel.component.milvus.MilvusAction.class, value)); return true;
+        case "capempath":
+        case "caPemPath": target.setCaPemPath(property(camelContext, java.lang.String.class, value)); return true;
         case "client": target.setClient(property(camelContext, io.milvus.client.MilvusClient.class, value)); return true;
+        case "clientkeypath":
+        case "clientKeyPath": target.setClientKeyPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientpempath":
+        case "clientPemPath": target.setClientPemPath(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "secure": target.setSecure(property(camelContext, boolean.class, value)); return true;
+        case "servername":
+        case "serverName": target.setServerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverpempath":
+        case "serverPemPath": target.setServerPemPath(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -38,9 +49,20 @@ public class MilvusConfigurationConfigurer extends org.apache.camel.support.comp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.component.milvus.MilvusAction.class;
+        case "capempath":
+        case "caPemPath": return java.lang.String.class;
         case "client": return io.milvus.client.MilvusClient.class;
+        case "clientkeypath":
+        case "clientKeyPath": return java.lang.String.class;
+        case "clientpempath":
+        case "clientPemPath": return java.lang.String.class;
         case "host": return java.lang.String.class;
         case "port": return int.class;
+        case "secure": return boolean.class;
+        case "servername":
+        case "serverName": return java.lang.String.class;
+        case "serverpempath":
+        case "serverPemPath": return java.lang.String.class;
         case "timeout": return long.class;
         case "token": return java.lang.String.class;
         default: return null;
@@ -52,9 +74,20 @@ public class MilvusConfigurationConfigurer extends org.apache.camel.support.comp
         org.apache.camel.component.milvus.MilvusConfiguration target = (org.apache.camel.component.milvus.MilvusConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
+        case "capempath":
+        case "caPemPath": return target.getCaPemPath();
         case "client": return target.getClient();
+        case "clientkeypath":
+        case "clientKeyPath": return target.getClientKeyPath();
+        case "clientpempath":
+        case "clientPemPath": return target.getClientPemPath();
         case "host": return target.getHost();
         case "port": return target.getPort();
+        case "secure": return target.isSecure();
+        case "servername":
+        case "serverName": return target.getServerName();
+        case "serverpempath":
+        case "serverPemPath": return target.getServerPemPath();
         case "timeout": return target.getTimeout();
         case "token": return target.getToken();
         default: return null;

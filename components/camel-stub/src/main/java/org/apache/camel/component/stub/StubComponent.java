@@ -21,7 +21,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -41,9 +40,15 @@ import org.apache.camel.support.NormalizedUri;
 @org.apache.camel.spi.annotations.Component("stub")
 public class StubComponent extends SedaComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "Whether to also register each stub endpoint in the endpoint registry under its URI without the"
+                            + " stub: prefix, so that looking up kafka:cheese returns the endpoint of stub:kafka:cheese.")
     private boolean shadow;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The pattern that selects which stub endpoints shadow is applied to. It is matched against the"
+                            + " whole endpoint URI including the stub: prefix, as an exact URI, a wildcard with a trailing *"
+                            + " (such as stub:kafka*), or a regular expression. If not set, shadow applies to all stub"
+                            + " endpoints.")
     private String shadowPattern;
 
     // guards making room in a queue without consumers, as the endpoints of a queue may have several producers
@@ -94,10 +99,6 @@ public class StubComponent extends SedaComponent {
         return shadow;
     }
 
-    /**
-     * If shadow is enabled then the stub component will register a shadow endpoint with the actual uri that refers to
-     * the stub endpoint, meaning you can lookup the endpoint via both stub:kafka:cheese and kafka:cheese.
-     */
     public void setShadow(boolean shadow) {
         this.shadow = shadow;
     }
@@ -106,12 +107,6 @@ public class StubComponent extends SedaComponent {
         return shadowPattern;
     }
 
-    /**
-     * If shadow is enabled then this pattern can be used to filter which components to match. Multiple patterns can be
-     * separated by comma.
-     *
-     * @see org.apache.camel.support.EndpointHelper#matchEndpoint(CamelContext, String, String)
-     */
     public void setShadowPattern(String shadowPattern) {
         this.shadowPattern = shadowPattern;
     }

@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.grpc.auth.jwt;
 
+import java.time.Instant;
+
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 
@@ -27,10 +30,28 @@ public final class JwtHelper {
     private JwtHelper() {
     }
 
+    /**
+     * Creates a token without the iat (issued at) and exp (expires at) claims, which is valid until the secret changes.
+     */
     public static String createJwtToken(JwtAlgorithm algorithmName, String secret, String issuer, String subject) {
+        return createJwtToken(algorithmName, secret, issuer, subject, null, null);
+    }
+
+    /**
+     * Creates a token with the given iat (issued at) and exp (expires at) claims. A null value leaves the claim out.
+     */
+    public static String createJwtToken(
+            JwtAlgorithm algorithmName, String secret, String issuer, String subject, Instant issuedAt, Instant expiresAt) {
         try {
             Algorithm algorithm = selectAlgorithm(algorithmName, secret);
-            return JWT.create().withIssuer(issuer).withSubject(subject).sign(algorithm);
+            JWTCreator.Builder builder = JWT.create().withIssuer(issuer).withSubject(subject);
+            if (issuedAt != null) {
+                builder.withIssuedAt(issuedAt);
+            }
+            if (expiresAt != null) {
+                builder.withExpiresAt(expiresAt);
+            }
+            return builder.sign(algorithm);
         } catch (JWTCreationException e) {
             throw new IllegalArgumentException("Unable to create JWT token", e);
         }

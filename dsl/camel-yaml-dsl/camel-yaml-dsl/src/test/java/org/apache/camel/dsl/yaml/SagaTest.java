@@ -89,10 +89,10 @@ class SagaTest extends YamlTestSupport {
         assertThat(saga.getCompensation()).isEqualTo("direct:compensation");
         assertThat(saga.getCompletion()).isEqualTo("direct:completion");
 
-        // saga spans the entire route so steps are inserted before any saga specific step
-        // https://issues.apache.org/jira/browse/CAMEL-17129
-        assertThat(((ToDefinition) saga.getOutputs().get(0)).getEndpointUri()).isEqualTo("mock:result");
-        assertThat(((ToDefinition) saga.getOutputs().get(1)).getEndpointUri()).isEqualTo("direct:something");
+        // saga spans the entire route, and the steps keep the order they are written in: the nested steps of the
+        // saga, then the steps after it (CAMEL-17129)
+        assertThat(((ToDefinition) saga.getOutputs().get(0)).getEndpointUri()).isEqualTo("direct:something");
+        assertThat(((ToDefinition) saga.getOutputs().get(1)).getEndpointUri()).isEqualTo("mock:result");
 
         assertThat(saga.getOptions().size()).isEqualTo(2);
         assertThat(saga.getOptions().get(0).getKey()).isEqualTo("o1");

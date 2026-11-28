@@ -23,7 +23,7 @@ public final class KMSHeaders {
     @Metadata(label = "producer",
               description = "The operation that the producer performs, which replaces the operation of the endpoint. If this"
                             + " header is not set, an exchange property of the same name replaces it.",
-              javaType = "String")
+              javaType = "String", enums = "encrypt,decrypt,generateDataKey")
     public static final String OPERATION = "CamelAlibabaKmsOperation";
 
     @Metadata(label = "producer",
@@ -52,7 +52,7 @@ public final class KMSHeaders {
               description = "The key spec of the data key for generateDataKey. The value must be AES_256 or AES_128. KMS does"
                             + " not use it when the number of bytes is set as well. This header replaces the keySpec option. If"
                             + " this header is not set, an exchange property of the same name replaces the keySpec option.",
-              javaType = "String")
+              javaType = "String", enums = "AES_256,AES_128")
     public static final String KEY_SPEC = "CamelAlibabaKmsKeySpec";
 
     @Metadata(label = "producer",

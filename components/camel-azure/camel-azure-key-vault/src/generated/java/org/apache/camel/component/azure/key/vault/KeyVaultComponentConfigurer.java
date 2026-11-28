@@ -20,16 +20,40 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class KeyVaultComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private org.apache.camel.component.azure.key.vault.KeyVaultConfiguration getOrCreateConfiguration(KeyVaultComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.azure.key.vault.KeyVaultConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KeyVaultComponent target = (KeyVaultComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "clientid":
+        case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientsecret":
+        case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.key.vault.KeyVaultConfiguration.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.key.vault.KeyVaultOperation.class, value)); return true;
+        case "secretclient":
+        case "secretClient": getOrCreateConfiguration(target).setSecretClient(property(camelContext, com.azure.security.keyvault.secrets.SecretClient.class, value)); return true;
+        case "tenantid":
+        case "tenantId": getOrCreateConfiguration(target).setTenantId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"secretClient"};
     }
 
     @Override
@@ -37,8 +61,20 @@ public class KeyVaultComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.azure.key.vault.KeyVaultConfiguration.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.azure.key.vault.KeyVaultOperation.class;
+        case "secretclient":
+        case "secretClient": return com.azure.security.keyvault.secrets.SecretClient.class;
+        case "tenantid":
+        case "tenantId": return java.lang.String.class;
         default: return null;
         }
     }
@@ -49,8 +85,20 @@ public class KeyVaultComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "clientid":
+        case "clientId": return getOrCreateConfiguration(target).getClientId();
+        case "clientsecret":
+        case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
+        case "configuration": return target.getConfiguration();
+        case "credentialtype":
+        case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "secretclient":
+        case "secretClient": return getOrCreateConfiguration(target).getSecretClient();
+        case "tenantid":
+        case "tenantId": return getOrCreateConfiguration(target).getTenantId();
         default: return null;
         }
     }

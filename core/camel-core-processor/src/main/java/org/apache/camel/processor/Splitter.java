@@ -60,6 +60,7 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.getVirtualMachineError;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -612,6 +613,13 @@ public class Splitter extends MulticastProcessor {
         if (hasException) {
             tracker.recordFailure(index, subExchange.getException());
 
+            // a VirtualMachineError is never swallowed by the thresholds: it stops the split, which keeps the original
+            // exchange and fails it (CAMEL-27515)
+            if (getVirtualMachineError(subExchange.getException()) != null) {
+                tracker.markStopped();
+                return false;
+            }
+
             // check if we've exceeded the max failed records
             if (maxFailedRecords > 0 && tracker.getFailureCount() >= maxFailedRecords) {
                 tracker.markStopped();
@@ -737,9 +745,6 @@ public class Splitter extends MulticastProcessor {
                 String value;
                 try {
                     value = watermarkExpression.evaluate(subExchange, String.class);
-                } catch (VirtualMachineError e) {
-                    // left as before: the application must not handle a JVM-level failure with Camel's error handling
-                    throw e;
                 } catch (Throwable e) {
                     // fail the item, as an exception (or an Error such as a NoClassDefFoundError) thrown here would
                     // make the split exchange hang (never complete)

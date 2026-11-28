@@ -43,6 +43,13 @@ public class LangChain4jWebSearchComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * The configuration that each endpoint starts from. Options set on the endpoint override it.
+     */
+    public void setConfiguration(LangChain4jWebSearchConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LangChain4jWebSearchConfiguration configuration = this.configuration.copy();

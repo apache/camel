@@ -36,7 +36,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+ * Sign message bodies and verify their signatures with java.security.Signature of the Java Cryptography Architecture.
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name",
              remote = false, producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },

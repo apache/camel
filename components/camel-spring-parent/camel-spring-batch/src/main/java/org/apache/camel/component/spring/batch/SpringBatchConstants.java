@@ -25,7 +25,9 @@ public final class SpringBatchConstants {
 
     public static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
 
-    @Metadata(description = "The name of the Batch Job to use. Only used when the endpoint has jobFromHeader=true.",
+    @Metadata(description = "The name of the Spring Batch job to launch for this message, looked up like the jobName path."
+                            + " Only read when the endpoint has jobFromHeader=true. Like every other header, it is also"
+                            + " passed to the job as a job parameter.",
               javaType = "String")
     public static final String JOB_NAME = "CamelSpringBatchJobName";
 

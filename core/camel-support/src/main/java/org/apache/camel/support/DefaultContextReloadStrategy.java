@@ -19,6 +19,8 @@ package org.apache.camel.support;
 import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -43,6 +45,9 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContextReloadStrategy.class);
 
+    // one reload at a time: a reload removes all the routes and then creates them again from their definitions, so two
+    // reloads that overlap would each create a copy of every route
+    private final Lock reloadLock = new ReentrantLock();
     private CamelContext camelContext;
     private int succeeded;
     private int failed;
@@ -63,8 +68,21 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
         onReload("JMX Management");
     }
 
+    /**
+     * Reloads the CamelContext. Reloads run one at a time: a reload requested while another one runs (from JMX, the
+     * developer console or a secret refresh task, for example) waits for it to complete, and then runs.
+     */
     @Override
     public void onReload(Object source) {
+        reloadLock.lock();
+        try {
+            doReload(source);
+        } finally {
+            reloadLock.unlock();
+        }
+    }
+
+    private void doReload(Object source) {
         LOG.info("Reloading CamelContext ({}) triggered by: {}", camelContext.getName(), source);
         try {
             lastError = null;

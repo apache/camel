@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.kafka.consumer.support.classic;
 
+import java.util.Collection;
+
 import org.apache.camel.component.kafka.SeekPolicy;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +45,20 @@ public class SeekPolicyPartitionAssignmentAdapter implements PartitionAssignment
 
     @Override
     public void handlePartitionAssignment() {
+        handlePartitionAssignment(consumer.assignment());
+    }
+
+    @Override
+    public void handlePartitionAssignment(Collection<TopicPartition> partitions) {
+        if (partitions.isEmpty()) {
+            return;
+        }
         if (seekPolicy == SeekPolicy.BEGINNING) {
-            LOG.debug("Seeking from the beginning of topic");
-            consumer.seekToBeginning(consumer.assignment());
+            LOG.debug("Seeking from the beginning of topic for partitions {}", partitions);
+            consumer.seekToBeginning(partitions);
         } else if (seekPolicy == SeekPolicy.END) {
-            LOG.debug("Seeking from the end off the topic");
-            consumer.seekToEnd(consumer.assignment());
+            LOG.debug("Seeking from the end of topic for partitions {}", partitions);
+            consumer.seekToEnd(partitions);
         }
     }
 }

@@ -1,0 +1,247 @@
+= LangChain4j Content Retriever
+:doctitle: LangChain4j Content Retriever
+:shortname: langchain4j-content-retriever
+:artifactid: camel-langchain4j-core
+:description: Use Camel routes as LangChain4j content retrievers for retrieval-augmented generation
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The `CamelContentRetriever` turns a Camel endpoint — a route, a Kamelet or a component — into a LangChain4j
+`ContentRetriever`, so that https://docs.langchain4j.dev/tutorials/rag[retrieval-augmented generation] can retrieve
+content from any system Camel can reach: a REST API, a database, a JMS queue, an LDAP server, a legacy mainframe.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-langchain4j-core</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Usage
+
+Create one retriever per content source, register it with the `CamelContext` and wire it into a LangChain4j
+`RetrievalAugmentor`:
+
+[source,java]
+----
+CamelContentRetriever orders = new CamelContentRetriever(camelContext, "orders", "direct:orders")
+        .setTimeout(Duration.ofSeconds(2))
+        .setOnError(OnError.EMPTY)
+        .setMaxResults(5);
+camelContext.addService(orders);
+
+RetrievalAugmentor augmentor = DefaultRetrievalAugmentor.builder()
+        .queryRouter(new DefaultQueryRouter(orders, knowledgeBase))
+        .contentInjector(DefaultContentInjector.builder()
+                .metadataKeysToInclude(List.of("camel_retrieval_source", "camel_retrieval_document_id"))
+                .build())
+        .build();
+----
+
+The first constructor argument is the source name, the second the endpoint URI. The name identifies the source in
+logs and in the `camel_retrieval_source` segment metadata.
+
+IMPORTANT: Register every retriever with `CamelContext.addService(...)`, after configuring it: the settings cannot
+change once it has started. A retriever that is only `start()`ed but not registered still works, but is not stopped
+with the context: call `stop()` yourself. Registering a retriever that is already started is allowed, as long as it
+was created with the same `CamelContext`.
+
+== What the Route Receives
+
+The retriever sends an InOut exchange to the endpoint: the query text is the message body, and the query metadata
+is set as exchange properties:
+
+[width="100%",cols="3,3,4",options="header"]
+|===
+|Property |Source |Value
+
+|`CamelLangChain4jRetrieverUserMessage` |query metadata |text of the original user message; absent when the message
+is not a single text part, for example a multimodal message with text and an image
+|`CamelLangChain4jRetrieverMemoryId` |query metadata |chat memory id of the AI Service invocation
+|`CamelLangChain4jRetrieverParams` |invocation parameters |read-only `Map<String, Object>` of the AI Service invocation
+parameters, absent when there are none
+|===
+
+Only `CamelLangChain4jRetrieverParams` carries identity: to scope a search to the caller's data, pass the caller's
+identity as an AI Service invocation parameter and read it from there, for example
+`${exchangeProperty.CamelLangChain4jRetrieverParams[customerId]}` in the Simple language.
+
+The body is the query, often rewritten by a query transformer. `CamelLangChain4jRetrieverUserMessage` is the original user
+text, before any rewriting: use it when the route needs the user's own words, but treat it as just as untrusted as the
+body — it is never an identity.
+
+The properties are `Camel`-prefixed, so a `HeaderFilterStrategy` removes them should a route copy them to headers.
+
+== What the Route Returns
+
+The response body becomes the content list, one `Content` per element:
+
+[width="100%",cols="3,7",options="header"]
+|===
+|Body |Result
+
+|`null`, empty collection |no content
+|`String` elements |used as-is
+|`Content` / `TextSegment` elements |used as-is, keeping their metadata
+|`EmbeddingMatch` elements |the embedded item, with the score and the embedding id of the match as content metadata;
+the vector is dropped. This is the default output of a `langchain4j-embeddingstore` search
+|`Map` elements |one `key: value` line per entry
+|anything else |converted to `String` with the Camel type converter; a plain object without a converter gives its
+`toString()` (`Order@1b2c3d`), so marshal such bodies to text first, for example to JSON
+|===
+
+A `Collection`, an object array, an `Iterator` or a `Stream` body is split into its elements; any other body is a
+single element. Blank elements are skipped. Reading stops once `maxResults` items or `maxChars` characters are
+converted, so the rest of an `Iterator` or a `Stream` is never read. A body holding a resource — a `Stream`, a
+`Closeable` iterator such as the `Scanner` of `tokenize` — is closed afterwards, and also when the route fails or
+answers after the `timeout`.
+
+The body is converted after the route has completed. A body that the route closes on completion, such as a camel-sql
+`StreamList` result, gives no content: materialize it in the route instead (`outputType=SelectList` for camel-sql).
+
+Response headers prefixed with `langchain4j.metadata.` are copied to the segment metadata with the prefix stripped.
+
+=== Metadata Keys
+
+The retriever writes `camel_retrieval_*` keys, and reads the `camel_ingest_*` keys that
+xref:ROOT:langchain4j-ingest-component.adoc[LangChain4j Ingest] writes on every segment it stores: ingestion is the write
+half of a RAG pipeline, the retriever the read half.
+
+[width="100%",cols="3,2,5",options="header"]
+|===
+|Key |Written by |Value
+
+|`camel_retrieval_source` |retriever |the source name, always; a segment cannot change it
+|`camel_retrieval_document_id` |retriever |the id to cite, from the first of: the `documentIdKey` entry of a `Map`
+element or `documentIdKey` metadata key of a `TextSegment` or `Content` element, the key already set on the element, or
+its `camel_ingest_document_id`
+|`camel_ingest_document_id` |ingest |the id of the ingested document, kept as-is
+|`camel_ingest_pipeline` |ingest |the ingestion pipeline name, kept as-is
+|`camel_ingest_content_type` |ingest |the MIME type of a media placeholder segment, kept as-is
+|===
+
+The `camel_retrieval_*` and `camel_ingest_*` keys never come from response headers, so a remote system cannot forge
+them. Only the keys listed in the content injector's `metadataKeysToInclude` reach the prompt.
+
+A media hit from a store written by ingest is a placeholder segment whose text is the document id: turn it into text
+in the route (a caption, a transcript) or drop it, rather than returning it as content.
+
+== Failure and Cost Control
+
+Retrieval runs over a bounded executor owned by the retriever, and `retrieve()` blocks the caller until the route
+answers or the configured `timeout` elapses.
+
+[width="100%",cols="3,3,4",options="header"]
+|===
+|Option |Default |Effect
+
+|`timeout` |30 seconds |how long `retrieve()` waits for the route, time spent in the queue included; `null` waits
+until the route answers. The conversion of the response body comes after it, on the calling thread, bounded by
+`maxResults` and `maxChars`
+|`onError` |`FAIL` |`FAIL` throws a `CamelExecutionException`, `EMPTY` logs a warning and returns no content
+|`maxResults` |`0` (unlimited) |maximum number of content items this source contributes
+|`maxChars` |`0` (unlimited) |maximum number of characters this source contributes across all items
+|`concurrency` |2 |number of route calls this retriever runs in parallel
+|`queueCapacity` |64 |number of calls that may wait for a free thread; beyond it the call follows `onError`.
+`concurrency + queueCapacity` must not exceed `Integer.MAX_VALUE`
+|`documentIdKey` |none |the key of the id to cite: a `Map` entry, or a `TextSegment` / `Content` metadata key; see
+<<Metadata Keys>>
+|===
+
+`OnError.EMPTY` makes a source best-effort: a failing or slow source degrades the answer's quality instead of
+failing the whole AI interaction. `onError` covers a rejected call, a timeout, a route failure and a response body that
+cannot be converted to content. Two cases never follow it: a `VirtualMachineError` (such as `OutOfMemoryError`) is
+rethrown, and an interrupt of the waiting caller throws a `CamelExecutionException` and keeps the thread interrupted.
+
+WARNING: Without a `timeout`, a hung source blocks the AI call forever, whatever `onError` says.
+
+The `concurrency` and `queueCapacity` bounds apply with platform and virtual threads
+(`camel.threads.virtual.enabled`) alike: a call beyond them is rejected at once, it never waits for room.
+
+When the `timeout` elapses, a call still waiting in the queue is dropped without reaching the route, but a call
+already running keeps running until the route answers, holding its thread: cancelling does not interrupt it. Set
+the component timeouts in the route as well (`requestTimeout`, connection timeouts) so the work itself stops.
+
+When the retriever stops, a call still queued follows `onError` without reaching the route, and a running call is
+interrupted. A route that does not react to the interrupt keeps running, and its caller keeps waiting until the
+`timeout` elapses.
+
+=== Monitoring
+
+`OnError.EMPTY` hides a failing source from the AI interaction, so the retriever counts its calls:
+`getRetrievalCount()`, `getFailureCount()` and `getFailureCount(RetrievalFailure)`, with the reasons `REJECTED`,
+`STOPPED`, `TIMEOUT`, `ROUTE_FAILURE` and `CONVERSION`. Each failure also logs a warning with its reason under
+`EMPTY`.
+
+With `camel-management` on the classpath, the counters are attributes of the retriever's service MBean. Camel registers
+the MBean of a service added while the context starts; for a retriever added later, enable `registerAlways` on the
+management agent (`context.getManagementStrategy().getManagementAgent().setRegisterAlways(true)`, or the
+`org.apache.camel.jmx.registerAlways` system property).
+
+=== Compared with LangChain4j Ingest
+
+Both halves fail loudly by default, but they answer different callers:
+
+[width="100%",cols="2,4,4",options="header"]
+|===
+| |Ingest |Retriever
+
+|default |the exception propagates to the consumer, which retries or quarantines |`FAIL`: the exception propagates to
+the AI interaction
+|best effort |none: a failed document is retried |`EMPTY`: the source contributes no content, the answer goes on
+|no content |`IngestResult` outcome `EMPTY`, `SKIPPED` or `FILTERED`, returned as the body |an empty list; the
+reason is only in the counters and the log, as LangChain4j's `ContentRetriever` returns content only
+|size limits |`maxDocumentSize`, `0` (off) by default |`maxResults`, `maxChars`, `0` (unlimited) by default
+|===
+
+`OnError.EMPTY` and the ingest outcome `EMPTY` are not the same thing: the first is a failure turned into no content,
+the second a blank document.
+
+== Routing Between Sources
+
+A `LanguageModelQueryRouter` picks the sources relevant to the query from their descriptions:
+
+[source,java]
+----
+CamelContentRetriever orders = new CamelContentRetriever(camelContext, "orders", "direct:orders");
+CamelContentRetriever articles = new CamelContentRetriever(camelContext, "articles", "direct:articles");
+camelContext.addService(orders);
+camelContext.addService(articles);
+
+QueryRouter router = LanguageModelQueryRouter.builder()
+        .chatModel(chatModel)
+        .retrieverToDescription(Map.of(
+                orders, "The customer's recent orders",
+                articles, "Support articles about orders and refunds"))
+        .build();
+
+RetrievalAugmentor augmentor = DefaultRetrievalAugmentor.builder()
+        .queryRouter(router)
+        .contentInjector(new DefaultContentInjector())
+        .build();
+----
+
+With a single query routed to a single source, LangChain4j calls the retriever on the caller thread; with several
+sources or an `ExpandingQueryTransformer` producing several queries, retrieval fans out to the augmentor's
+executor. The retriever works the same either way.
+
+== Security Considerations
+
+- Routes receive identity only through the `CamelLangChain4jRetrieverParams` property. Pass the caller's identity as an AI
+Service invocation parameter and scope every query with it — never trust data that is not scoped this way.
+- Give the retrieval route read-only credentials for the backing system: it answers queries, it does not write.
+- When the route templates the query into an endpoint URI or a statement (SQL, LDAP filter, REST path), prefer
+parameterized APIs and escape the value; the query text comes from an LLM-transformed user message.
+- Response headers prefixed with `langchain4j.metadata.` become segment metadata, including headers set by a remote
+system (for example an `http:` response). The `camel_retrieval_*` and `camel_ingest_*` keys are protected, and only
+the keys listed in the content injector's `metadataKeysToInclude` reach the prompt: remove the headers you do not
+trust in the route.

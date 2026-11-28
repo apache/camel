@@ -23,17 +23,25 @@ import org.apache.camel.spi.Metadata;
  */
 public final class VelocityConstants {
 
-    @Metadata(description = "The name of the velocity template.", javaType = "String")
+    @Metadata(description = "The URI of a template that the producer renders in place of the template of resourceUri, in the"
+                            + " same form as resourceUri. Only used when allowTemplateFromHeader is true. The producer removes"
+                            + " the header and hands the exchange to the velocity endpoint of that URI, with the same options as"
+                            + " this endpoint, which renders the text of a CamelVelocityTemplate header instead if one is set.",
+              javaType = "String")
     public static final String VELOCITY_RESOURCE_URI = "CamelVelocityResourceUri";
-    @Metadata(description = "The content of the velocity template.", javaType = "String")
+    @Metadata(description = "The text of a template that the producer renders in place of the template of resourceUri. Only"
+                            + " used when allowTemplateFromHeader is true. The producer removes the header after reading it.",
+              javaType = "String")
     public static final String VELOCITY_TEMPLATE = "CamelVelocityTemplate";
-    @Metadata(description = "The velocity context to use.", javaType = "org.apache.velocity.context.Context")
+    @Metadata(description = "The org.apache.velocity.context.Context that the template reads its data from, in place of the"
+                            + " context that the producer builds from the exchange with the body, the headers and the other"
+                            + " entries. Only used when allowTemplateFromHeader is true. The CamelVelocitySupplementalContext"
+                            + " header is then ignored.",
+              javaType = "org.apache.velocity.context.Context")
     public static final String VELOCITY_CONTEXT = "CamelVelocityContext";
-    @Metadata(description = "To add additional information to the used VelocityContext.\n" +
-                            "The value of this header should be a `Map` with key/values that will\n" +
-                            "added (override any existing key with the same name). \n" +
-                            "This can be used to pre setup some common key/values you want to reuse\n" +
-                            "in your velocity endpoints.",
+    @Metadata(description = "A Map of entries that the producer adds to the context that it builds from the exchange, where an"
+                            + " entry replaces the one with the same key, such as body or headers. Only used when"
+                            + " allowTemplateFromHeader is true, and not when the CamelVelocityContext header is set.",
               javaType = "Map<String, Object>")
     public static final String VELOCITY_SUPPLEMENTAL_CONTEXT = "CamelVelocitySupplementalContext";
 

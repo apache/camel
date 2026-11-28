@@ -22,5 +22,9 @@ package org.apache.camel.component.geocoder.http;
 public enum AuthenticationMethod {
 
     Basic,
+    /**
+     * Not supported: the proxyAuthMethod option accepts only Basic.
+     */
+    @Deprecated
     Digest
 }

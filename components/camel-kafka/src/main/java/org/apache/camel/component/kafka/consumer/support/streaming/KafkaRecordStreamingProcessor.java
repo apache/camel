@@ -731,10 +731,11 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             // when route uses NOOP Commit Manager it will rely
             // on the route implementation to explicitly commit offset
             // when route uses Synch/Asynch Commit Manager it commits the offset of the
-            // records before the failing record. That commit can fail or time out: the
+            // records before the failing record, also with manual commits (whether the route
+            // committed them or not). That commit can fail or time out: the
             // consumer still breaks out and polls again from the last committed offset
             try {
-                commitManager.commit(topicPartition);
+                commitManager.commitProcessedOffset(topicPartition);
             } catch (WakeupException | InterruptException e) {
                 throw e;
             } catch (KafkaException e) {

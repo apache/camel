@@ -37,7 +37,7 @@ class KubernetesPodLogsTest extends KubernetesBaseTestSupport {
     public void shouldHandlePodNotFound() throws Exception {
         KubernetesPodLogs command = createCommand();
         command.name = "mickey-mouse";
-        command.maxRetryAttempts = 2; // total timeout of 4 seconds
+        command.maxRetryAttempts = 2;
         CliException e = Assertions.assertThrows(CliException.class, command::doCall);
         Assertions.assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
         Assertions.assertEquals("No pod with label app.kubernetes.io/name=mickey-mouse", e.getMessage());
@@ -65,6 +65,12 @@ class KubernetesPodLogsTest extends KubernetesBaseTestSupport {
         podLog.name = "routes";
         int exit = podLog.doCall();
         Assertions.assertEquals(0, exit);
+
+        // the mock server answers the log of the running pod with one line, so the command reads it again until it
+        // has the 10 lines it may print
+        String out = printer.getOutput();
+        Assertions.assertTrue(out.contains("Retry 1/30 Pod log for label app.kubernetes.io/name=routes"), out);
+        Assertions.assertTrue(out.contains("Stopped pod logging!"), out);
     }
 
     @Test
@@ -84,16 +90,16 @@ class KubernetesPodLogsTest extends KubernetesBaseTestSupport {
 
         var podLog = createCommand();
         podLog.name = "job";
-        long start = System.currentTimeMillis();
         podLog.doCall();
 
-        Assertions.assertTrue(System.currentTimeMillis() - start < 2000, "no retry for a finished pod");
-        Assertions.assertFalse(printer.getOutput().contains("Retry"), printer.getOutput());
+        Assertions.assertFalse(printer.getOutput().contains("Retry"), "no retry for a finished pod: " + printer.getOutput());
     }
 
     private KubernetesPodLogs createCommand() {
         KubernetesPodLogs command = new CamelJBangMain().withPrinter(printer).command(new KubernetesPodLogs());
         command.withClient(kubernetesClient);
+        // the retries of the command, without its wait of 2 seconds
+        command.retryDelayMillis = 10;
         return command;
     }
 

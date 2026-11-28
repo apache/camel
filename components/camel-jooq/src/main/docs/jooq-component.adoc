@@ -2,7 +2,7 @@
 :doctitle: JOOQ
 :shortname: jooq
 :artifactid: camel-jooq
-:description: Store and retrieve Java objects from an SQL database using JOOQ.
+:description: Store and consume jOOQ records in an SQL database, and run jOOQ or plain SQL queries.
 :since: 3.0
 :supportlevel: Stable
 :tabs-sync-option:

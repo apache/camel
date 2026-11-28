@@ -53,6 +53,7 @@ public class TraitCatalog {
         register(new AnnotationTrait());
         register(new CamelTrait());
         register(new JolokiaTrait());
+        register(new PrometheusTrait());
     }
 
     public List<Trait> allTraits() {

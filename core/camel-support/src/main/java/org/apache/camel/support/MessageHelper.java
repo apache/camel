@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
@@ -972,117 +973,28 @@ public final class MessageHelper {
 
         // exchange variables
         if (includeExchangeVariables && message.getExchange().hasVariables()) {
-            JsonArray arr = new JsonArray();
-            // sort the exchange variables so they are listed A..Z
-            Map<String, Object> properties = new TreeMap<>(message.getExchange().getVariables());
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                Object value = entry.getValue();
-                String type = ObjectHelper.classCanonicalName(value);
-                JsonObject jh = new JsonObject();
-                String key = entry.getKey();
-                jh.put("key", key);
-                if (type != null) {
-                    jh.put("type", type);
-                }
-                if (value != null) {
-                    Object s = Jsoner.trySerialize(value);
-                    if (s == null) {
-                        // cannot JSon serialize out of the box, so we need to use string value
-                        try {
-                            s = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    } else {
-                        // use the value as-is because it can be serialized in json
-                        s = value;
-                    }
-                    jh.put("value", s);
-                }
-                arr.add(jh);
-            }
+            Map<String, Object> variables = new TreeMap<>(message.getExchange().getVariables());
+            JsonArray arr = serializeMapSection(variables, message, allowCachedStreams, allowStreams, allowFiles, maxChars,
+                    false, null);
             if (!arr.isEmpty()) {
                 jo.put("exchangeVariables", arr);
             }
         }
         // exchange properties
         if (includeExchangeProperties) {
-            JsonArray arr = new JsonArray();
-            // sort the exchange properties so they are listed A..Z
             Map<String, Object> properties = new TreeMap<>(message.getExchange().getAllProperties());
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                Object value = entry.getValue();
-                String type = ObjectHelper.classCanonicalName(value);
-                JsonObject jh = new JsonObject();
-                String key = entry.getKey();
-                // skip some special that are too big
-                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
-                        || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
-                    continue;
-                }
-                jh.put("key", key);
-                if (type != null) {
-                    jh.put("type", type);
-                }
-                if (ImportantHeaderUtils.isImportantHeader(key)) {
-                    jh.put("important", true);
-                }
-                if (value != null) {
-                    Object s = Jsoner.trySerialize(value);
-                    if (s == null) {
-                        // cannot JSon serialize out of the box, so we need to use string value
-                        try {
-                            s = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    } else {
-                        // use the value as-is because it can be serialized in json
-                        s = value;
-                    }
-                    jh.put("value", s);
-                }
-                arr.add(jh);
-            }
+            Set<String> skipKeys = Set.of(Exchange.MESSAGE_HISTORY, Exchange.GROUPED_EXCHANGE, Exchange.FILE_EXCHANGE_FILE);
+            JsonArray arr = serializeMapSection(properties, message, allowCachedStreams, allowStreams, allowFiles, maxChars,
+                    true, skipKeys);
             if (!arr.isEmpty()) {
                 jo.put("exchangeProperties", arr);
             }
         }
         // headers
         if (message.hasHeaders()) {
-            JsonArray arr = new JsonArray();
-            // sort the headers so they are listed A..Z
             Map<String, Object> headers = new TreeMap<>(message.getHeaders());
-            for (Map.Entry<String, Object> entry : headers.entrySet()) {
-                Object value = entry.getValue();
-                String type = ObjectHelper.classCanonicalName(value);
-                JsonObject jh = new JsonObject();
-                String key = entry.getKey();
-                jh.put("key", key);
-                if (type != null) {
-                    jh.put("type", type);
-                }
-                if (ImportantHeaderUtils.isImportantHeader(key)) {
-                    jh.put("important", true);
-                }
-                // dump header value as JSon, use Camel type converter to convert to String
-                if (value != null) {
-                    Object s = Jsoner.trySerialize(value);
-                    if (s == null) {
-                        // cannot JSon serialize out of the box, so we need to use string value
-                        try {
-                            s = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    } else {
-                        // use the value as-is because it can be serialized in json
-                        s = value;
-                    }
-                    jh.put("value", s);
-                }
-                arr.add(jh);
-            }
+            JsonArray arr
+                    = serializeMapSection(headers, message, allowCachedStreams, allowStreams, allowFiles, maxChars, true, null);
             if (!arr.isEmpty()) {
                 jo.put("headers", arr);
             }
@@ -1145,6 +1057,47 @@ public final class MessageHelper {
         }
 
         return root;
+    }
+
+    /**
+     * Serializes a map of entries into a JsonArray, with optional important header marking and key skipping.
+     */
+    private static JsonArray serializeMapSection(
+            Map<String, Object> entries, Message message,
+            boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars,
+            boolean checkImportant, Set<String> skipKeys) {
+        JsonArray arr = new JsonArray();
+        for (Map.Entry<String, Object> entry : entries.entrySet()) {
+            String key = entry.getKey();
+            if (skipKeys != null && skipKeys.contains(key)) {
+                continue;
+            }
+            Object value = entry.getValue();
+            String type = ObjectHelper.classCanonicalName(value);
+            JsonObject jh = new JsonObject();
+            jh.put("key", key);
+            if (type != null) {
+                jh.put("type", type);
+            }
+            if (checkImportant && ImportantHeaderUtils.isImportantHeader(key)) {
+                jh.put("important", true);
+            }
+            if (value != null) {
+                Object s = Jsoner.trySerialize(value);
+                if (s == null) {
+                    try {
+                        s = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                } else {
+                    s = value;
+                }
+                jh.put("value", s);
+            }
+            arr.add(jh);
+        }
+        return arr;
     }
 
     /**

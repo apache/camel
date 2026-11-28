@@ -332,6 +332,11 @@ systems where failing fast is preferred over blocking.
 message broker consumers and batch workloads where losing a task is unacceptable and latency is less critical.
 |===
 
+A thread pool that is shut down runs no new task, whatever the policy. This happens when a route uses a thread pool
+that is shut down by its owner (for example a shared pool), or when the route is removed. The EIPs then do not lose the
+task silently: the xref:components:eips:threads-eip.adoc[Threads] and xref:components:eips:wireTap-eip.adoc[Wire Tap]
+EIPs fail the exchange with a `RejectedExecutionException`, as with the `Abort` policy, so the error handler can react.
+
 With virtual threads, a task of the pool that submits more work to the same pool runs it at once when no permit is
 free, whatever the policy, instead of waiting (see <<virtual-threads>>).
 

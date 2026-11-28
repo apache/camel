@@ -42,6 +42,11 @@ retrieved, only the number of exchanges.
 * The Disruptor requires its consumers (multicasted or otherwise) to be
 statically configured. Adding or removing consumers on the fly requires
 complete flushing of all pending exchanges in the Disruptor.
+* While a Disruptor has no consumer, a reconfiguration (for example when
+its endpoint is added again) keeps the pending exchanges in a buffer for
+the first consumer. The queue can then hold more than `size` exchanges:
+`getRemainingCapacity()` does not count the buffered ones, and
+`getPendingExchangeCount()` does.
 * As a result of the reconfiguration: Data sent over a Disruptor is
 directly processed and 'gone' if there is at least one consumer, late
 joiners only get new exchanges published after they've joined.
@@ -266,6 +271,9 @@ spring beans.
 Since we have specified multipleConsumers=true on the Disruptor foo
 endpoint, we can have those two or more consumers receive their own copy
 of the message as a kind of _publish/subscriber_ style messaging.
+The message is completed once all consumers are done with it (as with SEDA): if a consumer fails, its failure is
+copied back to the message (the results of the consumers are not aggregated), so a producer waiting for the reply
+gets the failure, and the on completions of the caller run, only when all consumers are done.
 As the beans are part of a unit test, they simply send the message to a mock endpoint,
 but notice how we can use _@Consume_ to consume from the Disruptor.
 

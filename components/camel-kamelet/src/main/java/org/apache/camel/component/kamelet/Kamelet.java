@@ -168,12 +168,18 @@ public final class Kamelet {
     }
 
     /**
-     * Looking for OS environment variables that match the properties of the given Kamelet. At first lookup attempt is
-     * made without considering camelCase keys in the elements. The second lookup is converting camelCase to
-     * underscores.
+     * Looking for OS environment variables that match the properties of the given Kamelet. The elements (the Kamelet
+     * name, and the route id) are upper-cased, with dashes and dots replaced by underscores. The first lookup keeps a
+     * camelCase element as one word, the second lookup splits it with underscores.
      *
-     * For example given an ENV variable in either format: - CAMEL_KAMELET_AWSS3SOURCE_BUCKETNAMEORARN=myArn -
-     * CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN=myArn
+     * For example, given the Kamelet aws-s3-source used with the route id myRoute, these ENV variables all match:
+     * <ul>
+     * <li>CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN=myArn</li>
+     * <li>CAMEL_KAMELET_AWS_S3_SOURCE_BUCKETNAMEORARN=myArn</li>
+     * <li>CAMEL_KAMELET_AWS_S3_SOURCE_MYROUTE_BUCKET_NAME_OR_ARN=myArn</li>
+     * <li>CAMEL_KAMELET_AWS_S3_SOURCE_MY_ROUTE_BUCKET_NAME_OR_ARN=myArn</li>
+     * </ul>
+     * The dashes of the Kamelet name always become underscores: CAMEL_KAMELET_AWSS3SOURCE_... does not match.
      */
     public static void extractKameletEnvironmentVariables(Map<String, Object> properties, String... elements) {
         StringBuilder prefixBuffer = new StringBuilder(Kamelet.ENV_VAR_PREFIX);

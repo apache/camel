@@ -26,25 +26,27 @@ public final class IoTHubConstants {
     private static final String HEADER_PREFIX = "CamelAzureIoTHub";
 
     @Metadata(label = "producer",
-              description = "The target device id. Overrides the device id configured on the endpoint.",
+              description = "The ID of the device that sends the message. It replaces the deviceId of the endpoint, unless it"
+                            + " is empty.",
               javaType = "String")
     public static final String DEVICE_ID = HEADER_PREFIX + "DeviceId";
 
     @Metadata(label = "producer",
-              description = "The per-device IoT Hub connection string. Overrides the connection string "
-                            + "configured on the endpoint.",
+              description = "The connection string of the device. It replaces the connectionString option, unless it is"
+                            + " empty.",
               javaType = "String",
               secret = true)
     public static final String CONNECTION_STRING = HEADER_PREFIX + "ConnectionString";
 
     @Metadata(label = "producer",
-              description = "Overrides the configured delivery mode for this message.",
+              description = "What the producer sends for this message. It replaces the deliveryMode option.",
               javaType = "org.apache.camel.component.azure.iothub.IoTHubDeliveryMode")
     public static final String DELIVERY_MODE = HEADER_PREFIX + "DeliveryMode";
 
     @Metadata(label = "producer",
-              description = "Device twin reported properties to apply, as a Map<String, Object>. Used for TWIN "
-                            + "delivery and, in BOTH mode, alongside the telemetry message body.",
+              description = "The reported properties to set on the device twin, as a java.util.Map with String keys. TWIN"
+                            + " uses it instead of a Map body, and BOTH requires it. The producer sends only the properties"
+                            + " whose value differs from the current reported properties.",
               javaType = "java.util.Map")
     public static final String TWIN_PROPERTIES = HEADER_PREFIX + "TwinProperties";
 

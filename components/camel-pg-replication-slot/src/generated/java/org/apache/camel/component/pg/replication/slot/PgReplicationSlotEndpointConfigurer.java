@@ -60,6 +60,16 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "slotoptions":
         case "slotOptions": target.setSlotOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "sslcert":
+        case "sslCert": target.setSslCert(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkey":
+        case "sslKey": target.setSslKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslmode":
+        case "sslMode": target.setSslMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslpassword":
+        case "sslPassword": target.setSslPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslrootcert":
+        case "sslRootCert": target.setSslRootCert(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "statusinterval":
@@ -112,6 +122,16 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "slotoptions":
         case "slotOptions": return java.util.Map.class;
+        case "sslcert":
+        case "sslCert": return java.lang.String.class;
+        case "sslkey":
+        case "sslKey": return java.lang.String.class;
+        case "sslmode":
+        case "sslMode": return java.lang.String.class;
+        case "sslpassword":
+        case "sslPassword": return java.lang.String.class;
+        case "sslrootcert":
+        case "sslRootCert": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "statusinterval":
@@ -165,6 +185,16 @@ public class PgReplicationSlotEndpointConfigurer extends PropertyConfigurerSuppo
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "slotoptions":
         case "slotOptions": return target.getSlotOptions();
+        case "sslcert":
+        case "sslCert": return target.getSslCert();
+        case "sslkey":
+        case "sslKey": return target.getSslKey();
+        case "sslmode":
+        case "sslMode": return target.getSslMode();
+        case "sslpassword":
+        case "sslPassword": return target.getSslPassword();
+        case "sslrootcert":
+        case "sslRootCert": return target.getSslRootCert();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "statusinterval":

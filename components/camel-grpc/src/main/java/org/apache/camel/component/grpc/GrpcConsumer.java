@@ -17,6 +17,7 @@
 package org.apache.camel.component.grpc;
 
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import io.grpc.BindableService;
@@ -116,9 +117,22 @@ public class GrpcConsumer extends DefaultConsumer {
                     "Consumer strategy AGGREGATION and routeControlledStreamObserver are not compatible. Set the consumer strategy to PROPAGATION or DELEGATION");
         }
 
+        if (configuration.getAuthenticationType() == GrpcAuthType.GOOGLE) {
+            // GOOGLE makes the client send the OAuth2 tokens of a service account; there is no server side check of them
+            throw new IllegalArgumentException(
+                    "authenticationType GOOGLE is supported only on the producer. Use authenticationType JWT, or mutual TLS"
+                                               + " (negotiationType TLS), to authenticate the clients of a consumer");
+        }
+
         if (configuration.getNegotiationType() == NegotiationType.TLS) {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
+            if (ObjectHelper.isEmpty(configuration.getTrustCertCollectionResource())) {
+                // without trusted certificates, Netty verifies the clients with the default trust store of the JVM
+                throw new IllegalArgumentException(
+                        "trustCertCollectionResource must be set with negotiationType TLS: it names the CA certificates"
+                                                   + " whose client certificates the consumer accepts");
+            }
 
             SslContextBuilder sslContextBuilder
                     = SslContextBuilder
@@ -128,13 +142,9 @@ public class GrpcConsumer extends DefaultConsumer {
                                     ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
                                             configuration.getKeyResource()),
                                     configuration.getKeyPassword())
-                            .clientAuth(ClientAuth.REQUIRE);
-
-            if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
-                sslContextBuilder
-                        = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                configuration.getTrustCertCollectionResource()));
-            }
+                            .clientAuth(ClientAuth.REQUIRE)
+                            .trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
+                                    configuration.getTrustCertCollectionResource()));
 
             serverBuilder = serverBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());
         }
@@ -144,7 +154,8 @@ public class GrpcConsumer extends DefaultConsumer {
 
             serverBuilder = serverBuilder.intercept(new JwtServerInterceptor(
                     configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
-                    configuration.getJwtIssuer(), configuration.getJwtSubject()));
+                    configuration.getJwtIssuer(), configuration.getJwtSubject(),
+                    Duration.ofMillis(configuration.getJwtMaxTokenAge())));
         }
 
         // To configure RST_STREAM settings we need valid configuration for both maxRstFramesPerWindow & maxRstPeriodSeconds

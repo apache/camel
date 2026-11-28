@@ -49,7 +49,7 @@ public class SftpKeyUriConsumeIT extends SftpServerTestSupport {
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin"
                      + "&knownHostsUri=file:" + service.getKnownHostsFile()
-                     + "&privateKeyUri=file:./src/test/resources/sftp/id_rsa&privateKeyPassphrase=secret&useUserKnownHostsFile=false&delay=10000&disconnect=true")
+                     + "&privateKeyUri=file:./src/test/resources/sftp/id_rsa&privateKeyPassphrase=secret&useUserKnownHostsFile=false&disconnect=true")
                         .routeId("foo").autoStartup(false).to("mock:result");
             }
         };

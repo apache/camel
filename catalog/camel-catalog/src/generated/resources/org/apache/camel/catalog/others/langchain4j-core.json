@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "langchain4j-core",
+    "title": "LangChain4j Core",
+    "description": "LangChain4j core support for Camel AI components, and Camel endpoints as LangChain4j content retrievers",
+    "deprecated": false,
+    "firstVersion": "4.7.0",
+    "label": "ai",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-langchain4j-core",
+    "version": "4.24.0-SNAPSHOT"
+  }
+}

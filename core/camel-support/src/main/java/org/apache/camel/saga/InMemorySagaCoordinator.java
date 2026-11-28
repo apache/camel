@@ -57,6 +57,11 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemorySagaCoordinator.class);
+    // set on the exchanges that compensate or complete a step, to the id of their saga
+    private static final String FINALIZING_SAGA = "CamelInMemorySagaFinalizing";
+    // the id of the saga whose compensation or completion endpoint the current thread is calling: unlike the exchange
+    // property, a route cannot remove it (removeProperties("*")), so it covers the synchronous part of that route
+    private static final ThreadLocal<String> FINALIZING_ON_THREAD = new ThreadLocal<>();
 
     private final CamelContext camelContext;
     private final InMemorySagaService sagaService;
@@ -66,6 +71,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     private final AtomicReference<Status> currentStatus;
     // makes the status check and the enlistment of a step atomic with the change of status that ends the saga
     private final Lock lock = new ReentrantLock();
+    // the compensation or completion that ended the saga, set with that change of status: a caller that finds the saga
+    // already being compensated or completed gets its outcome, instead of a success before it is known
+    private volatile Finalization finalization;
 
     public InMemorySagaCoordinator(CamelContext camelContext, InMemorySagaService sagaService, String sagaId) {
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
@@ -125,7 +133,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
                 ScheduledFuture<?> timeoutFuture = sagaService.getExecutorService().schedule(() -> {
                     List<StepEnlistment> steps = end(Status.COMPENSATING);
                     if (steps != null) {
-                        doCompensate(exchange, steps);
+                        finish(doCompensate(exchange, steps));
                     }
                 }, step.getTimeoutInMilliseconds().get(), TimeUnit.MILLISECONDS);
                 timeoutFutures.add(timeoutFuture);
@@ -143,7 +151,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
         if (steps != null) {
             cancelTimeouts();
-            return doCompensate(exchange, steps).thenApply(res -> {
+            return finish(doCompensate(exchange, steps)).thenApply(res -> {
                 if (!res) {
                     throw new RuntimeCamelException(
                             "Unable to compensate all required steps of the saga " + sagaId);
@@ -152,14 +160,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             });
         }
 
-        Status status = currentStatus.get();
-        if (status != Status.COMPENSATING && status != Status.COMPENSATED) {
-            CompletableFuture<Void> res = new CompletableFuture<>();
-            res.completeExceptionally(new IllegalStateException("Cannot compensate: status is " + status));
-            return res;
-        }
-
-        return CompletableFuture.completedFuture(null);
+        return afterFinalization(exchange, Status.COMPENSATING, Status.COMPENSATED, "compensate");
     }
 
     @Override
@@ -168,7 +169,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
         if (steps != null) {
             cancelTimeouts();
-            return doComplete(exchange, steps).thenApply(res -> {
+            return finish(doComplete(exchange, steps)).thenApply(res -> {
                 if (!res) {
                     throw new RuntimeCamelException(
                             "Unable to complete all required steps of the saga " + sagaId);
@@ -177,14 +178,71 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             });
         }
 
-        Status status = currentStatus.get();
-        if (status != Status.COMPLETING && status != Status.COMPLETED) {
-            CompletableFuture<Void> res = new CompletableFuture<>();
-            res.completeExceptionally(new IllegalStateException("Cannot complete: status is " + status));
-            return res;
-        }
+        return afterFinalization(exchange, Status.COMPLETING, Status.COMPLETED, "complete");
+    }
 
+    /**
+     * The answer to a {@code compensate()} or {@code complete()} that found the saga no longer running: once the
+     * compensation or completion that ended the saga is done, success if it is of the kind asked for and succeeded,
+     * otherwise an {@link IllegalStateException} with the status.
+     * <p>
+     * A call from the compensation or completion of this saga itself (its route calls {@code saga:compensate}, say) is
+     * answered at once, as before: it would otherwise wait for the very finalization it is part of. Such a call is
+     * recognized by the thread that calls the compensation or completion endpoint, which covers the route even when it
+     * removes the exchange properties, or by the exchange property, which covers copies of the exchange that go on in
+     * other threads.
+     */
+    private CompletableFuture<Void> afterFinalization(
+            Exchange exchange, Status running, Status succeeded, String action) {
+        Finalization current = finalization;
+        boolean finalizing = sagaId.equals(FINALIZING_ON_THREAD.get())
+                || exchange != null && sagaId.equals(exchange.getProperty(FINALIZING_SAGA, String.class));
+        if (current == null || current.kind() != running || finalizing) {
+            return statusAnswer(running, succeeded, action);
+        }
+        // the status is set to the final one before the outcome is completed (see doCompensate and doComplete), so a
+        // failed outcome with the status still running is a finalization aborted by the stop of the saga service
+        return current.outcome().handle((res, ex) -> ex)
+                .thenCompose(ex -> ex != null && currentStatus.get() == running
+                        ? CompletableFuture.<Void> failedFuture(ex)
+                        : statusAnswer(running, succeeded, action));
+    }
+
+    private CompletableFuture<Void> statusAnswer(Status running, Status succeeded, String action) {
+        Status status = currentStatus.get();
+        if (status != running && status != succeeded) {
+            return CompletableFuture.failedFuture(new IllegalStateException("Cannot " + action + ": status is " + status));
+        }
         return CompletableFuture.completedFuture(null);
+    }
+
+    /**
+     * Completes the outcome of the finalization that ended the saga with the result of the compensation or completion,
+     * and returns the outcome, which {@link #abortFinalization(Throwable)} may complete first.
+     */
+    private CompletableFuture<Boolean> finish(CompletableFuture<Boolean> result) {
+        CompletableFuture<Boolean> outcome = finalization.outcome();
+        result.whenComplete((res, ex) -> {
+            if (ex != null) {
+                outcome.completeExceptionally(ex);
+            } else {
+                outcome.complete(res);
+            }
+        });
+        return outcome;
+    }
+
+    /**
+     * Fails the outcome of the compensation or completion that is still running when the saga service stops: its
+     * retries no longer run, so the callers that wait for it would otherwise never get an answer. A finalization that
+     * ends afterwards no longer changes the outcome. A finalization that already set its final status is not failed, as
+     * its outcome is about to be completed with its result.
+     */
+    void abortFinalization(Throwable cause) {
+        Finalization current = finalization;
+        if (current != null && currentStatus.get() == current.kind()) {
+            current.outcome().completeExceptionally(cause);
+        }
     }
 
     /**
@@ -196,6 +254,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         lock.lock();
         try {
             if (currentStatus.compareAndSet(Status.RUNNING, status)) {
+                finalization = new Finalization(status, new CompletableFuture<>());
                 return new ArrayList<>(enlistments);
             }
             return null;
@@ -268,7 +327,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         Exchange target = createExchange(exchange, endpoint, enlistment);
 
         return CompletableFuture.supplyAsync(() -> {
-            Exchange res = sagaService.getProducerTemplate().send(endpoint, target);
+            Exchange res = sendFinalizing(endpoint, target);
             Exception ex = res.getException();
             if (ex != null) {
                 throw new RuntimeCamelException(res.getException());
@@ -287,17 +346,41 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             } else {
                 CompletableFuture<Boolean> future = new CompletableFuture<>();
                 sagaService.getExecutorService().schedule(() -> {
-                    doFinalize(target, endpoint, enlistment, currentAttempt, description).whenComplete((res, ex) -> {
-                        if (ex != null) {
-                            future.completeExceptionally(ex);
-                        } else {
-                            future.complete(res);
-                        }
-                    });
+                    try {
+                        doFinalize(target, endpoint, enlistment, currentAttempt, description).whenComplete((res, ex) -> {
+                            if (ex != null) {
+                                future.completeExceptionally(ex);
+                            } else {
+                                future.complete(res);
+                            }
+                        });
+                    } catch (Exception e) {
+                        // such as the executor of the saga service rejecting the attempt: the scheduled task would
+                        // swallow the exception, and the attempt would never end
+                        future.completeExceptionally(e);
+                    }
                 }, sagaService.getRetryDelayInMilliseconds(), TimeUnit.MILLISECONDS);
                 return future;
             }
         });
+    }
+
+    /**
+     * Sends the exchange to the compensation or completion endpoint, with the current thread marked as finalizing this
+     * saga while it does. The previous mark is restored, so the thread of the pool keeps no mark afterwards.
+     */
+    private Exchange sendFinalizing(Endpoint endpoint, Exchange target) {
+        String previous = FINALIZING_ON_THREAD.get();
+        FINALIZING_ON_THREAD.set(sagaId);
+        try {
+            return sagaService.getProducerTemplate().send(endpoint, target);
+        } finally {
+            if (previous == null) {
+                FINALIZING_ON_THREAD.remove();
+            } else {
+                FINALIZING_ON_THREAD.set(previous);
+            }
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -305,6 +388,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         Exchange answer = endpoint.createExchange();
         answer.getMessage().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, getId());
         answer.getExchangeExtension().setSagaLongRunningAction(getId());
+        answer.setProperty(FINALIZING_SAGA, getId());
 
         // preserve span from parent, so we can link this new exchange to the parent span for distributed tracing
         Object span = parent != null ? parent.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN) : null;
@@ -329,6 +413,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         List<T> reversed = new ArrayList<>(list);
         Collections.reverse(reversed);
         return reversed;
+    }
+
+    private record Finalization(Status kind, CompletableFuture<Boolean> outcome) {
     }
 
     private static class StepEnlistment {

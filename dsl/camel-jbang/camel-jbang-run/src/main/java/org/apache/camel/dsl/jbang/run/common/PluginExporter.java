@@ -48,6 +48,26 @@ public interface PluginExporter {
     }
 
     /**
+     * Provide dependencies to remove from the exported project. They are removed after the dependencies of the routes,
+     * of {@code --dep} and of all plugins are collected, and before the project files are generated.
+     * <p>
+     * An entry is matched by groupId:artifactId against the dependencies as collected, whatever notation ({@code mvn:},
+     * {@code camel:} or plain groupId:artifactId) and version either side uses. A Camel component is named
+     * {@code org.apache.camel:camel-x} (or {@code camel:x}), not by the artifact of the runtime: an entry such as
+     * {@code org.apache.camel.quarkus:camel-quarkus-x} or a Spring Boot {@code camel-x-starter} does not match. A
+     * dependency that is not present is ignored.
+     * <p>
+     * Known limit: with the camel-main runtime, the export can add {@code camel:health} after this removal (when it
+     * enables the embedded HTTP server), so that one cannot be removed.
+     *
+     * @param  runtimeType Type of runtime (defined by parameter --runtime)
+     * @return             set of groupId:artifactId, in any of the notations above
+     */
+    default Set<String> getDependenciesToRemove(RuntimeType runtimeType) {
+        return Collections.emptySet();
+    }
+
+    /**
      * Checks if the plugin exporter should perform. Implementations may add explicit logic to determine if the plugin
      * exporter should be skipped.
      *

@@ -336,11 +336,11 @@ public class OpaConfiguration implements Cloneable {
     /**
      * Authorize a whole collection in one call. When enabled the producer expects a {@code List} body, evaluates one
      * input document per element - each element as the {@code body}, sharing the exchange's headers and properties -
-     * and returns the per-element verdicts in the {@code CamelOpaBatchDecision} header, a {@code List<Boolean>}
-     * parallel to the input. An element whose evaluation failed is denied, unless {@code failOpen} is set and its
-     * decision point was unavailable; the batch is never allowed or denied as a whole because one element failed. Only
-     * for {@code evaluationMode=rest}: it saves the per-element HTTP round-trip via OPA's batch API, which has no
-     * meaning for in-process {@code wasm}.
+     * and returns the per-element verdicts in the {@code CamelOpaBatchDecision} header, a list of booleans parallel to
+     * the input. An element whose evaluation failed is denied, unless {@code failOpen} is set and its decision point
+     * was unavailable; the batch is never allowed or denied as a whole because one element failed. Only for
+     * {@code evaluationMode=rest}: it saves the per-element HTTP round-trip via OPA's batch API, which has no meaning
+     * for in-process {@code wasm}.
      */
     public void setBatch(boolean batch) {
         this.batch = batch;

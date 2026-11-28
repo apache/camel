@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.catalog.cve.CveFinding;
+import org.apache.camel.catalog.cve.CveScan;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.maven.artifact.Artifact;
@@ -167,7 +168,7 @@ public class AuditReportTest {
         Map<CveFinding, String> hidden = new LinkedHashMap<>();
         hidden.put(finding("CVE-2", "LOW", "c:d:1", null), "not used");
 
-        JsonObject doc = AuditReport.json("com.acme:app", 12, List.of(listed), hidden, "high", true, null);
+        JsonObject doc = AuditReport.json("com.acme:app", 12, List.of(listed), hidden, "high", true, null, false);
 
         assertEquals(12, doc.getInteger("scanned"));
         assertEquals(1, doc.getInteger("vulnerabilities"));
@@ -175,5 +176,46 @@ public class AuditReportTest {
         assertTrue(doc.getBoolean("failed"));
         JsonObject row = (JsonObject) ((JsonArray) doc.get("suppressedFindings")).get(0);
         assertEquals("not used", row.getString("suppression"));
+        assertNull(doc.get("artifacts"));
+    }
+
+    /**
+     * CAMEL-27565: by artifact, as camel dependency audit --by-artifact.
+     */
+    @Test
+    void theTableByArtifactHasTheVersionThatFixesAll() {
+        String text = "org.apache.commons:commons-text:1.9";
+        String lang = "org.apache.commons:commons-lang3:3.11";
+        CveFinding critical = finding("CVE-2022-42889", "CRITICAL", text, "1.10.0");
+        CveFinding medium = finding("CVE-2024-1", "MEDIUM", text, "1.13.0");
+        CveFinding noFix = finding("CVE-2025-48924", "MEDIUM", lang, null);
+        noFix.gavVia().put(lang, "commons-text");
+
+        List<String> lines = AuditReport.artifactTable(CveScan.artifactRows(List.of(critical, medium, noFix)));
+
+        assertEquals(3, lines.size());
+        assertTrue(lines.get(0).startsWith("SEVERITY  SCORE  ARTIFACT"));
+        assertTrue(lines.get(0).contains("CVES  FIXES ALL  VIA"));
+        // the worst severity of the two, and the higher of the two fixes
+        assertEquals("CRITICAL 9.8 " + text + " 2 1.13.0", lines.get(1).replaceAll(" +", " "));
+        assertEquals("MEDIUM 9.8 " + lang + " 1 none commons-text", lines.get(2).replaceAll(" +", " "));
+    }
+
+    @Test
+    void theJsonReportHasTheArtifacts() {
+        CveFinding critical = finding("CVE-2022-42889", "CRITICAL", "org.apache.commons:commons-text:1.9", "1.10.0");
+        CveFinding medium = finding("CVE-2024-1", "MEDIUM", "org.apache.commons:commons-text:1.9", "1.13.0");
+
+        JsonObject doc = AuditReport.json("com.acme:app", 12, List.of(critical, medium), Map.of(), "none", false, null,
+                true);
+
+        assertEquals(2, doc.getInteger("vulnerabilities"));
+        assertEquals(2, ((JsonArray) doc.get("findings")).size());
+        assertEquals(1, doc.getInteger("vulnerableArtifacts"));
+        JsonObject row = (JsonObject) ((JsonArray) doc.get("artifacts")).get(0);
+        assertEquals("org.apache.commons:commons-text:1.9", row.getString("artifact"));
+        assertEquals("CRITICAL", row.getString("severity"));
+        assertEquals(2, row.getInteger("cveCount"));
+        assertEquals("1.13.0", row.getString("fixesAll"));
     }
 }

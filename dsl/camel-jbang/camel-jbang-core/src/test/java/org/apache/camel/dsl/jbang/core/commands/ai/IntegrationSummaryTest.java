@@ -242,6 +242,115 @@ class IntegrationSummaryTest {
     }
 
     @Test
+    void messageBodiesSayWhereTheBodyOfEachYamlRouteComesFrom() {
+        String orders = """
+                - rest:
+                    path: /stock
+                    get:
+                      - path: /{sku}
+                        to: direct:getStock
+                - route:
+                    id: get-stock
+                    from:
+                      uri: direct:getStock
+                      steps:
+                        - log: "${header.sku}"
+                        - setBody:
+                            constant: "{}"
+                - route:
+                    id: receive-order
+                    errorHandler:
+                      deadLetterChannel:
+                        deadLetterUri: direct:dlq
+                    from:
+                      uri: platform-http:/orders
+                      steps:
+                        - to: direct:validate
+                        - to: direct:audit
+                - route:
+                    id: validate-order
+                    from:
+                      uri: direct:validate
+                      steps:
+                        - log: "${body}"
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - log: "${body}"
+                """;
+        String report = """
+                - route:
+                    id: nightly-report
+                    from:
+                      uri: timer:nightly
+                      steps:
+                        - to: direct:buildReport
+                - route:
+                    id: build-report
+                    from:
+                      uri: direct:buildReport
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.total"
+                - route:
+                    id: audit
+                    from:
+                      uri: direct:audit
+                      steps:
+                        - log: "${body}"
+                """;
+        Overview o = ProjectOverview.analyze(
+                Path.of("shop"), Map.of("orders.camel.yaml", orders, "report.camel.yaml", report),
+                ProjectOverviewTest.CATALOG);
+        String md = IntegrationSummary.render(o, null, null, null, "2026-11-25");
+
+        String bodies = md.substring(md.indexOf("## Message bodies"), md.indexOf("## External systems"));
+        assertThat(bodies)
+                .contains("| `get-stock` | REST `GET /stock/{sku}`: **no body** | `setBody` (step 2) |")
+                .contains("| `receive-order` | consumer `platform-http:/orders` |  |")
+                .contains("| `validate-order` | called by `receive-order` over `direct:validate` |  |")
+                .contains("| `dlq` | the failed message, from a dead letter channel of `receive-order` |  |")
+                // the reply of the route it calls is the first body of the timer route
+                .contains("| `nightly-report` | consumer `timer:nightly`: **no body** | `to` (step 1) |")
+                .contains("| `build-report` | called by `nightly-report` over `direct:buildReport`: **no body**"
+                          + " | `setBody` (step 1) |")
+                .contains("| `audit` | called from another file by `receive-order` |  |");
+        assertThat(md.substring(md.indexOf("## Findings")))
+                .contains("- warning: route build-report: jsonpath reads the message body, and the message reaching"
+                          + " this route has none - the routes that call it do not set one either");
+
+        String json = ProjectOverview.toJson(o, null).toJson();
+        assertThat(json).contains("\"bodyFrom\":{\"origin\":\"caller\",\"via\":\"direct:buildReport\","
+                                  + "\"callers\":[\"nightly-report\"],\"noBody\":true,\"setBy\":\"setBody\",\"setAt\":1}")
+                .contains("\"bodyFrom\":{\"origin\":\"rest\",\"via\":\"GET \\/stock\\/{sku}\",\"noBody\":true,"
+                          + "\"setBy\":\"setBody\",\"setAt\":2}")
+                .contains("\"bodyFrom\":{\"origin\":\"errorHandler\",\"via\":\"deadLetterChannel\","
+                          + "\"callers\":[\"receive-order\"],\"noBody\":false}")
+                .contains("\"kind\":\"body-never-set\"");
+    }
+
+    @Test
+    void noMessageBodiesWithoutYamlRoutes() {
+        String java = """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Orders extends RouteBuilder {
+                    @Override
+                    public void configure() {
+                        from("timer:tick").routeId("tick").to("direct:lookup");
+                    }
+                }
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("shop"), Map.of("Orders.java", java), ProjectOverviewTest.CATALOG);
+        assertThat(o.bodies()).isEmpty();
+        assertThat(IntegrationSummary.render(o, null, null, null, "2026-11-25")).doesNotContain("## Message bodies");
+    }
+
+    @Test
     void errorHandlingNamesWhatNoRouteConsumesAndTheConsumersOfUncalledRoutes() {
         // a dead letter queue on a broker, and a route with no error handler that no route calls (CAMEL-25467)
         String yaml = """

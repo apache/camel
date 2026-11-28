@@ -38,6 +38,7 @@ import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeReason;
 import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,8 +48,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -153,6 +156,71 @@ class DeviceClientPoolTest {
     }
 
     @Test
+    void testConnectionStringWithAnotherKeyDoesNotReusePooledClient() {
+        String good = "HostName=h;DeviceId=d;SharedAccessKey=good";
+        String other = "HostName=h;DeviceId=d;SharedAccessKey=other";
+        String noKey = "HostName=h;DeviceId=d";
+        DeviceClient client = mock(DeviceClient.class);
+        List<String> opened = new ArrayList<>();
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        // like IoT Hub, open a client only for the right key
+        pool.setDeviceClientFactory((cs, protocol) -> {
+            opened.add(cs);
+            if (!cs.equals(good)) {
+                throw new IllegalStateException("Unauthorized");
+            }
+            return client;
+        });
+
+        try (DeviceClientPool.Lease lease = pool.lease("d", good, IotHubClientProtocol.MQTT)) {
+            assertSame(client, lease.getClient());
+        }
+        // the client of the right key is pooled, but another key or no key must open its own client
+        assertThrows(RuntimeException.class, () -> pool.lease("d", other, IotHubClientProtocol.MQTT));
+        assertThrows(RuntimeException.class, () -> pool.lease("d", noKey, IotHubClientProtocol.MQTT));
+
+        assertEquals(List.of(good, other, noKey), opened);
+        assertEquals(1, pool.getActiveClientCount());
+    }
+
+    @Test
+    void testConnectionStringWithWrongKeyIsRejectedOnEmptyPool() {
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> {
+            throw new IllegalStateException("Unauthorized");
+        });
+
+        assertThrows(RuntimeException.class, () -> pool.lease("d", CS, IotHubClientProtocol.MQTT));
+        assertEquals(0, pool.getActiveClientCount());
+    }
+
+    @Test
+    void testTwoKeysOfSameDeviceGetOwnClients() throws Exception {
+        String primary = "HostName=h;DeviceId=d;SharedAccessKey=primary";
+        String secondary = "HostName=h;DeviceId=d;SharedAccessKey=secondary";
+        DeviceClient primaryClient = mock(DeviceClient.class);
+        DeviceClient secondaryClient = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> cs.equals(primary) ? primaryClient : secondaryClient);
+
+        try (DeviceClientPool.Lease first = pool.lease("d", primary, IotHubClientProtocol.MQTT);
+             DeviceClientPool.Lease second = pool.lease("d", secondary, IotHubClientProtocol.MQTT)) {
+            assertSame(primaryClient, first.getClient());
+            assertSame(secondaryClient, second.getClient());
+        }
+        try (DeviceClientPool.Lease again = pool.lease("d", primary, IotHubClientProtocol.MQTT)) {
+            assertSame(primaryClient, again.getClient());
+        }
+        assertEquals(2, pool.getActiveClientCount());
+
+        // removing the device closes the clients of all its connection strings
+        pool.remove("d");
+        assertEquals(0, pool.getActiveClientCount());
+        verify(primaryClient, times(1)).close();
+        verify(secondaryClient, times(1)).close();
+    }
+
+    @Test
     void testRemoveClosesClient() throws Exception {
         DeviceClient client = mock(DeviceClient.class);
         DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
@@ -163,6 +231,26 @@ class DeviceClientPoolTest {
 
         assertEquals(0, pool.getActiveClientCount());
         verify(client, times(1)).close();
+    }
+
+    @Test
+    void testHttpsClientIsKeptApartAndRemovedByDeviceId() throws Exception {
+        DeviceClient https = mock(DeviceClient.class);
+        DeviceClient mqtt = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> protocol == IotHubClientProtocol.HTTPS ? https : mqtt);
+
+        assertSame(https, pool.getOrCreate("d", CS, IotHubClientProtocol.HTTPS));
+        assertSame(mqtt, pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT));
+        assertSame(mqtt, pool.getOrCreate("d", CS, IotHubClientProtocol.AMQPS));
+        assertEquals(2, pool.getActiveClientCount());
+
+        pool.remove("d");
+        pool.remove("d");
+
+        assertEquals(0, pool.getActiveClientCount());
+        verify(https, times(1)).close();
+        verify(mqtt, times(1)).close();
     }
 
     @Test
@@ -466,6 +554,115 @@ class DeviceClientPoolTest {
             allowEvictorToContinue.countDown();
             executor.shutdownNow();
         }
+    }
+
+    @Test
+    void testSlowSendKeepsItsClientAndIdleTimeCountsFromRelease() throws Exception {
+        AtomicLong clock = new AtomicLong();
+        List<DeviceClient> created = new ArrayList<>();
+        ScheduledExecutorService evictor = inlineEvictor();
+        DeviceClientPool pool = poolWithClock(evictor, clock, created, 0);
+        pool.start();
+        Runnable evictionRun = scheduledEvictionRun(evictor);
+
+        DeviceClient first;
+        try (DeviceClientPool.Lease lease = pool.lease("d", CS, IotHubClientProtocol.MQTT)) {
+            first = lease.getClient();
+            // the send takes 15 s, longer than the 10 s idle timeout: the client is in use all that time
+            clock.addAndGet(15_000);
+            evictionRun.run();
+            assertEquals(1, pool.getActiveClientCount(), "a leased client must not be evicted");
+        }
+        assertEquals(1, pool.getActiveClientCount(), "the release must not evict the client it gives back");
+        evictionRun.run();
+        assertEquals(1, pool.getActiveClientCount(), "the idle time starts at the release");
+        verify(first, never()).close();
+
+        clock.addAndGet(1);
+        try (DeviceClientPool.Lease lease = pool.lease("d", CS, IotHubClientProtocol.MQTT)) {
+            assertSame(first, lease.getClient(), "the next message reuses the open client");
+        }
+        assertEquals(1, created.size());
+
+        clock.addAndGet(10_001);
+        evictionRun.run();
+        assertEquals(0, pool.getActiveClientCount(), "a client unused for longer than the idle timeout is evicted");
+        verify(first, times(1)).close();
+    }
+
+    @Test
+    void testSlowlyOpenedClientIsNotEvictedBeforeItsFirstLease() throws Exception {
+        AtomicLong clock = new AtomicLong();
+        List<DeviceClient> created = new ArrayList<>();
+        ScheduledExecutorService evictor = inlineEvictor();
+        // open(true) takes 15 s, longer than the 10 s idle timeout
+        DeviceClientPool pool = poolWithClock(evictor, clock, created, 15_000);
+        pool.start();
+        Runnable evictionRun = scheduledEvictionRun(evictor);
+
+        DeviceClient opened = pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
+        // the eviction run comes right after the open, before the creator leases the client
+        evictionRun.run();
+        assertEquals(1, pool.getActiveClientCount(), "a client that was just opened is not idle");
+
+        try (DeviceClientPool.Lease lease = pool.lease("d", CS, IotHubClientProtocol.MQTT)) {
+            assertSame(opened, lease.getClient());
+        }
+        assertEquals(1, created.size());
+        verify(opened, never()).close();
+    }
+
+    @Test
+    void testSlowHubOpensOneConnectionForManyMessages() throws Exception {
+        AtomicLong clock = new AtomicLong();
+        List<DeviceClient> created = new ArrayList<>();
+        // open(true) takes 15 s, longer than the 10 s idle timeout; the sends are instant
+        DeviceClientPool pool = poolWithClock(null, clock, created, 15_000);
+
+        int messages = 5;
+        for (int i = 0; i < messages; i++) {
+            try (DeviceClientPool.Lease lease = pool.lease("d", CS, IotHubClientProtocol.MQTT)) {
+                assertSame(created.get(0), lease.getClient(), "every message reuses the first connection");
+            }
+            clock.addAndGet(100);
+        }
+
+        assertEquals(1, created.size(), "the messages share one connection");
+        assertEquals(1, pool.getActiveClientCount());
+        verify(created.get(0), times(1)).open(true);
+        verify(created.get(0), never()).close();
+    }
+
+    private static DeviceClientPool poolWithClock(
+            ScheduledExecutorService evictor, AtomicLong clock, List<DeviceClient> created, long openMillis) {
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofSeconds(10), Duration.ofSeconds(30), evictor);
+        pool.setNowMillisSupplier(clock::get);
+        pool.setDeviceClientFactory((cs, protocol) -> {
+            DeviceClient client = mock(DeviceClient.class);
+            doAnswer(invocation -> {
+                clock.addAndGet(openMillis);
+                return null;
+            }).when(client).open(true);
+            created.add(client);
+            return client;
+        });
+        return pool;
+    }
+
+    // an evictor that runs the queued closes at once; the periodic eviction run is called by the test
+    private static ScheduledExecutorService inlineEvictor() {
+        ScheduledExecutorService evictor = mock(ScheduledExecutorService.class);
+        doAnswer(invocation -> {
+            invocation.getArgument(0, Runnable.class).run();
+            return null;
+        }).when(evictor).execute(any(Runnable.class));
+        return evictor;
+    }
+
+    private static Runnable scheduledEvictionRun(ScheduledExecutorService evictor) {
+        ArgumentCaptor<Runnable> run = ArgumentCaptor.forClass(Runnable.class);
+        verify(evictor).scheduleAtFixedRate(run.capture(), anyLong(), anyLong(), any(TimeUnit.class));
+        return run.getValue();
     }
 
 }

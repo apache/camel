@@ -144,6 +144,20 @@ public interface ExchangeExtension {
     void setInterrupted(boolean interrupted);
 
     /**
+     * Used by the {@link org.apache.camel.spi.AsyncProcessorAwaitManager} each time its process() is called for this
+     * exchange (whether or not the thread then waits): returns a number one higher than the previous call for this
+     * exchange, so the manager knows which of the threads that wait for the exchange called it last. This is used
+     * internally by Camel.
+     * <p>
+     * The calls for one exchange do not overlap: an inner call is made while the outer call processes the exchange,
+     * after the exchange was handed to another thread, and that hand-off orders the two calls. So an implementation can
+     * use a plain counter.
+     *
+     * @since 4.24
+     */
+    long nextAwaitOrder();
+
+    /**
      * Whether the exchange has exhausted (attempted all) its redeliveries and still failed. This is used internally by
      * Camel.
      */

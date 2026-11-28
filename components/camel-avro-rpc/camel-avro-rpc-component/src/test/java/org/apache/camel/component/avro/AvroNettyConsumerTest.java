@@ -99,11 +99,11 @@ public class AvroNettyConsumerTest extends AvroConsumerTestSupport {
                              + "/setAge?protocolClassName=org.apache.camel.avro.test.TestReflection")
                                 .process(new ReflectionInOnlyProcessor(testReflection));
 
-                        from("avro:http:localhost:" + avroPortReflection
+                        from("avro:netty:localhost:" + avroPortReflection
                              + "/setTestPojo?protocolClassName=org.apache.camel.avro.test.TestReflection&singleParameter=true")
                                 .process(new ReflectionInOnlyProcessor(testReflection));
 
-                        from("avro:http:localhost:" + avroPortReflection
+                        from("avro:netty:localhost:" + avroPortReflection
                              + "/increaseAge?protocolClassName=org.apache.camel.avro.test.TestReflection&singleParameter=true")
                                 .process(new ReflectionInOutProcessor(testReflection));
 

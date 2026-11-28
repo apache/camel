@@ -19,6 +19,7 @@ package org.apache.camel.component.bonita.api.util;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BonitaAPIConfigTest {
 
@@ -26,6 +27,46 @@ public class BonitaAPIConfigTest {
     public void testBaseBonitaURL() {
         BonitaAPIConfig config = new BonitaAPIConfig("host", "port", "username", "password");
         assertEquals("http://host:port/bonita", config.getBaseBonitaURI());
+    }
+
+    @Test
+    public void testBaseBonitaURLWithHttps() {
+        BonitaAPIConfig config = new BonitaAPIConfig("host", "port", "username", "password");
+        config.setProtocol("https");
+        assertEquals("https://host:port/bonita", config.getBaseBonitaURI());
+    }
+
+    @Test
+    public void testProtocolIsCaseInsensitiveAndNullIsHttp() {
+        BonitaAPIConfig config = new BonitaAPIConfig("host", "port", "username", "password");
+        config.setProtocol("HTTPS");
+        assertEquals("https", config.getProtocol());
+        config.setProtocol(null);
+        assertEquals("http://host:port/bonita", config.getBaseBonitaURI());
+    }
+
+    @Test
+    public void testOtherProtocolIsRefused() {
+        BonitaAPIConfig config = new BonitaAPIConfig("host", "port", "username", "password");
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setProtocol("ftp"));
+        assertEquals("The protocol of the Bonita server must be http or https, but is: ftp", e.getMessage());
+        assertEquals("http", config.getProtocol());
+    }
+
+    @Test
+    public void testBasePath() {
+        assertEquals("http://host:port/bpm", new BonitaAPIConfig("host", "port", "u", "p", "/bpm/").getBaseBonitaURI());
+        assertEquals("http://host:port/bpm", new BonitaAPIConfig("host", "port", "u", "p", "bpm").getBaseBonitaURI());
+        assertEquals("http://host:port", new BonitaAPIConfig("host", "port", "u", "p", "/").getBaseBonitaURI());
+        assertEquals("http://host:port/bonita", new BonitaAPIConfig("host", "port", "u", "p", null).getBaseBonitaURI());
+    }
+
+    @Test
+    public void testProcessFileUploadBaseURI() {
+        assertEquals("http://host:port/bonita/portal/resource/process/orders/1.0/API/formFileUpload",
+                new BonitaAPIConfig("host", "port", "u", "p").getProcessFileUploadBaseURI("orders", "1.0"));
+        assertEquals("http://host:port/portal/resource/process/orders/1.0/API/formFileUpload",
+                new BonitaAPIConfig("host", "port", "u", "p", "/").getProcessFileUploadBaseURI("orders", "1.0"));
     }
 
 }

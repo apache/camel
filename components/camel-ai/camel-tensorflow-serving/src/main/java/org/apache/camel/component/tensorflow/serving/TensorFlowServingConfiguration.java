@@ -26,32 +26,46 @@ import org.apache.camel.spi.UriParams;
 @Configurer
 public class TensorFlowServingConfiguration implements Cloneable {
 
-    @UriParam(label = "common", defaultValue = "localhost:8500")
+    @UriParam(label = "common", defaultValue = "localhost:8500",
+              description = "The target of the gRPC channel to the model server, as host:port or as a gRPC target URI such"
+                            + " as dns:///host:8500. The default is the gRPC port of TensorFlow Serving on the local host."
+                            + " The channel is created once, when the endpoint is initialized.")
     private String target = "localhost:8500";
 
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The io.grpc.ChannelCredentials of the gRPC channel, for example a TlsChannelCredentials for"
+                            + " TLS, given as a bean reference. If not set, InsecureChannelCredentials is used, and the calls"
+                            + " are sent in plaintext.")
     private ChannelCredentials credentials;
 
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The name of the model (servable) to call. The CamelTensorFlowServingModelName header replaces"
+                            + " this option, and the model_spec of a request in the body replaces both. The option or the"
+                            + " header must be set, even when the request in the body names the model.")
     private String modelName;
 
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The version number of the model to use. If no version and no version label is set, the server"
+                            + " uses the best available version, typically the latest. The CamelTensorFlowServingModelVersion"
+                            + " header replaces this option, and a version label, if one is set, is used instead of it.")
     private Long modelVersion;
 
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The label of the model version to use, as assigned by version_labels in the model server"
+                            + " configuration, for example stable or canary. The CamelTensorFlowServingModelVersionLabel"
+                            + " header replaces this option. A version label is used instead of a version number.")
     private String modelVersionLabel;
 
-    @UriParam(label = "common")
+    @UriParam(label = "common",
+              description = "The name of the signature (SignatureDef) of the model to evaluate, for classify, regress and"
+                            + " predict. If not set, the server uses the default signature, serving_default. The"
+                            + " CamelTensorFlowServingSignatureName header replaces this option.")
     private String signatureName;
 
     public String getTarget() {
         return target;
     }
 
-    /**
-     * The target URI of the client. See:
-     * https://grpc.github.io/grpc-java/javadoc/io/grpc/Grpc.html#newChannelBuilder%28java.lang.String,io.grpc.ChannelCredentials%29
-     */
     public void setTarget(String target) {
         this.target = target;
     }
@@ -60,9 +74,6 @@ public class TensorFlowServingConfiguration implements Cloneable {
         return credentials;
     }
 
-    /**
-     * The credentials of the client.
-     */
     public void setCredentials(ChannelCredentials credentials) {
         this.credentials = credentials;
     }
@@ -71,9 +82,6 @@ public class TensorFlowServingConfiguration implements Cloneable {
         return modelName;
     }
 
-    /**
-     * Required servable name.
-     */
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
@@ -82,9 +90,6 @@ public class TensorFlowServingConfiguration implements Cloneable {
         return modelVersion;
     }
 
-    /**
-     * Optional choice of which version of the model to use. Use this specific version number.
-     */
     public void setModelVersion(Long modelVersion) {
         this.modelVersion = modelVersion;
     }
@@ -93,9 +98,6 @@ public class TensorFlowServingConfiguration implements Cloneable {
         return modelVersionLabel;
     }
 
-    /**
-     * Optional choice of which version of the model to use. Use the version associated with the given label.
-     */
     public void setModelVersionLabel(String modelVersionLabel) {
         this.modelVersionLabel = modelVersionLabel;
     }
@@ -104,9 +106,6 @@ public class TensorFlowServingConfiguration implements Cloneable {
         return signatureName;
     }
 
-    /**
-     * A named signature to evaluate. If unspecified, the default signature will be used.
-     */
     public void setSignatureName(String signatureName) {
         this.signatureName = signatureName;
     }

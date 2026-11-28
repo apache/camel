@@ -34,7 +34,9 @@ import org.apache.camel.spi.Transformer;
 
 /**
  * Data type transformer converts Google Calendar Stream consumer response to CloudEvent v1_0 data format. The data type
- * sets Camel specific CloudEvent headers with values extracted from Google Calendar Stream consumer response.
+ * sets Camel specific CloudEvent headers with values extracted from Google Calendar Stream consumer response. The
+ * CloudEvent source is the id of the calendar, from the header the google-calendar-stream consumer sets, with the
+ * prefix {@code google.calendar.stream.}.
  */
 @DataTypeTransformer(name = "google-calendar-stream:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with Google Calendar Stream consumer response details")
@@ -62,9 +64,9 @@ public class GoogleCalendarStreamCloudEventDataTypeTransformer extends Transform
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.google.calendar.stream.consume");
 
-        if (message.getHeaders().containsKey(GoogleCalendarStreamConstants.EVENT_ID)) {
+        if (message.getHeaders().containsKey(GoogleCalendarStreamConstants.CALENDAR_ID)) {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "google.calendar.stream." + message.getHeader(GoogleCalendarStreamConstants.EVENT_ID, String.class));
+                    "google.calendar.stream." + message.getHeader(GoogleCalendarStreamConstants.CALENDAR_ID, String.class));
         }
 
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, event.getEventType());

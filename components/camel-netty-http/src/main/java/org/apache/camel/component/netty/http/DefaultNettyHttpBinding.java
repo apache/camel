@@ -333,7 +333,9 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     /**
      * Decodes a name or a value of a form field as a header with {@link #shouldUrlDecodeHeader}. A % that is not
      * followed by two hex digits, as in a text such as "50% off" sent as form data, is kept as it is, as in the
-     * URL-encoded form parser of the WHATWG URL standard, instead of failing the request.
+     * URL-encoded form parser of the WHATWG URL standard, instead of failing the request. The fallback is used for any
+     * IllegalArgumentException from shouldUrlDecodeHeader, so a subclass that overrides it to reject a value by
+     * throwing one gets the fallback decoding instead.
      */
     private String decodeFormField(NettyHttpConfiguration configuration, String headerName, String value) {
         try {

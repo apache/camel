@@ -466,7 +466,11 @@ The component provides clear error messages for common failure scenarios:
 * **Connection timeout**: `Connection timed out after \{timeout\}ms`
 
 ==== Authentication Errors
-* **Authentication failure**: `Authentication failed: \{reason\}`
+* **Login rejected** (wrong credentials): `Login rejected by \{host\}:\{port\}: No more authentication methods available`
++
+When the server definitively rejects the credentials, `mina-sftp` throws `GenericFileOperationFailedException`
+immediately, without retrying. Transient connection failures (server unreachable, network error) are still retried up
+to `maximumReconnectAttempts` times.
 * **Authentication timeout**: `Authentication timed out after \{timeout\}ms`
 
 ==== Configuration Errors

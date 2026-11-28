@@ -213,6 +213,107 @@ public class KafkaIdempotentRepositoryTest {
         assertTrue(cache.isEmpty());
     }
 
+    @Test
+    void testOlderOwnAddDoesNotUndoALaterRemove() throws Exception {
+        // the route fails and the idempotent consumer removes the key before the poller read the add back
+        assertTrue(repository.add("key1")); // offset 0
+        repository.remove("key1"); // offset 1
+
+        addToCache(new ConsumerRecord<>("test-topic", 0, 0L, "key1", "add"));
+
+        // the redelivery is not taken for a duplicate
+        assertFalse(cache.containsKey("key1"));
+        assertTrue(repository.add("key1"));
+    }
+
+    @Test
+    void testOlderOwnRemoveDoesNotUndoALaterAdd() throws Exception {
+        assertTrue(repository.add("key1")); // offset 0
+        repository.remove("key1"); // offset 1
+        assertTrue(repository.add("key1")); // offset 2
+
+        addToCache(new ConsumerRecord<>("test-topic", 0, 0L, "key1", "add"));
+        addToCache(new ConsumerRecord<>("test-topic", 0, 1L, "key1", "remove"));
+
+        // a duplicate is still rejected
+        assertTrue(cache.containsKey("key1"));
+        assertFalse(repository.add("key1"));
+    }
+
+    @Test
+    void testOlderPeerRecordIsSkippedAndNewerIsApplied() throws Exception {
+        assertTrue(repository.add("other1")); // offset 0
+        assertTrue(repository.add("other2")); // offset 1
+        assertTrue(repository.add("key1")); // offset 2
+
+        // a remove of a peer written before the add of this instance
+        addToCache(new ConsumerRecord<>("test-topic", 0, 1L, "key1", "remove"));
+        assertTrue(cache.containsKey("key1"));
+
+        // the add of this instance is read back, then a remove of a peer written after it
+        addToCache(new ConsumerRecord<>("test-topic", 0, 2L, "key1", "add"));
+        addToCache(new ConsumerRecord<>("test-topic", 0, 3L, "key1", "remove"));
+        assertFalse(cache.containsKey("key1"));
+    }
+
+    @Test
+    void testRecordsReadWhileTheAddIsSentAreDecidedByItsOffset() throws Exception {
+        MockProducer<String, String> slowProducer
+                = new MockProducer<>(false, null, new StringSerializer(), new StringSerializer());
+        setField(repository, "changelog", changelog(slowProducer));
+        addAndComplete(slowProducer, "other1"); // offset 0
+        addAndComplete(slowProducer, "other2"); // offset 1
+
+        Thread sender = new Thread(() -> repository.add("key1")); // offset 2
+        sender.start();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> slowProducer.history().size() == 3);
+
+        // the poller reads an older remove of a peer and the add of this instance before the send completes
+        addToCache(new ConsumerRecord<>("test-topic", 0, 1L, "key1", "remove"));
+        assertTrue(cache.containsKey("key1"));
+        addToCache(new ConsumerRecord<>("test-topic", 0, 2L, "key1", "add"));
+        assertTrue(cache.containsKey("key1"));
+
+        slowProducer.completeNext();
+        sender.join(5000);
+        assertFalse(sender.isAlive());
+        assertTrue(cache.containsKey("key1"));
+
+        // the add was read back: a later remove of a peer is applied at once
+        addToCache(new ConsumerRecord<>("test-topic", 0, 3L, "key1", "remove"));
+        assertFalse(cache.containsKey("key1"));
+    }
+
+    @Test
+    void testNewerPeerRecordReadWhileTheAddIsSentIsApplied() throws Exception {
+        MockProducer<String, String> slowProducer
+                = new MockProducer<>(false, null, new StringSerializer(), new StringSerializer());
+        setField(repository, "changelog", changelog(slowProducer));
+
+        Thread sender = new Thread(() -> repository.add("key1")); // offset 0
+        sender.start();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> slowProducer.history().size() == 1);
+
+        // the record of this instance and a remove of a peer written after it, read before the send completes
+        addToCache(new ConsumerRecord<>("test-topic", 0, 0L, "key1", "add"));
+        addToCache(new ConsumerRecord<>("test-topic", 0, 1L, "key1", "remove"));
+
+        slowProducer.completeNext();
+        sender.join(5000);
+        assertFalse(sender.isAlive());
+        assertFalse(cache.containsKey("key1"));
+    }
+
+    private void addAndComplete(MockProducer<String, String> producer, String key) throws Exception {
+        int sent = producer.history().size();
+        Thread sender = new Thread(() -> repository.add(key));
+        sender.start();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> producer.history().size() == sent + 1);
+        producer.completeNext();
+        sender.join(5000);
+        assertFalse(sender.isAlive());
+    }
+
     private void addToCache(ConsumerRecord<String, String> consumerRecord) throws Exception {
         Method addToCache = KafkaIdempotentRepository.class.getDeclaredMethod("addToCache", ConsumerRecord.class);
         addToCache.setAccessible(true);

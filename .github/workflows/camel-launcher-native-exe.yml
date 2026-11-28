@@ -154,7 +154,7 @@ jobs:
         shell: bash
         run: |
           mvn -B -ntp -pl buildingtools,tooling/camel-exe -am test \
-            -Dtest=CamelExeBootstrapTest -Dsurefire.failIfNoSpecifiedTests=false
+            -Dtest=CamelExeBootstrapTest -Dsurefire.failIfNoSpecifiedTests=false -Dcamel.exe.test=true
 
   camel-launcher-native:
     needs: detect-changes

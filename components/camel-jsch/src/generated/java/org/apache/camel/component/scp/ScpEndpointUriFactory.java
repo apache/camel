@@ -58,13 +58,8 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("useUserKnownHostsFile");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(10);
-        secretProps.add("certBytes");
-        secretProps.add("certFile");
-        secretProps.add("certUri");
-        secretProps.add("knownHostsFile");
+        Set<String> secretProps = new HashSet<>(5);
         secretProps.add("password");
-        secretProps.add("preferredAuthentications");
         secretProps.add("privateKeyBytes");
         secretProps.add("privateKeyFile");
         secretProps.add("privateKeyFilePassphrase");

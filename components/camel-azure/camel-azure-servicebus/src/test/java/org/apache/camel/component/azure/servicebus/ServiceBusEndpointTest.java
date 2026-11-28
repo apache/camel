@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -237,5 +239,34 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         ServiceBusSenderClient senderClient = factory.createServiceBusSenderClient(configuration);
         assertNotNull(senderClient);
         senderClient.close();
+    }
+
+    @Test
+    void testScheduledEnqueueTimeInUri() {
+        final OffsetDateTime expected = OffsetDateTime.of(2026, 11, 18, 23, 0, 0, 0, ZoneOffset.ofHours(1));
+
+        // a plain + in the URI is decoded to a space, which the converter reads as a +
+        ServiceBusEndpoint endpoint = context.getEndpoint(
+                "azure-servicebus:plusQueue?producerOperation=scheduleMessages&scheduledEnqueueTime=2026-11-18T23:00:00+01:00"
+                                                          + "&connectionString=testString",
+                ServiceBusEndpoint.class);
+        assertEquals(ServiceBusProducerOperationDefinition.scheduleMessages,
+                endpoint.getConfiguration().getProducerOperation());
+        assertEquals(expected, endpoint.getConfiguration().getScheduledEnqueueTime());
+
+        endpoint = context.getEndpoint(
+                "azure-servicebus:encodedQueue?scheduledEnqueueTime=2026-11-18T23:00:00%2B01:00&connectionString=testString",
+                ServiceBusEndpoint.class);
+        assertEquals(expected, endpoint.getConfiguration().getScheduledEnqueueTime());
+
+        endpoint = context.getEndpoint(
+                "azure-servicebus:rawQueue?scheduledEnqueueTime=RAW(2026-11-18T23:00:00+01:00)&connectionString=testString",
+                ServiceBusEndpoint.class);
+        assertEquals(expected, endpoint.getConfiguration().getScheduledEnqueueTime());
+
+        endpoint = context.getEndpoint(
+                "azure-servicebus:utcQueue?scheduledEnqueueTime=2026-11-18T22:00:00Z&connectionString=testString",
+                ServiceBusEndpoint.class);
+        assertEquals(expected.toInstant(), endpoint.getConfiguration().getScheduledEnqueueTime().toInstant());
     }
 }

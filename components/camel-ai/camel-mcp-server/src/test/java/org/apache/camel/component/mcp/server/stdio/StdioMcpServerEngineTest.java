@@ -35,6 +35,7 @@ import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerConfiguration;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerPrompt;
+import org.apache.camel.component.mcp.server.McpServerRefusedException;
 import org.apache.camel.component.mcp.server.McpServerResource;
 import org.apache.camel.component.mcp.server.McpServerResourceTemplate;
 import org.apache.camel.component.mcp.server.McpServerTool;
@@ -45,6 +46,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class StdioMcpServerEngineTest extends CamelTestSupport {
 
@@ -197,6 +199,32 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    void toolWithAnInvalidSchemaIsRefusedBeforeAndAfterStart() throws Exception {
+        // a JSON object, so Camel accepts it, but "strng" is not a JSON Schema type
+        String invalidSchema = "{\"type\":\"object\",\"properties\":{\"q\":{\"type\":\"strng\"}}}";
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+        engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
+
+        // refused instead of queued, so it cannot fail the start of the server
+        assertThatThrownBy(() -> engine.toolAdded(sampleTool("queued_bad", "Queued before start", invalidSchema, null)))
+                .isInstanceOf(McpServerRefusedException.class)
+                .hasMessageContaining("Tool 'queued_bad' inputSchema is not a valid JSON Schema 2020-12 document");
+        try {
+            assertThatCode(engine::start).doesNotThrowAnyException();
+            assertThatThrownBy(() -> engine.toolAdded(sampleTool("late_bad", "Added after start", invalidSchema, null)))
+                    .isInstanceOf(McpServerRefusedException.class)
+                    .hasMessageContaining("Tool 'late_bad' inputSchema is not a valid JSON Schema 2020-12 document");
+            // the output schema is not served over stdio
+            assertThatCode(() -> engine.toolAdded(sampleTool("unserved_output", "Added after start", null, invalidSchema)))
+                    .doesNotThrowAnyException();
+        } finally {
+            engine.stop();
+        }
+    }
+
     private static McpServerResource sampleResource(String uri) {
         return new McpServerResource() {
             @Override
@@ -286,6 +314,11 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
     }
 
     private static McpServerTool sampleTool(String name, String description) {
+        return sampleTool(name, description, null, null);
+    }
+
+    private static McpServerTool sampleTool(
+            String name, String description, String inputSchemaJson, String outputSchemaJson) {
         McpToolCallHandler handler = arguments -> new McpToolCallResult("ok", false);
         return new McpServerTool() {
             @Override
@@ -300,7 +333,7 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
 
             @Override
             public String inputSchemaJson() {
-                return null;
+                return inputSchemaJson;
             }
 
             @Override
@@ -320,7 +353,7 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
 
             @Override
             public String outputSchemaJson() {
-                return null;
+                return outputSchemaJson;
             }
         };
     }

@@ -209,6 +209,32 @@ public class YamlValidator {
         return validate(content, ProjectFacts.NONE, true);
     }
 
+    /**
+     * Where the message body of each route of a YAML file comes from: the analysis the body check of
+     * {@link #validate(String, ProjectFacts)} makes, so {@code camel overview} and {@code camel validate} give the same
+     * answer (CAMEL-25200). The routes of the file only, in their order. Empty when the YAML does not pass the schema,
+     * as the routes are then not checked either.
+     *
+     * @param facts what the caller read from the files beside the route; the body analysis uses the endpoints of the
+     *              OpenAPI operations that carry no body
+     */
+    public List<BodyOrigin> bodyOrigins(String content, ProjectFacts facts) throws Exception {
+        if (schema == null) {
+            init();
+        }
+        if (content == null || content.isBlank() || extraDocument(content) != null || jbangDirective(content) != null) {
+            return List.of();
+        }
+        List<BodyOrigin> answer = new ArrayList<>();
+        try {
+            validate(mapper.readTree(content), facts != null ? facts : ProjectFacts.NONE, true, content, answer);
+        } catch (Exception e) {
+            // YAML the routes cannot be read from: nothing to say of them
+            return List.of();
+        }
+        return answer;
+    }
+
     private List<Error> validate(String content, ProjectFacts facts, boolean routesOnly) throws Exception {
         if (schema == null) {
             init();
@@ -232,7 +258,8 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly, content);
+            List<Error> errors
+                    = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly, content, null);
             if (routesOnly) {
                 return errors;
             }
@@ -1297,7 +1324,12 @@ public class YamlValidator {
         return kind != null && kind.isString() && "Kamelet".equals(kind.asString());
     }
 
-    private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly, String content) {
+    /**
+     * @param origins where the body analysis of the routes goes (CAMEL-25200), or null; it is only made when the YAML
+     *                passes the schema, as the checks of the routes
+     */
+    private List<Error> validate(
+            JsonNode target, ProjectFacts facts, boolean routesOnly, String content, List<BodyOrigin> origins) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
         // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
         var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
@@ -1371,8 +1403,11 @@ public class YamlValidator {
             checkJsonPathText(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkLiteralPathParameters(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts);
             // where the body comes from, across the routes of the file (CAMEL-24844)
-            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
-                    bodyTypes());
+            List<BodyOrigin> flow = BodyTypeFlow.analyze(camelOnly, facts.bodylessEndpoints(), bodyTypes());
+            if (origins != null) {
+                origins.addAll(flow);
+            }
+            BodyTypeFlow.report(flow, new NodePath(PathType.JSON_POINTER), errors);
             // a field read on a body that is still text (CAMEL-24844)
             TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts, bodyTypes());
         }

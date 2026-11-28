@@ -32,6 +32,7 @@ import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -176,6 +177,16 @@ class SmppConsumerTest {
     @ParameterizedTest
     @EnumSource(value = SessionState.class, names = { "UNBOUND", "CLOSED" })
     public void internalSessionStateListenerShouldCloseSessionAndReconnect(SessionState sessionState) throws Exception {
+        assertListenerClosesSessionAndReconnects(sessionState, session);
+    }
+
+    @Test
+    public void internalSessionStateListenerShouldReconnectWhenTheSourceIsNull() throws Exception {
+        // no bind runs on this thread, so the session being bound here is null as well: a null source still reconnects
+        assertListenerClosesSessionAndReconnects(SessionState.CLOSED, null);
+    }
+
+    private void assertListenerClosesSessionAndReconnects(SessionState sessionState, Session source) throws Exception {
         try (MockedStatic<SmppUtils> smppUtilsMock = mockStatic(SmppUtils.class)) {
             SessionStateListener sessionStateListener = (SessionStateListener) ReflectionHelper
                     .getField(SmppConsumer.class.getDeclaredField("internalSessionStateListener"), consumer);
@@ -200,7 +211,7 @@ class SmppConsumerTest {
 
             consumer.doStart();
 
-            sessionStateListener.onStateChange(sessionState, SessionState.BOUND_RX, null);
+            sessionStateListener.onStateChange(sessionState, SessionState.BOUND_RX, source);
             verify(session).unbindAndClose();
         }
     }

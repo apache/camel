@@ -21,16 +21,24 @@ import org.apache.camel.spi.Metadata;
 public final class EventGridConstants {
     public static final String HEADER_PREFIX = "CamelAzureEventGrid";
 
-    @Metadata(description = "The event type of the event.", javaType = "String")
+    @Metadata(description = "The type of the event, the type attribute of the CloudEvent. If not set, the producer uses"
+                            + " Camel.Event.",
+              javaType = "String")
     public static final String EVENT_TYPE = HEADER_PREFIX + "EventType";
 
-    @Metadata(description = "The subject of the event.", javaType = "String")
+    @Metadata(description = "The subject of the event, the subject attribute of the CloudEvent. If not set, the producer"
+                            + " uses /camel/event.",
+              javaType = "String")
     public static final String SUBJECT = HEADER_PREFIX + "Subject";
 
-    @Metadata(description = "The time the event was generated.", javaType = "java.time.OffsetDateTime")
+    @Metadata(description = "The time when the event happened, the time attribute of the CloudEvent. If not set, the"
+                            + " producer uses the current time.",
+              javaType = "java.time.OffsetDateTime")
     public static final String EVENT_TIME = HEADER_PREFIX + "EventTime";
 
-    @Metadata(description = "The unique identifier for the event.", javaType = "String")
+    @Metadata(description = "The ID of the event, the id attribute of the CloudEvent. If not set, the producer uses a"
+                            + " random UUID for each event. For a List body, every event gets this ID.",
+              javaType = "String")
     public static final String ID = HEADER_PREFIX + "Id";
 
     private EventGridConstants() {

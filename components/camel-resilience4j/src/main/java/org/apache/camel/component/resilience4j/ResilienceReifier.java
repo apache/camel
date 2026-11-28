@@ -44,10 +44,12 @@ import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.util.function.Suppliers;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
@@ -247,9 +249,12 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
                     .newDefaultScheduledThreadPool(this, "CircuitBreaker");
             shutdownThreadPool = true;
         } else {
-            executorService = camelContext.getExecutorServiceManager()
-                    .newThreadPool(this, "CircuitBreaker",
-                            camelContext.getExecutorServiceManager().getDefaultThreadPoolProfile());
+            // the default thread pool profile, but a call is rejected when all the threads are busy and the queue is
+            // full: with CallerRuns (the default) the call would run on the caller thread before the time limiter
+            // waits for it, so it would never time out
+            ThreadPoolProfile profile = camelContext.getExecutorServiceManager().getDefaultThreadPoolProfile().clone();
+            profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
+            executorService = camelContext.getExecutorServiceManager().newThreadPool(this, "CircuitBreaker", profile);
             shutdownThreadPool = true;
         }
 

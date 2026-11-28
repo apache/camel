@@ -2,7 +2,7 @@
 :doctitle: AWS Bedrock
 :shortname: aws-bedrock
 :artifactid: camel-aws-bedrock
-:description: Invoke Model of AWS Bedrock service.
+:description: Invoke Amazon Bedrock foundation models with the InvokeModel and Converse APIs, and check content with Bedrock guardrails.
 :since: 4.5
 :supportlevel: Stable
 :tabs-sync-option:
@@ -244,6 +244,8 @@ The Camel AWS Bedrock component provides comprehensive support for guardrails th
 - `guardrailIdentifier`: The ID or ARN of the guardrail to apply
 - `guardrailVersion`: The version of the guardrail (default: "DRAFT")
 - `guardrailTrace`: Whether to return trace information (default: false)
+- `guardrailStreamProcessingMode`: How converseStream applies the guardrail to the streamed response, `sync` or `async`
+  (default: `sync`). See Guardrails with converseStream below.
 
 *Message-level Configuration* (per-message override via headers):
 
@@ -268,6 +270,27 @@ aws-bedrock://label?operation=converse&modelId=anthropic.claude-3-sonnet-2024022
 ----
 aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-20240229-v1:0
     &guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT
+----
+
+==== Guardrails with converseStream
+
+Bedrock applies a guardrail to a streamed response in one of two processing modes, which the
+`guardrailStreamProcessingMode` option chooses for the guardrail of the `guardrailIdentifier` option:
+
+- `sync` (default): Bedrock buffers the response chunks and checks them with the guardrail before it sends them. This
+  adds some latency, but every chunk the producer receives has been checked.
+- `async`: Bedrock sends the chunks as soon as the model produces them and checks them in the background. Chunks that
+  the guardrail would block can reach the producer before Bedrock blocks the rest of the stream, and the guardrail
+  cannot mask sensitive information.
+
+The `guardrailTrace` option does not change the processing mode. When the `CamelAwsBedrockGuardrailConfig` header is a
+`GuardrailStreamConfiguration`, its `streamProcessingMode` is used; a `GuardrailConfiguration` has none, so Bedrock
+uses `sync`.
+
+[source]
+----
+aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+    &guardrailIdentifier=abc123xyz&guardrailTrace=true&guardrailStreamProcessingMode=async
 ----
 
 *applyGuardrail*: Standalone operation to validate content against a guardrail without invoking a model. The content
@@ -335,5 +358,3 @@ Maven users will need to add the following dependency to their pom.xml.
 ----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-

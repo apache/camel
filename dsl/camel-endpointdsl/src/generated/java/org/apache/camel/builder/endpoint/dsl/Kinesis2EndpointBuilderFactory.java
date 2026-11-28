@@ -170,6 +170,46 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of shards that the consumer reads at the same time in
+         * a poll, each on a thread of a thread pool of the consumer, which also
+         * routes the records of the shard. With 1 (or less), or a stream of one
+         * shard, the consumer reads the shards one after the other on its own
+         * thread. Not used with shardId, or by the KCL consumer
+         * (useKclConsumers).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxConcurrentShards the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder maxConcurrentShards(int maxConcurrentShards) {
+            doSetProperty("maxConcurrentShards", maxConcurrentShards);
+            return this;
+        }
+        /**
+         * Maximum number of shards that the consumer reads at the same time in
+         * a poll, each on a thread of a thread pool of the consumer, which also
+         * routes the records of the shard. With 1 (or less), or a stream of one
+         * shard, the consumer reads the shards one after the other on its own
+         * thread. Not used with shardId, or by the KCL consumer
+         * (useKclConsumers).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxConcurrentShards the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder maxConcurrentShards(String maxConcurrentShards) {
+            doSetProperty("maxConcurrentShards", maxConcurrentShards);
+            return this;
+        }
+        /**
          * Maximum number of records fetched from each shard in each poll: the
          * Limit of the GetRecords request, from 1 to 10000. Not used by the KCL
          * consumer (useKclConsumers).
@@ -266,12 +306,19 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Define what will be the behavior in case of shard closed. Possible
-         * value are ignore, silent and fail. In case of ignore a WARN message
-         * will be logged once and the consumer will not process new messages
-         * until restarted,in case of silent there will be no logging and the
-         * consumer will not process new messages until restarted,in case of
-         * fail a ReachedClosedStateException will be thrown.
+         * Define what the consumer does when a shard it reads is closed, after
+         * it read all the records of the shard. A split or a merge of shards
+         * closes the parent shards, which stay listed for the retention period
+         * of the stream. Possible values are ignore, silent and fail. With
+         * ignore a WARN message is logged once and the shard is skipped, with
+         * silent the shard is skipped without logging, with fail a
+         * ReachedClosedStatusException is reported once to the exception
+         * handler of the consumer (logged as a WARN, or routed to the error
+         * handler of the route with bridgeErrorHandler=true) and the shard is
+         * then skipped. Without shardId the consumer goes on with the other
+         * shards of the stream, which include the child shards of the closed
+         * shard. With shardId the consumer reads only that shard, so it has no
+         * more messages to read once the shard is closed.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> type.
@@ -287,12 +334,19 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Define what will be the behavior in case of shard closed. Possible
-         * value are ignore, silent and fail. In case of ignore a WARN message
-         * will be logged once and the consumer will not process new messages
-         * until restarted,in case of silent there will be no logging and the
-         * consumer will not process new messages until restarted,in case of
-         * fail a ReachedClosedStateException will be thrown.
+         * Define what the consumer does when a shard it reads is closed, after
+         * it read all the records of the shard. A split or a merge of shards
+         * closes the parent shards, which stay listed for the retention period
+         * of the stream. Possible values are ignore, silent and fail. With
+         * ignore a WARN message is logged once and the shard is skipped, with
+         * silent the shard is skipped without logging, with fail a
+         * ReachedClosedStatusException is reported once to the exception
+         * handler of the consumer (logged as a WARN, or routed to the error
+         * handler of the route with bridgeErrorHandler=true) and the shard is
+         * then skipped. Without shardId the consumer goes on with the other
+         * shards of the stream, which include the child shards of the closed
+         * shard. With shardId the consumer reads only that shard, so it has no
+         * more messages to read once the shard is closed.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> type.
@@ -2978,6 +3032,18 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         public String awsKinesisShardId() {
             return "CamelAwsKinesisShardId";
+        }
+        /**
+         * The name of the stream the record was read from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsKinesisStreamName}.
+         */
+        public String awsKinesisStreamName() {
+            return "CamelAwsKinesisStreamName";
         }
         /**
          * A list of partition keys for batch operations. When set, each record

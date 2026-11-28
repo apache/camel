@@ -29,6 +29,13 @@ public interface OpenSearchInfraService extends InfrastructureService {
         return String.format("%s:%d", getOpenSearchHost(), getPort());
     }
 
+    /**
+     * The hostAddresses option of camel-opensearch.
+     */
+    default String hostAddresses() {
+        return getHttpHostAddress();
+    }
+
     String getUsername();
 
     String getPassword();

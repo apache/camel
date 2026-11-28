@@ -34,7 +34,8 @@ import org.apache.camel.spi.UriPath;
 import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_EMBEDDED;
 
 /**
- * Read and write from/to Infinispan distributed key/value store and data grid.
+ * Read and write the entries of caches of an Infinispan cache manager embedded in the application, and receive their
+ * events.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = SCHEME_EMBEDDED, title = "Infinispan Embedded",
              syntax = "infinispan-embedded:cacheName",
@@ -85,7 +86,9 @@ import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_E
                                                  + " goes to that header and the body is kept"))
 public class InfinispanEmbeddedEndpoint extends InfinispanEndpoint {
 
-    @UriPath(description = "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")
+    @UriPath(description = "The name of the cache. The value current uses the default cache of the cache manager, and the"
+                           + " default cache of a cache manager that Camel creates is named default. The"
+                           + " CamelInfinispanCacheName header replaces this name for the producer.")
     @Metadata(required = true)
     private final String cacheName;
     @UriParam

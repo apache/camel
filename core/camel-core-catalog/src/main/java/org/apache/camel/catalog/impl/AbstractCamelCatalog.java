@@ -78,6 +78,9 @@ public abstract class AbstractCamelCatalog {
     private static final Pattern ENV_OR_SYS_PATTERN = Pattern.compile("\\{\\{(env|sys):\\w+(:[^{}]*)?\\}\\}");
     private static final String ENV_OR_SYS_WORD = "CamelEnvOrSysPlaceholder";
     private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
+    // the uri prefixes of the endpoint mapping types of spring-ws (EndpointMappingType in camel-spring-ws)
+    private static final List<String> SPRING_WS_TYPES
+            = List.of("rootqname", "action", "to", "soapaction", "xpathresult", "uri", "uripath", "beanname");
 
     private SuggestionStrategy suggestionStrategy = new EditDistanceSuggestionStrategy();
     private JSonSchemaResolver jsonSchemaResolver;
@@ -353,46 +356,7 @@ public abstract class AbstractCamelCatalog {
                     }
                 }
 
-                // is boolean
-                if (!multiValue && !valuePlaceholder && !lookup && "boolean".equals(row.getType())) {
-                    // value must be a boolean
-                    boolean bool = ObjectHelper.isBoolean(value);
-                    if (!bool) {
-                        result.addInvalidBoolean(name, value);
-                    }
-                }
-
-                // is duration
-                if (!multiValue && !valuePlaceholder && !lookup && "duration".equals(row.getType())) {
-                    // value must be convertible to a duration
-                    boolean valid = validateDuration(value);
-                    if (!valid) {
-                        result.addInvalidDuration(name, value);
-                    }
-                }
-
-                // is integer
-                if (!multiValue && !valuePlaceholder && !lookup && "integer".equals(row.getType())) {
-                    // value must be an integer (or long)
-                    boolean valid = validateInteger(value, row.getJavaType());
-                    if (!valid) {
-                        result.addInvalidInteger(name, value);
-                    }
-                }
-
-                // is number
-                if (!multiValue && !valuePlaceholder && !lookup && "number".equals(row.getType())) {
-                    // value must be an number
-                    boolean valid = false;
-                    try {
-                        valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                    if (!valid) {
-                        result.addInvalidNumber(name, value);
-                    }
-                }
+                validateTypedValue(result, name, value, row, multiValue, valuePlaceholder, lookup);
             }
         }
 
@@ -786,6 +750,12 @@ public abstract class AbstractCamelCatalog {
     }
 
     private static List<String> findTokens(String syntax, String scheme, String uriPath, List<Integer> positions) {
+        // special for spring-ws where the path is either the type and the lookupKey (consumer) or the address
+        // (producer), and both the lookupKey and the address may contain colons
+        if ("spring-ws".equals(scheme)) {
+            return findSpringWsTokens(uriPath, positions);
+        }
+
         String[] tokens = SYNTAX_PATTERN.split(syntax);
 
         // find the position where each option start/end
@@ -848,6 +818,29 @@ public abstract class AbstractCamelCatalog {
             positions.clear();
         }
         return word2;
+    }
+
+    /**
+     * Splits the path of a spring-ws endpoint (syntax type:lookupKey:webServiceEndpointUri) as the component does: a
+     * path that starts with a type prefix (case-insensitive) is the type and the lookupKey (the rest of the path), and
+     * any other path is the webServiceEndpointUri of the producer.
+     */
+    private static List<String> findSpringWsTokens(String uriPath, List<Integer> positions) {
+        List<String> answer = new ArrayList<>();
+        for (String type : SPRING_WS_TYPES) {
+            if (uriPath.regionMatches(true, 0, type + ":", 0, type.length() + 1)) {
+                // type and lookupKey are the 1st and 2nd option in the syntax
+                answer.add(uriPath.substring(0, type.length()));
+                positions.add(0);
+                answer.add(uriPath.substring(type.length() + 1));
+                positions.add(1);
+                return answer;
+            }
+        }
+        // webServiceEndpointUri is the 3rd option in the syntax
+        answer.add(uriPath);
+        positions.add(2);
+        return answer;
     }
 
     private Map<String, BaseOptionModel> extractApiProperties(ComponentModel model, String key, String key2) {
@@ -1354,46 +1347,7 @@ public abstract class AbstractCamelCatalog {
                 result.addDeprecated(longKey);
             }
 
-            // is boolean
-            if (!optionPlaceholder && !lookup && "boolean".equals(row.getType())) {
-                // value must be a boolean
-                boolean bool = ObjectHelper.isBoolean(value);
-                if (!bool) {
-                    result.addInvalidBoolean(longKey, value);
-                }
-            }
-
-            // is duration
-            if (!optionPlaceholder && !lookup && "duration".equals(row.getType())) {
-                // value must be convertible to a duration
-                boolean valid = validateDuration(value);
-                if (!valid) {
-                    result.addInvalidDuration(longKey, value);
-                }
-            }
-
-            // is integer
-            if (!optionPlaceholder && !lookup && "integer".equals(row.getType())) {
-                // value must be an integer (or long)
-                boolean valid = validateInteger(value, row.getJavaType());
-                if (!valid) {
-                    result.addInvalidInteger(longKey, value);
-                }
-            }
-
-            // is number
-            if (!optionPlaceholder && !lookup && "number".equals(row.getType())) {
-                // value must be an number
-                boolean valid = false;
-                try {
-                    valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
-                } catch (Exception e) {
-                    // ignore
-                }
-                if (!valid) {
-                    result.addInvalidNumber(longKey, value);
-                }
-            }
+            validateTypedValue(result, longKey, value, row, false, optionPlaceholder, lookup);
 
             // is enum
             List<String> enums = row.getEnums();
@@ -1890,6 +1844,76 @@ public abstract class AbstractCamelCatalog {
         }
         // use as-is
         return options;
+    }
+
+    @FunctionalInterface
+    private interface TypeErrorAdder {
+        void add(String name, String value);
+    }
+
+    private static void validateTypedValue(
+            EndpointValidationResult result, String name, String value, BaseOptionModel row,
+            boolean multiValue, boolean valuePlaceholder, boolean lookup) {
+        doValidateTypedValue(name, value, row, multiValue, valuePlaceholder, lookup,
+                result::addInvalidBoolean,
+                result::addInvalidDuration,
+                result::addInvalidInteger,
+                result::addInvalidNumber);
+    }
+
+    private static void validateTypedValue(
+            ConfigurationPropertiesValidationResult result, String name, String value, BaseOptionModel row,
+            boolean multiValue, boolean valuePlaceholder, boolean lookup) {
+        doValidateTypedValue(name, value, row, multiValue, valuePlaceholder, lookup,
+                result::addInvalidBoolean,
+                result::addInvalidDuration,
+                result::addInvalidInteger,
+                result::addInvalidNumber);
+    }
+
+    private static void doValidateTypedValue(
+            String name, String value, BaseOptionModel row,
+            boolean multiValue, boolean valuePlaceholder, boolean lookup,
+            TypeErrorAdder addBool, TypeErrorAdder addDuration,
+            TypeErrorAdder addInteger, TypeErrorAdder addNumber) {
+        if (multiValue || valuePlaceholder || lookup) {
+            return;
+        }
+        String type = row.getType();
+        if (type == null) {
+            return;
+        }
+        switch (type) {
+            case "boolean" -> {
+                if (!ObjectHelper.isBoolean(value)) {
+                    addBool.add(name, value);
+                }
+            }
+            case "duration" -> {
+                if (!validateDuration(value)) {
+                    addDuration.add(name, value);
+                }
+            }
+            case "integer" -> {
+                if (!validateInteger(value, row.getJavaType())) {
+                    addInteger.add(name, value);
+                }
+            }
+            case "number" -> {
+                boolean valid = false;
+                try {
+                    valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
+                } catch (Exception e) {
+                    // ignore
+                }
+                if (!valid) {
+                    addNumber.add(name, value);
+                }
+            }
+            default -> {
+                // no type-specific validation
+            }
+        }
     }
 
     private static boolean validateInteger(String value) {

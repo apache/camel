@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -45,15 +46,30 @@ public class BatchConsumerWorker implements Runnable {
     private final BatchEndpointMessageListener batchListener;
     private final MessageConsumer consumer;
     private final Session session;
+    private final BooleanSupplier suspended;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private volatile boolean jmsUnhealthy;
+    // the messages that this worker still routes before it ends: the batch being routed, and the buffered messages
+    // of an AUTO_ACKNOWLEDGE session (acknowledged on receipt, so they are routed when suspended or stopped). Written
+    // by the worker only
+    private volatile int pendingMessages;
 
     BatchConsumerWorker(SjmsEndpoint endpoint, BatchEndpointMessageListener batchListener,
-                        Session session, MessageConsumer consumer) {
+                        Session session, MessageConsumer consumer, BooleanSupplier suspended) {
         this.endpoint = endpoint;
         this.batchListener = batchListener;
         this.session = session;
         this.consumer = consumer;
+        this.suspended = suspended;
+    }
+
+    /**
+     * The number of messages that this worker still routes before it ends, for the graceful shutdown to wait for: the
+     * batch being routed, and the buffered messages of an AUTO_ACKNOWLEDGE session. The buffered messages of a
+     * transacted or CLIENT_ACKNOWLEDGE session are not counted, as they are redelivered when the consumer stops.
+     */
+    int getPendingMessages() {
+        return pendingMessages;
     }
 
     void shutdown() {
@@ -80,6 +96,7 @@ public class BatchConsumerWorker implements Runnable {
         LOG.trace("run START");
         int batchSize = endpoint.getBatchSize();
         long batchInterval = endpoint.getBatchInterval();
+        boolean redeliverable = isRedeliverable();
         List<Message> buffer = new ArrayList<>();
         long batchStartTime = 0L;
 
@@ -95,29 +112,65 @@ public class BatchConsumerWorker implements Runnable {
                         batchStartTime = System.nanoTime();
                     }
                     buffer.add(msg);
+                    if (!redeliverable) {
+                        pendingMessages = buffer.size();
+                    }
                 }
 
                 boolean sizeReached = batchSize > 0 && buffer.size() >= batchSize;
                 boolean intervalElapsed = batchInterval > 0 && !buffer.isEmpty()
                         && TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - batchStartTime) >= batchInterval;
+                boolean due = sizeReached || intervalElapsed;
+                if (due && redeliverable) {
+                    // counted before the consumer is found not suspended, so that a graceful shutdown that suspends
+                    // the consumer meanwhile sees this batch when it counts the pending messages
+                    pendingMessages = buffer.size();
+                }
 
-                if (sizeReached || intervalElapsed) {
-                    dispatchOrDiscard(buffer);
+                boolean dispatch;
+                if (suspended.getAsBoolean()) {
+                    // the consumer is suspended, such as by a graceful shutdown that waits for the pending messages.
+                    // The buffered messages of an AUTO_ACKNOWLEDGE session are acknowledged already, so they are
+                    // routed now, as no more messages may come to complete the batch. A transacted or
+                    // CLIENT_ACKNOWLEDGE session starts no batch while suspended: its buffered messages are routed
+                    // after a resume, or redelivered after a stop. So a stop does not close the session of a batch
+                    // that started after the graceful shutdown stopped waiting (that batch would be routed again
+                    // when redelivered)
+                    dispatch = !redeliverable && !buffer.isEmpty();
+                } else {
+                    dispatch = due;
+                }
+
+                if (dispatch) {
+                    dispatchBatch(buffer);
                     buffer = new ArrayList<>();
+                } else if (redeliverable) {
+                    pendingMessages = 0;
                 }
             }
 
             if (!buffer.isEmpty()) {
-                dispatchOrDiscard(buffer); // graceful-stop drain
+                dispatchBatch(buffer); // graceful-stop drain
             }
         } catch (JMSException e) {
             jmsUnhealthy = true;
             if (!buffer.isEmpty()) {
-                dispatchOrDiscard(buffer);
+                dispatchBatch(buffer);
             }
             throw new BatchConsumerWorkerException(e);
+        } finally {
+            pendingMessages = 0;
         }
         LOG.trace("run STOP");
+    }
+
+    private void dispatchBatch(List<Message> batch) {
+        pendingMessages = batch.size();
+        try {
+            dispatchOrDiscard(batch);
+        } finally {
+            pendingMessages = 0;
+        }
     }
 
     private void dispatchOrDiscard(List<Message> batch) {

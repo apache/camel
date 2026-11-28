@@ -2,7 +2,7 @@
 :doctitle: TensorFlow Serving
 :shortname: tensorflow-serving
 :artifactid: camel-tensorflow-serving
-:description: Provide access to TensorFlow Serving model servers to run inference with TensorFlow saved models remotely
+:description: Run inference on the models of a TensorFlow Serving model server over gRPC, and get their status and metadata.
 :since: 4.10
 :supportlevel: Stable
 :tabs-sync-option:
@@ -453,4 +453,3 @@ from("direct:predict-with-headers")
     .log("Result2: ${body.getOutputsOrThrow('y').getFloatVal(1)}")
     .log("Result3: ${body.getOutputsOrThrow('y').getFloatVal(2)}");
 ----
-

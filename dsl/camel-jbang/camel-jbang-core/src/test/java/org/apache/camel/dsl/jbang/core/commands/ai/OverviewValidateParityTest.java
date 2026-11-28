@@ -155,6 +155,102 @@ class OverviewValidateParityTest {
                 .noneMatch(m -> VALIDATE.matcher(m).find());
     }
 
+    @Test
+    void overviewAndValidateReportTheSameBodyNeverSet() throws Exception {
+        // a GET of an OpenAPI contract, a timer chain in one file, a call written with slashes, a call from another
+        // file (not followed by either), and a dead letter route (the failed message: nothing is said)
+        Files.writeString(dir.resolve("stock-api.json"), """
+                {
+                  "openapi": "3.0.2",
+                  "paths": {
+                    "/stock/{sku}": {
+                      "get": { "operationId": "getStock", "responses": { "200": { "description": "ok" } } }
+                    }
+                  }
+                }
+                """);
+        Files.writeString(dir.resolve("stock.camel.yaml"), """
+                - rest:
+                    openApi:
+                      specification: stock-api.json
+                - route:
+                    id: getStock
+                    from:
+                      uri: direct:getStock
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:dlq
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.id"
+                """);
+        Files.writeString(dir.resolve("report.camel.yaml"), """
+                - route:
+                    id: nightly
+                    from:
+                      uri: timer:nightly
+                      steps:
+                        - to: direct://buildReport
+                        - to: direct:remote
+                - route:
+                    id: buildReport
+                    from:
+                      uri: direct:buildReport
+                      steps:
+                        - unmarshal:
+                            json: {}
+                """);
+        Files.writeString(dir.resolve("remote.camel.yaml"), """
+                - route:
+                    id: remote
+                    from:
+                      uri: direct:remote
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.x"
+                """);
+
+        Set<String> overview = new TreeSet<>();
+        for (Finding f : ProjectOverview.analyze(dir, CATALOG).findings()) {
+            if ("body-never-set".equals(f.kind())) {
+                overview.add(f.message());
+            }
+        }
+        Set<String> validate = new TreeSet<>();
+        try (Stream<Path> files = Files.list(dir)) {
+            for (Path p : files.toList()) {
+                String name = p.getFileName().toString();
+                if (!name.endsWith(".yaml")) {
+                    continue;
+                }
+                for (String msg : SourceValidator.validate(name, Files.readString(p), CATALOG, null, dir)) {
+                    if (msg.contains("the message reaching this route has none")) {
+                        // validate prefixes the line and the location of the route
+                        validate.add(msg.substring(msg.indexOf("route ")));
+                    }
+                }
+            }
+        }
+
+        assertThat(validate).hasSize(2);
+        assertThat(validate).anyMatch(m -> m.startsWith("route getStock: jsonpath reads the message body"));
+        assertThat(validate).anyMatch(m -> m.startsWith("route buildReport: unmarshal works on the message body"));
+        assertThat(overview).isEqualTo(validate);
+    }
+
     private static String endpoint(Pattern pattern, String message) {
         Matcher m = pattern.matcher(message);
         assertThat(m.find()).as(message).isTrue();

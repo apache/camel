@@ -20,6 +20,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.HttpURLConnection;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,6 +55,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
 /* This test class doesn't use the KubernetesRunTest since we had to use the @EnableKubernetesMockClient
@@ -73,14 +75,23 @@ class KubernetesRunCustomTest {
     protected KubernetesClient client;
     protected StringPrinter printer;
 
+    // a home of its own, not the target directory that the other test classes use
+    @TempDir
+    Path home;
+    private Path previousHome;
+
     @AfterEach
     void cleanupWorkDirs() {
         FileUtil.removeDir(new File(runPlatformDir));
+        CommandLineHelper.useHomeDir(previousHome.toString());
+        // the client of the mock server of this test is closed after it
+        KubernetesHelper.setKubernetesClient(null);
     }
 
     @BeforeEach
     public void setup() {
-        CommandLineHelper.useHomeDir("target");
+        previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
         // Set Camel version with system property value, usually set via Maven surefire plugin
         // In case you run this test via local Java IDE you need to provide the system property or a default value here
         VersionHelper.setCamelVersion(System.getProperty("camel.version", ""));

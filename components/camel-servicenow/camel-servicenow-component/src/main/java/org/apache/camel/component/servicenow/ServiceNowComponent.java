@@ -34,11 +34,14 @@ import org.apache.camel.util.PropertiesHelper;
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("servicenow")
 public class ServiceNowComponent extends DefaultComponent implements SSLContextParametersAware {
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced",
+              description = "The name of the ServiceNow instance for the endpoints whose URI does not name one.")
     private String instanceName;
-    @Metadata
+    @Metadata(description = "The shared configuration of the endpoints. Each endpoint starts from a copy of it.")
     private ServiceNowConfiguration configuration;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Whether to use the global SSL context parameters of the CamelContext when the "
+                            + "sslContextParameters option is not set.")
     private boolean useGlobalSslContextParameters;
 
     public ServiceNowComponent() {
@@ -60,9 +63,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
         return instanceName;
     }
 
-    /**
-     * The ServiceNow instance name
-     */
     public void setInstanceName(String instanceName) {
         this.instanceName = instanceName;
     }
@@ -71,9 +71,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(ServiceNowConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -83,9 +80,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
         return this.useGlobalSslContextParameters;
     }
 
-    /**
-     * Enable usage of global SSL context parameters.
-     */
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;

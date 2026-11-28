@@ -22,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MNSOperationsTest {
 
+    // RECEIVE_MESSAGE is deprecated, but its value is still checked until it is removed
+    @SuppressWarnings("deprecation")
     @Test
     void testOperationNames() {
         assertThat(MNSOperations.SEND_MESSAGE).isEqualTo("sendMessage");

@@ -2,7 +2,7 @@
 :doctitle: Hugging Face
 :shortname: huggingface
 :artifactid: camel-huggingface
-:description: Integration with Hugging Face's Model Hub by using the Deep Java Library (DJL) Python bridge
+:description: Run Hugging Face models for tasks such as text classification, summarization, chat and speech recognition, in a Python process of Deep Java Library (DJL).
 :since: 4.19
 :supportlevel: Stable
 :tabs-sync-option:
@@ -130,6 +130,18 @@ include::partial$component-endpoint-headers.adoc[]
 
 // endpoint options: START
 // endpoint options: END
+
+== Authentication
+
+To download gated or private models, set the `authToken` option to a Hugging Face user access token.
+
+The producer writes a Python handler for the task into a temporary directory, which only the user that runs Camel can
+read, and runs it with the DJL Python engine. The directory is removed when the producer stops. The `authToken` is not
+written into the handler: it is given to the Python process as the `HF_TOKEN` environment variable. The token must not
+contain a comma.
+
+NOTE: DJL logs the options of the Python engine at DEBUG level, including the environment variables, so the token is
+written to the log when the `ai.djl.python.engine` logger is at DEBUG. Keep that logger above DEBUG in production.
 
 == OAuth Authentication
 

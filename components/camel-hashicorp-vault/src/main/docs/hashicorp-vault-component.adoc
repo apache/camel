@@ -840,6 +840,8 @@ For example, if a secret named `database` is updated in Vault:
 - On the next check, if `current_version` changes to `6`, a reload is triggered
 - The refresh period (default 60 seconds) determines how quickly changes are detected
 
+If the reload fails (for example a route cannot start because the system it connects to is briefly unreachable), the new version is not marked as seen: the next check reloads again, up to 10 times in a row. After that, the task waits for the next new version of a tracked secret.
+
 This polling approach works with all HashiCorp Vault deployments (on-premise, cloud, enterprise, and open-source) without requiring additional infrastructure.
 
 

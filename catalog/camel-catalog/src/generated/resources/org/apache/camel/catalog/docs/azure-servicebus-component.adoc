@@ -159,6 +159,16 @@ from("direct:start")
   .to("mock:result");
 ----
 
+The time can also be set with the `scheduledEnqueueTime` option, or as a string in the header, as an ISO-8601 date-time
+with an offset, such as `2026-11-18T22:00:00Z` or `2026-11-18T23:00:00+01:00`. The option and the header are used only by
+`scheduleMessages`: `sendMessages` sends the message at once.
+
+[source,java]
+----
+from("direct:start")
+  .to("azure-servicebus:test?connectionString=test&producerOperation=scheduleMessages&scheduledEnqueueTime=2026-11-18T23:00:00+01:00");
+----
+
 - `receiveMessages`
 
 [tabs]

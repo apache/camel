@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.azure.iothub.client;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -28,6 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.LongSupplier;
 
@@ -36,21 +41,35 @@ import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeReason;
 import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
+import com.microsoft.azure.sdk.iot.device.twin.DesiredPropertiesCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Thread-safe pool of Azure IoT Hub {@link DeviceClient} instances, keyed by the resolved hub/device/module identity
- * derived from the connection string instead of only the raw device id.
+ * derived from the connection string instead of only the raw device id, together with a SHA-256 hash of the whole
+ * connection string. A client is only reused for the same connection string, so a connection string with another key
+ * (or without a key) never gets a client that was opened with a different credential: it opens its own client, and IoT
+ * Hub checks its credential.
  *
  * <p>
- * Clients are created lazily, reused across messages, and evicted after an idle timeout. Connection status changes are
- * monitored through the Azure SDK callback, and disconnected clients are retired automatically; any in-use client is
- * closed only when the final lease is released. Callers may also remove a client from the pool explicitly during
- * cleanup.
+ * Clients are created lazily, reused across messages, and evicted after an idle timeout. A client is idle only while it
+ * has no lease, and its idle time counts from the last release (or from the end of its open, if it was never leased),
+ * so a long send or a slow open does not make it idle. Connection status changes are monitored through the Azure SDK
+ * callback, and disconnected clients are retired automatically; any in-use client is closed only when the final lease
+ * is released. Callers may also remove a client from the pool explicitly during cleanup.
+ * </p>
+ *
+ * <p>
+ * A client over HTTPS is kept apart from the client over MQTT or AMQPS of the same device, as it cannot do twin
+ * operations. MQTT and AMQPS endpoints of a device share one client, as IoT Hub allows only one MQTT or AMQP connection
+ * per device.
  * </p>
  */
 public class DeviceClientPool {
+
+    // the suffix of a client over HTTPS in the log text of its pool key; ':' separates the parts of the identity
+    private static final String HTTPS_KEY_SUFFIX = "|HTTPS";
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceClientPool.class);
 
@@ -61,18 +80,24 @@ public class DeviceClientPool {
 
     private static final class PooledClient {
         final DeviceClient client;
-        volatile long lastUsed;
+        // the last time the client was leased or released; the idle time of a client without a lease runs from here
+        final AtomicLong lastUsed;
         final AtomicInteger inUse = new AtomicInteger();
         volatile boolean retired;
         final AtomicBoolean closed = new AtomicBoolean();
 
         PooledClient(DeviceClient client, long nowMillis) {
             this.client = client;
-            this.lastUsed = nowMillis;
+            this.lastUsed = new AtomicLong(nowMillis);
         }
 
         void touch(long nowMillis) {
-            this.lastUsed = nowMillis;
+            // never move it back: a thread that read the clock earlier must not shorten the idle time
+            lastUsed.accumulateAndGet(nowMillis, Math::max);
+        }
+
+        boolean isIdle(long nowMillis, long idleTimeoutMillis) {
+            return inUse.get() == 0 && (nowMillis - lastUsed.get()) > idleTimeoutMillis;
         }
 
         void acquire() {
@@ -86,13 +111,11 @@ public class DeviceClientPool {
 
     public static final class Lease implements AutoCloseable {
         private final DeviceClientPool pool;
-        private final String poolKey;
         private final PooledClient pooled;
         private boolean closed;
 
-        private Lease(DeviceClientPool pool, String poolKey, PooledClient pooled) {
+        private Lease(DeviceClientPool pool, PooledClient pooled) {
             this.pool = pool;
-            this.poolKey = poolKey;
             this.pooled = pooled;
         }
 
@@ -110,20 +133,18 @@ public class DeviceClientPool {
                 return;
             }
             closed = true;
-            if (pooled.release()) {
-                if (pooled.retired) {
-                    pool.closeRetired(pooled);
-                } else {
-                    pool.touchAndMaybeEvict(poolKey);
-                }
+            // touch before the lease is given back, so the idle time of the client starts at the release
+            pooled.touch(pool.nowMillis());
+            if (pooled.release() && pooled.retired) {
+                pool.closeRetired(pooled);
             }
         }
     }
 
     private final Duration idleTimeout;
     private final Duration evictionInterval;
-    private final Map<String, PooledClient> pool = new ConcurrentHashMap<>();
-    private final Map<String, CompletableFuture<DeviceClient>> creationFutures = new ConcurrentHashMap<>();
+    private final Map<PoolKey, PooledClient> pool = new ConcurrentHashMap<>();
+    private final Map<PoolKey, CompletableFuture<DeviceClient>> creationFutures = new ConcurrentHashMap<>();
     private final Set<PooledClient> pendingClose = ConcurrentHashMap.newKeySet();
     private final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
@@ -178,16 +199,21 @@ public class DeviceClientPool {
 
     // package-private for test hooks only
     DeviceClient getOrCreate(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return getOrCreate(deviceId, connectionString, protocol, null);
+    }
+
+    // package-private for test hooks only
+    DeviceClient getOrCreate(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
-        final long now = nowMillisSupplier.getAsLong();
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         PooledClient existing = pool.get(poolKey);
         if (existing != null) {
-            existing.touch(now);
+            existing.touch(nowMillis());
             return existing.client;
         }
 
@@ -200,12 +226,13 @@ public class DeviceClientPool {
                     createdFuture.complete(rechecked.client);
                     return rechecked.client;
                 }
-                DeviceClient client = createClient(deviceId, connectionString, protocol);
-                PooledClient pooled = new PooledClient(client, now);
+                DeviceClient client = createClient(deviceId, connectionString, protocol, subscribeTimeout);
+                // read the clock after open: opening can take longer than the idle timeout on a slow hub
+                PooledClient pooled = new PooledClient(client, nowMillis());
                 PooledClient previous = pool.putIfAbsent(poolKey, pooled);
                 if (previous != null) {
                     client.close();
-                    previous.touch(now);
+                    previous.touch(nowMillis());
                     createdFuture.complete(previous.client);
                     return previous.client;
                 }
@@ -248,22 +275,27 @@ public class DeviceClientPool {
     }
 
     public Lease acquire(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return acquire(deviceId, connectionString, protocol, null);
+    }
+
+    /**
+     * @param subscribeTimeout the timeout of the subscription to desired properties when the device client is created,
+     *                         or null for the default of the Azure IoT SDK
+     */
+    public Lease acquire(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
-        final long now = nowMillisSupplier.getAsLong();
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         for (;;) {
+            // read the clock on every attempt: getOrCreate below can block for a whole open of the client
+            final long now = nowMillis();
             AtomicReference<PooledClient> evicted = new AtomicReference<>();
             PooledClient existing = pool.computeIfPresent(poolKey, (key, pooled) -> {
-                if (pooled.inUse.get() > 0) {
-                    pooled.touch(now);
-                    pooled.acquire();
-                    return pooled;
-                }
-                if ((now - pooled.lastUsed) > idleTimeout.toMillis()) {
+                if (pooled.isIdle(now, idleTimeout.toMillis())) {
                     evicted.set(pooled);
                     return null;
                 }
@@ -272,26 +304,27 @@ public class DeviceClientPool {
                 return pooled;
             });
             if (existing != null) {
-                return new Lease(this, poolKey, existing);
+                return new Lease(this, existing);
             }
             if (evicted.get() != null) {
-                closeQuietly(poolKey, evicted.get().client, "idle eviction");
+                closeQuietly(poolKey.toString(), evicted.get().client, "idle eviction");
                 continue;
             }
 
-            DeviceClient client = getOrCreate(deviceId, connectionString, protocol);
+            DeviceClient client = getOrCreate(deviceId, connectionString, protocol, subscribeTimeout);
+            final long afterCreate = nowMillis();
             AtomicReference<PooledClient> acquired = new AtomicReference<>();
             pool.computeIfPresent(poolKey, (key, pooled) -> {
                 if (pooled.client != client) {
                     return pooled;
                 }
-                pooled.touch(now);
+                pooled.touch(afterCreate);
                 pooled.acquire();
                 acquired.set(pooled);
                 return pooled;
             });
             if (acquired.get() != null) {
-                return new Lease(this, poolKey, acquired.get());
+                return new Lease(this, acquired.get());
             }
             // The pool entry may have been evicted or replaced between creation and the acquire step.
             // Loop back to retry instead of recursing to keep the stack depth constant.
@@ -303,7 +336,12 @@ public class DeviceClientPool {
         return acquire(deviceId, connectionString, protocol);
     }
 
-    private boolean isCreationInProgress(String poolKey) {
+    public Lease lease(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
+        return acquire(deviceId, connectionString, protocol, subscribeTimeout);
+    }
+
+    private boolean isCreationInProgress(PoolKey poolKey) {
         return creationFutures.containsKey(poolKey);
     }
 
@@ -311,8 +349,8 @@ public class DeviceClientPool {
         if (deviceId == null || deviceId.isBlank()) {
             return false;
         }
-        for (String poolKey : creationFutures.keySet()) {
-            if (matchesDeviceId(poolKey, deviceId)) {
+        for (PoolKey poolKey : creationFutures.keySet()) {
+            if (poolKey.matchesDeviceId(deviceId)) {
                 return true;
             }
         }
@@ -320,7 +358,8 @@ public class DeviceClientPool {
     }
 
     void remove(String deviceId, String connectionString) {
-        removePoolEntry(resolvePoolKey(deviceId, connectionString));
+        removePoolEntry(resolvePoolKey(deviceId, connectionString, false));
+        removePoolEntry(resolvePoolKey(deviceId, connectionString, true));
     }
 
     void remove(String deviceId) {
@@ -332,53 +371,68 @@ public class DeviceClientPool {
             return;
         }
 
-        String directKey = deviceId;
-        PooledClient pooled = pool.remove(directKey);
-        if (pooled != null) {
-            closeQuietly(deviceId, pooled.client, "explicit removal");
-            return;
-        }
-
-        for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
-            String key = entry.getKey();
-            if (matchesDeviceId(key, deviceId)) {
-                if (pool.remove(key, entry.getValue())) {
-                    closeQuietly(deviceId, entry.getValue().client, "explicit removal");
-                    return;
-                }
+        // a device can have several clients, one per connection string (for example while a key is rotated)
+        for (Map.Entry<PoolKey, PooledClient> entry : pool.entrySet()) {
+            if (entry.getKey().matchesDeviceId(deviceId) && pool.remove(entry.getKey(), entry.getValue())) {
+                closeQuietly(deviceId, entry.getValue().client, "explicit removal");
             }
         }
     }
 
-    private void removePoolEntry(String poolKey) {
-        if (poolKey == null || poolKey.isBlank()) {
-            return;
-        }
+    private void removePoolEntry(PoolKey poolKey) {
         if (isCreationInProgress(poolKey)) {
             LOG.debug("Skipping removal of in-flight DeviceClient for device {} while creation is still in progress", poolKey);
             return;
         }
         PooledClient pooled = pool.remove(poolKey);
         if (pooled != null) {
-            closeQuietly(poolKey, pooled.client, "explicit removal");
+            closeQuietly(poolKey.toString(), pooled.client, "explicit removal");
         }
     }
 
-    private static boolean matchesDeviceId(String poolKey, String deviceId) {
-        if (poolKey == null) {
-            return false;
+    /**
+     * The key of a pooled client: the hub, device and module of the connection string, whether the client is over
+     * HTTPS, and a SHA-256 hash of the whole connection string, so the credential (SharedAccessKey,
+     * SharedAccessSignature, ...) is part of the key without the key holding it. A client over HTTPS is kept apart from
+     * the client over MQTT or AMQPS of the same device, as it cannot do twin operations. {@link #toString()} leaves the
+     * hash out, as it is used in log messages.
+     */
+    private record PoolKey(String hostName, String deviceId, String moduleId, boolean https, String connectionStringHash) {
+
+        boolean matchesDeviceId(String id) {
+            return deviceId != null && deviceId.equals(id);
         }
-        if (poolKey.equals(deviceId)) {
-            return true;
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            if (hostName != null) {
+                sb.append(hostName);
+            }
+            if (deviceId != null) {
+                if (!sb.isEmpty()) {
+                    sb.append(':');
+                }
+                sb.append(deviceId);
+            }
+            if (moduleId != null) {
+                if (!sb.isEmpty()) {
+                    sb.append(':');
+                }
+                sb.append(moduleId);
+            }
+            if (https) {
+                sb.append(HTTPS_KEY_SUFFIX);
+            }
+            return sb.toString();
         }
-        String[] parts = poolKey.split(":");
-        return parts.length >= 2 && parts[1].equals(deviceId);
     }
 
-    private static String resolvePoolKey(String deviceId, String connectionString) {
-        if (deviceId == null || deviceId.isBlank()) {
-            return connectionString;
-        }
+    private static PoolKey resolvePoolKey(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return resolvePoolKey(deviceId, connectionString, protocol == IotHubClientProtocol.HTTPS);
+    }
+
+    private static PoolKey resolvePoolKey(String deviceId, String connectionString, boolean https) {
         String[] items = connectionString == null ? new String[0] : connectionString.split(";");
         String hostName = null;
         String csDeviceId = null;
@@ -402,30 +456,38 @@ public class DeviceClientPool {
                 }
             }
         }
-        if (csDeviceId != null && !csDeviceId.equals(deviceId)) {
+        boolean hasDeviceId = deviceId != null && !deviceId.isBlank();
+        if (hasDeviceId && csDeviceId != null && !csDeviceId.equals(deviceId)) {
             throw new IllegalArgumentException(
                     "Device id '" + deviceId + "' does not match the connection string's DeviceId '" + csDeviceId + "'");
         }
-        StringBuilder identity = new StringBuilder();
-        if (hostName != null && !hostName.isBlank()) {
-            identity.append(hostName);
-        }
+        String device;
         if (csDeviceId != null && !csDeviceId.isBlank()) {
-            if (!identity.isEmpty()) {
-                identity.append(':');
-            }
-            identity.append(csDeviceId);
+            device = csDeviceId;
+        } else {
+            device = hasDeviceId ? deviceId : null;
         }
-        if (moduleId != null && !moduleId.isBlank()) {
-            if (!identity.isEmpty()) {
-                identity.append(':');
-            }
-            identity.append(moduleId);
-        }
-        return !identity.isEmpty() ? identity.toString() : deviceId;
+        return new PoolKey(
+                hostName != null && !hostName.isBlank() ? hostName : null,
+                device,
+                moduleId != null && !moduleId.isBlank() ? moduleId : null,
+                https,
+                sha256(connectionString));
     }
 
-    private DeviceClient createClient(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+    private static String sha256(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest((value == null ? "" : value).getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            // every Java platform must support SHA-256
+            throw new IllegalStateException("SHA-256 is not available", e);
+        }
+    }
+
+    private DeviceClient createClient(
+            String deviceId, String connectionString, IotHubClientProtocol protocol, Duration subscribeTimeout) {
         try {
             DeviceClient client = deviceClientFactory.create(connectionString, protocol);
             if (shuttingDown.get()) {
@@ -440,13 +502,22 @@ public class DeviceClientPool {
             try {
                 // Avoid duplicate desired-property subscriptions: subscribe only if not already subscribed.
                 // The Azure DeviceClient does not expose a way to check, so we rely on only subscribing once per client creation.
-                client.subscribeToDesiredProperties((twinUpdate, ctx) -> {
-                }, null);
+                // the Azure IoT SDK supports twin operations, such as this subscription, only over MQTT and AMQPS:
+                // over HTTPS it throws UnsupportedOperationException, which failed every send, also of telemetry
+                if (protocol != IotHubClientProtocol.HTTPS) {
+                    DesiredPropertiesCallback callback = (twinUpdate, ctx) -> {
+                    };
+                    if (subscribeTimeout != null) {
+                        client.subscribeToDesiredProperties(callback, null, Math.toIntExact(subscribeTimeout.toMillis()));
+                    } else {
+                        client.subscribeToDesiredProperties(callback, null);
+                    }
+                }
                 client.setConnectionStatusChangeCallback(context -> {
                     if (context == null) {
                         return;
                     }
-                    evictDisconnectedClient(deviceId, connectionString, client, context);
+                    evictDisconnectedClient(deviceId, connectionString, protocol, client, context);
                 }, null);
             } catch (Exception e) {
                 closeQuietly(deviceId, client, "subscription setup");
@@ -465,7 +536,7 @@ public class DeviceClientPool {
     }
 
     private void evictDisconnectedClient(
-            String deviceId, String connectionString, DeviceClient client,
+            String deviceId, String connectionString, IotHubClientProtocol protocol, DeviceClient client,
             ConnectionStatusChangeContext context) {
         if (context == null || shuttingDown.get()) {
             return;
@@ -477,7 +548,7 @@ public class DeviceClientPool {
             return;
         }
 
-        String poolKey = resolvePoolKey(deviceId, connectionString);
+        PoolKey poolKey = resolvePoolKey(deviceId, connectionString, protocol);
 
         AtomicReference<PooledClient> removed = new AtomicReference<>();
         pool.computeIfPresent(poolKey, (key, pooled) -> {
@@ -496,28 +567,6 @@ public class DeviceClientPool {
             if (retired.inUse.get() == 0) {
                 closeRetired(retired);
             }
-        }
-    }
-
-    private void touchAndMaybeEvict(String poolKey) {
-        long now = nowMillisSupplier.getAsLong();
-        AtomicReference<PooledClient> retired = new AtomicReference<>();
-        pool.computeIfPresent(poolKey, (key, current) -> {
-            if (current.inUse.get() > 0) {
-                current.touch(now);
-                return current;
-            }
-            if ((now - current.lastUsed) > idleTimeout.toMillis()) {
-                current.retired = true;
-                retired.set(current);
-                return null;
-            }
-            current.touch(now);
-            return current;
-        });
-        PooledClient expired = retired.get();
-        if (expired != null) {
-            closeRetired(expired);
         }
     }
 
@@ -555,15 +604,12 @@ public class DeviceClientPool {
         if (shuttingDown.get()) {
             return;
         }
-        long now = nowMillisSupplier.getAsLong();
-        for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
-            String key = entry.getKey();
+        long now = nowMillis();
+        for (Map.Entry<PoolKey, PooledClient> entry : pool.entrySet()) {
+            PoolKey key = entry.getKey();
             AtomicReference<PooledClient> retired = new AtomicReference<>();
             pool.computeIfPresent(key, (k, current) -> {
-                if (current.inUse.get() > 0) {
-                    return current;
-                }
-                if ((now - current.lastUsed) > idleTimeout.toMillis()) {
+                if (current.isIdle(now, idleTimeout.toMillis())) {
                     current.retired = true;
                     retired.set(current);
                     return null;
@@ -575,6 +621,10 @@ public class DeviceClientPool {
                 closeRetired(expired);
             }
         }
+    }
+
+    private long nowMillis() {
+        return nowMillisSupplier.getAsLong();
     }
 
     public int getActiveClientCount() {
@@ -594,8 +644,8 @@ public class DeviceClientPool {
             }
         }
         creationFutures.clear();
-        for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
-            closeQuietly(entry.getKey(), entry.getValue() == null ? null : entry.getValue().client, "shutdown");
+        for (Map.Entry<PoolKey, PooledClient> entry : pool.entrySet()) {
+            closeQuietly(entry.getKey().toString(), entry.getValue() == null ? null : entry.getValue().client, "shutdown");
         }
         pool.clear();
     }

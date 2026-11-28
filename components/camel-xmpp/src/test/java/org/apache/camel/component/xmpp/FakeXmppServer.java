@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -60,10 +61,23 @@ final class FakeXmppServer implements AutoCloseable {
     private final AtomicInteger binds = new AtomicInteger();
     private final AtomicInteger conflicts = new AtomicInteger();
     private final AtomicInteger roomJoins = new AtomicInteger();
+    private final AtomicInteger roomJoinAttempts = new AtomicInteger();
+    private final AtomicInteger rejectRoomJoins = new AtomicInteger();
+    private final AtomicInteger logins = new AtomicInteger();
+    private final AtomicInteger failLogins = new AtomicInteger();
     private volatile boolean running = true;
 
     FakeXmppServer() throws IOException {
-        serverSocket = new ServerSocket(0, 50, InetAddress.getLoopbackAddress());
+        this(0);
+    }
+
+    /**
+     * A server on the given port (0 for any free port), to start a server where a client already tries to connect.
+     */
+    FakeXmppServer(int port) throws IOException {
+        serverSocket = new ServerSocket();
+        serverSocket.setReuseAddress(true);
+        serverSocket.bind(new InetSocketAddress(InetAddress.getLoopbackAddress(), port), 50);
         Thread acceptor = new Thread(this::accept, "fake-xmpp-acceptor");
         acceptor.setDaemon(true);
         acceptor.start();
@@ -71,6 +85,13 @@ final class FakeXmppServer implements AutoCloseable {
 
     int getPort() {
         return serverSocket.getLocalPort();
+    }
+
+    /**
+     * The number of client connections that are open, also the ones that did not log in.
+     */
+    long openConnections() {
+        return sessions.stream().filter(s -> !s.socket.isClosed()).count();
     }
 
     /**
@@ -99,6 +120,34 @@ final class FakeXmppServer implements AutoCloseable {
      */
     int roomJoins() {
         return roomJoins.get();
+    }
+
+    /**
+     * The number of times a session asked to enter a room, also the ones that were rejected.
+     */
+    int roomJoinAttempts() {
+        return roomJoinAttempts.get();
+    }
+
+    /**
+     * Rejects the next given number of room entries with a service-unavailable error (the MUC service is not ready).
+     */
+    void rejectRoomJoins(int count) {
+        rejectRoomJoins.set(count);
+    }
+
+    /**
+     * The number of SASL authentications the clients asked for, also the ones that failed.
+     */
+    int logins() {
+        return logins.get();
+    }
+
+    /**
+     * Fails the next given number of SASL authentications with temporary-auth-failure (the auth backend is not ready).
+     */
+    void failLogins(int count) {
+        failLogins.set(count);
     }
 
     /**
@@ -229,6 +278,11 @@ final class FakeXmppServer implements AutoCloseable {
                       + "' from='" + DOMAIN + "' version='1.0' xml:lang='en'><stream:features>" + features
                       + "</stream:features>");
             } else if (pattern == AUTH) {
+                logins.incrementAndGet();
+                if (failLogins.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
+                    write("<failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><temporary-auth-failure/></failure>");
+                    return;
+                }
                 user = "PLAIN".equals(attribute(MECHANISM, element))
                         ? new String(Base64.getDecoder().decode(content(AUTH_DATA, element)), StandardCharsets.UTF_8)
                                 .split("\0")[1]
@@ -277,6 +331,13 @@ final class FakeXmppServer implements AutoCloseable {
                     write("<presence from='" + to + "' to='" + jid + "' type='unavailable'>"
                           + "<x xmlns='http://jabber.org/protocol/muc#user'><item affiliation='none' role='none'/>"
                           + "<status code='110'/></x></presence>");
+                    return;
+                }
+                roomJoinAttempts.incrementAndGet();
+                if (rejectRoomJoins.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
+                    write("<presence from='" + to + "' to='" + jid + "' id='" + attribute(ID, element) + "' type='error'>"
+                          + "<x xmlns='http://jabber.org/protocol/muc'/><error type='cancel'>"
+                          + "<service-unavailable xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/></error></presence>");
                     return;
                 }
                 // entering a room: the room answers with the occupant's own presence (status 110)

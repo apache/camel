@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.junit6.TestExecutionConfiguration;
@@ -30,6 +31,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
@@ -40,6 +42,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -78,6 +81,11 @@ class QuartzIgnoredPropertiesFileWarningTest extends CamelTestSupport {
 
     @BeforeEach
     void captureWarnings() {
+        // the test classes run in parallel: while another one is still starting log4j, the logger has the default
+        // configuration, which log4j replaces once it has read log4j2.properties, and the appender attached to it is
+        // stopped and lost (CAMEL-27281), so attach it once log4j has started
+        LoggerContext logging = componentLogger().getContext();
+        await().atMost(30, TimeUnit.SECONDS).until(logging::isStarted);
         appender.start();
         componentLogger().addAppender(appender);
         // addAppender creates a non-additive logger config, which would hide this logger from the root appenders

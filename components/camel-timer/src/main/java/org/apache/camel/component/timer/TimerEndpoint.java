@@ -49,30 +49,52 @@ import org.apache.camel.support.DefaultEndpoint;
              headersClass = TimerConstants.class)
 @BodyTypes(consumerOut = @BodyType(value = Carrier.NULL, description = "No body: the message only starts the route"))
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    @UriPath
+    @UriPath(description = "The name of the timer. The consumers with the same timer name and the same daemon option share"
+                           + " one java.util.Timer, whose thread is named after the timer.")
     @Metadata(required = true)
     private String timerName;
-    @UriParam(defaultValue = "1000", javaType = "java.time.Duration")
+    @UriParam(defaultValue = "1000", javaType = "java.time.Duration",
+              description = "The time in milliseconds between two fires. A value of 0 or less fires only once, except"
+                            + " with fixedRate, which needs a positive value.")
     private long period = 1000;
-    @UriParam(defaultValue = "1000", javaType = "java.time.Duration")
+    @UriParam(defaultValue = "1000", javaType = "java.time.Duration",
+              description = "The time in milliseconds to wait before the first fire. The time option replaces it. A"
+                            + " negative value fires the messages one after the other as fast as possible on a thread of its"
+                            + " own, without the timer, and ignores the period, time and fixedRate options.")
     private long delay = 1000;
     @UriParam
     private long repeatCount;
-    @UriParam
+    @UriParam(description = "Whether to schedule the fires at a fixed rate instead of with a fixed delay. At a fixed rate"
+                            + " each fire is planned from the time of the first fire, so the fires after a late one come in"
+                            + " quick succession to catch up. With a fixed delay each fire is planned one period after the"
+                            + " previous fire started.")
     private boolean fixedRate;
     @UriParam
     private boolean includeMetadata;
-    @UriParam(defaultValue = "TRACE", label = "consumer,scheduler")
+    @UriParam(defaultValue = "TRACE", label = "consumer,scheduler",
+              description = "The logging level of the log lines that the consumer writes when the timer task of a fire"
+                            + " starts and completes. Not used when the delay is negative.")
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean daemon = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The date and time of the first fire, which replaces the delay option. In a URI the value is"
+                            + " parsed in the default time zone of the JVM with the pattern yyyy-MM-dd'T'HH:mm:ss, or"
+                            + " yyyy-MM-dd HH:mm:ss if it has no T, unless the pattern option is set.")
     private Date time;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "The java.text.SimpleDateFormat pattern to parse the time option with, instead of the default"
+                            + " patterns.")
     private String pattern;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "A custom java.util.Timer to schedule the fires on, instead of the timer that the component"
+                            + " shares between the consumers of the same timer name. The daemon option is not used, and Camel"
+                            + " does not cancel this timer.")
     private Timer timer;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "Whether the consumer processes each exchange synchronously, so the firing thread waits until the"
+                            + " route has completed it. If false, the next fire can start while an asynchronous step of the"
+                            + " route still processes the previous exchange.")
     private boolean synchronous;
 
     public TimerEndpoint() {
@@ -135,9 +157,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return timerName;
     }
 
-    /**
-     * The name of the timer
-     */
     @ManagedAttribute(description = "Timer Name")
     public void setTimerName(String timerName) {
         this.timerName = timerName;
@@ -163,12 +182,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return delay;
     }
 
-    /**
-     * The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with
-     * the time option.
-     * <p/>
-     * The default value is 1000.
-     */
     @ManagedAttribute(description = "Timer Delay")
     public void setDelay(long delay) {
         this.delay = delay;
@@ -179,9 +192,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return fixedRate;
     }
 
-    /**
-     * Events take place at approximately regular intervals, separated by the specified period.
-     */
     @ManagedAttribute(description = "Timer FixedRate")
     public void setFixedRate(boolean fixedRate) {
         this.fixedRate = fixedRate;
@@ -192,10 +202,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return runLoggingLevel;
     }
 
-    /**
-     * The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level
-     * for that.
-     */
     @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     public void setRunLoggingLevel(LoggingLevel runLoggingLevel) {
         this.runLoggingLevel = runLoggingLevel;
@@ -206,11 +212,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return period;
     }
 
-    /**
-     * Generate periodic events every period. Must be zero or positive value.
-     * <p/>
-     * The default value is 1000.
-     */
     @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {
         this.period = period;
@@ -234,10 +235,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return time;
     }
 
-    /**
-     * A java.util.Date the first event should be generated. If using the URI, the pattern expected is: yyyy-MM-dd
-     * HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.
-     */
     public void setTime(Date time) {
         this.time = time;
     }
@@ -246,9 +243,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return pattern;
     }
 
-    /**
-     * Allows you to specify a custom Date pattern to use for setting the time option using URI syntax.
-     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
@@ -257,9 +251,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return timer;
     }
 
-    /**
-     * To use a custom {@link Timer}
-     */
     public void setTimer(Timer timer) {
         this.timer = timer;
     }
@@ -292,9 +283,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return synchronous;
     }
 
-    /**
-     * Sets whether synchronous processing should be strictly used
-     */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
     }

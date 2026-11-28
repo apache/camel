@@ -255,6 +255,22 @@ class SemanticConsoleTest {
         }
     }
 
+    @Test
+    void rapidSequentialEvaluationsDoNotFailWithBusy() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var expert = new Scorer();
+            context.getRegistry().bind("risk", expert);
+            context.start();
+            DevConsole console = console(context, "semantic-evaluate");
+            Map<String, Object> options = Map.of("expert", "risk", "operation", "risk", "input", "test");
+            for (int i = 0; i < 50; i++) {
+                JsonObject response = call(console, options);
+                assertThat(response).containsEntry("status", "success");
+            }
+            assertThat(expert.calls).hasValue(50);
+        }
+    }
+
     private static SemanticEvaluation definition(String expert, String state) {
         return new SemanticEvaluation("risk", expert, state, Map.of());
     }

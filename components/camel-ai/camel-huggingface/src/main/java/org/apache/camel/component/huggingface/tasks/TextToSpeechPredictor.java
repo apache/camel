@@ -99,7 +99,8 @@ public class TextToSpeechPredictor extends AbstractTaskPredictor {
 
     @Override
     protected String getPythonScript() {
-        return loadPythonScript("text_to_speech.py", config.getModelId(), config.getRevision(), config.getDevice());
+        return loadPythonScript("text_to_speech.py", pythonString(config.getModelId()), pythonString(config.getRevision()),
+                pythonString(config.getDevice()));
     }
 
     @Override

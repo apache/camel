@@ -550,7 +550,7 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * Filters the file based on Simple language. For example to filter on
-         * file size, you can use ${file:size} 5000.
+         * the file extension, you can use ${file:ext} == 'txt'.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2032,7 +2032,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator class that compares
+         * org.apache.camel.component.file.GenericFile objects.
          * 
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
@@ -2047,7 +2048,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Pluggable sorter as a java.util.Comparator class.
+         * Pluggable sorter as a java.util.Comparator class that compares
+         * org.apache.camel.component.file.GenericFile objects.
          * 
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
@@ -2714,6 +2716,56 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * What to do with malformed input and unmappable characters when a file
+         * is read or written with a charset. REPORT fails with a
+         * MalformedInputException or an UnmappableCharacterException. REPLACE
+         * replaces the character with the replacement of the charset (U+FFFD
+         * when reading, '?' when writing ISO-8859-1 for example). IGNORE drops
+         * the character. The consumer uses it when the file content is read as
+         * text (such as a String or a Reader), and as an InputStream or byte[]
+         * when the charset option is set. The producer uses it only when the
+         * charset option is set. REPLACE and IGNORE change the data, so only
+         * use them when losing these characters is acceptable.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.CharsetErrorAction</code> type.
+         * 
+         * Default: REPORT
+         * Group: advanced
+         * 
+         * @param charsetErrorAction the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointConsumerBuilder charsetErrorAction(org.apache.camel.component.file.CharsetErrorAction charsetErrorAction) {
+            doSetProperty("charsetErrorAction", charsetErrorAction);
+            return this;
+        }
+        /**
+         * What to do with malformed input and unmappable characters when a file
+         * is read or written with a charset. REPORT fails with a
+         * MalformedInputException or an UnmappableCharacterException. REPLACE
+         * replaces the character with the replacement of the charset (U+FFFD
+         * when reading, '?' when writing ISO-8859-1 for example). IGNORE drops
+         * the character. The consumer uses it when the file content is read as
+         * text (such as a String or a Reader), and as an InputStream or byte[]
+         * when the charset option is set. The producer uses it only when the
+         * charset option is set. REPLACE and IGNORE change the data, so only
+         * use them when losing these characters is acceptable.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.CharsetErrorAction</code> type.
+         * 
+         * Default: REPORT
+         * Group: advanced
+         * 
+         * @param charsetErrorAction the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointConsumerBuilder charsetErrorAction(String charsetErrorAction) {
+            doSetProperty("charsetErrorAction", charsetErrorAction);
             return this;
         }
         /**
@@ -3613,6 +3665,56 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
+         * What to do with malformed input and unmappable characters when a file
+         * is read or written with a charset. REPORT fails with a
+         * MalformedInputException or an UnmappableCharacterException. REPLACE
+         * replaces the character with the replacement of the charset (U+FFFD
+         * when reading, '?' when writing ISO-8859-1 for example). IGNORE drops
+         * the character. The consumer uses it when the file content is read as
+         * text (such as a String or a Reader), and as an InputStream or byte[]
+         * when the charset option is set. The producer uses it only when the
+         * charset option is set. REPLACE and IGNORE change the data, so only
+         * use them when losing these characters is acceptable.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.CharsetErrorAction</code> type.
+         * 
+         * Default: REPORT
+         * Group: advanced
+         * 
+         * @param charsetErrorAction the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointProducerBuilder charsetErrorAction(org.apache.camel.component.file.CharsetErrorAction charsetErrorAction) {
+            doSetProperty("charsetErrorAction", charsetErrorAction);
+            return this;
+        }
+        /**
+         * What to do with malformed input and unmappable characters when a file
+         * is read or written with a charset. REPORT fails with a
+         * MalformedInputException or an UnmappableCharacterException. REPLACE
+         * replaces the character with the replacement of the charset (U+FFFD
+         * when reading, '?' when writing ISO-8859-1 for example). IGNORE drops
+         * the character. The consumer uses it when the file content is read as
+         * text (such as a String or a Reader), and as an InputStream or byte[]
+         * when the charset option is set. The producer uses it only when the
+         * charset option is set. REPLACE and IGNORE change the data, so only
+         * use them when losing these characters is acceptable.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.CharsetErrorAction</code> type.
+         * 
+         * Default: REPORT
+         * Group: advanced
+         * 
+         * @param charsetErrorAction the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointProducerBuilder charsetErrorAction(String charsetErrorAction) {
+            doSetProperty("charsetErrorAction", charsetErrorAction);
+            return this;
+        }
+        /**
          * Whether to fall back and do a copy and delete file, in case the file
          * could not be renamed directly. This option is not available for the
          * FTP component.
@@ -3995,6 +4097,56 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * What to do with malformed input and unmappable characters when a file
+         * is read or written with a charset. REPORT fails with a
+         * MalformedInputException or an UnmappableCharacterException. REPLACE
+         * replaces the character with the replacement of the charset (U+FFFD
+         * when reading, '?' when writing ISO-8859-1 for example). IGNORE drops
+         * the character. The consumer uses it when the file content is read as
+         * text (such as a String or a Reader), and as an InputStream or byte[]
+         * when the charset option is set. The producer uses it only when the
+         * charset option is set. REPLACE and IGNORE change the data, so only
+         * use them when losing these characters is acceptable.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.CharsetErrorAction</code> type.
+         * 
+         * Default: REPORT
+         * Group: advanced
+         * 
+         * @param charsetErrorAction the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointBuilder charsetErrorAction(org.apache.camel.component.file.CharsetErrorAction charsetErrorAction) {
+            doSetProperty("charsetErrorAction", charsetErrorAction);
+            return this;
+        }
+        /**
+         * What to do with malformed input and unmappable characters when a file
+         * is read or written with a charset. REPORT fails with a
+         * MalformedInputException or an UnmappableCharacterException. REPLACE
+         * replaces the character with the replacement of the charset (U+FFFD
+         * when reading, '?' when writing ISO-8859-1 for example). IGNORE drops
+         * the character. The consumer uses it when the file content is read as
+         * text (such as a String or a Reader), and as an InputStream or byte[]
+         * when the charset option is set. The producer uses it only when the
+         * charset option is set. REPLACE and IGNORE change the data, so only
+         * use them when losing these characters is acceptable.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.CharsetErrorAction</code> type.
+         * 
+         * Default: REPORT
+         * Group: advanced
+         * 
+         * @param charsetErrorAction the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointBuilder charsetErrorAction(String charsetErrorAction) {
+            doSetProperty("charsetErrorAction", charsetErrorAction);
             return this;
         }
         /**

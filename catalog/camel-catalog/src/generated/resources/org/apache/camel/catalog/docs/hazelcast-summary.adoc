@@ -195,4 +195,24 @@ Java deserialization in the JVM, not only to Hazelcast.
 When Camel starts a Hazelcast member or client from a `Config` or `ClientConfig` you supplied that declares no
 filter, and no JVM-wide filter is set, it logs a WARN.
 
+== Aggregation repositories
+
+`camel-hazelcast` provides two aggregation repositories for the xref:eips:aggregate-eip.adoc[Aggregate] EIP:
+
+* `HazelcastAggregationRepository` keeps the groups and the completed exchanges in Hazelcast `IMap` maps.
+* `ReplicatedHazelcastAggregationRepository` keeps them in Hazelcast `ReplicatedMap` maps, which have a copy on every
+member, so each member reads them from its own copy.
+
+By default (`optimistic=false`), a repository holds a cluster-wide lock on the correlation key only while it writes a
+group. The Aggregate EIP reads the group, aggregates the new message into it, and writes it back, and only its own lock
+keeps the other threads of the same aggregator out of these steps. This is safe when one aggregator updates a given
+correlation key at a time, such as a route that runs on one member only. When the aggregators of two members (or two
+routes) update the same correlation key at the same time, one of them can overwrite the group that the other one just
+wrote, and the messages that the other one added are lost. This applies to both repositories.
+
+`ReplicatedHazelcastAggregationRepository` does not support optimistic locking: a `ReplicatedMap` has no atomic
+compare-and-set, so the repository fails to start with `optimistic=true`. A lock around the read would not make it safe
+for several aggregators either, as a member reads the group from its own copy, which can miss a write that another
+member has just made.
+
 

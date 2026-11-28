@@ -33,7 +33,8 @@ import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * Generate messages in specified intervals using <code>java.util.concurrent.ScheduledExecutorService</code>.
+ * Generate messages on a schedule, by default at a fixed delay using a
+ * <code>java.util.concurrent.ScheduledExecutorService</code>.
  *
  * This component is similar to the timer component, but it offers more functionality in terms of scheduling. Also this
  * component uses JDK ScheduledExecutorService. Where as the timer uses a JDK Timer.
@@ -44,15 +45,28 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @BodyTypes(consumerOut = @BodyType(value = Carrier.NULL, description = "No body: the message only starts the route"))
 public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath
+    @UriPath(description = "The name of the scheduler. The consumers of all endpoints with the same name share one thread"
+                           + " pool of the component, unless the scheduler or scheduledExecutorService option is set. The"
+                           + " threads of that pool are named after it, and with includeMetadata the consumer sets the"
+                           + " CamelTimerName exchange property to it.")
     @Metadata(required = true)
     private String name;
-    @UriParam
+    @UriParam(description = "Whether the consumer adds the time when the scheduler fired to each message. If true, it sets the"
+                            + " CamelTimerName exchange property to the name, the CamelTimerFiredTime exchange property to"
+                            + " that time as a java.util.Date, and the CamelMessageTimestamp header to that time in"
+                            + " milliseconds since the epoch. If false, the message has none of them.")
     private boolean includeMetadata;
-    @UriParam(defaultValue = "1", label = "scheduler")
+    @UriParam(defaultValue = "1", label = "scheduler",
+              description = "The number of core threads of the thread pool that the component creates for the name. The"
+                            + " consumer that starts first with a name creates the pool with its poolSize, and the consumers"
+                            + " that start later with the same name share that pool. Not used when the scheduler or"
+                            + " scheduledExecutorService option is set.")
     private int poolSize = 1;
     @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+              description = "Whether the consumer waits until each message is fully routed before the scheduler can fire"
+                            + " again, also when the route continues on another thread. If false, the consumer uses the"
+                            + " asynchronous routing engine, and the scheduler can fire again while a message that continues"
+                            + " on another thread is still being routed.")
     private boolean synchronous;
 
     public SchedulerEndpoint(String uri, SchedulerComponent component, String remaining) {
@@ -86,9 +100,6 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
         return name;
     }
 
-    /**
-     * The name of the scheduler
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -97,9 +108,6 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
         return includeMetadata;
     }
 
-    /**
-     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
-     */
     public void setIncludeMetadata(boolean includeMetadata) {
         this.includeMetadata = includeMetadata;
     }
@@ -108,11 +116,6 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
         return poolSize;
     }
 
-    /**
-     * Number of core threads in the thread pool used by the scheduling thread pool.
-     * <p/>
-     * Is by default using a single thread
-     */
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
     }

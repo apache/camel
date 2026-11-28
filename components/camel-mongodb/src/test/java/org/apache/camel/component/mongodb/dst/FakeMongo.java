@@ -28,6 +28,7 @@ import com.mongodb.MongoSocketReadException;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
+import com.mongodb.ServerCursor;
 import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.ListCollectionNamesIterable;
 import com.mongodb.client.MongoChangeStreamCursor;
@@ -64,8 +65,12 @@ import org.bson.Document;
  * <p>
  * Not modelled: the oplog window (a resume token that fell out of the oplog, ChangeStreamHistoryLost), sharded
  * clusters, pipelines (streamFilter), pre-images, renames and dropDatabase (they end the change stream as a drop does),
- * transactions, batching (one event per getMore), and the post batch resume token of an empty getMore (the driver then
- * resumes from the last event it returned, which is the same position here, as events are never filtered).
+ * transactions, and batching (one event per getMore).
+ * <p>
+ * [A] The post batch resume token that the cursor gives after a getMore without an event (tryNext returned null) is the
+ * token of the last event the cursor returned, and null before its first event: events are never filtered and no other
+ * collection is written, so the change stream has read the oplog up to that event (a real server returns a token for
+ * the start position too; null makes the consumer keep the token it has).
  * <p>
  * Timing (the one-stack rule of the harness): a getMore waits up to its maxAwaitTime for an event and takes a round
  * trip; writes of the other clients take effect at once and never block.
@@ -395,6 +400,8 @@ final class FakeMongo {
             this.proxy = FakeMongo.this.proxy(MongoChangeStreamCursor.class, (m, args) -> switch (m) {
                 case "hasNext" -> hasNext();
                 case "next" -> next();
+                case "tryNext" -> tryNext();
+                case "getServerCursor" -> serverCursor();
                 case "close" -> {
                     closed = true;
                     yield null;
@@ -419,22 +426,54 @@ final class FakeMongo {
                 if (position < oplog.size()) {
                     return true;
                 }
-                // a getMore: waits up to maxAwaitTime (1 s by default) for an event, then answers
-                dst.awaitUntil(() -> position < oplog.size() || interruptRequested, 1000, "getMore");
-                roundTrip("getMore");
-                if (dst.now() < unreachableUntil || faults && dst.chance(getMoreFailRate)) {
-                    // [D] a resumable error (isResumableError is true for network errors): the driver opens the change
-                    // stream again after its cached token (ChangeStreamBatchCursor.resumeableOperation). The resume
-                    // itself is outside that retry, so what the resume throws reaches the caller: a server selection
-                    // timeout, or a network error of the resume aggregate
-                    dst.trace("mongo: getMore fails, the driver resumes the change stream");
-                    selectServer("resume the change stream");
-                    roundTrip("aggregate $changeStream (resume)");
-                    if (faults && dst.chance(0.5)) {
-                        // [A] the resume aggregate fails with a network error too
-                        throw new MongoSocketReadException(
-                                "dst: the connection was reset", new ServerAddress("fake", 27017));
-                    }
+                getMore();
+            }
+        }
+
+        /**
+         * [D] tryNext returns the next change, or sends one getMore and returns null when it brought none; once the
+         * server closed the cursor it returns null without a getMore (CommandCursor.tryHasNext of driver 5.14).
+         */
+        private ChangeStreamDocument<Document> tryNext() {
+            if (closed) {
+                violations.add("tryNext on a closed cursor");
+                throw new IllegalStateException("Cursor has been closed");
+            }
+            checkInterrupt();
+            if (invalidated) {
+                return null;
+            }
+            if (position >= oplog.size()) {
+                getMore();
+            }
+            return position < oplog.size() ? next() : null;
+        }
+
+        /** [D] the server cursor, null once the server closed it (after the invalidate event). */
+        private ServerCursor serverCursor() {
+            if (closed) {
+                violations.add("getServerCursor on a closed cursor");
+                throw new IllegalStateException("Iterator has been closed");
+            }
+            return invalidated ? null : new ServerCursor(1, new ServerAddress("fake", 27017));
+        }
+
+        /** A getMore: waits up to maxAwaitTime (1 s by default) for an event, then answers. */
+        private void getMore() {
+            dst.awaitUntil(() -> position < oplog.size() || interruptRequested, 1000, "getMore");
+            roundTrip("getMore");
+            if (dst.now() < unreachableUntil || faults && dst.chance(getMoreFailRate)) {
+                // [D] a resumable error (isResumableError is true for network errors): the driver opens the change
+                // stream again after its cached token (ChangeStreamBatchCursor.resumeableOperation). The resume
+                // itself is outside that retry, so what the resume throws reaches the caller: a server selection
+                // timeout, or a network error of the resume aggregate
+                dst.trace("mongo: getMore fails, the driver resumes the change stream");
+                selectServer("resume the change stream");
+                roundTrip("aggregate $changeStream (resume)");
+                if (faults && dst.chance(0.5)) {
+                    // [A] the resume aggregate fails with a network error too
+                    throw new MongoSocketReadException(
+                            "dst: the connection was reset", new ServerAddress("fake", 27017));
                 }
             }
         }

@@ -26,5 +26,28 @@ import java.util.Map;
 @FunctionalInterface
 public interface McpPromptHandler {
 
+    /**
+     * Gets the prompt messages for the given arguments.
+     *
+     * @param  arguments the prompt arguments sent in {@code prompts/get}
+     * @return           the sanitized result
+     */
     McpPromptResult get(Map<String, String> arguments);
+
+    /**
+     * Gets the prompt messages for the given arguments on behalf of the transport-supplied caller, so the prompt route
+     * can check who is asking. The default ignores the context and calls {@link #get(Map)}; the bridge overrides it to
+     * stamp the caller identity onto the prompt exchange, as for a tool call. Engines that can determine a caller
+     * identity (such as the Vert.x streamable HTTP transport) call this overload; others keep calling
+     * {@link #get(Map)}.
+     *
+     * @param  arguments the prompt arguments sent in {@code prompts/get}
+     * @param  context   the transport-supplied caller context, never null (use {@link McpToolCallContext#EMPTY} when
+     *                   there is no caller identity)
+     * @return           the sanitized result
+     * @since            4.24
+     */
+    default McpPromptResult get(Map<String, String> arguments, McpToolCallContext context) {
+        return get(arguments);
+    }
 }

@@ -254,9 +254,6 @@ public class Enricher extends BaseProcessorSupport
                             copyResultsWithoutCorrelationId(exchange, aggregatedExchange);
                         }
                         used = true;
-                    } catch (VirtualMachineError e) {
-                        // left as before: the application must not handle a JVM-level failure with Camel's error handling
-                        throw e;
                     } catch (Throwable e) {
                         // if the aggregationStrategy threw an exception (also an Error, which would escape this callback),
                         // set it on the original exchange

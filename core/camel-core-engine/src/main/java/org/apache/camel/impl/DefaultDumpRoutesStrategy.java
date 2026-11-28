@@ -204,6 +204,10 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         }
     }
 
+    private boolean shouldInclude(String entity) {
+        return include.contains("*") || include.contains("all") || include.contains(entity);
+    }
+
     private void doDumpRoutesDiagram(CamelContext camelContext) {
         String name = outputFileName;
         String folder = output;
@@ -379,7 +383,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final DummyResource dummy = new DummyResource(null, null);
         final Set<String> files = new HashSet<>();
 
-        if (include.contains("*") || include.contains("all") || include.contains("beans")) {
+        if (shouldInclude("beans")) {
             int size = model.getCustomBeans().size();
             if (size > 0) {
                 Map<Resource, List<BeanFactoryDefinition>> groups = new LinkedHashMap<>();
@@ -408,7 +412,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("dataFormats")) {
+        if (shouldInclude("dataFormats")) {
             int size = model.getDataFormats().size();
             if (size > 0) {
                 Map<Resource, Map<String, DataFormatDefinition>> groups = new LinkedHashMap<>();
@@ -438,7 +442,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("rests")) {
+        if (shouldInclude("rests")) {
             int size = model.getRestDefinitions().size();
             if (size > 0) {
                 Map<Resource, RestsDefinition> groups = new LinkedHashMap<>();
@@ -467,8 +471,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routeConfigurations")
-                || include.contains("route-configurations")) {
+        if (shouldInclude("routeConfigurations") || shouldInclude("route-configurations")) {
             int size = model.getRouteConfigurationDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteConfigurationsDefinition> groups = new LinkedHashMap<>();
@@ -499,8 +502,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routeTemplates")
-                || include.contains("route-templates")) {
+        if (shouldInclude("routeTemplates") || shouldInclude("route-templates")) {
             int size = model.getRouteTemplateDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();
@@ -530,7 +532,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routes")) {
+        if (shouldInclude("routes")) {
             int size = model.getRouteDefinitions().size();
             if (size > 0) {
                 List<RouteDefinition> eligible = new ArrayList<>();
@@ -624,7 +626,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final DummyResource dummy = new DummyResource(null, null);
         final Set<String> files = new HashSet<>();
 
-        if (include.contains("*") || include.contains("all") || include.contains("rests")) {
+        if (shouldInclude("rests")) {
             int size = model.getRestDefinitions().size();
             if (size > 0) {
                 Map<Resource, RestsDefinition> groups = new LinkedHashMap<>();
@@ -652,8 +654,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routeConfigurations")
-                || include.contains("route-configurations")) {
+        if (shouldInclude("routeConfigurations") || shouldInclude("route-configurations")) {
             int size = model.getRouteConfigurationDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteConfigurationsDefinition> groups = new LinkedHashMap<>();
@@ -683,8 +684,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routeTemplates")
-                || include.contains("route-templates")) {
+        if (shouldInclude("routeTemplates") || shouldInclude("route-templates")) {
             int size = model.getRouteTemplateDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();
@@ -713,7 +713,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routes")) {
+        if (shouldInclude("routes")) {
             int size = model.getRouteDefinitions().size();
             if (size > 0) {
                 Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
@@ -869,7 +869,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final DummyResource dummy = new DummyResource(null, null);
         final Set<String> files = new HashSet<>();
 
-        if (include.contains("*") || include.contains("all") || include.contains("beans")) {
+        if (shouldInclude("beans")) {
             int size = model.getCustomBeans().size();
             if (size > 0) {
                 Map<Resource, List<BeanFactoryDefinition>> groups = new LinkedHashMap<>();
@@ -898,7 +898,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("dataFormats")) {
+        if (shouldInclude("dataFormats")) {
             int size = model.getDataFormats().size();
             if (size > 0) {
                 Map<Resource, Map<String, DataFormatDefinition>> groups = new LinkedHashMap<>();
@@ -928,7 +928,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("rests")) {
+        if (shouldInclude("rests")) {
             int size = model.getRestDefinitions().size();
             if (size > 0) {
                 Map<Resource, RestsDefinition> groups = new LinkedHashMap<>();
@@ -957,8 +957,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routeConfigurations")
-                || include.contains("route-configurations")) {
+        if (shouldInclude("routeConfigurations") || shouldInclude("route-configurations")) {
             int size = model.getRouteConfigurationDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteConfigurationsDefinition> groups = new LinkedHashMap<>();
@@ -990,8 +989,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routeTemplates")
-                || include.contains("route-templates")) {
+        if (shouldInclude("routeTemplates") || shouldInclude("route-templates")) {
             int size = model.getRouteTemplateDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();
@@ -1021,7 +1019,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
-        if (include.contains("*") || include.contains("all") || include.contains("routes")) {
+        if (shouldInclude("routes")) {
             int size = model.getRouteDefinitions().size();
             if (size > 0) {
                 Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();

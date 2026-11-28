@@ -26,12 +26,18 @@ import org.apache.camel.component.ai.tool.AiToolConstants;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 
 /**
- * Transport-supplied context for a single MCP tool call, carrying the caller's authenticated security principal when
- * the transport can determine one, together with a runtime-neutral view of it. An engine builds it from its transport
- * (for the Vert.x streamable HTTP transport, from the authenticated {@code RoutingContext} user) and passes it to
+ * Transport-supplied context for a single MCP request, carrying the caller's authenticated security principal when the
+ * transport can determine one, together with a runtime-neutral view of it. An engine builds it from its transport (for
+ * the Vert.x streamable HTTP transport, from the authenticated {@code RoutingContext} user) and passes it to
  * {@link McpToolCallHandler#call(java.util.Map, McpToolCallContext)}; the bridge then stamps the principal and its
  * neutral view onto the tool exchange as exchange properties so a tool route's
  * {@link org.apache.camel.spi.AuthorizationPolicy} can authorize on them.
+ * <p>
+ * Despite its name, the same context is also used for resource reads and prompt gets (since 4.24): an engine passes it
+ * to {@link McpResourceReadHandler#read(McpToolCallContext)},
+ * {@link McpResourceTemplateReadHandler#read(String, McpToolCallContext)} and
+ * {@link McpPromptHandler#get(java.util.Map, McpToolCallContext)}, and the bridge stamps the same exchange properties
+ * on the resource or prompt exchange, so an {@code ai-resource} or {@code ai-prompt} route can check who is asking.
  * <p>
  * The raw {@link #securityPrincipal()} is an opaque {@link Object} (for example an {@code io.vertx.ext.auth.User}) so
  * this transport-agnostic API does not depend on any transport library. A policy can read it directly, but only when it
@@ -67,9 +73,9 @@ public record McpToolCallContext(
     public static final McpToolCallContext EMPTY = new McpToolCallContext(null, null, null, null, null, null, null);
 
     /**
-     * Exchange property under which the bridge stamps {@link #securityPrincipal()} on the tool exchange, so a tool
-     * route (or its {@link org.apache.camel.spi.AuthorizationPolicy}) can read the MCP caller identity via
-     * {@code exchangeProperty.CamelMcpSecurityPrincipal}.
+     * Exchange property under which the bridge stamps {@link #securityPrincipal()} on the tool, resource or prompt
+     * exchange, so the route (or a tool route's {@link org.apache.camel.spi.AuthorizationPolicy}) can read the MCP
+     * caller identity via {@code exchangeProperty.CamelMcpSecurityPrincipal}.
      */
     public static final String SECURITY_PRINCIPAL_PROPERTY = "CamelMcpSecurityPrincipal";
 

@@ -36,87 +36,200 @@ import org.slf4j.LoggerFactory;
 public class SmppConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(SmppConfiguration.class);
 
-    @UriPath(defaultValue = "localhost")
+    @UriPath(description = "The host name or IP address of the SMSC.",
+             defaultValue = "localhost")
     private String host = "localhost";
-    @UriPath(defaultValue = "2775")
+    @UriPath(description = "The TCP port of the SMSC.",
+             defaultValue = "2775")
     private Integer port = 2775;
-    @UriParam(label = "security", defaultValue = "smppclient", security = "secret")
+    @UriParam(description = "The system_id with which the consumer or producer binds to the SMSC: the user name that the "
+                            + "SMSC authenticates. The user info of the URI, as in smpp://user@host, sets it too.",
+              label = "security", defaultValue = "smppclient", security = "secret")
     private String systemId = "smppclient";
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The password with which the consumer or producer binds to the SMSC.",
+              label = "security", security = "secret")
     private String password;
-    @UriParam(label = "common", defaultValue = "")
+    @UriParam(description = "The system_type of the bind request, which tells the SMSC the type of ESME (External Short "
+                            + "Message Entity) that binds. SMPP 3.4 allows at most 13 octets, the NULL terminator included. "
+                            + "Empty by default.",
+              label = "common", defaultValue = "")
     private String systemType = "";
-    @UriParam(label = "codec")
+    @UriParam(description = "The data_coding that the producer sends with SubmitSm, SubmitMulti and DataSm, as defined in "
+                            + "section 5.2.19 of the SMPP 3.4 specification, for example 0 for the SMSC default alphabet, 3 "
+                            + "for Latin 1, 4 for 8-bit binary data and 8 for UCS2. An 8-bit value sends a byte array body as "
+                            + "it is; the alphabet and encoding options, not this option, select how a text body is encoded. "
+                            + "The CamelSmppDataCoding and CamelSmppAlphabet headers replace it; the default is 0.",
+              label = "codec")
     private byte dataCoding = (byte) 0;
-    @UriParam(label = "codec", enums = "0,4,8")
+    @UriParam(description = "The alphabet in which the producer encodes and splits the text of the short message for "
+                            + "SubmitSm, SubmitMulti and ReplaceSm: 0 (the SMSC default alphabet) encodes it in the charset "
+                            + "of the encoding option, 8 (UCS2) in UTF-16BE, and 4 (8-bit) sends a byte array body as it is. "
+                            + "It does not set the data_coding that is sent, which comes from the dataCoding option. The "
+                            + "CamelSmppAlphabet header replaces it; the default is 0.",
+              label = "codec", enums = "0,4,8")
     private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
-    @UriParam(label = "codec", defaultValue = "ISO-8859-1")
+    @UriParam(description = "The charset in which the producer encodes the text of the short message for SubmitSm, "
+                            + "SubmitMulti and ReplaceSm, unless the alphabet is UCS2, and in which the consumer decodes a "
+                            + "received message in the SMSC default alphabet. The CamelSmppEncoding header replaces it for the "
+                            + "producer.",
+              label = "codec", defaultValue = "ISO-8859-1")
     private String encoding = "ISO-8859-1";
-    @UriParam(label = "advanced", defaultValue = "60000")
+    @UriParam(description = "The time in milliseconds without data from the SMSC after which the session sends an "
+                            + "enquire_link to check the connection, or 0 to send none. Camel also uses it as the timeout to "
+                            + "connect to the SMSC or the HTTP proxy, and for the TLS handshake.",
+              label = "advanced", defaultValue = "60000")
     private Integer enquireLinkTimer = 60000;
-    @UriParam(label = "advanced", defaultValue = "10000")
+    @UriParam(description = "The time in milliseconds that the session waits for the response of the SMSC to a request that "
+                            + "it sent, such as a submit_sm or an enquire_link, before the request fails. The bind request "
+                            + "waits 60 seconds instead.",
+              label = "advanced", defaultValue = "10000")
     private Integer transactionTimer = 10000;
-    @UriParam(label = "producer", enums = "0,1,2")
+    @UriParam(description = "The registered_delivery that the producer sends with SubmitSm, SubmitMulti, ReplaceSm and "
+                            + "DataSm: 0 requests no delivery receipt, 1 a delivery receipt for success and for failure, and 2 "
+                            + "a delivery receipt for failure only. The CamelSmppRegisteredDelivery header replaces it; the "
+                            + "default is 1.",
+              label = "producer", enums = "0,1,2")
     private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE.value();
-    @UriParam(label = "producer", defaultValue = "", enums = "CMT,CPT,VMN,VMA,WAP,USSD")
+    @UriParam(description = "The service_type that the producer sends with SubmitSm, SubmitMulti, CancelSm and DataSm: the "
+                            + "SMS application service of the message, such as CMT (cellular messaging), CPT (cellular "
+                            + "paging), VMN (voice mail notification), VMA (voice mail alerting), WAP or USSD. Empty by "
+                            + "default, for the default service of the SMSC. The CamelSmppServiceType header replaces it.",
+              label = "producer", defaultValue = "", enums = "CMT,CPT,VMN,VMA,WAP,USSD")
     private String serviceType = "";
-    @UriParam(label = "producer", defaultValue = "1616")
+    @UriParam(description = "The source address that the producer sends with every command: the address of the SME (Short "
+                            + "Message Entity) that sends the message, or, for ReplaceSm, QuerySm and CancelSm, the source "
+                            + "address of the original message. The CamelSmppSourceAddr header replaces it.",
+              label = "producer", defaultValue = "1616")
     private String sourceAddr = "1616";
-    @UriParam(label = "producer", defaultValue = "1717")
+    @UriParam(description = "The destination address that the producer sends with SubmitSm, SubmitMulti, CancelSm and "
+                            + "DataSm, for example the phone number of the recipient of a mobile terminated message. The "
+                            + "CamelSmppDestAddr header replaces it, with a list of addresses for SubmitMulti.",
+              label = "producer", defaultValue = "1717")
     private String destAddr = "1717";
-    @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
+    @UriParam(description = "The type of number (TON) of the source address that the producer sends with every command: 0 "
+                            + "unknown, 1 international, 2 national, 3 network specific, 4 subscriber number, 5 alphanumeric "
+                            + "or 6 abbreviated. The CamelSmppSourceAddrTon header replaces it; the default is 0.",
+              label = "producer", enums = "0,1,2,3,4,5,6")
     private byte sourceAddrTon = TypeOfNumber.UNKNOWN.value();
-    @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
+    @UriParam(description = "The type of number (TON) of the destination address that the producer sends with SubmitSm, "
+                            + "SubmitMulti, CancelSm and DataSm, with the values of the sourceAddrTon option. The "
+                            + "CamelSmppDestAddrTon header replaces it; the default is 0.",
+              label = "producer", enums = "0,1,2,3,4,5,6")
     private byte destAddrTon = TypeOfNumber.UNKNOWN.value();
-    @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
+    @UriParam(description = "The numbering plan indicator (NPI) of the source address that the producer sends with every "
+                            + "command: 0 unknown, 1 ISDN (E.163/E.164), 2 data (X.121), 3 telex (F.69), 6 land mobile "
+                            + "(E.212), 8 national, 9 private, 10 ERMES, 13 Internet (IP) or 18 WAP client id. The "
+                            + "CamelSmppSourceAddrNpi header replaces it; the default is 0.",
+              label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte sourceAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
-    @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
+    @UriParam(description = "The numbering plan indicator (NPI) of the destination address that the producer sends with "
+                            + "SubmitSm, SubmitMulti, CancelSm and DataSm, with the values of the sourceAddrNpi option. The "
+                            + "CamelSmppDestAddrNpi header replaces it; the default is 0.",
+              label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte destAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
-    @UriParam(label = "consumer")
+    @UriParam(description = "The address_range of the bind request of the consumer: the SME addresses that this ESME serves, "
+                            + "as defined in section 5.2.7 of the SMPP 3.4 specification. The SMSC uses it to select the "
+                            + "messages that it delivers to the consumer. Empty by default.",
+              label = "consumer")
     private String addressRange = "";
-    @UriParam(label = "producer")
+    @UriParam(description = "The protocol_id that the producer sends with SubmitSm and SubmitMulti, which for GSM is set as "
+                            + "defined in GSM 03.40. The CamelSmppProtocolId header replaces it; the default is 0.",
+              label = "producer")
     private byte protocolId = (byte) 0;
-    @UriParam(label = "producer", enums = "0,1,2,3")
+    @UriParam(description = "The priority_flag that the producer sends with SubmitSm and SubmitMulti, from 0 (lowest) to 3 "
+                            + "(highest). The CamelSmppPriorityFlag header replaces it; the default is 1.",
+              label = "producer", enums = "0,1,2,3")
     private byte priorityFlag = (byte) 1;
-    @UriParam(label = "producer", enums = "0,1")
+    @UriParam(description = "The replace_if_present_flag that the producer sends with SubmitSm and SubmitMulti: 1 asks the "
+                            + "SMSC to replace a message that is still pending delivery and has the same source address, "
+                            + "destination address and service type, 0 does not. The CamelSmppReplaceIfPresentFlag header "
+                            + "replaces it; the default is 0.",
+              label = "producer", enums = "0,1")
     private byte replaceIfPresentFlag = ReplaceIfPresentFlag.DEFAULT.value();
-    @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
+    @UriParam(description = "The type of number (TON) that the producer sends in the addr_ton field of its bind request, "
+                            + "with the values of the sourceAddrTon option. The consumer binds with 0 (unknown). The default "
+                            + "is 0.",
+              label = "producer", enums = "0,1,2,3,4,5,6")
     private byte typeOfNumber = TypeOfNumber.UNKNOWN.value();
-    @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
+    @UriParam(description = "The numbering plan indicator (NPI) that the producer sends in the addr_npi field of its bind "
+                            + "request, with the values of the sourceAddrNpi option. The consumer binds with 0 (unknown). The "
+                            + "default is 0.",
+              label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
-    @UriParam(label = "security")
+    @UriParam(description = "Whether to connect to the SMSC with TLS, which the smpps scheme enables. The certificate of the "
+                            + "SMSC must be trusted by the default SSL socket factory of the JVM. Through an HTTP proxy, TLS "
+                            + "runs inside the tunnel.",
+              label = "security")
     private boolean usingSSL;
     @UriParam(label = "security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
     private boolean hostnameVerification = true;
-    @UriParam(label = "common", defaultValue = "5000")
+    @UriParam(description = "The delay in milliseconds before the first attempt to reconnect, after the consumer or producer "
+                            + "lost its session to the SMSC (the connection was closed, or the SMSC unbound). A failed connect "
+                            + "when the consumer or producer starts is not retried.",
+              label = "common", defaultValue = "5000")
     private long initialReconnectDelay = 5000;
-    @UriParam(label = "common", defaultValue = "5000")
+    @UriParam(description = "The delay in milliseconds between two attempts to reconnect to the SMSC, after the first "
+                            + "attempt failed.",
+              label = "common", defaultValue = "5000")
     private long reconnectDelay = 5000;
-    @UriParam(label = "common", defaultValue = "2147483647")
+    @UriParam(description = "The maximum number of attempts to reconnect after the session to the SMSC was lost. When the "
+                            + "last attempt fails, a consumer stays disconnected until it is restarted, and a producer fails "
+                            + "its exchanges, unless lazySessionCreation is enabled, which connects again for the next "
+                            + "exchange.",
+              label = "common", defaultValue = "2147483647")
     private int maxReconnect = Integer.MAX_VALUE;
-    @UriParam(label = "producer")
+    @UriParam(description = "Whether the producer connects to the SMSC when it sends its first exchange instead of when it "
+                            + "starts, so that the route can start while the SMSC is not available. The producer binds with "
+                            + "the systemId and password options, or with headers when allowSystemIdAndPasswordFromHeaders is "
+                            + "enabled.",
+              label = "producer")
     private boolean lazySessionCreation;
     @UriParam(label = "producer,security")
     private boolean allowSystemIdAndPasswordFromHeaders;
-    @UriParam(label = "producer")
+    @UriParam(description = "The id of a route whose consumer receives the messages that the SMSC sends to this producer. "
+                            + "The producer then binds as a transceiver (bind_transceiver) instead of a transmitter, and hands "
+                            + "each received deliver_sm, data_sm and alert_notification to that route, so that no SMPP "
+                            + "consumer is needed. Only tested with a route that starts from a direct endpoint; the route must "
+                            + "exist when Camel starts.",
+              label = "producer")
     private String messageReceiverRouteId;
-    @UriParam(label = "proxy")
+    @UriParam(description = "The host name or IP address of an HTTP proxy through which Camel tunnels the SMPP connection, "
+                            + "with an HTTP CONNECT request. When not set, Camel connects to the SMSC directly.",
+              label = "proxy")
     private String httpProxyHost;
-    @UriParam(label = "proxy", defaultValue = "3128")
+    @UriParam(description = "The port of the HTTP proxy that the httpProxyHost option sets.",
+              label = "proxy", defaultValue = "3128")
     private Integer httpProxyPort = 3128;
-    @UriParam(label = "proxy")
+    @UriParam(description = "The user name for Basic authentication with the HTTP proxy. It is sent only together with the "
+                            + "httpProxyPassword option.",
+              label = "proxy")
     private String httpProxyUsername;
-    @UriParam(label = "proxy", security = "secret")
+    @UriParam(description = "The password for Basic authentication with the HTTP proxy. It is sent only together with the "
+                            + "httpProxyUsername option.",
+              label = "proxy", security = "secret")
     private String httpProxyPassword;
-    @UriParam(label = "proxy")
+    @UriParam(description = "Extra HTTP headers that Camel sends to the HTTP proxy with the CONNECT request.",
+              label = "proxy")
     private Map<String, String> proxyHeaders;
-    @UriParam(label = "advanced")
+    @UriParam(description = "An org.jsmpp.session.SessionStateListener that is notified when the state of the SMPP session "
+                            + "of the consumer or producer changes, for example from BOUND_RX to CLOSED. Camel still "
+                            + "reconnects a lost session itself.",
+              label = "advanced")
     private SessionStateListener sessionStateListener;
-    @UriParam(defaultValue = "ALLOW")
+    @UriParam(description = "What the producer does with a SubmitSm or SubmitMulti whose body does not fit in one short "
+                            + "message: ALLOW sends it in several segments, TRUNCATE sends only its first part, and REJECT "
+                            + "fails the exchange with an SmppException caused by a NegativeResponseException with status 1. "
+                            + "Some carriers drop the segments after the first, which TRUNCATE does not send. The "
+                            + "CamelSmppSplittingPolicy header replaces it.",
+              defaultValue = "ALLOW")
     private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
-    @UriParam(label = "advanced", defaultValue = "3")
+    @UriParam(description = "The number of threads of the SMPP session that process the received PDUs in parallel.",
+              label = "advanced", defaultValue = "3")
     private Integer pduProcessorDegree = 3;
-    @UriParam(label = "advanced", defaultValue = "100")
+    @UriParam(description = "The number of received PDUs that can wait for a free processing thread. When the queue is full, "
+                            + "the session answers a received request with the ESME_RTHROTTLED error, so that the SMSC slows "
+                            + "down.",
+              label = "advanced", defaultValue = "100")
     private Integer pduProcessorQueueCapacity = 100;
     @UriParam(label = "advanced", defaultValue = "false")
     private boolean singleDLR;
@@ -161,9 +274,6 @@ public class SmppConfiguration implements Cloneable {
         return host;
     }
 
-    /**
-     * Hostname for the SMSC server to use.
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -172,9 +282,6 @@ public class SmppConfiguration implements Cloneable {
         return port;
     }
 
-    /**
-     * Port number for the SMSC server to use.
-     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -183,16 +290,10 @@ public class SmppConfiguration implements Cloneable {
         return systemId;
     }
 
-    /**
-     * The system id (username) for connecting to SMSC server.
-     */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
-    /**
-     * The password for connecting to SMSC server.
-     */
     public String getPassword() {
         return password;
     }
@@ -201,16 +302,6 @@ public class SmppConfiguration implements Cloneable {
         return dataCoding;
     }
 
-    /**
-     * Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are:
-     * <ul>
-     * <li>0: SMSC Default Alphabet</li>
-     * <li>3: Latin 1 (ISO-8859-1)</li>
-     * <li>4: Octet unspecified (8-bit binary)</li>
-     * <li>8: UCS2 (ISO/IEC-10646)</li>
-     * <li>13: Extended Kanji JIS(X 0212-1990)</li>
-     * </ul>
-     */
     public void setDataCoding(byte dataCoding) {
         this.dataCoding = dataCoding;
     }
@@ -219,14 +310,6 @@ public class SmppConfiguration implements Cloneable {
         return alphabet;
     }
 
-    /**
-     * Defines encoding of data according the SMPP 3.4 specification, section 5.2.19.
-     * <ul>
-     * <li>0: SMSC Default Alphabet
-     * <li>4: 8 bit Alphabet</li>
-     * <li>8: UCS2 Alphabet</li></li>
-     * </ul>
-     */
     public void setAlphabet(byte alphabet) {
         this.alphabet = alphabet;
     }
@@ -235,9 +318,6 @@ public class SmppConfiguration implements Cloneable {
         return encoding;
     }
 
-    /**
-     * Defines the encoding scheme of the short message user data. Only for SubmitSm, ReplaceSm and SubmitMulti.
-     */
     public void setEncoding(String encoding) {
         if (!Charset.isSupported(encoding)) {
             LOG.warn("Unsupported encoding \"{}\" is being set.", encoding);
@@ -253,10 +333,6 @@ public class SmppConfiguration implements Cloneable {
         return enquireLinkTimer;
     }
 
-    /**
-     * Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the
-     * communication path between an ESME and an SMSC.
-     */
     public void setEnquireLinkTimer(Integer enquireLinkTimer) {
         this.enquireLinkTimer = enquireLinkTimer;
     }
@@ -265,11 +341,6 @@ public class SmppConfiguration implements Cloneable {
         return transactionTimer;
     }
 
-    /**
-     * Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that
-     * the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or
-     * ESME).
-     */
     public void setTransactionTimer(Integer transactionTimer) {
         this.transactionTimer = transactionTimer;
     }
@@ -278,10 +349,6 @@ public class SmppConfiguration implements Cloneable {
         return systemType;
     }
 
-    /**
-     * This parameter is used to categorize the type of ESME (External Short Message Entity) that is binding to the SMSC
-     * (max. 13 characters).
-     */
     public void setSystemType(String systemType) {
         this.systemType = systemType;
     }
@@ -290,15 +357,6 @@ public class SmppConfiguration implements Cloneable {
         return registeredDelivery;
     }
 
-    /**
-     * Is used to request an SMSC delivery receipt and/or SME originated acknowledgements. The following values are
-     * defined:
-     * <ul>
-     * <li>0: No SMSC delivery receipt requested.</li>
-     * <li>1: SMSC delivery receipt requested where final delivery outcome is success or failure.</li>
-     * <li>2: SMSC delivery receipt requested where the final delivery outcome is delivery failure.</li>
-     * </ul>
-     */
     public void setRegisteredDelivery(byte registeredDelivery) {
         this.registeredDelivery = registeredDelivery;
     }
@@ -307,18 +365,6 @@ public class SmppConfiguration implements Cloneable {
         return serviceType;
     }
 
-    /**
-     * The service type parameter can be used to indicate the SMS Application service associated with the message. The
-     * following generic service_types are defined:
-     * <ul>
-     * <li>CMT: Cellular Messaging</li>
-     * <li>CPT: Cellular Paging</li>
-     * <li>VMN: Voice Mail Notification</li>
-     * <li>VMA: Voice Mail Alerting</li>
-     * <li>WAP: Wireless Application Protocol</li>
-     * <li>USSD: Unstructured Supplementary Services Data</li>
-     * </ul>
-     */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
@@ -327,19 +373,6 @@ public class SmppConfiguration implements Cloneable {
         return sourceAddrTon;
     }
 
-    /**
-     * Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values
-     * are defined:
-     * <ul>
-     * <li>0: Unknown</li>
-     * <li>1: International</li>
-     * <li>2: National</li>
-     * <li>3: Network Specific</li>
-     * <li>4: Subscriber Number</li>
-     * <li>5: Alphanumeric</li>
-     * <li>6: Abbreviated</li>
-     * </ul>
-     */
     public void setSourceAddrTon(byte sourceAddrTon) {
         this.sourceAddrTon = sourceAddrTon;
     }
@@ -348,19 +381,6 @@ public class SmppConfiguration implements Cloneable {
         return destAddrTon;
     }
 
-    /**
-     * Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm,
-     * SubmitMulti, CancelSm and DataSm. The following TON values are defined:
-     * <ul>
-     * <li>0: Unknown</li>
-     * <li>1: International</li>
-     * <li>2: National</li>
-     * <li>3: Network Specific</li>
-     * <li>4: Subscriber Number</li>
-     * <li>5: Alphanumeric</li>
-     * <li>6: Abbreviated</li>
-     * </ul>
-     */
     public void setDestAddrTon(byte destAddrTon) {
         this.destAddrTon = destAddrTon;
     }
@@ -369,22 +389,6 @@ public class SmppConfiguration implements Cloneable {
         return sourceAddrNpi;
     }
 
-    /**
-     * Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI
-     * values are defined:
-     * <ul>
-     * <li>0: Unknown</li>
-     * <li>1: ISDN (E163/E164)</li>
-     * <li>2: Data (X.121)</li>
-     * <li>3: Telex (F.69)</li>
-     * <li>6: Land Mobile (E.212)</li>
-     * <li>8: National</li>
-     * <li>9: Private</li>
-     * <li>10: ERMES</li>
-     * <li>13: Internet (IP)</li>
-     * <li>18: WAP Client Id (to be defined by WAP Forum)</li>
-     * </ul>
-     */
     public void setSourceAddrNpi(byte sourceAddrNpi) {
         this.sourceAddrNpi = sourceAddrNpi;
     }
@@ -393,22 +397,6 @@ public class SmppConfiguration implements Cloneable {
         return destAddrNpi;
     }
 
-    /**
-     * Defines the type of number (TON) to be used in the SME destination address parameters. Only for SubmitSm,
-     * SubmitMulti, CancelSm and DataSm. The following NPI values are defined:
-     * <ul>
-     * <li>0: Unknown</li>
-     * <li>1: ISDN (E163/E164)</li>
-     * <li>2: Data (X.121)</li>
-     * <li>3: Telex (F.69)</li>
-     * <li>6: Land Mobile (E.212)</li>
-     * <li>8: National</li>
-     * <li>9: Private</li>
-     * <li>10: ERMES</li>
-     * <li>13: Internet (IP)</li>
-     * <li>18: WAP Client Id (to be defined by WAP Forum)</li>
-     * </ul>
-     */
     public void setDestAddrNpi(byte destAddrNpi) {
         this.destAddrNpi = destAddrNpi;
     }
@@ -417,9 +405,6 @@ public class SmppConfiguration implements Cloneable {
         return protocolId;
     }
 
-    /**
-     * The protocol id
-     */
     public void setProtocolId(byte protocolId) {
         this.protocolId = protocolId;
     }
@@ -428,16 +413,6 @@ public class SmppConfiguration implements Cloneable {
         return priorityFlag;
     }
 
-    /**
-     * Allows the originating SME to assign a priority level to the short message. Only for SubmitSm and SubmitMulti.
-     * Four Priority Levels are supported:
-     * <ul>
-     * <li>0: Level 0 (lowest) priority</li>
-     * <li>1: Level 1 priority</li>
-     * <li>2: Level 2 priority</li>
-     * <li>3: Level 3 (highest) priority</li>
-     * </ul>
-     */
     public void setPriorityFlag(byte priorityFlag) {
         this.priorityFlag = priorityFlag;
     }
@@ -446,15 +421,6 @@ public class SmppConfiguration implements Cloneable {
         return replaceIfPresentFlag;
     }
 
-    /**
-     * Used to request the SMSC to replace a previously submitted message, that is still pending delivery. The SMSC will
-     * replace an existing message provided that the source address, destination address and service type match the same
-     * fields in the new message. The following replace if present flag values are defined:
-     * <ul>
-     * <li>0: Don't replace</li>
-     * <li>1: Replace</li>
-     * </ul>
-     */
     public void setReplaceIfPresentFlag(byte replaceIfPresentFlag) {
         this.replaceIfPresentFlag = replaceIfPresentFlag;
     }
@@ -463,9 +429,6 @@ public class SmppConfiguration implements Cloneable {
         return sourceAddr;
     }
 
-    /**
-     * Defines the address of SME (Short Message Entity) which originated this message.
-     */
     public void setSourceAddr(String sourceAddr) {
         this.sourceAddr = sourceAddr;
     }
@@ -474,10 +437,6 @@ public class SmppConfiguration implements Cloneable {
         return destAddr;
     }
 
-    /**
-     * Defines the destination SME address. For mobile terminated messages, this is the directory number of the
-     * recipient MS. Only for SubmitSm, SubmitMulti, CancelSm and DataSm.
-     */
     public void setDestAddr(String destAddr) {
         this.destAddr = destAddr;
     }
@@ -486,18 +445,6 @@ public class SmppConfiguration implements Cloneable {
         return typeOfNumber;
     }
 
-    /**
-     * Defines the type of number (TON) to be used in the SME. The following TON values are defined:
-     * <ul>
-     * <li>0: Unknown</li>
-     * <li>1: International</li>
-     * <li>2: National</li>
-     * <li>3: Network Specific</li>
-     * <li>4: Subscriber Number</li>
-     * <li>5: Alphanumeric</li>
-     * <li>6: Abbreviated</li>
-     * </ul>
-     */
     public void setTypeOfNumber(byte typeOfNumber) {
         this.typeOfNumber = typeOfNumber;
     }
@@ -506,21 +453,6 @@ public class SmppConfiguration implements Cloneable {
         return numberingPlanIndicator;
     }
 
-    /**
-     * Defines the numeric plan indicator (NPI) to be used in the SME. The following NPI values are defined:
-     * <ul>
-     * <li>0: Unknown</li>
-     * <li>1: ISDN (E163/E164)</li>
-     * <li>2: Data (X.121)</li>
-     * <li>3: Telex (F.69)</li>
-     * <li>6: Land Mobile (E.212)</li>
-     * <li>8: National</li>
-     * <li>9: Private</li>
-     * <li>10: ERMES</li>
-     * <li>13: Internet (IP)</li>
-     * <li>18: WAP Client Id (to be defined by WAP Forum)</li>
-     * </ul>
-     */
     public void setNumberingPlanIndicator(byte numberingPlanIndicator) {
         this.numberingPlanIndicator = numberingPlanIndicator;
     }
@@ -529,9 +461,6 @@ public class SmppConfiguration implements Cloneable {
         return usingSSL;
     }
 
-    /**
-     * Whether using SSL with the smpps protocol
-     */
     public void setUsingSSL(boolean usingSSL) {
         this.usingSSL = usingSSL;
     }
@@ -552,10 +481,6 @@ public class SmppConfiguration implements Cloneable {
         return initialReconnectDelay;
     }
 
-    /**
-     * Defines the initial delay in milliseconds after the consumer/producer tries to reconnect to the SMSC, after the
-     * connection was lost.
-     */
     public void setInitialReconnectDelay(long initialReconnectDelay) {
         this.initialReconnectDelay = initialReconnectDelay;
     }
@@ -564,17 +489,10 @@ public class SmppConfiguration implements Cloneable {
         return reconnectDelay;
     }
 
-    /**
-     * Defines the interval in milliseconds between the reconnect attempts, if the connection to the SMSC was lost and
-     * the previous was not succeed.
-     */
     public void setReconnectDelay(long reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
 
-    /**
-     * Defines the maximum number of attempts to reconnect to the SMSC, if SMSC returns a negative bind response
-     */
     public int getMaxReconnect() {
         return maxReconnect;
     }
@@ -587,11 +505,6 @@ public class SmppConfiguration implements Cloneable {
         return lazySessionCreation;
     }
 
-    /**
-     * Sessions can be lazily created to avoid exceptions, if the SMSC is not available when the Camel producer is
-     * started. The session is then created when the first exchange is sent, with the systemId and password of the
-     * endpoint. See the allowSystemIdAndPasswordFromHeaders option to take them from the message headers instead.
-     */
     public void setLazySessionCreation(boolean lazySessionCreation) {
         this.lazySessionCreation = lazySessionCreation;
     }
@@ -615,13 +528,6 @@ public class SmppConfiguration implements Cloneable {
         return messageReceiverRouteId;
     }
 
-    /**
-     * Set this on producer in order to benefit from transceiver (TRX) binding type. So once set, you don't need to
-     * define an 'SMTPP consumer' endpoint anymore. You would set this to a 'Direct consumer' endpoint instead.
-     *
-     * DISCALIMER: This feature is only tested with 'Direct consumer' endpoint. The behavior with any other consumer
-     * type is unknown and not tested.
-     */
     public void setMessageReceiverRouteId(String messageReceiverRouteId) {
         this.messageReceiverRouteId = messageReceiverRouteId;
     }
@@ -630,10 +536,6 @@ public class SmppConfiguration implements Cloneable {
         return httpProxyHost;
     }
 
-    /**
-     * If you need to tunnel SMPP through a HTTP proxy, set this attribute to the hostname or ip address of your HTTP
-     * proxy.
-     */
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
@@ -642,9 +544,6 @@ public class SmppConfiguration implements Cloneable {
         return httpProxyPort;
     }
 
-    /**
-     * If you need to tunnel SMPP through a HTTP proxy, set this attribute to the port of your HTTP proxy.
-     */
     public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
@@ -653,10 +552,6 @@ public class SmppConfiguration implements Cloneable {
         return httpProxyUsername;
     }
 
-    /**
-     * If your HTTP proxy requires basic authentication, set this attribute to the username required for your HTTP
-     * proxy.
-     */
     public void setHttpProxyUsername(String httpProxyUsername) {
         this.httpProxyUsername = httpProxyUsername;
     }
@@ -665,10 +560,6 @@ public class SmppConfiguration implements Cloneable {
         return httpProxyPassword;
     }
 
-    /**
-     * If your HTTP proxy requires basic authentication, set this attribute to the password required for your HTTP
-     * proxy.
-     */
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
     }
@@ -677,10 +568,6 @@ public class SmppConfiguration implements Cloneable {
         return sessionStateListener;
     }
 
-    /**
-     * You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session
-     * state changed.
-     */
     public void setSessionStateListener(SessionStateListener sessionStateListener) {
         this.sessionStateListener = sessionStateListener;
     }
@@ -689,11 +576,6 @@ public class SmppConfiguration implements Cloneable {
         return addressRange;
     }
 
-    /**
-     * You can specify the address range for the SmppConsumer as defined in section 5.2.7 of the SMPP 3.4 specification.
-     * The SmppConsumer will receive messages only from SMSC's which target an address (MSISDN or IP address) within
-     * this range.
-     */
     public void setAddressRange(String addressRange) {
         this.addressRange = addressRange;
     }
@@ -702,24 +584,10 @@ public class SmppConfiguration implements Cloneable {
         return splittingPolicy;
     }
 
-    /**
-     * You can specify a policy for handling long messages:
-     * <ul>
-     * <li>ALLOW - the default, long messages are split to 140 bytes per message</li>
-     * <li>TRUNCATE - long messages are split and only the first fragment will be sent to the SMSC. Some carriers drop
-     * subsequent fragments so this reduces load on the SMPP connection sending parts of a message that will never be
-     * delivered.</li>
-     * <li>REJECT - if a message would need to be split, it is rejected with an SMPP NegativeResponseException and the
-     * reason code signifying the message is too long.</li>
-     * </ul>
-     */
     public void setSplittingPolicy(SmppSplittingPolicy splittingPolicy) {
         this.splittingPolicy = splittingPolicy;
     }
 
-    /**
-     * These headers will be passed to the proxy server while establishing the connection.
-     */
     public void setProxyHeaders(Map<String, String> proxyHeaders) {
         this.proxyHeaders = proxyHeaders;
     }
@@ -732,9 +600,6 @@ public class SmppConfiguration implements Cloneable {
         return pduProcessorDegree;
     }
 
-    /**
-     * Sets the number of threads which can read PDU and process them in parallel.
-     */
     public void setPduProcessorDegree(Integer pduProcessorDegree) {
         this.pduProcessorDegree = pduProcessorDegree;
     }
@@ -743,9 +608,6 @@ public class SmppConfiguration implements Cloneable {
         return pduProcessorQueueCapacity;
     }
 
-    /**
-     * Sets the capacity of the working queue for PDU processing.
-     */
     public void setPduProcessorQueueCapacity(Integer pduProcessorQueueCapacity) {
         this.pduProcessorQueueCapacity = pduProcessorQueueCapacity;
     }

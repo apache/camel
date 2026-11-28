@@ -134,6 +134,44 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
         }
 
         StringBuilder sb = new StringBuilder(512);
+        appendExchangeMetadata(exchange, sb);
+        appendMessageParts(exchange, in, sb);
+        appendException(exchange, sb);
+
+        // only cut if we hit max-chars limit (or are using multiline
+        if (multiline || maxChars > 0 && sb.length() > maxChars) {
+            StringBuilder answer = new StringBuilder(sb.length());
+            for (String s : sb.toString().split(SEPARATOR)) {
+                if (s != null) {
+                    if (s.length() > maxChars) {
+                        s = s.substring(0, maxChars);
+                        answer.append(s).append("...");
+                    } else {
+                        answer.append(s);
+                    }
+                    if (multiline) {
+                        answer.append(LS);
+                    }
+                }
+            }
+
+            // switch string buffer
+            sb = answer;
+        }
+
+        if (!multiline) {
+            // get rid of the leading comma space if needed
+            if (sb.length() > 1 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
+                sb.replace(0, 2, "");
+            }
+
+        }
+        sb.insert(0, "Exchange[");
+        sb.append("]");
+        return sb.toString();
+    }
+
+    private void appendExchangeMetadata(Exchange exchange, StringBuilder sb) {
         if (showAll || showExchangeId) {
             if (multiline) {
                 sb.append(SEPARATOR);
@@ -170,6 +208,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
             style(sb, "ExchangePattern").append(exchange.getPattern());
         }
+    }
+
+    private void appendMessageParts(Exchange exchange, Message in, StringBuilder sb) {
         if (showAll || showAllProperties) {
             if (multiline) {
                 sb.append(SEPARATOR);
@@ -211,7 +252,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
             style(sb, "Body").append(body);
         }
+    }
 
+    private void appendException(Exchange exchange, StringBuilder sb) {
         if (showAll || showException || showCaughtException) {
 
             // try exception on exchange first
@@ -240,38 +283,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                 }
             }
         }
-
-        // only cut if we hit max-chars limit (or are using multiline
-        if (multiline || maxChars > 0 && sb.length() > maxChars) {
-            StringBuilder answer = new StringBuilder(sb.length());
-            for (String s : sb.toString().split(SEPARATOR)) {
-                if (s != null) {
-                    if (s.length() > maxChars) {
-                        s = s.substring(0, maxChars);
-                        answer.append(s).append("...");
-                    } else {
-                        answer.append(s);
-                    }
-                    if (multiline) {
-                        answer.append(LS);
-                    }
-                }
-            }
-
-            // switch string buffer
-            sb = answer;
-        }
-
-        if (!multiline) {
-            // get rid of the leading comma space if needed
-            if (sb.length() > 1 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
-                sb.replace(0, 2, "");
-            }
-
-        }
-        sb.insert(0, "Exchange[");
-        sb.append("]");
-        return sb.toString();
     }
 
     /**

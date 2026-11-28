@@ -17,6 +17,7 @@
 package org.apache.camel.component.grpc.auth.jwt;
 
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
 import io.grpc.CallCredentials;
 import io.grpc.Metadata;
@@ -30,10 +31,17 @@ import org.slf4j.LoggerFactory;
  */
 public class JwtCallCredentials extends CallCredentials {
     private static final Logger LOG = LoggerFactory.getLogger(JwtCallCredentials.class);
-    private final String jwtToken;
+    private final Supplier<String> jwtTokenSupplier;
 
     public JwtCallCredentials(String jwtToken) {
-        this.jwtToken = jwtToken;
+        this(() -> jwtToken);
+    }
+
+    /**
+     * Sends the token that the supplier returns on each call, so the supplier can replace a token before it expires.
+     */
+    public JwtCallCredentials(Supplier<String> jwtTokenSupplier) {
+        this.jwtTokenSupplier = jwtTokenSupplier;
     }
 
     @Override
@@ -46,7 +54,7 @@ public class JwtCallCredentials extends CallCredentials {
                 LOG.debug("Start to apply for the JWT token header");
                 Metadata headers = new Metadata();
                 Metadata.Key<String> jwtKey = GrpcConstants.GRPC_JWT_METADATA_KEY;
-                headers.put(jwtKey, jwtToken);
+                headers.put(jwtKey, jwtTokenSupplier.get());
                 metadataApplier.apply(headers);
             } catch (Exception e) {
                 LOG.debug("Unable to set metadata credentials header", e);

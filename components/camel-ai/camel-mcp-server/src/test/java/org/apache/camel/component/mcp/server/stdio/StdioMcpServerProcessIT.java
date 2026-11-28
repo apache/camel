@@ -30,6 +30,7 @@ import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.spec.McpSchema;
+import org.apache.camel.component.mcp.server.McpServerConstants;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -164,6 +165,25 @@ class StdioMcpServerProcessIT {
             McpSchema.CallToolResult result = client.callTool(new McpSchema.CallToolRequest("say_hello", Map.of()));
             assertThat(result.isError()).isEqualTo(Boolean.TRUE);
             assertThat(textOf(result)).contains("name");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    @Test
+    void testStdioMcpServerMarksACallRefusedByTheAuthorizationCheck() {
+        McpSyncClient client = null;
+        try {
+            client = createClient();
+            client.initialize();
+
+            McpSchema.CallToolResult result = client.callTool(new McpSchema.CallToolRequest("order_costs", Map.of()));
+            assertThat(result.isError()).isEqualTo(Boolean.TRUE);
+            assertThat(textOf(result)).isEqualTo("Access denied: not authorized to call tool 'order_costs'");
+            assertThat(result.meta()).containsOnly(
+                    Map.entry(McpServerConstants.META_AUTHORIZATION, McpServerConstants.META_AUTHORIZATION_DENIED));
         } finally {
             if (client != null) {
                 client.closeGracefully();

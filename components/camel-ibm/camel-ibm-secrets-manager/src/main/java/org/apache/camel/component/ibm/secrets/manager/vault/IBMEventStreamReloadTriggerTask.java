@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -43,6 +44,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +77,11 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
     private volatile Instant lastCheckTime;
     private volatile Instant lastReloadTime;
     private final Map<String, Instant> updates = new HashMap<>();
-    KafkaConsumer<String, String> kafkaConsumer;
+    volatile KafkaConsumer<String, String> kafkaConsumer;
     private static final String IBM_SECRETS_MANAGER_SECRET_ROTATED_EVENT = "secret_rotated";
+    // the wait before polling again after a failed poll, doubled after each failure in a row up to the maximum
+    private static final long POLL_RETRY_DELAY = 1000;
+    private static final long MAX_POLL_RETRY_DELAY = 60000;
     protected long pollTimeout;
 
     private static final Logger LOG = LoggerFactory.getLogger(IBMEventStreamReloadTriggerTask.class);
@@ -174,16 +179,48 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
 
         lastCheckTime = Instant.now();
         ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
+        long retryDelay = POLL_RETRY_DELAY;
+        int failedPolls = 0;
 
+        // this task runs only once (until Camel stops): nothing submits it again when it ends, so a failed poll must
+        // not end it, or no later secret rotation would trigger a reload any more
         while (isRunAllowed()) {
-            ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeout));
+            KafkaConsumer<String, String> consumer = kafkaConsumer;
+            if (consumer == null) {
+                // closed by doStop
+                break;
+            }
+            ConsumerRecords<String, String> records;
+            try {
+                records = consumer.poll(Duration.ofMillis(pollTimeout));
+            } catch (VirtualMachineError e) {
+                throw e;
+            } catch (Throwable e) {
+                if (!isRunAllowed() || e instanceof InterruptException) {
+                    // stopping (InterruptException keeps the interrupt flag of this thread set)
+                    break;
+                }
+                failedPolls++;
+                logPollFailure(failedPolls, retryDelay, e);
+                if (!waitBeforeNextPoll(retryDelay)) {
+                    break;
+                }
+                retryDelay = Math.min(retryDelay * 2, MAX_POLL_RETRY_DELAY);
+                continue;
+            }
+            if (failedPolls > 0) {
+                LOG.info("Polling the IBM Event Streams topic for secret rotations works again after {} failed poll(s)",
+                        failedPolls);
+                failedPolls = 0;
+                retryDelay = POLL_RETRY_DELAY;
+            }
+            lastCheckTime = Instant.now();
 
             for (ConsumerRecord<String, String> record : records) {
                 try {
                     onRecord(mapper, record);
                 } catch (Exception e) {
-                    // this task runs only once (until Camel stops), so a record it cannot read must not end it: no later
-                    // secret rotation would trigger a reload any more
+                    // a record this task cannot read must not end it either
                     LOG.warn("Skipping the IBM Event Streams record at offset {} of {}, as it cannot be processed: {}",
                             record.offset(), record.topic(), e.getMessage());
                     LOG.debug("Cannot process the IBM Event Streams record at offset {} of {}", record.offset(),
@@ -192,6 +229,40 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
             }
         }
 
+    }
+
+    private static void logPollFailure(int failedPolls, long retryDelay, Throwable e) {
+        if (e instanceof Error) {
+            LOG.error("Polling the IBM Event Streams topic for secret rotations failed, polling again in {} ms",
+                    retryDelay, e);
+        } else if (failedPolls == 1) {
+            // the first failure in a row at WARN, the repeats at DEBUG (a later poll that works is logged at INFO)
+            LOG.warn("Polling the IBM Event Streams topic for secret rotations failed, polling again in {} ms: {}",
+                    retryDelay, e.toString());
+            LOG.debug("Polling the IBM Event Streams topic for secret rotations failed", e);
+        } else {
+            LOG.debug("Polling the IBM Event Streams topic failed {} times in a row, polling again in {} ms",
+                    failedPolls, retryDelay, e);
+        }
+    }
+
+    /**
+     * Waits before the next poll, in short steps so that stopping Camel does not wait for the whole delay.
+     *
+     * @return false when this task should end (stopping, or interrupted)
+     */
+    private boolean waitBeforeNextPoll(long delay) {
+        long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(delay);
+        try {
+            long remaining;
+            while (isRunAllowed() && (remaining = deadline - System.nanoTime()) > 0) {
+                TimeUnit.NANOSECONDS.sleep(Math.min(remaining, TimeUnit.MILLISECONDS.toNanos(100)));
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+        return isRunAllowed();
     }
 
     private void onRecord(ObjectMapper mapper, ConsumerRecord<String, String> record) {
@@ -255,7 +326,8 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
     }
 
     /**
-     * Last time this task checked IBM for updated secrets.
+     * Last time this task checked IBM for updated secrets: when it started, and after each poll of the IBM Event
+     * Streams topic that did not fail.
      */
     public Instant getLastCheckTime() {
         return lastCheckTime;

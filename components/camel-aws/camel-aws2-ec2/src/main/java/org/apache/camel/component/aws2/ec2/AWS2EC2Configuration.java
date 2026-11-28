@@ -28,53 +28,92 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 @UriParams
 public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A logical name for the endpoint, of your choice. The component does not use it.")
     @Metadata(required = true)
     private String label;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "To use a custom software.amazon.awssdk.services.ec2.Ec2Client. When this option is set or"
+                            + " autowired, the region, credentials, proxy, endpoint override and trustAllCertificates"
+                            + " options are not used. The endpoint does not close a client that is set or autowired.")
     @Metadata(label = "advanced", autowired = true)
     private Ec2Client amazonEc2Client;
-    @UriParam(label = "producer,security", security = "secret")
+    @UriParam(label = "producer,security", security = "secret",
+              description = "The access key ID of the AWS credentials, used together with the secretKey option. It is not"
+                            + " used when useDefaultCredentialsProvider or useProfileCredentialsProvider is true.")
     private String accessKey;
-    @UriParam(label = "producer,security", security = "secret")
+    @UriParam(label = "producer,security", security = "secret",
+              description = "The secret access key of the AWS credentials, used together with the accessKey option. It is"
+                            + " not used when useDefaultCredentialsProvider or useProfileCredentialsProvider is true.")
     private String secretKey;
-    @UriParam(label = "producer,security", security = "secret")
+    @UriParam(label = "producer,security", security = "secret",
+              description = "The session token of temporary AWS credentials, for example of an assumed IAM role. It is"
+                            + " used only when useSessionCredentials is true, together with the accessKey and secretKey"
+                            + " options.")
     private String sessionToken;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "The operation that the producer performs. The CamelAwsEC2Operation header replaces this"
+                            + " option.")
     @Metadata(required = true)
     private AWS2EC2Operations operation;
-    @UriParam(label = "producer,proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "producer,proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "The protocol of the proxy that the EC2 client uses. It is used only when the proxyHost and"
+                            + " proxyPort options are both set.")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "producer,proxy")
+    @UriParam(label = "producer,proxy",
+              description = "The host name of the proxy that the EC2 client uses. The client uses a proxy only when the"
+                            + " proxyPort option is set too.")
     private String proxyHost;
-    @UriParam(label = "producer,proxy")
+    @UriParam(label = "producer,proxy",
+              description = "The port of the proxy that the EC2 client uses. The client uses a proxy only when the"
+                            + " proxyHost option is set too.")
     private Integer proxyPort;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
+    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
+              description = "The ID of the AWS region of the EC2 service, in lower case, for example eu-west-1 (the value"
+                            + " of Region.EU_WEST_1.id()). If not set, the AWS SDK resolves the region itself, for example"
+                            + " from the AWS_REGION environment variable.")
     private String region;
-    @UriParam
+    @UriParam(description = "Whether the body is the request of the AWS SDK for the operation, such as a"
+                            + " DescribeInstancesRequest for describeInstances. If true, the producer sends that request as"
+                            + " it is, and a body of another type fails. If false, the producer builds the request from the"
+                            + " headers.")
     private boolean pojoRequest;
-    @UriParam(label = "security", security = "insecure:ssl")
+    @UriParam(label = "security", security = "insecure:ssl",
+              description = "Whether the EC2 client accepts any TLS certificate of the server without checking it. It"
+                            + " applies whether or not the endpoint is overridden. Use it only for tests, for example with a"
+                            + " local emulator.")
     private boolean trustAllCertificates;
-    @UriParam
+    @UriParam(description = "Whether the EC2 client sends the requests to the URI of the uriEndpointOverride option"
+                            + " instead of the EC2 endpoint of the region. It has no effect when uriEndpointOverride is not"
+                            + " set.")
     private boolean overrideEndpoint;
-    @UriParam
+    @UriParam(description = "The URI that the EC2 client sends the requests to, for example http://localhost:4566 for a"
+                            + " local emulator. It is used only when overrideEndpoint is true.")
     private String uriEndpointOverride;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether the EC2 client loads the credentials with the default credentials provider chain of"
+                            + " the AWS SDK: system properties, environment variables, web identity token, the shared"
+                            + " credentials and config files, and container or instance profile credentials. It takes"
+                            + " precedence over the other credentials options.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether the EC2 client loads the credentials of a profile of the shared AWS credentials and"
+                            + " config files. The profileCredentialsName option names the profile. It takes precedence over"
+                            + " useSessionCredentials and the accessKey and secretKey options.")
     private boolean useProfileCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether the EC2 client uses temporary credentials made of the accessKey, secretKey and"
+                            + " sessionToken options, for example to assume an IAM role. If one of the three is not set, the"
+                            + " session credentials are not used.")
     private boolean useSessionCredentials;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "The name of the profile to load when useProfileCredentialsProvider is true. If not set, the"
+                            + " AWS SDK uses its default profile, which the AWS_PROFILE environment variable can set.")
     private String profileCredentialsName;
 
     public Ec2Client getAmazonEc2Client() {
         return amazonEc2Client;
     }
 
-    /**
-     * To use an existing configured AmazonEC2Client client
-     */
     public void setAmazonEc2Client(Ec2Client amazonEc2Client) {
         this.amazonEc2Client = amazonEc2Client;
     }
@@ -83,9 +122,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return accessKey;
     }
 
-    /**
-     * Amazon AWS Access Key
-     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -94,9 +130,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return secretKey;
     }
 
-    /**
-     * Amazon AWS Secret Key
-     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -105,9 +138,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return sessionToken;
     }
 
-    /**
-     * Amazon AWS Session Token used when the user needs to assume an IAM role
-     */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
     }
@@ -116,11 +146,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return operation;
     }
 
-    /**
-     * The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances,
-     * describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or
-     * deleteTags
-     */
     public void setOperation(AWS2EC2Operations operation) {
         this.operation = operation;
     }
@@ -129,9 +154,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyProtocol;
     }
 
-    /**
-     * To define a proxy protocol when instantiating the EC2 client
-     */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
@@ -140,9 +162,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyHost;
     }
 
-    /**
-     * To define a proxy host when instantiating the EC2 client
-     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -151,9 +170,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return proxyPort;
     }
 
-    /**
-     * To define a proxy port when instantiating the EC2 client
-     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -162,10 +178,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return region;
     }
 
-    /**
-     * The region in which EC2 client needs to work. When using this parameter, the configuration will expect the
-     * lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
-     */
     public void setRegion(String region) {
         this.region = region;
     }
@@ -174,9 +186,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return pojoRequest;
     }
 
-    /**
-     * If we want to use a POJO request as body or not
-     */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }
@@ -185,9 +194,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return trustAllCertificates;
     }
 
-    /**
-     * If we want to trust all certificates in case of overriding the endpoint
-     */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
@@ -196,10 +202,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return overrideEndpoint;
     }
 
-    /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the
-     * uriEndpointOverride option
-     */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
     }
@@ -208,17 +210,10 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return uriEndpointOverride;
     }
 
-    /**
-     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
-     */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
-    /**
-     * Set whether the EC2 client should expect to load credentials through a default credentials provider or to expect
-     * static credentials to be passed in.
-     */
     public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
@@ -233,9 +228,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return useProfileCredentialsProvider;
     }
 
-    /**
-     * Set whether the EC2 client should expect to load credentials through a profile credentials provider.
-     */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
     }
@@ -244,10 +236,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return useSessionCredentials;
     }
 
-    /**
-     * Set whether the EC2 client should expect to use Session Credentials. This is useful in a situation in which the
-     * user needs to assume an IAM role for doing operations in EC2.
-     */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
     }
@@ -256,9 +244,6 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
         return profileCredentialsName;
     }
 
-    /**
-     * If using a profile credentials provider, this parameter will set the profile name
-     */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }

@@ -2,7 +2,7 @@
 :doctitle: ArangoDb
 :shortname: arangodb
 :artifactid: camel-arangodb
-:description: Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
+:description: Store, find, update and delete documents, vertices and edges in an ArangoDB database, and run AQL queries.
 :since: 3.5
 :supportlevel: Stable
 :tabs-sync-option:

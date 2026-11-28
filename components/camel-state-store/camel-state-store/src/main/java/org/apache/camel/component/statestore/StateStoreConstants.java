@@ -25,14 +25,19 @@ import org.apache.camel.spi.Metadata;
  */
 public final class StateStoreConstants {
 
-    @Metadata(description = "The operation to perform", javaType = "org.apache.camel.component.statestore.StateStoreOperations",
+    @Metadata(description = "The operation to perform, which overrides the operation option. A String value is matched to"
+                            + " the operation name ignoring case.",
+              javaType = "org.apache.camel.component.statestore.StateStoreOperations",
               label = "producer")
     public static final String OPERATION = "CamelStateStoreOperation";
 
-    @Metadata(description = "The key to use for the operation", javaType = "String", label = "producer")
+    @Metadata(description = "The key of the entry. Required by put, putIfAbsent, get, delete and contains; keys, size and"
+                            + " clear do not use it.",
+              javaType = "String", label = "producer")
     public static final String KEY = "CamelStateStoreKey";
 
-    @Metadata(description = "Per-message TTL override in milliseconds. Takes precedence over the endpoint ttl option.",
+    @Metadata(description = "The time to live in milliseconds of the entry that put or putIfAbsent stores, which overrides"
+                            + " the ttl option. 0 or a negative value means that the entry does not expire.",
               javaType = "Long", label = "producer")
     public static final String TTL = "CamelStateStoreTtl";
 

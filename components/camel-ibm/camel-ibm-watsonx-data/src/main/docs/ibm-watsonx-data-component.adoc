@@ -2,7 +2,7 @@
 :doctitle: IBM watsonx.data
 :shortname: ibm-watsonx-data
 :artifactid: camel-ibm-watsonx-data
-:description: Interact with IBM watsonx.data lakehouse for catalog, schema, table, and engine management.
+:description: Manage the catalogs, schemas, tables, engines and storage registrations of an IBM watsonx.data lakehouse.
 :since: 4.19
 :supportlevel: Stable
 :tabs-sync-option:
@@ -95,7 +95,12 @@ YAML::
 ----
 ====
 
-OAuth 2.0 Client Credentials grant is also supported when `camel-oauth` is on the classpath:
+OAuth 2.0 Client Credentials grant is also supported when `camel-oauth` is on the classpath: set `oauthProfile` in the
+place of `apiKey`. The access token of the profile is sent to watsonx.data as a `Bearer` token, and asked again for
+every request (`camel-oauth` caches it until it expires), so a long-running route keeps working; the endpoint fails to
+start when the profile gives no token. The identity provider must issue tokens that watsonx.data accepts: IBM Cloud
+IAM itself does not offer the Client Credentials grant, so with IBM Cloud use `apiKey`. The examples read the service
+URL of such a deployment from the `watsonx.data.service-url` property.
 
 [tabs]
 ====
@@ -104,7 +109,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .to("ibm-watsonx-data:myLakehouse?oauthProfile=ibm&serviceUrl=https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2&operation=listCatalogs");
+    .to("ibm-watsonx-data:myLakehouse?oauthProfile=myidp&serviceUrl={{watsonx.data.service-url}}&operation=listCatalogs");
 ----
 
 XML::
@@ -113,7 +118,7 @@ XML::
 ----
 <route>
   <from uri="direct:start"/>
-  <to uri="ibm-watsonx-data:myLakehouse?oauthProfile=ibm&amp;serviceUrl=https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2&amp;operation=listCatalogs"/>
+  <to uri="ibm-watsonx-data:myLakehouse?oauthProfile=myidp&amp;serviceUrl={{watsonx.data.service-url}}&amp;operation=listCatalogs"/>
 </route>
 ----
 
@@ -128,8 +133,8 @@ YAML::
         - to:
             uri: ibm-watsonx-data:myLakehouse
             parameters:
-              oauthProfile: ibm
-              serviceUrl: "https://us-south.lakehouse.cloud.ibm.com/lakehouse/api/v2"
+              oauthProfile: myidp
+              serviceUrl: "{{watsonx.data.service-url}}"
               operation: listCatalogs
 ----
 ====

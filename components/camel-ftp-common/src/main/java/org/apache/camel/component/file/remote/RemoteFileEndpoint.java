@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
@@ -88,6 +89,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
                             + " The other read locks of the file component (markerFile, fileLock and the idempotent read "
                             + "locks) are not supported, and fail when the consumer is created.")
     private String readLock = "none";
+    // the numbers in the ids of the health checks of the producers of this endpoint, which are not singletons
+    private final Set<Integer> producerHealthCheckNumbers = ConcurrentHashMap.newKeySet();
 
     protected RemoteFileEndpoint() {
         // ftp must be synchronous as the ftp-client is not thread-safe
@@ -216,6 +219,21 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
 
         configureConsumer(consumer);
         return consumer;
+    }
+
+    /**
+     * The lowest number that no started producer of this endpoint uses in the id of its health check.
+     */
+    int acquireProducerHealthCheckNumber() {
+        int number = 1;
+        while (!producerHealthCheckNumbers.add(number)) {
+            number++;
+        }
+        return number;
+    }
+
+    void releaseProducerHealthCheckNumber(int number) {
+        producerHealthCheckNumbers.remove(number);
     }
 
     /**

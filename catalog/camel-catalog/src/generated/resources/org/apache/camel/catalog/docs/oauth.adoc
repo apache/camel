@@ -173,7 +173,12 @@ values to Camel, they are also treated as malformed.
 
 HTTP integrations reject missing credentials and invalid tokens with HTTP 401. Missing
 credentials receive the bare `WWW-Authenticate: Bearer` challenge, while invalid tokens receive
-the RFC 6750 `WWW-Authenticate: Bearer error="invalid_token"` challenge. Malformed `Authorization`
+the RFC 6750 `WWW-Authenticate: Bearer error="invalid_token"` challenge.
+When a token does not meet the configured step-up requirements (see `required-acr` and
+`max-auth-age-seconds`), it is rejected with HTTP 401 and a
+`WWW-Authenticate: Bearer error="insufficient_user_authentication"` challenge including
+`acr_values` and/or `max_age` hints per RFC 9470.
+Malformed `Authorization`
 headers are rejected with HTTP 400 and the
 RFC 6750 `WWW-Authenticate: Bearer error="invalid_request"` challenge. Token validation
 infrastructure failures are rejected with HTTP 503. For valid tokens, the validation result is
@@ -248,6 +253,10 @@ values require restarting the route or Camel context before they are used for to
 |`camel.oauth.<profile>.allow-missing-issuer` |No |Set to `true` to accept tokens without configuring an expected issuer. Default: `false`.
 
 |`camel.oauth.<profile>.allow-insecure-http` |No |Set to `true` to allow plain HTTP OIDC discovery, JWKS, or introspection endpoints for local development. Default: `false`.
+
+|`camel.oauth.<profile>.required-acr` |No |Comma-separated accepted `acr` (Authentication Context Class Reference) values for RFC 9470 step-up authentication. When set, tokens whose `acr` claim is missing or does not match one of the listed values are rejected with HTTP 401 and a `WWW-Authenticate: Bearer error="insufficient_user_authentication"` challenge.
+
+|`camel.oauth.<profile>.max-auth-age-seconds` |No |Maximum age in seconds for the user's authentication (RFC 9470 step-up). When positive, tokens whose `auth_time` claim is missing or indicates an authentication older than this value are rejected with HTTP 401 and a `WWW-Authenticate: Bearer error="insufficient_user_authentication"` challenge.
 |===
 
 ==== Choosing JWT Validation, OIDC Discovery, or Opaque Introspection
@@ -327,6 +336,28 @@ camel.oauth.myprofile.connect-timeout-seconds=5
 camel.oauth.myprofile.read-timeout-seconds=10
 ----
 
+===== RFC 9470 Step-Up Authentication
+
+Step-up authentication rejects tokens whose authentication context does not meet the required
+security level, prompting the client to re-authenticate with stronger assurance. Configure
+`required-acr` and/or `max-auth-age-seconds` on the validation profile to enforce step-up:
+
+[source,properties]
+----
+camel.oauth.myprofile.base-uri=https://idp.example.com/realms/main
+camel.oauth.myprofile.expected-audience=my-api
+# Require high assurance authentication context
+camel.oauth.myprofile.required-acr=high
+# Require re-authentication if the user authenticated more than 1 hour ago
+camel.oauth.myprofile.max-auth-age-seconds=3600
+----
+
+When a token fails the step-up check, the HTTP response includes a `WWW-Authenticate` challenge
+with `error="insufficient_user_authentication"`, and `acr_values` and/or `max_age` hints so the
+client can redirect the user to re-authenticate at the appropriate assurance level. Both options
+apply to JWT and opaque token introspection validation paths. Both options are off by default;
+existing profiles are unchanged.
+
 To use a runtime-specific or application-specific validator for one profile, bind an
 `OAuthTokenValidationFactory` bean and reference it from the profile:
 
@@ -352,7 +383,7 @@ Validation error details are intended for logs and diagnostics. Do not return
 generic messages such as `Unauthorized`.
 Stable error categories are available through `OAuthTokenValidationResult.getErrorCode()`: `INVALID_TOKEN`,
 `INACTIVE_TOKEN`, `EXPIRED_TOKEN`, `NOT_YET_VALID`, `MISSING_EXPIRATION`, `INVALID_SIGNATURE`,
-`NO_MATCHING_KEY`, `UNSUPPORTED_ALGORITHM`, `INVALID_ISSUER`, and `INVALID_AUDIENCE`.
+`NO_MATCHING_KEY`, `UNSUPPORTED_ALGORITHM`, `INVALID_ISSUER`, `INVALID_AUDIENCE`, and `INSUFFICIENT_USER_AUTHENTICATION`.
 
 === Using OAuth Programmatically
 

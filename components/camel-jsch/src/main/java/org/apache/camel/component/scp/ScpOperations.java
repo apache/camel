@@ -19,11 +19,11 @@ package org.apache.camel.component.scp;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Hashtable;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -325,13 +325,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         ObjectHelper.notNull(config, "ScpConfiguration");
         try {
             final JSch jsch = new JSch();
-            // get from configuration
-            if (ObjectHelper.isNotEmpty(config.getCiphers())) {
-                LOG.trace("Using ciphers: {}", config.getCiphers());
-                Hashtable<String, String> ciphers = new Hashtable<>();
-                ciphers.put("cipher.s2c", config.getCiphers());
-                ciphers.put("cipher.c2s", config.getCiphers());
-                JSch.setConfig(ciphers);
+            if (endpoint.getComponent() instanceof ScpComponent scp && scp.getJschLogger() != null) {
+                jsch.setInstanceLogger(scp.getJschLogger());
             }
             // Resolve certificate bytes once — used for both identity loading and key type detection
             byte[] certData = resolveCertificateBytes(config);
@@ -373,7 +368,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                     userKnownHostFile = HomeHelper.resolveHomeDir() + "/.ssh/known_hosts";
                     LOG.info("Known host file not configured, using user known host file: {}", userKnownHostFile);
                 }
-                knownHostsFile = userKnownHostFile;
+                if (new File(userKnownHostFile).exists()) {
+                    knownHostsFile = userKnownHostFile;
+                } else {
+                    // as JSch does for a known hosts file that does not exist: no host is known
+                    LOG.debug("The user known host file {} does not exist, so no host is known", userKnownHostFile);
+                }
             }
             // load file as input stream which can then load from classpath etc
             if (ObjectHelper.isNotEmpty(knownHostsFile)) {
@@ -393,6 +393,19 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             session = jsch.getSession(config.getUsername(), config.getHost(), config.getPort());
             session.setTimeout(config.getTimeout());
             session.setUserInfo(new SessionUserInfo(config));
+            if (ObjectHelper.isNotEmpty(config.getCiphers())) {
+                // on the session: JSch.setConfig would change the ciphers of every JSch session in the JVM
+                LOG.trace("Using ciphers: {}", config.getCiphers());
+                session.setConfig("cipher.s2c", config.getCiphers());
+                session.setConfig("cipher.c2s", config.getCiphers());
+            }
+            if (config.getPassword() != null) {
+                // JSch answers a keyboard-interactive password prompt only with the password of the session:
+                // a request of one question that is not echoed and contains "password:" is answered with it, without
+                // calling SessionUserInfo.promptKeyboardInteractive(). Any other request goes to that method, which
+                // returns null to cancel it, so the password is never sent as the answer to another question.
+                session.setPassword(config.getPassword());
+            }
 
             if (ObjectHelper.isNotEmpty(config.getStrictHostKeyChecking())) {
                 LOG.trace("Using StrickHostKeyChecking: {}", config.getStrictHostKeyChecking());
@@ -657,6 +670,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             LOG.debug(instruction);
             // Called for either SSH_MSG_USERAUTH_INFO_REQUEST or SSH_MSG_USERAUTH_PASSWD_CHANGEREQ
             // The most secure choice (especially for the second case) is to return null
+            // A keyboard-interactive password prompt does not come here: JSch answers it with the password set on the
+            // session in createSession(), so returning null only cancels the other questions (do not return the password)
             return null;
         }
     }

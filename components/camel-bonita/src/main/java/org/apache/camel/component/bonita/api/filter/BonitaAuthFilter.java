@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientRequestFilter;
 import jakarta.ws.rs.client.Entity;
@@ -55,8 +54,7 @@ public class BonitaAuthFilter implements ClientRequestFilter {
             if (ObjectHelper.isEmpty(password)) {
                 throw new IllegalArgumentException("Password provided is null or empty.");
             }
-            ClientBuilder clientBuilder = ClientBuilder.newBuilder();
-            Client client = clientBuilder.build();
+            Client client = bonitaApiConfig.newClient();
             // a client for this login only: it is closed when the cookies of the answer are read
             try {
                 WebTarget webTarget = client.target(bonitaApiConfig.getBaseBonitaURI()).path("loginservice");

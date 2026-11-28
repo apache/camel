@@ -51,7 +51,7 @@ public class IggyConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("Starting Iggy consumer for stream {} and topic {}", endpoint.getConfiguration().getStreamId(),
+        LOG.info("Starting Iggy consumer for stream {} and topic {}", endpoint.getConfiguration().getStreamName(),
                 endpoint.getTopicName());
 
         iggyClientConnectionPool = new IggyClientConnectionPool(
@@ -90,7 +90,7 @@ public class IggyConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Stopping Iggy consumer for stream {} and topic {}", endpoint.getConfiguration().getStreamId(),
+        LOG.info("Stopping Iggy consumer for stream {} and topic {}", endpoint.getConfiguration().getStreamName(),
                 endpoint.getTopicName());
 
         if (executor != null) {

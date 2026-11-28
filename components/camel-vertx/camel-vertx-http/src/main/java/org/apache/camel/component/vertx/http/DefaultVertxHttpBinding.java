@@ -41,10 +41,14 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
 
 public class DefaultVertxHttpBinding implements VertxHttpBinding {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultVertxHttpBinding.class);
 
     @Override
     public HttpRequest<Buffer> prepareHttpRequest(VertxHttpEndpoint endpoint, Exchange exchange) throws Exception {
@@ -140,6 +144,16 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             final TypeConverter tc = exchange.getContext().getTypeConverter();
             for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
                 String key = entry.getKey();
+                if (!HttpHelper.isValidHeaderName(key)) {
+                    // a message header can have any name, for example a form field mapped to a header,
+                    // but Vert.x rejects it as an HTTP header name, which would fail the exchange after
+                    // the route has run
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Skipping header {} in the request, as its name is not a valid HTTP header name",
+                                HttpHelper.sanitizeLog(key));
+                    }
+                    continue;
+                }
                 Object headerValue = entry.getValue();
 
                 if (endpoint.getConfiguration().isBridgeEndpoint() && request.queryParams().contains(key)) {

@@ -102,6 +102,9 @@ final class McpModernCatalog {
             if (result.structuredContent() != null) {
                 builder.structuredContent(result.structuredContent());
             }
+            if (result.meta() != null) {
+                builder.meta(result.meta());
+            }
             return McpSyncResponse.result(builder.build());
         }));
         changes.broadcast(new ServerChange.ToolsListChanged());
@@ -225,13 +228,15 @@ final class McpModernCatalog {
         if (resource != null) {
             McpServerResource source = resource.source();
             return McpSyncResource.of((c, request) -> McpSyncResponse.result(
-                    readResult(request.uri(), source.mimeType(), source.handler().read())));
+                    readResult(request.uri(), source.mimeType(),
+                            source.handler().read(VertxMcpServerEngine.toToolCallContext(c.transportContext())))));
         }
         for (TemplateEntry template : templates.values()) {
             if (template.matcher().matches(uri)) {
                 McpServerResourceTemplate source = template.source();
                 return McpSyncResource.of((c, request) -> McpSyncResponse.result(
-                        readResult(request.uri(), source.mimeType(), source.handler().read(request.uri()))));
+                        readResult(request.uri(), source.mimeType(), source.handler().read(request.uri(),
+                                VertxMcpServerEngine.toToolCallContext(c.transportContext())))));
             }
         }
         return null;
@@ -268,7 +273,8 @@ final class McpModernCatalog {
         }
         prompts.put(prompt.name(), McpSyncPrompt.of(builder.build(), (ctx, request) -> {
             Map<String, String> arguments = request.arguments() != null ? request.arguments() : Map.of();
-            McpPromptResult result = prompt.handler().get(arguments);
+            McpPromptResult result
+                    = prompt.handler().get(arguments, VertxMcpServerEngine.toToolCallContext(ctx.transportContext()));
             if (result == null) {
                 throw new McpException(ErrorCodes.INTERNAL_ERROR, "Prompt execution failed");
             }

@@ -38,7 +38,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
+ * Create, update, query, list and delete Kafka and RabbitMQ instances of Huawei Cloud Distributed Message Service
+ * (DMS).
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-dms", title = "Huawei Distributed Message Service (DMS)",
              syntax = "hwcloud-dms:operation",
@@ -80,136 +81,196 @@ import org.apache.camel.util.ObjectHelper;
                                                  + " operation"))
 public class DMSEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
+    @UriPath(description = "The operation that the producer performs: createInstance, deleteInstance, listInstances,"
+                           + " queryInstance or updateInstance. The CamelHwCloudDmsOperation exchange property"
+                           + " replaces this option.",
+             displayName = "Operation", label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "DMS service region", displayName = "Service region")
+    @UriParam(description = "The region ID of DMS, for example cn-north-4. The client uses the endpoint of this region"
+                            + " when the endpoint option is not set. Only af-south-1, ap-southeast-1, ap-southeast-2,"
+                            + " ap-southeast-3, cn-east-2, cn-east-3, cn-north-1, cn-north-4, cn-south-1 and"
+                            + " cn-southwest-2 are known: for another region, set the endpoint option.",
+              displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "DMS url. Carries higher precedence than region parameter based client initialization",
+    @UriParam(description = "The endpoint URL of DMS, for example https://dms.cn-north-4.myhuaweicloud.com. When set,"
+                            + " the client uses it and the region option is not used. Without a scheme, https:// is"
+                            + " added.",
               displayName = "Service endpoint")
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(description = "Cloud project ID", displayName = "Project ID")
+    @UriParam(description = "The ID of the Huawei Cloud project of the DMS instances. The producer uses it in the path"
+                            + " of every request.",
+              displayName = "Project ID")
     @Metadata(required = true)
     private String projectId;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host")
+    @UriParam(description = "The host name or IP address of the proxy server. The producer uses a proxy only when this"
+                            + " option and the proxyPort option are set.",
+              displayName = "Proxy server host")
     @Metadata(required = false)
     private String proxyHost;
 
-    @UriParam(description = "Proxy server port", displayName = "Proxy server port")
+    @UriParam(description = "The port of the proxy server. The producer uses a proxy only when this option is greater"
+                            + " than 0 and the proxyHost option is set.",
+              displayName = "Proxy server port")
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret")
+    @UriParam(description = "The user name to authenticate with the proxy server. It is used only when the proxyHost"
+                            + " and proxyPort options are set.",
+              displayName = "Proxy user", security = "secret")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret")
+    @UriParam(description = "The password to authenticate with the proxy server. It is used only when the proxyUser"
+                            + " option is set.",
+              displayName = "Proxy password", security = "secret")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", defaultValue = "false",
+    @UriParam(description = "Whether to skip the verification of the TLS certificate of the server. This makes the"
+                            + " connection insecure: use it only for testing.",
+              displayName = "SSL Verification Ignored", defaultValue = "false",
               label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
+    @UriParam(description = "The AK/SK pair as an org.apache.camel.component.huaweicloud.common.models.ServiceKeys."
+                            + " When set, its accessKey and its secretKey are used, and the accessKey and secretKey"
+                            + " options are not.",
+              displayName = "Service Configuration",
               security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret")
+    @UriParam(description = "The access key ID (AK) of the Huawei Cloud credentials. It is not used when the"
+                            + " serviceKeys option is set.",
+              displayName = "API access key (AK)", security = "secret")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret")
+    @UriParam(description = "The secret access key (SK) of the Huawei Cloud credentials. It is not used when the"
+                            + " serviceKeys option is set.",
+              displayName = "API secret key (SK)", security = "secret")
     @Metadata(required = true)
     private String secretKey;
 
-    @UriParam(description = "The message engine. Either kafka or rabbitmq. If the parameter is not specified, all instances will be queried",
+    @UriParam(description = "The message engine: kafka or rabbitmq. It is required for createInstance from the options,"
+                            + " and for listInstances it lists only the instances of this engine, or all instances if"
+                            + " not set. The CamelHwCloudDmsEngine exchange property replaces this option.",
               displayName = "Engine type",
               enums = "kafka,rabbitmq")
     @Metadata(required = false)
     private String engine;
 
-    @UriParam(description = "The id of the instance. This option is mandatory when deleting or querying an instance",
+    @UriParam(description = "The ID of the instance, required for deleteInstance, queryInstance and updateInstance. The"
+                            + " CamelHwCloudDmsInstanceId exchange property replaces this option.",
               displayName = "Instance id")
     @Metadata(required = false)
     private String instanceId;
 
-    @UriParam(description = "The name of the instance for creating and updating an instance. This option is mandatory when creating an instance",
+    @UriParam(description = "The name of the new instance, required for createInstance from the options. updateInstance"
+                            + " takes the name from the body only. The CamelHwCloudDmsName exchange property replaces"
+                            + " this option.",
               displayName = "Name")
     @Metadata(required = false)
     private String name;
 
-    @UriParam(description = "The version of the message engine. This option is mandatory when creating an instance.",
+    @UriParam(description = "The version of the message engine of the new instance, required for createInstance from"
+                            + " the options. The CamelHwCloudDmsEngineVersion exchange property replaces this option.",
               displayName = "Engine version")
     @Metadata(required = false)
     private String engineVersion;
 
-    @UriParam(description = "The baseline bandwidth of a Kafka instance. This option is mandatory when creating a Kafka instance.",
+    @UriParam(description = "The baseline bandwidth of a new Kafka instance, for example 100MB. It is required for"
+                            + " createInstance of a Kafka instance from the options. The CamelHwCloudDmsSpecification"
+                            + " exchange property replaces this option.",
               displayName = "Engine version")
     @Metadata(required = false)
     private String specification;
 
-    @UriParam(description = "The message storage space. This option is mandatory when creating an instance.",
+    @UriParam(description = "The message storage space of the new instance in GB. It must be greater than 0 for"
+                            + " createInstance from the options. The CamelHwCloudDmsStorageSpace exchange property"
+                            + " replaces this option.",
               displayName = "Storage space")
     @Metadata(required = false)
     private int storageSpace;
 
-    @UriParam(description = "The maximum number of partitions in a Kafka instance. This option is mandatory when creating a Kafka instance.",
+    @UriParam(description = "The maximum number of partitions of a new Kafka instance. It must be greater than 0 for"
+                            + " createInstance of a Kafka instance from the options. The CamelHwCloudDmsPartitionNum"
+                            + " exchange property replaces this option.",
               displayName = "Partition Number")
     @Metadata(required = false)
     private int partitionNum;
 
-    @UriParam(description = "The username of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
+    @UriParam(description = "The user name of a new RabbitMQ instance, required for createInstance of a RabbitMQ"
+                            + " instance from the options. The CamelHwCloudDmsAccessUser exchange property replaces"
+                            + " this option.",
               displayName = "Access user")
     @Metadata(required = false)
     private String accessUser;
 
-    @UriParam(description = "The password of a RabbitMQ instance. This option is mandatory when creating a RabbitMQ instance.",
+    @UriParam(description = "The password of the accessUser of a new RabbitMQ instance, required for createInstance of"
+                            + " a RabbitMQ instance from the options. The CamelHwCloudDmsPassword exchange property"
+                            + " replaces this option.",
               displayName = "Password", security = "secret")
     @Metadata(required = false)
     private String password;
 
-    @UriParam(description = "The VPC ID. This option is mandatory when creating an instance.", displayName = "VPC ID")
+    @UriParam(description = "The ID of the VPC of the new instance, required for createInstance from the options. The"
+                            + " CamelHwCloudDmsVpcId exchange property replaces this option.",
+              displayName = "VPC ID")
     @Metadata(required = false)
     private String vpcId;
 
-    @UriParam(description = "The security group which the instance belongs to. This option is mandatory when creating an instance.",
+    @UriParam(description = "The ID of the security group of the new instance, required for createInstance from the"
+                            + " options. The CamelHwCloudDmsSecurityGroupId exchange property replaces this option.",
               displayName = "Security group ID")
     @Metadata(required = false)
     private String securityGroupId;
 
-    @UriParam(description = "The subnet ID. This option is mandatory when creating an instance.", displayName = "Subnet ID")
+    @UriParam(description = "The ID of the subnet of the new instance, required for createInstance from the options."
+                            + " The CamelHwCloudDmsSubnetId exchange property replaces this option.",
+              displayName = "Subnet ID")
     @Metadata(required = false)
     private String subnetId;
 
-    @UriParam(description = "A comma separated String of Availability Zones. This option is mandatory when creating an instance and it cannot be an empty array.",
+    @UriParam(description = "The IDs of the availability zones of the new instance, separated by commas, required for"
+                            + " createInstance from the options. The CamelHwCloudDmsAvailableZones exchange property"
+                            + " replaces this option.",
               displayName = "Available zones")
     @Metadata(required = false)
     private String availableZones;
 
-    @UriParam(description = "The product ID. This option is mandatory when creating an instance.", displayName = "Product ID")
+    @UriParam(description = "The ID of the product (the instance flavor) of the new instance, required for"
+                            + " createInstance from the options. The CamelHwCloudDmsProductId exchange property"
+                            + " replaces this option.",
+              displayName = "Product ID")
     @Metadata(required = false)
     private String productId;
 
-    @UriParam(description = "The username for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
+    @UriParam(description = "The user name for logging in to Kafka Manager of a new Kafka instance, required for"
+                            + " createInstance of a Kafka instance from the options. The"
+                            + " CamelHwCloudDmsKafkaManagerUser exchange property replaces this option.",
               displayName = "Kafka manager username")
     @Metadata(required = false)
     private String kafkaManagerUser;
 
-    @UriParam(description = "The password for logging in to the Kafka Manager. This option is mandatory when creating a Kafka instance.",
+    @UriParam(description = "The password for logging in to Kafka Manager of a new Kafka instance, required for"
+                            + " createInstance of a Kafka instance from the options. The"
+                            + " CamelHwCloudDmsKafkaManagerPassword exchange property replaces this option.",
               displayName = "Kafka manager password", security = "secret")
     @Metadata(required = false)
     private String kafkaManagerPassword;
 
-    @UriParam(description = "The storage I/O specification. This option is mandatory when creating an instance.",
+    @UriParam(description = "The storage I/O specification of the new instance, for example dms.physical.storage.high."
+                            + " It is required for createInstance from the options. The CamelHwCloudDmsStorageSpecCode"
+                            + " exchange property replaces this option.",
               displayName = "Storage specification code")
     @Metadata(required = false)
     private String storageSpecCode;

@@ -52,6 +52,11 @@ public class CamelSpringCronService implements CamelCronService, CamelContextAwa
             }
             // the seconds are optional in the cron component but mandatory in Spring
             schedule = "0 " + schedule;
+        } else if (parts.length == 7) {
+            // Spring cron expressions have exactly six fields: no year
+            throw new IllegalArgumentException(
+                    "The seven-part schedule " + schedule + " has a year, which the spring cron service does not support:"
+                                               + " use a schedule without the year, or camel-quartz");
         }
         options.put("scheduler.cron", schedule);
         cronEndpoint.configureProperties(options);

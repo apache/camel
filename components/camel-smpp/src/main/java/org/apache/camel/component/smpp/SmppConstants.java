@@ -24,114 +24,116 @@ import org.apache.camel.spi.Metadata;
  */
 public interface SmppConstants {
 
-    @Metadata(label = "producer", description = "*For SubmitSm, SubmitMulti and ReplaceSm*  The alphabet according\n" +
-                                                "to the SMPP 3.4 specification, section 5.2.19, which is bits 0-3 of\n" +
-                                                "the data coding. Use the URI option `alphabet` settings above.",
+    @Metadata(label = "producer",
+              description = "The alphabet of the short message, which replaces the alphabet option for SubmitSm, SubmitMulti"
+                            + " and ReplaceSm: 0 for the SMSC default alphabet, 4 for 8-bit data and 8 for UCS2. When the"
+                            + " CamelSmppDataCoding header is not set, SubmitSm, SubmitMulti and DataSm also send it as the"
+                            + " data_coding.",
               javaType = "Byte")
     String ALPHABET = "CamelSmppAlphabet";
     @Metadata(description = "The command to send: SubmitSm (the default when the header is missing), ReplaceSm, QuerySm,\n" +
                             "SubmitMulti, CancelSm or DataSm. The names are case-sensitive, and any other value fails.",
               javaType = "String")
     String COMMAND = "CamelSmppCommand";
-    @Metadata(label = "consumer", description = "*only for AlertNotification, DeliverSm and DataSm* The command id field\n" +
-                                                "identifies the particular SMPP PDU. For the complete list of defined\n" +
-                                                "values see chapter 5.1.2.1 in the smpp specification v3.4.",
+    @Metadata(label = "consumer",
+              description = "The command_id of the received PDU, which identifies its type, as listed in section 5.1.2.1 of"
+                            + " the SMPP 3.4 specification. Set for an AlertNotification, a DeliverSm and a DataSm.",
               javaType = "Integer")
     String COMMAND_ID = "CamelSmppCommandId";
-    @Metadata(label = "consumer", description = "*only for DataSm* The Command status of the message.", javaType = "Integer")
+    @Metadata(label = "consumer",
+              description = "The command_status of the received PDU. Set for an AlertNotification and a DataSm.",
+              javaType = "Integer")
     String COMMAND_STATUS = "CamelSmppCommandStatus";
-    @Metadata(label = "producer", description = "*For SubmitSm, SubmitMulti and ReplaceSm*  The data\n" +
-                                                "coding according to the SMPP 3.4 specification, section 5.2.19. Use the\n" +
-                                                "URI option `dataCoding` settings above.",
+    @Metadata(label = "producer",
+              description = "For the producer, the data_coding to send with SubmitSm, SubmitMulti and DataSm, which replaces"
+                            + " the dataCoding option; with an 8-bit value, the body is sent as bytes, for ReplaceSm too. The"
+                            + " consumer sets it to the data_coding of a received DeliverSm or DataSm.",
               javaType = "Byte")
     String DATA_CODING = "CamelSmppDataCoding";
-    @Metadata(label = "producer", description = "The splitter", javaType = "org.apache.camel.component.smpp.SmppSplitter")
+    @Metadata(label = "producer",
+              description = "An org.apache.camel.component.smpp.SmppSplitter that splits the body into segments for SubmitSm"
+                            + " and SubmitMulti, instead of the splitter that the producer chooses for the alphabet. A value"
+                            + " that is not an SmppSplitter fails the exchange.",
+              javaType = "org.apache.camel.component.smpp.SmppSplitter")
     String DATA_SPLITTER = "CamelSmppSplitter";
-    @Metadata(label = "consumer", description = "*only for smsc DeliveryReceipt* Number of short messages delivered. This\n" +
-                                                "is only relevant where the original message was submitted to a\n" +
-                                                "distribution list.The value is padded with leading zeros if necessary.",
+    @Metadata(label = "consumer",
+              description = "The number of short messages delivered, from the dlvrd field of a delivery receipt. It is"
+                            + " relevant only when the original message was submitted to a distribution list.",
               javaType = "Integer")
     String DELIVERED = "CamelSmppDelivered";
-    @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the\n" +
-                            "destination SME address(es). For mobile terminated messages, this is the\n" +
-                            "directory number of the recipient MS. It must be a `List<String>` for\n" +
-                            "SubmitMulti and a `String` otherwise.\n" +
-                            "*Consumer:* *only for DeliverSm and DataSm:* Defines the destination SME address.\n" +
-                            "For mobile terminated messages, this is the directory number of the\n" +
-                            "recipient MS.",
+    @Metadata(description = "For the producer, the destination address for SubmitSm, CancelSm and DataSm, or a list of"
+                            + " destination addresses for SubmitMulti, which replaces the destAddr option. The consumer sets it"
+                            + " to the destination address of a received DeliverSm or DataSm.",
               javaType = "List or String")
     String DEST_ADDR = "CamelSmppDestAddr";
-    @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the\n" +
-                            "numeric plan indicator (NPI) to be used in the SME destination address\n" +
-                            "parameters. Use the URI option `sourceAddrNpi` values defined above.\n" +
-                            "*Consumer:* *only for DataSm* Defines the numeric plan indicator (NPI) in the\n" +
-                            "destination address parameters. Use the URI option `sourceAddrNpi`\n" +
-                            "values defined above.",
+    @Metadata(description = "For the producer, the numbering plan indicator (NPI) of the destination address for SubmitSm,"
+                            + " SubmitMulti, CancelSm and DataSm, which replaces the destAddrNpi option. The consumer sets it"
+                            + " to the NPI of the destination address of a received DeliverSm or DataSm.",
               javaType = "Byte")
     String DEST_ADDR_NPI = "CamelSmppDestAddrNpi";
-    @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti, CancelSm and DataSm* Defines the type\n" +
-                            "of number (TON) to be used in the SME destination address parameters.\n" +
-                            "Use the `sourceAddrTon` URI option values defined above.\n" +
-                            "*Consumer:* *only for DataSm* Defines the type of number (TON) in the destination\n" +
-                            "address parameters. Use the `sourceAddrTon` URI option values defined\n" +
-                            "above.",
+    @Metadata(description = "For the producer, the type of number (TON) of the destination address for SubmitSm,"
+                            + " SubmitMulti, CancelSm and DataSm, which replaces the destAddrTon option. The consumer sets it"
+                            + " to the TON of the destination address of a received DeliverSm or DataSm.",
               javaType = "Byte")
     String DEST_ADDR_TON = "CamelSmppDestAddrTon";
-    @Metadata(label = "consumer", description = "*only for smsc DeliveryReceipt* The time and date at which the short\n" +
-                                                "message reached it's final state. The format is as follows: YYMMDDhhmm.",
+    @Metadata(label = "consumer",
+              description = "The date and time at which the message reached its final state, from the done date field of a"
+                            + " delivery receipt.",
               javaType = "Date")
     String DONE_DATE = "CamelSmppDoneDate";
-    @Metadata(label = "producer", description = "*only for SubmitSm,\n" +
-                                                "SubmitMulti and ReplaceSm*.  Specifies the encoding (character set name)\n" +
-                                                "the text of the message body is encoded in, as the short message.  A\n" +
-                                                "byte array body is first read as text, in the charset of the exchange,\n" +
-                                                "unless an 8-bit data coding or alphabet (in a header, or in the\n" +
-                                                "endpoint options) sends it as it is.\n" +
-                                                "Default value is specified by the endpoint configuration parameter\n" +
-                                                "_encoding_",
+    @Metadata(label = "producer",
+              description = "The charset in which the producer encodes the text of the body for SubmitSm, SubmitMulti and"
+                            + " ReplaceSm, which replaces the encoding option, also for the UCS2 alphabet. A charset that the"
+                            + " JVM does not support is logged and ignored. It is not used for an 8-bit message, whose body is"
+                            + " sent as bytes: a byte array as it is, any other body converted in the charset of the exchange.",
               javaType = "String")
     String ENCODING = "CamelSmppEncoding";
-    @Metadata(description = "*Producer:* *only for SubmitMultiSm* The errors which\n" +
-                            "occurred by sending the short message(s) the form `Map<String, List<Map<String, Object>>>` (messageID : (destAddr :\n"
-                            +
-                            "address, error : errorCode)).\n" +
-                            "*Consumer:* *only for smsc DeliveryReceipt* Where appropriate this may hold a\n" +
-                            "Network specific error code or an SMSC error code for the attempted\n" +
-                            "delivery of the message. These errors are Network or SMSC specific and\n" +
-                            "are not included here.",
+    @Metadata(description = "The producer sets it for SubmitMulti, when some destinations failed, to a map from the message"
+                            + " id to a list of maps, each with the destination address (CamelSmppDestAddr key) and the error"
+                            + " code (CamelSmppError key); for QuerySm, it sets it to the error_code of the response. The"
+                            + " consumer sets it to the err field of a delivery receipt, a network or SMSC specific error code,"
+                            + " when it is not 000.",
               javaType = "String or Map<String, List<Map<String, Object>>>")
     String ERROR = "CamelSmppError";
-    @Metadata(label = "producer", description = "the ASM class", javaType = "org.jsmpp.bean.ESMClass")
+    @Metadata(label = "producer",
+              description = "The esm_class to send with SubmitSm and SubmitMulti. Without it, the producer sends the default"
+                            + " esm_class, or the one with the UDH indicator for a message that it splits.",
+              javaType = "org.jsmpp.bean.ESMClass")
     String ESM_CLASS = "CamelSmppClass";
-    @Metadata(label = "consumer", description = "*only for AlertNotification* Defines the destination ESME address. For\n" +
-                                                "mobile terminated messages, this is the directory number of the\n" +
-                                                "recipient MS.",
+    @Metadata(label = "consumer",
+              description = "The esme_addr of a received AlertNotification: the address of the ESME that requested the"
+                            + " alert.",
               javaType = "String")
     String ESME_ADDR = "CamelSmppEsmeAddr";
-    @Metadata(label = "consumer", description = "*only for AlertNotification* Defines the numeric plan indicator (NPI) to\n" +
-                                                "be used in the ESME originator address parameters. Use the URI option\n" +
-                                                "`sourceAddrNpi` values defined above.",
+    @Metadata(label = "consumer",
+              description = "The numbering plan indicator (NPI) of the esme_addr of a received AlertNotification.",
               javaType = "Byte")
     String ESME_ADDR_NPI = "CamelSmppEsmeAddrNpi";
-    @Metadata(label = "consumer", description = "*only for AlertNotification* Defines the type of number (TON) to be used\n" +
-                                                "in the ESME originator address parameters. Use the `sourceAddrTon` URI\n" +
-                                                "option values defined above.",
+    @Metadata(label = "consumer",
+              description = "The type of number (TON) of the esme_addr of a received AlertNotification.",
               javaType = "Byte")
     String ESME_ADDR_TON = "CamelSmppEsmeAddrTon";
-    @Metadata(label = "producer", description = "The final date", javaType = "java.util.Date")
+    @Metadata(label = "producer",
+              description = "The date and time at which the message reached its final state, from the final_date of the"
+                            + " response to QuerySm, or null when the message has not reached a final state.",
+              javaType = "java.util.Date")
     String FINAL_DATE = "CamelSmppFinalDate";
-    @Metadata(label = "consumer", description = "*only for smsc DeliveryReceipt:* The final status of the message.",
+    @Metadata(label = "consumer",
+              description = "The final state of the message, from the stat field of a delivery receipt, such as DELIVRD,"
+                            + " UNDELIV or EXPIRED.",
               javaType = "org.jsmpp.util.DeliveryReceiptState")
     String FINAL_STATUS = "CamelSmppStatus";
-    @Metadata(description = "*Producer:* The id to identify the submitted short message(s) for later use.\n" +
-                            "In case of a ReplaceSm, QuerySm, CancelSm and DataSm this\n" +
-                            "header value is a `String`. In case of a SubmitSm or SubmitMultiSm this\n" +
-                            "header value is a `List<String>`.\n" +
-                            "*Consumer:* *only for smsc DeliveryReceipt and DataSm* The message ID allocated to\n" +
-                            "the message by the SMSC when originally submitted.",
+    @Metadata(description = "For ReplaceSm, QuerySm and CancelSm, the message id of the message to act on, as the SMSC"
+                            + " returned it. After the send, the producer sets it to the list of message ids that the SMSC"
+                            + " returned for SubmitSm and SubmitMulti (one per segment), and to a single message id for the"
+                            + " other commands. The consumer sets it to the id of the original message for a delivery receipt,"
+                            + " and to the message id that it returns to the SMSC for a DataSm.",
               javaType = "String or List<String>")
     String ID = "CamelSmppId";
-    @Metadata(label = "producer", description = "The message date", javaType = "String")
+    @Metadata(label = "producer",
+              description = "The state of the message from the response to QuerySm, as the name of an"
+                            + " org.jsmpp.bean.MessageState, such as ENROUTE, DELIVERED or EXPIRED.",
+              javaType = "String")
     String MESSAGE_STATE = "CamelSmppMessageState";
     @Metadata(label = "consumer", description = "Identifies the type of an incoming message:\n" +
                                                 "`AlertNotification`: an SMSC alert notification,\n" +
@@ -140,98 +142,75 @@ public interface SmppConstants {
                                                 "`DeliverSm`: an SMSC deliver short message",
               javaType = "String")
     String MESSAGE_TYPE = "CamelSmppMessageType";
-    @Metadata(label = "producer", description = "*only for SubmitSm and SubmitMulti* Allows the originating SME to assign\n" +
-                                                "a priority level to the short message. Use the URI option `priorityFlag`\n" +
-                                                "settings above.",
+    @Metadata(label = "producer",
+              description = "The priority_flag to send with SubmitSm and SubmitMulti, from 0 (lowest) to 3 (highest), which"
+                            + " replaces the priorityFlag option.",
               javaType = "Byte")
     String PRIORITY_FLAG = "CamelSmppPriorityFlag";
-    @Metadata(label = "producer", description = "The protocol id", javaType = "Byte")
+    @Metadata(label = "producer",
+              description = "The protocol_id to send with SubmitSm and SubmitMulti, which replaces the protocolId option.",
+              javaType = "Byte")
     String PROTOCOL_ID = "CamelSmppProtocolId";
-    @Metadata(description = "*Producer:* *only for SubmitSm, ReplaceSm, SubmitMulti and DataSm* Is used to\n" +
-                            "request an SMSC delivery receipt and/or SME originated acknowledgements.\n" +
-                            "Use the URI option `registeredDelivery` settings above.\n" +
-                            "*Consumer:* *only for DataSm* Is used to request an delivery receipt and/or SME\n" +
-                            "originated acknowledgements. Same values as in Producer header list\n" +
-                            "above.",
+    @Metadata(description = "For the producer, the registered_delivery to send with SubmitSm, SubmitMulti, ReplaceSm and"
+                            + " DataSm, which replaces the registeredDelivery option. The consumer sets it to the"
+                            + " registered_delivery of a received DataSm.",
               javaType = "Byte")
     String REGISTERED_DELIVERY = "CamelSmppRegisteredDelivery";
-    @Metadata(label = "producer", description = "*only for SubmitSm, SubmitMulti* Is used to\n" +
-                                                "request the SMSC delivery receipt only on the last segment of multi-segment (long) messages.\n"
-                                                +
-                                                "Use the URI option `singleDLR` settings above.",
+    @Metadata(label = "producer",
+              description = "Whether to request a delivery receipt only for the last segment of a message that is split, for"
+                            + " SubmitSm and SubmitMulti, which replaces the singleDLR option.",
               javaType = "Boolean")
     String SINGLE_DLR = "CamelSmppSingleDLR";
-    @Metadata(label = "producer", description = "*only for SubmitSm and SubmitMulti* The replace if present flag\n" +
-                                                "parameter is used to request the SMSC to replace a previously submitted\n" +
-                                                "message, that is still pending delivery. The SMSC will replace an\n" +
-                                                "existing message provided that the source address, destination address\n" +
-                                                "and service type match the same fields in the new message. The following\n" +
-                                                "values are defined: `0`, Don't replace and `1`, Replace",
+    @Metadata(label = "producer",
+              description = "The replace_if_present_flag to send with SubmitSm and SubmitMulti, which replaces the"
+                            + " replaceIfPresentFlag option: 1 asks the SMSC to replace a message that is still pending"
+                            + " delivery and has the same source address, destination address and service type, 0 does not.",
               javaType = "Boolean")
     String REPLACE_IF_PRESENT_FLAG = "CamelSmppReplaceIfPresentFlag";
-    @Metadata(description = "*Producer:* only for SubmitSm, SubmitMulti and ReplaceSm* This parameter specifies\n" +
-                            "the scheduled time at which the message delivery should be first\n" +
-                            "attempted. It defines either the absolute date and time or relative time\n" +
-                            "from the current SMSC time at which delivery of this message will be\n" +
-                            "attempted by the SMSC. It can be specified in either absolute time\n" +
-                            "format or relative time format. The encoding of a time format is\n" +
-                            "specified in chapter 7.1.1. in the smpp specification v3.4.\n" +
-                            "*Consumer:* *only for DeliverSm:* This parameter specifies the scheduled time at\n" +
-                            "which the message delivery should be first attempted. It defines either\n" +
-                            "the absolute date and time or relative time from the current SMSC time\n" +
-                            "at which delivery of this message will be attempted by the SMSC. It can\n" +
-                            "be specified in either absolute time format or relative time format. The\n" +
-                            "encoding of a time format is specified in Section 7.1.1. in the smpp\n" +
-                            "specification v3.4.",
+    @Metadata(description = "For the producer, the time at which the SMSC first tries to deliver the message, for SubmitSm,"
+                            + " SubmitMulti and ReplaceSm, as a java.util.Date that is sent in the absolute time format of the"
+                            + " SMPP 3.4 specification, section 7.1.1. The consumer sets it to the schedule_delivery_time of a"
+                            + " received DeliverSm, as the String in that format.",
               javaType = "Date")
     String SCHEDULE_DELIVERY_TIME = "CamelSmppScheduleDeliveryTime";
-    @Metadata(label = "producer", description = "*only for SubmitSm and SubmitMultiSm* The total\n" +
-                                                "number of messages which has been sent.",
+    @Metadata(label = "producer",
+              description = "The number of short messages that the producer sent for SubmitSm and SubmitMulti, which is more"
+                            + " than one when the body was split.",
               javaType = "Integer")
     String SENT_MESSAGE_COUNT = "CamelSmppSentMessageCount";
-    @Metadata(label = "consumer", description = "*only for AlertNotification, DeliverSm and DataSm* A sequence number\n" +
-                                                "allows a response PDU to be correlated with a request PDU. The\n" +
-                                                "associated SMPP response PDU must preserve this field.",
+    @Metadata(label = "consumer",
+              description = "The sequence_number of the received PDU, which correlates the response with the request. Set"
+                            + " for an AlertNotification, a DeliverSm and a DataSm.",
               javaType = "int")
     String SEQUENCE_NUMBER = "CamelSmppSequenceNumber";
-    @Metadata(description = "*Producer:* The service type parameter can be used to indicate the SMS Application\n" +
-                            "service associated with the message. Use the URI option `serviceType`\n" +
-                            "settings above.\n" +
-                            "*Consumer:* *only for DeliverSm and DataSm* The service type parameter indicates the\n" +
-                            "SMS Application service associated with the message.",
+    @Metadata(description = "For the producer, the service_type to send with SubmitSm, SubmitMulti, CancelSm and DataSm,"
+                            + " which replaces the serviceType option. The consumer sets it to the service_type of a received"
+                            + " DeliverSm or DataSm.",
               javaType = "String")
     String SERVICE_TYPE = "CamelSmppServiceType";
-    @Metadata(description = "*Producer:* Defines the address of SME (Short Message Entity) which originated this message.\n" +
-                            "*Consumer:* *Only for AlertNotification, DeliverSm and DataSm* Defines the address\n" +
-                            "of SME (Short Message Entity) which originated this message.",
+    @Metadata(description = "For the producer, the source address to send with every command, which replaces the sourceAddr"
+                            + " option; for ReplaceSm, QuerySm and CancelSm, the source address of the original message. The"
+                            + " consumer sets it to the source address of a received AlertNotification, DeliverSm or DataSm.",
               javaType = "String")
     String SOURCE_ADDR = "CamelSmppSourceAddr";
-    @Metadata(description = "*Producer:* Defines the numeric plan indicator (NPI) to be used in the SME\n" +
-                            "originator address parameters. Use the URI option `sourceAddrNpi` values\n" +
-                            "defined above.\n" +
-                            "*Consumer:* *only for AlertNotification and DataSm* Defines the numeric plan\n" +
-                            "indicator (NPI) to be used in the SME originator address parameters. Use\n" +
-                            "the URI option `sourceAddrNpi` values defined above.",
+    @Metadata(description = "For the producer, the numbering plan indicator (NPI) of the source address to send with every"
+                            + " command, which replaces the sourceAddrNpi option. The consumer sets it to the NPI of the source"
+                            + " address of a received AlertNotification, DeliverSm or DataSm.",
               javaType = "Byte")
     String SOURCE_ADDR_NPI = "CamelSmppSourceAddrNpi";
-    @Metadata(description = "*Producer:* Defines the type of number (TON) to be used in the SME originator\n" +
-                            "address parameters. Use the `sourceAddrTon` URI option values defined\n" +
-                            "above.\n" +
-                            "*Consumer:* *only for AlertNotification and DataSm* Defines the type of number (TON)\n" +
-                            "to be used in the SME originator address parameters. Use the\n" +
-                            "`sourceAddrTon` URI option values defined above.",
+    @Metadata(description = "For the producer, the type of number (TON) of the source address to send with every command,"
+                            + " which replaces the sourceAddrTon option. The consumer sets it to the TON of the source address"
+                            + " of a received AlertNotification, DeliverSm or DataSm.",
               javaType = "Byte")
     String SOURCE_ADDR_TON = "CamelSmppSourceAddrTon";
-    @Metadata(label = "consumer", description = "*only for smsc DeliveryReceipt* Number of short messages originally\n" +
-                                                "submitted. This is only relevant when the original message was submitted\n" +
-                                                "to a distribution list.The value is padded with leading zeros if\n" +
-                                                "necessary.",
+    @Metadata(label = "consumer",
+              description = "The number of short messages originally submitted, from the sub field of a delivery receipt. It"
+                            + " is relevant only when the original message was submitted to a distribution list.",
               javaType = "Integer")
     String SUBMITTED = "CamelSmppSubmitted";
-    @Metadata(label = "consumer", description = "*only for smsc DeliveryReceipt* The time and date at which the short\n" +
-                                                "message was submitted. In the case of a message which has been replaced,\n" +
-                                                "this is the date that the original message was replaced. The format is\n" +
-                                                "as follows: YYMMDDhhmm.",
+    @Metadata(label = "consumer",
+              description = "The date and time at which the original message was submitted, or replaced, from the submit"
+                            + " date field of a delivery receipt.",
               javaType = "Date")
     String SUBMIT_DATE = "CamelSmppSubmitDate";
     @Metadata(label = "producer",
@@ -246,45 +225,29 @@ public interface SmppConstants {
                             + " the `CamelSmppSystemId` header; otherwise ignored.",
               javaType = "String", secret = true)
     String PASSWORD = "CamelSmppPassword";
-    @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti and ReplaceSm* The validity period\n" +
-                            "parameter indicates the SMSC expiration time, after which the message\n" +
-                            "should be discarded if not delivered to the destination. If it's\n" +
-                            "provided as `Date`, it's interpreted as absolute time or relative time\n" +
-                            "format if you provide it as `String` as specified in chapter 7.1.1 in\n" +
-                            "the smpp specification v3.4.\n" +
-                            "*Consumer:* *only for DeliverSm* The validity period parameter indicates the SMSC\n" +
-                            "expiration time, after which the message should be discarded if not\n" +
-                            "delivered to the destination. It can be defined in absolute time format\n" +
-                            "or relative time format. The encoding of absolute and relative time\n" +
-                            "format is specified in Section 7.1.1 in the smpp specification v3.4.",
+    @Metadata(description = "For the producer, the time after which the SMSC discards the message if it was not delivered,"
+                            + " for SubmitSm, SubmitMulti and ReplaceSm: a java.util.Date is sent in the absolute time format,"
+                            + " and a String as it is, so it can hold a relative time (SMPP 3.4 specification, section 7.1.1)."
+                            + " The consumer sets it to the validity_period of a received DeliverSm, as a String.",
               javaType = "String or Date")
     String VALIDITY_PERIOD = "CamelSmppValidityPeriod";
-    @Metadata(label = "consumer", description = "The optional parameters by name.", javaType = "Map<String, Object>",
-              deprecationNote = "Use CamelSmppOptionalParameter instead")
+    @Metadata(label = "consumer",
+              description = "The optional parameters (TLVs) by the name of their org.jsmpp.bean.OptionalParameter.Tag. The"
+                            + " producer sends them, with String values, with SubmitSm, SubmitMulti and DataSm when the"
+                            + " CamelSmppOptionalParameter header is not set. The consumer sets it for a received DeliverSm,"
+                            + " and the producer for the response to DataSm.",
+              javaType = "Map<String, Object>", deprecationNote = "Use CamelSmppOptionalParameter instead")
     String OPTIONAL_PARAMETERS = "CamelSmppOptionalParameters";
-    @Metadata(description = "*Producer:* *only for SubmitSm, SubmitMulti and\n" +
-                            "DataSm* The optional parameter which are send to the SMSC. The value is\n" +
-                            "converted in the following way: `String` -> `org.jsmpp.bean.OptionalParameter.COctetString`, \n" +
-                            "`byte[]` -> `org.jsmpp.bean.OptionalParameter.OctetString`, \n" +
-                            "`Byte` -> `org.jsmpp.bean.OptionalParameter.Byte`,\n" +
-                            "`Integer` -> `org.jsmpp.bean.OptionalParameter.Int`,\n" +
-                            "`Short` -> `org.jsmpp.bean.OptionalParameter.Short`, \n" +
-                            "`null` -> `org.jsmpp.bean.OptionalParameter.Null`\n" +
-                            "*Consumer:* *only for DeliverSm* The optional\n" +
-                            "parameters send back by the SMSC. The key is the `Short` code for the\n" +
-                            "optional parameter. The value is converted in the following way: \n" +
-                            "`org.jsmpp.bean.OptionalParameter.COctetString` -> `String`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.OctetString` -> `byte[]`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.Byte` -> `Byte`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.Int` -> `Integer`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.Short` -> `Short`,\n" +
-                            "`org.jsmpp.bean.OptionalParameter.Null` -> `null`",
+    @Metadata(description = "The optional parameters (TLVs) by their tag code. The producer sends them with SubmitSm,"
+                            + " SubmitMulti and DataSm: a String as a COctetString, a byte array as an OctetString, a Byte, a"
+                            + " Short or an Integer as a parameter of that size, and null as a parameter without value; it"
+                            + " skips other values. The consumer sets it for a received DeliverSm, and the producer for the"
+                            + " response to DataSm, with the values converted back the same way.",
               javaType = "Map<Short, Object>")
     String OPTIONAL_PARAMETER = "CamelSmppOptionalParameter";
-    @Metadata(label = "producer", description = "*only for SubmitSm,\n" +
-                                                "SubmitMulti and DataSm*.  Specifies the policy for message splitting for\n" +
-                                                "this exchange.  Possible values are described in the endpoint\n" +
-                                                "configuration parameter _splittingPolicy_",
+    @Metadata(label = "producer",
+              description = "The splitting policy for SubmitSm and SubmitMulti, ALLOW, REJECT or TRUNCATE, which replaces"
+                            + " the splittingPolicy option. Any other value fails the exchange.",
               javaType = "String")
     String SPLITTING_POLICY = "CamelSmppSplittingPolicy";
 

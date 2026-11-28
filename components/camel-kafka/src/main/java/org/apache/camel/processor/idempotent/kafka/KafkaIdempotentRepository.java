@@ -16,9 +16,14 @@
  */
 package org.apache.camel.processor.idempotent.kafka;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -32,6 +37,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -68,6 +74,17 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     // internal properties
     private Map<String, Object> cache;
     private KafkaChangelog<String> changelog;
+    // the writes of this instance that the poller has not read back from the topic yet, by key: an older record of the
+    // key that the poller reads after the local change must not undo it. At most maxCacheSize writes are kept, in case
+    // the poller never reads a record back (a partition added after the start is not read)
+    private final Map<String, LocalWrite> localWrites = new LinkedHashMap<>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, LocalWrite> eldest) {
+            return size() > maxCacheSize && !eldest.getValue().sending;
+        }
+    };
+    // guards the local changes of the cache against the records applied by the poller, never held while sending
+    private final Lock lock = new ReentrantLock();
 
     private Properties producerConfig;
     private Properties consumerConfig;
@@ -320,11 +337,113 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         if (changelog != null) {
             changelog.stop();
         }
+        lock.lock();
+        try {
+            localWrites.clear();
+        } finally {
+            lock.unlock();
+        }
         LOG.debug("Stopped KafkaIdempotentRepository. Cache counter: {}", cacheCounter.get());
     }
 
     private void addToCache(ConsumerRecord<String, String> consumerRecord) {
         cacheCounter.incrementAndGet();
+        lock.lock();
+        try {
+            String key = consumerRecord.key();
+            LocalWrite write = key != null ? localWrites.get(key) : null;
+            if (write != null) {
+                if (write.sending) {
+                    // the record cannot be ordered against the write yet: decided once its offset is known
+                    write.held.add(consumerRecord);
+                    return;
+                }
+                if (!isAfter(key, write, consumerRecord)) {
+                    return;
+                }
+            }
+            applyRecord(consumerRecord);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Starts a write of this instance to the topic, called under the lock together with the change of the local cache.
+     */
+    private LocalWrite startWrite(String key) {
+        if (startupOnly) {
+            // no record is applied after the start, so none can undo the write
+            return null;
+        }
+        LocalWrite write = new LocalWrite();
+        LocalWrite previous = localWrites.put(key, write);
+        if (previous != null && previous.sending) {
+            // the records held by an earlier write of the key that is still sent are decided by this later write
+            write.held.addAll(previous.held);
+            previous.held.clear();
+        }
+        return write;
+    }
+
+    /**
+     * Completes a write of this instance, and decides the records of its key that the poller read while it was sent.
+     *
+     * @param metadata the partition and offset of the record, or null when the send failed
+     */
+    private void completeWrite(String key, LocalWrite write, RecordMetadata metadata) {
+        if (write == null) {
+            return;
+        }
+        lock.lock();
+        try {
+            write.sending = false;
+            if (localWrites.get(key) != write) {
+                // a later write of the key took over the held records
+                return;
+            }
+            if (metadata == null || !metadata.hasOffset()) {
+                // the records cannot be ordered against the write: apply them as they come
+                localWrites.remove(key);
+                write.held.forEach(this::applyRecord);
+            } else {
+                write.partition = metadata.partition();
+                write.offset = metadata.offset();
+                for (ConsumerRecord<String, String> consumerRecord : write.held) {
+                    if (isAfter(key, write, consumerRecord)) {
+                        applyRecord(consumerRecord);
+                    }
+                }
+            }
+            write.held.clear();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Whether the record of the key was written after the given write of this instance, so it is applied. A record
+     * written before it, or the record of the write itself, would undo the local change, and is skipped.
+     */
+    private boolean isAfter(String key, LocalWrite write, ConsumerRecord<String, String> consumerRecord) {
+        if (consumerRecord.partition() != write.partition) {
+            // records of different partitions cannot be ordered (the docs recommend a topic with one partition)
+            return true;
+        }
+        if (consumerRecord.offset() == write.offset) {
+            // the record of the write is read back: the later records of the key are applied
+            localWrites.remove(key, write);
+            return false;
+        }
+        if (consumerRecord.offset() < write.offset) {
+            LOG.debug("Skipping record of messageId:{} at offset:{} written before the local change at offset:{}",
+                    key, consumerRecord.offset(), write.offset);
+            return false;
+        }
+        return true;
+    }
+
+    private void applyRecord(ConsumerRecord<String, String> consumerRecord) {
         String value = consumerRecord.value();
         String messageId = consumerRecord.key();
         // a record without a value (a tombstone) or an add or remove without a key is not written by this repository:
@@ -361,22 +480,37 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     public boolean add(String key) {
         // the poller stores key -> key for an add of a peer, so roll back only the value put by this call
         Object token = new Object();
-        if (cache.putIfAbsent(key, token) != null) {
-            return false;
-        }
+        LocalWrite write;
+        lock.lock();
         try {
-            broadcastAction(key, CacheAction.add);
-            return true;
+            if (cache.putIfAbsent(key, token) != null) {
+                return false;
+            }
+            write = startWrite(key);
+        } finally {
+            lock.unlock();
+        }
+        RecordMetadata metadata;
+        try {
+            metadata = broadcastAction(key, CacheAction.add);
         } catch (Exception e) {
-            cache.remove(key, token);
+            lock.lock();
+            try {
+                cache.remove(key, token);
+                completeWrite(key, write, null);
+            } finally {
+                lock.unlock();
+            }
             throw e;
         }
+        completeWrite(key, write, metadata);
+        return true;
     }
 
-    private void broadcastAction(String key, CacheAction action) {
+    private RecordMetadata broadcastAction(String key, CacheAction action) {
         LOG.debug("Broadcasting action:{} for key:{}", action, key);
         ObjectHelper.notNull(changelog, "changelog");
-        changelog.send(key, action.toString());
+        return changelog.send(key, action.toString());
     }
 
     @Override
@@ -391,8 +525,20 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         // update the local cache and broadcast the removal on the topic, which
         // will be reflected
         // at a later point in any peers
-        cache.remove(key);
-        broadcastAction(key, CacheAction.remove);
+        LocalWrite write;
+        lock.lock();
+        try {
+            cache.remove(key);
+            write = startWrite(key);
+        } finally {
+            lock.unlock();
+        }
+        RecordMetadata metadata = null;
+        try {
+            metadata = broadcastAction(key, CacheAction.remove);
+        } finally {
+            completeWrite(key, write, metadata);
+        }
         return true;
     }
 
@@ -403,7 +549,12 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     public void clear() {
-        cache.clear();
+        lock.lock();
+        try {
+            cache.clear();
+        } finally {
+            lock.unlock();
+        }
         broadcastAction(null, CacheAction.clear);
     }
 
@@ -415,5 +566,16 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @ManagedOperation(description = "Number of elements currently in the cache")
     public long getCacheSize() {
         return cache != null ? cache.size() : 0;
+    }
+
+    /**
+     * A write of this instance to the topic that the background poller has not read back yet.
+     */
+    private static final class LocalWrite {
+        private boolean sending = true;
+        private int partition = -1;
+        private long offset = -1;
+        // the records of the key that the poller read while the write was sent
+        private final List<ConsumerRecord<String, String>> held = new ArrayList<>();
     }
 }
