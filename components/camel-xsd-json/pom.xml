@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.24.0-SNAPSHOT</version>
+        <version>4.24.0</version>
     </parent>
 
     <artifactId>camel-xsd-json</artifactId>
@@ -87,7 +87,7 @@
                             <includes>
                                 <include>**/XsdJsonWoodstoxTest.java</include>
                             </includes>
-                            <excludes combine.self="override"/>
+                            <excludes combine.self="override" />
                             <additionalClasspathDependencies>
                                 <additionalClasspathDependency>
                                     <groupId>com.fasterxml.woodstox</groupId>
