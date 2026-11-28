@@ -55,6 +55,7 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.ContentHandlerDecorator;
+import org.apache.tika.sax.SafeContentHandler;
 import org.apache.tika.sax.XHTMLContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,13 +187,15 @@ public class TikaProducer extends DefaultProducer {
         TikaParseOutputFormat outputFormat = configuration.getTikaParseOutputFormat();
         switch (outputFormat) {
             case xml:
-                result = getTransformerHandler(outputStream, "xml", true);
+                TransformerHandler xmlHandler = getTransformerHandler(outputStream, "xml", true);
+                result = xmlHandler != null ? new SafeContentHandler(xmlHandler) : null;
                 break;
             case text:
                 result = new BodyContentHandler(new OutputStreamWriter(outputStream, this.encoding));
                 break;
             case html:
-                result = new HtmlTitleContentHandler(getTransformerHandler(outputStream, "html", true));
+                TransformerHandler htmlHandler = getTransformerHandler(outputStream, "html", true);
+                result = htmlHandler != null ? new HtmlTitleContentHandler(new SafeContentHandler(htmlHandler)) : null;
                 break;
             default:
                 throw new IllegalArgumentException(
