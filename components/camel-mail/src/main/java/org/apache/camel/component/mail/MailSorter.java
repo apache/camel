@@ -18,9 +18,9 @@ package org.apache.camel.component.mail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
+import jakarta.mail.Address;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
@@ -114,36 +114,57 @@ public final class MailSorter {
      * @throws jakarta.mail.MessagingException If message data could not be read.
      */
     private static int compareMessageProperty(Message msg1, Message msg2, SortTerm property) throws MessagingException {
+        // Every value read here is optional in RFC 5322 or may be absent on the server, so each comparison
+        // must tolerate a missing value. A message legitimately lacking the sorted-on property previously
+        // threw from inside the comparator and aborted the whole poll, on every subsequent poll.
         if (property.equals(SortTerm.TO)) {
-            InternetAddress addr1 = (InternetAddress) msg1.getRecipients(Message.RecipientType.TO)[0];
-            InternetAddress addr2 = (InternetAddress) msg2.getRecipients(Message.RecipientType.TO)[0];
-            return addr1.getAddress().compareTo(addr2.getAddress());
+            return compareNullable(firstAddress(msg1.getRecipients(Message.RecipientType.TO)),
+                    firstAddress(msg2.getRecipients(Message.RecipientType.TO)));
         } else if (property.equals(SortTerm.CC)) {
-            InternetAddress addr1 = (InternetAddress) msg1.getRecipients(Message.RecipientType.CC)[0];
-            InternetAddress addr2 = (InternetAddress) msg2.getRecipients(Message.RecipientType.CC)[0];
-            return addr1.getAddress().compareTo(addr2.getAddress());
+            return compareNullable(firstAddress(msg1.getRecipients(Message.RecipientType.CC)),
+                    firstAddress(msg2.getRecipients(Message.RecipientType.CC)));
         } else if (property.equals(SortTerm.FROM)) {
-            InternetAddress addr1 = (InternetAddress) msg1.getFrom()[0];
-            InternetAddress addr2 = (InternetAddress) msg2.getFrom()[0];
-            return addr1.getAddress().compareTo(addr2.getAddress());
+            return compareNullable(firstAddress(msg1.getFrom()), firstAddress(msg2.getFrom()));
         } else if (property.equals(SortTerm.ARRIVAL)) {
-            Date arr1 = msg1.getReceivedDate();
-            Date arr2 = msg2.getReceivedDate();
-            return arr1.compareTo(arr2);
+            return compareNullable(msg1.getReceivedDate(), msg2.getReceivedDate());
         } else if (property.equals(SortTerm.DATE)) {
-            Date sent1 = msg1.getSentDate();
-            Date sent2 = msg2.getSentDate();
-            return sent1.compareTo(sent2);
+            return compareNullable(msg1.getSentDate(), msg2.getSentDate());
         } else if (property.equals(SortTerm.SIZE)) {
-            int size1 = msg1.getSize();
-            int size2 = msg2.getSize();
-            return Integer.compare(size1, size2);
+            return Integer.compare(msg1.getSize(), msg2.getSize());
         } else if (property.equals(SortTerm.SUBJECT)) {
-            String sub1 = msg1.getSubject();
-            String sub2 = msg2.getSubject();
-            return sub1.compareTo(sub2);
+            return compareNullable(msg1.getSubject(), msg2.getSubject());
         }
         throw new IllegalArgumentException(String.format("Unknown sort term: %s", property.toString()));
+    }
+
+    /**
+     * Returns the address of the first entry, or null when the message carries none.
+     */
+    private static String firstAddress(Address[] addresses) {
+        if (addresses == null || addresses.length == 0) {
+            return null;
+        }
+        if (addresses[0] instanceof InternetAddress internetAddress) {
+            return internetAddress.getAddress();
+        }
+        return addresses[0].toString();
+    }
+
+    /**
+     * Compares two optional values, ordering a missing one first. Sorting must not depend on every message carrying the
+     * sorted-on property.
+     */
+    private static <T extends Comparable<T>> int compareNullable(T value1, T value2) {
+        if (value1 == null && value2 == null) {
+            return 0;
+        }
+        if (value1 == null) {
+            return -1;
+        }
+        if (value2 == null) {
+            return 1;
+        }
+        return value1.compareTo(value2);
     }
 
     /**
