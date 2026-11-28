@@ -73,6 +73,12 @@ public class FCProducer extends DefaultProducer {
         if (response.getHeaders() != null && ObjectHelper.isNotEmpty(response.getHeaders().get("x-fc-request-id"))) {
             exchange.getMessage().setHeader(FCHeaders.REQUEST_ID, response.getHeaders().get("x-fc-request-id"));
         }
+        // a response without an error type removes the header of an earlier call
+        if (response.getHeaders() != null && ObjectHelper.isNotEmpty(response.getHeaders().get("x-fc-error-type"))) {
+            exchange.getMessage().setHeader(FCHeaders.FUNCTION_ERROR, response.getHeaders().get("x-fc-error-type"));
+        } else {
+            exchange.getMessage().removeHeader(FCHeaders.FUNCTION_ERROR);
+        }
     }
 
     private void getFunction(Exchange exchange, ClientConfigurations configuration, Client fcClient) throws Exception {

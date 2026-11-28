@@ -57,6 +57,14 @@ public final class FCHeaders {
               javaType = "Integer")
     public static final String STATUS_CODE = "CamelAlibabaFcStatusCode";
 
+    @Metadata(label = "producer",
+              description = "The error type that Function Compute returns with the status 200 for a function error, such as"
+                            + " UnhandledInvocationError. The producer sets it for invokeFunction, or removes it if the"
+                            + " response has none, unless the exchange fails. Such a function error does not fail the"
+                            + " exchange, so a route detects it by this header.",
+              javaType = "String")
+    public static final String FUNCTION_ERROR = "CamelAlibabaFcFunctionError";
+
     private FCHeaders() {
     }
 }
