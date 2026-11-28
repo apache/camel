@@ -1,0 +1,675 @@
+{
+  "schemaVersion": 1,
+  "description": "Curated Apache Camel integration pattern recipes for AI-assisted development.",
+  "recipes": [
+    {
+      "id": "idempotent-consumer",
+      "name": "Idempotent Consumer",
+      "problem": "Prevent duplicate messages from being processed more than once by calculating a stable business key and storing processed keys in an idempotent repository.",
+      "components": [
+        "file",
+        "kafka",
+        "jms",
+        "log"
+      ],
+      "componentRequirements": [
+        "Add org.apache.camel:camel-jackson or org.apache.camel:camel-jackson3, using the same Camel release, for the JSON unmarshal steps.",
+        "The Kafka variant requires org.apache.camel:camel-kafka and a reachable Kafka cluster. It uses KafkaIdempotentRepository with a dedicated changelog topic shared by the participating consumer instances.",
+        "The JMS variant requires org.apache.camel:camel-jms, a configured JMS ConnectionFactory, and a reachable broker. Bind a durable, shared IdempotentRepository under the registry name processedOrderIds."
+      ],
+      "eips": [
+        "unmarshal",
+        "idempotentConsumer"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "idempotentConsumer",
+          "name": "skipDuplicate",
+          "value": true,
+          "reason": "Skip duplicate messages by default."
+        },
+        {
+          "target": "idempotentConsumer",
+          "name": "eager",
+          "value": true,
+          "reason": "Register the key eagerly to detect concurrent duplicates."
+        },
+        {
+          "target": "idempotentConsumer",
+          "name": "removeOnFailure",
+          "value": true,
+          "reason": "Allow a failed exchange to be retried."
+        }
+      ],
+      "pitfalls": [
+        "Use a stable business identifier such as orderId, not a newly generated message identifier.",
+        "An in-memory repository does not survive application restarts and is not shared between cluster nodes.",
+        "For durable or clustered processing, select a persistent or distributed IdempotentRepository appropriate to the deployment.",
+        "When skipDuplicate is false, duplicates enter the EIP and are marked with the CamelDuplicateMessage exchange property.",
+        "The Kafka variant uses CamelKafkaKey as its idempotency key; producers must supply a stable, non-null record key.",
+        "The KafkaIdempotentRepository changelog topic must be dedicated to that repository and available to all participating instances.",
+        "The JMS variant expects a persistent or distributed repository to be bound as processedOrderIds; a per-process memory repository is not durable or cluster-safe."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "- beans:\n    - name: processedOrderIds\n      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository\n\n- route:\n    id: deduplicate-orders\n    from:\n      uri: file\n      parameters:\n        directoryName: orders\n        noop: true\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - idempotentConsumer:\n            expression:\n              simple:\n                expression: \"${body[orderId]}\"\n            idempotentRepository: \"#processedOrderIds\"\n            eager: true\n            removeOnFailure: true\n            skipDuplicate: true\n            steps:\n              - log:\n                  message: \"Processing order ${body[orderId]}\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "route/enrich-and-dedupe",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/route/enrich-and-dedupe",
+          "coverage": "direct",
+          "note": "Demonstrates an idempotent consumer using an in-memory repository and an order identifier."
+        }
+      ],
+      "transportVariants": [
+        {
+          "id": "kafka",
+          "component": "kafka",
+          "description": "Kafka consumer using the stable Kafka record key and a Kafka-backed idempotent repository.",
+          "exampleRoute": {
+            "dsl": "yaml",
+            "source": "- beans:\n    - name: processedOrderIds\n      type: org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository\n      properties:\n        topic: orders-idempotency\n        bootstrapServers: localhost:9092\n\n- route:\n    id: deduplicate-kafka-orders\n    from:\n      uri: kafka:orders\n      parameters:\n        brokers: localhost:9092\n        groupId: order-processor\n        autoOffsetReset: earliest\n      steps:\n        - idempotentConsumer:\n            expression:\n              simple:\n                expression: \"${header.CamelKafkaKey}\"\n            idempotentRepository: \"#processedOrderIds\"\n            eager: true\n            removeOnFailure: true\n            steps:\n              - log:\n                  message: \"Processing Kafka order ${header.CamelKafkaKey}\"\n"
+          }
+        },
+        {
+          "id": "jms",
+          "component": "jms",
+          "description": "JMS queue consumer using the order business identifier and a registry-bound persistent idempotent repository.",
+          "exampleRoute": {
+            "dsl": "yaml",
+            "source": "- route:\n    id: deduplicate-jms-orders\n    from:\n      uri: jms\n      parameters:\n        destinationType: queue\n        destinationName: orders\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - idempotentConsumer:\n            expression:\n              simple:\n                expression: \"${body[orderId]}\"\n            idempotentRepository: \"#processedOrderIds\"\n            eager: true\n            removeOnFailure: true\n            steps:\n              - log:\n                  message: \"Processing JMS order ${body[orderId]}\"\n"
+          }
+        }
+      ]
+    },
+    {
+      "id": "content-based-routing-with-validation",
+      "name": "Content-Based Routing with Validation",
+      "problem": "Validate required message fields before routing a message to different destinations according to its content.",
+      "components": [
+        "file",
+        "log"
+      ],
+      "componentRequirements": [
+        "Add org.apache.camel:camel-jackson or org.apache.camel:camel-jackson3, using the same Camel release, for the JSON unmarshal step."
+      ],
+      "eips": [
+        "unmarshal",
+        "validate",
+        "choice"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "validate",
+          "name": "expression",
+          "reason": "Validate required fields before evaluating routing conditions. Reject malformed messages before they reach business routing logic."
+        },
+        {
+          "target": "choice",
+          "name": "otherwise",
+          "reason": "Provide a fallback branch for values that do not match an explicit routing condition."
+        }
+      ],
+      "pitfalls": [
+        "Validate required fields before evaluating expressions that depend on those fields.",
+        "Do not assume that an otherwise branch means the message is valid; validate its required structure separately.",
+        "A failed Validate EIP throws PredicateValidationException and is subject to the route error handler.",
+        "Keep routing predicates mutually understandable and make the fallback behavior explicit."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "- route:\n    id: validated-content-router\n    from:\n      uri: file\n      parameters:\n        directoryName: orders\n        noop: true\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - validate:\n            expression:\n              simple:\n                expression: \"${body[orderId]} != null\"\n        - validate:\n            expression:\n              simple:\n                expression: \"${body[country]} != null\"\n        - choice:\n            when:\n              - expression:\n                  simple:\n                    expression: \"${body[country]} == 'DK'\"\n                steps:\n                  - log:\n                      message: \"Order ${body[orderId]} routed to local delivery\"\n              - expression:\n                  simple:\n                    expression: \"${body[country]} in 'DE,SE,NL,FR'\"\n                steps:\n                  - log:\n                      message: \"Order ${body[orderId]} routed to EU shipping\"\n            otherwise:\n              steps:\n                - log:\n                    message: \"Order ${body[orderId]} routed to export\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "route/content-based-router",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/route/content-based-router",
+          "coverage": "related",
+          "note": "Demonstrates choice-based country routing. This recipe adds Validate EIPs before the routing conditions."
+        }
+      ]
+    },
+    {
+      "id": "file-polling-with-idempotent-repository",
+      "name": "File Polling with Idempotency and Move/Error Handling",
+      "problem": "Poll an inbox for files, avoid processing files that have already been consumed, validate their contents, and move successful and failed files to separate locations.",
+      "components": [
+        "file",
+        "direct",
+        "log"
+      ],
+      "componentRequirements": [
+        "Add org.apache.camel:camel-jackson or org.apache.camel:camel-jackson3, using the same Camel release, for the JSON unmarshal step."
+      ],
+      "eips": [
+        "unmarshal",
+        "validate"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "file",
+          "name": "idempotent",
+          "value": true,
+          "reason": "Enable the file consumer's idempotent filter."
+        },
+        {
+          "target": "file",
+          "name": "idempotentKey",
+          "value": "${file:name}-${file:size}",
+          "reason": "Use a file-specific key; select a stronger key if the application needs to detect same-name, same-size replacements."
+        },
+        {
+          "target": "file",
+          "name": "idempotentRepository",
+          "value": "#processedFiles",
+          "reason": "Use the configured repository rather than relying on an implicit repository."
+        },
+        {
+          "target": "file",
+          "name": "move",
+          "value": "done",
+          "reason": "Move successfully processed files to the done directory."
+        },
+        {
+          "target": "file",
+          "name": "moveFailed",
+          "value": "failed",
+          "reason": "Move files whose exchanges fail to the failed directory."
+        }
+      ],
+      "pitfalls": [
+        "The example uses an in-memory repository. Use a persistent or cluster-capable repository when file history must survive restarts or be shared by multiple nodes.",
+        "The file component's move and moveFailed locations are relative to the consumed directory.",
+        "Do not mark a failed exchange as handled when the intended behavior is for the file consumer to apply moveFailed.",
+        "A key based on file name and size cannot distinguish different file contents when both name and size remain unchanged.",
+        "The file consumer's idempotent filter is distinct from the Idempotent Consumer EIP."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "- beans:\n    - name: processedFiles\n      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository\n\n- onException:\n    exception:\n      - org.apache.camel.support.processor.PredicateValidationException\n    steps:\n      - log:\n          loggingLevel: WARN\n          message: \"Rejected ${header.CamelFileName}: ${exception.message}\"\n\n- route:\n    id: invoice-inbox\n    from:\n      uri: file\n      parameters:\n        directoryName: inbox\n        include: \".*[.]json\"\n        idempotent: true\n        idempotentKey: \"${file:name}-${file:size}\"\n        idempotentRepository: \"#processedFiles\"\n        move: done\n        moveFailed: failed\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - validate:\n            expression:\n              simple:\n                expression: \"${body[amount]} > 0\"\n        - to:\n            uri: direct:process-invoice\n\n- route:\n    id: process-invoice\n    from:\n      uri: direct\n      parameters:\n        name: process-invoice\n      steps:\n        - log:\n            message: \"Processed invoice ${header.CamelFileName}\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "connect/file-processing",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/connect/file-processing",
+          "coverage": "related",
+          "note": "Demonstrates validation, move and moveFailed. Its README also suggests enabling idempotent file consumption; this recipe combines those concepts."
+        }
+      ]
+    },
+    {
+      "id": "throttling-rate-limiting",
+      "name": "Throttling and Rate Limiting",
+      "problem": "Limit the number of messages sent to a downstream endpoint within a configured time period so that the target service is not overloaded.",
+      "components": [
+        "direct",
+        "log"
+      ],
+      "eips": [
+        "throttle"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "throttle",
+          "name": "mode",
+          "value": "TotalRequests",
+          "reason": "Limit the total number of messages within the time period."
+        },
+        {
+          "target": "throttle",
+          "name": "timePeriodMillis",
+          "value": 1000,
+          "reason": "Define the rate-limit window explicitly."
+        },
+        {
+          "target": "throttle",
+          "name": "rejectExecution",
+          "value": false,
+          "reason": "Keep the default behavior of delaying excess exchanges instead of rejecting them."
+        }
+      ],
+      "pitfalls": [
+        "TotalRequests limits the number of exchanges per period; it does not limit concurrent in-flight exchanges.",
+        "Use ConcurrentRequests mode when the requirement is to cap concurrent processing rather than requests per time period.",
+        "Without a correlationExpression, exchanges share the same throttle group.",
+        "By default, exchanges exceeding the limit are delayed; rejectExecution changes this behavior to rejection."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "- route:\n    id: rate-limited-submit\n    from:\n      uri: direct\n      parameters:\n        name: submit\n      steps:\n        - throttle:\n            mode: TotalRequests\n            timePeriodMillis: 1000\n            rejectExecution: false\n            expression:\n              constant:\n                expression: \"5\"\n        - to:\n            uri: direct:downstream\n\n- route:\n    id: downstream\n    from:\n      uri: direct\n      parameters:\n        name: downstream\n      steps:\n        - log:\n            message: \"Message accepted by downstream route\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "route/dynamic-routing",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/route/dynamic-routing",
+          "coverage": "related",
+          "note": "Demonstrates a throttle limiting the US warehouse route to one message per second."
+        }
+      ]
+    },
+    {
+      "id": "error-handling-dead-letter-redelivery",
+      "name": "Error Handling with Dead Letter Channel and Redelivery",
+      "problem": "Retry transient processing failures according to a redelivery policy and route messages that exhaust their retries to a dead-letter destination.",
+      "components": [
+        "direct",
+        "log"
+      ],
+      "componentRequirements": [
+        "The minimal route uses Camel direct and log components.",
+        "For production, use a durable dead-letter destination when failed messages must survive application restarts.",
+        "Configure the destination endpoint and its connection settings, credentials, and availability."
+      ],
+      "eips": [
+        "errorHandler",
+        "deadLetterChannel",
+        "redeliveryPolicy",
+        "throwException"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "deadLetterChannel",
+          "name": "deadLetterUri",
+          "value": "direct:dead-letter",
+          "reason": "Send exhausted exchanges to a dedicated dead-letter route in this minimal example."
+        },
+        {
+          "target": "redeliveryPolicy",
+          "name": "maximumRedeliveries",
+          "value": 3,
+          "reason": "Allow three redeliveries after the initial delivery."
+        },
+        {
+          "target": "redeliveryPolicy",
+          "name": "redeliveryDelay",
+          "value": 1000,
+          "reason": "Wait one second between redelivery attempts."
+        },
+        {
+          "target": "deadLetterChannel",
+          "name": "useOriginalMessage",
+          "value": true,
+          "reason": "Preserve the original incoming message for dead-letter handling."
+        }
+      ],
+      "pitfalls": [
+        "maximumRedeliveries counts retries after the initial attempt; three redeliveries can mean four total attempts.",
+        "Retry transient failures selectively. Retrying permanent validation or business errors may repeat unwanted side effects.",
+        "An onException clause can define exception-specific redelivery and handling behavior.",
+        "The dead-letter destination needs monitoring and an operational reprocessing procedure.",
+        "direct:dead-letter is in-memory and not durable; use persistent storage or a broker when messages must survive process restarts.",
+        "Avoid configuring dead-letter processing so that its own failures create an endless dead-letter loop."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "- errorHandler:\n    deadLetterChannel:\n      deadLetterUri: direct:dead-letter\n      useOriginalMessage: true\n      redeliveryPolicy:\n        maximumRedeliveries: 3\n        redeliveryDelay: 1000\n\n- route:\n    id: process-request\n    from:\n      uri: direct\n      parameters:\n        name: input\n      steps:\n        - throwException:\n            exceptionType: java.lang.IllegalStateException\n            message: \"Temporary downstream failure\"\n\n- route:\n    id: dead-letter\n    errorHandler:\n      noErrorHandler: {}\n    from:\n      uri: direct\n      parameters:\n        name: dead-letter\n      steps:\n        - log:\n            loggingLevel: ERROR\n            message: \"Message moved to dead-letter handling: ${exception.message}\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "fail-well/error-handling",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/fail-well/error-handling",
+          "coverage": "direct",
+          "note": "Demonstrates Dead Letter Channel, redelivery policy, exception-specific handling, and parking failed orders."
+        }
+      ]
+    },
+    {
+      "id": "jms-asynchronous-request-reply",
+      "name": "Request-Reply over Asynchronous JMS Messaging",
+      "problem": "Send a request through a JMS queue and associate the asynchronous reply with the original request so that the route can continue with the returned response.",
+      "components": [
+        "jms",
+        "direct",
+        "log"
+      ],
+      "componentRequirements": [
+        "Add org.apache.camel:camel-jms using the same Camel version as the application.",
+        "Configure a JMS ConnectionFactory and a running JMS provider such as ActiveMQ Artemis.",
+        "Make the request queue and responder destination available on the broker.",
+        "The example uses the JMS component's temporary reply queue strategy."
+      ],
+      "eips": [
+        "to",
+        "setBody"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "jms",
+          "name": "exchangePattern",
+          "value": "InOut",
+          "reason": "Use the InOut exchange pattern when the caller expects a reply."
+        },
+        {
+          "target": "jms",
+          "name": "requestTimeout",
+          "value": 10000,
+          "reason": "Set an explicit ten-second reply timeout in milliseconds."
+        },
+        {
+          "target": "to",
+          "name": "variableReceive",
+          "value": "stockReply",
+          "reason": "Store the reply in a variable while retaining the original request body."
+        }
+      ],
+      "pitfalls": [
+        "InOut is request-reply, not fire-and-forget. The route waits for a response even though JMS transports messages asynchronously.",
+        "The JMS component uses JMSReplyTo and correlation information to associate replies with requests; do not discard or overwrite the required correlation information.",
+        "requestTimeout is expressed in milliseconds. The JMS component's default is twenty seconds.",
+        "A reply timeout results in an ExchangeTimedOutException and should be handled by an appropriate error policy.",
+        "Temporary reply queues and fixed reply queues have different operational and clustering characteristics.",
+        "A broker outage, missing responder, or slow service can cause request timeouts.",
+        "Configure transaction handling deliberately when the messaging workflow requires transactions."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "- route:\n    id: request-stock\n    from:\n      uri: direct\n      parameters:\n        name: reserve\n      steps:\n        - to:\n            uri: jms\n            parameters:\n              destinationType: queue\n              destinationName: stock\n              exchangePattern: InOut\n              requestTimeout: 10000\n            variableReceive: stockReply\n        - log:\n            message: \"Stock service replied: ${variable.stockReply}\"\n\n- route:\n    id: stock-service\n    from:\n      uri: jms\n      parameters:\n        destinationType: queue\n        destinationName: stock\n      steps:\n        - setBody:\n            expression:\n              constant:\n                expression: \"reserved\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "connect-service/jms-request-reply",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/connect-service/jms-request-reply",
+          "coverage": "direct",
+          "note": "Demonstrates JMS request-reply with ActiveMQ Artemis, a stock service, replies, and dead-letter handling."
+        }
+      ]
+    },
+    {
+      "id": "circuit-breaker-with-fallback",
+      "name": "Circuit Breaker with Fallback",
+      "problem": "Protect a route from repeatedly calling an unavailable downstream service by monitoring failures, opening the circuit at a configured threshold, and returning a fallback response.",
+      "components": [
+        "direct",
+        "log"
+      ],
+      "componentRequirements": [
+        "Add org.apache.camel:camel-resilience4j using the same Camel version as the application.",
+        "The recipe uses Camel's Resilience4j circuit-breaker implementation.",
+        "The direct component isolates the protected downstream service route."
+      ],
+      "eips": [
+        "circuitBreaker",
+        "onFallback",
+        "throwException"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "resilience4jConfiguration",
+          "name": "slidingWindowSize",
+          "value": 4,
+          "reason": "Evaluate failures over a bounded window of four calls."
+        },
+        {
+          "target": "resilience4jConfiguration",
+          "name": "minimumNumberOfCalls",
+          "value": 4,
+          "reason": "Require four calls before calculating the failure rate."
+        },
+        {
+          "target": "resilience4jConfiguration",
+          "name": "failureRateThreshold",
+          "value": 50,
+          "reason": "Open the circuit when the configured failure-rate threshold is reached."
+        },
+        {
+          "target": "resilience4jConfiguration",
+          "name": "waitDurationInOpenState",
+          "value": 5000,
+          "reason": "Wait five seconds before allowing a trial call."
+        },
+        {
+          "target": "resilience4jConfiguration",
+          "name": "permittedNumberOfCallsInHalfOpenState",
+          "value": 1,
+          "reason": "Allow one trial call in the half-open state."
+        }
+      ],
+      "pitfalls": [
+        "A circuit breaker monitors failures and controls calls; it is not itself a retry policy.",
+        "The failure threshold and minimum number of calls determine when the breaker opens.",
+        "An open breaker rejects calls without invoking the protected service; fallback handling can also run after an execution failure.",
+        "Use CamelCircuitBreakerResponseRejected to distinguish an open-circuit rejection from a failure during downstream execution.",
+        "Camel's error handler is not inherited by the circuit breaker by default. Set inheritErrorHandler deliberately if Camel redelivery should apply to the protected block.",
+        "A fallback should return a safe degraded response and must not imply that an operation succeeded when it did not.",
+        "The fallback itself can fail and needs an explicit operational strategy."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "- route:\n    id: guarded-service\n    from:\n      uri: direct\n      parameters:\n        name: request\n      steps:\n        - circuitBreaker:\n            resilience4jConfiguration:\n              slidingWindowSize: 4\n              minimumNumberOfCalls: 4\n              failureRateThreshold: 50\n              waitDurationInOpenState: 5000\n              permittedNumberOfCallsInHalfOpenState: 1\n            steps:\n              - to:\n                  uri: direct:supplier\n            onFallback:\n              steps:\n                - setBody:\n                    expression:\n                      constant:\n                        expression: \"Fallback response: service temporarily unavailable\"\n        - log:\n            message: \"Service result: ${body}\"\n\n- route:\n    id: supplier\n    errorHandler:\n      noErrorHandler: {}\n    from:\n      uri: direct\n      parameters:\n        name: supplier\n      steps:\n        - throwException:\n            exceptionType: java.net.ConnectException\n            message: \"Supplier is unavailable\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "fail-well/circuit-breaker",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/fail-well/circuit-breaker",
+          "coverage": "direct",
+          "note": "Demonstrates Resilience4j configuration, open and half-open states, and fallback."
+        }
+      ]
+    },
+    {
+      "id": "scatter-gather-with-timeout",
+      "name": "Scatter-Gather with Parallel Processing and Timeout",
+      "problem": "Send the same request to multiple independent services in parallel, combine the replies that arrive, and continue after a bounded overall response time.",
+      "components": [
+        "direct",
+        "log"
+      ],
+      "componentRequirements": [
+        "The example uses Camel direct and log components.",
+        "GroupedBodyAggregationStrategy is provided by Camel core processor functionality.",
+        "Replace the direct endpoints with the actual service endpoints used by the application."
+      ],
+      "eips": [
+        "multicast"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "multicast",
+          "name": "parallelProcessing",
+          "value": true,
+          "reason": "Invoke the destinations concurrently rather than sequentially."
+        },
+        {
+          "target": "multicast",
+          "name": "timeout",
+          "value": 1500,
+          "reason": "Set an overall deadline of 1500 milliseconds for parallel processing."
+        },
+        {
+          "target": "multicast",
+          "name": "aggregationStrategy",
+          "value": "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy",
+          "reason": "Collect completed reply bodies into a list."
+        },
+        {
+          "target": "multicast",
+          "name": "stopOnException",
+          "value": false,
+          "reason": "Retain the default behavior of processing remaining destinations when a branch fails."
+        }
+      ],
+      "pitfalls": [
+        "The multicast timeout is an overall deadline, not a separate timeout for every destination.",
+        "Only replies completed within the deadline can be assumed to be present in the aggregated result.",
+        "Do not assume that timing out the multicast safely cancels every outstanding downstream operation. A timed-out task may continue executing.",
+        "The default aggregation behavior keeps the last reply. Use an explicit AggregationStrategy when multiple replies must be combined.",
+        "GroupedBodyAggregationStrategy collects completed message bodies into a list; it does not implement application-specific merging or business validation.",
+        "By default, Multicast does not stop on the first branch exception. Configure stopOnException or handle failures in the aggregation strategy when required.",
+        "Multicast aggregation is not a durable workflow. Use a persistent workflow or aggregation design when results must survive application restarts.",
+        "A timeout does not undo side effects already performed by downstream services. Operations should be idempotent or have explicit compensation."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "- route:\n    id: gather-quotes\n    from:\n      uri: direct\n      parameters:\n        name: quote-request\n      steps:\n        - multicast:\n            parallelProcessing: true\n            timeout: 1500\n            aggregationStrategy: \"#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy\"\n            stopOnException: false\n            steps:\n              - to:\n                  uri: direct:supplier-a\n              - to:\n                  uri: direct:supplier-b\n              - to:\n                  uri: direct:supplier-c\n        - log:\n            message: \"Supplier replies received before timeout: ${body}\"\n\n- route:\n    id: supplier-a\n    from:\n      uri: direct\n      parameters:\n        name: supplier-a\n      steps:\n        - setBody:\n            expression:\n              constant:\n                expression: \"supplier-a response\"\n\n- route:\n    id: supplier-b\n    from:\n      uri: direct\n      parameters:\n        name: supplier-b\n      steps:\n        - setBody:\n            expression:\n              constant:\n                expression: \"supplier-b response\"\n\n- route:\n    id: supplier-c\n    from:\n      uri: direct\n      parameters:\n        name: supplier-c\n      steps:\n        - delay:\n            expression:\n              constant:\n                expression: \"3000\"\n        - setBody:\n            expression:\n              constant:\n                expression: \"supplier-c response\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "route/filter-and-multicast",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/route/filter-and-multicast",
+          "coverage": "related",
+          "note": "Demonstrates multicast to multiple destinations. It does not demonstrate aggregation with a timeout."
+        },
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "route/aggregator",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/route/aggregator",
+          "coverage": "related",
+          "note": "Demonstrates GroupedBodyAggregationStrategy and message aggregation, but not parallel scatter-gather with timeout."
+        }
+      ],
+      "referenceDocs": [
+        "multicast",
+        "aggregate"
+      ]
+    },
+    {
+      "id": "transactional-outbox",
+      "name": "Transactional Outbox",
+      "problem": "Persist a business change and the event representing that change in the same database transaction, then publish the stored event asynchronously without losing it when the application crashes between the business update and message publication.",
+      "components": [
+        "sql",
+        "jms"
+      ],
+      "componentRequirements": [
+        "Add org.apache.camel:camel-sql and a JDBC driver appropriate for the database.",
+        "Configure a shared JDBC DataSource and a Spring or JTA transaction manager for the producer transaction.",
+        "The business-table update and outbox-table insert must use the same transactional DataSource and transaction manager.",
+        "Create an outbox_event table with event_id, aggregate_id, event_type, payload, created_at, and published_at columns.",
+        "Use a unique key for event_id and appropriate indexes for polling unpublished events.",
+        "Add org.apache.camel:camel-jms and configure a JMS ConnectionFactory and broker for the relay.",
+        "The example expects the input body to contain orderId, status, eventId, and payload.",
+        "The route uses transacted: {} and Camel's convention-based lookup when one Spring/JTA transaction manager is configured. For multiple transaction policies, define a SpringTransactionPolicy bean and use the transacted EIP ref option to select that policy."
+      ],
+      "eips": [
+        "transacted"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "sql",
+          "name": "noop",
+          "value": true,
+          "reason": "Preserve the incoming message after an INSERT."
+        },
+        {
+          "target": "sql",
+          "name": "delay",
+          "value": 1000,
+          "reason": "Poll the outbox periodically rather than continuously."
+        },
+        {
+          "target": "sql",
+          "name": "maxMessagesPerPoll",
+          "value": 100,
+          "reason": "Bound the number of outbox rows handled in a single poll."
+        }
+      ],
+      "pitfalls": [
+        "The atomic transaction covers the business update and outbox insert in the same database only. It does not make the database commit and JMS publication one atomic operation.",
+        "The relay provides at-least-once delivery: if publication succeeds but the process fails before the published_at update commits, the event may be published again.",
+        "Give every event a stable event_id and require downstream consumers to handle duplicate delivery idempotently.",
+        "This minimal polling example does not implement a distributed claim or lease. Multiple relay instances may select the same unpublished rows unless database-specific locking or claiming is added.",
+        "A production outbox needs handling for failed rows, retry limits, poison events, retention, monitoring, and recovery.",
+        "Choose indexes and cleanup policies based on expected event volume.",
+        "The DataSource and transaction manager must be configured consistently. Merely placing two SQL endpoints in the same route does not guarantee that they share a transaction.",
+        "Do not describe this pattern as exactly-once delivery. It atomically records the intent to publish and normally provides at-least-once delivery with idempotent consumers."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "# Producer: persist the business update and outbox event in one local DB transaction.\n- route:\n    id: save-order-and-outbox-event\n    from:\n      uri: direct\n      parameters:\n        name: record-order\n      steps:\n        - transacted: {}\n        - to:\n            uri: \"sql:insert into orders (order_id, status) values (:#${body[orderId]}, :#${body[status]})\"\n            parameters:\n              noop: true\n        - to:\n            uri: \"sql:insert into outbox_event (event_id, aggregate_id, event_type, payload, created_at, published_at) values (:#${body[eventId]}, :#${body[orderId]}, 'OrderCreated', :#${body[payload]}, CURRENT_TIMESTAMP, NULL)\"\n            parameters:\n              noop: true\n\n# Relay: send an unpublished event, then mark it published after successful JMS publication.\n- route:\n    id: publish-outbox-events\n    from:\n      uri: \"sql:select event_id, payload from outbox_event where published_at is null order by created_at\"\n      parameters:\n        delay: 1000\n        maxMessagesPerPoll: 100\n      steps:\n        - setHeader:\n            name: outboxEventId\n            expression:\n              simple:\n                expression: \"${body[event_id]}\"\n        - setBody:\n            expression:\n              simple:\n                expression: \"${body[payload]}\"\n        - to:\n            uri: \"jms:queue:order-events\"\n        - to:\n            uri: \"sql:update outbox_event set published_at = CURRENT_TIMESTAMP where event_id = :#${header.outboxEventId}\"\n"
+      },
+      "examples": [
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "connect-service/sql",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/connect-service/sql",
+          "coverage": "building-block",
+          "note": "Demonstrates SQL, PostgreSQL configuration, named parameters, inserts, and queries. It is not a transactional outbox example."
+        },
+        {
+          "repository": "apache/camel-jbang-examples",
+          "path": "connect-service/artemis",
+          "url": "https://github.com/apache/camel-jbang-examples/tree/main/connect-service/artemis",
+          "coverage": "building-block",
+          "note": "Demonstrates JMS and ActiveMQ Artemis messaging. It is not an outbox relay example."
+        }
+      ],
+      "referenceDocs": [
+        "transacted",
+        "sql"
+      ]
+    },
+    {
+      "id": "saga-coordination-with-compensation",
+      "name": "Saga Coordination with Compensating Actions",
+      "problem": "Coordinate a long-running business process across services that cannot participate in one ACID transaction, and invoke compensating actions when a later participant fails or the Saga expires.",
+      "components": [
+        "direct"
+      ],
+      "componentRequirements": [
+        "Register a CamelSagaService with the CamelContext.",
+        "InMemorySagaService can be used for a local demonstration but is not suitable for production durability.",
+        "For durable distributed coordination, configure the Camel LRA Saga Service with org.apache.camel:camel-lra, a REST component such as camel-undertow, and an external LRA coordinator.",
+        "Register orderService and creditService beans implementing the create, cancel, reserve, and refund operations shown in the route.",
+        "Use consistent Saga service configuration across participating application instances."
+      ],
+      "eips": [
+        "saga"
+      ],
+      "recommendedOptions": [
+        {
+          "target": "saga",
+          "name": "timeout",
+          "value": "5m",
+          "reason": "Bound the maximum duration of the workflow so it cannot remain open indefinitely."
+        },
+        {
+          "target": "saga",
+          "name": "propagation",
+          "value": "MANDATORY",
+          "reason": "Require participant routes to join an existing Saga."
+        },
+        {
+          "target": "saga",
+          "name": "compensation",
+          "reason": "Register the business operation that compensates for each participant's action. This example uses direct:cancel-order and direct:refund-credit in the participant routes."
+        },
+        {
+          "target": "saga",
+          "name": "completionMode",
+          "value": "AUTO",
+          "reason": "Complete the Saga when the orchestration succeeds; use MANUAL for workflows completed asynchronously."
+        }
+      ],
+      "pitfalls": [
+        "A Saga is not an ACID or XA transaction. Intermediate business changes can be visible before all participants have completed.",
+        "A Saga provides eventual consistency through compensating business operations; compensation is not a database rollback.",
+        "There is no default Saga timeout. Always configure one so a Saga does not remain open indefinitely.",
+        "InMemorySagaService stores Saga state only in memory and cannot guarantee consistency after an application failure.",
+        "Use a persistent coordinator-backed implementation, such as the LRA Saga service, when durable distributed coordination is required.",
+        "Compensation routes must be idempotent because the Saga service can retry them or invoke callbacks more than once.",
+        "Compensation can race with the forward action. Actions and compensations should be designed to be commutative where possible.",
+        "A failed compensation needs monitoring and a manual remediation process.",
+        "A distributed LRA deployment requires a reachable coordinator and participant callback endpoints.",
+        "Some business operations cannot be perfectly undone. In those cases, compensation must be a corrective business action rather than an attempted rollback."
+      ],
+      "exampleRoute": {
+        "dsl": "yaml",
+        "source": "# Orchestrator: create a Saga with an explicit overall timeout.\n- route:\n    id: place-order-saga\n    from:\n      uri: direct\n      parameters:\n        name: buy\n      steps:\n        - saga:\n            timeout: 5m\n            completionMode: AUTO\n        - to:\n            uri: direct:new-order\n        - to:\n            uri: direct:reserve-credit\n\n# Participant: create an order and register its compensation.\n- route:\n    id: new-order\n    from:\n      uri: direct\n      parameters:\n        name: new-order\n      steps:\n        - saga:\n            propagation: MANDATORY\n            compensation: direct:cancel-order\n        - transform:\n            expression:\n              header:\n                expression: Long-Running-Action\n        - bean:\n            ref: orderService\n            method: create\n        - log:\n            message: \"Order created for Saga ${header.Long-Running-Action}\"\n\n# Compensation for the order creation participant.\n- route:\n    id: cancel-order\n    from:\n      uri: direct\n      parameters:\n        name: cancel-order\n      steps:\n        - transform:\n            expression:\n              header:\n                expression: Long-Running-Action\n        - bean:\n            ref: orderService\n            method: cancel\n\n# Participant: reserve credit and register its compensation.\n- route:\n    id: reserve-credit\n    from:\n      uri: direct\n      parameters:\n        name: reserve-credit\n      steps:\n        - saga:\n            propagation: MANDATORY\n            compensation: direct:refund-credit\n        - transform:\n            expression:\n              header:\n                expression: Long-Running-Action\n        - bean:\n            ref: creditService\n            method: reserve\n        - log:\n            message: \"Credit reserved for Saga ${header.Long-Running-Action}\"\n\n# Compensation for the credit reservation participant.\n- route:\n    id: refund-credit\n    from:\n      uri: direct\n      parameters:\n        name: refund-credit\n      steps:\n        - transform:\n            expression:\n              header:\n                expression: Long-Running-Action\n        - bean:\n            ref: creditService\n            method: refund\n"
+      },
+      "examples": [],
+      "exampleAvailability": "No runnable Saga EIP example was found in the inspected camel-jbang-examples catalog. This minimal YAML route follows the official Camel Saga EIP documentation. It requires the application-provided Saga service and order/credit service beans.",
+      "referenceDocs": [
+        "saga"
+      ]
+    }
+  ]
+}
