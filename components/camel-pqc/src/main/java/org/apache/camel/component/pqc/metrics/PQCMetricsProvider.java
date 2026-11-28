@@ -16,21 +16,15 @@
  */
 package org.apache.camel.component.pqc.metrics;
 
-import java.util.ServiceLoader;
-
 import org.apache.camel.CamelContext;
 
-/**
- * SPI for optional PQC metrics integrations. Implementations are discovered using {@link ServiceLoader}. The core PQC
- * component deliberately has no compile-time dependency on Micrometer or another metrics backend.
- */
+/** SPI for optional PQC metrics integrations discovered through Camel's FactoryFinder. */
 @FunctionalInterface
 public interface PQCMetricsProvider {
 
-    /**
-     * Creates the metrics implementation for the supplied Camel context.
-     *
-     * @return a metrics instance, or {@link PQCMetrics#NOOP} when the integration has no registry to use
-     */
+    String FACTORY_RESOURCE_PATH = "META-INF/services/org/apache/camel/pqc/metrics/";
+    String FACTORY_NAME = "micrometer";
+
+    /** Creates the metrics implementation for the supplied Camel context. */
     PQCMetrics create(CamelContext camelContext);
 }

@@ -151,25 +151,22 @@ def import_vectors(runtime_version: str, producer_version: str, source: Path) ->
     run(mvn(runtime_version, *arguments, "-Dtest=PQCBCVersionBehaviorTest", "surefire:test"))
 
 
-def run_micrometer_tests() -> None:
-    command = command_prefix() + ["-B", "-ntp", "-pl", "components/camel-pqc-micrometer", "test"]
-    run(command)
-
-
-def run_interoperability_matrix(versions: list[str]) -> None:
+def run_interoperability_matrix(versions: list[str], compile_version: str) -> None:
     with tempfile.TemporaryDirectory(prefix="camel-pqc-bc-interop-") as temporary:
         directory = Path(temporary)
-        for compile_version in versions:
-            vectors = directory / f"bc-{compile_version}-vectors.properties"
-            # Compile once for this BC API level, then execute that same bytecode
-            # against every runtime version. This models platform BOM overrides,
-            # including the Camel-pinned version when it is not the latest.
-            run(mvn(compile_version, "clean", "test-compile"))
-            export_vectors(compile_version, vectors)
+        # Compile against Camel's pinned (newest supported) BC API once. The
+        # stateful compatibility helper links the 1.87 types lazily and falls
+        # back to the 1.86 aliases at runtime, so this bytecode is exercised
+        # unchanged against every supported runtime version.
+        run(mvn(compile_version, "clean", "test-compile"))
+        for producer_version in versions:
+            vectors = directory / f"bc-{producer_version}-vectors.properties"
+            export_vectors(producer_version, vectors)
             for runtime_version in versions:
-                if runtime_version != compile_version:
-                    import_vectors(runtime_version, compile_version, vectors)
+                if runtime_version != producer_version:
+                    import_vectors(runtime_version, producer_version, vectors)
                 run_suite_on_compiled_tests(runtime_version)
+
 
 
 def main() -> int:
@@ -218,7 +215,6 @@ def main() -> int:
 
     if not args.skip_dependency_bootstrap:
         bootstrap_dependencies()
-    run_micrometer_tests()
 
     if args.skip_interoperability:
         for version in versions:
@@ -226,7 +222,7 @@ def main() -> int:
     else:
         # Include every distinct version so the matrix explicitly covers the
         # Camel compile-time pin against platform-selected runtime versions.
-        run_interoperability_matrix(versions)
+        run_interoperability_matrix(versions, pinned)
 
     print("\nCAMEL-PQC BOUNCY CASTLE COMPATIBILITY CHECK PASSED", flush=True)
     return 0

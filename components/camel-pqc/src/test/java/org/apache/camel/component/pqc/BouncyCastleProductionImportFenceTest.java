@@ -21,8 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -30,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Enforces zero reflection across PQC production sources and restricts BC imports to typed public boundaries. */
+/** Enforces zero reflection across PQC production sources and restricts BC imports to typed support classes. */
 class BouncyCastleProductionImportFenceTest {
 
     private static final Pattern BC_IMPORT = Pattern.compile(
@@ -43,10 +41,11 @@ class BouncyCastleProductionImportFenceTest {
                                                               +
                                                               "(?:Constructor|Method|Field)\\s*\\.newInstance\\s*\\(|Class\\.newInstance\\s*\\(");
     private static final List<String> ALLOWED_BC_FILES = List.of(
-            "BouncyCastleSupport.java", "BouncyCastleKemSupport.java");
+            "BouncyCastleSupport.java", "BouncyCastleKemSupport.java",
+            "BouncyCastlePqcCompatibility.java");
 
     @Test
-    void productionBcImportsStayInsideTheTwoTypedJcaBoundaries() throws IOException {
+    void productionBcImportsStayInsideTypedSupportClasses() throws IOException {
         Path sourceRoot = Path.of("src/main/java");
         assertTrue(Files.isDirectory(sourceRoot), "Test must run from the camel-pqc module directory");
         List<String> violations = new ArrayList<>();
@@ -62,58 +61,18 @@ class BouncyCastleProductionImportFenceTest {
     }
 
     @Test
-    void allPqcProductionAndAdapterSourcesContainNoReflection() throws IOException {
-        List<Path> roots = List.of(
-                Path.of("src/main/java"),
-                Path.of("../camel-pqc-bc-compat-api/src/main/java"),
-                Path.of("../camel-pqc-bc-compat-186/src/main/java"),
-                Path.of("../camel-pqc-bc-compat-187/src/main/java"),
-                Path.of("../camel-pqc-micrometer/src/main/java"));
+    void allPqcProductionSourcesContainNoReflection() throws IOException {
+        Path sourceRoot = Path.of("src/main/java");
+        assertTrue(Files.isDirectory(sourceRoot), "Missing camel-pqc production source root");
         List<String> violations = new ArrayList<>();
-        for (Path root : roots) {
-            assertTrue(Files.isDirectory(root), "Missing production source root: " + root);
-            try (Stream<Path> files = Files.walk(root)) {
-                for (Path file : files.filter(path -> path.toString().endsWith(".java")).toList()) {
-                    String source = Files.readString(file);
-                    if (REFLECTION.matcher(source).find()) {
-                        violations.add(file + ": reflective access detected");
-                    }
+        try (Stream<Path> files = Files.walk(sourceRoot)) {
+            for (Path file : files.filter(path -> path.toString().endsWith(".java")).toList()) {
+                if (REFLECTION.matcher(Files.readString(file)).find()) {
+                    violations.add(file + ": reflective access detected");
                 }
             }
         }
         assertTrue(violations.isEmpty(), () -> String.join("\n", violations));
     }
 
-    @Test
-    void bc187AdapterDoesNotImportDeprecatedLmsXmssCompatibilityAliases() throws IOException {
-        Path sourceRoot = Path.of("../camel-pqc-bc-compat-187/src/main/java");
-        assertTrue(Files.isDirectory(sourceRoot), "Missing BC 1.87 adapter source root");
-        Set<String> deprecatedAliases = Set.of(
-                "org.bouncycastle.pqc.jcajce.spec.LMSParameterSpec",
-                "org.bouncycastle.pqc.jcajce.spec.LMSHSSParameterSpec",
-                "org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec",
-                "org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec",
-                "org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec",
-                "org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec",
-                "org.bouncycastle.pqc.jcajce.interfaces.LMSKey",
-                "org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey",
-                "org.bouncycastle.pqc.jcajce.interfaces.XMSSKey",
-                "org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey",
-                "org.bouncycastle.pqc.jcajce.interfaces.XMSSMTKey",
-                "org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey");
-        Pattern imports = Pattern.compile(
-                "(?m)^\\s*import\\s+(?:static\\s+)?(org\\.bouncycastle\\.[A-Za-z0-9_.$*]+)\\s*;");
-        List<String> violations = new ArrayList<>();
-        try (Stream<Path> files = Files.walk(sourceRoot)) {
-            for (Path file : files.filter(path -> path.toString().endsWith(".java")).toList()) {
-                Matcher matcher = imports.matcher(Files.readString(file));
-                while (matcher.find()) {
-                    if (deprecatedAliases.contains(matcher.group(1))) {
-                        violations.add(file + ": deprecated BC 1.87 alias " + matcher.group(1));
-                    }
-                }
-            }
-        }
-        assertTrue(violations.isEmpty(), () -> String.join("\n", violations));
-    }
 }

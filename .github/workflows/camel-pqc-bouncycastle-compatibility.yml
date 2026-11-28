@@ -24,13 +24,8 @@ on:
     paths:
       - 'components/camel-pqc/**'
       - 'components/pom.xml'
-      - 'components/camel-pqc-micrometer/**'
-      - 'components/camel-pqc-bc-compat-187/**'
-      - 'components/camel-pqc-bc-compat-186/**'
-      - 'components/camel-pqc-bc-compat-api/**'
       - 'parent/pom.xml'
       - 'etc/scripts/camel-pqc-bouncycastle-compatibility.py'
-      - 'etc/scripts/check-camel-pqc-bouncycastle-imports.py'
       - '.github/workflows/camel-pqc-bouncycastle-compatibility.yml'
   schedule:
     - cron: '17 6 * * 1'
@@ -57,7 +52,5 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Enforce camel-pqc Bouncy Castle production import boundary
-        run: python3 etc/scripts/check-camel-pqc-bouncycastle-imports.py
       - name: Run camel-pqc Bouncy Castle compatibility matrix
         run: python3 etc/scripts/camel-pqc-bouncycastle-compatibility.py ${{ github.event_name == 'pull_request' && '--skip-latest' || '' }}

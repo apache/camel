@@ -29,8 +29,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -321,39 +319,23 @@ public class PQCProducer extends DefaultProducer {
 
     private PQCMetrics createMetrics() {
         CamelContext camelContext = getEndpoint().getCamelContext();
-        ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
-        ClassLoader componentLoader = PQCMetricsProvider.class.getClassLoader();
-
-        PQCMetrics metrics = createMetrics(camelContext, contextLoader);
-        if (metrics != PQCMetrics.NOOP) {
-            return metrics;
-        }
-        if (componentLoader != null && componentLoader != contextLoader) {
-            metrics = createMetrics(camelContext, componentLoader);
-            if (metrics != PQCMetrics.NOOP) {
-                return metrics;
+        try {
+            Class<?> providerType = camelContext.getCamelContextExtension()
+                    .getFactoryFinder(PQCMetricsProvider.FACTORY_RESOURCE_PATH)
+                    .findClass(PQCMetricsProvider.FACTORY_NAME)
+                    .orElse(null);
+            if (providerType == null || !PQCMetricsProvider.class.isAssignableFrom(providerType)) {
+                return PQCMetrics.NOOP;
             }
-        }
-        return PQCMetrics.NOOP;
-    }
-
-    /** Loads optional metrics integrations through the Camel-owned SPI; no reflective class lookup is used. */
-    private PQCMetrics createMetrics(CamelContext camelContext, ClassLoader classLoader) {
-        if (classLoader == null) {
+            PQCMetricsProvider provider = camelContext.getInjector()
+                    .newInstance(providerType.asSubclass(PQCMetricsProvider.class), false);
+            PQCMetrics result = provider.create(camelContext);
+            return result != null ? result : PQCMetrics.NOOP;
+        } catch (Exception | LinkageError e) {
+            // Micrometer is optional. A missing integration or optional Micrometer class must not affect PQC operations.
+            LOG.debug("Optional PQC metrics provider is not available: {}", e.getMessage());
             return PQCMetrics.NOOP;
         }
-        try {
-            for (PQCMetricsProvider provider : ServiceLoader.load(PQCMetricsProvider.class, classLoader)) {
-                PQCMetrics candidate = provider.create(camelContext);
-                if (candidate != null && candidate != PQCMetrics.NOOP) {
-                    return candidate;
-                }
-            }
-        } catch (ServiceConfigurationError | LinkageError | RuntimeException e) {
-            LOG.debug("Optional PQC metrics provider is not available through class loader {}: {}",
-                    classLoader, e.getMessage());
-        }
-        return PQCMetrics.NOOP;
     }
 
     private static boolean isStatefulSignatureAlgorithm(String algorithm) {
@@ -1298,6 +1280,7 @@ public class PQCProducer extends DefaultProducer {
      */
     private void claimStatefulKeyBeforeSign(Exchange exchange) {
         if (keyPair == null || keyPair.getPrivate() == null
+                || !isStatefulPrivateKeyAlgorithm(keyPair.getPrivate().getAlgorithm())
                 || getStatefulKeyRemaining(keyPair.getPrivate()) < 0) {
             return;
         }
@@ -1614,6 +1597,9 @@ public class PQCProducer extends DefaultProducer {
      * Returns the remaining signatures for a stateful private key, or -1 if the key is not stateful.
      */
     static long getStatefulKeyRemaining(PrivateKey privateKey) {
+        if (privateKey == null || !isStatefulPrivateKeyAlgorithm(privateKey.getAlgorithm())) {
+            return -1;
+        }
         return BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey);
     }
 
@@ -1622,7 +1608,15 @@ public class PQCProducer extends DefaultProducer {
      * not stateful.
      */
     static long getStatefulKeyIndex(PrivateKey privateKey) {
+        if (privateKey == null || !isStatefulPrivateKeyAlgorithm(privateKey.getAlgorithm())) {
+            return 0;
+        }
         return BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey);
+    }
+
+    private static boolean isStatefulPrivateKeyAlgorithm(String algorithm) {
+        return "LMS".equalsIgnoreCase(algorithm) || "HSS".equalsIgnoreCase(algorithm)
+                || "XMSS".equalsIgnoreCase(algorithm) || "XMSSMT".equalsIgnoreCase(algorithm);
     }
 
     // ========== Configuration Validation ==========

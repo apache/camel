@@ -23,6 +23,7 @@ import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.NamedParameterSpec;
 
 import org.junit.jupiter.api.Test;
 
@@ -33,12 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BouncyCastlePqcCompatibilityTest {
 
     @Test
-    void selectsTheAdapterMatchingTheInstalledBcVersion() throws Exception {
-        String providerVersion = BouncyCastleSupport.getProvider("KeyPairGenerator", "LMS").getVersionStr();
-        assertEquals(providerVersion, BouncyCastlePqcAdapterSupport.adapter().bcVersion());
-    }
-
-    @Test
     void resolvesNamedParametersUsingTypedPublicApis() {
         assertNotNull(PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-65"));
         assertNotNull(PQCParameterSpecResolver.resolve("SLHDSA", "SLH-DSA-SHA2-128S"));
@@ -46,6 +41,9 @@ class BouncyCastlePqcCompatibilityTest {
         assertNotNull(PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-768"));
         assertNotNull(PQCParameterSpecResolver.resolve("NTRU", "ntruhps2048509"));
         assertNotNull(PQCParameterSpecResolver.resolve("CMCE", "mceliece460896"));
+        assertTrue(PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-65") instanceof NamedParameterSpec);
+        assertTrue(PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-768") instanceof NamedParameterSpec);
+        assertTrue(PQCParameterSpecResolver.resolve("CMCE", "mceliece460896") instanceof NamedParameterSpec);
     }
 
     @Test
@@ -75,22 +73,10 @@ class BouncyCastlePqcCompatibilityTest {
         String signatureProvider = BouncyCastleSupport.getProviderName("Signature", "XMSS");
         Signature signature = Signature.getInstance("XMSS", signatureProvider);
         signature.initSign(privateKey);
-        signature.update("typed-adapter".getBytes(StandardCharsets.UTF_8));
+        signature.update("typed-stateful-api".getBytes(StandardCharsets.UTF_8));
         assertNotNull(signature.sign());
         assertEquals(1, BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey));
         assertEquals(3, BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey));
-    }
-
-    @Test
-    void adapterRemainsAvailableWhenTheThreadContextLoaderCannotSeeIt() throws Exception {
-        String providerVersion = BouncyCastleSupport.getProvider("KeyPairGenerator", "LMS").getVersionStr();
-        ClassLoader original = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(ClassLoader.getPlatformClassLoader());
-            assertEquals(providerVersion, BouncyCastlePqcAdapterSupport.adapter().bcVersion());
-        } finally {
-            Thread.currentThread().setContextClassLoader(original);
-        }
     }
 
     @Test
@@ -139,7 +125,7 @@ class BouncyCastlePqcCompatibilityTest {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(1024);
         PrivateKey privateKey = generator.generateKeyPair().getPrivate();
-        assertEquals(0, BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey));
-        assertEquals(-1, BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey));
+        assertEquals(0, PQCProducer.getStatefulKeyIndex(privateKey));
+        assertEquals(-1, PQCProducer.getStatefulKeyRemaining(privateKey));
     }
 }

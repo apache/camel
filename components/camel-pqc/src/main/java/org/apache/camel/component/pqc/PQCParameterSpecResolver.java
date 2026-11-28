@@ -17,6 +17,8 @@
 package org.apache.camel.component.pqc;
 
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.NamedParameterSpec;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.camel.util.ObjectHelper;
@@ -42,6 +44,17 @@ public final class PQCParameterSpecResolver {
             "MLDSA", "SLHDSA", "FALCON", "DILITHIUM", "SPHINCSPLUS", "MAYO", "SNOVA",
             // Key encapsulation algorithms
             "MLKEM", "KYBER", "NTRU", "NTRULPRime", "SNTRUPrime", "BIKE", "HQC", "CMCE", "FRODO", "SABER");
+
+    private static final Set<String> ML_DSA_PARAMETER_SETS = Set.of(
+            "ML-DSA-44", "ML-DSA-65", "ML-DSA-87",
+            "ML-DSA-44-WITH-SHA512", "ML-DSA-65-WITH-SHA512", "ML-DSA-87-WITH-SHA512");
+    private static final Set<String> ML_KEM_PARAMETER_SETS = Set.of(
+            "ML-KEM-512", "ML-KEM-768", "ML-KEM-1024");
+    private static final Set<String> CMCE_PARAMETER_SETS = Set.of(
+            "mceliece460896", "mceliece460896f", "mceliece460896pc", "mceliece460896pcf",
+            "mceliece6688128", "mceliece6688128f", "mceliece6688128pc", "mceliece6688128pcf",
+            "mceliece6960119", "mceliece6960119f", "mceliece6960119pc", "mceliece6960119pcf",
+            "mceliece8192128", "mceliece8192128f", "mceliece8192128pc", "mceliece8192128pcf");
 
     private PQCParameterSpecResolver() {
     }
@@ -105,7 +118,36 @@ public final class PQCParameterSpecResolver {
     }
 
     private static AlgorithmParameterSpec doResolve(String algorithm, String parameterSpec) {
-        return BouncyCastlePqcCompatibility.namedParameterSpec(algorithm, parameterSpec);
+        AlgorithmParameterSpec standardized = resolveStandardizedParameterSpec(algorithm, parameterSpec);
+        return standardized != null
+                ? standardized
+                : BouncyCastlePqcCompatibility.namedParameterSpec(algorithm, parameterSpec);
+    }
+
+    private static AlgorithmParameterSpec resolveStandardizedParameterSpec(String algorithm, String parameterName) {
+        String name = parameterName.replace('_', '-');
+        if ("MLDSA".equalsIgnoreCase(algorithm) || "DILITHIUM".equalsIgnoreCase(algorithm)) {
+            name = name.toUpperCase(Locale.ROOT);
+            if (!ML_DSA_PARAMETER_SETS.contains(name)) {
+                throw new IllegalArgumentException("Unknown ML-DSA parameter set: " + parameterName);
+            }
+            return new NamedParameterSpec(name);
+        }
+        if ("MLKEM".equalsIgnoreCase(algorithm)) {
+            name = name.toUpperCase(Locale.ROOT);
+            if (!ML_KEM_PARAMETER_SETS.contains(name)) {
+                throw new IllegalArgumentException("Unknown ML-KEM parameter set: " + parameterName);
+            }
+            return new NamedParameterSpec(name);
+        }
+        if ("CMCE".equalsIgnoreCase(algorithm)) {
+            name = name.toLowerCase(Locale.ROOT);
+            if (!CMCE_PARAMETER_SETS.contains(name)) {
+                throw new IllegalArgumentException("Unknown CMCE parameter set: " + parameterName);
+            }
+            return new NamedParameterSpec(name);
+        }
+        return null;
     }
 
 }

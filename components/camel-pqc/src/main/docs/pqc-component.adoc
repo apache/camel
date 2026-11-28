@@ -155,10 +155,9 @@ See xref:others:pqc-key-lifecycle.adoc[PQC Key Lifecycle Management] for full de
 
 == Metrics
 
-Micrometer support is provided by the optional `camel-pqc-micrometer` integration module. When that module is on the
-application classpath and a `MeterRegistry` is available in the Camel registry, the PQC producer records metrics.
-Without the integration module (or without a `MeterRegistry`) metrics are disabled and the core `camel-pqc` artifact
-has no Micrometer dependency or reflective class loading.
+When https://micrometer.io[Micrometer] is on the classpath and a `MeterRegistry` bean is available in the Camel
+registry, the PQC producer records metrics automatically. Micrometer is an *optional* dependency: without it (or without
+a `MeterRegistry`) no metrics are emitted and there is no runtime overhead.
 
 [cols="2,1,4",options="header"]
 |===
@@ -175,9 +174,8 @@ has no Micrometer dependency or reflective class loading.
   producers configured with a stateful signature algorithm.
 |===
 
-To enable metrics, add `camel-pqc-micrometer` and bind a `MeterRegistry` in the Camel registry - for example a
-`SimpleMeterRegistry`, or the registry provided by Spring Boot or Quarkus. The Micrometer integration is discovered
-through the Camel-owned metrics SPI; applications that do not include the integration module remain Micrometer-free.
+To enable the metrics, add `camel-micrometer` (or Micrometer directly) to your application and bind a `MeterRegistry` in
+the registry - for example a `SimpleMeterRegistry`, or the registry provided by Spring Boot or Quarkus.
 
 == Sub-Pages
 
@@ -194,11 +192,11 @@ Provider selection is service- and algorithm-specific; an algorithm is not assum
 because it is a post-quantum algorithm. The provider is resolved at runtime from the providers visible to the
 application.
 
-The Bouncy Castle version selected by an application or platform dependency manager (for example, a Quarkus BOM) can
-differ from the version used to compile Camel. Keep the runtime Bouncy Castle artifacts aligned to one release and
-validate that release in the target deployment. The Camel compatibility tests currently cover Bouncy Castle 1.86 and
-1.87. A scheduled CI check also tests the latest stable release; it is an early-warning compatibility check and does
-not automatically change Camel's pinned dependency or by itself constitute a supported-version guarantee.
+The Bouncy Castle version selected by an application or platform dependency manager can differ from the version used
+to compile Camel. Keep the runtime Bouncy Castle artifacts aligned to one release and validate that release in the
+target deployment. The Camel compatibility tests currently cover Bouncy Castle 1.86 and 1.87. A scheduled CI check
+also tests the latest stable release; it is an early-warning compatibility check and does not automatically change
+Camel's pinned dependency or by itself constitute a supported-version guarantee.
 
 === KEM API boundary
 
@@ -209,26 +207,52 @@ Bouncy Castle 1.86 and keeps the data format interoperable with applications tha
 `KeyGenerator` service; this supports KEM-only JCA providers. The standard `KEM.Encapsulated` result carries both the
 `SecretKey` and its encapsulation. Algorithms without either service fail with a provider-specific diagnostic.
 
-`BouncyCastleKemSupport` is the only compatibility boundary for that fallback. It resolves BC parameter specifications
-from the selected provider's class loader and preserves the existing `SecretKeyWithEncapsulation` runtime carrier when
-that class is available, so routes that use `getEncapsulation()` continue to work. No production class imports BC
-implementation or provider API types directly; the production-source import-fence script enforces that boundary.
+`BouncyCastleKemSupport` isolates the provider-specific handling needed by the KEM fallback. It resolves BC parameter
+specifications from the selected provider's class loader and preserves the `SecretKeyWithEncapsulation` runtime
+carrier when that class is available, so routes that use `getEncapsulation()` continue to work. Bouncy Castle API use
+is kept in typed support code and checked by the PQC production import-fence test; production code does not use
+reflective API access.
 
-=== Quarkus BOM and class-loader integration
+=== Stateful-key compatibility
 
-The Camel Quarkus PQC runtime extension brings in `camel-pqc` and `camel-quarkus-support-bouncycastle`. The latter
-provides `bcprov-jdk18on` and `bcpkix-jdk18on` without hard-coded versions, allowing the Quarkus dependency BOM to select
-the runtime release. The Quarkus support extension registers the BC provider during static initialization using the
-thread context class loader; the PQC deployment processor contributes BCPQC registration and native-image provider /
-reflection metadata. Camel's provider support deliberately reuses providers already registered by the embedding runtime.
+Bouncy Castle 1.87 moved the LMS/HSS and XMSS/XMSSMT JCA parameter specifications and key interfaces to the newer
+`org.bouncycastle.jcajce` packages. Earlier releases expose the corresponding types under
+`org.bouncycastle.pqc.jcajce`.
 
-`BouncyCastleKemSupport` and `BouncyCastlePqcCompatibility` resolve provider-specific parameter-spec and legacy-carrier
-classes from the selected provider's class loader before trying application or component class loaders. This ordering
-prevents a thread context class loader from shadowing the types expected by the provider and avoids incompatible
-parameter-spec instances at runtime. Keep the BC artifacts aligned to one BOM-selected version and do not package a
-second copy in an application/plugin class loader. The Camel compatibility matrix exercises the corresponding
-compile/runtime version override and class-loader contract at component level; the Camel Quarkus
-`integration-tests/pqc` JVM/native tests remain the end-to-end deployment check for a concrete Quarkus BOM.
+`BouncyCastlePqcCompatibility` contains typed access paths for these API layouts. At runtime it checks which API is
+available, selects the matching access path, and caches that selection. It does not choose an implementation by
+comparing a provider version string, and it does not use reflection or `ServiceLoader` to load version-specific
+adapters.
+
+This compatibility path is used for stateful LMS, HSS, XMSS and XMSSMT key handling. Ordinary non-stateful signing does
+not need to query the stateful-key compatibility support. The compatibility implementation is part of `camel-pqc`;
+applications do not need to add separate BC compatibility adapter artifacts.
+
+=== Runtime dependency alignment
+
+A platform BOM, including a Quarkus BOM, may select a Bouncy Castle runtime version that differs from Camel's
+compile-time dependency. Keep the related Bouncy Castle artifacts aligned to one release, and test the exact runtime
+version selected by the application. Avoid packaging multiple Bouncy Castle versions in separate application or
+plugin class loaders.
+
+=== Quarkus BOM and native-image integration
+
+The Camel Quarkus PQC runtime extension depends on `camel-pqc` and
+`camel-quarkus-support-bouncycastle`. The Bouncy Castle support module brings in `bcprov-jdk18on` and
+`bcpkix-jdk18on`; their versions are managed by the Quarkus dependency platform.
+
+The Quarkus Bouncy Castle support extension registers the security provider during static initialization. When a
+provider is not already registered, it uses the thread context class loader to load the configured BC provider.
+The PQC deployment processor requests registration of the BCPQC provider and contributes native-image security
+provider and reflection metadata for the PQC provider classes.
+
+The support extension also reuses an already registered BC or BCFIPS provider instead of unconditionally
+registering another copy. Keep the Bouncy Castle artifacts aligned with the versions selected by the Quarkus BOM.
+
+The Camel compatibility workflow exercises the component against the tested Bouncy Castle versions and checks
+cross-version KEM interoperability. This component-level matrix is useful for validating a dependency override, but
+it does not replace testing the application in its target runtime, including JVM or native deployment where
+applicable.
 
 === Bouncy Castle 1.87 upgrade considerations
 
@@ -241,10 +265,9 @@ compile/runtime version override and class-loader contract at component level; t
   while 1.87 derives the requested AES key. A key and ciphertext may still be decoded across these releases, but the
   resulting AES key is different. Ensure both communicating applications use compatible KDF behavior; do not assume
   that successful decapsulation alone proves that the derived application key is equal.
-* **LMS/HSS and XMSS/XMSSMT:** Bouncy Castle 1.87 removes the old lightweight LMS/XMSS implementation packages and
-  promotes the JCA APIs to the current packages. `camel-pqc` isolates these package changes in its compatibility
-  adapter. Applications that directly import Bouncy Castle implementation classes should review the Bouncy Castle
-  upgrade notes and migrate those imports separately.
+* **LMS/HSS and XMSS/XMSSMT:** Bouncy Castle 1.87 moves the relevant JCA parameter specifications and key interfaces
+  to the newer packages. `camel-pqc` handles the old and new public JCA API layouts internally. Applications that
+  directly import Bouncy Castle types should review their own imports when upgrading Bouncy Castle.
 * **CMCE:** Bouncy Castle deprecated Classic McEliece in 1.87. `camel-pqc` retains its existing `CMCE` algorithm entry
   for compatibility; deprecation does not mean that the component has silently removed it. For new deployments,
   evaluate standardized ML-KEM instead.

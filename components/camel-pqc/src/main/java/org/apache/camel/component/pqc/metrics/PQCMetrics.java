@@ -21,8 +21,8 @@ import java.util.function.LongSupplier;
 /**
  * Abstraction over the optional Micrometer metrics emitted by the PQC producer.
  * <p/>
- * When the optional {@code camel-pqc-micrometer} integration is present, its implementation is discovered through the
- * Camel-owned {@link PQCMetricsProvider} SPI. This interface deliberately contains no Micrometer types, so the core
+ * When the optional Micrometer integration is present, its implementation is discovered through the Camel-owned
+ * {@link PQCMetricsProvider} SPI. This interface deliberately contains no Micrometer types, so the core
  * {@code camel-pqc} artifact remains independent of Micrometer.
  */
 public interface PQCMetrics {

@@ -276,11 +276,7 @@
         <module>camel-protobuf-schema</module>
         <module>camel-pubnub</module>
         <module>camel-pulsar</module>
-        <module>camel-pqc-bc-compat-api</module>
-        <module>camel-pqc-bc-compat-186</module>
-        <module>camel-pqc-bc-compat-187</module>
         <module>camel-pqc</module>
-        <module>camel-pqc-micrometer</module>
         <module>camel-python</module>
         <module>camel-python3</module>
         <module>camel-quartz</module>
