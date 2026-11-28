@@ -73,6 +73,13 @@ built a new `DefaultAzureCredential` with the default settings, so a credential 
 `AZURE_IDENTITY` still builds a new `DefaultAzureCredential`. In camel-azure-eventgrid, an explicit `credentialType`
 `TOKEN_CREDENTIAL` or `AZURE_IDENTITY` is no longer replaced when `tokenCredential` is set.
 
+=== Weighted Load Balancer EIP
+
+The distribution ratios of the weighted load balancer are now validated when the route starts. A negative ratio,
+ratios that are all `0`, or ratios whose sum is greater than `2147483647` now fail the route at startup with an
+`IllegalArgumentException`. Previously such a route started, but sending to it could hang the caller, spin a CPU,
+or send every message to the same endpoint.
+
 == Upgrading from 4.22.2 to 4.22.3
 
 === Undertow servlet implementation
