@@ -1054,6 +1054,8 @@ public class MXParser implements XmlPullParser {
         return nextImpl();
     }
 
+    // vendored XmlPull parser — complexity is inherent in the XML spec state machine
+    @SuppressWarnings("java:S3776")
     protected int nextImpl() throws XmlPullParserException, IOException {
         text = null;
         pcEnd = pcStart = 0;
@@ -1363,6 +1365,8 @@ public class MXParser implements XmlPullParser {
         }
     }
 
+    // vendored XmlPull parser — complexity is inherent in the XML spec state machine
+    @SuppressWarnings("java:S3776")
     protected int parseProlog() throws XmlPullParserException, IOException {
         // [2] prolog: ::= XMLDecl? Misc* (doctypedecl Misc*)? and look for [39]
         // element
@@ -1488,6 +1492,8 @@ public class MXParser implements XmlPullParser {
         }
     }
 
+    // vendored XmlPull parser — complexity is inherent in the XML spec state machine
+    @SuppressWarnings("java:S3776")
     protected int parseEpilog() throws XmlPullParserException, IOException {
         if (eventType == END_DOCUMENT) {
             throw new XmlPullParserException("already reached end of XML input", this, null);
@@ -1851,6 +1857,8 @@ public class MXParser implements XmlPullParser {
         return eventType = START_TAG;
     }
 
+    // vendored XmlPull parser — complexity is inherent in the XML spec state machine
+    @SuppressWarnings("java:S3776")
     protected char parseAttribute() throws XmlPullParserException, IOException {
         // parse attribute
         // [41] Attribute ::= Name Eq AttValue

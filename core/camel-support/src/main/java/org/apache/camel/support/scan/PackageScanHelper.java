@@ -66,110 +66,132 @@ public class PackageScanHelper {
                     Set<Class<?>> lazy = new HashSet<>();
                     for (String pkg : packages) {
                         Set<Class<?>> classes = scanner.findAnnotated(BindToRegistry.class, pkg);
-                        for (Class<?> c : classes) {
-                            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
-                            if (ann != null && ann.lazy()) {
-                                // phase-1: remember lazy creating beans
-                                lazy.add(c);
-                            } else {
-                                // phase-1: create empty bean instance without any bean post-processing
-                                Object b = injector.newInstance(c, false);
-                                if (b != null) {
-                                    created.put(c, b);
-                                }
-                            }
-                        }
-                        for (Class<?> c : lazy) {
-                            // phase-2: special for lazy beans that must be registered and created on-demand
-                            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
-                            if (ann != null) {
-                                String name = ann.value();
-                                if (isEmpty(name)) {
-                                    name = c.getSimpleName();
-                                }
-                                String beanName = c.getName();
-                                Object bean = (Supplier<Object>) () -> {
-                                    Object answer = injector.newInstance(c);
-                                    if (answer != null && ann.beanPostProcess()) {
-                                        try {
-                                            final CamelBeanPostProcessor beanPostProcessor
-                                                    = PluginHelper.getBeanPostProcessor(camelContext);
-                                            beanPostProcessor.postProcessBeforeInitialization(answer, beanName);
-                                            beanPostProcessor.postProcessAfterInitialization(answer, beanName);
-                                        } catch (Exception e) {
-                                            throw RuntimeCamelException.wrapRuntimeException(e);
-                                        }
-                                    }
-                                    return answer;
-                                };
-                                // - bind to registry if @org.apache.camel.BindToRegistry is present
-                                // use dependency injection factory to perform the task of binding the bean to registry
-                                Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, null);
-                                task.run();
-                            }
-                        }
-                        for (Entry<Class<?>, Object> entry : created.entrySet()) {
-                            Class<?> c = entry.getKey();
-                            // phase-3: discover any created beans has @BindToRegistry to register them eager
-                            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
-                            if (ann != null) {
-                                String name = ann.value();
-                                if (isEmpty(name)) {
-                                    name = c.getSimpleName();
-                                }
-                                Object bean = entry.getValue();
-                                String beanName = c.getName();
-                                String initMethod = ann.initMethod();
-                                if (isEmpty(initMethod) && bean instanceof Service) {
-                                    initMethod = "start";
-                                }
-                                String destroyMethod = ann.destroyMethod();
-                                if (isEmpty(destroyMethod) && bean instanceof Service) {
-                                    destroyMethod = "stop";
-                                } else if (isEmpty(destroyMethod) && bean instanceof Closeable) {
-                                    destroyMethod = "close";
-                                }
-                                // - bind to registry if @org.apache.camel.BindToRegistry is present
-                                // use dependency injection factory to perform the task of binding the bean to registry
-                                // use null for init method as we need to defer calling it at a late phase
-                                Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, destroyMethod);
-                                // defer calling init methods until dependency injection in phase-4 is complete
-                                if (isNotEmpty(initMethod)) {
-                                    initMethods.put(bean, initMethod);
-                                }
-                                task.run();
-                            }
-                        }
-                        for (Entry<Class<?>, Object> entry : created.entrySet()) {
-                            Class<?> c = entry.getKey();
-                            // phase-4: now we can do bean post-processing on the created beans
-                            Object bean = entry.getValue();
-                            String beanName = c.getName();
-                            try {
-                                // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization
-                                // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessAfterInitialization
-                                PluginHelper.getBeanPostProcessor(camelContext).postProcessBeforeInitialization(bean,
-                                        beanName);
-                                PluginHelper.getBeanPostProcessor(camelContext).postProcessAfterInitialization(bean,
-                                        beanName);
-                            } catch (Exception e) {
-                                throw new RuntimeCamelException("Error post-processing bean: " + beanName, e);
-                            }
-                        }
-                        for (Entry<Object, String> entry : initMethods.entrySet()) {
-                            Object bean = entry.getKey();
-                            String method = entry.getValue();
-                            // phase-5: now call init method on created beans
-                            try {
-                                ObjectHelper.invokeMethodSafe(method, bean);
-                            } catch (Exception e) {
-                                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                            }
-                        }
+                        createInstances(injector, classes, created, lazy);
+                        registerLazyBeans(camelContext, injector, lazy);
+                        registerEagerBeans(camelContext, created, initMethods);
+                        postProcessBeans(camelContext, created);
+                        callInitMethods(initMethods);
                     }
                 }
+            }
+        }
+    }
+
+    private static void createInstances(
+            Injector injector, Set<Class<?>> classes, Map<Class<?>, Object> created, Set<Class<?>> lazy) {
+        for (Class<?> c : classes) {
+            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
+            if (ann != null && ann.lazy()) {
+                // phase-1: remember lazy creating beans
+                lazy.add(c);
+            } else {
+                // phase-1: create empty bean instance without any bean post-processing
+                Object b = injector.newInstance(c, false);
+                if (b != null) {
+                    created.put(c, b);
+                }
+            }
+        }
+    }
+
+    private static void registerLazyBeans(CamelContext camelContext, Injector injector, Set<Class<?>> lazy) {
+        for (Class<?> c : lazy) {
+            // phase-2: special for lazy beans that must be registered and created on-demand
+            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
+            if (ann != null) {
+                String name = ann.value();
+                if (isEmpty(name)) {
+                    name = c.getSimpleName();
+                }
+                String beanName = c.getName();
+                Object bean = (Supplier<Object>) () -> {
+                    Object answer = injector.newInstance(c);
+                    if (answer != null && ann.beanPostProcess()) {
+                        try {
+                            final CamelBeanPostProcessor beanPostProcessor
+                                    = PluginHelper.getBeanPostProcessor(camelContext);
+                            beanPostProcessor.postProcessBeforeInitialization(answer, beanName);
+                            beanPostProcessor.postProcessAfterInitialization(answer, beanName);
+                        } catch (Exception e) {
+                            throw RuntimeCamelException.wrapRuntimeException(e);
+                        }
+                    }
+                    return answer;
+                };
+                // - bind to registry if @org.apache.camel.BindToRegistry is present
+                // use dependency injection factory to perform the task of binding the bean to registry
+                Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
+                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, null);
+                task.run();
+            }
+        }
+    }
+
+    private static void registerEagerBeans(
+            CamelContext camelContext, Map<Class<?>, Object> created, Map<Object, String> initMethods) {
+        for (Entry<Class<?>, Object> entry : created.entrySet()) {
+            Class<?> c = entry.getKey();
+            // phase-3: discover any created beans has @BindToRegistry to register them eager
+            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
+            if (ann != null) {
+                String name = ann.value();
+                if (isEmpty(name)) {
+                    name = c.getSimpleName();
+                }
+                Object bean = entry.getValue();
+                String beanName = c.getName();
+                String initMethod = ann.initMethod();
+                if (isEmpty(initMethod) && bean instanceof Service) {
+                    initMethod = "start";
+                }
+                String destroyMethod = ann.destroyMethod();
+                if (isEmpty(destroyMethod) && bean instanceof Service) {
+                    destroyMethod = "stop";
+                } else if (isEmpty(destroyMethod) && bean instanceof Closeable) {
+                    destroyMethod = "close";
+                }
+                // - bind to registry if @org.apache.camel.BindToRegistry is present
+                // use dependency injection factory to perform the task of binding the bean to registry
+                // use null for init method as we need to defer calling it at a late phase
+                Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
+                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, destroyMethod);
+                // defer calling init methods until dependency injection in phase-4 is complete
+                if (isNotEmpty(initMethod)) {
+                    initMethods.put(bean, initMethod);
+                }
+                task.run();
+            }
+        }
+    }
+
+    private static void postProcessBeans(CamelContext camelContext, Map<Class<?>, Object> created) {
+        for (Entry<Class<?>, Object> entry : created.entrySet()) {
+            Class<?> c = entry.getKey();
+            // phase-4: now we can do bean post-processing on the created beans
+            Object bean = entry.getValue();
+            String beanName = c.getName();
+            try {
+                // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization
+                // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessAfterInitialization
+                PluginHelper.getBeanPostProcessor(camelContext).postProcessBeforeInitialization(bean,
+                        beanName);
+                PluginHelper.getBeanPostProcessor(camelContext).postProcessAfterInitialization(bean,
+                        beanName);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Error post-processing bean: " + beanName, e);
+            }
+        }
+    }
+
+    private static void callInitMethods(Map<Object, String> initMethods) {
+        for (Entry<Object, String> entry : initMethods.entrySet()) {
+            Object bean = entry.getKey();
+            String method = entry.getValue();
+            // phase-5: now call init method on created beans
+            try {
+                ObjectHelper.invokeMethodSafe(method, bean);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }

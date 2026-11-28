@@ -144,21 +144,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
 
         // for each invalid option build a reason message
         Map<String, String> options = new LinkedHashMap<>();
-        if (unknown != null) {
-            for (String name : unknown) {
-                if (unknownSuggestions != null && unknownSuggestions.containsKey(name)) {
-                    String[] suggestions = unknownSuggestions.get(name);
-                    if (suggestions != null && suggestions.length > 0) {
-                        String str = Arrays.asList(suggestions).toString();
-                        options.put(name, "Unknown option. Did you mean: " + str);
-                    } else {
-                        options.put(name, "Unknown option");
-                    }
-                } else {
-                    options.put(name, "Unknown option");
-                }
-            }
-        }
+        collectUnknownErrors(options);
         if (notConsumerOnly != null) {
             for (String name : notConsumerOnly) {
                 options.put(name, "Option not applicable in consumer only mode");
@@ -169,89 +155,14 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
                 options.put(name, "Option not applicable in producer only mode");
             }
         }
-        if (required != null) {
-            for (String name : required) {
-                options.put(name, "Missing required option");
-            }
-        }
-        if (deprecated != null) {
-            for (String name : deprecated) {
-                options.put(name, "Deprecated option");
-            }
-        }
-        if (invalidEnum != null) {
-            for (Map.Entry<String, String> entry : invalidEnum.entrySet()) {
-                String name = entry.getKey();
-                String[] choices = invalidEnumChoices != null ? invalidEnumChoices.get(name) : null;
-                String defaultValue = defaultValues != null ? defaultValues.get(entry.getKey()) : null;
-                String str = Arrays.asList(choices).toString();
-                String msg = "Invalid enum value: " + entry.getValue() + ". Possible values: " + str;
-                if (invalidEnumSuggestions != null) {
-                    String[] suggestions = invalidEnumSuggestions.get(name);
-                    if (suggestions != null && suggestions.length > 0) {
-                        str = Arrays.asList(suggestions).toString();
-                        msg += ". Did you mean: " + str;
-                    }
-                }
-                if (defaultValue != null) {
-                    msg += ". Default value: " + defaultValue;
-                }
-
-                options.put(entry.getKey(), msg);
-            }
-        }
-        if (invalidReference != null) {
-            for (Map.Entry<String, String> entry : invalidReference.entrySet()) {
-                boolean empty = isEmpty(entry.getValue());
-                if (empty) {
-                    options.put(entry.getKey(), "Empty reference value");
-                } else if (!entry.getValue().startsWith("#")) {
-                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must start with #");
-                } else {
-                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue());
-                }
-            }
-        }
-        if (invalidBoolean != null) {
-            for (Map.Entry<String, String> entry : invalidBoolean.entrySet()) {
-                boolean empty = isEmpty(entry.getValue());
-                if (empty) {
-                    options.put(entry.getKey(), "Empty boolean value");
-                } else {
-                    options.put(entry.getKey(), "Invalid boolean value: " + entry.getValue());
-                }
-            }
-        }
-        if (invalidInteger != null) {
-            for (Map.Entry<String, String> entry : invalidInteger.entrySet()) {
-                boolean empty = isEmpty(entry.getValue());
-                if (empty) {
-                    options.put(entry.getKey(), "Empty integer value");
-                } else {
-                    options.put(entry.getKey(), "Invalid integer value: " + entry.getValue());
-                }
-            }
-        }
-        if (invalidNumber != null) {
-            for (Map.Entry<String, String> entry : invalidNumber.entrySet()) {
-                boolean empty = isEmpty(entry.getValue());
-                if (empty) {
-                    options.put(entry.getKey(), "Empty number value");
-                } else {
-                    options.put(entry.getKey(), "Invalid number value: " + entry.getValue());
-                }
-            }
-        }
-        if (invalidDuration != null) {
-            for (Map.Entry<String, String> entry : invalidDuration.entrySet()) {
-                boolean empty = isEmpty(entry.getValue());
-                if (empty) {
-                    options.put(entry.getKey(), "Empty duration value");
-                } else {
-                    options.put(entry.getKey(), "Invalid duration value: " + entry.getValue());
-                }
-            }
-        }
+        collectRequiredErrors(options);
+        collectDeprecatedErrors(options);
+        collectEnumErrors(options);
+        collectReferenceErrors(options);
+        collectSimpleTypeErrors(invalidBoolean, "boolean", options);
+        collectSimpleTypeErrors(invalidInteger, "integer", options);
+        collectSimpleTypeErrors(invalidNumber, "number", options);
+        collectSimpleTypeErrors(invalidDuration, "duration", options);
 
         // build a table with the error summary nicely formatted
         // lets use 24 as min length
@@ -280,6 +191,92 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
         }
 
         return sb.toString();
+    }
+
+    private void collectUnknownErrors(Map<String, String> options) {
+        if (unknown != null) {
+            for (String name : unknown) {
+                if (unknownSuggestions != null && unknownSuggestions.containsKey(name)) {
+                    String[] suggestions = unknownSuggestions.get(name);
+                    if (suggestions != null && suggestions.length > 0) {
+                        String str = Arrays.asList(suggestions).toString();
+                        options.put(name, "Unknown option. Did you mean: " + str);
+                    } else {
+                        options.put(name, "Unknown option");
+                    }
+                } else {
+                    options.put(name, "Unknown option");
+                }
+            }
+        }
+    }
+
+    private void collectRequiredErrors(Map<String, String> options) {
+        if (required != null) {
+            for (String name : required) {
+                options.put(name, "Missing required option");
+            }
+        }
+    }
+
+    private void collectDeprecatedErrors(Map<String, String> options) {
+        if (deprecated != null) {
+            for (String name : deprecated) {
+                options.put(name, "Deprecated option");
+            }
+        }
+    }
+
+    private void collectEnumErrors(Map<String, String> options) {
+        if (invalidEnum != null) {
+            for (Map.Entry<String, String> entry : invalidEnum.entrySet()) {
+                String name = entry.getKey();
+                String[] choices = invalidEnumChoices != null ? invalidEnumChoices.get(name) : null;
+                String defaultValue = defaultValues != null ? defaultValues.get(entry.getKey()) : null;
+                String str = Arrays.asList(choices).toString();
+                String msg = "Invalid enum value: " + entry.getValue() + ". Possible values: " + str;
+                if (invalidEnumSuggestions != null) {
+                    String[] suggestions = invalidEnumSuggestions.get(name);
+                    if (suggestions != null && suggestions.length > 0) {
+                        str = Arrays.asList(suggestions).toString();
+                        msg += ". Did you mean: " + str;
+                    }
+                }
+                if (defaultValue != null) {
+                    msg += ". Default value: " + defaultValue;
+                }
+                options.put(entry.getKey(), msg);
+            }
+        }
+    }
+
+    private void collectReferenceErrors(Map<String, String> options) {
+        if (invalidReference != null) {
+            for (Map.Entry<String, String> entry : invalidReference.entrySet()) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty reference value");
+                } else if (!entry.getValue().startsWith("#")) {
+                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue() + " must start with #");
+                } else {
+                    options.put(entry.getKey(), "Invalid reference value: " + entry.getValue());
+                }
+            }
+        }
+    }
+
+    private static void collectSimpleTypeErrors(
+            Map<String, String> invalidMap, String typeName, Map<String, String> options) {
+        if (invalidMap != null) {
+            for (Map.Entry<String, String> entry : invalidMap.entrySet()) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty " + typeName + " value");
+                } else {
+                    options.put(entry.getKey(), "Invalid " + typeName + " value: " + entry.getValue());
+                }
+            }
+        }
     }
 
 }
