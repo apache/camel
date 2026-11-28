@@ -58,11 +58,14 @@ jobs:
 
       - name: Check container versions
         id: version_check
+        env:
+          SCAN_PATH_INPUT: ${{ github.event.inputs.scan_path }}
+          CHECK_PRERELEASES: ${{ github.event.inputs.check_prereleases }}
         run: |
-          SCAN_PATH="${{ github.event.inputs.scan_path || 'test-infra' }}"
+          SCAN_PATH="${SCAN_PATH_INPUT:-test-infra}"
           PRERELEASE_FLAG=""
 
-          if [[ "${{ github.event.inputs.check_prereleases }}" == "true" ]]; then
+          if [[ "$CHECK_PRERELEASES" == "true" ]]; then
             PRERELEASE_FLAG="--check-prereleases"
           fi
 
