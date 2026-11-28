@@ -21,6 +21,7 @@ camel test run [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--clear` | Remove the working directory before the test run | false | boolean
 | `--dep,--dependency` | Comma delimited list of additional Maven GAV dependencies that must be loaded to run the test. |  | List
 | `--engine` | Name of the test engine that is used to run tests. One of junit, junit-jupiter, junit4, testng, cucumber |  | String
 | `--includes` | Includes test name pattern. |  | List

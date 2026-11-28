@@ -22,6 +22,7 @@ camel test init [options]
 |===
 | Option | Description | Default | Type
 | `--directory` | Directory where the files will be created | . | String
+| `--force` | Overwrite existing files | false | boolean
 | `-h,--help` | Display this help and exit |  | boolean
 |===
 

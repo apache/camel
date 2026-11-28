@@ -619,6 +619,12 @@ public final class CitrusTestChecks {
             List<Error> all = List.copyOf(errors);
             errors.removeIf(e -> isComposition(e)
                     && all.stream().anyMatch(o -> location(o).startsWith(location(e) + "/")));
+            // a value of the wrong type fails the object and each branch of it (http: in a oneOf of sendRequest,
+            // receiveResponse... since Citrus 5.2.1): the type error of the object says it with all its keys
+            List<Error> types = List.copyOf(errors);
+            errors.removeIf(e -> "type".equals(e.getKeyword())
+                    && types.stream().anyMatch(o -> o != e && "type".equals(o.getKeyword())
+                            && location(o).equals(location(e)) && isBranchOf(e, o)));
             Map<String, List<Error>> unknown = new LinkedHashMap<>();
             for (Error e : errors) {
                 if ("additionalProperties".equals(e.getKeyword()) && e.getProperty() != null) {
@@ -1397,6 +1403,14 @@ public final class CitrusTestChecks {
 
     private static boolean isComposition(Error e) {
         return "oneOf".equals(e.getKeyword()) || "anyOf".equals(e.getKeyword());
+    }
+
+    /** Whether the schema of an error is in a branch of the schema of another error (both of the keyword type). */
+    private static boolean isBranchOf(Error branch, Error outer) {
+        String b = String.valueOf(branch.getSchemaLocation());
+        String o = String.valueOf(outer.getSchemaLocation());
+        String base = o.endsWith("/type") ? o.substring(0, o.length() - "/type".length()) : o;
+        return b.length() > o.length() && b.startsWith(base + "/");
     }
 
     /** The instance location of an error as a pointer, "" for the root. */
