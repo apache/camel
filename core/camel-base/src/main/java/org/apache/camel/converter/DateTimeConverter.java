@@ -73,7 +73,7 @@ public final class DateTimeConverter {
      * Converts an ISO-8601 date-time with an offset, such as {@code 2026-11-18T23:00:00+01:00} or
      * {@code 2026-11-18T22:00:00Z}, so that an option of this type can be set in an endpoint URI or as a property. An
      * empty value converts to {@code null}.
-     * <p/>
+     * <p>
      * An ISO-8601 date-time never contains a space, so a space is read as a {@code +}: in an endpoint URI the {@code +}
      * of a positive offset is decoded to a space, unless the value is written as {@code %2B} or in {@code RAW(...)}.
      */
@@ -87,7 +87,7 @@ public final class DateTimeConverter {
      * Converts an ISO-8601 date-time with an offset and an optional zone id, such as
      * {@code 2026-11-18T23:00:00+01:00[Europe/Paris]} or {@code 2026-11-18T22:00:00Z}, so that an option of this type
      * can be set in an endpoint URI or as a property. An empty value converts to {@code null}.
-     * <p/>
+     * <p>
      * An ISO-8601 date-time never contains a space, so a space is read as a {@code +}: in an endpoint URI the {@code +}
      * of a positive offset is decoded to a space, unless the value is written as {@code %2B} or in {@code RAW(...)}.
      */
@@ -100,7 +100,7 @@ public final class DateTimeConverter {
     /**
      * Converts an ISO-8601 instant, such as {@code 2026-11-18T22:00:00Z} or {@code 2026-11-18T23:00:00+01:00}, so that
      * an option of this type can be set in an endpoint URI or as a property. An empty value converts to {@code null}.
-     * <p/>
+     * <p>
      * An ISO-8601 date-time never contains a space, so a space is read as a {@code +}: in an endpoint URI the {@code +}
      * of a positive offset is decoded to a space, unless the value is written as {@code %2B} or in {@code RAW(...)}.
      */

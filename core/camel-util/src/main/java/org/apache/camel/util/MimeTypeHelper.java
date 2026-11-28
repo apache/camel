@@ -25,9 +25,9 @@ public class MimeTypeHelper {
     /**
      * Sanitizes the mime types after URL decoding.
      * <p>
-     * URL decoding turns a plus sign into a space, so a space inside the <tt>type/subtype</tt> token (such as
-     * <tt>application/xslt xml</tt>) is turned back into a plus sign. The parameters of a media type (such as
-     * <tt>application/json; q=0.5</tt>) keep their meaning: the spaces around <tt>;</tt> and <tt>=</tt> are removed,
+     * URL decoding turns a plus sign into a space, so a space inside the {@code type/subtype} token (such as
+     * {@code application/xslt xml}) is turned back into a plus sign. The parameters of a media type (such as
+     * {@code application/json; q=0.5}) keep their meaning: the spaces around {@code ;} and {@code =} are removed,
      * and a quoted parameter value is kept as is.
      *
      * @param  types mime types such as from HTTP Accept header
