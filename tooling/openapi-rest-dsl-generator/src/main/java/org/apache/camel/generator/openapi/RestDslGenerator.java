@@ -102,7 +102,7 @@ public abstract class RestDslGenerator<G> {
     /**
      * Syntax to use for to uri.
      *
-     * The default is <tt>direct:${operationId}</tt>
+     * The default is {@code direct:${operationId}}
      */
     public G withDestinationToSyntax(final String destinationToSyntax) {
         this.destinationToSyntax = destinationToSyntax;

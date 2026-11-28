@@ -26,7 +26,7 @@ import java.util.Map;
  * Reflectively converts a Java {@link Record} into a {@link JsonObject}, so a record can be used as the single source
  * of truth for both a runtime JSON payload and (via reflection over the record's structure) a JSON Schema describing
  * it.
- * <p/>
+ * <p>
  * A record component whose value is {@code null} is omitted from the resulting {@link JsonObject}, mirroring the common
  * "only include a field if present" convention. Supported component value types: primitives, {@link String}, boxed
  * numbers/{@link Boolean}, {@link Enum} (converted via {@link Enum#name()}), nested {@link Record}s,

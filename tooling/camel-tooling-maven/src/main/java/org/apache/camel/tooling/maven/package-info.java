@@ -22,6 +22,5 @@
  * <li>catalog/camel-catalog-maven (previously using Ivy/Grape)</li>
  * <li>dsl/camel-kamelet-main (previously using Shrinkwrap)</li>
  * </ul>
- * </p>
  */
 package org.apache.camel.tooling.maven;
