@@ -45,11 +45,8 @@ public interface JsonataEndpointBuilderFactory {
         }
 
         /**
-         * Sets whether the context map should allow access to all details. By
-         * default only the message body and headers can be accessed. This
-         * option can be enabled for full access to the current Exchange and
-         * CamelContext. Doing so impose a potential security risk as this opens
-         * access to the full power of CamelContext API.
+         * Not used by jsonata. Deprecation note: The jsonata component builds
+         * no context map, so this option has no effect.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -59,16 +56,14 @@ public interface JsonataEndpointBuilderFactory {
          * @param allowContextMapAll the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default JsonataEndpointBuilder allowContextMapAll(boolean allowContextMapAll) {
             doSetProperty("allowContextMapAll", allowContextMapAll);
             return this;
         }
         /**
-         * Sets whether the context map should allow access to all details. By
-         * default only the message body and headers can be accessed. This
-         * option can be enabled for full access to the current Exchange and
-         * CamelContext. Doing so impose a potential security risk as this opens
-         * access to the full power of CamelContext API.
+         * Not used by jsonata. Deprecation note: The jsonata component builds
+         * no context map, so this option has no effect.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -78,6 +73,7 @@ public interface JsonataEndpointBuilderFactory {
          * @param allowContextMapAll the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default JsonataEndpointBuilder allowContextMapAll(String allowContextMapAll) {
             doSetProperty("allowContextMapAll", allowContextMapAll);
             return this;
