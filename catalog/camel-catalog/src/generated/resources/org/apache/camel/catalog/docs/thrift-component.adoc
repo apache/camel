@@ -197,7 +197,7 @@ from("thrift://0.0.0.0:1101/org.apache.camel.component.thrift.generated.Calculat
 The producer builds its TLS connection from the full SSL context of `sslParameters`, the same as the consumer. All
 SSL settings apply: the key managers (client certificate for mTLS), trust managers, protocols, cipher suites, named
 groups, signature schemes and the post-quantum preference. Without trust managers, the JVM default trust store is used.
-Hostname verification is enabled by default: the server certificate must match the host name of the URI.
+The producer verifies that the server certificate matches the host name of the URI.
 
 For mTLS (the producer sends a client certificate), configure the key managers of `sslParameters` with the client
 certificate and key, and the trust managers with the CA that signed the server certificate, and add

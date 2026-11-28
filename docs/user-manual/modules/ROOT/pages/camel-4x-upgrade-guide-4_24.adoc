@@ -5623,13 +5623,9 @@ An endpoint without an `operation`, which took the operation from the header, no
   cipher suites, named groups, signature schemes and the post-quantum preference. Before, the producer used
   `TSSLTransportFactory` and only applied the protocol, cipher suites and trust store; the named groups and signature
   schemes were ignored (with a `WARN`), and the key managers were never sent.
-* Hostname verification is now enabled on the producer socket, as `TSSLTransportFactory` does since libthrift 0.23.0.
-  The server certificate must match the host name of the URI. Before, the socket created by the producer did not verify
-  the host name.
 * A `camel-thrift` producer without trust managers configured now uses the JVM default trust store. Before, it failed
   to start with a `NullPointerException` on the missing trust store path.
-* The `camel-thrift` producer is no longer listed in the _Components with their own TLS stack_ table of the
-  xref:camel-configuration-utilities.adoc[Camel JSSE Configuration Utility].
+* The producer still verifies that the server certificate matches the host name of the URI, as before.
 
 === camel-thrift - SSL/TLS settings of the consumer, and errors sent to the client
 

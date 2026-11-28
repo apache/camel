@@ -317,11 +317,11 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
                 throw new TTransportException(
                         "Unable to open SSL connection to " + configuration.getHost() + ":" + configuration.getPort(), e);
             }
-            // Apply hostname verification, as TSSLTransportFactory does since libthrift 0.23.0.
-            SSLParameters socketParameters = sslSocket.getSSLParameters();
-            socketParameters.setEndpointIdentificationAlgorithm("HTTPS");
-            sslSocket.setSSLParameters(socketParameters);
             try {
+                // Apply hostname verification, as TSSLTransportFactory does since libthrift 0.23.0.
+                SSLParameters socketParameters = sslSocket.getSSLParameters();
+                socketParameters.setEndpointIdentificationAlgorithm("HTTPS");
+                sslSocket.setSSLParameters(socketParameters);
                 if (configuration.getClientTimeout() > 0) {
                     sslSocket.setSoTimeout(configuration.getClientTimeout());
                 }
