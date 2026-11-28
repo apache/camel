@@ -33,7 +33,7 @@ import org.apache.camel.component.alibaba.mns.MNSComponent;
 public interface AlibabaMnsComponentBuilderFactory {
 
     /**
-     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Alibaba Simple Message Queue (SMQ) (camel-alibaba-mns)
      * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
      * formerly MNS).
      * 
@@ -48,7 +48,7 @@ public interface AlibabaMnsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Alibaba Message Service (MNS) component.
+     * Builder for the Alibaba Simple Message Queue (SMQ) component.
      */
     interface AlibabaMnsComponentBuilder extends ComponentBuilder<MNSComponent> {
     

@@ -33,8 +33,8 @@
 
     <artifactId>camel-alibaba-mns</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Alibaba Cloud :: Message Service (MNS)</name>
-    <description>Camel Alibaba Cloud Message Service (MNS) component</description>
+    <name>Camel :: Alibaba Cloud :: Simple Message Queue (SMQ)</name>
+    <description>Camel Alibaba Cloud Simple Message Queue (SMQ) component</description>
 
     <dependencies>
         <dependency>
