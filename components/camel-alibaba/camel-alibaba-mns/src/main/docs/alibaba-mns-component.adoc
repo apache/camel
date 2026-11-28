@@ -1,5 +1,5 @@
-= Alibaba Message Service (MNS) Component
-:doctitle: Alibaba Message Service (MNS)
+= Alibaba Simple Message Queue (SMQ) Component
+:doctitle: Alibaba Simple Message Queue (SMQ)
 :shortname: alibaba-mns
 :artifactid: camel-alibaba-mns
 :description: Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ, formerly MNS).
@@ -14,11 +14,11 @@
 
 *{component-header}*
 
-The Alibaba Cloud Message Service (MNS) component allows you to integrate with
-https://www.alibabacloud.com/product/mns[Alibaba Cloud MNS] for queue and topic messaging.
+The Alibaba Cloud Simple Message Queue (SMQ, formerly MNS) component allows you to integrate with
+https://www.alibabacloud.com/product/message-service[Alibaba Cloud SMQ] for queue and topic messaging.
 
-NOTE: Alibaba Cloud recommends RocketMQ for new messaging workloads. MNS remains supported,
-but evaluate https://www.alibabacloud.com/product/rocketmq[RocketMQ] or the Camel RocketMQ
+NOTE: Alibaba Cloud recommends RocketMQ for new messaging workloads. SMQ remains supported,
+but evaluate https://www.alibabacloud.com/product/mq[ApsaraMQ for RocketMQ] or the Camel RocketMQ
 component for greenfield projects.
 
 Maven users will need to add the following dependency to their `pom.xml`

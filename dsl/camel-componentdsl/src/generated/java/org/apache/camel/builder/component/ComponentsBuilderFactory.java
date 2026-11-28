@@ -170,7 +170,7 @@ public interface ComponentsBuilderFactory {
         return AlibabaKmsComponentBuilderFactory.alibabaKms();
     }
     /**
-     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Alibaba Simple Message Queue (SMQ) (camel-alibaba-mns)
      * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
      * formerly MNS).
      * 

@@ -36,7 +36,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ, formerly MNS).
  */
-@UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-mns", title = "Alibaba Message Service (MNS)",
+@UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-mns", title = "Alibaba Simple Message Queue (SMQ)",
              syntax = "alibaba-mns:queueName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = MNSHeaders.class)
 @BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES },

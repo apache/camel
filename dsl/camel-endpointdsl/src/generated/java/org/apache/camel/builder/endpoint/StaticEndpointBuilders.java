@@ -481,7 +481,7 @@ public class StaticEndpointBuilders {
         return KMSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Alibaba Simple Message Queue (SMQ) (camel-alibaba-mns)
      * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
      * formerly MNS).
      * 
@@ -503,7 +503,7 @@ public class StaticEndpointBuilders {
         return alibabaMns("alibaba-mns", path);
     }
     /**
-     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Alibaba Simple Message Queue (SMQ) (camel-alibaba-mns)
      * Send and receive messages using Alibaba Cloud Simple Message Queue (SMQ,
      * formerly MNS).
      * 

@@ -36,7 +36,7 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface MNSEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint consumers for the Alibaba Message Service (MNS) component.
+     * Builder for endpoint consumers for the Alibaba Simple Message Queue (SMQ) component.
      */
     public interface MNSEndpointConsumerBuilder
             extends
@@ -776,7 +776,7 @@ public interface MNSEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Alibaba Message Service (MNS) component.
+     * Advanced builder for endpoint consumers for the Alibaba Simple Message Queue (SMQ) component.
      */
     public interface AdvancedMNSEndpointConsumerBuilder
             extends
@@ -975,7 +975,7 @@ public interface MNSEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Alibaba Message Service (MNS) component.
+     * Builder for endpoint producers for the Alibaba Simple Message Queue (SMQ) component.
      */
     public interface MNSEndpointProducerBuilder
             extends
@@ -1119,7 +1119,7 @@ public interface MNSEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Alibaba Message Service (MNS) component.
+     * Advanced builder for endpoint producers for the Alibaba Simple Message Queue (SMQ) component.
      */
     public interface AdvancedMNSEndpointProducerBuilder extends EndpointProducerBuilder {
         default MNSEndpointProducerBuilder basic() {
@@ -1210,7 +1210,7 @@ public interface MNSEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Alibaba Message Service (MNS) component.
+     * Builder for endpoint for the Alibaba Simple Message Queue (SMQ) component.
      */
     public interface MNSEndpointBuilder
             extends
@@ -1321,7 +1321,7 @@ public interface MNSEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Alibaba Message Service (MNS) component.
+     * Advanced builder for endpoint for the Alibaba Simple Message Queue (SMQ) component.
      */
     public interface AdvancedMNSEndpointBuilder
             extends
@@ -1370,7 +1370,7 @@ public interface MNSEndpointBuilderFactory {
 
     public interface MNSBuilders {
         /**
-         * Alibaba Message Service (MNS) (camel-alibaba-mns)
+         * Alibaba Simple Message Queue (SMQ) (camel-alibaba-mns)
          * Send and receive messages using Alibaba Cloud Simple Message Queue
          * (SMQ, formerly MNS).
          * 
@@ -1384,7 +1384,7 @@ public interface MNSEndpointBuilderFactory {
             return MNSHeaderNameBuilder.INSTANCE;
         }
         /**
-         * Alibaba Message Service (MNS) (camel-alibaba-mns)
+         * Alibaba Simple Message Queue (SMQ) (camel-alibaba-mns)
          * Send and receive messages using Alibaba Cloud Simple Message Queue
          * (SMQ, formerly MNS).
          * 
@@ -1407,7 +1407,7 @@ public interface MNSEndpointBuilderFactory {
             return MNSEndpointBuilderFactory.endpointBuilder("alibaba-mns", path);
         }
         /**
-         * Alibaba Message Service (MNS) (camel-alibaba-mns)
+         * Alibaba Simple Message Queue (SMQ) (camel-alibaba-mns)
          * Send and receive messages using Alibaba Cloud Simple Message Queue
          * (SMQ, formerly MNS).
          * 
@@ -1434,7 +1434,7 @@ public interface MNSEndpointBuilderFactory {
 
     }
     /**
-     * The builder of headers' name for the Alibaba Message Service (MNS) component.
+     * The builder of headers' name for the Alibaba Simple Message Queue (SMQ) component.
      */
     public static class MNSHeaderNameBuilder {
         /**
