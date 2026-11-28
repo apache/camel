@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataFormatConcurrentTest extends CamelTestSupport {
 
@@ -169,16 +171,23 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         final ByteArrayInputStream[] payloads = createPayloads(testCycleCount);
         ExecutorService pool = Executors.newFixedThreadPool(20);
         StopWatch watch = new StopWatch();
-        for (int i = 0; i < payloads.length; i++) {
-            final int finalI = i;
-            pool.execute(new Runnable() {
-                public void run() {
-                    template.sendBody(payloads[finalI]);
-                }
-            });
-        }
+        try {
+            for (int i = 0; i < payloads.length; i++) {
+                final int finalI = i;
+                pool.execute(new Runnable() {
+                    public void run() {
+                        template.sendBody(payloads[finalI]);
+                    }
+                });
+            }
 
-        latch.await();
+            assertTrue(latch.await(2, TimeUnit.MINUTES),
+                    "only " + (warmupCount + testCycleCount - latch.getCount())
+                                                         + " of " + (warmupCount + testCycleCount)
+                                                         + " messages reached the end of the route");
+        } finally {
+            pool.shutdownNow();
+        }
         long duration = watch.taken();
 
         LOG.info("Sending {} messages to {} took {} ms",
@@ -195,16 +204,23 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         final Foo[] payloads = createFoo(testCycleCount);
         ExecutorService pool = Executors.newFixedThreadPool(20);
         StopWatch watch = new StopWatch();
-        for (int i = 0; i < payloads.length; i++) {
-            final int finalI = i;
-            pool.execute(new Runnable() {
-                public void run() {
-                    template.sendBody(payloads[finalI]);
-                }
-            });
-        }
+        try {
+            for (int i = 0; i < payloads.length; i++) {
+                final int finalI = i;
+                pool.execute(new Runnable() {
+                    public void run() {
+                        template.sendBody(payloads[finalI]);
+                    }
+                });
+            }
 
-        latch.await();
+            assertTrue(latch.await(2, TimeUnit.MINUTES),
+                    "only " + (warmupCount + testCycleCount - latch.getCount())
+                                                         + " of " + (warmupCount + testCycleCount)
+                                                         + " messages reached the end of the route");
+        } finally {
+            pool.shutdownNow();
+        }
         long duration = watch.taken();
 
         LOG.info("Sending {} messages to {} took {} ms",
