@@ -872,10 +872,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     /**
-     * Sets the defaults of Camel (unless configured, such as with the aether.connector.requestTimeout system property):
-     * the request timeout, and the breadth-first dependency collector, which downloads the POMs in parallel (it
-     * resolves the same dependencies as the depth-first default of Maven Resolver). And stops using a repository that
-     * cannot be connected to.
+     * Sets the defaults of Camel (unless configured, such as with the aether.transport.http.requestTimeout system
+     * property): the request timeout, and the breadth-first dependency collector, which downloads the POMs in parallel
+     * (it resolves the same dependencies as the depth-first default of Maven Resolver). And stops using a repository
+     * that cannot be connected to.
      */
     private RepositorySystemSession withCamelDefaults(RepositorySystemSession session) {
         DefaultRepositorySystemSession answer = new DefaultRepositorySystemSession(session);
@@ -946,7 +946,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     /**
      * The request timeout in millis: how long to wait for data from a Maven repository before failing (default 60
-     * seconds). The aether.connector.requestTimeout system property overrides it.
+     * seconds). The aether.transport.http.requestTimeout system property overrides it.
      */
     public void setRequestTimeout(int requestTimeout) {
         this.requestTimeout = requestTimeout;

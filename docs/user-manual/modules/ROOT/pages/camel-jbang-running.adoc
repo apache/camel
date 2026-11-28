@@ -387,14 +387,14 @@ threads). Set the `aether.dependencyCollector.impl=df` system property to use th
 instead.
 
 A repository that cannot be connected to (the host does not resolve, refuses the connection, or does not answer
-within the connect timeout of 10 seconds) is logged once with a WARN and not used for the rest of the run, so each
+within the connect timeout of 30 seconds) is logged once with a WARN and not used for the rest of the run, so each
 download does not wait for it again. A repository that stops sending data fails the download after 60 seconds.
-Set the `aether.connector.connectTimeout` and `aether.connector.requestTimeout` system properties (in millis) to
+Set the `aether.transport.http.connectTimeout` and `aether.transport.http.requestTimeout` system properties (in millis) to
 change the timeouts:
 
 [source,bash]
 ----
-export JAVA_TOOL_OPTIONS="-Daether.connector.requestTimeout=180000"
+export JAVA_TOOL_OPTIONS="-Daether.transport.http.requestTimeout=180000"
 ----
 
 [[advanced-class-to-dependency]]

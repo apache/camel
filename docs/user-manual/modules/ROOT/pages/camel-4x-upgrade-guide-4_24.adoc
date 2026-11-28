@@ -25,6 +25,19 @@ Maven Resolver 2.x ships with Maven 3.10.x and Maven 4. Users who embed or exten
 `camel-tooling-maven` and reference `maven-resolver-transport-http` directly must rename
 that dependency to `maven-resolver-transport-apache` (the artifact was renamed in Resolver 2.x).
 
+**Timeout system properties renamed.** Maven Resolver 2.x reads
+`aether.transport.http.connectTimeout` and `aether.transport.http.requestTimeout` (in millis).
+The previous names `aether.connector.connectTimeout` and `aether.connector.requestTimeout` are
+no longer recognised. The default connect timeout increased from 10 seconds to 30 seconds; Camel
+keeps its own default of 60 seconds for the request timeout. Update any `JAVA_TOOL_OPTIONS` or
+JVM system property overrides to the new names.
+
+**Local-repository tracking keys.** Since Maven Resolver 2.0.23, the default tracking-key
+function is `nid_hurl`, which writes URL-qualified keys to `_remote.repositories`. Artifacts
+downloaded by `camel run` may not be recognised as already-available by a Maven 3.9.x build
+using the same local repository, so Maven 3.9 may re-fetch them and `mvn -o` (offline mode)
+may fail for those artifacts.
+
 === camel-openapi-java - RestModelConverters is now an interface
 
 `org.apache.camel.openapi.RestModelConverters` is now an interface instead of a concrete class. Applications that
@@ -4257,7 +4270,7 @@ All commands find running integrations the same way:
 
 The Camel CLI (`camel run`, `camel export`, the CLI plugins, and other tools that download with `camel-tooling-maven`) now
 waits 60 seconds for data from a Maven repository, instead of the 30 minutes of Maven Resolver, so a repository that
-stops sending no longer hangs the download for that long. Set the `aether.connector.requestTimeout` system property
+stops sending no longer hangs the download for that long. Set the `aether.transport.http.requestTimeout` system property
 (in millis) for a longer timeout. A repository that cannot be connected to is now logged with a WARN and not used
 for the rest of the run.
 
