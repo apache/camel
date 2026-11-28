@@ -691,7 +691,8 @@ class CitrusTestChecksTest {
                     from:
                       uri: timer:tick
                 """)).containsExactly("Line 1: array found, object expected: a Citrus test is a map with the keys"
-                                      + " actions, author, description, endpoints, finally, name, status, variables");
+                                      + " actions, author, configuration, description, endpoints, finally, name, status,"
+                                      + " variables");
         List<String> msgs = CitrusTestChecks.validate("""
                 name: t
                 status: final
@@ -703,7 +704,7 @@ class CitrusTestChecksTest {
         assertThat(msgs.get(0)).isEqualTo("Line 2: status: final is not one of DRAFT, READY_FOR_REVIEW, FINAL, DISABLED"
                                           + " (did you mean FINAL?)");
         assertThat(msgs.get(1)).isEqualTo("Line 3: steps is not a key of a Citrus test, which takes actions, author,"
-                                          + " description, endpoints, finally, name, status, variables");
+                                          + " configuration, description, endpoints, finally, name, status, variables");
     }
 
     @Test
