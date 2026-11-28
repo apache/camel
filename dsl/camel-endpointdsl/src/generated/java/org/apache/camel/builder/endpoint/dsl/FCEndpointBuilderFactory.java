@@ -462,6 +462,22 @@ public interface FCEndpointBuilderFactory {
         public String alibabaFcStatusCode() {
             return "CamelAlibabaFcStatusCode";
         }
+        /**
+         * The error type that Function Compute returns with the status 200 for
+         * a function error, such as UnhandledInvocationError. The producer sets
+         * it for invokeFunction, or removes it if the response has none, unless
+         * the exchange fails. Such a function error does not fail the exchange,
+         * so a route detects it by this header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaFcFunctionError}.
+         */
+        public String alibabaFcFunctionError() {
+            return "CamelAlibabaFcFunctionError";
+        }
     }
     static FCEndpointBuilder endpointBuilder(String componentName, String path) {
         class FCEndpointBuilderImpl extends AbstractEndpointBuilder implements FCEndpointBuilder, AdvancedFCEndpointBuilder {

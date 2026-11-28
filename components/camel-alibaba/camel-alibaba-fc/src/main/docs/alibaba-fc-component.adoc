@@ -58,6 +58,12 @@ file is sent as its bytes, so binary data is kept. Without a body the function i
 or a POJO does not convert to bytes and fails with an `InvalidPayloadException`, so marshal it first, for example to
 JSON with `marshal().json()`.
 
+=== Function error
+
+A function error that Function Compute returns with the status 200 does not fail the exchange. The producer sets the
+`CamelAlibabaFcFunctionError` header to its error type, such as `UnhandledInvocationError`. A route detects such a
+function error by this header, for example in a choice.
+
 === Endpoint of Function Compute
 
 The `endpoint` option is the endpoint of Function Compute for your Alibaba Cloud account and region. The public
