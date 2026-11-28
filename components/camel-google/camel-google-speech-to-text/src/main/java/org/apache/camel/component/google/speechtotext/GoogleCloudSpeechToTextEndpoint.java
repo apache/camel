@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Transcribe audio to text using Google Cloud Speech-to-Text API
+ * Transcribe audio to text with the Google Cloud Speech-to-Text API.
  */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "google-speech-to-text", title = "Google Cloud Speech To Text",
              syntax = "google-speech-to-text:operation", category = {

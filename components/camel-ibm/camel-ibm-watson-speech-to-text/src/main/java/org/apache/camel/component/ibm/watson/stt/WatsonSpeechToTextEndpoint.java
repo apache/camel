@@ -33,7 +33,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Convert speech audio to text using IBM Watson Speech to Text
+ * Transcribe audio to text with IBM Watson Speech to Text, and list or get its speech models and custom language
+ * models.
  */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "ibm-watson-speech-to-text", title = "IBM Watson Speech to Text",
              syntax = "ibm-watson-speech-to-text:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
@@ -48,9 +49,11 @@ import org.apache.camel.support.DefaultEndpoint;
                                                          carriers = Carrier.TEXT) },
                                   description = "The audio to recognize in the format of contentType (audio/wav by default), as"
                                                 + " bytes, a stream or a file, unless the CamelIBMWatsonSTTAudioFile header gives a"
-                                                + " file. No body or a Map fails, and text is sent as its bytes. getModel and"
-                                                + " getCustomModel read the model name or ID as text unless the"
-                                                + " CamelIBMWatsonSTTModelName header gives it"),
+                                                + " file. No body or a Map fails, and text is sent as its bytes. getModel reads the"
+                                                + " model name as text unless the CamelIBMWatsonSTTModelName header gives it, and"
+                                                + " getCustomModel the customization ID unless the"
+                                                + " CamelIBMWatsonSTTCustomizationId or CamelIBMWatsonSTTModelName header"
+                                                + " gives it"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    javaType = "com.ibm.watson.speech_to_text.v1.model.SpeechRecognitionResults",
                                    byOption = {
@@ -68,7 +71,8 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " and listCustomModels a List of LanguageModel"))
 public class WatsonSpeechToTextEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A logical name for the endpoint, for example to tell endpoints apart. The component does not"
+                           + " use it.")
     @Metadata(required = true)
     private String label;
 
@@ -117,6 +121,11 @@ public class WatsonSpeechToTextEndpoint extends DefaultEndpoint implements Endpo
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    @Override
+    public WatsonSpeechToTextComponent getComponent() {
+        return (WatsonSpeechToTextComponent) super.getComponent();
     }
 
     public WatsonSpeechToTextConfiguration getConfiguration() {

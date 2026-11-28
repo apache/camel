@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.securityhub.SecurityHubClient;
 
 /**
- * Manage and interact with AWS Security Hub for security findings.
+ * Import, query and update security findings in AWS Security Hub.
  */
 @UriEndpoint(firstVersion = "4.18.0", scheme = "aws-security-hub", title = "AWS Security Hub",
              syntax = "aws-security-hub:label", producerOnly = true, category = {
@@ -65,7 +65,8 @@ public class SecurityHubEndpoint extends DefaultEndpoint implements EndpointServ
 
     private SecurityHubClient securityHubClient;
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A logical name of your choice for the endpoint. The producer does not send it to Security"
+                           + " Hub.")
     @Metadata(required = true)
     private String label;
     @UriParam
@@ -122,9 +123,6 @@ public class SecurityHubEndpoint extends DefaultEndpoint implements EndpointServ
         return label;
     }
 
-    /**
-     * Logical name
-     */
     public void setLabel(String label) {
         this.label = label;
     }

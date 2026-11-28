@@ -26,13 +26,19 @@ public final class ChunkConstants {
     /**
      * Header containing a Chunk template location
      */
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint configured.", javaType = "String")
+    @Metadata(description = "The URI of the template that the producer uses instead of the resourceUri, in the same format, for"
+                            + " example letter or file:templates/letter.chtml. The producer reads it only when"
+                            + " allowTemplateFromHeader is true, and removes it. It takes precedence over the CamelChunkTemplate"
+                            + " header.",
+              javaType = "String")
     public static final String CHUNK_RESOURCE_URI = "CamelChunkResourceUri";
 
     /**
      * Header containing the Chunk template code
      */
-    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
+    @Metadata(description = "The template text that the producer renders instead of the resourceUri. The producer reads it only"
+                            + " when allowTemplateFromHeader is true, and removes it.",
+              javaType = "String")
     public static final String CHUNK_TEMPLATE = "CamelChunkTemplate";
 
     /**

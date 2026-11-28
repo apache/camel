@@ -29,78 +29,153 @@ import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeCl
 @UriParams
 public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonConfiguration {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A logical name of the endpoint, which you choose freely. The producer does not use it: the"
+                           + " knowledge base, agent or flow and the operation are given by options and headers.")
     @Metadata(required = true)
     private String label;
-    @UriParam
+    @UriParam(description = "To use a custom software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient"
+                            + " for retrieve and retrieveAndGenerate. When this option is set or autowired, the credentials,"
+                            + " region, proxy, endpoint override and trustAllCertificates options are not used for this client."
+                            + " The Camel endpoint does not close a client that is set or autowired.")
     @Metadata(label = "advanced", autowired = true)
     private BedrockAgentRuntimeClient bedrockAgentRuntimeClient;
-    @UriParam
+    @UriParam(description = "To use a custom"
+                            + " software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient for"
+                            + " invokeFlow, invokeAgent and invokeInlineAgent, which receive their response as an event stream."
+                            + " When it is not set, the endpoint builds one from the credentials, region, proxy and endpoint"
+                            + " override options: at start when the operation option is one of these, or else on first use. The"
+                            + " Camel endpoint does not close a client that is set or autowired.")
     @Metadata(label = "advanced", autowired = true)
     private BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The access key ID of the AWS credentials, used together with the secretKey option. It is"
+                            + " required, unless bedrockAgentRuntimeClient is set or useDefaultCredentialsProvider,"
+                            + " useProfileCredentialsProvider or useSessionCredentials is true.",
+              label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The secret access key of the AWS credentials, used together with the accessKey option. It is"
+                            + " required, unless bedrockAgentRuntimeClient is set or useDefaultCredentialsProvider,"
+                            + " useProfileCredentialsProvider or useSessionCredentials is true.",
+              label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(description = "The session token of temporary AWS credentials, for example of an assumed IAM role. It is used"
+                            + " only when useSessionCredentials is true, together with the accessKey and secretKey options."
+                            + " When it is not set, the accessKey and secretKey options are used without a session token.",
+              label = "security", security = "secret")
     private String sessionToken;
-    @UriParam(enums = "amazon.titan-text-express-v1,amazon.titan-text-lite-v1,amazon.titan-image-generator-v1,amazon.titan-embed-text-v1,amazon.titan-embed-image-v1,amazon.titan-text-premier-v1:0,amazon.titan-embed-text-v2:0,amazon.titan-image-generator-v2:0,amazon.nova-canvas-v1:0,amazon.nova-lite-v1:0,amazon.nova-micro-v1:0,amazon.nova-premier-v1:0,amazon.nova-pro-v1:0,amazon.nova-reel-v1:0,amazon.nova-reel-v1:1,amazon.nova-sonic-v1:0,amazon.rerank-v1:0,ai21.jamba-1-5-large-v1:0,ai21.jamba-1-5-mini-v1:0,anthropic.claude-3-sonnet-20240229-v1:0,anthropic.claude-3-5-sonnet-20240620-v1:0,anthropic.claude-3-5-sonnet-20241022-v2:0,anthropic.claude-3-haiku-20240307-v1:0,anthropic.claude-3-5-haiku-20241022-v1:0,anthropic.claude-3-opus-20240229-v1:0,anthropic.claude-3-7-sonnet-20250219-v1:0,anthropic.claude-opus-4-20250514-v1:0,anthropic.claude-sonnet-4-20250514-v1:0,cohere.command-r-plus-v1:0,cohere.command-r-v1:0,cohere.embed-english-v3,cohere.embed-multilingual-v3,cohere.rerank-v3-5:0,meta.llama3-8b-instruct-v1:0,meta.llama3-70b-instruct-v1:0,meta.llama3-1-8b-instruct-v1:0,meta.llama3-1-70b-instruct-v1:0,meta.llama3-1-405b-instruct-v1:0,meta.llama3-2-1b-instruct-v1:0,meta.llama3-2-3b-instruct-v1:0,meta.llama3-2-11b-instruct-v1:0,meta.llama3-2-90b-instruct-v1:0,meta.llama3-3-70b-instruct-v1:0,meta.llama4-maverick-17b-instruct-v1:0,meta.llama4-scout-17b-instruct-v1:0,mistral.mistral-7b-instruct-v0:2,mistral.mixtral-8x7b-instruct-v0:1,mistral.mistral-large-2402-v1:0,mistral.mistral-large-2407-v1:0,mistral.mistral-small-2402-v1:0,mistral.pixtral-large-2502-v1:0,stability.sd3-5-large-v1:0,stability.stable-image-control-sketch-v1:0,stability.stable-image-control-structure-v1:0,stability.stable-image-core-v1:1")
+    @UriParam(description = "The ID or ARN of the model that retrieveAndGenerate generates the answer with, for example"
+                            + " anthropic.claude-3-5-sonnet-20241022-v2:0. The other operations do not use it, and neither does"
+                            + " retrieveAndGenerate with pojoRequest.",
+              enums = "amazon.titan-text-express-v1,amazon.titan-text-lite-v1,amazon.titan-image-generator-v1,amazon.titan-embed-text-v1,amazon.titan-embed-image-v1,amazon.titan-text-premier-v1:0,amazon.titan-embed-text-v2:0,amazon.titan-image-generator-v2:0,amazon.nova-canvas-v1:0,amazon.nova-lite-v1:0,amazon.nova-micro-v1:0,amazon.nova-premier-v1:0,amazon.nova-pro-v1:0,amazon.nova-reel-v1:0,amazon.nova-reel-v1:1,amazon.nova-sonic-v1:0,amazon.rerank-v1:0,ai21.jamba-1-5-large-v1:0,ai21.jamba-1-5-mini-v1:0,anthropic.claude-3-sonnet-20240229-v1:0,anthropic.claude-3-5-sonnet-20240620-v1:0,anthropic.claude-3-5-sonnet-20241022-v2:0,anthropic.claude-3-haiku-20240307-v1:0,anthropic.claude-3-5-haiku-20241022-v1:0,anthropic.claude-3-opus-20240229-v1:0,anthropic.claude-3-7-sonnet-20250219-v1:0,anthropic.claude-opus-4-20250514-v1:0,anthropic.claude-sonnet-4-20250514-v1:0,cohere.command-r-plus-v1:0,cohere.command-r-v1:0,cohere.embed-english-v3,cohere.embed-multilingual-v3,cohere.rerank-v3-5:0,meta.llama3-8b-instruct-v1:0,meta.llama3-70b-instruct-v1:0,meta.llama3-1-8b-instruct-v1:0,meta.llama3-1-70b-instruct-v1:0,meta.llama3-1-405b-instruct-v1:0,meta.llama3-2-1b-instruct-v1:0,meta.llama3-2-3b-instruct-v1:0,meta.llama3-2-11b-instruct-v1:0,meta.llama3-2-90b-instruct-v1:0,meta.llama3-3-70b-instruct-v1:0,meta.llama4-maverick-17b-instruct-v1:0,meta.llama4-scout-17b-instruct-v1:0,mistral.mistral-7b-instruct-v0:2,mistral.mixtral-8x7b-instruct-v0:1,mistral.mistral-large-2402-v1:0,mistral.mistral-large-2407-v1:0,mistral.mistral-small-2402-v1:0,mistral.pixtral-large-2502-v1:0,stability.sd3-5-large-v1:0,stability.stable-image-control-sketch-v1:0,stability.stable-image-control-structure-v1:0,stability.stable-image-core-v1:1")
     private String modelId;
-    @UriParam
+    @UriParam(description = "The ID of the knowledge base that retrieve and retrieveAndGenerate query. The other operations"
+                            + " do not use it, and neither do these with pojoRequest.")
     private String knowledgeBaseId;
-    @UriParam
+    @UriParam(description = "The operation that the producer performs. The CamelAwsBedrockAgentRuntimeOperation header"
+                            + " replaces this option.")
     @Metadata(required = true)
     private BedrockAgentRuntimeOperations operation;
-    @UriParam(label = "flow")
+    @UriParam(description = "The ID of the flow that invokeFlow invokes. The CamelAwsBedrockAgentRuntimeFlowIdentifier header"
+                            + " replaces this option.",
+              label = "flow")
     private String flowIdentifier;
-    @UriParam(label = "flow")
+    @UriParam(description = "The ID of the alias of the flow that invokeFlow invokes. The"
+                            + " CamelAwsBedrockAgentRuntimeFlowAliasIdentifier header replaces this option.",
+              label = "flow")
     private String flowAliasIdentifier;
-    @UriParam(label = "flow,agent", defaultValue = "false")
+    @UriParam(description = "Whether invokeFlow, invokeAgent and invokeInlineAgent ask for the trace events of the"
+                            + " invocation, which the producer gives in the CamelAwsBedrockAgentRuntimeFlowTraces or"
+                            + " CamelAwsBedrockAgentRuntimeAgentTraces header. The CamelAwsBedrockAgentRuntimeFlowEnableTrace"
+                            + " header replaces it for invokeFlow, and the CamelAwsBedrockAgentRuntimeAgentEnableTrace header"
+                            + " for the agent operations.",
+              label = "flow,agent", defaultValue = "false")
     private boolean enableTrace;
-    @UriParam(label = "agent")
+    @UriParam(description = "The ID of the agent that invokeAgent invokes. The CamelAwsBedrockAgentRuntimeAgentId header"
+                            + " replaces this option.",
+              label = "agent")
     private String agentId;
-    @UriParam(label = "agent")
+    @UriParam(description = "The ID of the alias of the agent that invokeAgent invokes. The"
+                            + " CamelAwsBedrockAgentRuntimeAgentAliasId header replaces this option.",
+              label = "agent")
     private String agentAliasId;
-    @UriParam(label = "agent")
+    @UriParam(description = "The ID of the session of invokeAgent and invokeInlineAgent: reuse the same value to continue the"
+                            + " conversation. The CamelAwsBedrockAgentRuntimeSessionId header replaces this option. If neither"
+                            + " is set, the producer uses a random ID for each message, and gives it in that header.",
+              label = "agent")
     private String sessionId;
-    @UriParam(label = "agent", enums = "complete,chunks", defaultValue = "complete")
+    @UriParam(description = "How invokeAgent and invokeInlineAgent give the answer: complete gives the whole text as a"
+                            + " String, and chunks gives a List of the text of each chunk. In both modes the producer waits"
+                            + " until the agent has finished. The CamelAwsBedrockAgentRuntimeAgentStreamOutputMode header"
+                            + " replaces this option.",
+              label = "agent", enums = "complete,chunks", defaultValue = "complete")
     private String streamOutputMode;
-    @UriParam(label = "agent")
+    @UriParam(description = "The ID of the foundation model that the inline agent of invokeInlineAgent uses, for example"
+                            + " anthropic.claude-3-5-sonnet-20241022-v2:0. The CamelAwsBedrockAgentRuntimeAgentFoundationModel"
+                            + " header replaces this option.",
+              label = "agent")
     private String foundationModel;
-    @UriParam(label = "agent")
+    @UriParam(description = "The instructions that tell the inline agent of invokeInlineAgent what to do and how to interact"
+                            + " with users. The CamelAwsBedrockAgentRuntimeAgentInstruction header replaces this option.",
+              label = "agent")
     private String instruction;
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(description = "The protocol that the HTTP clients of Bedrock Agent Runtime use to connect to the proxy. It is"
+                            + " used only when the proxyHost and proxyPort options are set.",
+              label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "proxy")
+    @UriParam(description = "The host name of the proxy that the HTTP clients of Bedrock Agent Runtime connect through. The"
+                            + " proxy is used only when the proxyPort option is set too.",
+              label = "proxy")
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(description = "The port of the proxy that the HTTP clients of Bedrock Agent Runtime connect through. The proxy"
+                            + " is used only when the proxyHost option is set too.",
+              label = "proxy")
     private Integer proxyPort;
-    @UriParam(enums = "us-east-1,us-east-2,us-west-2,us-gov-west-1,ap-northeast-1,ap-northeast-2,ap-south-1,ap-southeast-1,ap-southeast-2,ca-central-1,eu-central-1,eu-central-2,eu-west-1,eu-west-2,eu-west-3,sa-east-1")
+    @UriParam(description = "The AWS region of Amazon Bedrock, as a region ID such as us-east-1, which is the value of"
+                            + " Region.US_EAST_1.id(). If not set, the AWS SDK takes the region from its default region"
+                            + " provider chain, for example the AWS_REGION environment variable.",
+              enums = "us-east-1,us-east-2,us-west-2,us-gov-west-1,ap-northeast-1,ap-northeast-2,ap-south-1,ap-southeast-1,ap-southeast-2,ca-central-1,eu-central-1,eu-central-2,eu-west-1,eu-west-2,eu-west-3,sa-east-1")
     private String region;
-    @UriParam
+    @UriParam(description = "Whether the body is the request object of the AWS SDK for the operation, which the producer"
+                            + " sends as it is: a RetrieveAndGenerateRequest, RetrieveRequest, InvokeFlowRequest,"
+                            + " InvokeAgentRequest or InvokeInlineAgentRequest. The options and headers that build the request"
+                            + " are then not used, and a body of another type fails the exchange.")
     private boolean pojoRequest;
-    @UriParam(label = "security", security = "insecure:ssl")
+    @UriParam(description = "Whether the HTTP clients of Bedrock Agent Runtime trust every TLS certificate without checking"
+                            + " it. It applies to any endpoint, not only to an overridden one, so use it only for testing, for"
+                            + " example against a local emulator.",
+              label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
-    @UriParam
+    @UriParam(description = "Whether to send the requests to the URI of the uriEndpointOverride option instead of the"
+                            + " endpoint of the region. It has no effect when uriEndpointOverride is not set.")
     private boolean overrideEndpoint;
-    @UriParam
+    @UriParam(description = "The URI of the endpoint to use instead of the endpoint of the region, for example"
+                            + " http://localhost:4566 for a local emulator. It is used only when overrideEndpoint is true.")
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether to load the credentials with the default credentials provider chain of the AWS SDK,"
+                            + " which looks in system properties, environment variables, the shared credentials and config"
+                            + " files, and the container or instance role. It takes precedence over the other credentials"
+                            + " options.",
+              defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "Whether to load the credentials from a profile of the AWS shared credentials and config files,"
+                            + " the one of the profileCredentialsName option. It is not used when useDefaultCredentialsProvider"
+                            + " is true, and it takes precedence over the session and static credentials.",
+              defaultValue = "false")
     private boolean useProfileCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(description = "Whether to use temporary credentials made of the accessKey, secretKey and sessionToken options,"
+                            + " for example those of an assumed IAM role. It is not used when useDefaultCredentialsProvider or"
+                            + " useProfileCredentialsProvider is true.",
+              label = "security")
     private boolean useSessionCredentials;
-    @UriParam(defaultValue = "false")
+    @UriParam(description = "The name of the profile in the AWS shared credentials and config files, used when"
+                            + " useProfileCredentialsProvider is true. If not set, the AWS SDK uses its default profile, which"
+                            + " the AWS_PROFILE environment variable can change.",
+              defaultValue = "false")
     private String profileCredentialsName;
 
     public BedrockAgentRuntimeClient getBedrockAgentRuntimeClient() {
         return bedrockAgentRuntimeClient;
     }
 
-    /**
-     * To use an existing configured AWS Bedrock Agent Runtime client
-     */
     public void setBedrockAgentRuntimeClient(BedrockAgentRuntimeClient bedrockRuntimeClient) {
         this.bedrockAgentRuntimeClient = bedrockRuntimeClient;
     }
@@ -109,10 +184,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return bedrockAgentRuntimeAsyncClient;
     }
 
-    /**
-     * To use an existing configured AWS Bedrock Agent Runtime async client (required for invokeFlow which streams
-     * events back).
-     */
     public void setBedrockAgentRuntimeAsyncClient(BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient) {
         this.bedrockAgentRuntimeAsyncClient = bedrockAgentRuntimeAsyncClient;
     }
@@ -121,9 +192,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return accessKey;
     }
 
-    /**
-     * Amazon AWS Access Key
-     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -132,9 +200,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return secretKey;
     }
 
-    /**
-     * Amazon AWS Secret Key
-     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -143,9 +208,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return sessionToken;
     }
 
-    /**
-     * Amazon AWS Session Token used when the user needs to assume an IAM role
-     */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
     }
@@ -154,9 +216,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return operation;
     }
 
-    /**
-     * The operation to perform
-     */
     public void setOperation(BedrockAgentRuntimeOperations operation) {
         this.operation = operation;
     }
@@ -165,9 +224,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return proxyProtocol;
     }
 
-    /**
-     * To define a proxy protocol when instantiating the Bedrock Agent Runtime client
-     */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
@@ -176,9 +232,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return proxyHost;
     }
 
-    /**
-     * To define a proxy host when instantiating the Bedrock Agent Runtime client
-     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -187,9 +240,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return proxyPort;
     }
 
-    /**
-     * To define a proxy port when instantiating the Bedrock Agent Runtime client
-     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -198,11 +248,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return region;
     }
 
-    /**
-     * The region in which Bedrock Agent Runtime client needs to work. When using this parameter, the configuration will
-     * expect the lowercase name of the region (for example, ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
-     */
     public void setRegion(String region) {
         this.region = region;
     }
@@ -211,9 +256,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return pojoRequest;
     }
 
-    /**
-     * If we want to use a POJO request as body or not
-     */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }
@@ -222,9 +264,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return trustAllCertificates;
     }
 
-    /**
-     * If we want to trust all certificates in case of overriding the endpoint
-     */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
@@ -233,10 +272,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return overrideEndpoint;
     }
 
-    /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the
-     * uriEndpointOverride option
-     */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
     }
@@ -245,17 +280,10 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return uriEndpointOverride;
     }
 
-    /**
-     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
-     */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
-    /**
-     * Set whether the Bedrock Agent Runtime client should expect to load credentials through a default credentials
-     * provider or to expect static credentials to be passed in.
-     */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
@@ -268,10 +296,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return useProfileCredentialsProvider;
     }
 
-    /**
-     * Set whether the Bedrock Agent Runtime client should expect to load credentials through a profile credentials
-     * provider.
-     */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
     }
@@ -280,10 +304,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return useSessionCredentials;
     }
 
-    /**
-     * Set whether the Bedrock Agent Runtime client should expect to use Session Credentials. This is useful in a
-     * situation in which the user needs to assume an IAM role for doing operations in Bedrock.
-     */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
     }
@@ -292,9 +312,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return profileCredentialsName;
     }
 
-    /**
-     * If using a profile credentials provider, this parameter will set the profile name
-     */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }
@@ -303,9 +320,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return modelId;
     }
 
-    /**
-     * Define the model Id we are going to use (used by the retrieveAndGenerate operation)
-     */
     public void setModelId(String modelId) {
         this.modelId = modelId;
     }
@@ -314,9 +328,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return knowledgeBaseId;
     }
 
-    /**
-     * Define the Knowledge Base Id we are going to use (used by the retrieve and retrieveAndGenerate operations)
-     */
     public void setKnowledgeBaseId(String knowledgeBaseId) {
         this.knowledgeBaseId = knowledgeBaseId;
     }
@@ -325,10 +336,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return flowIdentifier;
     }
 
-    /**
-     * The unique identifier of the Bedrock flow to invoke (used by the invokeFlow operation). Can be overridden per
-     * exchange via the CamelAwsBedrockAgentRuntimeFlowIdentifier header.
-     */
     public void setFlowIdentifier(String flowIdentifier) {
         this.flowIdentifier = flowIdentifier;
     }
@@ -337,10 +344,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return flowAliasIdentifier;
     }
 
-    /**
-     * The unique identifier of the Bedrock flow alias to invoke (used by the invokeFlow operation). Can be overridden
-     * per exchange via the CamelAwsBedrockAgentRuntimeFlowAliasIdentifier header.
-     */
     public void setFlowAliasIdentifier(String flowAliasIdentifier) {
         this.flowAliasIdentifier = flowAliasIdentifier;
     }
@@ -349,9 +352,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return agentId;
     }
 
-    /**
-     * The unique identifier of the agent to invoke, used by the invokeAgent operation.
-     */
     public void setAgentId(String agentId) {
         this.agentId = agentId;
     }
@@ -360,9 +360,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return agentAliasId;
     }
 
-    /**
-     * The unique identifier of the agent alias to invoke, used by the invokeAgent operation.
-     */
     public void setAgentAliasId(String agentAliasId) {
         this.agentAliasId = agentAliasId;
     }
@@ -371,10 +368,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return sessionId;
     }
 
-    /**
-     * The unique identifier of the agent session. Reuse the same value across invocations to continue the same
-     * conversation. When not set, a random session id is generated for each invocation.
-     */
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
@@ -383,10 +376,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return streamOutputMode;
     }
 
-    /**
-     * The streaming output mode (complete or chunks) used by the agent operations. In complete mode the response chunks
-     * are accumulated and the body is the full text. In chunks mode the body is the list of chunks.
-     */
     public void setStreamOutputMode(String streamOutputMode) {
         this.streamOutputMode = streamOutputMode;
     }
@@ -395,9 +384,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return foundationModel;
     }
 
-    /**
-     * The foundation model used by the invokeInlineAgent operation.
-     */
     public void setFoundationModel(String foundationModel) {
         this.foundationModel = foundationModel;
     }
@@ -406,9 +392,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return instruction;
     }
 
-    /**
-     * The instruction given to the agent defined by the invokeInlineAgent operation.
-     */
     public void setInstruction(String instruction) {
         this.instruction = instruction;
     }
@@ -417,10 +400,6 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
         return enableTrace;
     }
 
-    /**
-     * Enables tracing for the invokeFlow and agent operations. When enabled, the producer collects the trace events and
-     * publishes them in the CamelAwsBedrockAgentRuntimeFlowTraces or CamelAwsBedrockAgentRuntimeAgentTraces header.
-     */
     public void setEnableTrace(boolean enableTrace) {
         this.enableTrace = enableTrace;
     }

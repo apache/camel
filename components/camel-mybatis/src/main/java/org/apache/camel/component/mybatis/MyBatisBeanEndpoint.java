@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS_BEAN;
 
 /**
- * Perform queries, inserts, updates or deletes in a relational database using MyBatis.
+ * Call a method of a MyBatis mapper interface to query, insert, update or delete rows in a relational database.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = SCHEME_MYBATIS_BEAN, title = "MyBatis Bean",
              syntax = "mybatis-bean:beanName:methodName", producerOnly = true, category = { Category.DATABASE },
@@ -48,10 +48,13 @@ import static org.apache.camel.component.mybatis.MyBatisConstants.SCHEME_MYBATIS
                                                  + " is unchanged"))
 public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
 
-    @UriPath
+    @UriPath(description = "The mapper interface to call, as a type alias of the MyBatis configuration or a fully qualified"
+                           + " class name. It is not a bean of the Camel registry: the mapper must be registered in the"
+                           + " MyBatis configuration.")
     @Metadata(required = true)
     private String beanName;
-    @UriPath
+    @UriPath(description = "The name of the method of the mapper interface to call. The bean binding of Camel selects the"
+                           + " method and converts the parameter to the type that the method declares.")
     @Metadata(required = true)
     private String methodName;
 
@@ -78,9 +81,6 @@ public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
         return beanName;
     }
 
-    /**
-     * Name of the bean with the MyBatis annotations. This can either by a type alias or a FQN class name.
-     */
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
@@ -89,9 +89,6 @@ public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
         return methodName;
     }
 
-    /**
-     * Name of the method on the bean that has the SQL query to be executed.
-     */
     public void setMethodName(String methodName) {
         this.methodName = methodName;
     }

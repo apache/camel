@@ -2,7 +2,7 @@
 :doctitle: IBM watsonx.ai
 :shortname: ibm-watsonx-ai
 :artifactid: camel-ibm-watsonx-ai
-:description: Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
+:description: Generate text, chat, embed, rerank and tokenize text, extract and classify documents, detect harmful content and forecast time series with the foundation models and deployments of IBM watsonx.ai.
 :since: 4.18
 :supportlevel: Stable
 :tabs-sync-option:
@@ -53,22 +53,39 @@ include::partial$component-endpoint-headers.adoc[]
 
 You must provide the following options to use this component:
 
-* `apiKey` - Your IBM Cloud API key for authentication
-* `baseUrl` - The watsonx.ai endpoint URL (e.g., https://us-south.ml.cloud.ibm.com)
+* `apiKey` - Your IBM Cloud API key for authentication (or `oauthProfile` or `authenticator`, see <<_authentication>>)
+* `baseUrl` - The watsonx.ai endpoint URL of your region, such as `https://us-south.ml.cloud.ibm.com` (Dallas) or `https://eu-de.ml.cloud.ibm.com` (Frankfurt)
 * `projectId` or `spaceId` - Your IBM Cloud project or deployment space ID
 * `modelId` - The foundation model ID (for model-specific operations)
 * (optional) `documentConnectionId`, `documentBucket`, `cosUrl` - needed by services like `textExtraction` or `textClassification`
 * (optional) `wxUrl` - For hosted IBM tools
 
-== OAuth Authentication
+== Authentication
 
-When using an identity provider for service-to-service authentication instead of a static API key, set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is used as the `apiKey`. This requires `camel-oauth` on the classpath.
+The endpoint authenticates in one of three ways. All the services of an endpoint share its authenticator, and so its
+access token.
+
+* `apiKey`: an IBM Cloud API key, which the endpoint exchanges at IBM Cloud IAM for an access token, renewed before it
+expires. This is the usual way for watsonx.ai on IBM Cloud.
+* `oauthProfile`: the access token of an OAuth 2.0 Client Credentials profile of `camel-oauth`, sent to watsonx.ai as
+a `Bearer` token. The identity provider must issue tokens that watsonx.ai accepts, such as an API gateway in front of
+watsonx.ai or a watsonx.ai software installation that trusts the identity provider: IBM Cloud IAM itself does not offer
+the Client Credentials grant.
+* `authenticator`: any `com.ibm.watsonx.ai.core.auth.Authenticator` of the watsonx.ai SDK, given as a bean reference,
+such as a `CP4DAuthenticator` for watsonx.ai software on Cloud Pak for Data.
+
+=== OAuth profile
+
+Set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. This requires
+`camel-oauth` on the classpath. The token is asked again for every request: `camel-oauth` caches it until it expires and
+then obtains a new one, so a long-running route keeps working. The endpoint fails to start when the profile cannot give
+a token.
 
 [source,properties]
 ----
-camel.oauth.ibm.client-id=my-client
-camel.oauth.ibm.client-secret=my-secret
-camel.oauth.ibm.token-endpoint=https://iam.cloud.ibm.com/identity/token
+camel.oauth.myidp.client-id=my-client
+camel.oauth.myidp.client-secret=my-secret
+camel.oauth.myidp.token-endpoint=https://idp.example.com/oauth2/token
 ----
 
 [tabs]
@@ -78,7 +95,7 @@ Java::
 [source,java]
 ----
 from("direct:generate")
-    .to("ibm-watsonx-ai:myLabel?oauthProfile=ibm&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=my-project&modelId=ibm/granite-13b-instruct-v2");
+    .to("ibm-watsonx-ai:myLabel?oauthProfile=myidp&baseUrl={{ibm.watsonx.base-url}}&projectId=my-project&modelId=ibm/granite-4-h-small");
 ----
 
 XML::
@@ -87,7 +104,7 @@ XML::
 ----
 <route>
   <from uri="direct:generate"/>
-  <to uri="ibm-watsonx-ai:myLabel?oauthProfile=ibm&amp;baseUrl=https://us-south.ml.cloud.ibm.com&amp;projectId=my-project&amp;modelId=ibm/granite-13b-instruct-v2"/>
+  <to uri="ibm-watsonx-ai:myLabel?oauthProfile=myidp&amp;baseUrl={{ibm.watsonx.base-url}}&amp;projectId=my-project&amp;modelId=ibm/granite-4-h-small"/>
 </route>
 ----
 
@@ -102,12 +119,37 @@ YAML::
         - to:
             uri: ibm-watsonx-ai:myLabel
             parameters:
-              oauthProfile: ibm
-              baseUrl: "https://us-south.ml.cloud.ibm.com"
+              oauthProfile: myidp
+              baseUrl: "{{ibm.watsonx.base-url}}"
               projectId: my-project
-              modelId: ibm/granite-13b-instruct-v2
+              modelId: ibm/granite-4-h-small
 ----
 ====
+
+=== Custom authenticator
+
+The `authenticator` option takes an authenticator of the watsonx.ai SDK, for example to call watsonx.ai software on
+Cloud Pak for Data:
+
+[source,java]
+----
+import com.ibm.watsonx.ai.core.auth.cp4d.AuthMode;
+import com.ibm.watsonx.ai.core.auth.cp4d.CP4DAuthenticator;
+
+@BindToRegistry("cp4d")
+public CP4DAuthenticator cp4d() {
+    return CP4DAuthenticator.builder()
+        .baseUrl("https://cpd.example.com")
+        .username("admin")
+        .apiKey("my-api-key")
+        .authMode(AuthMode.ZEN_API_KEY)
+        .build();
+}
+
+from("direct:chat")
+    .to("ibm-watsonx-ai:chat?authenticator=#cp4d&baseUrl=https://cpd.example.com&projectId=my-project"
+        + "&modelId=ibm/granite-4-h-small&operation=chat");
+----
 
 == Security Considerations
 
@@ -129,7 +171,8 @@ The IBM watsonx.ai component provides the following operations:
 ==== Chat
 
 * `chat` - Chat with conversation history supporting system, user, and assistant messages
-* `chatStreaming` - Chat with streaming responses via callback consumer
+* `chatStreaming` - Chat with streaming responses via callback consumer (the `CamelIBMWatsonxAiStreamConsumer` header)
+or the `streamEndpoint` option
 
 The messages come from the `CamelIBMWatsonxAiMessages` header when it is set. Otherwise the message body gives them:
 a `List` is the conversation, in which each element is a `ChatMessage` or a `String` (a user message), and any other
@@ -158,7 +201,15 @@ header or the message body, as for `embedding`.
 
 ==== Content Detection
 
-* `detect` - Detect PII (Personal Identifiable Information) and HAP (Harmful, Abusive, Profane) content in text
+* `detect` - Detect PII (Personal Identifiable Information) and HAP (Harmful, Abusive, Profane) content in text, or
+risks with Granite Guardian
+* `detectContext` - Grade how relevant the context (documents, as texts or URLs) is to the input of the body
+(`context_relevance`), or how faithful the body is to the context (`faithfulness`)
+* `detectGenerated` - Grade how relevant the generated text of the body is to its prompt (`answer_relevance`)
+
+The `detectors` option names the detectors, such as `granite_guardian` for `detect`. In IBM Cloud, the detectors of
+`detectContext` and `detectGenerated` run in a watsonx.governance instance, given by the `governanceInstanceId` option:
+with a project or space only, watsonx.ai answers `detector_not_accessible`.
 
 ==== Document Processing
 
@@ -168,6 +219,7 @@ Text Extraction operations:
 * `textExtractionFetch` - Fetch text extraction results by job ID
 * `textExtractionUpload` - Upload a local file and start extraction
 * `textExtractionUploadAndFetch` - Upload, extract, and return text synchronously
+* `textExtractionAndFetch` - Extract a document already in the document bucket and return its text synchronously
 * `textExtractionUploadFile` - Upload file to COS without starting extraction
 * `textExtractionReadFile` - Read file from COS result bucket
 * `textExtractionDeleteFile` - Delete file from COS
@@ -179,6 +231,15 @@ Text Classification operations:
 * `textClassificationFetch` - Fetch classification results by job ID
 * `textClassificationUpload` - Upload a local file and start classification
 * `textClassificationUploadAndFetch` - Upload, classify, and return result synchronously
+* `textClassificationAndFetch` - Classify a document already in the document bucket and return the result synchronously
+
+The options of the text extraction (`extractionOutputs`, `extractionMode`, `ocrMode`, `documentLanguages`,
+`autoRotationCorrection`, `embeddedImages`, `outputDpi`, `outputTokens`, `kvpMode`) and classification
+(`classificationMode`, `ocrMode`, `documentLanguages`, `autoRotationCorrection`) are sent with every request; the
+`CamelIBMWatsonxAiOutputFileName` header names the output file. The operations that wait for the result (`AndFetch`)
+can remove the uploaded document (`removeUploadedFile`) and the output file (`removeOutputFile`) from Cloud Object
+Storage once the result is read (the SDK removes them asynchronously, so they can still be listed for a moment), and
+wait at most `processingTimeout`, which defaults to the `timeout` of the endpoint.
 * `textClassificationUploadFile` - Upload file to COS without starting classification
 * `textClassificationDeleteFile` - Delete file from COS
 * `textClassificationDeleteRequest` - Delete classification job
@@ -232,7 +293,7 @@ before the endpoint.
 
 |Conversational AI, chatbots, Text summarization, Q&A, translation
 |`chat`, `chatStreaming`
-|ibm/granite-4-h-small, meta-llama/llama-3-8b-instruct
+|ibm/granite-4-h-small, meta-llama/llama-3-3-70b-instruct
 
 |Semantic search, similarity matching
 |`embedding`
@@ -240,7 +301,7 @@ before the endpoint.
 
 |RAG document retrieval ranking
 |`rerank`
-|cross-encoder/ms-marco-minilm-l-12-v2
+|intfloat/multilingual-e5-large
 
 |Token counting, context management
 |`tokenize`
@@ -260,7 +321,7 @@ before the endpoint.
 
 |Time series forecasting
 |`forecast`, `deploymentForecast`
-|ibm/granite-ttm-1536-96-r2
+|ibm/granite-ttm-512-96-r2, ibm/granite-ttm-1024-96-r2, ibm/granite-ttm-1536-96-r2 (check the availability in your region with `listModels`)
 
 |Model catalog exploration
 |`listModels`, `listTasks`
@@ -276,7 +337,7 @@ before the endpoint.
 
 |Chat with tool calling (agentic)
 |`chat`, `processToolCalls`
-|ibm/granite-3-8b-instruct, ibm/granite-4-h-small
+|ibm/granite-4-h-small, meta-llama/llama-3-3-70b-instruct, mistralai/mistral-small-3-1-24b-instruct-2503
 |===
 
 == Sub-Pages
@@ -295,9 +356,9 @@ NOTE: This configuration approach works with both Spring Boot (`camel-ibm-watson
 ----
 # watsonx.ai configuration
 camel.component.ibm-watsonx-ai.configuration.api-key=${IBM_WATSONX_API_KEY}
-camel.component.ibm-watsonx-ai.configuration.base-url=https://us-south.ml.cloud.ibm.com
+camel.component.ibm-watsonx-ai.configuration.base-url=${IBM_WATSONX_URL}
 camel.component.ibm-watsonx-ai.configuration.project-id=${IBM_WATSONX_PROJECT_ID}
-camel.component.ibm-watsonx-ai.configuration.model-id=ibm/granite-13b-instruct-v2
+camel.component.ibm-watsonx-ai.configuration.model-id=ibm/granite-4-h-small
 camel.component.ibm-watsonx-ai.configuration.temperature=0.7
 camel.component.ibm-watsonx-ai.configuration.max-new-tokens=200
 ----
@@ -424,5 +485,8 @@ Maven users will need to add the following dependency to their `pom.xml`.
 ----
 
 where `x.x.x` is the version number of Camel.
+
+The component brings the JSON binding of the watsonx.ai SDK for Jackson 3 (`com.ibm.watsonx:watsonx-ai-jackson3`).
+The SDK accepts exactly one binding, so do not add `com.ibm.watsonx:watsonx-ai-jackson2` as well.
 
 // TODO restore once Spring Boot partials are released

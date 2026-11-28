@@ -17,6 +17,7 @@
 package org.apache.camel.component.avro;
 
 import java.net.InetSocketAddress;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -48,11 +49,52 @@ public class AvroListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvroListener.class);
 
     private final ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<>();
-    private AvroConsumer defaultConsumer;
+    private volatile AvroConsumer defaultConsumer;
     private final Server server;
+    private final AvroTransport transport;
+    private final Protocol protocol;
+    private final boolean reflectionProtocol;
+    private final String endpointUri;
 
     public AvroListener(AvroEndpoint endpoint) throws Exception {
-        server = initAndStartServer(endpoint.getConfiguration(), endpoint.getCamelContext());
+        AvroConfiguration configuration = endpoint.getConfiguration();
+        this.transport = configuration.getTransport();
+        this.protocol = configuration.getProtocol();
+        this.reflectionProtocol = configuration.isReflectionProtocol();
+        this.endpointUri = endpoint.getEndpointUri();
+        server = initAndStartServer(configuration, endpoint.getCamelContext());
+    }
+
+    /**
+     * Checks that a consumer of the endpoint can share the server of this listener: the server serves only the
+     * transport, protocol and responder type of the consumer that created it.
+     *
+     * @param  endpoint               the endpoint of the consumer that joins this listener
+     * @throws AvroComponentException when the transport, the protocol or reflectionProtocol differs
+     */
+    public void checkCompatible(AvroEndpoint endpoint) throws AvroComponentException {
+        AvroConfiguration configuration = endpoint.getConfiguration();
+        String reason = null;
+        if (transport != configuration.getTransport()) {
+            reason = "the transport " + configuration.getTransport() + " differs from " + transport;
+        } else if (reflectionProtocol != configuration.isReflectionProtocol()) {
+            reason = "reflectionProtocol=" + configuration.isReflectionProtocol() + " differs from reflectionProtocol="
+                     + reflectionProtocol;
+        } else if (!Objects.equals(protocol, configuration.getProtocol())) {
+            reason = "the protocol " + protocolName(configuration.getProtocol()) + " differs from "
+                     + protocolName(protocol);
+        }
+        if (reason != null) {
+            throw new AvroComponentException(
+                    "Consumer " + endpoint.getEndpointUri() + " cannot share the Avro server on " + configuration.getHost()
+                                             + ":" + configuration.getPort() + " with " + endpointUri + ": " + reason
+                                             + ". Consumers on the same host and port must use the same transport,"
+                                             + " protocol and reflectionProtocol.");
+        }
+    }
+
+    private static String protocolName(Protocol protocol) {
+        return protocol != null ? protocol.getNamespace() + "." + protocol.getName() : "null";
     }
 
     /**
@@ -123,12 +165,12 @@ public class AvroListener {
      * @return             true if all consumers are unregistered and defaultConsumer is absent or null. It means that
      *                     this responder can be unregistered.
      */
-    public boolean unregister(String messageName) {
+    public boolean unregister(String messageName, AvroConsumer consumer) {
         if (!StringUtils.isEmpty(messageName)) {
-            if (consumerRegistry.remove(messageName) == null) {
+            if (!consumerRegistry.remove(messageName, consumer)) {
                 LOGGER.warn("Consumer with message name {} was already unregistered.", messageName);
             }
-        } else {
+        } else if (defaultConsumer == consumer) {
             defaultConsumer = null;
         }
 

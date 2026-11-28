@@ -21,6 +21,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -43,6 +44,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.pqc.BouncyCastleKemSupport;
 import org.apache.camel.component.pqc.BouncyCastleSupport;
+import org.apache.camel.component.pqc.PQCAlgorithmId;
 import org.apache.camel.component.pqc.PQCKemLocks;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
@@ -79,7 +81,23 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  * <p>
- * The encrypted message format is:
+ * Wire format v2 (written by this implementation):
+ * </p>
+ *
+ * <pre>
+ * [8 bytes: header] [4 bytes: encap len] [N bytes: encapsulation] [12 bytes: AEAD nonce] [M bytes: ciphertext + auth tag]
+ *
+ * Header layout (8 bytes):
+ *   byte 0: magic 0x50 ('P')
+ *   byte 1: magic 0x51 ('Q')
+ *   byte 2: version  0x02
+ *   byte 3: format   0x03 (KEM data encryption)
+ *   byte 4-5: 16-bit KEM algorithm ID (big-endian, from {@link PQCAlgorithmId})
+ *   byte 6-7: 16-bit symmetric algorithm ID (big-endian, from {@link PQCAlgorithmId})
+ * </pre>
+ *
+ * <p>
+ * Wire format v1 (legacy, read-only backward compatibility):
  * </p>
  *
  * <pre>
@@ -135,6 +153,18 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     private static final String CHACHA_POLY1305_TRANSFORMATION = "CHACHA20-POLY1305";
     private static final String CHACHA_KEY_ALGORITHM = "ChaCha20";
 
+    // Wire format v2 header constants
+    /** Magic byte 0: 'P' (0x50) — identifies a PQC wire format v2 message. */
+    static final byte MAGIC_BYTE_0 = 0x50;
+    /** Magic byte 1: 'Q' (0x51) — identifies a PQC wire format v2 message. */
+    static final byte MAGIC_BYTE_1 = 0x51;
+    /** Wire format version: 0x02 (shared across all PQC v2 wire formats). */
+    static final byte WIRE_VERSION = 0x02;
+    /** Format type: KEM data encryption (0x03). */
+    static final byte FORMAT_TYPE_KEM = 0x03;
+    /** Total byte length of the v2 header. */
+    static final int HEADER_LENGTH = 8;
+
     /**
      * JCE names of the 128-bit block ciphers that provide a GCM AEAD mode and can therefore be used as the symmetric
      * (data-encapsulation) layer. The ChaCha20 stream cipher is handled separately via ChaCha20-Poly1305.
@@ -185,14 +215,37 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
                     kemAlg, kp.getPublic(), symAlg);
             byte[] encapsulation = encapsulated.encapsulation();
 
-            // Encrypt the payload with an authenticated cipher using a fresh random nonce
+            // Compute algorithm IDs for the header
+            int kemAlgId = PQCAlgorithmId.fromJcaName(kemAlg).getId();
+            if (kemAlgId == PQCAlgorithmId.UNKNOWN.getId()) {
+                // Try looking up by enum name (e.g. "MLKEM" enum → "ML-KEM" JCA name)
+                kemAlgId = lookupKemAlgId(kemAlg);
+            }
+            int symAlgId = PQCAlgorithmId.fromJcaName(symAlg).getId();
+
+            // Build the 8-byte header as a byte array for both writing and AAD binding
+            byte[] header = new byte[HEADER_LENGTH];
+            header[0] = MAGIC_BYTE_0;
+            header[1] = MAGIC_BYTE_1;
+            header[2] = WIRE_VERSION;
+            header[3] = FORMAT_TYPE_KEM;
+            header[4] = (byte) (kemAlgId >> 8);
+            header[5] = (byte) (kemAlgId & 0xFF);
+            header[6] = (byte) (symAlgId >> 8);
+            header[7] = (byte) (symAlgId & 0xFF);
+
+            // Encrypt the payload with an authenticated cipher using a fresh random nonce.
+            // The header is bound as AAD so that any modification to the header is detected
+            // by the AEAD tag verification on decryption.
             byte[] nonce = new byte[NONCE_LENGTH_BYTES];
             SecureRandomHelper.getSecureRandom().nextBytes(nonce);
             Cipher cipher = initAeadCipher(Cipher.ENCRYPT_MODE, symAlg, encapsulated.secretKey().getEncoded(), nonce);
+            cipher.updateAAD(header);
             byte[] ciphertext = cipher.doFinal(plaintext);
 
-            // Write encapsulation length, encapsulation, nonce and the authenticated ciphertext
+            // Write header, encapsulation, nonce and the authenticated ciphertext
             DataOutputStream dataOut = new DataOutputStream(outputStream);
+            dataOut.write(header);
             dataOut.writeInt(encapsulation.length);
             dataOut.write(encapsulation);
             dataOut.write(nonce);
@@ -221,29 +274,24 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         String symAlg = getSymmetricAlgorithm(exchange);
         checkAeadSupported(symAlg);
 
-        try (DataInputStream dataIn = new DataInputStream(encryptedStream)) {
-            // Read encapsulation
-            int encapsulationLength = dataIn.readInt();
-            if (encapsulationLength < 0 || encapsulationLength > MAX_ENCAPSULATION_LENGTH) {
-                throw new IOException("Invalid PQC encapsulation length: " + encapsulationLength);
+        try {
+            // Wrap in PushbackInputStream so we can peek at the first two bytes without consuming them.
+            // v2 starts with magic bytes 0x50 0x51 ('P' 'Q').
+            // v1 starts with a 4-byte big-endian encapsulation length, which cannot be 0x5051xxxx
+            // for any realistic KEM (that would require a >1.3 GB encapsulation).
+            PushbackInputStream pbIn = new PushbackInputStream(encryptedStream, 2);
+            byte[] peek = pbIn.readNBytes(2);
+            if (peek.length < 2) {
+                throw new IOException("PQC encrypted stream too short");
             }
-            byte[] encapsulation = new byte[encapsulationLength];
-            dataIn.readFully(encapsulation);
+            pbIn.unread(peek);
 
-            // Read the AEAD nonce
-            byte[] nonce = new byte[NONCE_LENGTH_BYTES];
-            dataIn.readFully(nonce);
-
-            // The remainder is the authenticated ciphertext (including the tag)
-            byte[] ciphertext = dataIn.readAllBytes();
-
-            // Extract the shared secret from the encapsulation
-            SecretKey secretKey = decapsulateKem(kemAlg, kp.getPrivate(), encapsulation, symAlg);
-
-            // Decrypt. doFinal() verifies the authentication tag and throws on tampering; this must not be done with
-            // CipherInputStream, which can silently swallow an AEAD tag failure and return truncated plaintext.
-            Cipher cipher = initAeadCipher(Cipher.DECRYPT_MODE, symAlg, secretKey.getEncoded(), nonce);
-            return cipher.doFinal(ciphertext);
+            DataInputStream dataIn = new DataInputStream(pbIn);
+            if (peek[0] == MAGIC_BYTE_0 && peek[1] == MAGIC_BYTE_1) {
+                return unmarshalV2(dataIn, kp, kemAlg, symAlg);
+            } else {
+                return unmarshalV1(dataIn, kp, kemAlg, symAlg);
+            }
         } catch (AEADBadTagException e) {
             throw new IOException(
                     "PQC decryption failed: authentication tag mismatch. The encrypted data may have been tampered with, "
@@ -254,6 +302,110 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         } catch (Exception e) {
             throw new IOException("Failed to decrypt data using PQC KEM", e);
         }
+    }
+
+    /**
+     * Decrypts a v2-format message (8-byte self-describing header).
+     * <p>
+     * Layout: [2B magic][1B version][1B format][2B KEM alg ID][2B sym alg ID][4B encap len][encap][12B
+     * nonce][ciphertext]
+     */
+    private Object unmarshalV2(DataInputStream dataIn, KeyPair kp, String kemAlg, String symAlg) throws Exception {
+        // Read the 8-byte header into a byte array for AAD binding
+        byte[] headerBytes = new byte[HEADER_LENGTH];
+        dataIn.readFully(headerBytes);
+
+        byte magic0 = headerBytes[0];
+        byte magic1 = headerBytes[1];
+        byte version = headerBytes[2];
+        byte format = headerBytes[3];
+        int kemAlgId = ((headerBytes[4] & 0xFF) << 8) | (headerBytes[5] & 0xFF);
+        int symAlgId = ((headerBytes[6] & 0xFF) << 8) | (headerBytes[7] & 0xFF);
+
+        LOG.debug("PQC wire format v{} type={} kemAlgId=0x{} symAlgId=0x{}",
+                version, format, Integer.toHexString(kemAlgId), Integer.toHexString(symAlgId));
+
+        if (magic0 != MAGIC_BYTE_0 || magic1 != MAGIC_BYTE_1) {
+            throw new IOException("Invalid PQC wire format: unexpected magic bytes");
+        }
+        if (version != WIRE_VERSION) {
+            throw new IOException("Unsupported PQC wire format version: " + version);
+        }
+        if (format != FORMAT_TYPE_KEM) {
+            throw new IOException("Unsupported PQC wire format type: " + format);
+        }
+
+        // Check that the algorithm IDs in the header match the configured algorithms (if known)
+        if (kemAlgId != PQCAlgorithmId.UNKNOWN.getId()) {
+            int configuredKemId = PQCAlgorithmId.fromJcaName(kemAlg).getId();
+            if (configuredKemId == PQCAlgorithmId.UNKNOWN.getId()) {
+                configuredKemId = lookupKemAlgId(kemAlg);
+            }
+            if (configuredKemId != PQCAlgorithmId.UNKNOWN.getId() && kemAlgId != configuredKemId) {
+                PQCAlgorithmId headerAlg = PQCAlgorithmId.fromId(kemAlgId);
+                throw new IOException(
+                        "PQC data was encrypted with KEM algorithm " + headerAlg.getJcaName()
+                                      + " (0x" + Integer.toHexString(kemAlgId)
+                                      + ") but the configured algorithm is " + kemAlg);
+            }
+        }
+        if (symAlgId != PQCAlgorithmId.UNKNOWN.getId()) {
+            int configuredSymId = PQCAlgorithmId.fromJcaName(symAlg).getId();
+            if (configuredSymId != PQCAlgorithmId.UNKNOWN.getId() && symAlgId != configuredSymId) {
+                PQCAlgorithmId headerAlg = PQCAlgorithmId.fromId(symAlgId);
+                throw new IOException(
+                        "PQC data was encrypted with symmetric algorithm " + headerAlg.getJcaName()
+                                      + " (0x" + Integer.toHexString(symAlgId)
+                                      + ") but the configured algorithm is " + symAlg);
+            }
+        }
+
+        return decryptPayload(dataIn, kp, kemAlg, symAlg, headerBytes);
+    }
+
+    /**
+     * Decrypts a v1-format message (legacy 4-byte length prefix, no self-describing header).
+     * <p>
+     * Layout: [4B encap len][encap][12B nonce][ciphertext]
+     */
+    private Object unmarshalV1(DataInputStream dataIn, KeyPair kp, String kemAlg, String symAlg) throws Exception {
+        LOG.debug("PQC wire format v1 (legacy) detected, decrypting with algorithm {} / {}", kemAlg, symAlg);
+        return decryptPayload(dataIn, kp, kemAlg, symAlg, null);
+    }
+
+    /**
+     * Common decryption path shared by both v1 and v2: reads [4B encap len][encap][12B nonce][ciphertext].
+     *
+     * @param headerBytes the 8-byte v2 header to bind as AAD (null for v1, which has no AAD)
+     */
+    private Object decryptPayload(
+            DataInputStream dataIn, KeyPair kp, String kemAlg, String symAlg, byte[] headerBytes)
+            throws Exception {
+        // Read encapsulation
+        int encapsulationLength = dataIn.readInt();
+        if (encapsulationLength < 0 || encapsulationLength > MAX_ENCAPSULATION_LENGTH) {
+            throw new IOException("Invalid PQC encapsulation length: " + encapsulationLength);
+        }
+        byte[] encapsulation = new byte[encapsulationLength];
+        dataIn.readFully(encapsulation);
+
+        // Read the AEAD nonce
+        byte[] nonce = new byte[NONCE_LENGTH_BYTES];
+        dataIn.readFully(nonce);
+
+        // The remainder is the authenticated ciphertext (including the tag)
+        byte[] ciphertext = dataIn.readAllBytes();
+
+        // Extract the shared secret from the encapsulation
+        SecretKey secretKey = decapsulateKem(kemAlg, kp.getPrivate(), encapsulation, symAlg);
+
+        // Decrypt. doFinal() verifies the authentication tag and throws on tampering; this must not be done with
+        // CipherInputStream, which can silently swallow an AEAD tag failure and return truncated plaintext.
+        Cipher cipher = initAeadCipher(Cipher.DECRYPT_MODE, symAlg, secretKey.getEncoded(), nonce);
+        if (headerBytes != null) {
+            cipher.updateAAD(headerBytes);
+        }
+        return cipher.doFinal(ciphertext);
     }
 
     @Override
@@ -298,6 +450,23 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         Cipher cipher = Cipher.getInstance(transformation, cipherProvider);
         cipher.init(mode, key, spec);
         return cipher;
+    }
+
+    /**
+     * Looks up the wire-format algorithm ID for a KEM algorithm name that may be a configured enum name (e.g. "MLKEM")
+     * rather than a JCA name (e.g. "ML-KEM"). Falls back to {@link PQCAlgorithmId#UNKNOWN} if not found.
+     */
+    private static int lookupKemAlgId(String kemAlg) {
+        try {
+            PQCKeyEncapsulationAlgorithms enumVal = PQCKeyEncapsulationAlgorithms.valueOf(kemAlg);
+            PQCAlgorithmId algId = PQCAlgorithmId.fromJcaName(enumVal.getAlgorithm());
+            if (algId != PQCAlgorithmId.UNKNOWN) {
+                return algId.getId();
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Not a known enum value; fall through to UNKNOWN
+        }
+        return PQCAlgorithmId.UNKNOWN.getId();
     }
 
     /**

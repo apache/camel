@@ -35,7 +35,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.fop.apps.FopFactory;
 
 /**
- * Render messages into PDF and other output formats supported by Apache FOP.
+ * Render XSL-FO documents into PDF, PostScript, PNG and other output formats with Apache FOP.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true,
              remote = false, category = { Category.FILE, Category.TRANSFORMATION }, headersClass = FopConstants.class)
@@ -48,13 +48,20 @@ import org.apache.fop.apps.FopFactory;
                                                  + " outputType, or the format of the CamelFop.Output.Format header"))
 public class FopEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath(description = "The output format to render to. The endpoint URI takes the lower-case name, such as pdf or png,"
+                           + " or the MIME type, such as application/pdf. The CamelFop.Output.Format header overrides it for"
+                           + " a single message.")
     @Metadata(required = true)
     private FopOutputType outputType;
-    @UriParam
+    @UriParam(description = "The location of an Apache FOP configuration file (such as fop.xconf), for example to set the"
+                            + " resolution, the default page size or the fonts. Use the classpath:, file: or http: prefix;"
+                            + " without a prefix the file is loaded from the classpath. It cannot be combined with"
+                            + " fopFactory.")
     @Metadata(supportFileReference = true)
     private String userConfigURL;
-    @UriParam
+    @UriParam(description = "A custom org.apache.fop.apps.FopFactory to render with, for example one built in Java code with"
+                            + " FopFactoryBuilder. It cannot be combined with userConfigURL. If neither is set, a FopFactory"
+                            + " with the default FOP settings is created.")
     private FopFactory fopFactory;
 
     public FopEndpoint(String uri, FopComponent component, FopOutputType outputType) {
@@ -81,9 +88,6 @@ public class FopEndpoint extends DefaultEndpoint {
         return outputType;
     }
 
-    /**
-     * The primary output format is PDF but other output formats are also supported.
-     */
     public void setOutputType(FopOutputType outputType) {
         this.outputType = outputType;
     }
@@ -92,9 +96,6 @@ public class FopEndpoint extends DefaultEndpoint {
         return userConfigURL;
     }
 
-    /**
-     * The location of a configuration file which can be loaded from classpath or file system.
-     */
     public void setUserConfigURL(String userConfigURL) {
         this.userConfigURL = userConfigURL;
     }
@@ -103,9 +104,6 @@ public class FopEndpoint extends DefaultEndpoint {
         return fopFactory;
     }
 
-    /**
-     * Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory.
-     */
     public void setFopFactory(FopFactory fopFactory) {
         this.fopFactory = fopFactory;
     }

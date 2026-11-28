@@ -2,7 +2,7 @@
 :doctitle: Velocity
 :shortname: velocity
 :artifactid: camel-velocity
-:description: Transform messages using a Velocity template.
+:description: Render a Velocity template with the data of the message and use the text it writes as the new message body.
 :since: 1.2
 :supportlevel: Stable
 :tabs-sync-option:
@@ -47,18 +47,18 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-Headers set during the Velocity evaluation are returned to the message
-and added as headers. Then it is possible to return values from
-Velocity to the Message.
+Headers set during the Velocity evaluation are kept on the message, so a
+template can return values to the route as headers.
 
-For example, to set the header value of `fruit` in the Velocity template
-`.tm`:
+For example, to set the header `fruit` in the Velocity template:
 
 ----
-$in.setHeader("fruit", "Apple")
+$headers.put("fruit", "Apple")
 ----
 
-The `fruit` header is now accessible from the `message.out.headers`.
+The `fruit` header is now set on the message after the velocity endpoint.
+With `allowContextMapAll=true`, the template can also use `$in.setHeader("fruit", "Apple")`,
+as the `in` entry is only in the Velocity context with that option.
 
 == Usage
 
@@ -187,11 +187,13 @@ but a variable keeps the tool out of the message, so it is not sent along to the
 
 === Hot reloading
 
-The Velocity template resource is, by default, hot reloadable for both
-file and classpath resources (expanded jar). If you set
-`contentCache=true`, Camel will only load the resource once, and thus
-hot reloading is not possible. This scenario can be used in production
-when the resource never changes.
+By default, `contentCache` is `true`: Camel loads the Velocity template
+resource only once, and changes to the resource are not picked up. This
+suits production, where the resource never changes.
+
+To hot reload the template, set `contentCache=false`. Camel then loads the
+resource again for each message, for both file and classpath resources
+(expanded jar).
 
 === Dynamic templates
 

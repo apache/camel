@@ -21,6 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -86,7 +88,7 @@ class BouncyCastleProductionImportFenceTest {
     void bc187AdapterDoesNotImportDeprecatedLmsXmssCompatibilityAliases() throws IOException {
         Path sourceRoot = Path.of("../camel-pqc-bc-compat-187/src/main/java");
         assertTrue(Files.isDirectory(sourceRoot), "Missing BC 1.87 adapter source root");
-        java.util.Set<String> deprecatedAliases = java.util.Set.of(
+        Set<String> deprecatedAliases = Set.of(
                 "org.bouncycastle.pqc.jcajce.spec.LMSParameterSpec",
                 "org.bouncycastle.pqc.jcajce.spec.LMSHSSParameterSpec",
                 "org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec",
@@ -104,7 +106,7 @@ class BouncyCastleProductionImportFenceTest {
         List<String> violations = new ArrayList<>();
         try (Stream<Path> files = Files.walk(sourceRoot)) {
             for (Path file : files.filter(path -> path.toString().endsWith(".java")).toList()) {
-                java.util.regex.Matcher matcher = imports.matcher(Files.readString(file));
+                Matcher matcher = imports.matcher(Files.readString(file));
                 while (matcher.find()) {
                     if (deprecatedAliases.contains(matcher.group(1))) {
                         violations.add(file + ": deprecated BC 1.87 alias " + matcher.group(1));

@@ -23,11 +23,14 @@ import org.apache.camel.spi.Metadata;
  */
 public final class WeatherConstants {
 
-    @Metadata(label = "producer", description = "Used by the producer to override the endpoint location and use the\n" +
-                                                "location from this header instead.",
+    @Metadata(label = "producer", description = "The location to query, in the format of the location option, which this header"
+                                                + " replaces for the producer. The producer ignores it when lat and lon, zip or"
+                                                + " ids are set, and current or an empty value looks up the location.",
               javaType = "String")
     public static final String WEATHER_LOCATION = "CamelWeatherLocation";
-    @Metadata(description = "The original query URL sent to the Open Weather Map site", javaType = "String")
+    @Metadata(description = "The URL of the request that the consumer or the producer sent to OpenWeatherMap,"
+                            + " with its query parameters. The value of the APPID parameter is masked as xxxxxx.",
+              javaType = "String")
     public static final String WEATHER_QUERY = "CamelWeatherQuery";
 
     private WeatherConstants() {

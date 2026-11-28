@@ -46,11 +46,15 @@ public class StateStoreComponent extends DefaultComponent {
     private final AtomicBoolean backendFactoryChecked = new AtomicBoolean();
 
     @Metadata(label = "advanced", autowired = true,
-              description = "Factory that creates a dedicated backend for each store name. When set, it takes precedence over"
-                            + " registry auto-discovery for endpoints without an explicit backend.")
+              description = "Creates a dedicated backend for each store name, for the endpoints that set no backend. It takes"
+                            + " precedence over the KeyValueRepository found in the registry, which is used when the"
+                            + " factory returns null. The component starts and stops the backends it creates, and does not"
+                            + " prefix their keys.")
     private StateStoreBackendFactory backendFactory;
 
-    @Metadata(description = "Whether to use a store-specific namespace prefix to isolate keys on a shared backend repository.",
+    @Metadata(description = "The default of the namespaced option of the endpoints: whether to prefix the keys with the"
+                            + " store name in a backend set on the endpoint or found in the registry, so that stores"
+                            + " sharing one repository do not see each other's keys.",
               defaultValue = "true")
     private boolean namespaced = true;
 

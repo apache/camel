@@ -2,7 +2,7 @@
 :doctitle: Git
 :shortname: git
 :artifactid: camel-git
-:description: Perform operations on git repositories.
+:description: Run git operations, such as clone, commit, push and pull, on a local repository with JGit, and receive its commits, branches and tags.
 :since: 2.16
 :supportlevel: Stable
 :tabs-sync-option:

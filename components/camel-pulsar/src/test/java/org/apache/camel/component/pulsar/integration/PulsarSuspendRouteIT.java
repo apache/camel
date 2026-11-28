@@ -19,11 +19,14 @@ package org.apache.camel.component.pulsar.integration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.PulsarMessageReceipt;
@@ -42,6 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -136,13 +140,16 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
                                    + "&subscriptionName=camel-subscription&consumerQueueSize=" + consumerQueueSize
                                    + "&consumerName=camel-consumer&allowManualAcknowledgement=false");
 
+        CountDownLatch exchangeInFlight = new CountDownLatch(1);
         CountDownLatch waitForRouteSuspension = new CountDownLatch(1);
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(from).routeId(ROUTE_ID).process(e -> assertTrue(waitForRouteSuspension.await(2, TimeUnit.SECONDS)))
-                        .to(to);
+                from(from).routeId(ROUTE_ID).process(e -> {
+                    exchangeInFlight.countDown();
+                    assertTrue(waitForRouteSuspension.await(10, TimeUnit.SECONDS));
+                }).to(to);
             }
         });
 
@@ -151,8 +158,21 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
 
         producer.send("test");
 
-        context.getRouteController().suspendRoute(ROUTE_ID);
+        // suspend only once the exchange is in-flight. suspendRoute blocks until the in-flight exchange completes,
+        // so it runs in another thread. The processor is released only after the consumer is suspended, which is
+        // what the shutdown strategy does before it waits for the in-flight exchange
+        assertTrue(exchangeInFlight.await(30, TimeUnit.SECONDS));
+        Consumer consumer = context.getRoute(ROUTE_ID).getConsumer();
+        CompletableFuture<Void> suspension = CompletableFuture.runAsync(() -> {
+            try {
+                context.getRouteController().suspendRoute(ROUTE_ID);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        await().atMost(30, TimeUnit.SECONDS).until(() -> ((SuspendableService) consumer).isSuspended());
         waitForRouteSuspension.countDown();
+        suspension.get(30, TimeUnit.SECONDS);
 
         MockEndpoint.assertIsSatisfied(context);
 

@@ -53,12 +53,12 @@ public class SshProducerExitCodeTest extends SshComponentTestSupport {
                 // 1st try (expected: ExitValue=1)
                 from("direct:start")
                         .setBody().simple("exit 1")
-                        .to("ssh:localhost:" + port)
+                        .to("ssh:localhost:" + port + "?allowUsernameAndPasswordFromHeaders=true")
                         .log("1st try: ExitValue=${header.CamelSshExitValue}")
 
                         // 2nd try (expected: ExitValue=2)
                         .setBody().simple("exit 2")
-                        .to("ssh:localhost:" + port)
+                        .to("ssh:localhost:" + port + "?allowUsernameAndPasswordFromHeaders=true")
                         .log("2nd try: ExitValue=${header.CamelSshExitValue}")
 
                         .to("mock:result");

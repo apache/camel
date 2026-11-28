@@ -54,7 +54,7 @@ import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.utils.Assert;
 
 /**
- * Access market data and trade on Bitcoin and Altcoin exchanges.
+ * Query the market data, the currency metadata and the account data of cryptocurrency exchanges with XChange.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "xchange", title = "XChange", syntax = "xchange:name", producerOnly = true,
              category = { Category.BLOCKCHAIN }, headersClass = XChangeConfiguration.class)

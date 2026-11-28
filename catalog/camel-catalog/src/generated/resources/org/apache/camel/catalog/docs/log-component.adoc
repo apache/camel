@@ -2,7 +2,7 @@
 :doctitle: Log Data
 :shortname: log
 :artifactid: camel-log
-:description: Prints data from the routed message (such as body and headers) to the logger.
+:description: Log the exchanges that pass through a route, or their throughput, with an SLF4J logger.
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:

@@ -26,7 +26,8 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("ibm-watson-speech-to-text")
 public class WatsonSpeechToTextComponent extends HealthCheckComponent {
 
-    @Metadata
+    @Metadata(description = "The shared configuration of the endpoints. Each endpoint starts from a copy of it, and"
+                            + " its endpoint options override the values.")
     private WatsonSpeechToTextConfiguration configuration = new WatsonSpeechToTextConfiguration();
 
     public WatsonSpeechToTextComponent() {
@@ -47,9 +48,6 @@ public class WatsonSpeechToTextComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * Component configuration
-     */
     public void setConfiguration(WatsonSpeechToTextConfiguration configuration) {
         this.configuration = configuration;
     }

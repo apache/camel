@@ -163,6 +163,11 @@ class PQCDataFormatConcurrencyTest extends CamelTestSupport {
 
     private static byte[] encapsulationOf(byte[] message) {
         ByteBuffer buffer = ByteBuffer.wrap(message);
+        // Skip the 8-byte v2 header: [magic0][magic1][version][format][kemAlgId(2B)][symAlgId(2B)]
+        if (buffer.remaining() >= 2 && buffer.get(0) == PQCDataFormat.MAGIC_BYTE_0
+                && buffer.get(1) == PQCDataFormat.MAGIC_BYTE_1) {
+            buffer.position(PQCDataFormat.HEADER_LENGTH);
+        }
         byte[] encapsulation = new byte[buffer.getInt()];
         buffer.get(encapsulation);
         return encapsulation;

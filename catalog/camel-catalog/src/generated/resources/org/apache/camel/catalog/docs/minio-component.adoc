@@ -2,7 +2,7 @@
 :doctitle: Minio
 :shortname: minio
 :artifactid: camel-minio
-:description: Store and retrieve objects from Minio Storage Service using Minio SDK.
+:description: Store and retrieve objects in MinIO or another Amazon S3 compatible object storage.
 :since: 3.5
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*

@@ -36,7 +36,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import static org.apache.camel.component.milo.MiloConstants.SCHEME_CLIENT;
 
 /**
- * Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
+ * Read, write and monitor the values of nodes, and call methods, on an OPC UA server.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_CLIENT, syntax = "milo-client:endpointUri", title = "OPC UA Client",
              category = { Category.IOT }, headersClass = MiloConstants.class)
@@ -62,41 +62,33 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     private final MiloClientConnectionManager connectionManager;
 
-    /**
-     * The OPC UA server endpoint
-     */
-    @UriPath
+    @UriPath(description = "The endpoint URL of the OPC UA server, for example opc.tcp://localhost:4840/path. It can hold a"
+                           + " user name and password in its user info part. The username and password options take"
+                           + " precedence over them.")
     @Metadata(required = true)
     private final String endpointUri;
 
-    /**
-     * The node definition (see Node ID)
-     */
-    @UriParam
+    @UriParam(description = "The node ID of the node that the consumer monitors and that the producer writes the body to,"
+                            + " for example ns=2;s=item or nsu=urn:org:apache:camel;s=item. With the method option, the node"
+                            + " ID of the object that the method is called on.")
     private String node;
 
-    /**
-     * Comma-separated node definitions to monitor with one consumer, instead of node (see Node ID)
-     */
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer",
+              description = "A comma-separated list of the node IDs that the consumer monitors, instead of the node option,"
+                            + " which must then not be set. The CamelMiloNodeId header of each exchange tells which node the"
+                            + " value is of.")
     private String nodes;
 
-    /**
-     * The method definition (see Method ID)
-     */
-    @UriParam
+    @UriParam(description = "The node ID of a method. When set, the producer calls this method on the object of the node"
+                            + " option, with the input arguments from the body, instead of writing the body to the node.")
     private String method;
 
-    /**
-     * The sampling interval in milliseconds
-     */
-    @UriParam(defaultValue = "1000.0")
+    @UriParam(defaultValue = "1000.0",
+              description = "The sampling interval in milliseconds that the consumer requests for its monitored items: how"
+                            + " often the server checks the node for a change.")
     private Double samplingInterval = 1000.0;
 
-    /**
-     * The queue size used for OPC UA subscriptions. If not set, a queue size of 1 is requested.
-     */
-    @UriParam
+    @UriParam(description = "The queue size used for OPC UA subscriptions. If not set, a queue size of 1 is requested.")
     private Integer queueSize;
 
     /**
@@ -105,17 +97,15 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     @UriParam
     private MiloClientConfiguration configuration;
 
-    /**
-     * Default "await" setting for writes
-     */
-    @UriParam
+    @UriParam(description = "Whether the producer waits for the outcome of its request and sets it as the body: the"
+                            + " StatusCode of a write, the CallMethodResult of a method call, or the List of DataValue of a"
+                            + " read. If false, the route goes on at once and a failed request is not reported. The"
+                            + " CamelMiloAwait header replaces this option.")
     private boolean defaultAwaitWrites;
 
-    /**
-     * Omit a data change whose value is null and whose status is Good. A data change with a Bad or Uncertain status is
-     * always delivered.
-     */
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true",
+              description = "Omit a data change whose value is null and whose status is Good. A data change with a Bad or"
+                            + " Uncertain status is always delivered.")
     private boolean omitNullValues = true;
 
     @UriParam

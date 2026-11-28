@@ -40,7 +40,7 @@ import org.springframework.context.ApplicationEvent;
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
- * Listen for Spring Application Events.
+ * Publish and receive the Spring ApplicationEvents of the Spring ApplicationContext.
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name",
              remote = false, category = { Category.MESSAGING })
@@ -61,7 +61,10 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;
 
-    @UriPath(description = "Name of endpoint")
+    @UriPath(description = "The name of the endpoint. When the body is not a Spring ApplicationEvent, the producer wraps it"
+                           + " in a CamelEvent and publishes that. Only the consumers of endpoints with the same name"
+                           + " receive a CamelEvent. Any other ApplicationEvent goes to the consumers of all spring-event"
+                           + " endpoints, whatever their name. This includes an ApplicationEvent that a producer publishes.")
     private String name;
 
     public EventEndpoint(String endpointUri, EventComponent component, String name) {

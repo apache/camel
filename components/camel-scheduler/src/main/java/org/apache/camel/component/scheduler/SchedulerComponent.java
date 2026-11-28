@@ -32,9 +32,14 @@ public class SchedulerComponent extends HealthCheckComponent {
 
     private final Map<String, ScheduledExecutorServiceHolder> executors = new ConcurrentHashMap<>();
 
-    @Metadata
+    @Metadata(description = "Whether the consumers add the time when the scheduler fired to each message, as the"
+                            + " CamelTimerName and CamelTimerFiredTime exchange properties and the CamelMessageTimestamp"
+                            + " header. The default for the includeMetadata option of each endpoint that the component"
+                            + " creates.")
     private boolean includeMetadata;
-    @Metadata(defaultValue = "1", label = "scheduler")
+    @Metadata(defaultValue = "1", label = "scheduler",
+              description = "The number of core threads of the thread pool that the component creates for each scheduler"
+                            + " name. The default for the poolSize option of each endpoint that the component creates.")
     private int poolSize = 1;
 
     public SchedulerComponent() {
@@ -53,9 +58,6 @@ public class SchedulerComponent extends HealthCheckComponent {
         return includeMetadata;
     }
 
-    /**
-     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
-     */
     public void setIncludeMetadata(boolean includeMetadata) {
         this.includeMetadata = includeMetadata;
     }
@@ -64,11 +66,6 @@ public class SchedulerComponent extends HealthCheckComponent {
         return poolSize;
     }
 
-    /**
-     * Number of core threads in the thread pool used by the scheduling thread pool.
-     * <p/>
-     * Is by default using a single thread
-     */
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
     }

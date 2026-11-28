@@ -2,7 +2,7 @@
 :doctitle: HiveMQ
 :shortname: hivemq
 :artifactid: camel-hivemq
-:description: Camel HiveMQ MQTT Client support
+:description: Send messages to and receive messages from an MQTT broker with the HiveMQ MQTT Client.
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:

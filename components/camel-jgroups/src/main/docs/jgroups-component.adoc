@@ -58,6 +58,10 @@ The default JGroups protocol stack (`udp.xml`) multicasts over UDP and does
 multicast group or bind port can join and send messages. Treat cluster peers as
 part of your trust boundary and harden the deployment accordingly.
 
+The endpoint uses this default stack when neither the `channelProperties` option
+nor the `channel` option of the component is set, and then logs a WARN when it
+starts: the default stack is meant for development and tests.
+
 * *Authenticate and encrypt the channel.* Supply a hardened JGroups
 configuration through the `channelProperties` option and add the `AUTH`
 protocol together with `SYM_ENCRYPT` or `ASYM_ENCRYPT`, so that only trusted

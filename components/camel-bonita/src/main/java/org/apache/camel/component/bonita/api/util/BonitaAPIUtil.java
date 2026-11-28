@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
 import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 
@@ -56,8 +55,7 @@ public class BonitaAPIUtil {
      */
     @Deprecated(since = "4.24.0")
     public static BonitaAPIUtil getInstance(BonitaAPIConfig bonitaAPIConfig) {
-        ClientBuilder clientBuilder = ClientBuilder.newBuilder();
-        Client client = clientBuilder.build();
+        Client client = bonitaAPIConfig.newClient();
         client.register(jsonProvider());
         client.register(new BonitaAuthFilter(bonitaAPIConfig));
         return forClient(client, bonitaAPIConfig);

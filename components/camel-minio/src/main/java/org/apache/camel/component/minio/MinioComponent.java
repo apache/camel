@@ -29,7 +29,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 @Component("minio")
 @Deprecated(since = "4.23")
 public class MinioComponent extends HealthCheckComponent {
-    @Metadata
+    @Metadata(description = "The configuration that the endpoints of this component start from. The options set on an"
+                            + " endpoint replace its values.")
     private MinioConfiguration configuration = new MinioConfiguration();
 
     public MinioComponent() {
@@ -59,9 +60,6 @@ public class MinioComponent extends HealthCheckComponent {
         return configuration;
     }
 
-    /**
-     * The component configuration
-     */
     public void setConfiguration(MinioConfiguration configuration) {
         this.configuration = configuration;
     }

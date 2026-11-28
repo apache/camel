@@ -2,7 +2,7 @@
 :doctitle: Spring Batch
 :shortname: spring-batch
 :artifactid: camel-spring-batch
-:description: Send messages to Spring Batch for further processing.
+:description: Launch Spring Batch jobs, with the message headers as the job parameters.
 :since: 2.10
 :supportlevel: Stable
 :tabs-sync-option:
@@ -301,5 +301,3 @@ JMS queue.
   </batch:listeners>
 </batch:job>
 ----
-
-

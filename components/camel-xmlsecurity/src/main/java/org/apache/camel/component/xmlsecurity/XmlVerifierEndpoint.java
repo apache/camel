@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.SCHEME_VERIFIER;
 
 /**
- * Verify XML payloads using the XML signature specification.
+ * Verify the XML signatures of an XML document and return the signed content.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_VERIFIER, title = "XML Security Verify",
              syntax = "xmlsecurity-verify:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
@@ -53,7 +53,8 @@ import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.S
                                                  + " picks another node. A signature that does not verify fails the exchange"))
 public class XmlVerifierEndpoint extends DefaultEndpoint {
 
-    @UriPath
+    @UriPath(description = "The name of the endpoint, chosen freely to tell endpoints apart. The component does not"
+                           + " use it otherwise.")
     @Metadata(required = true)
     private String name;
     @UriParam
@@ -74,10 +75,6 @@ public class XmlVerifierEndpoint extends DefaultEndpoint {
         return name;
     }
 
-    /**
-     * The name part in the URI can be chosen by the user to distinguish between different verify endpoints within the
-     * camel context.
-     */
     public void setName(String name) {
         this.name = name;
     }

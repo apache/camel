@@ -2,7 +2,7 @@
 :doctitle: Cron
 :shortname: cron
 :artifactid: camel-cron
-:description: A generic interface for triggering events at times specified through the Unix cron syntax.
+:description: Trigger events at the times of a cron expression, using a cron implementation such as camel-quartz or camel-spring.
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
@@ -113,7 +113,8 @@ Schedule expressions can be made of five to seven parts. When expressions are co
 A five-part expression can also use the Unix cron syntax, with `*` in both day fields (for example `*/5 * * * *`).
 The day of month and the day of week cannot both be given. With camel-quartz, give the day of week by name (such as
 `MON-FRI`): a number is used as in Quartz, where Sunday is 1 (0 in Unix), and needs `?` in the day of month. With
-camel-spring, the day of week cannot use `*/n`.
+camel-spring, the day of week cannot use `*/n`, and the year cannot be given: a seven-part expression fails the
+endpoint with camel-spring, and works with camel-quartz.
 
 Other valid examples of schedule expressions are:
 

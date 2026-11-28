@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -31,7 +30,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("azure-key-vault")
 public class KeyVaultComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(description = "The configuration that each endpoint of the component starts from, as a copy. The options of"
+                            + " the endpoint replace its values.")
     private KeyVaultConfiguration configuration = new KeyVaultConfiguration();
 
     public KeyVaultComponent() {
@@ -57,13 +57,15 @@ public class KeyVaultComponent extends DefaultComponent {
         final KeyVaultEndpoint endpoint = new KeyVaultEndpoint(uri, this, epConfiguration);
         setProperties(endpoint, parameters);
 
-        if (CredentialType.CLIENT_SECRET == epConfiguration.getCredentialType() && epConfiguration.getSecretClient() == null
-                && (epConfiguration.getClientId() == null || epConfiguration.getClientSecret() == null
-                        || epConfiguration.getTenantId() == null)) {
-            throw new IllegalArgumentException(
-                    "Azure Secret Client or client Id, client secret and tenant Id must be specified if credential type is set to clientSecret");
-        }
-
+        // the credentials are checked when the endpoint is initialized, after a SecretClient may have been autowired
         return endpoint;
+    }
+
+    public KeyVaultConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(KeyVaultConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

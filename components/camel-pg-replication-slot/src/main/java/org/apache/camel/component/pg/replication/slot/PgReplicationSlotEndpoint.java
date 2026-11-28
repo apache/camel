@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -43,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
+ * Receive the changes of a PostgreSQL database from a logical replication slot.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgreSQL Replication Slot",
              syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
@@ -57,32 +58,84 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);
 
+    private static final List<String> SSL_MODES
+            = List.of("disable", "allow", "prefer", "require", "verify-ca", "verify-full");
+
     private static final Pattern URI_PATTERN = Pattern.compile(
             "^pg-replication-slot:(//)?(?<host>[^:]*):?(?<port>\\d*)?/(?<database>\\w+)/(?<slot>\\w+):(?<plugin>\\w+).*$");
 
-    @UriPath(description = "Postgres host", label = "common", defaultValue = "localhost")
+    @UriPath(description = "The host name or IP address of the PostgreSQL server.", label = "common",
+             defaultValue = "localhost")
     private String host = "localhost";
-    @UriPath(description = "Postgres port", label = "common", defaultValue = "5432")
+    @UriPath(description = "The port of the PostgreSQL server.", label = "common", defaultValue = "5432")
     private Integer port = 5432;
-    @UriPath(description = "Postgres database name", label = "common")
+    @UriPath(description = "The name of the database to connect to. A logical replication slot belongs to one database and"
+                           + " decodes only the changes of that database. The endpoint accepts only letters, digits and"
+                           + " underscores in the name.",
+             label = "common")
     @Metadata(required = true)
     private String database;
     @UriPath
-    @Metadata(description = "Replication Slot name", label = "common", required = true)
+    @Metadata(description = "The name of the logical replication slot to read the changes from. PostgreSQL accepts only lower"
+                            + " case letters, digits and underscores in a slot name.",
+              label = "common", required = true)
     private String slot;
     @UriPath
-    @Metadata(description = "Output plugin name", label = "common", required = true)
+    @Metadata(description = "The name of the logical decoding output plugin, for example test_decoding, wal2json or pgoutput,"
+                            + " which sets the format of the messages. The consumer uses it only when it creates the slot (see"
+                            + " autoCreateSlot): an existing slot keeps the plugin that it was created with.",
+              label = "common", required = true)
     private String outputPlugin;
-    @UriParam(description = "Postgres user", label = "common", defaultValue = "postgres")
+    @UriParam(description = "The name of the database user. The user needs the REPLICATION attribute, or must be a"
+                            + " superuser.",
+              label = "common", defaultValue = "postgres")
     private String user = "postgres";
-    @UriParam(description = "Postgres password", label = "common", security = "secret")
+    @UriParam(description = "The password of the database user.", label = "common", security = "secret")
     private String password;
-    @UriParam(label = "advanced", defaultValue = "10")
+    @UriParam(description = "The number of seconds between the status updates that the consumer sends to the PostgreSQL"
+                            + " server, which report the position that it has received and flushed. While a message is"
+                            + " routed, the consumer also sends a status update at this interval, so that the server does not"
+                            + " close the connection when routing takes longer than wal_sender_timeout.",
+              label = "advanced", defaultValue = "10")
     private Integer statusInterval = 10;
-    @UriParam(label = "advanced", prefix = "slotOptions.", multiValue = true)
+    @UriParam(description = "The options that the consumer passes to the output plugin when it starts reading from the slot,"
+                            + " for example slotOptions.include-xids=false for test_decoding, or slotOptions.proto_version=1"
+                            + " and slotOptions.publication_names=mypub for pgoutput. The plugin defines which options exist.",
+              label = "advanced", prefix = "slotOptions.", multiValue = true)
     private Map<String, Object> slotOptions = Collections.emptyMap();
-    @UriParam(label = "advanced", defaultValue = "true")
+    @UriParam(description = "Whether the consumer creates a logical replication slot with the outputPlugin when it connects"
+                            + " and no slot of this name exists. If false, the slot must exist, otherwise each poll fails. The"
+                            + " consumer never drops the slot, so PostgreSQL keeps the WAL that the slot has not confirmed, also"
+                            + " while the route is stopped.",
+              label = "advanced", defaultValue = "true")
     private Boolean autoCreateSlot = true;
+    @UriParam(description = "The SSL mode of the connection to the PostgreSQL server: disable, allow, prefer, require,"
+                            + " verify-ca or verify-full. When not set, the default of the PostgreSQL JDBC driver applies,"
+                            + " which is prefer: TLS when the server offers it, without checking the server certificate, and"
+                            + " a plain connection otherwise. Use verify-full to require TLS and check both the certificate"
+                            + " and the host name of the server.",
+              label = "security", enums = "disable,allow,prefer,require,verify-ca,verify-full")
+    private String sslMode;
+    @UriParam(description = "The file of the root certificates (PEM) that the server certificate is checked against with"
+                            + " sslMode verify-ca or verify-full. When not set, the PostgreSQL JDBC driver reads"
+                            + " root.crt in the .postgresql folder of the home directory of the user.",
+              label = "security")
+    private String sslRootCert;
+    @UriParam(description = "The file of the client certificate (PEM) for a server that checks client certificates. When"
+                            + " not set, the PostgreSQL JDBC driver reads postgresql.crt in the .postgresql folder of the home"
+                            + " directory of the user, if it exists.",
+              label = "security")
+    private String sslCert;
+    @UriParam(description = "The file of the private key of the client certificate. The PostgreSQL JDBC driver accepts"
+                            + " PKCS-8 in DER format, PKCS-8 in PEM format (a .pem file, or a file that starts with"
+                            + " -----BEGIN PRIVATE KEY-----), or a PKCS-12 file (.p12 or .pfx) that holds the certificate"
+                            + " and the key."
+                            + " When not set, the driver reads postgresql.pk8 in the .postgresql folder of the home directory"
+                            + " of the user, if it exists.",
+              label = "security")
+    private String sslKey;
+    @UriParam(description = "The password of the private key in sslKey.", label = "security", security = "secret")
+    private String sslPassword;
 
     public PgReplicationSlotEndpoint(String uri, Component component) {
         super(uri, component);
@@ -105,6 +158,15 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
      * Creates a new PostgreSQL JDBC connection that's setup for replication.
      */
     Connection newDbConnection() throws SQLException {
+        return DriverManager.getConnection(
+                String.format("jdbc:postgresql://%s:%d/%s", this.getHost(), this.getPort(), this.getDatabase()),
+                createConnectionProperties());
+    }
+
+    /**
+     * The properties of the JDBC connection.
+     */
+    Properties createConnectionProperties() {
         Properties props = new Properties();
 
         PGProperty.USER.set(props, this.getUser());
@@ -114,9 +176,34 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         PGProperty.PREFER_QUERY_MODE.set(props, "simple");
         PGProperty.TCP_KEEP_ALIVE.set(props, true);
 
-        return DriverManager.getConnection(
-                String.format("jdbc:postgresql://%s:%d/%s", this.getHost(), this.getPort(), this.getDatabase()),
-                props);
+        // TLS: only the options that are set, so the defaults of the driver apply otherwise
+        if (sslMode != null) {
+            PGProperty.SSL_MODE.set(props, sslMode);
+        }
+        if (sslRootCert != null) {
+            PGProperty.SSL_ROOT_CERT.set(props, sslRootCert);
+        }
+        if (sslCert != null) {
+            PGProperty.SSL_CERT.set(props, sslCert);
+        }
+        if (sslKey != null) {
+            PGProperty.SSL_KEY.set(props, sslKey);
+        }
+        if (sslPassword != null) {
+            PGProperty.SSL_PASSWORD.set(props, sslPassword);
+        }
+
+        return props;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (sslMode != null && !SSL_MODES.contains(sslMode)) {
+            throw new IllegalArgumentException(
+                    "Invalid sslMode: " + sslMode + ". Use one of: " + String.join(", ", SSL_MODES));
+        }
     }
 
     /**
@@ -150,9 +237,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return host;
     }
 
-    /**
-     * PostgreSQL server host
-     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -161,9 +245,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return port;
     }
 
-    /**
-     * PostgreSQL server port
-     */
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -172,9 +253,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return database;
     }
 
-    /**
-     * PostgreSQL database name
-     */
     public void setDatabase(String database) {
         this.database = database;
     }
@@ -183,9 +261,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return slot;
     }
 
-    /**
-     * Replication slot name.
-     */
     public void setSlot(String slot) {
         this.slot = slot;
     }
@@ -194,9 +269,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return outputPlugin;
     }
 
-    /**
-     * Output plugin name (e.g. test_decoding, wal2json)
-     */
     public void setOutputPlugin(String outputPlugin) {
         this.outputPlugin = outputPlugin;
     }
@@ -205,9 +277,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return user;
     }
 
-    /**
-     * PostgreSQL username
-     */
     public void setUser(String user) {
         this.user = user;
     }
@@ -216,9 +285,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return password;
     }
 
-    /**
-     * PostgreSQL password
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -227,9 +293,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return statusInterval;
     }
 
-    /**
-     * Specifies the number of seconds between status packets sent back to Postgres server.
-     */
     public void setStatusInterval(Integer statusInterval) {
         this.statusInterval = statusInterval;
     }
@@ -238,9 +301,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return slotOptions;
     }
 
-    /**
-     * Slot options to be passed to the output plugin.
-     */
     public void setSlotOptions(Map<String, Object> slotOptions) {
         this.slotOptions = slotOptions;
     }
@@ -249,10 +309,47 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return autoCreateSlot;
     }
 
-    /**
-     * Auto create slot if it does not exist
-     */
     public void setAutoCreateSlot(Boolean autoCreateSlot) {
         this.autoCreateSlot = autoCreateSlot;
+    }
+
+    public String getSslMode() {
+        return sslMode;
+    }
+
+    public void setSslMode(String sslMode) {
+        this.sslMode = sslMode;
+    }
+
+    public String getSslRootCert() {
+        return sslRootCert;
+    }
+
+    public void setSslRootCert(String sslRootCert) {
+        this.sslRootCert = sslRootCert;
+    }
+
+    public String getSslCert() {
+        return sslCert;
+    }
+
+    public void setSslCert(String sslCert) {
+        this.sslCert = sslCert;
+    }
+
+    public String getSslKey() {
+        return sslKey;
+    }
+
+    public void setSslKey(String sslKey) {
+        this.sslKey = sslKey;
+    }
+
+    public String getSslPassword() {
+        return sslPassword;
+    }
+
+    public void setSslPassword(String sslPassword) {
+        this.sslPassword = sslPassword;
     }
 }

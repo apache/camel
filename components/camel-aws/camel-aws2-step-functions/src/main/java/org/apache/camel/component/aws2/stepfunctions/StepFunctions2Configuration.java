@@ -28,54 +28,96 @@ import software.amazon.awssdk.services.sfn.SfnClient;
 @UriParams
 public class StepFunctions2Configuration implements Cloneable, AwsCommonConfiguration {
 
-    @UriPath(description = "Logical name")
+    @UriPath(description = "A logical name of the endpoint, which you choose freely. The producer does not use it: the state"
+                           + " machine, activity or execution to act on is given in headers.")
     @Metadata(required = true)
     private String label;
-    @UriParam
+    @UriParam(description = "The operation that the producer performs. The CamelAwsStepFunctionsOperation header replaces this"
+                            + " option.")
     @Metadata(required = true)
     private StepFunctions2Operations operation;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The access key ID of the AWS credentials, used together with the secretKey option. It is"
+                            + " required, unless awsSfnClient is set or useDefaultCredentialsProvider,"
+                            + " useProfileCredentialsProvider or useSessionCredentials is true.")
     private String accessKey;
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The secret access key of the AWS credentials, used together with the accessKey option. It is"
+                            + " required, unless awsSfnClient is set or useDefaultCredentialsProvider,"
+                            + " useProfileCredentialsProvider or useSessionCredentials is true.")
     private String secretKey;
 
-    @UriParam(label = "security", security = "secret")
+    @UriParam(label = "security", security = "secret",
+              description = "The session token of temporary AWS credentials, for example of an assumed IAM role. It is used"
+                            + " only when useSessionCredentials is true, together with the accessKey and secretKey options. When it is not"
+                            + " set, the accessKey and secretKey options are used without a session token.")
     private String sessionToken;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
+    @UriParam(description = "The AWS region of Step Functions, as a region ID such as eu-west-1, which is the value of"
+                            + " Region.EU_WEST_1.id(). If not set, the AWS SDK takes the region from its default region"
+                            + " provider chain, for example the AWS_REGION environment variable.",
+              enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
     private String region;
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "The protocol that the HTTP client of Step Functions uses to connect to the proxy. It is used only"
+                            + " when the proxyHost and proxyPort options are set.")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy",
+              description = "The host name of the proxy that the HTTP client of Step Functions connects through. The proxy is"
+                            + " used only when the proxyPort option is set too.")
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy",
+              description = "The port of the proxy that the HTTP client of Step Functions connects through. The proxy is used"
+                            + " only when the proxyHost option is set too.")
     private Integer proxyPort;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced",
+              description = "To use a custom software.amazon.awssdk.services.sfn.SfnClient. When this option is set or"
+                            + " autowired, the credentials, region, proxy, endpoint override and trustAllCertificates options"
+                            + " are not used. The Camel endpoint does not close a client that is set or autowired.")
     @Metadata(autowired = true)
     private SfnClient awsSfnClient;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether the body is the request object of the AWS SDK for the operation, such as a"
+                            + " StartExecutionRequest, which the producer sends as it is. The headers that give the input of"
+                            + " the operation are then not used, and a body of another type fails the exchange.")
     private boolean pojoRequest;
-    @UriParam(security = "insecure:ssl", defaultValue = "false")
+    @UriParam(security = "insecure:ssl", defaultValue = "false",
+              description = "Whether the HTTP client of Step Functions trusts every TLS certificate without checking it. It"
+                            + " applies to any endpoint, not only to an overridden one, so use it only for testing, for"
+                            + " example against a local emulator.")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether to send the requests to the URI of the uriEndpointOverride option instead of the"
+                            + " endpoint of the region. It has no effect when uriEndpointOverride is not set.")
     private boolean overrideEndpoint;
-    @UriParam
+    @UriParam(description = "The URI of the endpoint to use instead of the endpoint of the region, for example"
+                            + " http://localhost:4566 for a local emulator. It is used only when overrideEndpoint is true, and"
+                            + " then the AWS SDK does not put the sync- prefix before its host for startSyncExecution.")
     private String uriEndpointOverride;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether to load the credentials with the default credentials provider chain of the AWS SDK,"
+                            + " which looks in system properties, environment variables, the shared credentials and config"
+                            + " files, and the container or instance role. It takes precedence over the other credentials"
+                            + " options.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false",
+              description = "Whether to load the credentials from a profile of the AWS shared credentials and config files,"
+                            + " the one of the profileCredentialsName option. It is not used when useDefaultCredentialsProvider"
+                            + " is true, and it takes precedence over the session and static credentials.")
     private boolean useProfileCredentialsProvider;
-    @UriParam(label = "security")
+    @UriParam(label = "security",
+              description = "Whether to use temporary credentials made of the accessKey, secretKey and sessionToken options,"
+                            + " for example those of an assumed IAM role. It is not used when useDefaultCredentialsProvider or"
+                            + " useProfileCredentialsProvider is true.")
     private boolean useSessionCredentials;
-    @UriParam
+    @UriParam(description = "The name of the profile in the AWS shared credentials and config files, used when"
+                            + " useProfileCredentialsProvider is true. If not set, the AWS SDK uses its default profile, which"
+                            + " the AWS_PROFILE environment variable can change.")
     private String profileCredentialsName;
 
     public SfnClient getAwsSfnClient() {
         return awsSfnClient;
     }
 
-    /**
-     * To use an existing configured AwsStepFunctionsClient client
-     */
     public void setAwsSfnClient(SfnClient awsSfnClient) {
         this.awsSfnClient = awsSfnClient;
     }
@@ -84,9 +126,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return accessKey;
     }
 
-    /**
-     * Amazon AWS Access Key
-     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -95,9 +134,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return secretKey;
     }
 
-    /**
-     * Amazon AWS Secret Key
-     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -106,9 +142,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return sessionToken;
     }
 
-    /**
-     * Amazon AWS Session Token used when the user needs to assume an IAM role
-     */
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
     }
@@ -117,10 +150,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return region;
     }
 
-    /**
-     * The region in which StepFunctions client needs to work. When using this parameter, the configuration will expect
-     * the lowercase name of the region (for example, ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
-     */
     public void setRegion(String region) {
         this.region = region;
     }
@@ -129,9 +158,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return operation;
     }
 
-    /**
-     * The operation to perform
-     */
     public void setOperation(StepFunctions2Operations operation) {
         this.operation = operation;
     }
@@ -140,9 +166,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return proxyProtocol;
     }
 
-    /**
-     * To define a proxy protocol when instantiating the StepFunctions client
-     */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
@@ -151,9 +174,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return proxyHost;
     }
 
-    /**
-     * To define a proxy host when instantiating the StepFunctions client
-     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -162,9 +182,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return proxyPort;
     }
 
-    /**
-     * To define a proxy port when instantiating the StepFunctions client
-     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -173,9 +190,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return pojoRequest;
     }
 
-    /**
-     * If we want to use a POJO request as body or not
-     */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;
     }
@@ -184,9 +198,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return trustAllCertificates;
     }
 
-    /**
-     * If we want to trust all certificates in case of overriding the endpoint
-     */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
@@ -195,10 +206,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return overrideEndpoint;
     }
 
-    /**
-     * Set the need for overriding the endpoint. This option needs to be used in combination with the
-     * uriEndpointOverride option
-     */
     public void setOverrideEndpoint(boolean overrideEndpoint) {
         this.overrideEndpoint = overrideEndpoint;
     }
@@ -207,17 +214,10 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return uriEndpointOverride;
     }
 
-    /**
-     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
-     */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 
-    /**
-     * Set whether the StepFunctions client should expect to load credentials through a default credentials provider or
-     * to expect static credentials to be passed in.
-     */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
@@ -230,9 +230,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return useProfileCredentialsProvider;
     }
 
-    /**
-     * Set whether the StepFunctions client should expect to load credentials through a profile credentials provider.
-     */
     public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
         this.useProfileCredentialsProvider = useProfileCredentialsProvider;
     }
@@ -241,10 +238,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return useSessionCredentials;
     }
 
-    /**
-     * Set whether the Step Functions client should expect to use Session Credentials. This is useful in a situation in
-     * which the user needs to assume an IAM role for doing operations in Step Functions.
-     */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
     }
@@ -253,9 +246,6 @@ public class StepFunctions2Configuration implements Cloneable, AwsCommonConfigur
         return profileCredentialsName;
     }
 
-    /**
-     * If using a profile credentials provider, this parameter will set the profile name
-     */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }

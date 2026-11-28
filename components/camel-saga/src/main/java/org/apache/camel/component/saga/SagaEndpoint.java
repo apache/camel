@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Execute custom actions within a route using the Saga EIP.
+ * Complete or compensate the saga that an exchange takes part in through the Saga EIP.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "saga", title = "Saga", syntax = "saga:action", producerOnly = true,
              category = { Category.CLUSTERING }, headersClass = SagaConstants.class)
@@ -45,7 +45,9 @@ public class SagaEndpoint extends DefaultEndpoint {
         COMPENSATE
     }
 
-    @UriPath(description = "Action to execute (complete or compensate)")
+    @UriPath(description = "Whether to complete or to compensate the saga that the exchange takes part in. The saga service"
+                           + " then calls the completion or the compensation endpoint of the saga. The exchange fails if it"
+                           + " does not take part in a saga.")
     @Metadata(required = true)
     private final SagaEndpointAction action;
 

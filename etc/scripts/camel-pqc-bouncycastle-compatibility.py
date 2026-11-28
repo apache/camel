@@ -219,7 +219,6 @@ def main() -> int:
     if not args.skip_dependency_bootstrap:
         bootstrap_dependencies()
     run_micrometer_tests()
-    run_micrometer_tests()
 
     if args.skip_interoperability:
         for version in versions:

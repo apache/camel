@@ -187,7 +187,8 @@ class AWS2S3StreamUploadStopStartTest {
 
         failingUploadParts.set(1);
         assertThrows(S3Exception.class, producer::stop, "the upload of the stop fails");
-        await().atMost(5, TimeUnit.SECONDS).until(() -> timeoutCheckersOfTheProducer(others).isEmpty());
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(Set.of(), timeoutCheckersOfTheProducer(others), "the failed stop ends the timeout task"));
 
         producer.start();
         assertEquals(1, timeoutCheckersOfTheProducer(others).size(), "the start after the failed stop runs one task");
@@ -195,7 +196,9 @@ class AWS2S3StreamUploadStopStartTest {
         producer.stop();
         assertEquals("message-1\n", bucket.get("camel.txt"),
                 "the exchange sent after the start is uploaded, not added to the failed upload");
-        assertEquals(Set.of(), timeoutCheckersOfTheProducer(others), "the stop ends the timeout task");
+        // the thread of a terminated executor may be alive a short while after the stop
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(Set.of(), timeoutCheckersOfTheProducer(others), "the stop ends the timeout task"));
     }
 
     private void send(String body) throws Exception {

@@ -31,6 +31,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SshComponent target = (SshComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowusernameandpasswordfromheaders":
+        case "allowUsernameAndPasswordFromHeaders": getOrCreateConfiguration(target).setAllowUsernameAndPasswordFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "authtimeout":
         case "authTimeout": getOrCreateConfiguration(target).setAuthTimeout(property(camelContext, long.class, value)); return true;
         case "autowiredenabled":
@@ -96,6 +98,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowusernameandpasswordfromheaders":
+        case "allowUsernameAndPasswordFromHeaders": return boolean.class;
         case "authtimeout":
         case "authTimeout": return long.class;
         case "autowiredenabled":
@@ -157,6 +161,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SshComponent target = (SshComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowusernameandpasswordfromheaders":
+        case "allowUsernameAndPasswordFromHeaders": return getOrCreateConfiguration(target).isAllowUsernameAndPasswordFromHeaders();
         case "authtimeout":
         case "authTimeout": return getOrCreateConfiguration(target).getAuthTimeout();
         case "autowiredenabled":

@@ -25,7 +25,7 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * Invoke methods of Java beans specified by class name.
+ * Invoke a method of a Java bean given by its fully qualified class name.
  */
 @UriEndpoint(firstVersion = "2.4.0", scheme = "class", title = "Class", syntax = "class:beanName", producerOnly = true,
              remote = false, category = { Category.CORE, Category.SCRIPT })

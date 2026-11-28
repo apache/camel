@@ -154,6 +154,14 @@ public class SshEndpoint extends ScheduledPollEndpoint implements EndpointServic
         getConfiguration().setPassword(password);
     }
 
+    public boolean isAllowUsernameAndPasswordFromHeaders() {
+        return getConfiguration().isAllowUsernameAndPasswordFromHeaders();
+    }
+
+    public void setAllowUsernameAndPasswordFromHeaders(boolean allowUsernameAndPasswordFromHeaders) {
+        getConfiguration().setAllowUsernameAndPasswordFromHeaders(allowUsernameAndPasswordFromHeaders);
+    }
+
     public String getPollCommand() {
         return getConfiguration().getPollCommand();
     }

@@ -2,7 +2,7 @@
 :doctitle: SMPP
 :shortname: smpp
 :artifactid: camel-smpp
-:description: Send and receive SMS messages using a SMSC (Short Message Service Center).
+:description: Send and receive SMS messages through an SMSC (Short Message Service Center) with the SMPP protocol.
 :since: 2.2
 :supportlevel: Stable
 :tabs-sync-option:

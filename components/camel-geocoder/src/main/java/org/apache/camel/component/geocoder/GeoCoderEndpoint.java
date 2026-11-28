@@ -35,7 +35,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Find geocodes (latitude and longitude) for a given address or the other way round.
+ * Look up the latitude and longitude of an address, or the address of a latitude and longitude, with Google or a
+ * Nominatim server.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng",
              producerOnly = true, category = { Category.API, Category.SEARCH }, headersClass = GeoCoderConstants.class)
@@ -55,41 +56,71 @@ import org.apache.camel.support.DefaultEndpoint;
                                                  + " for a latitude and longitude. The first result is also in the headers"))
 public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath
+    @UriPath(description = "The address to look up the latitude and longitude of, such as Paris, France, written after"
+                           + " address: in the URI. With Google, the address current looks up the location of the IP address"
+                           + " that the request comes from. The CamelGeoCoderAddress header replaces this option.")
     private String address;
-    @UriPath
+    @UriPath(description = "The latitude and longitude to look up the address of, written after latlng: in the URI as two"
+                           + " decimal numbers separated by a comma, such as 48.8566,2.3522. The CamelGeoCoderLatlng header"
+                           + " replaces this option. A latitude and longitude, from this option or the header, takes"
+                           + " precedence over an address.")
     private String latlng;
     @UriParam(defaultValue = "en",
               description = "The language of the answer (such as the address, the country and the city), as a language code"
                             + " such as en, de or fr. It is sent as the accept-language parameter to Nominatim and as the language"
                             + " parameter to Google.")
     private String language = "en";
-    @UriParam(label = "security", security = "secret", description = "Client ID to access Google GeoCoding server.")
+    @UriParam(label = "security", security = "secret",
+              description = "The client ID of the Google Maps Platform Premium Plan. When it is set, the producer signs the"
+                            + " requests to Google with it and clientKey instead of using apiKey. The geolocation of the"
+                            + " address current does not accept a client ID.")
     private String clientId;
-    @UriParam(label = "security", security = "secret", description = "Client Key to access Google GeoCoding server.")
+    @UriParam(label = "security", security = "secret",
+              description = "The URL signing secret (cryptographic key) that belongs to clientId, with which the producer"
+                            + " signs the requests to Google.")
     private String clientKey;
     @UriParam(label = "security", security = "secret",
-              description = "API Key to access Google. Mandatory for Google GeoCoding server.")
+              description = "The API key of the Google Maps Platform, which the producer uses when clientId is not set."
+                            + " Google needs either this key or clientId and clientKey. It is not used for Nominatim.")
     private String apiKey;
-    @UriParam(description = "URL to the geocoder server. Mandatory for Nominatim server.", displayName = "Server URL")
+    @UriParam(description = "The base URL of the Nominatim server, such as https://nominatim.openstreetmap.org, to which the"
+                            + " producer adds /search or /reverse. Required when type is NOMINATIM, and not used for Google.",
+              displayName = "Server URL")
     private String serverUrl;
-    @UriParam
+    @UriParam(description = "Whether to leave the message body as it is and only set the headers. If false, the producer"
+                            + " sets the body to the result: an array of com.google.maps.model.GeocodingResult for Google, or"
+                            + " the JSON response of Nominatim as a String.")
     private boolean headersOnly;
-    @UriParam(label = "proxy", description = "Proxy Host to access GeoCoding server.")
+    @UriParam(label = "proxy",
+              description = "The host name of the HTTP proxy for the requests to Google. The proxy is used only when"
+                            + " proxyPort is also set, and not for Nominatim.")
     private String proxyHost;
-    @UriParam(label = "proxy", description = "Proxy Port to access GeoCoding server.")
+    @UriParam(label = "proxy",
+              description = "The port of the HTTP proxy for the requests to Google. The proxy is used only when proxyHost is"
+                            + " also set.")
     private Integer proxyPort;
-    @UriParam(label = "proxy", description = "Authentication Method to Google GeoCoding server.")
+    @UriParam(label = "proxy", enums = "Basic",
+              description = "The authentication method for the proxy. Only Basic is supported: when it is set, the producer"
+                            + " authenticates to the proxy with proxyAuthUsername and proxyAuthPassword, which are sent Base64"
+                            + " encoded in the Proxy-Authorization header. Another value, such as Digest, fails when the"
+                            + " producer starts.")
     private String proxyAuthMethod;
-    @UriParam(label = "proxy", description = "Proxy Username to access GeoCoding server.")
+    @UriParam(label = "proxy", description = "The user name for the proxy authentication, used when proxyAuthMethod is set.")
     private String proxyAuthUsername;
-    @UriParam(label = "proxy", security = "secret", description = "Proxy Password to access GeoCoding server.")
+    @UriParam(label = "proxy", security = "secret",
+              description = "The password for the proxy authentication, used when proxyAuthMethod is set.")
     private String proxyAuthPassword;
-    @UriParam(label = "proxy", description = "Proxy Authentication Domain to access Google GeoCoding server.")
+    @UriParam(label = "proxy",
+              description = "The domain for NTLM proxy authentication. The component does not use this option, as"
+                            + " proxyAuthMethod accepts only Basic.")
     private String proxyAuthDomain;
-    @UriParam(label = "proxy", description = "Proxy Authentication Host to access Google GeoCoding server.")
+    @UriParam(label = "proxy",
+              description = "The host for NTLM proxy authentication. The component does not use this option, as"
+                            + " proxyAuthMethod accepts only Basic.")
     private String proxyAuthHost;
-    @UriParam(displayName = "GeoCoding Type", description = "Type of GeoCoding server. Supported Nominatim and Google.")
+    @UriParam(displayName = "GeoCoding Type",
+              description = "The geocoding service: GOOGLE for the Google Geocoding API, or NOMINATIM for the Nominatim"
+                            + " server at serverUrl. If not set, Google is used.")
     private GeoCoderType type;
 
     public GeoCoderEndpoint() {
@@ -130,9 +161,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return language;
     }
 
-    /**
-     * The language of the answer, as a language code such as en, de or fr.
-     */
     public void setLanguage(String language) {
         this.language = language;
     }
@@ -141,9 +169,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return address;
     }
 
-    /**
-     * The geo address which should be prefixed with <tt>address:</tt>
-     */
     public void setAddress(String address) {
         this.address = address;
     }
@@ -152,9 +177,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return latlng;
     }
 
-    /**
-     * The geo latitude and longitude which should be prefixed with <tt>latlng:</tt>
-     */
     public void setLatlng(String latlng) {
         this.latlng = latlng;
     }
@@ -163,9 +185,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return headersOnly;
     }
 
-    /**
-     * Whether to only enrich the Exchange with headers, and leave the body as-is.
-     */
     public void setHeadersOnly(boolean headersOnly) {
         this.headersOnly = headersOnly;
     }
@@ -174,9 +193,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return clientId;
     }
 
-    /**
-     * To use google premium with this client id
-     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -185,9 +201,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return clientKey;
     }
 
-    /**
-     * To use google premium with this client key
-     */
     public void setClientKey(String clientKey) {
         this.clientKey = clientKey;
     }
@@ -196,9 +209,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return apiKey;
     }
 
-    /**
-     * To use google apiKey
-     */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
@@ -207,9 +217,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return proxyHost;
     }
 
-    /**
-     * The proxy host name
-     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
@@ -218,9 +225,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return proxyPort;
     }
 
-    /**
-     * The proxy port number
-     */
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
     }
@@ -229,9 +233,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return proxyAuthMethod;
     }
 
-    /**
-     * Authentication method for proxy, either as Basic, Digest or NTLM.
-     */
     public void setProxyAuthMethod(String proxyAuthMethod) {
         this.proxyAuthMethod = proxyAuthMethod;
     }
@@ -240,9 +241,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return proxyAuthUsername;
     }
 
-    /**
-     * Username for proxy authentication
-     */
     public void setProxyAuthUsername(String proxyAuthUsername) {
         this.proxyAuthUsername = proxyAuthUsername;
     }
@@ -251,9 +249,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return proxyAuthPassword;
     }
 
-    /**
-     * Password for proxy authentication
-     */
     public void setProxyAuthPassword(String proxyAuthPassword) {
         this.proxyAuthPassword = proxyAuthPassword;
     }
@@ -262,9 +257,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return proxyAuthDomain;
     }
 
-    /**
-     * Domain for proxy NTML authentication
-     */
     public void setProxyAuthDomain(String proxyAuthDomain) {
         this.proxyAuthDomain = proxyAuthDomain;
     }
@@ -273,9 +265,6 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
         return proxyAuthHost;
     }
 
-    /**
-     * Optional host for proxy NTML authentication
-     */
     public void setProxyAuthHost(String proxyAuthHost) {
         this.proxyAuthHost = proxyAuthHost;
     }
@@ -329,13 +318,12 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
     }
 
     private GeoApiContext.Builder configureProxyAuth(GeoApiContext.Builder builder) {
-        AuthenticationMethod auth = getCamelContext().getTypeConverter().convertTo(AuthenticationMethod.class, proxyAuthMethod);
-        if (auth == AuthenticationMethod.Basic || auth == AuthenticationMethod.Digest) {
-            builder = builder.proxyAuthentication(proxyAuthUsername, proxyAuthPassword);
-        } else {
-            throw new IllegalArgumentException("Unknown proxyAuthMethod " + proxyAuthMethod);
+        // the Google client always answers the proxy with Basic credentials, so only Basic is accepted
+        if (!AuthenticationMethod.Basic.name().equalsIgnoreCase(proxyAuthMethod)) {
+            throw new IllegalArgumentException(
+                    "Unsupported proxyAuthMethod " + proxyAuthMethod + ": only Basic proxy authentication is supported");
         }
-        return builder;
+        return builder.proxyAuthentication(proxyAuthUsername, proxyAuthPassword);
     }
 
     private Proxy createProxy() {

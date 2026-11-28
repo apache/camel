@@ -37,6 +37,9 @@ import org.apache.camel.support.DefaultEndpoint;
 import tensorflow.serving.ModelServiceGrpc;
 import tensorflow.serving.PredictionServiceGrpc;
 
+/**
+ * Run inference on the models of a TensorFlow Serving model server over gRPC, and get their status and metadata.
+ */
 @UriEndpoint(firstVersion = "4.10.0", scheme = "tensorflow-serving", title = "TensorFlow Serving",
              syntax = "tensorflow-serving:api", producerOnly = true,
              category = { Category.AI }, headersClass = TensorFlowServingConstants.class)
@@ -75,7 +78,10 @@ import tensorflow.serving.PredictionServiceGrpc;
                                                  + " output tensors by name"))
 public class TensorFlowServingEndpoint extends DefaultEndpoint {
 
-    @UriPath(enums = "model-status,model-metadata,classify,regress,predict", description = "The TensorFlow Serving API")
+    @UriPath(enums = "model-status,model-metadata,classify,regress,predict",
+             description = "The TensorFlow Serving API that the producer calls: model-status (GetModelStatus of the"
+                           + " ModelService), or model-metadata (GetModelMetadata), classify, regress or predict of the"
+                           + " PredictionService.")
     @Metadata(required = true)
     private final String api;
 
