@@ -119,6 +119,44 @@ class OpenAIMcpOAuthTokenRefreshTest {
     }
 
     /**
+     * The supplier returns token-1 for the first request (initialize) and token-2 for the second request (tools/list),
+     * both within the same MCP session. This proves that the OAuth token supplier is called on every HTTP request
+     * rather than once at client creation: the per-request customizer causes each POST to re-invoke the supplier, so a
+     * rotated token appears immediately on the very next request on the same open connection.
+     */
+    @Test
+    void tokenSupplierIsCalledPerRequestWithinSameSession() throws Exception {
+        // Rotating supplier: first call → token-1 (initialize), second call → token-2 (tools/list)
+        StubOAuthClientAuthenticationFactory.registerRotating(PROFILE, "token-1", "token-2");
+
+        DefaultCamelContext camelContext = new DefaultCamelContext();
+        camelContext.start();
+        try {
+            OpenAIComponent component = new OpenAIComponent();
+            component.setCamelContext(camelContext);
+            OpenAIConfiguration configuration = new OpenAIConfiguration();
+            configuration.setMcpTimeout(10);
+            OpenAIEndpoint endpoint = new OpenAIEndpoint("openai:chat-completion", component, configuration);
+            endpoint.setCamelContext(camelContext);
+
+            McpSyncClient client = endpoint.createMcpClient("local",
+                    Map.of("transportType", "streamableHttp", "url", serverUrl + "/mcp", "oauthProfile", PROFILE));
+            try {
+                assertThat(client.listTools().tools()).extracting(McpSchema.Tool::name).containsExactly("echo");
+            } finally {
+                client.closeGracefully();
+            }
+            // The session sends at least two POSTs (initialize + tools/list). With per-request resolution the tokens
+            // rotate across requests; without it every request would carry the same value baked at client creation.
+            assertThat(RECORDED_AUTHORIZATIONS).hasSizeGreaterThanOrEqualTo(2);
+            assertThat(RECORDED_AUTHORIZATIONS.get(0)).isEqualTo("Bearer token-1");
+            assertThat(RECORDED_AUTHORIZATIONS.get(1)).isEqualTo("Bearer token-2");
+        } finally {
+            camelContext.stop();
+        }
+    }
+
+    /**
      * The stub returns token-1 for the first session and then token-2 for the second session. All requests in the first
      * MCP session carry token-1; all requests in the second session carry token-2, proving per-request resolution.
      */
