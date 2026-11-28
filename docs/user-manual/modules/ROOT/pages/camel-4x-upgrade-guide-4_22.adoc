@@ -13,6 +13,15 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.3 to 4.22.4
 
+=== camel-paho - consumer restarts route after resubscribe failure on reconnect
+
+When a Paho MQTT v3 consumer reconnects and the resubscribe attempt fails (for example because the broker is still
+recovering), the consumer route is now automatically stopped and restarted to recover the MQTT session.
+
+This behaviour change only affects owned clients (those created by the consumer, not set via the `client` option).
+Routes using an externally provided `MqttClient` are unaffected: a resubscribe failure on that client is still
+logged as an error and the route is not restarted.
+
 === Weighted Load Balancer EIP
 
 The distribution ratios of the weighted load balancer are now validated when the route starts. A negative ratio,
