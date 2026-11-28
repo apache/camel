@@ -62,9 +62,13 @@ public class EventGridComponent extends DefaultComponent {
                 endpoint.getConfiguration().setCredentialType(CredentialType.AZURE_IDENTITY);
             }
         } else if (endpoint.getConfiguration().getTokenCredential() != null) {
-            boolean azure = endpoint.getConfiguration().getTokenCredential() instanceof DefaultAzureCredential;
-            endpoint.getConfiguration()
-                    .setCredentialType(azure ? CredentialType.AZURE_IDENTITY : CredentialType.TOKEN_CREDENTIAL);
+            // keep an explicit TOKEN_CREDENTIAL or AZURE_IDENTITY: both use the configured tokenCredential
+            CredentialType type = endpoint.getConfiguration().getCredentialType();
+            if (type != CredentialType.TOKEN_CREDENTIAL && type != CredentialType.AZURE_IDENTITY) {
+                boolean azure = endpoint.getConfiguration().getTokenCredential() instanceof DefaultAzureCredential;
+                endpoint.getConfiguration()
+                        .setCredentialType(azure ? CredentialType.AZURE_IDENTITY : CredentialType.TOKEN_CREDENTIAL);
+            }
         } else if (endpoint.getConfiguration().getAzureKeyCredential() != null
                 || endpoint.getConfiguration().getAccessKey() != null) {
             endpoint.getConfiguration().setCredentialType(CredentialType.ACCESS_KEY);

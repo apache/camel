@@ -32,26 +32,6 @@
     <name>Camel :: AWS2 Kinesis</name>
     <description>Consuming and Producing data to AWS Kinesis Service</description>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Pin com.squareup.wire:wire-runtime transitively brought in by amazon-kinesis-client
-                 via software.amazon.glue:schema-registry-serde (still on Wire 5.2.0, no release with
-                 the fix) to remediate CVE-2026-45799. wire-runtime is an empty Kotlin-Multiplatform
-                 stub and wire-runtime-jvm carries the fix; both are pinned because the advisory lists
-                 both coordinates. -->
-            <dependency>
-                <groupId>com.squareup.wire</groupId>
-                <artifactId>wire-runtime</artifactId>
-                <version>${squareup-wire-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup.wire</groupId>
-                <artifactId>wire-runtime-jvm</artifactId>
-                <version>${squareup-wire-version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -86,6 +66,23 @@
             <groupId>at.yawk.lz4</groupId>
             <artifactId>lz4-java</artifactId>
             <version>${lz4-java-version}</version>
+        </dependency>
+        <!-- Override com.squareup.wire:wire-runtime brought in transitively by amazon-kinesis-client
+             via software.amazon.glue:schema-registry-serde (still on Wire 5.2.0) to remediate
+             CVE-2026-45799. Declared as direct dependencies rather than in dependencyManagement so
+             that the override also applies to applications depending on this component.
+             wire-runtime is an empty Kotlin-Multiplatform stub and wire-runtime-jvm carries the fix;
+             both are declared because the advisory lists both coordinates. Remove once
+             schema-registry-serde depends on a fixed Wire release. -->
+        <dependency>
+            <groupId>com.squareup.wire</groupId>
+            <artifactId>wire-runtime</artifactId>
+            <version>${squareup-wire-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.wire</groupId>
+            <artifactId>wire-runtime-jvm</artifactId>
+            <version>${squareup-wire-version}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>

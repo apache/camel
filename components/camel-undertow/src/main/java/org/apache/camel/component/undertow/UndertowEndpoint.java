@@ -428,7 +428,9 @@ public class UndertowEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Timeout in milliseconds when sending to a websocket channel. The default timeout is 30000 (30 seconds).
+     * Timeout in milliseconds when sending to a websocket channel. The default timeout is 30000 (30 seconds). A message
+     * that is not sent to a peer within the timeout fails the exchange, and the connection to that peer is closed. Use
+     * 0 for no timeout.
      */
     public void setSendTimeout(Integer sendTimeout) {
         this.sendTimeout = sendTimeout;

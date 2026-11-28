@@ -30,7 +30,14 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] list = doGetProcessors();
         if (list.length > 0) {
-            AsyncProcessor processor = chooseProcessor(list, exchange);
+            AsyncProcessor processor;
+            try {
+                processor = chooseProcessor(list, exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(false);
+                return false;
+            }
             if (processor == null) {
                 Exception e = new IllegalStateException("No processors could be chosen to process " + exchange);
                 exchange.setException(e);
