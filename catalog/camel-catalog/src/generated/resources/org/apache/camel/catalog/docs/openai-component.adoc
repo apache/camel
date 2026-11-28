@@ -123,12 +123,14 @@ include::partial$component-endpoint-headers.adoc[]
 
 Set `baseUrl` to your providers endpoint (default: `https://api.openai.com/v1`).
 
-API key resolution order:
+API key resolution order (when no `oauthProfile` is set):
 
 - Endpoint `apiKey`
 - Component `apiKey`
 - Environment variable `OPENAI_API_KEY`
 - System property `openai.api.key`
+
+When `oauthProfile` is set, it takes precedence over all of the above and the API key is not used.
 
 [NOTE]
 ====

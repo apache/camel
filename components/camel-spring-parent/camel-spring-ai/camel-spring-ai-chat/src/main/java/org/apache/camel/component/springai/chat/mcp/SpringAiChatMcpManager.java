@@ -18,7 +18,6 @@ package org.apache.camel.component.springai.chat.mcp;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +30,7 @@ import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
+import io.modelcontextprotocol.client.transport.customizer.McpSyncHttpClientRequestCustomizer;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.spec.McpClientTransport;
 import org.apache.camel.CamelContext;
@@ -151,18 +151,35 @@ public class SpringAiChatMcpManager {
         LOG.debug("All MCP clients closed");
     }
 
+    /**
+     * Creates the MCP transport for the given server configuration.
+     *
+     * <p>
+     * When an {@code oauthProfile} is configured, the OAuth token is resolved lazily via a per-request customizer
+     * rather than eagerly at startup. This enables short-lived tokens to be refreshed when they expire, at the cost of
+     * deferring misconfiguration errors (wrong profile name, unreachable OIDC server) to the first request rather than
+     * surfacing them at endpoint start.
+     */
     private McpClientTransport createTransport(
             String serverName, String transportType, Map<String, String> props, CamelContext camelContext)
             throws Exception {
 
-        // Resolve per-server OAuth token if configured
+        // Build a per-request customizer so the OAuth token is re-resolved on every request,
+        // allowing short-lived tokens to be refreshed when they expire.
         String oauthProfile = props.get("oauthProfile");
-        HttpRequest.Builder authRequestBuilder = null;
+        McpSyncHttpClientRequestCustomizer oauthCustomizer = null;
         if (ObjectHelper.isNotEmpty(oauthProfile)) {
-            String token = OAuthHelper.resolveOAuthToken(camelContext, oauthProfile);
-            authRequestBuilder = HttpRequest.newBuilder()
-                    .header("Authorization", "Bearer " + token);
-            LOG.debug("OAuth token resolved for MCP server '{}' using profile '{}'", serverName, oauthProfile);
+            final String profile = oauthProfile;
+            oauthCustomizer = (requestBuilder, method, uri, body, context) -> {
+                try {
+                    String token = OAuthHelper.resolveOAuthToken(camelContext, profile);
+                    requestBuilder.header("Authorization", "Bearer " + token);
+                } catch (Exception e) {
+                    throw new RuntimeException(
+                            "Failed to resolve OAuth token for MCP server '" + serverName + "': " + e.getMessage(), e);
+                }
+            };
+            LOG.debug("OAuth customizer registered for MCP server '{}' using profile '{}'", serverName, profile);
         }
 
         return switch (transportType) {
@@ -184,7 +201,7 @@ public class SpringAiChatMcpManager {
                     throw new IllegalArgumentException(
                             "mcpServer." + serverName + ".url is required for streamableHttp transport");
                 }
-                yield createStreamableHttpTransport(serverName, url, authRequestBuilder);
+                yield createStreamableHttpTransport(serverName, url, oauthCustomizer);
             }
             case "sse" -> {
                 String url = props.get("url");
@@ -197,8 +214,8 @@ public class SpringAiChatMcpManager {
                 McpServerUrl serverUrl = splitUrl(serverName, url, DEFAULT_SSE_ENDPOINT);
                 HttpClientSseClientTransport.Builder sseBuilder = HttpClientSseClientTransport.builder(serverUrl.baseUri())
                         .sseEndpoint(serverUrl.endpoint());
-                if (authRequestBuilder != null) {
-                    sseBuilder.requestBuilder(authRequestBuilder);
+                if (oauthCustomizer != null) {
+                    sseBuilder.addHttpRequestCustomizer(oauthCustomizer);
                 }
                 yield sseBuilder.build();
             }
@@ -212,13 +229,13 @@ public class SpringAiChatMcpManager {
      * Creates the Streamable HTTP transport for the MCP endpoint at the given URL.
      */
     private static McpClientTransport createStreamableHttpTransport(
-            String serverName, String url, HttpRequest.Builder authRequestBuilder) {
+            String serverName, String url, McpSyncHttpClientRequestCustomizer oauthCustomizer) {
         McpServerUrl serverUrl = splitUrl(serverName, url, DEFAULT_STREAMABLE_HTTP_ENDPOINT);
         HttpClientStreamableHttpTransport.Builder builder
                 = HttpClientStreamableHttpTransport.builder(serverUrl.baseUri())
                         .endpoint(serverUrl.endpoint());
-        if (authRequestBuilder != null) {
-            builder.requestBuilder(authRequestBuilder);
+        if (oauthCustomizer != null) {
+            builder.addHttpRequestCustomizer(oauthCustomizer);
         }
         return builder.build();
     }

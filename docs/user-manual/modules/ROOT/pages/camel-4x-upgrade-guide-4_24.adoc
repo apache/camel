@@ -912,6 +912,14 @@ A URL whose path is not the endpoint of the server, such as `http://host:8080/v1
 because its path was ignored, and now fails: set the URL of the endpoint, here `http://host:8080/mcp`, or remove the
 path. The URL must be absolute, with a scheme and a host.
 
+=== camel-openai - oauthProfile takes precedence over apiKey
+
+When both `oauthProfile` and `apiKey` are set on a `camel-openai` endpoint, `oauthProfile` now takes precedence and
+the `apiKey` is ignored. Before, `apiKey` took precedence over `oauthProfile`. This reversal matches the option
+descriptions and the behaviour of the other AI components. Applications that intentionally configured both options
+relying on `apiKey` taking precedence must remove the `oauthProfile` option or set it to empty to restore the previous
+resolution order.
+
 === camel-ibm-watsonx-data - the OAuth token of oauthProfile is sent as a Bearer token
 
 With `oauthProfile`, the endpoint used to obtain an access token once at startup and use it as `apiKey`, so the token

@@ -19,7 +19,6 @@ package org.apache.camel.component.openai;
 import java.io.FileInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpRequest;
 import java.security.KeyStore;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -44,6 +43,7 @@ import javax.net.ssl.X509TrustManager;
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 import com.openai.core.Timeout;
+import com.openai.credential.BearerTokenCredential;
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import com.openai.models.decisions.Decision;
 import com.openai.models.decisions.DecisionCreateParams;
@@ -53,6 +53,7 @@ import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
+import io.modelcontextprotocol.client.transport.customizer.McpSyncHttpClientRequestCustomizer;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.spec.McpClientTransport;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -520,13 +521,20 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     private McpClientTransport createMcpTransport(String serverName, String transportType, Map<String, String> props)
             throws Exception {
-        // Resolve per-server OAuth token if configured
+        // Build a per-request customizer so the OAuth token is re-resolved on every request,
+        // allowing short-lived tokens to be refreshed when they expire.
         String mcpOauthProfile = props.get("oauthProfile");
-        HttpRequest.Builder authRequestBuilder = null;
+        McpSyncHttpClientRequestCustomizer oauthCustomizer = null;
         if (ObjectHelper.isNotEmpty(mcpOauthProfile)) {
-            String token = OAuthHelper.resolveOAuthToken(getCamelContext(), mcpOauthProfile);
-            authRequestBuilder = HttpRequest.newBuilder()
-                    .header("Authorization", "Bearer " + token);
+            oauthCustomizer = (requestBuilder, method, uri, body, context) -> {
+                try {
+                    String token = OAuthHelper.resolveOAuthToken(getCamelContext(), mcpOauthProfile);
+                    requestBuilder.header("Authorization", "Bearer " + token);
+                } catch (Exception e) {
+                    throw new RuntimeException(
+                            "Failed to resolve OAuth token for MCP server '" + serverName + "': " + e.getMessage(), e);
+                }
+            };
         }
 
         return switch (transportType) {
@@ -550,8 +558,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 McpServerUrl serverUrl = splitMcpServerUrl(serverName, url, DEFAULT_SSE_ENDPOINT);
                 HttpClientSseClientTransport.Builder sseBuilder = HttpClientSseClientTransport.builder(serverUrl.baseUri())
                         .sseEndpoint(serverUrl.endpoint());
-                if (authRequestBuilder != null) {
-                    sseBuilder.requestBuilder(authRequestBuilder);
+                if (oauthCustomizer != null) {
+                    sseBuilder.addHttpRequestCustomizer(oauthCustomizer);
                 }
                 yield sseBuilder.build();
             }
@@ -569,8 +577,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 if (protocolVersions != null) {
                     transportBuilder.supportedProtocolVersions(protocolVersions);
                 }
-                if (authRequestBuilder != null) {
-                    transportBuilder.requestBuilder(authRequestBuilder);
+                if (oauthCustomizer != null) {
+                    transportBuilder.addHttpRequestCustomizer(oauthCustomizer);
                 }
                 yield transportBuilder.build();
             }
@@ -937,17 +945,30 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     private static final String NO_API_KEY = "camel-openai-no-api-key";
 
     protected OpenAIClient createClient() throws Exception {
-        String apiKey = resolveApiKey();
-
         OpenAIOkHttpClient.Builder builder = OpenAIOkHttpClient.builder();
 
-        if (ObjectHelper.isNotEmpty(apiKey)) {
-            builder.apiKey(apiKey);
+        if (ObjectHelper.isNotEmpty(configuration.getOauthProfile())) {
+            // Use a Supplier-based credential so the token is re-resolved on every request,
+            // allowing short-lived OAuth tokens to be refreshed when they expire.
+            String profile = configuration.getOauthProfile();
+            builder.credential(BearerTokenCredential.create(
+                    () -> {
+                        try {
+                            return OAuthHelper.resolveOAuthToken(getCamelContext(), profile);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Failed to resolve OAuth token for profile: " + profile, e);
+                        }
+                    }));
         } else {
-            // no key, such as for a local server (Ollama, vLLM, LM Studio): the SDK needs a credential, so a placeholder
-            // is given, and its Authorization header is removed, so the requests are sent without one
-            builder.apiKey(NO_API_KEY);
-            builder.removeHeaders("Authorization");
+            String apiKey = resolveApiKey();
+            if (ObjectHelper.isNotEmpty(apiKey)) {
+                builder.apiKey(apiKey);
+            } else {
+                // no key, such as for a local server (Ollama, vLLM, LM Studio): the SDK needs a credential, so a
+                // placeholder is given, and its Authorization header is removed, so the requests are sent without one
+                builder.apiKey(NO_API_KEY);
+                builder.removeHeaders("Authorization");
+            }
         }
 
         builder.baseUrl(ObjectHelper.notNullOrEmpty(configuration.getBaseUrl(), "baseUrl"));
@@ -1098,14 +1119,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     }
 
     protected String resolveApiKey() throws Exception {
-        // Priority: URI parameter > OAuth profile > environment variable > system property
+        // Priority: configuration property (apiKey) > environment variable > system property
+        // OAuth profile is handled separately in createClient() via BearerTokenCredential.create(Supplier)
+        // so that tokens are re-resolved on every request rather than once at startup.
         if (ObjectHelper.isNotEmpty(configuration.getApiKey())) {
             return configuration.getApiKey();
-        }
-
-        // Try OAuth profile if configured
-        if (ObjectHelper.isNotEmpty(configuration.getOauthProfile())) {
-            return resolveOAuthToken();
         }
 
         String envApiKey = System.getenv("OPENAI_API_KEY");
@@ -1114,10 +1132,6 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         }
 
         return System.getProperty("openai.api.key");
-    }
-
-    private String resolveOAuthToken() throws Exception {
-        return OAuthHelper.resolveOAuthToken(getCamelContext(), configuration.getOauthProfile());
     }
 
     public OpenAIOperations getOperation() {
