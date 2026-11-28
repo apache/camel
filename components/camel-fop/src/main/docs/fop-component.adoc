@@ -91,6 +91,13 @@ loaded from the file system.
 
 === Message Operations
 
+The `CamelFop.Render.*` headers set the metadata and rendering options of each document, and the `CamelFop.Encrypt.*`
+headers encrypt a PDF document. The option names are matched case-insensitively (`CamelFop.Render.Creator` sets the
+creator too). The values are used as given and converted to the type of the option, so a route that needs a property
+placeholder or a bean in such a value resolves it before the `fop` endpoint, for example with the
+xref:languages:simple-language.adoc[Simple] language. Other names are ignored, and a WARN is logged. Other FOP user
+agent settings are set in the <<Configuration file>> or on a custom `FopFactory`.
+
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |name |default value |description
@@ -103,17 +110,29 @@ loaded from the file system.
 
 |`CamelFop.Encrypt.allowPrint` | `true` |Allows printing the PDF
 
+|`CamelFop.Encrypt.allowPrintHq` | `true` |Allows printing the PDF in high quality
+
 |`CamelFop.Encrypt.allowCopyContent` |`true` |Allows copying content of the PDF
 
 |`CamelFop.Encrypt.allowEditContent` |`true` |Allows editing content of the PDF
 
 |`CamelFop.Encrypt.allowEditAnnotations` |`true` |Allows editing annotation of the PDF
 
+|`CamelFop.Encrypt.allowFillInForms` |`true` |Allows filling in the forms of the PDF
+
+|`CamelFop.Encrypt.allowAccessContent` |`true` |Allows extracting content of the PDF for accessibility
+
+|`CamelFop.Encrypt.allowAssembleDocument` |`true` |Allows assembling the PDF (inserting, rotating and deleting pages)
+
+|`CamelFop.Encrypt.encryptMetadata` |`true` |Whether the metadata of the PDF is encrypted
+
+|`CamelFop.Encrypt.encryptionLengthInBits` |`128` |The length of the encryption key in bits
+
 |`CamelFop.Render.producer` |Apache FOP |Metadata element for the system/software that produces the document
 
 |`CamelFop.Render.creator` |  | Metadata element for the user that created the document
 
-|`CamelFop.Render.creationDate` |  | Creation Date
+|`CamelFop.Render.creationDate` |  | Creation Date, as a `java.util.Date`
 
 |`CamelFop.Render.author` |  | Author of the content of the document
 
@@ -122,6 +141,18 @@ loaded from the file system.
 |`CamelFop.Render.subject` |  | Subject of the document
 
 |`CamelFop.Render.keywords` |  | Set of keywords applicable to this document
+
+|`CamelFop.Render.targetResolution` |  |The target resolution in dpi (the FOP configuration sets the default)
+
+|`CamelFop.Render.accessibility` |  |Whether the accessibility features (tagged PDF) are enabled (the FOP configuration sets the default)
+
+|`CamelFop.Render.pdfUAEnabled` |  |Whether the document conforms to PDF/UA
+
+|`CamelFop.Render.keepEmptyTags` |  |Whether empty tags are kept in the structure tree of a tagged PDF (the FOP configuration sets the default)
+
+|`CamelFop.Render.locatorEnabled` |`true` |Whether the location of an FO element is kept for error messages
+
+|`CamelFop.Render.conserveMemoryPolicy` |  |Whether FOP writes pages to a temporary file to save memory
 |=======================================================================
 
 === Example
