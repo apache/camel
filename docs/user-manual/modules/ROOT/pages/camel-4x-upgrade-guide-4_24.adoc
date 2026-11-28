@@ -19,7 +19,7 @@ The bundled Maven and Maven Resolver libraries in `camel-tooling-maven` and `cam
 
 - `org.apache.maven` artifacts: `3.9.16` → `3.10.2`
 - `org.apache.maven.resolver` artifacts: `1.9.27` → `2.0.26`
-- `eu.maveniverse.maven.mima` artifacts: `2.4.48` → `3.0.1`
+- `eu.maveniverse.maven.mima` artifacts: `2.4.48` → `3.0.2`
 
 Maven Resolver 2.x ships with Maven 3.10.x and Maven 4. Users who embed or extend
 `camel-tooling-maven` and reference `maven-resolver-transport-http` directly must rename
