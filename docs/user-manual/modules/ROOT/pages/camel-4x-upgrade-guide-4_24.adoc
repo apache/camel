@@ -38,6 +38,14 @@ downloaded by `camel run` may not be recognised as already-available by a Maven 
 using the same local repository, so Maven 3.9 may re-fetch them and `mvn -o` (offline mode)
 may fail for those artifacts.
 
+**`camel-report-maven-plugin` running under Maven 3.9.** The plugin bundles `camel-tooling-maven`
+(and its transitive Resolver 2.0.26 jars) in its own classloader. Maven's plugin classloading
+gives the bundled jars precedence over the Maven-provided Resolver 1.9.x jars, so the two
+versions do not interfere. The embedded-mode constructor path in `MavenDownloaderImpl` does not
+go through MIMA and does not apply the new timeout-property constants, so running
+`camel-report-maven-plugin:validate` or `camel-report-maven-plugin:audit` under Maven 3.9.x
+remains supported and behaves the same as before.
+
 === camel-openapi-java - RestModelConverters is now an interface
 
 `org.apache.camel.openapi.RestModelConverters` is now an interface instead of a concrete class. Applications that
