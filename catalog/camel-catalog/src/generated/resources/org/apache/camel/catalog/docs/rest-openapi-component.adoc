@@ -375,7 +375,7 @@ applies there as well, also to the specification served as api-doc.
 == Request validation
 
 API requests can be validated against the configured OpenAPI specification before they are sent by setting the `requestValidationEnabled` option to `true`.
-Validation is provided by the https://bitbucket.org/atlassian/swagger-request-validator/src/master/[swagger-request-validator].
+Validation is provided by the https://github.com/atlassian/openapi-request-validator[openapi-request-validator]
 
 The validator checks for the following conditions:
 
