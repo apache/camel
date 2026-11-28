@@ -251,6 +251,14 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      */
     private @Nullable String sessionTimeout;
 
+    /**
+     * Returns the endpoint identification algorithm to apply to the client sockets that the {@code SSLSocketFactory}
+     * creates, or {@code null} to leave it unset. Only {@link SSLContextClientParameters} sets one.
+     */
+    protected @Nullable String getSocketEndpointIdentificationAlgorithm() {
+        return null;
+    }
+
     protected List<SNIServerName> getSNIHostNames() {
         return Collections.emptyList();
     }
@@ -834,6 +842,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         final boolean allowPassthrough = getAllowPassthrough();
 
+        final String endpointIdentificationAlgorithm = getSocketEndpointIdentificationAlgorithm();
+
         //////
 
         Configurer<SSLSocket> sslSocketConfigurer = new Configurer<>() {
@@ -844,6 +854,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 if (!getSNIHostNames().isEmpty()) {
                     SSLParameters sslParameters = socket.getSSLParameters();
                     sslParameters.setServerNames(getSNIHostNames());
+                    socket.setSSLParameters(sslParameters);
+                }
+
+                if (endpointIdentificationAlgorithm != null) {
+                    // host name verification: the JDK checks the certificate of the server against the host of the socket
+                    SSLParameters sslParameters = socket.getSSLParameters();
+                    sslParameters.setEndpointIdentificationAlgorithm(endpointIdentificationAlgorithm);
                     socket.setSSLParameters(sslParameters);
                 }
 
