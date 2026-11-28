@@ -106,7 +106,6 @@ public class XmlStreamReader extends Reader {
      * UTF-8.
      * <p>
      * It does a lenient charset encoding detection, check the constructor with the lenient parameter for details.
-     * <p>
      *
      * @param  file        File to create a Reader from.
      * @throws IOException thrown if there is a problem reading the file.
@@ -121,7 +120,6 @@ public class XmlStreamReader extends Reader {
      * It follows the same logic used for files.
      * <p>
      * It does a lenient charset encoding detection, check the constructor with the lenient parameter for details.
-     * <p>
      *
      * @param  is          InputStream to create a Reader from.
      * @throws IOException thrown if there is a problem reading the stream.
@@ -147,7 +145,6 @@ public class XmlStreamReader extends Reader {
      * Else 'UTF-8' is used.
      * <p>
      * If lenient detection is indicated an XmlStreamReaderException is never thrown.
-     * <p>
      *
      * @param  is                       InputStream to create a Reader from.
      * @param  lenient                  indicates if the charset encoding detection should be relaxed.
@@ -190,7 +187,6 @@ public class XmlStreamReader extends Reader {
      * Else 'UTF-8' is used.
      * <p>
      * If lenient detection is indicated an XmlStreamReaderException is never thrown.
-     * <p>
      *
      * @param  is                       InputStream to create a Reader from.
      * @param  lenient                  indicates if the charset encoding detection should be relaxed.
@@ -211,7 +207,6 @@ public class XmlStreamReader extends Reader {
      * an InputStream with content-type.
      * <p>
      * It does a lenient charset encoding detection, check the constructor with the lenient parameter for details.
-     * <p>
      *
      * @param  url         URL to create a Reader from.
      * @throws IOException thrown if there is a problem reading the stream of the URL.
@@ -230,7 +225,6 @@ public class XmlStreamReader extends Reader {
      * an InputStream with content-type.
      * <p>
      * It does a lenient charset encoding detection, check the constructor with the lenient parameter for details.
-     * <p>
      *
      * @param  url            URL to create a Reader from.
      * @param  requestHeaders optional Map of headers to set on http request.
@@ -250,7 +244,6 @@ public class XmlStreamReader extends Reader {
      * used for an InputStream with content-type.
      * <p>
      * It does a lenient charset encoding detection, check the constructor with the lenient parameter for details.
-     * <p>
      *
      * @param  conn        URLConnection to create a Reader from.
      * @throws IOException thrown if there is a problem reading the stream of the URLConnection.
@@ -269,7 +262,6 @@ public class XmlStreamReader extends Reader {
      * used for an InputStream with content-type.
      * <p>
      * It does a lenient charset encoding detection, check the constructor with the lenient parameter for details.
-     * <p>
      *
      * @param  conn           URLConnection to create a Reader from.
      * @param  requestHeaders optional Map of headers to set on http request.
@@ -308,7 +300,6 @@ public class XmlStreamReader extends Reader {
      * encoding mandated by the content-type MIME type.
      * <p>
      * It does a lenient charset encoding detection, check the constructor with the lenient parameter for details.
-     * <p>
      *
      * @param  is              InputStream to create the reader from.
      * @param  httpContentType content-type header to use for the resolution of the charset encoding.
@@ -337,7 +328,6 @@ public class XmlStreamReader extends Reader {
      * Else 'UTF-8' is used.
      * <p>
      * If lenient detection is indicated and XmlStreamReaderException is never thrown.
-     * <p>
      *
      * @param  is                       InputStream to create the reader from.
      * @param  httpContentType          content-type header to use for the resolution of the charset encoding.
@@ -383,7 +373,6 @@ public class XmlStreamReader extends Reader {
      * Else 'UTF-8' is used.
      * <p>
      * If lenient detection is indicated and XmlStreamReaderException is never thrown.
-     * <p>
      *
      * @param  is                       InputStream to create the reader from.
      * @param  httpContentType          content-type header to use for the resolution of the charset encoding.
@@ -424,7 +413,6 @@ public class XmlStreamReader extends Reader {
 
     /**
      * Returns the charset encoding of the XmlReader.
-     * <p>
      *
      * @return charset encoding.
      */
@@ -468,7 +456,6 @@ public class XmlStreamReader extends Reader {
 
     /**
      * Closes the XmlReader stream.
-     * <p>
      *
      * @throws IOException thrown if there was a problem closing the stream.
      */
