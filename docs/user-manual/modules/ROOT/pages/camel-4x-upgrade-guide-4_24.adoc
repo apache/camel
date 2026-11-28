@@ -753,7 +753,7 @@ all `https://` addresses.
 A route that called an `https://` address of a server that only speaks plain HTTP now fails; use an `http://` address
 for such a server. An `http://` address with `sslContextParameters` is not changed.
 
-=== camel-platform-http-vertx, camel-vertx-http, camel-vertx-websocket, camel-vertx-mqtt, camel-apicurio-registry, camel-kafka, camel-thrift - the named groups of sslContextParameters
+=== camel-platform-http-vertx, camel-vertx-http, camel-vertx-websocket, camel-vertx-mqtt, camel-apicurio-registry, camel-kafka - the named groups of sslContextParameters
 
 The Vert.x components (`camel-platform-http-vertx`, `camel-vertx-http`, `camel-vertx-websocket` and
 `camel-vertx-mqtt`) and `camel-apicurio-registry` now apply the `namedGroups` (or `namedGroupsFilter`) of
@@ -762,11 +762,11 @@ post-quantum preference that `SSLContextParameters` applies on a JVM that offers
 one is applied as well. A peer that only supports named groups outside of the configured ones can no longer connect.
 Vert.x has no setting for the signature schemes: a `WARN` is logged when `signatureSchemes` are configured.
 
-The Kafka client (`camel-kafka`, `camel-kafka-share`) and the `camel-thrift` producer cannot apply the named groups
-and the signature schemes of `sslContextParameters`, as they create their TLS connections from settings of their own.
-They still ignore them, as before, but now log a `WARN` when they start with them configured. To apply them, set
-the `jdk.tls.namedGroups`, `jdk.tls.client.SignatureSchemes` and `jdk.tls.server.SignatureSchemes` system properties
-of the JDK. See _Components with their own TLS stack_ in the
+The Kafka client (`camel-kafka`, `camel-kafka-share`) cannot apply the named groups and the signature schemes of
+`sslContextParameters`, as it creates its TLS connections from settings of its own. It still ignores them, as before,
+but now logs a `WARN` when it starts with them configured. To apply them, set the `jdk.tls.namedGroups`,
+`jdk.tls.client.SignatureSchemes` and `jdk.tls.server.SignatureSchemes` system properties of the JDK. See
+_Components with their own TLS stack_ in the
 xref:camel-configuration-utilities.adoc#_components_with_their_own_tls_stack[Camel JSSE Configuration Utility].
 
 === camel-openfga - writeTuples and the read operations carry a relationship condition
@@ -5913,6 +5913,17 @@ on the component (`camel.component.keycloak.allowOperationHeader=true`) for all 
 
 An endpoint without an `operation`, which took the operation from the header, now fails with an
 `IllegalArgumentException` that asks for the operation, unless it sets `allowOperationHeader=true`.
+
+=== camel-thrift - SSL/TLS settings of the producer
+
+* The SSL/TLS producer now builds its client socket from the full SSL context of `sslParameters`, the same as the
+  consumer. All SSL settings now apply: the key managers (client certificate for mTLS), trust managers, protocols,
+  cipher suites, named groups, signature schemes and the post-quantum preference. Before, the producer used
+  `TSSLTransportFactory` and only applied the protocol, cipher suites and trust store; the named groups and signature
+  schemes were ignored (with a `WARN`), and the key managers were never sent.
+* A `camel-thrift` producer without trust managers configured now uses the JVM default trust store. Before, it failed
+  to start with a `NullPointerException` on the missing trust store path.
+* The producer still verifies that the server certificate matches the host name of the URI, as before.
 
 === camel-thrift - SSL/TLS settings of the consumer, and errors sent to the client
 

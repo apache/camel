@@ -17,10 +17,14 @@
 package org.apache.camel.component.thrift;
 
 import java.io.IOException;
-import java.util.List;
+import java.security.GeneralSecurityException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLSocket;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
@@ -29,15 +33,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.support.jsse.JsseParametersHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.TAsyncClientManager;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TNonblockingTransport;
-import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
@@ -287,62 +289,49 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
                                                    + configuration.getNegotiationType());
             }
 
-            ObjectHelper.notNull(sslParameters.getSecureSocketProtocol(), "Security protocol");
-            ObjectHelper.notNull(sslParameters.getTrustManagers().getKeyStore().getResource(), "Trust store path");
-            ObjectHelper.notNull(sslParameters.getTrustManagers().getKeyStore().getPassword(), "Trust store password");
-
             LOG.info("Creating secured transport to the remote Thrift server {}:{}", configuration.getHost(),
                     configuration.getPort());
 
-            logDroppedSslOptions(sslParameters);
-
-            TSSLTransportFactory.TSSLTransportParameters sslParams;
-
-            sslParams = new TSSLTransportFactory.TSSLTransportParameters(
-                    sslParameters.getSecureSocketProtocol(),
-                    sslParameters.getCipherSuites() == null
-                            ? null
-                            : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
-
-            if (ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getProvider())
-                    && ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getKeyStore().getType())) {
-                sslParams.setTrustStore(
-                        ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                sslParameters.getTrustManagers().getKeyStore().getResource()),
-                        sslParameters.getTrustManagers().getKeyStore().getPassword(),
-                        sslParameters.getTrustManagers().getProvider(),
-                        sslParameters.getTrustManagers().getKeyStore().getType());
-            } else {
-                sslParams.setTrustStore(sslParameters.getTrustManagers().getKeyStore().getResource(),
-                        sslParameters.getTrustManagers().getKeyStore().getPassword());
+            // Use the full SSLContext from sslParameters so that all SSL settings are applied: key managers
+            // (client certificate for mTLS), trust managers, protocols, cipher suites and named groups.
+            // This mirrors the approach used by ThriftConsumer.initializeServer().
+            SSLContext sslContext;
+            try {
+                sslContext = sslParameters.createSSLContext(endpoint.getCamelContext());
+            } catch (GeneralSecurityException e) {
+                throw new IllegalArgumentException(
+                        "Unable to create the SSL context for the Thrift producer"
+                                                   + (sslParameters.getKeyManagers() != null
+                                                           && sslParameters.getKeyManagers().getKeyPassword() == null
+                                                                   ? " (set keyPassword on the key managers of sslParameters"
+                                                                     + " when the key is protected by a password)"
+                                                                   : ""),
+                        e);
             }
 
-            syncTransport = TSSLTransportFactory.getClientSocket(configuration.getHost(), configuration.getPort(),
-                    configuration.getClientTimeout(), sslParams);
+            SSLSocket sslSocket;
+            try {
+                sslSocket = (SSLSocket) sslContext.getSocketFactory()
+                        .createSocket(configuration.getHost(), configuration.getPort());
+            } catch (IOException e) {
+                throw new TTransportException(
+                        "Unable to open SSL connection to " + configuration.getHost() + ":" + configuration.getPort(), e);
+            }
+            try {
+                // Apply hostname verification, as TSSLTransportFactory does since libthrift 0.23.0.
+                SSLParameters socketParameters = sslSocket.getSSLParameters();
+                socketParameters.setEndpointIdentificationAlgorithm("HTTPS");
+                sslSocket.setSSLParameters(socketParameters);
+                if (configuration.getClientTimeout() > 0) {
+                    sslSocket.setSoTimeout(configuration.getClientTimeout());
+                }
+                syncTransport = new TSocket(sslSocket);
+            } catch (IOException | TTransportException e) {
+                IOHelper.close(sslSocket);
+                throw e;
+            }
         } else {
             throw new IllegalArgumentException("No connection properties (host, port) specified");
-        }
-    }
-
-    /**
-     * The Thrift client builds its TLS connection from TSSLTransportParameters, which cannot carry the options that
-     * only the SSLContext of {@code SSLContextParameters.createSSLContext} applies: say so instead of dropping them in
-     * silence. The post-quantum preference of the named groups, which that SSLContext applies when no named groups are
-     * configured, is not an option of the user: losing it is only logged at DEBUG.
-     */
-    private static void logDroppedSslOptions(SSLContextParameters sslParameters) {
-        List<String> dropped = JsseParametersHelper.engineOnlyParameters(sslParameters);
-        if (!dropped.isEmpty()) {
-            LOG.warn("The Thrift producer cannot apply the {} of sslParameters: it creates its TLS connection from the"
-                     + " protocol, cipher suites and trust store only, so the JVM defaults are used instead",
-                    String.join(", ", dropped));
-        } else if (LOG.isDebugEnabled()) {
-            List<String> postQuantum = JsseParametersHelper.postQuantumNamedGroups(sslParameters);
-            if (postQuantum != null) {
-                LOG.debug("The Thrift producer cannot apply the post-quantum named group order {} that sslParameters"
-                          + " prefers on this JVM: it uses the named group order of the JVM instead",
-                        postQuantum);
-            }
         }
     }
 }
