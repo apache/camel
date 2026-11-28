@@ -18,6 +18,7 @@ package org.apache.camel.telemetry;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -30,6 +31,7 @@ import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -61,8 +63,9 @@ public class AsyncTest extends ExchangeTestSupport {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
         mock.assertIsSatisfied(1000);
-        // We must wait a safe time to let the context completing the async writing to the log trace.
-        Thread.sleep(10000);
+        // The spans are written asynchronously, so wait for every trace to land instead of
+        // guessing how long that takes.
+        await().atMost(30, TimeUnit.SECONDS).until(() -> mockTracer.traces().size() == j);
         Map<String, MockTrace> traces = mockTracer.traces();
         // Each trace should have a unique trace id. It is enough to assert that
         // the number of elements in the map is the same of the requests to prove
