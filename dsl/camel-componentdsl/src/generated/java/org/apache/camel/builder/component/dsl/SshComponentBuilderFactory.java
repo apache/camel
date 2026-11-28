@@ -54,7 +54,8 @@ public interface SshComponentBuilderFactory {
         /**
          * The time in milliseconds that the component waits for each step of
          * setting up the session: the connection, the authentication and the
-         * opening of the channel. It does not limit how long the command runs.
+         * opening of the channel, unless channelOpenTimeout is set. It does not
+         * limit how long the command runs.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -181,10 +182,9 @@ public interface SshComponentBuilderFactory {
         }
     
         /**
-         * Sets a channel open timeout of Apache MINA SSHD that applies only to
-         * SSH agent forwarding, which this component does not use. The timeout
-         * option limits how long the component waits for the channel that runs
-         * the command.
+         * The time in milliseconds that the component waits for the channel
+         * that runs the command to open. If 0 or less, the timeout option
+         * applies.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -202,8 +202,8 @@ public interface SshComponentBuilderFactory {
         /**
          * The type of SSH channel that runs the command: exec runs it as a
          * single command, and shell writes it to an interactive shell and reads
-         * the output up to the shellPrompt text. Other values are not
-         * supported.
+         * the output up to the shellPrompt text. The endpoint fails to start
+         * with another value.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -323,13 +323,16 @@ public interface SshComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * The time in milliseconds after which Apache MINA SSHD closes a
-         * session without traffic. The session is open while a command runs. If
-         * 0 or less, the default of Apache MINA SSHD, 10 minutes, applies.
+         * session without traffic. The session is open while a command runs.
+         * The default, 10 minutes, is the default of Apache MINA SSHD. If 0 or
+         * less, the session has no idle timeout.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
+         * Default: 600000
          * Group: advanced
          * 
          * @param idleTimeout the value to set

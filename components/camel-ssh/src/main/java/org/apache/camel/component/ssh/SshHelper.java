@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.StringHelper;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
@@ -139,6 +140,14 @@ public final class SshHelper {
                 } else {
                     pair = keyPairProvider.loadKey(session, configuration.getKeyType());
                 }
+                if (pair == null) {
+                    // addPublicKeyIdentity would fail with a NullPointerException "No key-pair to add"
+                    String source = describeKeySource(certResource);
+                    throw new RuntimeCamelException(
+                            configuration.getKeyType() != null
+                                    ? "No key pair of type " + configuration.getKeyType() + " found in " + source
+                                    : "No key pair found in " + source);
+                }
 
                 session.addPublicKeyIdentity(pair);
             } else {
@@ -174,6 +183,10 @@ public final class SshHelper {
                 // this approach is used to send the command and evaluate the response
                 channel = session.createChannel(Channel.CHANNEL_SHELL);
                 in = new PipedInputStream(reply);
+            } else {
+                // SshEndpoint rejects other values when it starts
+                throw new IllegalArgumentException(
+                        "Unsupported channelType " + endpoint.getChannelType() + ": use exec or shell");
             }
 
             channel.setIn(in);
@@ -184,17 +197,30 @@ public final class SshHelper {
             ByteArrayOutputStream err = new ByteArrayOutputStream();
             channel.setErr(err);
             OpenFuture openFuture = channel.open();
-            openFuture.await(configuration.getTimeout());
+            // channelOpenTimeout, when set, limits the wait for the channel instead of timeout
+            long channelOpenTimeout = configuration.getChannelOpenTimeout() > 0
+                    ? configuration.getChannelOpenTimeout() : configuration.getTimeout();
+            openFuture.await(channelOpenTimeout);
+            if (!openFuture.isOpened()) {
+                String channelTo = "the " + endpoint.getChannelType() + " channel to " + configuration.getHost() + ":"
+                                   + configuration.getPort();
+                Throwable refused = openFuture.getException();
+                if (refused != null) {
+                    // the server answered, and refused to open the channel
+                    throw new RuntimeCamelException(
+                            "The server refused to open " + channelTo + ": " + refused.getMessage(), refused);
+                }
+                throw new RuntimeCamelException(
+                        "Failed to open " + channelTo + " within timeout " + channelOpenTimeout + "ms");
+            }
             SshResult result = null;
             if (Channel.CHANNEL_EXEC.equals(endpoint.getChannelType())) {
-                if (openFuture.isOpened()) {
-                    Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
-                    if (!events.contains(ClientChannelEvent.TIMEOUT)) {
-                        result = new SshResult(
-                                command, channel.getExitStatus(),
-                                new ByteArrayInputStream(out.toByteArray()),
-                                new ByteArrayInputStream(err.toByteArray()));
-                    }
+                Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
+                if (!events.contains(ClientChannelEvent.TIMEOUT)) {
+                    result = new SshResult(
+                            command, channel.getExitStatus(),
+                            new ByteArrayInputStream(out.toByteArray()),
+                            new ByteArrayInputStream(err.toByteArray()));
                 }
             } else if (Channel.CHANNEL_SHELL.equals(endpoint.getChannelType())) {
                 getPrompt(channel, out, endpoint);
@@ -217,6 +243,20 @@ public final class SshHelper {
             }
         }
 
+    }
+
+    /**
+     * Where the key pair comes from, for an error message. A base64: or mem: resource holds the key itself, so only its
+     * scheme is named.
+     */
+    static String describeKeySource(String certResource) {
+        if (certResource == null) {
+            return "keyPairProvider";
+        }
+        if (certResource.startsWith("base64:") || certResource.startsWith("mem:")) {
+            return "certResource (" + StringHelper.before(certResource, ":") + ")";
+        }
+        return "certResource " + certResource;
     }
 
     private static String getPrompt(ClientChannel channel, ByteArrayOutputStream output, SshEndpoint endpoint)

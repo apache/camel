@@ -82,7 +82,7 @@ public class SshIdleTimeoutTest extends SshComponentTestSupport {
     @Test
     public void testConsumerIdleTimeoutAppliedToClient() throws Exception {
         SshEndpoint endpoint = context.getEndpoint(
-                "ssh://smx:smx@localhost:" + port + "?timeout=3000&idleTimeout=60000", SshEndpoint.class);
+                "ssh://smx:smx@localhost:" + port + "?timeout=3000&idleTimeout=60000&pollCommand=test", SshEndpoint.class);
         SshConsumer consumer = (SshConsumer) endpoint.createConsumer(x -> {
         });
         consumer.start();
@@ -94,15 +94,15 @@ public class SshIdleTimeoutTest extends SshComponentTestSupport {
     }
 
     @Test
-    public void testDefaultNoIdleTimeoutOnClient() throws Exception {
+    public void testDefaultIdleTimeoutOnClient() throws Exception {
         SshEndpoint endpoint = context.getEndpoint(
                 "ssh://smx:smx@localhost:" + port + "?timeout=3000", SshEndpoint.class);
         SshProducer producer = (SshProducer) endpoint.createProducer();
         producer.start();
         SshClient client = (SshClient) FieldUtils.readField(producer, "client", true);
 
-        Duration idleTimeout = CoreModuleProperties.IDLE_TIMEOUT.getOrNull(client);
-        Assertions.assertNull(idleTimeout, "Idle timeout should not be explicitly set by default");
+        // the default of the option is the default of Apache MINA SSHD, 10 minutes
+        Assertions.assertEquals(Duration.ofMinutes(10), CoreModuleProperties.IDLE_TIMEOUT.getOrNull(client));
     }
 
     private void startDelayedServer() throws Exception {

@@ -100,6 +100,8 @@ public class SshAlgorithmParametersTest extends CamelTestSupport {
     public void consumerCiphersParameterTest() throws Exception {
         context.getComponent("ssh", SshComponent.class);
         SshEndpoint endpoint = context.getEndpoint(getSshEndpointURI(), SshEndpoint.class);
+        // a consumer needs a poll command to start
+        endpoint.setPollCommand("test");
         SshConsumer consumer = (SshConsumer) endpoint.createConsumer(x -> {
         });
         consumer.start();
@@ -111,6 +113,8 @@ public class SshAlgorithmParametersTest extends CamelTestSupport {
     public void consumerCustomClientParameterTest() throws Exception {
         context.getComponent("ssh", SshComponent.class);
         SshEndpoint endpoint = context.getEndpoint(getCustomClientSshEndpointURI(), SshEndpoint.class);
+        // a consumer needs a poll command to start
+        endpoint.setPollCommand("test");
         SshConsumer consumer = (SshConsumer) endpoint.createConsumer(x -> {
         });
         consumer.start();

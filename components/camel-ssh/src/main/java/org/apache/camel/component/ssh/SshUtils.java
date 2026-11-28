@@ -80,7 +80,7 @@ public class SshUtils {
 
     public static List<KeyExchangeFactory> filter(List<KeyExchangeFactory> factories, String[] names) {
         List<KeyExchangeFactory> list = new ArrayList<>();
-        LOGGER.info("List of available kex algorithms : {}",
+        LOGGER.trace("List of available kex algorithms : {}",
                 factories.stream().map(NamedResource::getName).collect(joining(",")));
 
         for (String name : names) {
@@ -130,9 +130,13 @@ public class SshUtils {
         if (isBlank(names)) {
             return;
         }
-        Set<BuiltinDHFactories> builtin = BuiltinDHFactories.VALUES;
-        NavigableSet<DHFactory> dhFactories = BuiltinDHFactories.getRegisteredExtensions();
-        List<KeyExchangeFactory> avail = NamedFactory.setUpTransformedFactories(false, builtin, ClientBuilder.DH2KEX);
+        Set<BuiltinDHFactories> builtIn = BuiltinDHFactories.VALUES;
+        NavigableSet<DHFactory> registered = BuiltinDHFactories.getRegisteredExtensions();
+        Set<DHFactory> allDHFactories = new HashSet<>();
+        allDHFactories.addAll(builtIn);
+        allDHFactories.addAll(registered);
+        List<KeyExchangeFactory> avail
+                = NamedFactory.setUpTransformedFactories(false, allDHFactories, ClientBuilder.DH2KEX);
         factoryManager.setKeyExchangeFactories(filter(avail, names.split(",")));
     }
 
@@ -178,9 +182,8 @@ public class SshUtils {
             client = configuration.getClientBuilder().build(true);
         }
         configureAlgorithms(configuration, client);
-        if (configuration.getIdleTimeout() > 0) {
-            CoreModuleProperties.IDLE_TIMEOUT.set(client, Duration.ofMillis(configuration.getIdleTimeout()));
-        }
+        // Apache MINA SSHD applies only a positive idle timeout, so 0 or less turns it off
+        CoreModuleProperties.IDLE_TIMEOUT.set(client, Duration.ofMillis(Math.max(0, configuration.getIdleTimeout())));
         if (configuration.getHeartbeatInterval() > 0) {
             CoreModuleProperties.HEARTBEAT_INTERVAL.set(client, Duration.ofMillis(configuration.getHeartbeatInterval()));
         }

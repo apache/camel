@@ -82,6 +82,10 @@ public class SshEndpoint extends ScheduledPollEndpoint implements EndpointServic
 
     @Override
     protected void doStart() throws Exception {
+        if (!Channel.CHANNEL_EXEC.equals(getChannelType()) && !Channel.CHANNEL_SHELL.equals(getChannelType())) {
+            throw new IllegalArgumentException(
+                    "Unsupported channelType " + getChannelType() + ": set channelType to exec or shell");
+        }
         if (Channel.CHANNEL_SHELL.equals(getChannelType()) && ObjectHelper.isEmpty(getShellPrompt())) {
             throw new IllegalArgumentException(
                     "The shell channel needs the shellPrompt option: set shellPrompt to the text the shell prompt ends with");

@@ -80,8 +80,8 @@ public class SshConfiguration implements Cloneable {
     private String certResourcePassword;
     @UriParam(defaultValue = "30000",
               description = "The time in milliseconds that the component waits for each step of setting up the session:"
-                            + " the connection, the authentication and the opening of the channel. It does not limit how long"
-                            + " the command runs.")
+                            + " the connection, the authentication and the opening of the channel, unless channelOpenTimeout"
+                            + " is set. It does not limit how long the command runs.")
     private long timeout = 30000;
     @UriParam(label = "security", security = "insecure:ssl",
               description = "The resource of a file in the OpenSSH known_hosts format, such as file:/etc/camel/known_hosts,"
@@ -97,9 +97,10 @@ public class SshConfiguration implements Cloneable {
                             + " matching entry with the revoked marker. This option has no effect when knownHostsResource is not set.")
     private boolean failOnUnknownHost;
     @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC,
+              enums = "exec,shell",
               description = "The type of SSH channel that runs the command: exec runs it as a single command, and shell writes"
-                            + " it to an interactive shell and reads the output up to the shellPrompt text. Other values are"
-                            + " not supported.")
+                            + " it to an interactive shell and reads the output up to the shellPrompt text. The endpoint fails"
+                            + " to start with another value.")
     private String channelType = Channel.CHANNEL_EXEC;
     @UriParam(label = "advanced",
               description = "The text that the shell prompt ends with, which channelType=shell needs: the endpoint fails to"
@@ -137,11 +138,11 @@ public class SshConfiguration implements Cloneable {
               description = "A comma-separated list of the compression algorithms that the client proposes, in order of"
                             + " preference, for example zlib,none. If not set, the client uses no compression.")
     private String compressions;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", defaultValue = "600000",
               description = "The time in milliseconds after which Apache MINA SSHD closes a session without traffic. The"
-                            + " session is open while a command runs. If 0 or less, the default of Apache MINA SSHD, 10"
-                            + " minutes, applies.")
-    private long idleTimeout;
+                            + " session is open while a command runs. The default, 10 minutes, is the default of Apache MINA"
+                            + " SSHD. If 0 or less, the session has no idle timeout.")
+    private long idleTimeout = 600000;
     @UriParam(label = "advanced",
               description = "The interval in milliseconds at which the client sends keep-alive requests to the server while a"
                             + " command runs. If 0 or less, no keep-alive requests are sent.")
@@ -161,9 +162,8 @@ public class SshConfiguration implements Cloneable {
                             + " component waits for the connection.")
     private long connectTimeout;
     @UriParam(label = "advanced",
-              description = "Sets a channel open timeout of Apache MINA SSHD that applies only to SSH agent forwarding,"
-                            + " which this component does not use. The timeout option limits how long the component waits"
-                            + " for the channel that runs the command.")
+              description = "The time in milliseconds that the component waits for the channel that runs the command to"
+                            + " open. If 0 or less, the timeout option applies.")
     private long channelOpenTimeout;
     @UriParam(description = "To use a custom org.apache.sshd.client.ClientBuilder to create the SSH client, for example to"
                             + " set a ServerKeyVerifier. The producer and the consumer each create a client with it when they"

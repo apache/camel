@@ -19,6 +19,7 @@ package org.apache.camel.component.ssh;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.sshd.client.SshClient;
 
 public class SshConsumer extends ScheduledPollConsumer {
@@ -33,6 +34,10 @@ public class SshConsumer extends ScheduledPollConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        if (ObjectHelper.isEmpty(endpoint.getPollCommand())) {
+            // without it, every poll connects and authenticates, then fails
+            throw new IllegalArgumentException("The consumer needs the pollCommand option: set it to the command to run");
+        }
         client = SshUtils.createAndStartClient(endpoint.getConfiguration());
 
         super.doStart();
