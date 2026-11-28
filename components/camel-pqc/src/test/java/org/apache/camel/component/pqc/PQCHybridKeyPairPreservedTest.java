@@ -119,9 +119,9 @@ public class PQCHybridKeyPairPreservedTest {
 
             // the matched pair, not the generic MLDSA default: asserting only non-null would not notice the
             // difference, and for the KEM pairing below it is a difference in security level
-            assertSame(PQCDefaultECDSAMLDSAMaterial.pqcKeyPair, endpoint.getConfiguration().getKeyPair(),
+            assertSame(PQCDefaultECDSAMLDSAMaterial.getPqcKeyPair(), endpoint.getConfiguration().getKeyPair(),
                     "the PQC half must be the one matched to the classical algorithm");
-            assertSame(PQCDefaultECDSAMLDSAMaterial.classicalKeyPair,
+            assertSame(PQCDefaultECDSAMLDSAMaterial.getClassicalKeyPair(),
                     endpoint.getConfiguration().getClassicalKeyPair(),
                     "the classical half must be auto-configured");
         }
@@ -139,9 +139,9 @@ public class PQCHybridKeyPairPreservedTest {
 
             // PQCDefaultX25519MLKEMMaterial is ML-KEM-768; the generic PQCDefaultMLKEMMaterial is ML-KEM-512, so
             // falling back to it would silently weaken the default hybrid pairing
-            assertSame(PQCDefaultX25519MLKEMMaterial.pqcKeyPair, endpoint.getConfiguration().getKeyPair(),
+            assertSame(PQCDefaultX25519MLKEMMaterial.getPqcKeyPair(), endpoint.getConfiguration().getKeyPair(),
                     "the PQC half must be the ML-KEM-768 material matched to X25519");
-            assertSame(PQCDefaultX25519MLKEMMaterial.classicalKeyPair,
+            assertSame(PQCDefaultX25519MLKEMMaterial.getClassicalKeyPair(),
                     endpoint.getConfiguration().getClassicalKeyPair(),
                     "the classical half must be auto-configured");
         }

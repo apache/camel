@@ -53,6 +53,7 @@ import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
 import org.apache.camel.component.pqc.metrics.PQCMetrics;
+import org.apache.camel.component.pqc.metrics.PQCMetricsProvider;
 import org.apache.camel.component.pqc.stateful.StatefulKeyState;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
@@ -60,14 +61,6 @@ import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
-import org.bouncycastle.jcajce.interfaces.LMSPrivateKey;
-import org.bouncycastle.jcajce.interfaces.XMSSMTPrivateKey;
-import org.bouncycastle.jcajce.interfaces.XMSSPrivateKey;
-import org.bouncycastle.jcajce.spec.KEMExtractSpec;
-import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -326,20 +319,21 @@ public class PQCProducer extends DefaultProducer {
 
     private PQCMetrics createMetrics() {
         CamelContext camelContext = getEndpoint().getCamelContext();
-        // Only touch Micrometer if it is actually on the classpath, keeping it an optional dependency.
-        // Use reflection to avoid a static class reference that GraalVM native image would follow.
-        if (camelContext.getClassResolver().resolveClass("io.micrometer.core.instrument.MeterRegistry") == null) {
-            return PQCMetrics.NOOP;
-        }
         try {
-            Class<?> clazz = camelContext.getClassResolver()
-                    .resolveClass("org.apache.camel.component.pqc.metrics.PQCMicrometerMetrics");
-            if (clazz == null) {
+            Class<?> providerType = camelContext.getCamelContextExtension()
+                    .getFactoryFinder(PQCMetricsProvider.FACTORY_RESOURCE_PATH)
+                    .findClass(PQCMetricsProvider.FACTORY_NAME)
+                    .orElse(null);
+            if (providerType == null || !PQCMetricsProvider.class.isAssignableFrom(providerType)) {
                 return PQCMetrics.NOOP;
             }
-            return (PQCMetrics) clazz.getMethod("create", CamelContext.class).invoke(null, camelContext);
-        } catch (Throwable t) {
-            LOG.debug("Micrometer metrics are not available for the PQC producer: {}", t.getMessage());
+            PQCMetricsProvider provider = camelContext.getInjector()
+                    .newInstance(providerType.asSubclass(PQCMetricsProvider.class), false);
+            PQCMetrics result = provider.create(camelContext);
+            return result != null ? result : PQCMetrics.NOOP;
+        } catch (Exception | LinkageError e) {
+            // Micrometer is optional. A missing integration or optional Micrometer class must not affect PQC operations.
+            LOG.debug("Optional PQC metrics provider is not available: {}", e.getMessage());
             return PQCMetrics.NOOP;
         }
     }
@@ -460,7 +454,7 @@ public class PQCProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(signer)) {
                 PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
                 signerAlgorithm = sigAlg.getAlgorithm();
-                signerProvider = sigAlg.getBcProvider();
+                signerProvider = sigAlg.getBcProvider("Signature");
                 signer = Signature.getInstance(signerAlgorithm, signerProvider);
             }
         }
@@ -472,7 +466,7 @@ public class PQCProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(keyGenerator)) {
                 PQCKeyEncapsulationAlgorithms kemAlg
                         = PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm());
-                keyGenerator = KeyGenerator.getInstance(kemAlg.getAlgorithm(), kemAlg.getBcProvider());
+                keyGenerator = KeyGenerator.getInstance(kemAlg.getAlgorithm(), kemAlg.getBcProvider("KeyGenerator"));
                 keyGeneratorAlgorithm = kemAlg.getAlgorithm();
                 keyGeneratorProvider = keyGenerator.getProvider();
             }
@@ -508,7 +502,7 @@ public class PQCProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(signer) && ObjectHelper.isNotEmpty(getConfiguration().getSignatureAlgorithm())) {
                 PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
                 signerAlgorithm = sigAlg.getAlgorithm();
-                signerProvider = sigAlg.getBcProvider();
+                signerProvider = sigAlg.getBcProvider("Signature");
                 signer = Signature.getInstance(signerAlgorithm, signerProvider);
             }
 
@@ -536,7 +530,7 @@ public class PQCProducer extends DefaultProducer {
                     && ObjectHelper.isNotEmpty(getConfiguration().getKeyEncapsulationAlgorithm())) {
                 PQCKeyEncapsulationAlgorithms kemAlg
                         = PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm());
-                keyGenerator = KeyGenerator.getInstance(kemAlg.getAlgorithm(), kemAlg.getBcProvider());
+                keyGenerator = KeyGenerator.getInstance(kemAlg.getAlgorithm(), kemAlg.getBcProvider("KeyGenerator"));
                 keyGeneratorAlgorithm = kemAlg.getAlgorithm();
                 keyGeneratorProvider = keyGenerator.getProvider();
             }
@@ -840,58 +834,44 @@ public class PQCProducer extends DefaultProducer {
         }
 
         KeyGenerator generator = keyGeneratorForExchange();
-        SecretKeyWithEncapsulation secEnc1;
-        synchronized (PQCKemLocks.lockFor(generator, keyPair.getPublic())) {
-            // initialise for creating an encapsulation and shared secret.
-            generator.init(
-                    new KEMGenerateSpec(
-                            keyPair.getPublic(),
-                            // The mapped JCE algorithm name, as the extract operations use: for the algorithms whose
-                            // enum name differs from the JCE name (GOST3412_2015 -> GOST3412-2015, DESEDE -> DESede)
-                            // the raw name is not a resolvable cipher, and the two ends of the exchange would disagree
-                            // on the identity of the key
-                            PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
-                            getEndpoint().getConfiguration().getSymmetricKeyLength()),
-                    SecureRandomHelper.getSecureRandom());
-            // SecretKeyWithEncapsulation is the class to use as the secret key, it has additional
-            // methods on it for recovering the encapsulation as well.
-            secEnc1 = (SecretKeyWithEncapsulation) generator.generateKey();
-        }
+        BouncyCastleKemSupport.EncapsulationResult secEnc1;
+        secEnc1 = BouncyCastleKemSupport.encapsulate(
+                generator,
+                keyPair.getPublic(),
+                PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
+                getEndpoint().getConfiguration().getSymmetricKeyLength(),
+                SecureRandomHelper.getSecureRandom());
 
-        exchange.getMessage().setBody(secEnc1, SecretKeyWithEncapsulation.class);
+        exchange.getMessage().setBody(secEnc1.secretKey(), SecretKey.class);
     }
 
     private void extractEncapsulation(Exchange exchange)
             throws InvalidAlgorithmParameterException,
             InvalidPayloadException, NoSuchAlgorithmException {
         // initialise for creating an encapsulation and shared secret.
-        SecretKeyWithEncapsulation payload = exchange.getMessage().getMandatoryBody(SecretKeyWithEncapsulation.class);
+        SecretKey payload = exchange.getMessage().getMandatoryBody(SecretKey.class);
 
         if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
             throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
         }
 
         KeyGenerator generator = keyGeneratorForExchange();
-        SecretKeyWithEncapsulation secEnc2;
-        synchronized (PQCKemLocks.lockFor(generator, keyPair.getPrivate())) {
-            generator.init(
-                    new KEMExtractSpec(
-                            keyPair.getPrivate(), payload.getEncapsulation(),
-                            PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
-                            getEndpoint().getConfiguration().getSymmetricKeyLength()),
-                    SecureRandomHelper.getSecureRandom());
+        SecretKey secEnc2;
+        secEnc2 = BouncyCastleKemSupport.decapsulate(
+                generator,
+                keyPair.getPrivate(),
+                BouncyCastleKemSupport.getEncapsulation(payload),
+                PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
+                getEndpoint().getConfiguration().getSymmetricKeyLength(),
+                SecureRandomHelper.getSecureRandom());
 
-            // initialise for extracting the shared secret from the encapsulation.
-            secEnc2 = (SecretKeyWithEncapsulation) generator.generateKey();
-        }
-
-        exchange.getMessage().setBody(secEnc2, SecretKeyWithEncapsulation.class);
+        exchange.getMessage().setBody(secEnc2, SecretKey.class);
     }
 
     private void extractSecretKeyFromEncapsulation(Exchange exchange)
-            throws InvalidPayloadException {
+            throws InvalidAlgorithmParameterException, InvalidPayloadException {
         // initialise for creating an encapsulation and shared secret.
-        SecretKeyWithEncapsulation payload = exchange.getMessage().getMandatoryBody(SecretKeyWithEncapsulation.class);
+        SecretKey payload = exchange.getMessage().getMandatoryBody(SecretKey.class);
 
         if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
             throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
@@ -901,7 +881,7 @@ public class PQCProducer extends DefaultProducer {
         // whose enum name differs from the JCE name (for example GOST3412_2015 -> GOST3412-2015) the raw name is not a
         // resolvable cipher algorithm, so the restored key would carry an unusable algorithm label
         SecretKey restoredKey = new SecretKeySpec(
-                payload.getEncoded(),
+                BouncyCastleKemSupport.getEncodedKey(payload),
                 PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm());
 
         if (!getConfiguration().isStoreExtractedSecretKeyAsHeader()) {
@@ -1300,6 +1280,7 @@ public class PQCProducer extends DefaultProducer {
      */
     private void claimStatefulKeyBeforeSign(Exchange exchange) {
         if (keyPair == null || keyPair.getPrivate() == null
+                || !isStatefulPrivateKeyAlgorithm(keyPair.getPrivate().getAlgorithm())
                 || getStatefulKeyRemaining(keyPair.getPrivate()) < 0) {
             return;
         }
@@ -1616,14 +1597,10 @@ public class PQCProducer extends DefaultProducer {
      * Returns the remaining signatures for a stateful private key, or -1 if the key is not stateful.
      */
     static long getStatefulKeyRemaining(PrivateKey privateKey) {
-        if (privateKey instanceof XMSSPrivateKey xmssPrivateKey) {
-            return xmssPrivateKey.getUsagesRemaining();
-        } else if (privateKey instanceof XMSSMTPrivateKey xmssmtPrivateKey) {
-            return xmssmtPrivateKey.getUsagesRemaining();
-        } else if (privateKey instanceof LMSPrivateKey lmsPrivateKey) {
-            return lmsPrivateKey.getUsagesRemaining();
+        if (privateKey == null || !isStatefulPrivateKeyAlgorithm(privateKey.getAlgorithm())) {
+            return -1;
         }
-        return -1;
+        return BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey);
     }
 
     /**
@@ -1631,14 +1608,15 @@ public class PQCProducer extends DefaultProducer {
      * not stateful.
      */
     static long getStatefulKeyIndex(PrivateKey privateKey) {
-        if (privateKey instanceof XMSSPrivateKey xmssPrivateKey) {
-            return xmssPrivateKey.getIndex();
-        } else if (privateKey instanceof XMSSMTPrivateKey xmssmtPrivateKey) {
-            return xmssmtPrivateKey.getIndex();
-        } else if (privateKey instanceof LMSPrivateKey lmsPrivateKey) {
-            return lmsPrivateKey.getIndex();
+        if (privateKey == null || !isStatefulPrivateKeyAlgorithm(privateKey.getAlgorithm())) {
+            return 0;
         }
-        return 0;
+        return BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey);
+    }
+
+    private static boolean isStatefulPrivateKeyAlgorithm(String algorithm) {
+        return "LMS".equalsIgnoreCase(algorithm) || "HSS".equalsIgnoreCase(algorithm)
+                || "XMSS".equalsIgnoreCase(algorithm) || "XMSSMT".equalsIgnoreCase(algorithm);
     }
 
     // ========== Configuration Validation ==========
@@ -1794,13 +1772,8 @@ public class PQCProducer extends DefaultProducer {
      * Returns a BC {@link KeyFactory} for the given JCE algorithm name, trying the main BC provider first and falling
      * back to the BC PQC provider.
      */
-    private static KeyFactory getBcKeyFactory(String algorithm)
-            throws NoSuchAlgorithmException, NoSuchProviderException {
-        try {
-            return KeyFactory.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME);
-        } catch (NoSuchAlgorithmException e) {
-            return KeyFactory.getInstance(algorithm, BouncyCastlePQCProvider.PROVIDER_NAME);
-        }
+    private static KeyFactory getBcKeyFactory(String algorithm) throws Exception {
+        return KeyFactory.getInstance(algorithm, BouncyCastleSupport.getProvider("KeyFactory", algorithm));
     }
 
 }

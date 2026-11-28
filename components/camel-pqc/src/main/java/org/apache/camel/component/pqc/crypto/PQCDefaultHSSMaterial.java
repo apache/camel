@@ -18,46 +18,53 @@ package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
 
+import org.apache.camel.component.pqc.BouncyCastlePqcCompatibility;
+import org.apache.camel.component.pqc.BouncyCastleSupport;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.crypto.params.LMOtsParameters;
-import org.bouncycastle.crypto.params.LMSigParameters;
-import org.bouncycastle.jcajce.spec.LMSHSSKeyGenParameterSpec;
-import org.bouncycastle.jcajce.spec.LMSKeyGenParameterSpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 public class PQCDefaultHSSMaterial {
-    public static final KeyPair keyPair;
-    public static final Signature signer;
+    private static KeyPair keyPair;
+    private static Signature signer;
 
-    static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
+    private static boolean initialized;
+
+    /** Initializes the default key material on first use and preserves the original failure as an exception. */
+    public static synchronized void initialize() throws Exception {
+        if (initialized) {
+            return;
         }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastlePQCProvider());
-        }
+        BouncyCastleSupport.ensureProviders();
         KeyPairGenerator generator;
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
             signer = Signature.getInstance(PQCSignatureAlgorithms.HSS.getAlgorithm(),
-                    PQCSignatureAlgorithms.HSS.getBcProvider());
+                    PQCSignatureAlgorithms.HSS.getBcProvider("Signature"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        initialized = true;
     }
 
     protected static KeyPairGenerator prepareKeyPair()
-            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+            throws GeneralSecurityException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.HSS.getAlgorithm(),
-                PQCSignatureAlgorithms.HSS.getBcProvider());
-        LMSKeyGenParameterSpec[] lmsSpecs = new LMSKeyGenParameterSpec[] {
-                new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2),
-                new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2)
-        };
-        kpGen.initialize(new LMSHSSKeyGenParameterSpec(lmsSpecs), SecureRandomHelper.getSecureRandom());
+                PQCSignatureAlgorithms.HSS.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(BouncyCastlePqcCompatibility.lmsHssKeyGenParameterSpec(
+                new String[] { "lms_sha256_n32_h5", "lms_sha256_n32_h5" },
+                new String[] { "sha256_n32_w2", "sha256_n32_w2" }),
+                SecureRandomHelper.getSecureRandom());
         return kpGen;
+    }
+
+    public static KeyPair getKeyPair() throws Exception {
+        initialize();
+        return keyPair;
+    }
+
+    public static Signature getSigner() throws Exception {
+        initialize();
+        return signer;
     }
 }

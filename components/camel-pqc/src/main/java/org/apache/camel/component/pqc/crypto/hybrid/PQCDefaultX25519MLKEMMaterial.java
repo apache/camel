@@ -21,11 +21,10 @@ import java.security.*;
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 
+import org.apache.camel.component.pqc.BouncyCastleSupport;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCParameterSpecResolver;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 /**
  * Default hybrid KEM material combining X25519 with ML-KEM-768. This is the recommended hybrid combination per NIST
@@ -40,35 +39,37 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
  */
 public class PQCDefaultX25519MLKEMMaterial {
 
-    public static final KeyPair classicalKeyPair;
-    public static final KeyAgreement classicalKeyAgreement;
-    public static final KeyPair pqcKeyPair;
-    public static final KeyGenerator pqcKeyGenerator;
-    public static final PQCHybridKEMMaterial material;
+    private static KeyPair classicalKeyPair;
+    private static KeyAgreement classicalKeyAgreement;
+    private static KeyPair pqcKeyPair;
+    private static KeyGenerator pqcKeyGenerator;
+    private static PQCHybridKEMMaterial material;
 
-    static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastlePQCProvider());
-        }
+    private static boolean initialized;
 
+    /** Initializes the default key material on first use and preserves the original failure as an exception. */
+    public static synchronized void initialize() throws Exception {
+        if (initialized) {
+            return;
+        }
+        BouncyCastleSupport.ensureProviders();
         try {
             // Generate X25519 key pair
-            KeyPairGenerator x25519Kpg = KeyPairGenerator.getInstance("X25519", "BC");
+            KeyPairGenerator x25519Kpg
+                    = KeyPairGenerator.getInstance("X25519", BouncyCastleSupport.getProvider("KeyPairGenerator", "X25519"));
             classicalKeyPair = x25519Kpg.generateKeyPair();
-            classicalKeyAgreement = KeyAgreement.getInstance("X25519", "BC");
+            classicalKeyAgreement
+                    = KeyAgreement.getInstance("X25519", BouncyCastleSupport.getProvider("KeyAgreement", "X25519"));
 
             // Generate ML-KEM-768 key pair
             KeyPairGenerator mlkemKpg = KeyPairGenerator.getInstance(
                     PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                    PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
-            mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, SecureRandomHelper.getSecureRandom());
+                    PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
+            mlkemKpg.initialize(PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-768"), SecureRandomHelper.getSecureRandom());
             pqcKeyPair = mlkemKpg.generateKeyPair();
             pqcKeyGenerator = KeyGenerator.getInstance(
                     PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                    PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                    PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyGenerator"));
 
             // Create the material container
             material = new PQCHybridKEMMaterial(
@@ -82,9 +83,35 @@ public class PQCDefaultX25519MLKEMMaterial {
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize hybrid X25519 + ML-KEM material", e);
         }
+        initialized = true;
     }
 
     private PQCDefaultX25519MLKEMMaterial() {
         // Static access only
+    }
+
+    public static KeyPair getClassicalKeyPair() throws Exception {
+        initialize();
+        return classicalKeyPair;
+    }
+
+    public static KeyAgreement getClassicalKeyAgreement() throws Exception {
+        initialize();
+        return classicalKeyAgreement;
+    }
+
+    public static KeyPair getPqcKeyPair() throws Exception {
+        initialize();
+        return pqcKeyPair;
+    }
+
+    public static KeyGenerator getPqcKeyGenerator() throws Exception {
+        initialize();
+        return pqcKeyGenerator;
+    }
+
+    public static PQCHybridKEMMaterial getMaterial() throws Exception {
+        initialize();
+        return material;
     }
 }

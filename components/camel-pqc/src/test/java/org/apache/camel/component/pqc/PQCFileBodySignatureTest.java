@@ -76,7 +76,7 @@ public class PQCFileBodySignatureTest extends CamelTestSupport {
         }
 
         KeyPairGenerator pqc = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
-                PQCSignatureAlgorithms.MLDSA.getBcProvider());
+                PQCSignatureAlgorithms.MLDSA.getBcProvider("KeyPairGenerator"));
         pqc.initialize(MLDSAParameterSpec.ml_dsa_65);
         pqcKeyPair = pqc.generateKeyPair();
 
@@ -238,7 +238,7 @@ public class PQCFileBodySignatureTest extends CamelTestSupport {
 
     private static Signature pqcSignature() throws Exception {
         return Signature.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
-                PQCSignatureAlgorithms.MLDSA.getBcProvider());
+                PQCSignatureAlgorithms.MLDSA.getBcProvider("Signature"));
     }
 
     private static Signature classicalSignature() throws Exception {

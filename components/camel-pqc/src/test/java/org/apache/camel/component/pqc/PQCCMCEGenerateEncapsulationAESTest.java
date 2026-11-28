@@ -37,6 +37,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// This test intentionally exercises the deprecated CMCE compatibility API.
+@SuppressWarnings("deprecation")
 public class PQCCMCEGenerateEncapsulationAESTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
@@ -91,7 +93,7 @@ public class PQCCMCEGenerateEncapsulationAESTest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.CMCE.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider("KeyPairGenerator"));
         kpg.initialize(CMCEParameterSpec.mceliece8192128f, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
         return kp;
@@ -101,7 +103,7 @@ public class PQCCMCEGenerateEncapsulationAESTest extends CamelTestSupport {
     public KeyGenerator setKeyGenerator()
             throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.CMCE.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider("KeyGenerator"));
         return kg;
     }
 }

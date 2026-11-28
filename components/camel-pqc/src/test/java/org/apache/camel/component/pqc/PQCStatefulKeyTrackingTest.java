@@ -33,8 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pqc.stateful.StatefulKeyState;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.bouncycastle.jcajce.interfaces.XMSSPrivateKey;
-import org.bouncycastle.jcajce.spec.XMSSParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.Test;
@@ -92,8 +90,8 @@ public class PQCStatefulKeyTrackingTest extends CamelTestSupport {
         ensureProviders();
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
                 PQCSignatureAlgorithms.XMSS.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSS.getBcProvider());
-        kpGen.initialize(new XMSSParameterSpec(2, XMSSParameterSpec.SHA256), new SecureRandom());
+                PQCSignatureAlgorithms.XMSS.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(BouncyCastlePqcCompatibility.xmssParameterSpec(2, "SHA256"), new SecureRandom());
         return kpGen.generateKeyPair();
     }
 
@@ -102,7 +100,7 @@ public class PQCStatefulKeyTrackingTest extends CamelTestSupport {
         ensureProviders();
         return Signature.getInstance(
                 PQCSignatureAlgorithms.XMSS.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSS.getBcProvider());
+                PQCSignatureAlgorithms.XMSS.getBcProvider("Signature"));
     }
 
     @Test
@@ -143,14 +141,14 @@ public class PQCStatefulKeyTrackingTest extends CamelTestSupport {
         // Create a fresh key with height=2 (4 signatures)
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
                 PQCSignatureAlgorithms.XMSS.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSS.getBcProvider());
-        kpGen.initialize(new XMSSParameterSpec(2, XMSSParameterSpec.SHA256), new SecureRandom());
+                PQCSignatureAlgorithms.XMSS.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(BouncyCastlePqcCompatibility.xmssParameterSpec(2, "SHA256"), new SecureRandom());
         KeyPair exhaustionKeyPair = kpGen.generateKeyPair();
 
         // Sign 4 times to exhaust the key
         Signature xmssSigner = Signature.getInstance(
                 PQCSignatureAlgorithms.XMSS.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSS.getBcProvider());
+                PQCSignatureAlgorithms.XMSS.getBcProvider("Signature"));
 
         for (int i = 0; i < 4; i++) {
             xmssSigner.initSign(exhaustionKeyPair.getPrivate());
@@ -159,9 +157,8 @@ public class PQCStatefulKeyTrackingTest extends CamelTestSupport {
         }
 
         // Now the key should be exhausted
-        XMSSPrivateKey xmssPriv
-                = (XMSSPrivateKey) exhaustionKeyPair.getPrivate();
-        assertEquals(0, xmssPriv.getUsagesRemaining(), "Key should be exhausted after 4 signatures with height=2");
+        assertEquals(0, BouncyCastlePqcCompatibility.getStatefulKeyRemaining(exhaustionKeyPair.getPrivate()),
+                "Key should be exhausted after 4 signatures with height=2");
     }
 
     @Test
@@ -170,15 +167,14 @@ public class PQCStatefulKeyTrackingTest extends CamelTestSupport {
 
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
                 PQCSignatureAlgorithms.XMSS.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSS.getBcProvider());
-        kpGen.initialize(new XMSSParameterSpec(2, XMSSParameterSpec.SHA256), new SecureRandom());
+                PQCSignatureAlgorithms.XMSS.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(BouncyCastlePqcCompatibility.xmssParameterSpec(2, "SHA256"), new SecureRandom());
         KeyPair freshKeyPair = kpGen.generateKeyPair();
 
-        XMSSPrivateKey xmssPriv
-                = (XMSSPrivateKey) freshKeyPair.getPrivate();
-
         StatefulKeyState state = new StatefulKeyState(
-                xmssPriv.getAlgorithm(), xmssPriv.getIndex(), xmssPriv.getUsagesRemaining());
+                freshKeyPair.getPrivate().getAlgorithm(),
+                BouncyCastlePqcCompatibility.getStatefulKeyIndex(freshKeyPair.getPrivate()),
+                BouncyCastlePqcCompatibility.getStatefulKeyRemaining(freshKeyPair.getPrivate()));
 
         assertFalse(state.isExhausted(), "Fresh key should not be exhausted");
         assertEquals(4, state.getUsagesRemaining(), "Fresh XMSS key with height=2 should have 4 remaining");

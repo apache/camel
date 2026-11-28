@@ -1,0 +1,2 @@
+# Optional Micrometer integration for camel-pqc.
+class=org.apache.camel.component.pqc.metrics.PQCMicrometerMetricsProvider

@@ -133,7 +133,7 @@ public class PQCExtractSecretKeyAlgorithmNameTest extends CamelTestSupport {
             InvalidAlgorithmParameterException {
         ensureProviders();
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
         kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
         return kpg.generateKeyPair();
     }
@@ -142,6 +142,6 @@ public class PQCExtractSecretKeyAlgorithmNameTest extends CamelTestSupport {
     public KeyGenerator setKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
         ensureProviders();
         return KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyGenerator"));
     }
 }

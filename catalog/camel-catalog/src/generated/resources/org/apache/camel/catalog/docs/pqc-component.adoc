@@ -185,6 +185,97 @@ The PQC component documentation is split into focused sub-pages:
 * xref:others:pqc-hybrid.adoc[Hybrid Cryptography] - Combining classical and post-quantum algorithms for defense-in-depth, including wire format v2
 * xref:dataformats:pqc-dataformat.adoc[PQC DataFormat] - DataFormat for quantum-resistant encryption/decryption using KEM
 
+== Bouncy Castle Runtime Compatibility
+
+`camel-pqc` uses the JCA services advertised by the Bouncy Castle (`BC`) and Bouncy Castle PQC (`BCPQC`) providers.
+Provider selection is service- and algorithm-specific; an algorithm is not assumed to be available from `BCPQC` just
+because it is a post-quantum algorithm. The provider is resolved at runtime from the providers visible to the
+application.
+
+The Bouncy Castle version selected by an application or platform dependency manager can differ from the version used
+to compile Camel. Keep the runtime Bouncy Castle artifacts aligned to one release and validate that release in the
+target deployment. The Camel compatibility tests currently cover Bouncy Castle 1.86 and 1.87. A scheduled CI check
+also tests the latest stable release; it is an early-warning compatibility check and does not automatically change
+Camel's pinned dependency or by itself constitute a supported-version guarantee.
+
+=== KEM API boundary
+
+On the Java 21 baseline, `camel-pqc` prefers a provider's `KeyGenerator` service when both `KeyGenerator` and
+`KEM` are advertised. This preserves the established `KEMGenerateSpec` / `KEMExtractSpec` derivation behavior on
+Bouncy Castle 1.86 and keeps the data format interoperable with applications that explicitly configure a
+`KeyGenerator`. The standard `javax.crypto.KEM` API is used when the selected provider does not advertise a
+`KeyGenerator` service; this supports KEM-only JCA providers. The standard `KEM.Encapsulated` result carries both the
+`SecretKey` and its encapsulation. Algorithms without either service fail with a provider-specific diagnostic.
+
+`BouncyCastleKemSupport` isolates the provider-specific handling needed by the KEM fallback. It resolves BC parameter
+specifications from the selected provider's class loader and preserves the `SecretKeyWithEncapsulation` runtime
+carrier when that class is available, so routes that use `getEncapsulation()` continue to work. Bouncy Castle API use
+is kept in typed support code and checked by the PQC production import-fence test; production code does not use
+reflective API access.
+
+=== Stateful-key compatibility
+
+Bouncy Castle 1.87 moved the LMS/HSS and XMSS/XMSSMT JCA parameter specifications and key interfaces to the newer
+`org.bouncycastle.jcajce` packages. Earlier releases expose the corresponding types under
+`org.bouncycastle.pqc.jcajce`.
+
+`BouncyCastlePqcCompatibility` contains typed access paths for these API layouts. At runtime it checks which API is
+available, selects the matching access path, and caches that selection. It does not choose an implementation by
+comparing a provider version string, and it does not use reflection or `ServiceLoader` to load version-specific
+adapters.
+
+This compatibility path is used for stateful LMS, HSS, XMSS and XMSSMT key handling. Ordinary non-stateful signing does
+not need to query the stateful-key compatibility support. The compatibility implementation is part of `camel-pqc`;
+applications do not need to add separate BC compatibility adapter artifacts.
+
+=== Runtime dependency alignment
+
+A platform BOM, including a Quarkus BOM, may select a Bouncy Castle runtime version that differs from Camel's
+compile-time dependency. Keep the related Bouncy Castle artifacts aligned to one release, and test the exact runtime
+version selected by the application. Avoid packaging multiple Bouncy Castle versions in separate application or
+plugin class loaders.
+
+=== Quarkus BOM and native-image integration
+
+The Camel Quarkus PQC runtime extension depends on `camel-pqc` and
+`camel-quarkus-support-bouncycastle`. The Bouncy Castle support module brings in `bcprov-jdk18on` and
+`bcpkix-jdk18on`; their versions are managed by the Quarkus dependency platform.
+
+The Quarkus Bouncy Castle support extension registers the security provider during static initialization. When a
+provider is not already registered, it uses the thread context class loader to load the configured BC provider.
+The PQC deployment processor requests registration of the BCPQC provider and contributes native-image security
+provider and reflection metadata for the PQC provider classes.
+
+The support extension also reuses an already registered BC or BCFIPS provider instead of unconditionally
+registering another copy. Keep the Bouncy Castle artifacts aligned with the versions selected by the Quarkus BOM.
+
+The Camel compatibility workflow exercises the component against the tested Bouncy Castle versions and checks
+cross-version KEM interoperability. This component-level matrix is useful for validating a dependency override, but
+it does not replace testing the application in its target runtime, including JVM or native deployment where
+applicable.
+
+=== Bouncy Castle 1.87 upgrade considerations
+
+* **HQC:** Bouncy Castle 1.87 implements the HQC specification published on 12 October 2026. HQC keys and ciphertexts
+  created by earlier Bouncy Castle releases are not compatible with the 1.87 implementation. Regenerate affected HQC
+  key pairs and distribute the new public keys to communicating peers. Do not assume that old HQC ciphertexts can be
+  decrypted by the new provider.
+* **NTRU, NTRU LPRime and SNTRU Prime:** Bouncy Castle 1.87 applies the default KDF-3/SHA-256 derivation in these JCA
+  KEM services. With the default JCA KEM specifications, Bouncy Castle 1.86 returned the mechanism secret directly,
+  while 1.87 derives the requested AES key. A key and ciphertext may still be decoded across these releases, but the
+  resulting AES key is different. Ensure both communicating applications use compatible KDF behavior; do not assume
+  that successful decapsulation alone proves that the derived application key is equal.
+* **LMS/HSS and XMSS/XMSSMT:** Bouncy Castle 1.87 moves the relevant JCA parameter specifications and key interfaces
+  to the newer packages. `camel-pqc` handles the old and new public JCA API layouts internally. Applications that
+  directly import Bouncy Castle types should review their own imports when upgrading Bouncy Castle.
+* **CMCE:** Bouncy Castle deprecated Classic McEliece in 1.87. `camel-pqc` retains its existing `CMCE` algorithm entry
+  for compatibility; deprecation does not mean that the component has silently removed it. For new deployments,
+  evaluate standardized ML-KEM instead.
+
+A Bouncy Castle upgrade must still be reviewed and tested before being adopted. The compatibility workflow checks
+provider availability, the component test suite, and cross-version KEM vectors; it does not rewrite stored keys,
+ciphertexts, or application data during an upgrade.
+
 == Signature and Verification
 
 The component expects to find a KeyPair and a Signature Objects in to the Camel Registry.
@@ -256,15 +347,18 @@ With the following beans registered in the Registry
 ----
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
-        kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
+                PQCSignatureAlgorithms.MLDSA.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-65"));
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
     }
 
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance("ML-DSA");
+        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
+                PQCSignatureAlgorithms.MLDSA.getBcProvider("Signature"));
         return mlDsa;
     }
 ----
@@ -494,8 +588,8 @@ With the following beans registered in the Registry
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
-        kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
+        kpg.initialize(PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-512"), new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
         return kp;
     }
@@ -504,7 +598,7 @@ With the following beans registered in the Registry
     public KeyGenerator setKeyGenerator()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyGenerator"));
         return kg;
     }
 ----

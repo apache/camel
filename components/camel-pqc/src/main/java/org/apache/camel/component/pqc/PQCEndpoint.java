@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.pqc;
 
-import java.security.Security;
-
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -29,8 +27,6 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 /**
  * Post Quantum Cryptography Signature and Verification component.
@@ -50,10 +46,10 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
                                                          carriers = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM }),
                                           @BodyType.When(option = "operation", value = "extractSecretKeyEncapsulation",
                                                          carriers = Carrier.POJO,
-                                                         javaType = "org.bouncycastle.jcajce.SecretKeyWithEncapsulation"),
+                                                         javaType = "javax.crypto.SecretKey"),
                                           @BodyType.When(option = "operation", value = "extractSecretKeyFromEncapsulation",
                                                          carriers = Carrier.POJO,
-                                                         javaType = "org.bouncycastle.jcajce.SecretKeyWithEncapsulation"),
+                                                         javaType = "javax.crypto.SecretKey"),
                                           @BodyType.When(option = "operation", value = "importKey",
                                                          carriers = {
                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
@@ -61,17 +57,17 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
                                   description = "The payload of sign, verify, hybridSign and hybridVerify: bytes or a stream as"
                                                 + " they are, text as UTF-8; another body is signed as its text, so marshal it"
                                                 + " first. extractSecretKeyEncapsulation and extractSecretKeyFromEncapsulation"
-                                                + " take the SecretKeyWithEncapsulation that generateSecretKeyEncapsulation"
-                                                + " gives, and importKey the key as bytes, or as text for PEM. The other"
+                                                + " take the SecretKey carrier returned by generateSecretKeyEncapsulation,"
+                                                + " and importKey the key as bytes, or as text for PEM. The other"
                                                 + " operations do not use the body"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "generateSecretKeyEncapsulation",
                                                           carriers = Carrier.POJO,
-                                                          javaType = "org.bouncycastle.jcajce.SecretKeyWithEncapsulation"),
+                                                          javaType = "javax.crypto.SecretKey"),
                                            @BodyType.When(option = "operation", value = "extractSecretKeyEncapsulation",
                                                           carriers = Carrier.POJO,
-                                                          javaType = "org.bouncycastle.jcajce.SecretKeyWithEncapsulation"),
+                                                          javaType = "javax.crypto.SecretKey"),
                                            @BodyType.When(option = "operation", value = "extractSecretKeyFromEncapsulation",
                                                           carriers = Carrier.POJO, javaType = "javax.crypto.SecretKey"),
                                            @BodyType.When(option = "operation", value = "hybridGenerateSecretKeyEncapsulation",
@@ -86,7 +82,7 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
                                    description = "Unchanged for the signature and key operations, which set their results in"
                                                  + " headers, such as CamelPQCSignature and CamelPQCVerification."
                                                  + " generateSecretKeyEncapsulation and extractSecretKeyEncapsulation give a"
-                                                 + " SecretKeyWithEncapsulation, and the other key encapsulation operations the"
+                                                 + " SecretKey with the encapsulation carried by its runtime BC implementation; the other key encapsulation operations give a"
                                                  + " SecretKey; with storeExtractedSecretKeyAsHeader=true the key is in the"
                                                  + " CamelPQCSecretKey header instead"))
 public class PQCEndpoint extends DefaultEndpoint {
@@ -126,12 +122,7 @@ public class PQCEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastlePQCProvider());
-        }
+        BouncyCastleSupport.ensureProviders();
     }
 
     public PQCConfiguration getConfiguration() {

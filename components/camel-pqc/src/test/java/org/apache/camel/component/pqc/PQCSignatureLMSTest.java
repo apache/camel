@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pqc;
 
-import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -31,9 +30,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.bouncycastle.crypto.params.LMOtsParameters;
-import org.bouncycastle.crypto.params.LMSigParameters;
-import org.bouncycastle.jcajce.spec.LMSKeyGenParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -81,10 +77,11 @@ public class PQCSignatureLMSTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    public KeyPair setKeyPair() throws Exception {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(),
-                PQCSignatureAlgorithms.LMS.getBcProvider());
-        kpGen.initialize(new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w1));
+                PQCSignatureAlgorithms.LMS.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(BouncyCastlePqcCompatibility.lmsKeyGenParameterSpec(
+                "lms_sha256_n32_h5", "sha256_n32_w1"));
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
     }
@@ -92,7 +89,8 @@ public class PQCSignatureLMSTest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
         Signature mlDsa
-                = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(), PQCSignatureAlgorithms.LMS.getBcProvider());
+                = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(),
+                        PQCSignatureAlgorithms.LMS.getBcProvider("Signature"));
         return mlDsa;
     }
 }

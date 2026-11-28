@@ -77,7 +77,7 @@ public class PQCSignatureDILITHIUMTest extends CamelTestSupport {
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
-                PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
+                PQCSignatureAlgorithms.DILITHIUM.getBcProvider("KeyPairGenerator"));
         kpGen.initialize(MLDSAParameterSpec.ml_dsa_87);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;

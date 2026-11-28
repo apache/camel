@@ -74,6 +74,17 @@ The KEM encapsulation allows the receiver to decapsulate the shared secret using
 The authenticated wire format was introduced in Camel 4.22. Data encrypted by earlier versions used unauthenticated ECB and did not include a nonce, and cannot be decrypted by Camel 4.22 or later. See the Camel 4.x upgrade guide for details.
 ====
 
+[IMPORTANT]
+====
+**Bouncy Castle 1.87 KEM interoperability and stored PQCDataFormat messages**
+
+Bouncy Castle 1.87 changes the default key derivation behavior for NTRU, NTRU LPRime and SNTRU Prime compared with 1.86. A ciphertext created with one version can therefore produce a different symmetric key when decapsulated with the other version; for `PQCDataFormat`, the AEAD authentication check will fail even when the encapsulation and key pair are otherwise accepted. Do not assume that changing the runtime Bouncy Castle version is transparent for stored messages using these algorithms. Re-encrypt retained data, or maintain an explicitly versioned migration/decryption path before upgrading.
+
+HQC key and ciphertext compatibility also changes between 1.86 and 1.87. Rotate affected HQC key pairs and redistribute the corresponding public keys rather than expecting old keys and ciphertexts to remain interoperable.
+
+ML-KEM is the recommended production KEM. The compatibility notes above apply to the named experimental algorithms and should be part of the deployment and rollback plan when they are used.
+====
+
 == Basic Usage
 
 .PQC DataFormat basic encrypt and decrypt routes
@@ -159,7 +170,7 @@ YAML::
 |provider
 |String
 |null
-|JCE security provider (defaults to Bouncy Castle PQC provider)
+|JCE security provider. When omitted, the component prefers a Bouncy Castle provider that advertises the selected KeyGenerator service and algorithm (BC or BCPQC), falling back to a provider that advertises the standard KEM service when no KeyGenerator is available.
 
 |keyGenerator
 |KeyGenerator
@@ -182,8 +193,10 @@ The DataFormat requires a KeyPair to be available either:
 ----
 @BindToRegistry("pqcKeyPair")
 public KeyPair createMLKEMKeyPair() throws Exception {
-    KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BCPQC");
-    kpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+    KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+            PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+            PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
+    kpg.initialize(PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-768"), new SecureRandom());
     return kpg.generateKeyPair();
 }
 
@@ -198,8 +211,10 @@ pqcFormat.setSymmetricKeyAlgorithm("AES");
 ._Java-only: configuring PQCDataFormat with KeyPair directly_
 [source,java]
 ----
-KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BCPQC");
-kpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+        PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+        PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
+kpg.initialize(PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-768"), new SecureRandom());
 KeyPair keyPair = kpg.generateKeyPair();
 
 PQCDataFormat pqcFormat = new PQCDataFormat();
@@ -360,7 +375,7 @@ public KeyPair createKeyPair() throws Exception {
         keyPair = manager.getKey("dataformat-key");
     } catch (Exception e) {
         keyPair = manager.generateKeyPair("MLKEM", "dataformat-key",
-            MLKEMParameterSpec.ml_kem_768);
+            PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-768"));
     }
 
     // Check if rotation needed
@@ -462,8 +477,10 @@ void testPQCDataFormatRoundTrip() throws Exception {
     Security.addProvider(new BouncyCastleProvider());
     Security.addProvider(new BouncyCastlePQCProvider());
 
-    KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BCPQC");
-    kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
+    KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+            PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+            PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
+    kpg.initialize(PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-512"), new SecureRandom());
     KeyPair keyPair = kpg.generateKeyPair();
 
     PQCDataFormat pqcFormat = new PQCDataFormat();

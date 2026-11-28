@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.pqc;
 
-import java.security.InvalidAlgorithmParameterException;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +32,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.bouncycastle.jcajce.spec.XMSSMTParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
@@ -82,10 +81,10 @@ public class PQCSignatureXMSSMTTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    public KeyPair setKeyPair() throws GeneralSecurityException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSSMT.getBcProvider());
-        kpGen.initialize(XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256, new SecureRandom());
+                PQCSignatureAlgorithms.XMSSMT.getBcProvider("KeyPairGenerator"));
+        kpGen.initialize(BouncyCastlePqcCompatibility.xmssMtParameterSpec(20, 2, "SHA256"), new SecureRandom());
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
     }
@@ -93,7 +92,7 @@ public class PQCSignatureXMSSMTTest extends CamelTestSupport {
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
         Signature xmssmtSig = Signature.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSSMT.getBcProvider());
+                PQCSignatureAlgorithms.XMSSMT.getBcProvider("Signature"));
         return xmssmtSig;
     }
 }

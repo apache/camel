@@ -34,23 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
-import org.bouncycastle.crypto.params.LMOtsParameters;
-import org.bouncycastle.crypto.params.LMSigParameters;
-import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
-import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
-import org.bouncycastle.jcajce.spec.LMSKeyGenParameterSpec;
-import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
-import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
-import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
-import org.bouncycastle.jcajce.spec.XMSSMTParameterSpec;
-import org.bouncycastle.jcajce.spec.XMSSParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -565,11 +548,11 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
     private String determineProvider(String algorithm) {
         try {
             PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(algorithm);
-            return sigAlg.getBcProvider();
+            return sigAlg.getBcProvider("KeyPairGenerator");
         } catch (IllegalArgumentException e1) {
             try {
                 PQCKeyEncapsulationAlgorithms kemAlg = PQCKeyEncapsulationAlgorithms.valueOf(algorithm);
-                return kemAlg.getBcProvider();
+                return kemAlg.getBcProvider("KeyPairGenerator");
             } catch (IllegalArgumentException e2) {
                 return null;
             }
@@ -589,54 +572,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
     }
 
     private AlgorithmParameterSpec getDefaultParameterSpec(String algorithm) {
-        // Provide default parameter specs for PQC algorithms
-        try {
-            switch (algorithm) {
-                case "DILITHIUM":
-                case "MLDSA":
-                    return MLDSAParameterSpec.ml_dsa_44;
-                case "SLHDSA":
-                case "SPHINCSPLUS":
-                    return SLHDSAParameterSpec.slh_dsa_sha2_128s;
-                case "FALCON":
-                    return FalconParameterSpec.falcon_512;
-                case "XMSS":
-                    return new XMSSParameterSpec(
-                            10,
-                            XMSSParameterSpec.SHA256);
-                case "XMSSMT":
-                    return XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
-                case "LMS":
-                case "HSS":
-                    return new LMSKeyGenParameterSpec(
-                            LMSigParameters.lms_sha256_n32_h10,
-                            LMOtsParameters.sha256_n32_w4);
-                case "MLKEM":
-                case "KYBER":
-                    return MLKEMParameterSpec.ml_kem_768;
-                case "NTRU":
-                    return NTRUParameterSpec.ntruhps2048509;
-                case "NTRULPRime":
-                    return NTRULPRimeParameterSpec.ntrulpr653;
-                case "SNTRUPrime":
-                    return SNTRUPrimeParameterSpec.sntrup761;
-                case "SABER":
-                    return SABERParameterSpec.lightsaberkem128r3;
-                case "FRODO":
-                    return FrodoKEMParameterSpec.frodokem976aes;
-                case "BIKE":
-                    return BIKEParameterSpec.bike128;
-                case "HQC":
-                    return HQCParameterSpec.hqc128;
-                case "CMCE":
-                    return CMCEParameterSpec.mceliece460896;
-                default:
-                    return null;
-            }
-        } catch (Exception e) {
-            LOG.warn("Failed to create default parameter spec for algorithm: {}", algorithm, e);
-            return null;
-        }
+        return KeyAlgorithmSupport.getDefaultParameterSpec(algorithm);
     }
 
     private int getDefaultKeySize(String algorithm) {

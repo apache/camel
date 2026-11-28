@@ -66,7 +66,8 @@ class PQCKemSharedEngineIsolationTest {
     void overlappingExtractionsOnDifferentKeyGeneratorsEachReturnTheirOwnSecret(PQCKeyEncapsulationAlgorithms kem)
             throws Exception {
         InterleavingProbe probe = new InterleavingProbe();
-        KeyPair keyPair = KeyPairGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider()).generateKeyPair();
+        KeyPair keyPair
+                = KeyPairGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider("KeyPairGenerator")).generateKeyPair();
 
         try (CamelContext context = new DefaultCamelContext()) {
             context.getRegistry().bind("kemKeyPair", keyPair);
@@ -98,7 +99,8 @@ class PQCKemSharedEngineIsolationTest {
     @ParameterizedTest
     @EnumSource(PQCKeyEncapsulationAlgorithms.class)
     void lockIsSharedByKeyGeneratorsOnlyWhenTheEngineIsShared(PQCKeyEncapsulationAlgorithms kem) throws Exception {
-        KeyPair keyPair = KeyPairGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider()).generateKeyPair();
+        KeyPair keyPair
+                = KeyPairGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider("KeyPairGenerator")).generateKeyPair();
         KeyGenerator first = newKeyGenerator(kem);
         KeyGenerator second = newKeyGenerator(kem);
 
@@ -121,6 +123,6 @@ class PQCKemSharedEngineIsolationTest {
     }
 
     private static KeyGenerator newKeyGenerator(PQCKeyEncapsulationAlgorithms kem) throws Exception {
-        return KeyGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider());
+        return KeyGenerator.getInstance(kem.getAlgorithm(), kem.getBcProvider("KeyGenerator"));
     }
 }

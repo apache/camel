@@ -97,7 +97,7 @@ public class PQCDataFormatMultipleAlgorithmsTest extends CamelTestSupport {
         // This test uses Kyber, so register Kyber keypair as pqcKeyPair
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                 PQCKeyEncapsulationAlgorithms.KYBER.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.KYBER.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.KYBER.getBcProvider("KeyPairGenerator"));
         kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
         return kpg.generateKeyPair();
     }

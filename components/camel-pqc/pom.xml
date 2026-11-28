@@ -70,12 +70,7 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- Micrometer for optional PQC metrics/observability -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-            <optional>true</optional>
-        </dependency>
+
 
         <!-- Spring Vault for HashicorpVaultKeyLifecycleManager (optional) -->
         <dependency>
@@ -144,6 +139,12 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
+        </dependency>
+        <!-- Micrometer remains an optional dependency of camel-pqc. -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

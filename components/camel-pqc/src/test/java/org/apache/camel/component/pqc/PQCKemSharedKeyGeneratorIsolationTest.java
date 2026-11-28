@@ -74,7 +74,7 @@ class PQCKemSharedKeyGeneratorIsolationTest extends CamelTestSupport {
     protected void bindToRegistry(Registry registry) throws Exception {
         ensureProviders();
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyPairGenerator"));
         kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
         keyPair = kpg.generateKeyPair();
         registry.bind("kemKeyPair", keyPair);
@@ -146,6 +146,6 @@ class PQCKemSharedKeyGeneratorIsolationTest extends CamelTestSupport {
 
     private static KeyGenerator newKeyGenerator() throws Exception {
         return KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider("KeyGenerator"));
     }
 }

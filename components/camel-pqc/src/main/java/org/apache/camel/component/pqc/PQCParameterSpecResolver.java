@@ -17,23 +17,11 @@
 package org.apache.camel.component.pqc;
 
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.NamedParameterSpec;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.camel.util.ObjectHelper;
-import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
-import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
-import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
-import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
-import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
 
 /**
  * Resolves the BouncyCastle {@link AlgorithmParameterSpec} for a PQC algorithm from the parameter-set name configured
@@ -56,6 +44,17 @@ public final class PQCParameterSpecResolver {
             "MLDSA", "SLHDSA", "FALCON", "DILITHIUM", "SPHINCSPLUS", "MAYO", "SNOVA",
             // Key encapsulation algorithms
             "MLKEM", "KYBER", "NTRU", "NTRULPRime", "SNTRUPrime", "BIKE", "HQC", "CMCE", "FRODO", "SABER");
+
+    private static final Set<String> ML_DSA_PARAMETER_SETS = Set.of(
+            "ML-DSA-44", "ML-DSA-65", "ML-DSA-87",
+            "ML-DSA-44-WITH-SHA512", "ML-DSA-65-WITH-SHA512", "ML-DSA-87-WITH-SHA512");
+    private static final Set<String> ML_KEM_PARAMETER_SETS = Set.of(
+            "ML-KEM-512", "ML-KEM-768", "ML-KEM-1024");
+    private static final Set<String> CMCE_PARAMETER_SETS = Set.of(
+            "mceliece460896", "mceliece460896f", "mceliece460896pc", "mceliece460896pcf",
+            "mceliece6688128", "mceliece6688128f", "mceliece6688128pc", "mceliece6688128pcf",
+            "mceliece6960119", "mceliece6960119f", "mceliece6960119pc", "mceliece6960119pcf",
+            "mceliece8192128", "mceliece8192128f", "mceliece8192128pc", "mceliece8192128pcf");
 
     private PQCParameterSpecResolver() {
     }
@@ -119,48 +118,36 @@ public final class PQCParameterSpecResolver {
     }
 
     private static AlgorithmParameterSpec doResolve(String algorithm, String parameterSpec) {
-        switch (algorithm) {
-            // Signature algorithms
-            case "MLDSA":
-                return MLDSAParameterSpec.fromName(parameterSpec);
-            case "SLHDSA":
-                return SLHDSAParameterSpec.fromName(parameterSpec);
-            case "FALCON":
-                return FalconParameterSpec.fromName(parameterSpec);
-            // DILITHIUM and SPHINCSPLUS generate ML-DSA and SLH-DSA keys (see PQCSignatureAlgorithms), so they take the
-            // standardized parameter sets
-            case "DILITHIUM":
-                return MLDSAParameterSpec.fromName(parameterSpec);
-            case "SPHINCSPLUS":
-                return SLHDSAParameterSpec.fromName(parameterSpec);
-            case "MAYO":
-                return MayoParameterSpec.fromName(parameterSpec);
-            case "SNOVA":
-                return SnovaParameterSpec.fromName(parameterSpec);
-            // Key encapsulation algorithms
-            case "MLKEM":
-            case "KYBER":
-                // KYBER generates ML-KEM keys (see PQCKeyEncapsulationAlgorithms)
-                return MLKEMParameterSpec.fromName(parameterSpec);
-            case "NTRU":
-                return NTRUParameterSpec.fromName(parameterSpec);
-            case "NTRULPRime":
-                return NTRULPRimeParameterSpec.fromName(parameterSpec);
-            case "SNTRUPrime":
-                return SNTRUPrimeParameterSpec.fromName(parameterSpec);
-            case "BIKE":
-                return BIKEParameterSpec.fromName(parameterSpec);
-            case "HQC":
-                return HQCParameterSpec.fromName(parameterSpec);
-            case "CMCE":
-                return CMCEParameterSpec.fromName(parameterSpec);
-            case "FRODO":
-                return FrodoKEMParameterSpec.fromName(parameterSpec);
-            case "SABER":
-                return SABERParameterSpec.fromName(parameterSpec);
-            default:
-                // Guarded by isSupported above
-                throw new IllegalStateException("Unsupported algorithm: " + algorithm);
-        }
+        AlgorithmParameterSpec standardized = resolveStandardizedParameterSpec(algorithm, parameterSpec);
+        return standardized != null
+                ? standardized
+                : BouncyCastlePqcCompatibility.namedParameterSpec(algorithm, parameterSpec);
     }
+
+    private static AlgorithmParameterSpec resolveStandardizedParameterSpec(String algorithm, String parameterName) {
+        String name = parameterName.replace('_', '-');
+        if ("MLDSA".equalsIgnoreCase(algorithm) || "DILITHIUM".equalsIgnoreCase(algorithm)) {
+            name = name.toUpperCase(Locale.ROOT);
+            if (!ML_DSA_PARAMETER_SETS.contains(name)) {
+                throw new IllegalArgumentException("Unknown ML-DSA parameter set: " + parameterName);
+            }
+            return new NamedParameterSpec(name);
+        }
+        if ("MLKEM".equalsIgnoreCase(algorithm)) {
+            name = name.toUpperCase(Locale.ROOT);
+            if (!ML_KEM_PARAMETER_SETS.contains(name)) {
+                throw new IllegalArgumentException("Unknown ML-KEM parameter set: " + parameterName);
+            }
+            return new NamedParameterSpec(name);
+        }
+        if ("CMCE".equalsIgnoreCase(algorithm)) {
+            name = name.toLowerCase(Locale.ROOT);
+            if (!CMCE_PARAMETER_SETS.contains(name)) {
+                throw new IllegalArgumentException("Unknown CMCE parameter set: " + parameterName);
+            }
+            return new NamedParameterSpec(name);
+        }
+        return null;
+    }
+
 }
