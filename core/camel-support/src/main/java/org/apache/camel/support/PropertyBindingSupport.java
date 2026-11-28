@@ -697,7 +697,7 @@ public final class PropertyBindingSupport {
                     bound = setSimplePropertyViaConfigurer(camelContext, target, key, value, ignoreCase, configurer);
                 }
                 if (!bound && reflection) {
-                    // fallback to reflection based
+                    // fallback to reflection based (with references turned off, a #... value is not resolved either)
                     bound = setSimplePropertyViaReflection(camelContext, target, key, value, fluentBuilder, allowPrivateSetter,
                             effReference, ignoreCase);
                 }
