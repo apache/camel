@@ -48,7 +48,9 @@ public final class OpenAIConstants {
     public static final String OUTPUT_CLASS = "CamelOpenAIOutputClass";
     @Metadata(description = "The JSON schema to use for structured output validation", javaType = "String")
     public static final String JSON_SCHEMA = "CamelOpenAIJsonSchema";
-    @Metadata(description = "Whether to strip <think>...</think> blocks from the response body", javaType = "Boolean")
+    @Metadata(description = "Whether to strip the think blocks (from the opening to the closing think tag) from the "
+                            + "response body",
+              javaType = "Boolean")
     public static final String STRIP_THINKING = "CamelOpenAIStripThinking";
     @Metadata(description = "The MIME type of the message body when sending a file or binary content (File, WrappedFile, "
                             + "byte[] or InputStream) to the model. Takes precedence over component content-type headers "
@@ -57,7 +59,8 @@ public final class OpenAIConstants {
     public static final String MEDIA_TYPE = "CamelOpenAIMediaType";
 
     // Output Headers
-    @Metadata(description = "The thinking content extracted from <think>...</think> blocks in the model response",
+    @Metadata(description = "The thinking content extracted from the think blocks (from the opening to the closing think "
+                            + "tag) in the model response",
               javaType = "String")
     public static final String THINKING_CONTENT = "CamelOpenAIThinkingContent";
     @Metadata(description = "The reasoning content from the model response reasoning_content field, "
