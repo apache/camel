@@ -63,6 +63,8 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     /**
      * Returns the endpoint identification algorithm that client sockets use to check that the certificate of the server
      * matches the host they connect to, or {@code null} if it is not set.
+     *
+     * @since 4.24
      */
     public @Nullable String getEndpointIdentificationAlgorithm() {
         return endpointIdentificationAlgorithm;
@@ -74,12 +76,15 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
      * {@code SSLSocket} instances that the {@code SSLSocketFactory} of the context creates, which are client sockets.
      * Unset by default, which keeps the behavior of the JDK: no host name verification.
      * <p>
-     * The JDK checks the host that the socket was created with, so a socket that is created without one, and connected
-     * afterwards, fails the handshake. An {@code SSLEngine} starts in server mode and is switched to client mode by the
-     * component, so this setting is not applied to engines: a component that uses an {@code SSLEngine} applies it to
-     * the {@code SSLParameters} of the engine once it is in client mode, as for its own host name verification option.
+     * The JDK checks the host name that the socket connects to: the host given to {@code createSocket}, or the host of
+     * the {@code InetSocketAddress} given to {@code connect}. Connecting to an IP address, or to an {@code InetAddress}
+     * without a host name, fails the handshake unless the certificate lists that address. An {@code SSLEngine} starts
+     * in server mode and is switched to client mode by the component, so this setting is not applied to engines: a
+     * component that uses an {@code SSLEngine} applies it to the {@code SSLParameters} of the engine once it is in
+     * client mode, as for its own host name verification option.
      *
      * @param endpointIdentificationAlgorithm the algorithm, or {@code null} to not verify the host name
+     * @since                                 4.24
      */
     public void setEndpointIdentificationAlgorithm(@Nullable String endpointIdentificationAlgorithm) {
         this.endpointIdentificationAlgorithm = endpointIdentificationAlgorithm;

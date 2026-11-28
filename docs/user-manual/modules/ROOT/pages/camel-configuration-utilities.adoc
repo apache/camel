@@ -367,8 +367,10 @@ sockets that the `SSLSocketFactory` of the context creates: with `HTTPS`
 (or `LDAPS`), the handshake fails unless the certificate of the server
 matches the host that the socket connects to. It is unset by default,
 which keeps the behavior of the JDK: no host name verification. It may
-use a property placeholder. The JDK checks the host that the socket was
-created with, so a socket created without one fails the handshake. It is
+use a property placeholder. The JDK checks the host name that the socket
+connects to (the host given to `createSocket`, or of the `InetSocketAddress`
+given to `connect`), so connecting by IP address fails the handshake unless
+the certificate lists that address. It is
 not applied to an `SSLEngine`, which starts in server mode: a component
 that uses an engine applies it to the `SSLParameters` of the engine once
 the engine is in client mode.
