@@ -59,6 +59,8 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - id: changes
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "camel-exe=true" >> "$GITHUB_OUTPUT"
@@ -68,7 +70,7 @@ jobs:
           fi
 
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            CHANGED="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
+            CHANGED="$(git diff --name-only "origin/$BASE_REF"...HEAD)"
           else
             CHANGED="$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")"
           fi
