@@ -929,9 +929,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     return t;
                 }
                 // the connect timeout of an HTTP client, by name to need none of them on the classpath:
-                // org.apache.http.conn.ConnectTimeoutException (HttpClient 4, the transport of Maven Resolver 1.x),
-                // org.apache.hc.client5.http.ConnectTimeoutException (HttpClient 5), whose message is not
-                // "Connect timed out", and java.net.http.HttpConnectTimeoutException (the JDK HTTP client)
+                // org.apache.hc.client5.http.ConnectTimeoutException (HttpClient 5, the transport of Maven Resolver 2.x),
+                // whose message is not "Connect timed out", and java.net.http.HttpConnectTimeoutException (JDK HTTP client)
                 if (t.getClass().getSimpleName().endsWith("ConnectTimeoutException")) {
                     return t;
                 }
