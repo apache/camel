@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-langchain4j-core/src/main/docs/langchain4j-content-retriever.adoc
