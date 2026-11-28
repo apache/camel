@@ -609,6 +609,17 @@ nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed
 An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
 `deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
+=== camel-fop - the CamelFop.Render and CamelFop.Encrypt headers are applied as given
+
+The `fop` producer now applies only the `CamelFop.Render.*` and `CamelFop.Encrypt.*` headers that the
+xref:components::fop-component.adoc[FOP] component page lists, and uses their values as given, converted to the type
+of the option. Before, these headers were bound onto the FOP user agent and the PDF encryption parameters like
+endpoint options, so a value with `{{` `}}` or a value that starts with `#` was resolved as a property placeholder or
+a bean reference, and any property of these objects could be set. A route that needs a property placeholder or a bean
+in such a header resolves it before the `fop` endpoint, for example with the Simple language. Other names are ignored,
+and a WARN is logged. Set other FOP user agent settings in the FOP configuration file (`userConfigURL`) or on a
+custom `FopFactory`.
+
 === camel-grpc - a producer with streamRepliesTo fails the exchange of a failed call
 
 A gRPC producer with `streamRepliesTo` and the SIMPLE producer strategy (the default) completed the exchange of a

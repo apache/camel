@@ -55,6 +55,17 @@ directory than the one it lists. With `handleDirectoryParserAbsoluteResult=true`
 path that the server lists is checked. A backslash is a valid character in the name of a directory on a server on
 Linux: to poll such a directory, set `stepwise=false`.
 
+=== camel-fop - the CamelFop.Render and CamelFop.Encrypt headers are applied as given
+
+The `fop` producer now applies only the `CamelFop.Render.*` and `CamelFop.Encrypt.*` headers that the
+xref:components::fop-component.adoc[FOP] component page lists, and uses their values as given, converted to the type
+of the option. Before, these headers were bound onto the FOP user agent and the PDF encryption parameters like
+endpoint options, so a value with `{{` `}}` or a value that starts with `#` was resolved as a property placeholder or
+a bean reference, and any property of these objects could be set. A route that needs a property placeholder or a bean
+in such a header resolves it before the `fop` endpoint, for example with the Simple language. Other names are ignored,
+and a WARN is logged. Set other FOP user agent settings in the FOP configuration file (`userConfigURL`) or on a
+custom `FopFactory`.
+
 === camel-ibm-watsonx-data - the OAuth token of oauthProfile is sent as a Bearer token
 
 With `oauthProfile`, the endpoint used to obtain an access token once at startup and use it as `apiKey`, so the token
