@@ -83,7 +83,7 @@ class TestPluginTest {
         camelJBangMain.execute("test", "init", "edited.citrus.it.yaml", "--directory", dir.toString());
 
         Assertions.assertEquals("name: my edited test\n", Files.readString(test));
-        Assertions.assertTrue(printer.getOutput().contains("Test already exists: " + test + " (use --force to overwrite it)"),
+        Assertions.assertTrue(printer.getOutput().contains("File already exists: " + test + " (use --force to overwrite)"),
                 printer.getOutput());
 
         camelJBangMain.execute("test", "init", "edited.citrus.it.yaml", "--directory", dir.toString(), "--force");
