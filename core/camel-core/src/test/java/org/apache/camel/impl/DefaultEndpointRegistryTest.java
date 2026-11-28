@@ -19,7 +19,9 @@ package org.apache.camel.impl;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.FluentProducerTemplate;
@@ -184,30 +186,44 @@ public class DefaultEndpointRegistryTest {
         int nThreads = 4;
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
         int iterations = 500;
+        AtomicReference<Throwable> failure = new AtomicReference<>();
 
         for (int j = 0; j < iterations; j++) {
             CountDownLatch allThreadCompletionSemaphore = new CountDownLatch(nThreads);
             for (int i = 0; i < nThreads; i++) {
 
                 executorService.submit(() -> {
-
-                    producerTemplate.requestBody("controlbus:route?routeId=route1&action=ACTION_STATUS&loggingLevel=off", null,
-                            ServiceStatus.class);
-                    producerTemplate.requestBody("controlbus:route?routeId=route2&action=ACTION_STATUS&loggingLevel=off", null,
-                            ServiceStatus.class);
-                    producerTemplate.requestBody("controlbus:route?routeId=route3&action=ACTION_STATUS&loggingLevel=off", null,
-                            ServiceStatus.class);
-                    producerTemplate.requestBody("controlbus:route?routeId=route4&action=ACTION_STATUS&loggingLevel=off", null,
-                            ServiceStatus.class);
-                    producerTemplate.requestBody("controlbus:route?routeId=route5&action=ACTION_STATUS&loggingLevel=off", null,
-                            ServiceStatus.class);
-
-                    allThreadCompletionSemaphore.countDown();
-
+                    try {
+                        producerTemplate.requestBody(
+                                "controlbus:route?routeId=route1&action=ACTION_STATUS&loggingLevel=off", null,
+                                ServiceStatus.class);
+                        producerTemplate.requestBody(
+                                "controlbus:route?routeId=route2&action=ACTION_STATUS&loggingLevel=off", null,
+                                ServiceStatus.class);
+                        producerTemplate.requestBody(
+                                "controlbus:route?routeId=route3&action=ACTION_STATUS&loggingLevel=off", null,
+                                ServiceStatus.class);
+                        producerTemplate.requestBody(
+                                "controlbus:route?routeId=route4&action=ACTION_STATUS&loggingLevel=off", null,
+                                ServiceStatus.class);
+                        producerTemplate.requestBody(
+                                "controlbus:route?routeId=route5&action=ACTION_STATUS&loggingLevel=off", null,
+                                ServiceStatus.class);
+                    } catch (Throwable t) {
+                        failure.compareAndSet(null, t);
+                    } finally {
+                        allThreadCompletionSemaphore.countDown();
+                    }
                 });
             }
 
-            allThreadCompletionSemaphore.await();
+            assertTrue(allThreadCompletionSemaphore.await(30, TimeUnit.SECONDS),
+                    "the worker threads did not finish iteration " + j);
+
+            Throwable thrown = failure.get();
+            if (thrown != null) {
+                throw new AssertionError("a worker threw during iteration " + j, thrown);
+            }
 
             assertNotNull(endpointRegistry.values().toArray());
 
