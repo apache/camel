@@ -146,6 +146,8 @@ jobs:
       - name: Fail if there are uncommitted changes
         if: ${{ !inputs.skip_full_build }}
         shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.number || inputs.pr_number }}
         run: |
           if [[ -z $(git status --porcelain) ]]; then
             exit 0
@@ -162,7 +164,7 @@ jobs:
           git add -A
           mkdir -p regen-patch-artifact
           git diff --cached --binary > regen-patch-artifact/regen.patch
-          echo "${{ github.event.number || inputs.pr_number }}" > regen-patch-artifact/pr-number
+          echo "$PR_NUMBER" > regen-patch-artifact/pr-number
           exit 1
       # Both non-experimental matrix entries regenerate the same files, so the
       # patch content is identical across JDKs — last writer wins, same as the
@@ -217,9 +219,10 @@ jobs:
         shell: bash
         env:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PR_NUMBER: ${{ github.event.number || inputs.pr_number }}
         run: |
           mkdir -p ci-comment-artifact
-          prNumber="${{ github.event.number || inputs.pr_number }}"
+          prNumber="$PR_NUMBER"
           echo "$prNumber" > ci-comment-artifact/pr-number
           if [ -f incremental-test-comment.md ]; then
             cp incremental-test-comment.md ci-comment-artifact/
