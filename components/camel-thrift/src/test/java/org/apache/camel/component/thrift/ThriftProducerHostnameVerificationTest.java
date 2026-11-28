@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.TrustManagerFactory;
 
@@ -37,6 +38,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
@@ -44,6 +46,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -85,9 +88,10 @@ class ThriftProducerHostnameVerificationTest extends CamelTestSupport {
         SSLContext serverSslContext = SSLContext.getInstance("TLS");
         serverSslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-        // Server bound to localhost; certificate is CN=localhost (no SAN)
+        // Server bound to 127.0.0.1, the address the producer connects to, so the connection always reaches
+        // the TLS handshake (localhost may resolve to ::1 first); the certificate is CN=localhost (no SAN)
         SSLServerSocket serverSocket = (SSLServerSocket) serverSslContext.getServerSocketFactory()
-                .createServerSocket(0, 100, InetAddress.getByName("localhost"));
+                .createServerSocket(0, 100, InetAddress.getByName("127.0.0.1"));
         thriftTestPort = serverSocket.getLocalPort();
 
         serverTransport = new TServerSocket(
@@ -140,9 +144,11 @@ class ThriftProducerHostnameVerificationTest extends CamelTestSupport {
         requestBody.add(1);
         requestBody.add(new Work(12, 13, Operation.MULTIPLY));
 
-        assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody("direct:thrift-ip-calculate", requestBody),
                 "Expected TLS handshake failure when connecting by IP to a CN=localhost certificate");
+        assertNotNull(ObjectHelper.getException(SSLHandshakeException.class, e),
+                "Expected a TLS handshake failure (hostname mismatch), got: " + e);
     }
 
     @Override
