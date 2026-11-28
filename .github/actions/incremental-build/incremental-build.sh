@@ -50,6 +50,15 @@ maxNumberOfTestableProjects=50
 # Modules excluded from targeted testing (generated code, meta-modules, etc.)
 EXCLUSION_LIST="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-mcp,!:camel-jbang-plugin-validate,!:camel-launcher-container,!:camel-yaml-dsl-validator,!:camel-yaml-dsl-validator-maven-plugin,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel"
 
+# Sync-point modules that depend on every component (artifact IDs, comma-separated).
+# The modules downstream of a cut point (camel-catalog, camel-yaml-dsl, camel-jbang-*,
+# camel-launcher, ...) are not tested for a component change, as a component reaches
+# them only through the cut point. They are still tested when a module downstream of
+# the cut point changed itself (e.g. camel-jbang-core tests camel-jbang-plugin-tui).
+# Maven's !: exclusion is not enough for this: it removes the module itself from the
+# -amd reactor, not the modules downstream of it.
+CUT_POINT_MODULES="camel-allcomponents"
+
 
 # Allow projects to override the exclusion list
 # (e.g., camel-spring-boot has different modules than main Camel)
@@ -74,6 +83,36 @@ findProjectRoot() {
     fi
   done
   echo "$path"
+}
+
+# Find the modules whose changed files are all generated (under the module's src/generated/).
+# A component change regenerates files in other modules: the catalog
+# (catalog/camel-catalog/src/generated/...), the endpoint DSL and the component DSL.
+# Such a module did not change on its own: the change is in the component, which is
+# tested. Testing the dependents of the regenerated module (-amd of camel-catalog is
+# camel-yaml-dsl, camel-jbang-*, camel-launcher, ...) tests code the PR did not touch.
+# Args: $1=changed file paths (newline-separated, relative to the repository root)
+# Prints the module root of each generated-only module, one per line.
+findGeneratedOnlyModules() {
+  local changed_files="$1"
+  local all_roots=","
+  local hand_written_roots=","
+  local file dir root
+  while read -r file; do
+    [ -z "$file" ] && continue
+    dir=$(dirname "$file")
+    root=$(findProjectRoot "$dir")
+    [[ "$root" = "." ]] && continue
+    all_roots="${all_roots}${root},"
+    if [[ "$file" != "${root}/src/generated/"* ]]; then
+      hand_written_roots="${hand_written_roots}${root},"
+    fi
+  done <<< "$changed_files"
+  for root in $(echo "$all_roots" | tr ',' '\n' | sort -u); do
+    if [[ "$hand_written_roots" != *",${root},"* ]]; then
+      echo "$root"
+    fi
+  done
 }
 
 # Remove exclusion entries that conflict with explicitly included modules.
@@ -106,6 +145,102 @@ filterExclusions() {
   done
 
   echo "$result"
+}
+
+# Print the artifact IDs of $1 that are not in $2 (both newline-separated), sorted.
+subtractModules() {
+  local from="$1"
+  local remove="$2"
+  if [ -z "$remove" ]; then
+    echo "$from" | grep . | sort -u || true
+    return
+  fi
+  comm -23 <(echo "$from" | grep . | sort -u) <(echo "$remove" | grep . | sort -u) || true
+}
+
+# Modules to cut from the -amd reactor: the modules downstream of a cut point, minus
+# the modules downstream of a changed module that is itself downstream of the cut point,
+# minus the changed modules.
+# Args: $1=-amd reactor of the cut points, $2=-amd reactor of the changed modules that
+#   are downstream of the cut points, $3=artifact IDs of the changed modules
+#   (all newline-separated)
+computeCutModules() {
+  local cut_reactor="$1"
+  local keep_reactor="$2"
+  local changed_ids="$3"
+  subtractModules "$cut_reactor" "$(printf '%s\n%s\n' "$keep_reactor" "$changed_ids")"
+}
+
+# Print the artifact ID of the module of a pom.xml (the first one outside <parent>).
+moduleArtifactId() {
+  sed -n '/<parent>/,/<\/parent>/!{ s/.*<artifactId>\([^<]*\)<\/artifactId>.*/\1/p; }' "$1" | head -1
+}
+
+# Print the artifact IDs of the -amd reactor of a -pl list (newline-separated).
+amdReactorIds() {
+  ./mvnw -B -q -amd exec:exec -Dexec.executable="echo" \
+    -Dexec.args='${project.artifactId}' -pl "$1" 2>/dev/null | grep -v '^\[' || true
+}
+
+# Find the modules to cut from the -amd reactor of the changed modules (see CUT_POINT_MODULES).
+# Kept are the changed modules, and the -amd reactor of the changed modules located
+# downstream of a cut point and of the modules downstream of a cut point that declare a
+# dependency on a changed module (e.g. camel-jbang-plugin-tui uses camel-chaos).
+# Args: $1=changed modules (comma-separated paths or :artifactIds), $2=-amd reactor of them
+# Prints the artifact IDs to cut, one per line.
+findCutModules() {
+  local changed_pl="$1"
+  local reactor="$2"
+
+  local changed_ids="" path
+  for path in $(echo "$changed_pl" | tr ',' '\n'); do
+    if [[ "$path" == :* ]]; then
+      changed_ids="${changed_ids}${path#:}"$'\n'
+    elif [ -f "$path/pom.xml" ]; then
+      changed_ids="${changed_ids}$(moduleArtifactId "$path/pom.xml")"$'\n'
+    fi
+  done
+
+  local cut_points="" cp
+  for cp in $(echo "$CUT_POINT_MODULES" | tr ',' '\n'); do
+    if echo "$reactor" | grep -qxF "$cp" && ! echo "$changed_ids" | grep -qxF "$cp"; then
+      cut_points="${cut_points:+${cut_points},}:${cp}"
+    fi
+  done
+  if [ -z "$cut_points" ]; then
+    return 0
+  fi
+
+  local cut_reactor
+  cut_reactor=$(amdReactorIds "$cut_points")
+  if [ -z "$cut_reactor" ]; then
+    return 0
+  fi
+
+  # Changed modules downstream of a cut point, and modules downstream of a cut point
+  # that depend on a changed module directly: their -amd reactor stays.
+  local keep_roots="" id pom dep_id
+  for id in $changed_ids; do
+    if echo "$cut_reactor" | grep -qxF "$id"; then
+      keep_roots="${keep_roots}${id}"$'\n'
+    fi
+    for pom in $(git grep -l -F "<artifactId>${id}</artifactId>" -- '*pom.xml' ':!*/src/*' 2>/dev/null); do
+      dep_id=$(moduleArtifactId "$pom")
+      # A cut point depends on every component: it is not a direct user
+      if [[ ",${CUT_POINT_MODULES}," == *",${dep_id},"* ]]; then
+        continue
+      fi
+      if [ "$dep_id" != "$id" ] && echo "$cut_reactor" | grep -qxF "$dep_id"; then
+        keep_roots="${keep_roots}${dep_id}"$'\n'
+      fi
+    done
+  done
+  local keep_reactor=""
+  if [ -n "$(echo "$keep_roots" | grep .)" ]; then
+    keep_reactor=$(amdReactorIds "$(echo "$keep_roots" | grep . | sort -u | sed 's/^/:/' | paste -sd, -)")
+  fi
+
+  computeCutModules "$cut_reactor" "$keep_reactor" "$changed_ids"
 }
 
 # Count the modules a build would test: the -amd reactor of the changed modules
@@ -246,7 +381,9 @@ analyzePomDependencies() {
 # Run Scalpel in report mode to detect modules affected by POM changes.
 # Sets caller-visible variables: scalpel_module_ids, scalpel_module_paths,
 #   scalpel_props, scalpel_managed_deps, scalpel_managed_plugins
+# Args: $1=module roots where only generated files changed (newline-separated, may be empty)
 runScalpelDetection() {
+  local generated_only_modules="${1:-}"
   echo "  Running Scalpel change detection..."
 
   # Scalpel is permanently configured in .mvn/extensions.xml.
@@ -264,6 +401,8 @@ runScalpelDetection() {
   #   mvnw, mvnw.cmd and pom.xml are left out on purpose: they do affect the build.
   #   A pattern without a "/" also matches at any depth (e.g. a module's README.md);
   #   the file-path step above still picks up the module of such a file.
+  #   The src/generated/** of a generated-only module is excluded as well, so Scalpel
+  #   does not report the dependents of a regenerated catalog or endpoint DSL.
   # - skipTestsForDownstreamModules: derived from EXCLUSION_LIST — tells Scalpel which
   #   downstream modules should not run tests in skip-tests mode (for shadow comparison)
   # Strip the Maven "!:" prefix from each entry to get bare artifact IDs for Scalpel.
@@ -273,6 +412,10 @@ runScalpelDetection() {
   # auto-detection is fragile across Maven wrappers and CI rerun contexts.
   local base_branch="origin/${GITHUB_BASE_REF:-main}"
   local exclude_paths=".github/**,AGENTS.md,CLAUDE.md,CONTRIBUTING.md,README.md,SECURITY.md,KEYS,LICENSE.txt,NOTICE.txt,doap.rdf,Jenkinsfile*,.asf.yaml,.gitattributes,.gitignore,.gitmodules,.sdkmanrc,jbang-catalog.json"
+  local gen_root
+  for gen_root in $generated_only_modules; do
+    exclude_paths="${exclude_paths},${gen_root}/src/generated/**"
+  done
   local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.explain=true -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.baseBranch=${base_branch} -Dscalpel.excludePaths=${exclude_paths} -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
 
   # Verify merge base is reachable (pre-fetched by the CI workflow step)
@@ -321,8 +464,11 @@ runScalpelDetection() {
     report="$filtered_report"
   fi
 
-  # Extract affected module artifactIds (colon-prefixed for Maven -pl compatibility)
-  scalpel_module_ids=$(jq -r '.affectedModules[].artifactId' "$report" 2>/dev/null | sort -u | sed 's/^/:/' | tr '\n' ',' | sed 's/,$//' || true)
+  # Extract the artifactIds of the affected modules whose tests Scalpel would run
+  # (colon-prefixed for Maven -pl compatibility). The modules with testsSkipped are the
+  # EXCLUSION_LIST passed as skipTestsForDownstreamModules: putting them in -pl by name
+  # would make filterExclusions drop their exclusions, and their tests would run.
+  scalpel_module_ids=$(jq -r '.affectedModules[] | select(.testsSkipped != true) | .artifactId' "$report" 2>/dev/null | sort -u | sed 's/^/:/' | tr '\n' ',' | sed 's/,$//' || true)
   scalpel_module_paths=$(jq -r '.affectedModules[].path' "$report" 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//' || true)
   scalpel_props=$(jq -r '(.changedProperties // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
   scalpel_managed_deps=$(jq -r '(.changedManagedDependencies // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
@@ -790,6 +936,12 @@ main() {
   done
   pl="${pl:1}"  # strip leading comma
 
+  # Modules where only generated files changed (catalog, endpoint DSL, component DSL
+  # regenerated by a component change). They are built like pom-only modules (without
+  # -amd), and Scalpel ignores their generated files, so their dependents are not tested.
+  local generated_only_modules
+  generated_only_modules=$(findGeneratedOnlyModules "$(echo "$diff_body" | sed -n -e '/^diff --git a/p' | awk '{print $3}' | cut -b 3-)")
+
   # Only analyze parent/pom.xml for grep-based dependency detection
   # (matches original detect-test.sh behavior)
   if echo "$diff_body" | grep -q '^diff --git a/parent/pom.xml'; then
@@ -847,7 +999,7 @@ main() {
   # comparison with the grep-based approach.
   echo ""
   echo "Running Scalpel change detection..."
-  runScalpelDetection
+  runScalpelDetection "$generated_only_modules"
 
   # Save grep-only results for comment attribution (before merging with Scalpel).
   # The comment's top section shows only what the current grep mechanism detected;
@@ -874,11 +1026,15 @@ main() {
   # Pom-only modules (e.g. "parent", aggregator poms) are kept in the build
   # list but must NOT be expanded with -amd, since that would pull in every
   # dependent module. Modules with src/main (including test-infra modules)
-  # are treated as testable so their dependents get tested.
+  # are treated as testable so their dependents get tested, unless only their
+  # generated files changed (see findGeneratedOnlyModules).
   local testable_pl=""
   local pom_only_pl=""
   for w in $(echo "$pl" | tr ',' '\n'); do
-    if [ -d "$w/src/main" ]; then
+    if echo "$generated_only_modules" | grep -qxF "$w"; then
+      pom_only_pl="${pom_only_pl:+${pom_only_pl},}${w}"
+      echo "  Generated-only module (only src/generated changed, won't expand dependents): $w"
+    elif [ -d "$w/src/main" ]; then
       testable_pl="${testable_pl:+${testable_pl},}${w}"
     else
       pom_only_pl="${pom_only_pl:+${pom_only_pl},}${w}"
@@ -930,6 +1086,8 @@ main() {
   # Reactor artifact IDs resolved by the threshold check below.
   # Reused later to validate -pl exclusions against the -amd reactor.
   local reactor_ids=""
+  # Modules of the -amd reactor reached only through a cut point (see findCutModules)
+  local cut_ids=""
 
   if [ -n "$testable_pl" ]; then
     # File-path modules with tests — use -amd to catch dependents
@@ -952,7 +1110,18 @@ main() {
       local totalTestableProjects
       reactor_ids=$(./mvnw -B -q -amd exec:exec -Dexec.executable="echo" \
         -Dexec.args='${project.artifactId}' -pl "$threshold_pl" 2>/dev/null || true)
-      totalTestableProjects=$(countTestableModules "$reactor_ids" "$dep_module_ids")
+      # Cut the modules that the changed modules reach only through a cut point
+      # (camel-allcomponents): a component change does not test camel-yaml-dsl, camel-jbang-*, ...
+      cut_ids=$(findCutModules "$threshold_pl" "$reactor_ids")
+      if [ -n "$cut_ids" ]; then
+        echo "Not testing $(echo "$cut_ids" | grep -c .) modules reached only through ${CUT_POINT_MODULES}:"
+        echo "$cut_ids" | sed 's/^/  - /'
+        if [ -n "$dep_module_ids" ]; then
+          dep_module_ids=$(subtractModules "$(echo "$dep_module_ids" | tr ',' '\n' | sed 's/^://')" "$cut_ids" | sed 's/^/:/' | paste -sd, -)
+        fi
+        final_pl=$(echo "$final_pl" | tr ',' '\n' | grep -vxF -f <(echo "$cut_ids" | sed 's/^/:/') | paste -sd, - || true)
+      fi
+      totalTestableProjects=$(countTestableModules "$(subtractModules "$reactor_ids" "$cut_ids")" "$dep_module_ids")
 
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]]; then
         echo "Too many dependent modules (${totalTestableProjects} > ${maxNumberOfTestableProjects}), testing only the affected modules"
@@ -1036,6 +1205,13 @@ main() {
         filtered_exclusions="$valid_exclusions"
       fi
     fi
+    # Exclude the cut modules too (all of them are in the -amd reactor of the threshold check)
+    local cut_id
+    for cut_id in $cut_ids; do
+      if [[ ",${filtered_exclusions}," != *",!:${cut_id},"* ]] && echo "$reactor_ids" | grep -qxF "$cut_id"; then
+        filtered_exclusions="${filtered_exclusions:+${filtered_exclusions},}!:${cut_id}"
+      fi
+    done
     local build_pl_with_exclusions="$build_pl"
     if [ -n "$filtered_exclusions" ]; then
       build_pl_with_exclusions="${build_pl},${filtered_exclusions}"
@@ -1080,7 +1256,7 @@ main() {
   local tested_reactor_ids=""
   if [ -n "$reactor_ids" ]; then
     local excl_set
-    excl_set=$(echo "$EXCLUSION_LIST" | sed 's/!://g' | tr ',' '\n')
+    excl_set=$(printf '%s\n%s\n' "$(echo "$EXCLUSION_LIST" | sed 's/!://g' | tr ',' '\n')" "$cut_ids")
     tested_reactor_ids=$(echo "$reactor_ids" | while read -r rid; do
       if ! echo "$excl_set" | grep -qx "$rid"; then
         echo "$rid"
