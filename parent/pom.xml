@@ -2786,6 +2786,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-semantic-spring-ai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-semantic-typesafe-ai</artifactId>
                 <version>${project.version}</version>
             </dependency>
