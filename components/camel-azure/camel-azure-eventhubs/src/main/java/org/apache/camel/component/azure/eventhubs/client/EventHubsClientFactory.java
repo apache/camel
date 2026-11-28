@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.eventhubs.client;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.eventhubs.CheckpointStore;
 import com.azure.messaging.eventhubs.EventHubClientBuilder;
@@ -69,7 +70,7 @@ public final class EventHubsClientFactory {
         return eventHubClientBuilder
                 .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
                 .eventHubName(configuration.getEventHubName())
-                .credential(new DefaultAzureCredentialBuilder().build())
+                .credential(azureIdentityCredential(configuration))
                 .buildAsyncProducerClient();
     }
 
@@ -100,7 +101,7 @@ public final class EventHubsClientFactory {
         return eventHubClientBuilder
                 .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
                 .eventHubName(configuration.getEventHubName())
-                .credential(new DefaultAzureCredentialBuilder().build())
+                .credential(azureIdentityCredential(configuration))
                 .buildAsyncConsumerClient();
     }
 
@@ -136,8 +137,17 @@ public final class EventHubsClientFactory {
         return eventProcessorClientBuilder
                 .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
                 .eventHubName(configuration.getEventHubName())
-                .credential(new DefaultAzureCredentialBuilder().build())
+                .credential(azureIdentityCredential(configuration))
                 .buildEventProcessorClient();
+    }
+
+    /**
+     * The credential for AZURE_IDENTITY: the tokenCredential when it is set (such as a DefaultAzureCredential with a
+     * managed identity client id or a tenant id), otherwise a new DefaultAzureCredential.
+     */
+    static TokenCredential azureIdentityCredential(final EventHubsConfiguration configuration) {
+        TokenCredential credential = configuration.getTokenCredential();
+        return credential != null ? credential : new DefaultAzureCredentialBuilder().build();
     }
 
     // public for testing purposes
