@@ -940,6 +940,16 @@ public final class RouteDefinitionHelper {
             icp.addAll(g.getIntercepts());
             ifrom.addAll(g.getInterceptFroms());
             ito.addAll(g.getInterceptSendTos());
+            for (OnCompletionDefinition def : g.getOnCompletions()) {
+                if (def.getRouteConfiguration() == null) {
+                    // the YAML and XML DSLs set the onCompletions as a list instead of using the fluent
+                    // RouteConfigurationDefinition.onCompletion(), so link them here the same way (CAMEL-25420)
+                    def.setRouteConfiguration(g);
+                    if (g.getId() == null || "*".equals(g.getId())) {
+                        def.setRouteScoped(false);
+                    }
+                }
+            }
             oc.addAll(g.getOnCompletions());
         };
     }

@@ -294,6 +294,16 @@ messages, and grew with each one. An exception from a predicate of `onException`
 Split is no longer added to it either, and is logged instead. Use `throwException(MyException.class, "...")`, or
 `exceptionType` and `message`, to get a new exception for each message, with the previous exception as suppressed.
 
+=== camel-core - an onCompletion of a route configuration in YAML or XML fires once per exchange
+
+An `onCompletion` of a route configuration defined in the YAML or XML DSL (including Spring XML) now
+fires once per exchange, as it does in the Java DSL since Camel 4.23. It used to fire once for each route of the
+exchange that the configuration applies to: for example twice when a route calls another route with `direct:` and the
+route configuration applies to both, either because it is global (no `id`, or the `id` `*`) or because both routes
+set its `routeConfigurationId`. A global route configuration fires its `onCompletion` for the route that consumed the
+exchange, and a named one fires it once, from the consumer route when that route also uses the configuration. If you
+relied on the `onCompletion` firing once per route, define it in each route instead.
+
 === camel-cron - cronService can be the id of a cron service, and fails when nothing matches
 
 The `cronService` option can now also be the id of the cron service of a module on the classpath: `quartz` for

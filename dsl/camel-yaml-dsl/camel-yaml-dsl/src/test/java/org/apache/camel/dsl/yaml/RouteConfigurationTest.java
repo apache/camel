@@ -92,6 +92,70 @@ class RouteConfigurationTest extends YamlTestSupport {
     }
 
     @Test
+    void routeConfigurationOnCompletionFiresOncePerExchange() throws Exception {
+        // CAMEL-25420: the global configuration applies to both routes the exchange goes through,
+        // and its onCompletion must fire once, as with the Java DSL
+        loadRoutes("""
+                    - routeConfiguration:
+                        onCompletion:
+                          - onCompletion:
+                              steps:
+                                - to: "mock:on-completion"
+                    - from:
+                        uri: "direct:start"
+                        steps:
+                          - to: "direct:sub"
+                    - from:
+                        uri: "direct:sub"
+                        steps:
+                          - to: "mock:result"
+                """);
+
+        withMock("mock:on-completion", mock -> mock.expectedMessageCount(1));
+        withMock("mock:result", mock -> mock.expectedBodiesReceived("hello"));
+
+        context.start();
+
+        withTemplate(t -> t.to("direct:start").withBody("hello").send());
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void namedRouteConfigurationOnCompletionFiresOncePerExchange() throws Exception {
+        // CAMEL-25420: both routes opt in to the named configuration, and the id comes after onCompletion
+        loadRoutes("""
+                    - routeConfiguration:
+                        onCompletion:
+                          - onCompletion:
+                              steps:
+                                - to: "mock:on-completion"
+                        id: "myconfig"
+                    - route:
+                        routeConfigurationId: "myconfig"
+                        from:
+                          uri: "direct:start"
+                          steps:
+                            - to: "direct:sub"
+                    - route:
+                        routeConfigurationId: "myconfig"
+                        from:
+                          uri: "direct:sub"
+                          steps:
+                            - to: "mock:result"
+                """);
+
+        withMock("mock:on-completion", mock -> mock.expectedMessageCount(1));
+        withMock("mock:result", mock -> mock.expectedBodiesReceived("hello"));
+
+        context.start();
+
+        withTemplate(t -> t.to("direct:start").withBody("hello").send());
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
     void routeConfigurationPrecondition() throws Exception {
         context.getPropertiesComponent().setInitialProperties(asProperties("activate", "true"));
         loadRoutes("""
