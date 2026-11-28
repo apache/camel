@@ -113,6 +113,30 @@ public class RoutesConfigurationOnCompletionSetterTest extends ContextTestSuppor
     }
 
     @Test
+    public void testGlobalNotFiredWhenConsumerRouteDoesNotUseIt() throws Exception {
+        // a global configuration fires only for exchanges consumed by a route it applies to: the consumer route
+        // uses another configuration, so the global onCompletion does not fire for the sub-route either
+        addConfiguration(null, new OnCompletionDefinition().to("mock:global"));
+        addConfiguration("other", new OnCompletionDefinition().to("mock:other"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").routeConfigurationId("other").to("direct:sub");
+                from("direct:sub").to("mock:sub");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:global").expectedMessageCount(0);
+        getMockEndpoint("mock:other").expectedMessageCount(1);
+        getMockEndpoint("mock:sub").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testNamedWithIndirectConsumer() throws Exception {
         // only the called route opts in: the onCompletion must still fire (REST DSL -> direct: case)
         addConfiguration("myconfig", new OnCompletionDefinition().to("mock:completion"));

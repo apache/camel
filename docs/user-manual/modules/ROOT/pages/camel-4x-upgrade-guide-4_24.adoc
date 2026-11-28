@@ -304,6 +304,10 @@ set its `routeConfigurationId`. A global route configuration fires its `onComple
 exchange, and a named one fires it once, from the consumer route when that route also uses the configuration. If you
 relied on the `onCompletion` firing once per route, define it in each route instead.
 
+A global route configuration applies its `onCompletion` only to exchanges consumed by a route that uses it: when the
+consumer route sets a `routeConfigurationId` (or has an `onCompletion` of its own) and calls a route that uses the
+global configuration, the `onCompletion` no longer fires.
+
 === camel-cron - cronService can be the id of a cron service, and fails when nothing matches
 
 The `cronService` option can now also be the id of the cron service of a module on the classpath: `quartz` for
