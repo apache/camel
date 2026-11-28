@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -73,7 +74,9 @@ class DefaultTracerTraceCounterConcurrencyTest extends ContextTestSupport {
             }
             // release all threads at once to maximise contention
             startGate.countDown();
-            doneLatch.await();
+            assertThat(doneLatch.await(30, TimeUnit.SECONDS))
+                    .as("the worker threads did not finish sending")
+                    .isTrue();
         } finally {
             pool.shutdown();
         }
