@@ -56,10 +56,10 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
     }
 
     /**
-     * The options of the language itself, which camel.language.<name>.<option> sets on the language and which apply to
-     * all its expressions. These are not the options of an expression ({@link #getOptions()}).
+     * The options of the language itself, which {@code camel.language.<name>.<option>} sets on the language and which
+     * apply all its expressions. These are not the options of an expression ({@link #getOptions()}).
      *
-     * @return the options, empty when the language has none, or <tt>null</tt> when the catalog is older than these
+     * @return the options, empty when the language has none, or {@code null} when the catalog is older than these
      *         options (before Camel 4.24) and does not say
      */
     public List<LanguageOptionModel> getLanguageOptions() {
@@ -71,8 +71,8 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
     }
 
     /**
-     * The options that camel.language.<name>.<option> can set: the {@link #getLanguageOptions() language options}, or
-     * the expression options when the catalog is older than the language options and does not have them.
+     * The options that {@code camel.language.<name>.<option>} can set: the {@link #getLanguageOptions() language
+     * options}, or the expression options when the catalog is older than the language options and does not have them.
      */
     public List<LanguageOptionModel> getConfigurationOptions() {
         return languageOptions != null ? languageOptions : getOptions();

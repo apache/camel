@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * One side of the body types of a component, data format, language or EIP: the body a step needs, or the body it leaves
  * after it, with the default options (CAMEL-24961, CAMEL-25928).
- * <p/>
+ * <p>
  * The carriers are the kinds of Java object the body is in: null, text, bytes, stream, file, value, map, list, iterator
  * and pojo; unchanged for a step that leaves the body as it was, any for a step that takes any body, and unknown for a
  * body that depends on what the other system sends or on a class the user configures.
