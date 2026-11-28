@@ -29,6 +29,7 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLServerSocketFactory;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,11 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
      */
     private final List<String> sniHostNames = new ArrayList<>();
 
+    /**
+     * The endpoint identification algorithm, such as HTTPS or LDAPS
+     */
+    private @Nullable String endpointIdentificationAlgorithm;
+
     public void addAllSniHostNames(List<String> sniHostNames) {
         Objects.requireNonNull(sniHostNames, "sniHostNames");
         this.sniHostNames.addAll(sniHostNames);
@@ -52,6 +58,37 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     public void setSniHostName(String sniHostName) {
         Objects.requireNonNull(sniHostName, "sniHostName");
         this.sniHostNames.add(sniHostName);
+    }
+
+    /**
+     * Returns the endpoint identification algorithm that client sockets use to check that the certificate of the server
+     * matches the host they connect to, or {@code null} if it is not set.
+     */
+    public @Nullable String getEndpointIdentificationAlgorithm() {
+        return endpointIdentificationAlgorithm;
+    }
+
+    /**
+     * Sets the endpoint identification algorithm, such as {@code HTTPS} or {@code LDAPS}, that the client uses to check
+     * that the certificate of the server matches the host it connects to (host name verification). It is applied to the
+     * {@code SSLSocket} instances that the {@code SSLSocketFactory} of the context creates, which are client sockets.
+     * Unset by default, which keeps the behavior of the JDK: no host name verification.
+     * <p>
+     * The JDK checks the host that the socket was created with, so a socket that is created without one, and connected
+     * afterwards, fails the handshake. An {@code SSLEngine} starts in server mode and is switched to client mode by the
+     * component, so this setting is not applied to engines: a component that uses an {@code SSLEngine} applies it to
+     * the {@code SSLParameters} of the engine once it is in client mode, as for its own host name verification option.
+     *
+     * @param endpointIdentificationAlgorithm the algorithm, or {@code null} to not verify the host name
+     */
+    public void setEndpointIdentificationAlgorithm(@Nullable String endpointIdentificationAlgorithm) {
+        this.endpointIdentificationAlgorithm = endpointIdentificationAlgorithm;
+    }
+
+    @Override
+    protected @Nullable String getSocketEndpointIdentificationAlgorithm() {
+        // the algorithm may use a property placeholder
+        return parsePropertyValue(endpointIdentificationAlgorithm);
     }
 
     @Override
@@ -123,6 +160,8 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
+        builder.append(", getEndpointIdentificationAlgorithm()=");
+        builder.append(getEndpointIdentificationAlgorithm());
         builder.append("]");
         return builder.toString();
     }
