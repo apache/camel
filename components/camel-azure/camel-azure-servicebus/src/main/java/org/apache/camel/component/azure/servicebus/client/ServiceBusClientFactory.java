@@ -45,7 +45,9 @@ public final class ServiceBusClientFactory {
         switch (type) {
             case CONNECTION_STRING -> builder.connectionString(configuration.getConnectionString());
             case TOKEN_CREDENTIAL -> builder.credential(fullyQualifiedNamespace, credential);
-            case AZURE_IDENTITY -> builder.credential(fullyQualifiedNamespace, new DefaultAzureCredentialBuilder().build());
+            // a DefaultAzureCredential set as tokenCredential (with a managed identity client id, a tenant id, ...) is used as is
+            case AZURE_IDENTITY -> builder.credential(fullyQualifiedNamespace,
+                    credential != null ? credential : new DefaultAzureCredentialBuilder().build());
         }
 
         return builder;

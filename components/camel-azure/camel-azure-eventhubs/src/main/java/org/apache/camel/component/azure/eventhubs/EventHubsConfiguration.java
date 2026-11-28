@@ -145,7 +145,9 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Provide custom authentication credentials using an implementation of {@link TokenCredential}.
+     * The com.azure.core.credential.TokenCredential to authenticate with Microsoft Entra ID, for credentialType
+     * TOKEN_CREDENTIAL or AZURE_IDENTITY. A DefaultAzureCredential built with a managed identity client id or a tenant
+     * id is used as it is.
      */
     public TokenCredential getTokenCredential() {
         return tokenCredential;
@@ -359,7 +361,10 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Determines the credential strategy to adopt
+     * Determines the credential strategy to adopt: CONNECTION_STRING, TOKEN_CREDENTIAL with the tokenCredential option,
+     * or AZURE_IDENTITY with a DefaultAzureCredential: the tokenCredential option when it is set, otherwise a new one.
+     * When not set, it is TOKEN_CREDENTIAL (or AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+     * set, else CONNECTION_STRING.
      */
     public void setCredentialType(CredentialType credentialType) {
         this.credentialType = credentialType;

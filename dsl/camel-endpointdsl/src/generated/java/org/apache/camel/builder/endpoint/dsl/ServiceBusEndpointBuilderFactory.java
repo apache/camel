@@ -542,7 +542,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -559,7 +564,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -590,7 +600,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option is a:
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -605,7 +618,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1152,7 +1168,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -1169,7 +1190,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -1200,7 +1226,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option is a:
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1215,7 +1244,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1518,7 +1550,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option is a:
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -1535,7 +1572,12 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Determines the credential strategy to adopt.
+         * Determines the credential strategy to adopt: CONNECTION_STRING,
+         * TOKEN_CREDENTIAL with the tokenCredential option, or AZURE_IDENTITY
+         * with a DefaultAzureCredential: the tokenCredential option when it is
+         * set, otherwise a new one. When not set, it is TOKEN_CREDENTIAL (or
+         * AZURE_IDENTITY for a DefaultAzureCredential) when tokenCredential is
+         * set, else CONNECTION_STRING.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.common.CredentialType</code>
@@ -1566,7 +1608,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option is a:
          * <code>com.azure.core.credential.TokenCredential</code> type.
@@ -1581,7 +1626,10 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * A TokenCredential for Azure AD authentication.
+         * The com.azure.core.credential.TokenCredential to authenticate with
+         * Microsoft Entra ID, for credentialType TOKEN_CREDENTIAL or
+         * AZURE_IDENTITY. A DefaultAzureCredential built with a managed
+         * identity client id or a tenant id is used as it is.
          * 
          * The option will be converted to a
          * <code>com.azure.core.credential.TokenCredential</code> type.
