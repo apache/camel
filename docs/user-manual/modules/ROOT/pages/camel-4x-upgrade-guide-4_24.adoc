@@ -317,6 +317,20 @@ client library) is now a failed poll, as an exception, and the consumer polls ag
 scheduler, it also ended the scheduled task. See the section "camel-core - a VirtualMachineError fails the exchange,
 and Camel does not recover from it".
 
+=== camel-support - PropertyBindingSupport withPlaceholder(false) and withReference(false) apply to values
+
+The `withPlaceholder` and `withReference` options of `PropertyBindingSupport.build()` now apply to the values as
+documented, both when binding via reflection and via a property configurer:
+
+* With `withPlaceholder(false)` a property placeholder in a value (such as `{{myKey}}` or `prefix-{{myKey}}`) is bound
+  as given, and a placeholder in a `#property:` key or a `#class:` value is not resolved either. Before, only the keys
+  were left as given.
+* With `withReference(false)` a value that starts with `#` (`#bean:`, `#name`, `#type:`, `#class:`, `#property:`,
+  `#autowired` and `#valueAs(type):value`) is bound as given. Before, these values were still resolved.
+
+The defaults (both options on) are unchanged. Code that turns these options off, and still expects placeholders or
+references in the values to be resolved, must turn them on.
+
 === camel-file - a file lock cluster member waits for an open of the lock file that timed out
 
 When an open of the lock file of the file lock cluster service (`FileLockClusterService`) takes longer than

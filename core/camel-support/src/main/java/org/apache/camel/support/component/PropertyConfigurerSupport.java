@@ -24,6 +24,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.TimeUtils;
 
 /**
@@ -47,11 +48,12 @@ public abstract class PropertyConfigurerSupport {
      */
     public static <T> T property(CamelContext camelContext, Class<T> type, Object value) {
         // if the type is not string based and the value is a bean reference, then we need to lookup
-        // the bean from the registry
+        // the bean from the registry (unless reference parameters are turned off for the current binding,
+        // then the value is taken as given)
         if (value instanceof String && String.class != type) {
             String text = value.toString();
 
-            if (EndpointHelper.isReferenceParameter(text)) {
+            if (EndpointHelper.isReferenceParameter(text) && !PropertyBindingSupport.isReferenceBindingDisabled()) {
                 Object obj;
                 // special for a list where we refer to beans which can be either a list or a single element
                 // so use Object.class as type

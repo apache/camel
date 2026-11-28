@@ -127,6 +127,10 @@ public final class PropertyBindingSupport {
     // and direct use of this class).
     private static final ThreadLocal<Boolean> LITERAL_OPTION_BINDING = new ThreadLocal<>();
 
+    // set while a value is bound via a PropertyConfigurer with reference parameters turned off (see
+    // Builder#withReference(boolean)), so PropertyConfigurerSupport#property takes a value starting with # as given
+    private static final ThreadLocal<Boolean> REFERENCE_BINDING_DISABLED = new ThreadLocal<>();
+
     public static Builder build() {
         return new Builder();
     }
@@ -160,6 +164,18 @@ public final class PropertyBindingSupport {
             LITERAL_OPTION_BINDING.remove();
         }
         return prev;
+    }
+
+    /**
+     * Whether the value currently being bound on this thread via a {@link PropertyConfigurer} is bound with reference
+     * parameters turned off, see {@link Builder#withReference(boolean)}. The configurer then takes a value that starts
+     * with # as given, instead of resolving it as a reference.
+     *
+     * @return true if reference parameters are turned off for the value currently being bound on this thread
+     * @since  4.24
+     */
+    public static boolean isReferenceBindingDisabled() {
+        return Boolean.TRUE.equals(REFERENCE_BINDING_DISABLED.get());
     }
 
     /**
@@ -625,9 +641,13 @@ public final class PropertyBindingSupport {
             value = text;
         } else {
             try {
-                Object str = resolveValue(camelContext, target, key, text, ignoreCase, fluentBuilder,
-                        allowPrivateSetter, reflection, configurer);
-                if (str instanceof String strValue && !literal) {
+                Object str = text;
+                if (reference) {
+                    // resolve #property:, #autowired, #class:, #type:, #bean: and #valueAs values
+                    str = resolveValue(camelContext, target, key, text, ignoreCase, fluentBuilder,
+                            allowPrivateSetter, placeholder, reflection, configurer);
+                }
+                if (placeholder && !literal && str instanceof String strValue) {
                     // resolve property placeholders
                     str = camelContext.resolvePropertyPlaceholders(strValue);
                 }
@@ -647,6 +667,15 @@ public final class PropertyBindingSupport {
         // refuses a #class: or #property: value while the literal option binding scope is active, and an option of
         // type String gets the literal text
         boolean effReference = reference && !literalValue;
+
+        // a configurer resolves a reference (#...) on its own, so with references turned off it is told (thread-scoped)
+        // to take the value as given. The flag is only touched when references are off, or when an outer binding on
+        // this thread turned them off
+        Boolean prevReferenceBindingDisabled = REFERENCE_BINDING_DISABLED.get();
+        boolean referenceScope = configurer != null && (!reference || prevReferenceBindingDisabled != null);
+        if (referenceScope) {
+            setReferenceBindingDisabled(!reference ? Boolean.TRUE : null);
+        }
 
         // okay we are ready to set the value, but the property key
         // can still be complex such as a map/list/array so we need to handle them specially than a regular key
@@ -670,7 +699,7 @@ public final class PropertyBindingSupport {
                 if (!bound && reflection) {
                     // fallback to reflection based
                     bound = setSimplePropertyViaReflection(camelContext, target, key, value, fluentBuilder, allowPrivateSetter,
-                            !literalValue && reflection, ignoreCase);
+                            effReference, ignoreCase);
                 }
                 // if the target value is a map type, then we can skip reflection
                 // and set the entry
@@ -695,6 +724,10 @@ public final class PropertyBindingSupport {
             throw e;
         } catch (Exception e) {
             throw new PropertyBindingException(target, key, value, e);
+        } finally {
+            if (referenceScope) {
+                setReferenceBindingDisabled(prevReferenceBindingDisabled);
+            }
         }
 
         if (mandatory && !optional && !bound) {
@@ -702,6 +735,14 @@ public final class PropertyBindingSupport {
         }
 
         return bound;
+    }
+
+    private static void setReferenceBindingDisabled(Boolean disabled) {
+        if (disabled != null) {
+            REFERENCE_BINDING_DISABLED.set(disabled);
+        } else {
+            REFERENCE_BINDING_DISABLED.remove();
+        }
     }
 
     private static boolean isCollectionKey(String name) {
@@ -978,14 +1019,23 @@ public final class PropertyBindingSupport {
     private static Object resolveValue(
             CamelContext context, Object target, String name, Object value,
             boolean ignoreCase, boolean fluentBuilder, boolean allowPrivateSetter,
-            boolean reflection, PropertyConfigurer configurer)
+            boolean placeholder, boolean reflection, PropertyConfigurer configurer)
             throws Exception {
         if (value instanceof String str) {
             if (str.startsWith("#property:")) {
                 String key = str.substring(10);
-                // the key may have property placeholder so resolve those first
-                key = context.resolvePropertyPlaceholders(key);
-                Optional<String> resolved = context.getPropertiesComponent().resolveProperty(key);
+                Optional<String> resolved;
+                if (placeholder) {
+                    // the key may have property placeholder so resolve those first
+                    key = context.resolvePropertyPlaceholders(key);
+                    resolved = context.getPropertiesComponent().resolveProperty(key);
+                } else if (key.contains(PropertiesComponent.PREFIX_TOKEN)) {
+                    // the key is taken as given, and no property has a key with a placeholder in it
+                    // (the properties component would resolve the placeholder in the key)
+                    resolved = Optional.empty();
+                } else {
+                    resolved = context.getPropertiesComponent().resolveProperty(key);
+                }
                 if (resolved.isPresent()) {
                     value = resolved.get();
                 } else {
@@ -995,7 +1045,7 @@ public final class PropertyBindingSupport {
                 value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter,
                         reflection, configurer);
             } else {
-                value = resolveBean(context, value);
+                value = doResolveBean(context, value, placeholder);
             }
         }
         return value;
@@ -1651,6 +1701,12 @@ public final class PropertyBindingSupport {
      */
     public static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
             throws Exception {
+        return doNewInstanceConstructorParameters(camelContext, type, parameters, true);
+    }
+
+    private static Object doNewInstanceConstructorParameters(
+            CamelContext camelContext, Class<?> type, String parameters, boolean placeholder)
+            throws Exception {
         // keep quotes as we need to understand the parameter type if its boolean,numbers or string (quoted)
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', true, true);
         Constructor<?> found = findMatchingConstructor(camelContext, type.getConstructors(), params);
@@ -1672,7 +1728,7 @@ public final class PropertyBindingSupport {
                 if (param instanceof String str) {
                     String ref = StringHelper.removeLeadingAndEndingQuotes(str);
                     if (ref.startsWith("#")) {
-                        Object bean = resolveBean(camelContext, ref);
+                        Object bean = doResolveBean(camelContext, ref, placeholder);
                         if (bean != null) {
                             val = bean;
                         }
@@ -1770,6 +1826,12 @@ public final class PropertyBindingSupport {
     public static Object newInstanceFactoryParameters(
             CamelContext camelContext, Class<?> type, String factoryMethod, String parameters)
             throws Exception {
+        return doNewInstanceFactoryParameters(camelContext, type, factoryMethod, parameters, true);
+    }
+
+    private static Object doNewInstanceFactoryParameters(
+            CamelContext camelContext, Class<?> type, String factoryMethod, String parameters, boolean placeholder)
+            throws Exception {
         // keep quotes as we need to understand the parameter type if its boolean,numbers or string (quoted)
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', true, true);
         Method found = findMatchingFactoryMethod(camelContext, type.getMethods(), factoryMethod, params);
@@ -1791,7 +1853,7 @@ public final class PropertyBindingSupport {
                 if (param instanceof String str) {
                     String ref = removeLeadingAndEndingQuotes(str);
                     if (ref.startsWith("#")) {
-                        Object bean = resolveBean(camelContext, ref);
+                        Object bean = doResolveBean(camelContext, ref, placeholder);
                         if (bean != null) {
                             val = bean;
                         }
@@ -2051,6 +2113,10 @@ public final class PropertyBindingSupport {
      * @throws Exception    is thrown if error resolving the bean, or if the value is invalid.
      */
     public static Object resolveBean(CamelContext camelContext, Object value) throws Exception {
+        return doResolveBean(camelContext, value, true);
+    }
+
+    private static Object doResolveBean(CamelContext camelContext, Object value, boolean placeholder) throws Exception {
         if (!(value instanceof String strval)) {
             return value;
         }
@@ -2061,8 +2127,10 @@ public final class PropertyBindingSupport {
         // #property: value is not resolved
         checkLiteralOptionReference(strval);
 
-        // resolve placeholders
-        strval = camelContext.resolvePropertyPlaceholders(strval);
+        if (placeholder) {
+            // resolve placeholders
+            strval = camelContext.resolvePropertyPlaceholders(strval);
+        }
 
         if (strval.startsWith("#class:")) {
             // it's a new class to be created
@@ -2102,7 +2170,7 @@ public final class PropertyBindingSupport {
                 }
                 if (parameters != null) {
                     Class<?> target = factoryClass != null ? factoryClass : type;
-                    answer = newInstanceFactoryParameters(camelContext, target, factoryMethod, parameters);
+                    answer = doNewInstanceFactoryParameters(camelContext, target, factoryMethod, parameters, placeholder);
                 } else {
                     answer = camelContext.getInjector().newInstance(type, factoryClass, factoryMethod);
                 }
@@ -2112,7 +2180,7 @@ public final class PropertyBindingSupport {
                 }
             } else if (parameters != null) {
                 // special to support constructor parameters
-                answer = newInstanceConstructorParameters(camelContext, type, parameters);
+                answer = doNewInstanceConstructorParameters(camelContext, type, parameters, placeholder);
             } else {
                 // a class without a public no-arg constructor but with a builder is created via the builder
                 Object builder = newBuilderInstance(type);
@@ -2336,7 +2404,10 @@ public final class PropertyBindingSupport {
         }
 
         /**
-         * Whether reference parameter (syntax starts with #) is in use
+         * Whether reference parameter (syntax starts with #) is in use. When turned off, a value starting with # (such
+         * as {@code #bean:name}, {@code #name}, {@code #type:}, {@code #class:}, {@code #property:}, {@code #autowired}
+         * or {@code #valueAs(type):value}) is bound as given, both when binding via reflection and via a
+         * {@link PropertyConfigurer}.
          */
         public Builder withReference(boolean reference) {
             this.reference = reference;
@@ -2344,7 +2415,9 @@ public final class PropertyBindingSupport {
         }
 
         /**
-         * Whether to use Camels property placeholder to resolve placeholders on keys and values
+         * Whether to use Camels property placeholder to resolve placeholders on keys and values. When turned off, a key
+         * or value with a property placeholder ({@code {{...}}}) is bound as given, and placeholders inside a
+         * {@code #property:} key or a {@code #class:} value are not resolved either.
          */
         public Builder withPlaceholder(boolean placeholder) {
             this.placeholder = placeholder;
@@ -2355,8 +2428,8 @@ public final class PropertyBindingSupport {
          * Whether to bind in literal mode, for values computed from message content at runtime (for example the option
          * values of a dynamic endpoint). In literal mode a value with a property placeholder ({@code {{...}}}), a
          * {@code #class:} value or a {@code #property:} value is bound as literal text, and option names are not
-         * resolved as property placeholders. Plain registry references ({@code #bean:}, {@code #type:}, {@code #name})
-         * are still resolved.
+         * resolved as property placeholders. Plain registry references ({@code #bean:}, {@code #type:}, {@code #name}),
+         * {@code #autowired} and {@code #valueAs(type):value} are still resolved.
          * <p>
          * Literal mode is also on, whatever this option says, while a literal option binding scope is active on the
          * current thread, see {@link PropertyBindingSupport#isLiteralOptionBinding()}.
