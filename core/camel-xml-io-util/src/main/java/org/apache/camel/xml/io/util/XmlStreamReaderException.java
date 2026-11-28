@@ -58,7 +58,6 @@ public class XmlStreamReaderException extends IOException {
      * Creates an exception instance if the charset encoding could not be determined.
      * <p>
      * Instances of this exception are thrown by the XmlReader.
-     * <p>
      *
      * @param msg         message describing the reason for the exception.
      * @param bomEnc      BOM encoding.
@@ -75,7 +74,6 @@ public class XmlStreamReaderException extends IOException {
      * Creates an exception instance if the charset encoding could not be determined.
      * <p>
      * Instances of this exception are thrown by the XmlReader.
-     * <p>
      *
      * @param msg         message describing the reason for the exception.
      * @param ctMime      MIME type in the content-type.
@@ -99,7 +97,6 @@ public class XmlStreamReaderException extends IOException {
 
     /**
      * Returns the BOM encoding found in the InputStream.
-     * <p>
      *
      * @return the BOM encoding, null if none.
      */
@@ -109,7 +106,6 @@ public class XmlStreamReaderException extends IOException {
 
     /**
      * Returns the encoding guess based on the first bytes of the InputStream.
-     * <p>
      *
      * @return the encoding guess, null if it couldn't be guessed.
      */
@@ -119,7 +115,6 @@ public class XmlStreamReaderException extends IOException {
 
     /**
      * Returns the encoding found in the XML prolog of the InputStream.
-     * <p>
      *
      * @return the encoding of the XML prolog, null if none.
      */
@@ -129,7 +124,6 @@ public class XmlStreamReaderException extends IOException {
 
     /**
      * Returns the MIME type in the content-type used to attempt determining the encoding.
-     * <p>
      *
      * @return the MIME type in the content-type, null if there was not content-type or the encoding detection did not
      *         involve HTTP.
@@ -140,7 +134,6 @@ public class XmlStreamReaderException extends IOException {
 
     /**
      * Returns the encoding in the content-type used to attempt determining the encoding.
-     * <p>
      *
      * @return the encoding in the content-type, null if there was not content-type, no encoding in it or the encoding
      *         detection did not involve HTTP.
@@ -152,7 +145,6 @@ public class XmlStreamReaderException extends IOException {
     /**
      * Returns the unconsumed InputStream to allow the application to do an alternate encoding detection on the
      * InputStream.
-     * <p>
      *
      * @return the unconsumed InputStream.
      */
