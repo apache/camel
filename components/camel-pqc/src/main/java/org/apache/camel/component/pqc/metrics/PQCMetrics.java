@@ -21,11 +21,9 @@ import java.util.function.LongSupplier;
 /**
  * Abstraction over the optional Micrometer metrics emitted by the PQC producer.
  * <p/>
- * When Micrometer is not on the classpath, or no {@code MeterRegistry} is available in the Camel registry,
- * {@link #NOOP} is used and nothing is recorded. This interface is deliberately free of any {@code io.micrometer} type
- * so that {@code PQCProducer} can reference it without forcing Micrometer onto the classpath - the concrete
- * {@link PQCMicrometerMetrics} implementation (which does reference Micrometer) is only loaded once Micrometer is known
- * to be present.
+ * When the optional {@code camel-pqc-micrometer} integration is present, its implementation is discovered through the
+ * Camel-owned {@link PQCMetricsProvider} SPI. This interface deliberately contains no Micrometer types, so the core
+ * {@code camel-pqc} artifact remains independent of Micrometer.
  */
 public interface PQCMetrics {
 

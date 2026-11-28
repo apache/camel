@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.pqc;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.PrivateKey;
@@ -32,72 +29,37 @@ import javax.crypto.KEM;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-/**
- * The single compatibility boundary for PQC KEM operations.
- *
- * <p>
- * On Java 21+, overloads that receive an algorithm and provider prefer the provider's {@link KeyGenerator} service when
- * it is available. This retains the established {@code KEMGenerateSpec}/{@code KEMExtractSpec} behavior on Bouncy
- * Castle 1.86, where the standard {@link KEM} service can derive different keys for some algorithms. The standard
- * {@link KEM} API is used only when the selected provider does not advertise a {@link KeyGenerator} service. When a
- * caller supplies a {@link KeyGenerator} instance, this class always uses that exact instance; it never silently
- * substitutes another service. This preserves configured Camel generators and their locking/instrumentation behavior.
- * </p>
- *
- * <p>
- * The BC-specific KTS/KEM parameter specs and the optional legacy carrier are loaded from the selected provider's own
- * class loader. No BC implementation classes are statically linked by this component. The resulting body remains a
- * standard {@link SecretKey}; where BC's carrier is visible it is retained as the runtime object for source/binary
- * compatibility with Camel routes that have historically inspected {@code getEncapsulation()}.
- * </p>
- */
+import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
+import org.bouncycastle.jcajce.spec.KEMExtractSpec;
+import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
+import org.bouncycastle.jcajce.spec.KTSParameterSpec;
+
+/** Typed BC/JCA boundary for encapsulation and decapsulation. */
 public final class BouncyCastleKemSupport {
 
     private static final String KEM_SERVICE = "KEM";
     private static final String KEY_GENERATOR_SERVICE = "KeyGenerator";
-    private static final String BC_KTS_PARAMETER_SPEC = "org.bouncycastle.jcajce.spec.KTSParameterSpec";
-    private static final String BC_KEM_GENERATE_SPEC = "org.bouncycastle.jcajce.spec.KEMGenerateSpec";
-    private static final String BC_KEM_EXTRACT_SPEC = "org.bouncycastle.jcajce.spec.KEMExtractSpec";
-    private static final String BC_SECRET_KEY_WITH_ENCAPSULATION
-            = "org.bouncycastle.jcajce.SecretKeyWithEncapsulation";
 
     private BouncyCastleKemSupport() {
     }
 
-    /** Performs encapsulation with the explicitly supplied KeyGenerator instance. */
+    /** Always uses the exact KeyGenerator supplied by the Camel endpoint/registry. */
     public static EncapsulationResult encapsulate(
-            KeyGenerator generator,
-            PublicKey publicKey,
-            String symmetricAlgorithm,
-            int keyLength,
-            SecureRandom random)
+            KeyGenerator generator, PublicKey publicKey, String symmetricAlgorithm, int keyLength, SecureRandom random)
             throws InvalidAlgorithmParameterException {
         Objects.requireNonNull(generator, "generator");
         Objects.requireNonNull(publicKey, "publicKey");
         Objects.requireNonNull(symmetricAlgorithm, "symmetricAlgorithm");
         validateKeyLength(keyLength);
-        // A caller-supplied KeyGenerator is an explicit Camel extension point. Always execute
-        // init()/generateKey() on that exact instance, even when its provider also advertises the
-        // standard JDK KEM service. Switching APIs here would bypass configured generators and
-        // break applications that wrap or instrument them. The JDK KEM API is selected only by
-        // the overload that receives an algorithm and Provider rather than a KeyGenerator.
         synchronized (PQCKemLocks.lockFor(generator, publicKey)) {
             return encapsulateWithKeyGenerator(generator, publicKey, symmetricAlgorithm, keyLength, random);
         }
     }
 
-    /**
-     * Performs encapsulation with an explicitly selected provider. The provider's KeyGenerator service is preferred
-     * when present for Bouncy Castle 1.86 interoperability; the standard JDK KEM service is used only when no
-     * KeyGenerator service is advertised.
-     */
+    /** Prefer BC KeyGenerator on both releases; on BC 1.86 this is required for legacy KEM interoperability. */
     public static EncapsulationResult encapsulate(
-            String algorithm,
-            Provider provider,
-            PublicKey publicKey,
-            String symmetricAlgorithm,
-            int keyLength,
-            SecureRandom random)
+            String algorithm, Provider provider, PublicKey publicKey, String symmetricAlgorithm,
+            int keyLength, SecureRandom random)
             throws InvalidAlgorithmParameterException {
         Objects.requireNonNull(algorithm, "algorithm");
         Objects.requireNonNull(provider, "provider");
@@ -106,14 +68,7 @@ public final class BouncyCastleKemSupport {
         validateKeyLength(keyLength);
 
         if (hasService(provider, KEY_GENERATOR_SERVICE, algorithm)) {
-            KeyGenerator generator;
-            try {
-                generator = KeyGenerator.getInstance(algorithm, provider);
-            } catch (GeneralSecurityException e) {
-                throw invalidParameter("Provider '" + provider.getName()
-                                       + "' advertises but cannot create KeyGenerator for '" + algorithm + "'",
-                        e);
-            }
+            KeyGenerator generator = createKeyGenerator(algorithm, provider);
             synchronized (PQCKemLocks.lockFor(generator, publicKey)) {
                 return encapsulateWithKeyGenerator(generator, publicKey, symmetricAlgorithm, keyLength, random);
             }
@@ -122,46 +77,29 @@ public final class BouncyCastleKemSupport {
             return encapsulateWithJdkKem(algorithm, provider, publicKey, symmetricAlgorithm, keyLength, random);
         }
         throw invalidParameter("Provider '" + provider.getName()
-                               + "' exposes neither a usable KeyGenerator nor KEM service for '" + algorithm + "'",
+                               + "' exposes neither KeyGenerator nor KEM for '" + algorithm + "'",
                 new GeneralSecurityException("No matching KEM service"));
     }
 
-    /** Performs decapsulation with the explicitly supplied KeyGenerator instance. */
+    /** Always uses the exact KeyGenerator supplied by the Camel endpoint/registry. */
     public static SecretKey decapsulate(
-            KeyGenerator generator,
-            PrivateKey privateKey,
-            byte[] encapsulation,
-            String symmetricAlgorithm,
-            int keyLength,
-            SecureRandom random)
+            KeyGenerator generator, PrivateKey privateKey, byte[] encapsulation,
+            String symmetricAlgorithm, int keyLength, SecureRandom random)
             throws InvalidAlgorithmParameterException {
         Objects.requireNonNull(generator, "generator");
         Objects.requireNonNull(privateKey, "privateKey");
         Objects.requireNonNull(encapsulation, "encapsulation");
         Objects.requireNonNull(symmetricAlgorithm, "symmetricAlgorithm");
         validateKeyLength(keyLength);
-        // The explicitly configured generator must own the complete init()/generateKey()
-        // sequence. The provider-based overload remains responsible for selecting the standard
-        // JDK KEM API when no KeyGenerator was injected.
         synchronized (PQCKemLocks.lockFor(generator, privateKey)) {
-            return decapsulateWithKeyGenerator(
-                    generator, privateKey, encapsulation, symmetricAlgorithm, keyLength, random);
+            return decapsulateWithKeyGenerator(generator, privateKey, encapsulation, symmetricAlgorithm, keyLength, random);
         }
     }
 
-    /**
-     * Performs decapsulation with an explicitly selected provider. The provider's KeyGenerator service is preferred
-     * when present for Bouncy Castle 1.86 interoperability; the standard JDK KEM service is used only when no
-     * KeyGenerator service is advertised.
-     */
+    /** Prefer BC KeyGenerator on both releases; use JCA KEM only if no KeyGenerator service exists. */
     public static SecretKey decapsulate(
-            String algorithm,
-            Provider provider,
-            PrivateKey privateKey,
-            byte[] encapsulation,
-            String symmetricAlgorithm,
-            int keyLength,
-            SecureRandom random)
+            String algorithm, Provider provider, PrivateKey privateKey, byte[] encapsulation,
+            String symmetricAlgorithm, int keyLength, SecureRandom random)
             throws InvalidAlgorithmParameterException {
         Objects.requireNonNull(algorithm, "algorithm");
         Objects.requireNonNull(provider, "provider");
@@ -171,69 +109,105 @@ public final class BouncyCastleKemSupport {
         validateKeyLength(keyLength);
 
         if (hasService(provider, KEY_GENERATOR_SERVICE, algorithm)) {
-            KeyGenerator generator;
-            try {
-                generator = KeyGenerator.getInstance(algorithm, provider);
-            } catch (GeneralSecurityException e) {
-                throw invalidParameter("Provider '" + provider.getName()
-                                       + "' advertises but cannot create KeyGenerator for '" + algorithm + "'",
-                        e);
-            }
+            KeyGenerator generator = createKeyGenerator(algorithm, provider);
             synchronized (PQCKemLocks.lockFor(generator, privateKey)) {
-                return decapsulateWithKeyGenerator(generator, privateKey, encapsulation,
-                        symmetricAlgorithm, keyLength, random);
+                return decapsulateWithKeyGenerator(
+                        generator, privateKey, encapsulation, symmetricAlgorithm, keyLength, random);
             }
         }
         if (hasService(provider, KEM_SERVICE, algorithm)) {
             return decapsulateWithJdkKem(algorithm, provider, privateKey, encapsulation,
-                    symmetricAlgorithm, keyLength, random);
+                    symmetricAlgorithm, keyLength);
         }
         throw invalidParameter("Provider '" + provider.getName()
-                               + "' exposes neither a usable KeyGenerator nor KEM service for '" + algorithm + "'",
+                               + "' exposes neither KeyGenerator nor KEM for '" + algorithm + "'",
                 new GeneralSecurityException("No matching KEM service"));
     }
 
-    /** Returns a defensive copy of the encapsulation carried by a generated SecretKey body. */
+    /** Return a copy of the ciphertext carried by either BC's typed carrier or Camel's JDK-KEM wrapper. */
     public static byte[] getEncapsulation(SecretKey secretKey) throws InvalidAlgorithmParameterException {
         Objects.requireNonNull(secretKey, "secretKey");
-        if (secretKey instanceof EncapsulatedSecretKey encapsulated) {
-            return encapsulated.getEncapsulation();
-        }
-        try {
-            Method accessor = secretKey.getClass().getMethod("getEncapsulation");
-            Object value = accessor.invoke(secretKey);
-            if (!(value instanceof byte[] bytes) || bytes.length == 0) {
-                throw new InvalidAlgorithmParameterException(
-                        "KEM SecretKey carrier '" + secretKey.getClass().getName()
-                                                             + "' returned an empty encapsulation");
-            }
-            return bytes.clone();
-        } catch (NoSuchMethodException e) {
+        final byte[] encapsulation;
+        if (secretKey instanceof SecretKeyWithEncapsulation bcCarrier) {
+            encapsulation = bcCarrier.getEncapsulation();
+        } else if (secretKey instanceof EncapsulatedSecretKey camelCarrier) {
+            encapsulation = camelCarrier.getEncapsulation();
+        } else {
             throw invalidParameter("SecretKey '" + secretKey.getClass().getName()
-                                   + "' does not carry a KEM encapsulation. Pass the SecretKey body returned by "
+                                   + "' does not carry a KEM encapsulation. Use the key returned by "
                                    + "generateSecretKeyEncapsulation.",
-                    e);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw invalidParameter("Could not read the KEM encapsulation from SecretKey '"
-                                   + secretKey.getClass().getName() + "'",
-                    unwrap(e));
+                    null);
         }
+        if (encapsulation == null || encapsulation.length == 0) {
+            throw invalidParameter("KEM SecretKey carrier returned an empty encapsulation", null);
+        }
+        return encapsulation.clone();
     }
 
-    /** Returns a defensive copy of the encoded secret key. */
+    /** Returns a defensive copy of the encoded shared secret. */
     public static byte[] getEncodedKey(SecretKey secretKey) throws InvalidAlgorithmParameterException {
         Objects.requireNonNull(secretKey, "secretKey");
         byte[] encoded = secretKey.getEncoded();
         if (encoded == null || encoded.length == 0) {
-            throw new InvalidAlgorithmParameterException(
-                    "KEM SecretKey '" + secretKey.getClass().getName() + "' does not expose encoded key material");
+            throw invalidParameter("KEM SecretKey '" + secretKey.getClass().getName()
+                                   + "' does not expose encoded key material",
+                    null);
         }
         return encoded.clone();
     }
 
+    private static KeyGenerator createKeyGenerator(String algorithm, Provider provider)
+            throws InvalidAlgorithmParameterException {
+        try {
+            return KeyGenerator.getInstance(algorithm, provider);
+        } catch (GeneralSecurityException e) {
+            throw invalidParameter("Provider '" + provider.getName()
+                                   + "' advertises but cannot create KeyGenerator for '" + algorithm + "'",
+                    e);
+        }
+    }
+
+    private static EncapsulationResult encapsulateWithKeyGenerator(
+            KeyGenerator generator, PublicKey publicKey, String symmetricAlgorithm, int keyLength, SecureRandom random)
+            throws InvalidAlgorithmParameterException {
+        try {
+            KEMGenerateSpec spec = new KEMGenerateSpec.Builder(publicKey, symmetricAlgorithm, keyLength).build();
+            generator.init(spec, random);
+            SecretKey generated = generator.generateKey();
+            byte[] encapsulation = getEncapsulation(generated);
+            return new EncapsulationResult(generated, encapsulation);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw invalidParameter("KeyGenerator encapsulation failed for '" + generator.getAlgorithm()
+                                   + "' using provider '" + generator.getProvider().getName() + "'",
+                    e);
+        }
+    }
+
+    private static SecretKey decapsulateWithKeyGenerator(
+            KeyGenerator generator, PrivateKey privateKey, byte[] encapsulation,
+            String symmetricAlgorithm, int keyLength, SecureRandom random)
+            throws InvalidAlgorithmParameterException {
+        try {
+            KEMExtractSpec spec = new KEMExtractSpec.Builder(
+                    privateKey, encapsulation.clone(), symmetricAlgorithm, keyLength).build();
+            generator.init(spec, random);
+            SecretKey generated = generator.generateKey();
+            getEncapsulation(generated);
+            return generated;
+        } catch (InvalidAlgorithmParameterException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw invalidParameter("KeyGenerator decapsulation failed for '" + generator.getAlgorithm()
+                                   + "' using provider '" + generator.getProvider().getName() + "'",
+                    e);
+        }
+    }
+
     private static EncapsulationResult encapsulateWithJdkKem(
-            String algorithm, Provider provider, PublicKey publicKey, String symmetricAlgorithm,
-            int keyLength, SecureRandom random)
+            String algorithm, Provider provider, PublicKey publicKey,
+            String symmetricAlgorithm, int keyLength, SecureRandom random)
             throws InvalidAlgorithmParameterException {
         try {
             KEM kem = KEM.getInstance(algorithm, provider);
@@ -241,40 +215,37 @@ public final class BouncyCastleKemSupport {
             KEM.Encapsulator encapsulator = kem.newEncapsulator(publicKey, spec, random);
             KEM.Encapsulated encapsulated;
             if (spec != null) {
-                // BC's KTSParameterSpec default is KDF-3/SHA-256, matching the legacy KEMGenerateSpec default.
                 encapsulated = encapsulator.encapsulate();
             } else {
                 int bytes = keyLength / Byte.SIZE;
                 if (bytes > encapsulator.secretSize()) {
-                    throw new InvalidAlgorithmParameterException(
-                            "Provider '" + provider.getName() + "' has no KTSParameterSpec and its raw '" + algorithm
-                                                                 + "' shared secret is only "
-                                                                 + encapsulator.secretSize() * Byte.SIZE
-                                                                 + " bits; it cannot produce the requested " + keyLength
-                                                                 + "-bit key without a KDF");
+                    throw invalidParameter("Provider '" + provider.getName() + "' has only "
+                                           + encapsulator.secretSize() * Byte.SIZE + " raw bits for '" + algorithm
+                                           + "'; cannot derive the requested " + keyLength + "-bit key",
+                            null);
                 }
                 encapsulated = encapsulator.encapsulate(0, bytes, symmetricAlgorithm);
             }
             byte[] message = encapsulated.encapsulation();
             if (message == null || message.length == 0) {
-                throw new InvalidAlgorithmParameterException(
-                        "Provider '" + provider.getName() + "' returned an empty KEM encapsulation for '"
-                                                             + algorithm + "'");
+                throw invalidParameter("Provider '" + provider.getName()
+                                       + "' returned an empty KEM encapsulation for '" + algorithm + "'",
+                        null);
             }
-            SecretKey carried = carryEncapsulation(encapsulated.key(), message, provider);
+            SecretKey carried = new EncapsulatedSecretKey(encapsulated.key(), message);
             return new EncapsulationResult(carried, message);
         } catch (InvalidAlgorithmParameterException e) {
             throw e;
         } catch (GeneralSecurityException | RuntimeException e) {
-            throw invalidParameter("JDK KEM encapsulation failed for '" + algorithm + "' using provider '"
-                                   + provider.getName() + "'",
+            throw invalidParameter("JDK KEM encapsulation failed for '" + algorithm
+                                   + "' using provider '" + provider.getName() + "'",
                     e);
         }
     }
 
     private static SecretKey decapsulateWithJdkKem(
             String algorithm, Provider provider, PrivateKey privateKey, byte[] encapsulation,
-            String symmetricAlgorithm, int keyLength, SecureRandom random)
+            String symmetricAlgorithm, int keyLength)
             throws InvalidAlgorithmParameterException {
         try {
             KEM kem = KEM.getInstance(algorithm, provider);
@@ -286,177 +257,30 @@ public final class BouncyCastleKemSupport {
             } else {
                 int bytes = keyLength / Byte.SIZE;
                 if (bytes > decapsulator.secretSize()) {
-                    throw new InvalidAlgorithmParameterException(
-                            "Provider '" + provider.getName() + "' has no KTSParameterSpec and its raw '" + algorithm
-                                                                 + "' shared secret is only "
-                                                                 + decapsulator.secretSize() * Byte.SIZE
-                                                                 + " bits; it cannot recover the requested " + keyLength
-                                                                 + "-bit key without a KDF");
+                    throw invalidParameter("Provider '" + provider.getName() + "' has only "
+                                           + decapsulator.secretSize() * Byte.SIZE + " raw bits for '" + algorithm
+                                           + "'; cannot recover the requested " + keyLength + "-bit key",
+                            null);
                 }
                 extracted = decapsulator.decapsulate(encapsulation, 0, bytes, symmetricAlgorithm);
             }
-            return carryEncapsulation(extracted, encapsulation, provider);
+            return new EncapsulatedSecretKey(extracted, encapsulation);
         } catch (InvalidAlgorithmParameterException e) {
             throw e;
         } catch (GeneralSecurityException | RuntimeException e) {
-            throw invalidParameter("JDK KEM decapsulation failed for '" + algorithm + "' using provider '"
-                                   + provider.getName() + "'",
-                    e);
-        }
-    }
-
-    private static EncapsulationResult encapsulateWithKeyGenerator(
-            KeyGenerator generator, PublicKey publicKey, String symmetricAlgorithm,
-            int keyLength, SecureRandom random)
-            throws InvalidAlgorithmParameterException {
-        try {
-            AlgorithmParameterSpec spec = newBcParameterSpec(generator.getProvider(), BC_KEM_GENERATE_SPEC,
-                    new Class<?>[] { PublicKey.class, String.class, int.class },
-                    new Object[] { publicKey, symmetricAlgorithm, keyLength });
-            generator.init(spec, random);
-            SecretKey generated = generator.generateKey();
-            byte[] encapsulation = getEncapsulation(generated);
-            return new EncapsulationResult(generated, encapsulation);
-        } catch (InvalidAlgorithmParameterException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw invalidParameter("Legacy KeyGenerator encapsulation failed for '" + generator.getAlgorithm()
-                                   + "' using provider '" + generator.getProvider().getName() + "'",
-                    e);
-        }
-    }
-
-    private static SecretKey decapsulateWithKeyGenerator(
-            KeyGenerator generator, PrivateKey privateKey, byte[] encapsulation,
-            String symmetricAlgorithm, int keyLength, SecureRandom random)
-            throws InvalidAlgorithmParameterException {
-        try {
-            AlgorithmParameterSpec spec = newBcParameterSpec(generator.getProvider(), BC_KEM_EXTRACT_SPEC,
-                    new Class<?>[] { PrivateKey.class, byte[].class, String.class, int.class },
-                    new Object[] { privateKey, encapsulation.clone(), symmetricAlgorithm, keyLength });
-            generator.init(spec, random);
-            SecretKey generated = generator.generateKey();
-            // Validate that legacy providers continue returning a carrier usable by Camel's extract operations.
-            getEncapsulation(generated);
-            return generated;
-        } catch (InvalidAlgorithmParameterException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw invalidParameter("Legacy KeyGenerator decapsulation failed for '" + generator.getAlgorithm()
-                                   + "' using provider '" + generator.getProvider().getName() + "'",
+            throw invalidParameter("JDK KEM decapsulation failed for '" + algorithm
+                                   + "' using provider '" + provider.getName() + "'",
                     e);
         }
     }
 
     private static AlgorithmParameterSpec newKtsParameterSpec(
-            Provider provider, String symmetricAlgorithm, int keyLength)
-            throws InvalidAlgorithmParameterException {
-        try {
-            Class<?> builderType;
-            try {
-                builderType = loadProviderClass(provider, BC_KTS_PARAMETER_SPEC + "$Builder");
-            } catch (ClassNotFoundException e) {
-                // Non-BC standard KEM providers need not expose BC's optional KTSParameterSpec.
-                return null;
-            }
-            Object builder = builderType.getConstructor(String.class, int.class)
-                    .newInstance(symmetricAlgorithm, keyLength);
-            Object spec = builderType.getMethod("build").invoke(builder);
-            if (!(spec instanceof AlgorithmParameterSpec parameterSpec)) {
-                throw new InvalidAlgorithmParameterException(
-                        "Provider '" + provider.getName()
-                                                             + "' KTSParameterSpec.Builder.build() did not return an AlgorithmParameterSpec");
-            }
-            return parameterSpec;
-        } catch (InvalidAlgorithmParameterException e) {
-            throw e;
-        } catch (ReflectiveOperationException | LinkageError e) {
-            throw invalidParameter("Could not create the provider-specific KTSParameterSpec from provider '"
-                                   + provider.getName() + "'",
-                    unwrap(e));
+            Provider provider, String symmetricAlgorithm, int keyLength) {
+        // Only BC understands its KTSParameterSpec. Other JCA KEM providers use the standard KEM API directly.
+        if (!"BC".equals(provider.getName()) && !"BCPQC".equals(provider.getName())) {
+            return null;
         }
-    }
-
-    private static AlgorithmParameterSpec newBcParameterSpec(
-            Provider provider, String className, Class<?>[] parameterTypes, Object[] arguments)
-            throws InvalidAlgorithmParameterException {
-        try {
-            Class<?> specType = loadProviderClass(provider, className);
-            Constructor<?> constructor = specType.getConstructor(parameterTypes);
-            Object result = constructor.newInstance(arguments);
-            if (!(result instanceof AlgorithmParameterSpec parameterSpec)) {
-                throw new InvalidAlgorithmParameterException(
-                        "Provider-specific KEM spec '" + className + "' does not implement AlgorithmParameterSpec");
-            }
-            return parameterSpec;
-        } catch (InvalidAlgorithmParameterException e) {
-            throw e;
-        } catch (ReflectiveOperationException | LinkageError e) {
-            throw invalidParameter("Provider '" + provider.getName()
-                                   + "' cannot construct compatible KEM parameter spec " + className
-                                   + ". Use a BC-compatible KeyGenerator provider or a standard JDK KEM service.",
-                    unwrap(e));
-        }
-    }
-
-    private static Class<?> loadProviderClass(Provider provider, String className) throws ClassNotFoundException {
-        ClassLoader providerLoader = provider == null ? null : provider.getClass().getClassLoader();
-        ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
-        ClassLoader componentLoader = BouncyCastleKemSupport.class.getClassLoader();
-        ClassLoader[] loaders = { providerLoader, contextLoader, componentLoader };
-        ClassNotFoundException failure = null;
-        for (int i = 0; i < loaders.length; i++) {
-            ClassLoader loader = loaders[i];
-            if (loader == null || alreadyTried(loaders, i, loader)) {
-                continue;
-            }
-            try {
-                return Class.forName(className, true, loader);
-            } catch (ClassNotFoundException e) {
-                if (failure == null) {
-                    failure = e;
-                } else {
-                    failure.addSuppressed(e);
-                }
-            }
-        }
-        if (failure != null) {
-            throw failure;
-        }
-        return Class.forName(className);
-    }
-
-    private static boolean alreadyTried(ClassLoader[] loaders, int before, ClassLoader candidate) {
-        for (int i = 0; i < before; i++) {
-            if (loaders[i] == candidate) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static SecretKey carryEncapsulation(SecretKey secretKey, byte[] encapsulation, Provider provider)
-            throws InvalidAlgorithmParameterException {
-        if (secretKey == null) {
-            throw new InvalidAlgorithmParameterException("Provider returned a null KEM SecretKey");
-        }
-        if (encapsulation == null || encapsulation.length == 0) {
-            throw new InvalidAlgorithmParameterException("Provider returned an empty KEM encapsulation");
-        }
-        try {
-            Class<?> carrierType = loadProviderClass(provider, BC_SECRET_KEY_WITH_ENCAPSULATION);
-            if (SecretKey.class.isAssignableFrom(carrierType)) {
-                Constructor<?> constructor = carrierType.getConstructor(SecretKey.class, byte[].class);
-                return (SecretKey) constructor.newInstance(secretKey, encapsulation.clone());
-            }
-        } catch (ClassNotFoundException e) {
-            // A non-BC provider may return a standard SecretKey without a BC carrier implementation.
-        } catch (ReflectiveOperationException | LinkageError e) {
-            throw invalidParameter("Could not wrap the JDK KEM result in the provider's "
-                                   + "SecretKeyWithEncapsulation carrier",
-                    unwrap(e));
-        }
-        return new EncapsulatedSecretKey(secretKey, encapsulation);
+        return new KTSParameterSpec.Builder(symmetricAlgorithm, keyLength).build();
     }
 
     private static boolean hasService(Provider provider, String type, String algorithm) {
@@ -474,22 +298,15 @@ public final class BouncyCastleKemSupport {
         return new InvalidAlgorithmParameterException(message, cause);
     }
 
-    private static Throwable unwrap(Throwable throwable) {
-        if (throwable instanceof InvocationTargetException invocation && invocation.getCause() != null) {
-            return invocation.getCause();
-        }
-        return throwable;
-    }
-
-    /** Standard SecretKey facade used only when a JDK KEM provider has no BC carrier class. */
-    private static final class EncapsulatedSecretKey implements SecretKey {
+    /** Camel-owned carrier keeps the ciphertext explicit without depending on a provider implementation class. */
+    public static final class EncapsulatedSecretKey implements SecretKey {
         private static final long serialVersionUID = 1L;
         private final SecretKey delegate;
         private final byte[] encapsulation;
 
         private EncapsulatedSecretKey(SecretKey delegate, byte[] encapsulation) {
             this.delegate = Objects.requireNonNull(delegate, "delegate");
-            this.encapsulation = encapsulation.clone();
+            this.encapsulation = Objects.requireNonNull(encapsulation, "encapsulation").clone();
         }
 
         public byte[] getEncapsulation() {

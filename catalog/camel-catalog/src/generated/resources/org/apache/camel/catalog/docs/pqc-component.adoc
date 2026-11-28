@@ -155,9 +155,10 @@ See xref:others:pqc-key-lifecycle.adoc[PQC Key Lifecycle Management] for full de
 
 == Metrics
 
-When https://micrometer.io[Micrometer] is on the classpath and a `MeterRegistry` bean is available in the Camel
-registry, the PQC producer records metrics automatically. Micrometer is an *optional* dependency: without it (or without
-a `MeterRegistry`) no metrics are emitted and there is no runtime overhead.
+Micrometer support is provided by the optional `camel-pqc-micrometer` integration module. When that module is on the
+application classpath and a `MeterRegistry` is available in the Camel registry, the PQC producer records metrics.
+Without the integration module (or without a `MeterRegistry`) metrics are disabled and the core `camel-pqc` artifact
+has no Micrometer dependency or reflective class loading.
 
 [cols="2,1,4",options="header"]
 |===
@@ -174,8 +175,9 @@ a `MeterRegistry`) no metrics are emitted and there is no runtime overhead.
   producers configured with a stateful signature algorithm.
 |===
 
-To enable the metrics, add `camel-micrometer` (or Micrometer directly) to your application and bind a `MeterRegistry` in
-the registry - for example a `SimpleMeterRegistry`, or the registry provided by Spring Boot or Quarkus.
+To enable metrics, add `camel-pqc-micrometer` and bind a `MeterRegistry` in the Camel registry - for example a
+`SimpleMeterRegistry`, or the registry provided by Spring Boot or Quarkus. The Micrometer integration is discovered
+through the Camel-owned metrics SPI; applications that do not include the integration module remain Micrometer-free.
 
 == Sub-Pages
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pqc.metrics;
+package org.apache.camel.component.pqc.metrics.micrometer;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,10 +25,11 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.pqc.metrics.PQCMetrics;
 
 /**
- * Micrometer-backed {@link PQCMetrics}. All {@code io.micrometer} references live in this class so that it is only
- * loaded when Micrometer is actually present on the classpath (see {@code PQCProducer#createMetrics}).
+ * Micrometer-backed {@link PQCMetrics}. This class lives in the optional {@code camel-pqc-micrometer} integration so
+ * the core {@code camel-pqc} artifact has no Micrometer linkage or reflective loading.
  * <p/>
  * Note on {@link #close()}: a {@code MeterRegistry} is shared across the JVM and identifies a meter by its id, so two
  * producers whose operation, algorithm and outcome tags coincide share one meter instance. Closing one therefore

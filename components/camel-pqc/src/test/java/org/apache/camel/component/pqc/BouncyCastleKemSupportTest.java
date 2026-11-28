@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -64,8 +65,6 @@ class BouncyCastleKemSupportTest {
                 "ML-KEM", provider, keyPair.getPublic(), "AES", 256, new SecureRandom());
         assertNotNull(encapsulated.secretKey());
         assertTrue(encapsulated.encapsulation().length > 0);
-        assertTrue(encapsulated.secretKey().getClass().getName()
-                .equals("org.bouncycastle.jcajce.SecretKeyWithEncapsulation"));
         assertArrayEquals(encapsulated.secretKey().getEncoded(),
                 BouncyCastleKemSupport.getEncodedKey(encapsulated.secretKey()));
         assertArrayEquals(encapsulated.encapsulation(),
@@ -105,17 +104,14 @@ class BouncyCastleKemSupportTest {
     }
 
     @Test
-    void resolvesBcParameterSpecsFromTheProviderLoaderRatherThanAShadowingContextLoader() throws Exception {
+    void resolvesStandardNamedParameterSpecWithShadowingContextLoader() throws Exception {
         Provider provider = BouncyCastleSupport.getProvider("KeyPairGenerator", "ML-KEM");
         KeyPairGenerator generator = KeyPairGenerator.getInstance("ML-KEM", provider);
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(new ShadowingBcClassLoader(original));
         try {
             var spec = PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-512");
-            Class<?> providerView = Class.forName(
-                    spec.getClass().getName(), false, provider.getClass().getClassLoader());
-            assertSame(providerView, spec.getClass(),
-                    "parameter spec must be assignable to the selected provider's API");
+            assertInstanceOf(java.security.spec.NamedParameterSpec.class, spec);
             generator.initialize(spec, new SecureRandom());
         } finally {
             Thread.currentThread().setContextClassLoader(original);

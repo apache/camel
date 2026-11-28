@@ -151,6 +151,11 @@ def import_vectors(runtime_version: str, producer_version: str, source: Path) ->
     run(mvn(runtime_version, *arguments, "-Dtest=PQCBCVersionBehaviorTest", "surefire:test"))
 
 
+def run_micrometer_tests() -> None:
+    command = command_prefix() + ["-B", "-ntp", "-pl", "components/camel-pqc-micrometer", "test"]
+    run(command)
+
+
 def run_interoperability_matrix(versions: list[str]) -> None:
     with tempfile.TemporaryDirectory(prefix="camel-pqc-bc-interop-") as temporary:
         directory = Path(temporary)
@@ -213,6 +218,8 @@ def main() -> int:
 
     if not args.skip_dependency_bootstrap:
         bootstrap_dependencies()
+    run_micrometer_tests()
+    run_micrometer_tests()
 
     if args.skip_interoperability:
         for version in versions:

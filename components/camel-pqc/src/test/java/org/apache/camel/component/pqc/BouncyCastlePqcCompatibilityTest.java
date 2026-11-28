@@ -26,32 +26,46 @@ import java.security.spec.AlgorithmParameterSpec;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BouncyCastlePqcCompatibilityTest {
 
     @Test
-    void createsLmsHssAndXmssParameterSpecsFromRuntimeApi() throws Exception {
-        assertSupportedSpec(BouncyCastlePqcCompatibility.lmsKeyGenParameterSpec(
-                "lms_sha256_n32_h5", "sha256_n32_w1"), "LMSKeyGenParameterSpec");
-        assertSupportedSpec(BouncyCastlePqcCompatibility.lmsHssKeyGenParameterSpec(
-                new String[] { "lms_sha256_n32_h5", "lms_sha256_n32_h5" },
-                new String[] { "sha256_n32_w2", "sha256_n32_w2" }),
-                "LMSHSSKeyGenParameterSpec");
-        assertSupportedSpec(BouncyCastlePqcCompatibility.xmssParameterSpec(2, "SHA256"), "XMSSParameterSpec");
-        assertSupportedSpec(BouncyCastlePqcCompatibility.xmssMtParameterSpec(20, 2, "SHA256"),
-                "XMSSMTParameterSpec");
+    void selectsTheAdapterMatchingTheInstalledBcVersion() throws Exception {
+        String providerVersion = BouncyCastleSupport.getProvider("KeyPairGenerator", "LMS").getVersionStr();
+        assertEquals(providerVersion, BouncyCastlePqcAdapterSupport.adapter().bcVersion());
     }
 
     @Test
-    void readsStatefulXmssPrivateKeyWithoutLinkingToBcInterface() throws Exception {
+    void resolvesNamedParametersUsingTypedPublicApis() {
+        assertNotNull(PQCParameterSpecResolver.resolve("MLDSA", "ML-DSA-65"));
+        assertNotNull(PQCParameterSpecResolver.resolve("SLHDSA", "SLH-DSA-SHA2-128S"));
+        assertNotNull(PQCParameterSpecResolver.resolve("FALCON", "falcon-512"));
+        assertNotNull(PQCParameterSpecResolver.resolve("MLKEM", "ML-KEM-768"));
+        assertNotNull(PQCParameterSpecResolver.resolve("NTRU", "ntruhps2048509"));
+        assertNotNull(PQCParameterSpecResolver.resolve("CMCE", "mceliece460896"));
+    }
+
+    @Test
+    void createsStatefulParameterSpecsAndTracksXmssKeyUse() throws Exception {
+        AlgorithmParameterSpec lms = BouncyCastlePqcCompatibility.lmsKeyGenParameterSpec(
+                "lms_sha256_n32_h5", "sha256_n32_w1");
+        AlgorithmParameterSpec hss = BouncyCastlePqcCompatibility.lmsHssKeyGenParameterSpec(
+                new String[] { "lms_sha256_n32_h5", "lms_sha256_n32_h5" },
+                new String[] { "sha256_n32_w2", "sha256_n32_w2" });
+        AlgorithmParameterSpec xmss = BouncyCastlePqcCompatibility.xmssParameterSpec(2, "SHA256");
+        AlgorithmParameterSpec xmssMt = BouncyCastlePqcCompatibility.xmssMtParameterSpec(20, 2, "SHA256");
+        assertNotNull(lms);
+        assertNotNull(hss);
+        assertNotNull(xmss);
+        assertNotNull(xmssMt);
+
         BouncyCastleSupport.ensureProviders();
-        String keyPairGeneratorProvider = BouncyCastleSupport.getProviderName("KeyPairGenerator", "XMSS");
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("XMSS", keyPairGeneratorProvider);
-        keyPairGenerator.initialize(BouncyCastlePqcCompatibility.xmssParameterSpec(2, "SHA256"), new SecureRandom());
+        String kpgProvider = BouncyCastleSupport.getProviderName("KeyPairGenerator", "XMSS");
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("XMSS", kpgProvider);
+        keyPairGenerator.initialize(xmss);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         PrivateKey privateKey = keyPair.getPrivate();
 
@@ -61,65 +75,71 @@ class BouncyCastlePqcCompatibilityTest {
         String signatureProvider = BouncyCastleSupport.getProviderName("Signature", "XMSS");
         Signature signature = Signature.getInstance("XMSS", signatureProvider);
         signature.initSign(privateKey);
-        signature.update("adapter-test".getBytes(StandardCharsets.UTF_8));
+        signature.update("typed-adapter".getBytes(StandardCharsets.UTF_8));
         assertNotNull(signature.sign());
-
         assertEquals(1, BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey));
         assertEquals(3, BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey));
     }
 
     @Test
-    void nonStatefulPrivateKeysUseExistingFallbackValues() throws Exception {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(1024);
-        PrivateKey privateKey = keyPairGenerator.generateKeyPair().getPrivate();
-
-        assertEquals(0, BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey));
-        assertEquals(-1, BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey));
-    }
-
-    @Test
-    void prefersRuntimeContextLoaderAndRetainsComponentFallback() {
-        ClassLoader runtimeLoader = new ClassLoader() {
-        };
-        ClassLoader componentLoader = new ClassLoader() {
-        };
-
-        assertArrayEquals(new ClassLoader[] { runtimeLoader, componentLoader },
-                BouncyCastlePqcCompatibility.compatibilityClassLoaders(runtimeLoader, componentLoader));
-        assertArrayEquals(new ClassLoader[] { runtimeLoader },
-                BouncyCastlePqcCompatibility.compatibilityClassLoaders(runtimeLoader, runtimeLoader));
-        assertArrayEquals(new ClassLoader[] { componentLoader },
-                BouncyCastlePqcCompatibility.compatibilityClassLoaders(null, componentLoader));
-        assertArrayEquals(new ClassLoader[0],
-                BouncyCastlePqcCompatibility.compatibilityClassLoaders(null, null));
-    }
-
-    @Test
-    void fallsBackToTheComponentLoaderWhenTheRuntimeContextLoaderCannotSeeBcClasses() throws Exception {
+    void adapterRemainsAvailableWhenTheThreadContextLoaderCannotSeeIt() throws Exception {
+        String providerVersion = BouncyCastleSupport.getProvider("KeyPairGenerator", "LMS").getVersionStr();
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(ClassLoader.getPlatformClassLoader());
-            assertSupportedSpec(BouncyCastlePqcCompatibility.xmssParameterSpec(2, "SHA256"), "XMSSParameterSpec");
+            assertEquals(providerVersion, BouncyCastlePqcAdapterSupport.adapter().bcVersion());
         } finally {
             Thread.currentThread().setContextClassLoader(original);
         }
     }
 
-    private static void assertSupportedSpec(AlgorithmParameterSpec spec, String simpleName) throws Exception {
-        assertNotNull(spec);
-        assertInstanceOf(AlgorithmParameterSpec.class, spec);
+    @Test
+    void tracksLmsHssAndXmssMtStatefulKeyUse() throws Exception {
+        assertStatefulKeyUse(createStatefulKeyPair(PQCSignatureAlgorithms.LMS), PQCSignatureAlgorithms.LMS);
+        assertStatefulKeyUse(createStatefulKeyPair(PQCSignatureAlgorithms.HSS), PQCSignatureAlgorithms.HSS);
+        assertStatefulKeyUse(createStatefulKeyPair(PQCSignatureAlgorithms.XMSSMT), PQCSignatureAlgorithms.XMSSMT);
+    }
 
-        String currentType = "org.bouncycastle.jcajce.spec." + simpleName;
-        String legacyType = "org.bouncycastle.pqc.jcajce.spec." + simpleName;
-        boolean currentTypeAvailable;
-        try {
-            Class.forName(currentType, false, spec.getClass().getClassLoader());
-            currentTypeAvailable = true;
-        } catch (ClassNotFoundException e) {
-            currentTypeAvailable = false;
+    private static KeyPair createStatefulKeyPair(PQCSignatureAlgorithms algorithm) throws Exception {
+        KeyPairGenerator generator = KeyPairGenerator.getInstance(
+                algorithm.getAlgorithm(), algorithm.getBcProvider("KeyPairGenerator"));
+        switch (algorithm) {
+            case LMS -> generator.initialize(BouncyCastlePqcCompatibility.lmsKeyGenParameterSpec(
+                    "lms_sha256_n32_h5", "sha256_n32_w1"), new SecureRandom());
+            case HSS -> generator.initialize(BouncyCastlePqcCompatibility.lmsHssKeyGenParameterSpec(
+                    new String[] { "lms_sha256_n32_h5", "lms_sha256_n32_h5" },
+                    new String[] { "sha256_n32_w2", "sha256_n32_w2" }), new SecureRandom());
+            case XMSSMT -> generator.initialize(
+                    BouncyCastlePqcCompatibility.xmssMtParameterSpec(20, 2, "SHA256"), new SecureRandom());
+            default -> throw new IllegalArgumentException("Not a stateful test algorithm: " + algorithm);
         }
-        assertEquals(currentTypeAvailable ? currentType : legacyType, spec.getClass().getName(),
-                "The adapter should prefer the non-deprecated package when it is available");
+        return generator.generateKeyPair();
+    }
+
+    private static void assertStatefulKeyUse(KeyPair pair, PQCSignatureAlgorithms algorithm) throws Exception {
+        PrivateKey privateKey = pair.getPrivate();
+        assertEquals(0, BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey),
+                algorithm + " starts at stateful signature index zero");
+        long remainingBefore = BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey);
+        assertTrue(remainingBefore > 0, algorithm + " must expose a positive remaining-signature count");
+
+        Signature signature = Signature.getInstance(algorithm.getAlgorithm(), algorithm.getBcProvider("Signature"));
+        signature.initSign(privateKey);
+        signature.update("stateful-adapter-regression".getBytes(StandardCharsets.UTF_8));
+        assertNotNull(signature.sign());
+
+        assertEquals(1, BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey),
+                algorithm + " increments its signature index");
+        assertEquals(remainingBefore - 1, BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey),
+                algorithm + " decrements its remaining-signature count");
+    }
+
+    @Test
+    void nonStatefulKeysKeepTheExistingFallbackValues() throws Exception {
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(1024);
+        PrivateKey privateKey = generator.generateKeyPair().getPrivate();
+        assertEquals(0, BouncyCastlePqcCompatibility.getStatefulKeyIndex(privateKey));
+        assertEquals(-1, BouncyCastlePqcCompatibility.getStatefulKeyRemaining(privateKey));
     }
 }

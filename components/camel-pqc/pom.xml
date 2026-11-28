@@ -64,18 +64,30 @@
             <artifactId>bcprov-jdk18on</artifactId>
             <version>${bouncycastle-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-pqc-bc-compat-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-pqc-bc-compat-186</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-pqc-bc-compat-187</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- Micrometer for optional PQC metrics/observability -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-            <optional>true</optional>
-        </dependency>
+
 
         <!-- Spring Vault for HashicorpVaultKeyLifecycleManager (optional) -->
         <dependency>

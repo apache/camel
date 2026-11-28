@@ -23,6 +23,11 @@ on:
       - main
     paths:
       - 'components/camel-pqc/**'
+      - 'components/pom.xml'
+      - 'components/camel-pqc-micrometer/**'
+      - 'components/camel-pqc-bc-compat-187/**'
+      - 'components/camel-pqc-bc-compat-186/**'
+      - 'components/camel-pqc-bc-compat-api/**'
       - 'parent/pom.xml'
       - 'etc/scripts/camel-pqc-bouncycastle-compatibility.py'
       - 'etc/scripts/check-camel-pqc-bouncycastle-imports.py'

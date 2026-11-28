@@ -29,6 +29,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -53,6 +55,7 @@ import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
 import org.apache.camel.component.pqc.metrics.PQCMetrics;
+import org.apache.camel.component.pqc.metrics.PQCMetricsProvider;
 import org.apache.camel.component.pqc.stateful.StatefulKeyState;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
@@ -318,22 +321,39 @@ public class PQCProducer extends DefaultProducer {
 
     private PQCMetrics createMetrics() {
         CamelContext camelContext = getEndpoint().getCamelContext();
-        // Only touch Micrometer if it is actually on the classpath, keeping it an optional dependency.
-        // Use reflection to avoid a static class reference that GraalVM native image would follow.
-        if (camelContext.getClassResolver().resolveClass("io.micrometer.core.instrument.MeterRegistry") == null) {
+        ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader componentLoader = PQCMetricsProvider.class.getClassLoader();
+
+        PQCMetrics metrics = createMetrics(camelContext, contextLoader);
+        if (metrics != PQCMetrics.NOOP) {
+            return metrics;
+        }
+        if (componentLoader != null && componentLoader != contextLoader) {
+            metrics = createMetrics(camelContext, componentLoader);
+            if (metrics != PQCMetrics.NOOP) {
+                return metrics;
+            }
+        }
+        return PQCMetrics.NOOP;
+    }
+
+    /** Loads optional metrics integrations through the Camel-owned SPI; no reflective class lookup is used. */
+    private PQCMetrics createMetrics(CamelContext camelContext, ClassLoader classLoader) {
+        if (classLoader == null) {
             return PQCMetrics.NOOP;
         }
         try {
-            Class<?> clazz = camelContext.getClassResolver()
-                    .resolveClass("org.apache.camel.component.pqc.metrics.PQCMicrometerMetrics");
-            if (clazz == null) {
-                return PQCMetrics.NOOP;
+            for (PQCMetricsProvider provider : ServiceLoader.load(PQCMetricsProvider.class, classLoader)) {
+                PQCMetrics candidate = provider.create(camelContext);
+                if (candidate != null && candidate != PQCMetrics.NOOP) {
+                    return candidate;
+                }
             }
-            return (PQCMetrics) clazz.getMethod("create", CamelContext.class).invoke(null, camelContext);
-        } catch (Throwable t) {
-            LOG.debug("Micrometer metrics are not available for the PQC producer: {}", t.getMessage());
-            return PQCMetrics.NOOP;
+        } catch (ServiceConfigurationError | LinkageError | RuntimeException e) {
+            LOG.debug("Optional PQC metrics provider is not available through class loader {}: {}",
+                    classLoader, e.getMessage());
         }
+        return PQCMetrics.NOOP;
     }
 
     private static boolean isStatefulSignatureAlgorithm(String algorithm) {

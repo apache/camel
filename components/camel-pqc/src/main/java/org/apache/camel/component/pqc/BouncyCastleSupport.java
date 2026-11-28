@@ -23,6 +23,10 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 /**
  * Central access point for Bouncy Castle providers.
@@ -33,9 +37,8 @@ import java.util.Objects;
  * </p>
  *
  * <p>
- * The provider implementations are loaded reflectively so the rest of the component does not have to link directly to
- * provider implementation classes. An already installed provider is never replaced or removed; runtimes such as Quarkus
- * can therefore register their BOM-selected provider instances before Camel starts.
+ * The two public provider classes are constructed directly. An already installed provider is never replaced or removed;
+ * runtimes such as Quarkus can therefore register their BOM-selected provider instances before Camel starts.
  * </p>
  */
 public final class BouncyCastleSupport {
@@ -44,8 +47,6 @@ public final class BouncyCastleSupport {
 
     private static final String BC_NAME = "BC";
     private static final String BCPQC_NAME = "BCPQC";
-    private static final String BC_CLASS = "org.bouncycastle.jce.provider.BouncyCastleProvider";
-    private static final String BCPQC_CLASS = "org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider";
 
     private BouncyCastleSupport() {
     }
@@ -57,12 +58,12 @@ public final class BouncyCastleSupport {
     public static void ensureProviders() throws GeneralSecurityException {
         GeneralSecurityException failure = null;
         try {
-            ensureProvider(BC_NAME, BC_CLASS);
+            ensureProvider(BC_NAME, BouncyCastleProvider::new);
         } catch (GeneralSecurityException e) {
             failure = e;
         }
         try {
-            ensureProvider(BCPQC_NAME, BCPQC_CLASS);
+            ensureProvider(BCPQC_NAME, BouncyCastlePQCProvider::new);
         } catch (GeneralSecurityException e) {
             if (failure == null) {
                 failure = e;
@@ -151,7 +152,8 @@ public final class BouncyCastleSupport {
         }
     }
 
-    private static void ensureProvider(String providerName, String providerClassName) throws GeneralSecurityException {
+    private static void ensureProvider(String providerName, Supplier<Provider> providerFactory)
+            throws GeneralSecurityException {
         if (Security.getProvider(providerName) != null) {
             return;
         }
@@ -159,46 +161,15 @@ public final class BouncyCastleSupport {
             if (Security.getProvider(providerName) != null) {
                 return;
             }
-            Provider candidate = instantiateProvider(providerClassName);
+            Provider candidate = providerFactory.get();
             if (!providerName.equals(candidate.getName())) {
                 throw new GeneralSecurityException(
-                        "Provider class " + providerClassName + " returned provider '"
-                                                   + candidate.getName() + "', expected '" + providerName + "'.");
+                        "Provider constructor for '" + providerName + "' returned '" + candidate.getName() + "'.");
             }
             Security.addProvider(candidate);
-            // Another thread or security manager may have won the registration race.
             if (Security.getProvider(providerName) == null) {
                 throw new GeneralSecurityException("Could not register Bouncy Castle provider '" + providerName + "'.");
             }
         }
-    }
-
-    private static Provider instantiateProvider(String className) throws GeneralSecurityException {
-        ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
-        ClassLoader ownLoader = BouncyCastleSupport.class.getClassLoader();
-        Throwable firstFailure = null;
-        for (ClassLoader loader : new ClassLoader[] { contextLoader, ownLoader }) {
-            if (loader == null || (firstFailure != null && loader == contextLoader && contextLoader == ownLoader)) {
-                continue;
-            }
-            try {
-                Class<?> providerClass = Class.forName(className, true, loader);
-                Object instance = providerClass.getDeclaredConstructor().newInstance();
-                if (!(instance instanceof Provider provider)) {
-                    throw new GeneralSecurityException("Class " + className + " is not a java.security.Provider.");
-                }
-                return provider;
-            } catch (ReflectiveOperationException | LinkageError e) {
-                if (firstFailure == null) {
-                    firstFailure = e;
-                } else {
-                    firstFailure.addSuppressed(e);
-                }
-            }
-        }
-        throw new GeneralSecurityException(
-                "Could not load Bouncy Castle provider implementation " + className
-                                           + " from the thread context or component class loader.",
-                firstFailure);
     }
 }
