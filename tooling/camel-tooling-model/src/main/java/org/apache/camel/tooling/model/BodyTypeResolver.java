@@ -28,7 +28,7 @@ import org.apache.camel.tooling.model.BodyTypeModel.OptionBodyTypeModel;
 /**
  * What one side of the body types of the catalog says for the options a step sets (CAMEL-24961, CAMEL-25928): the rule
  * that the YAML validator and the other tools share, so they all read the catalog the same way.
- * <p/>
+ * <p>
  * The rule, in order:
  * <ol>
  * <li>An option of byOption for any value ({@code *}) the step sets: that body, whatever the rest says, even for a side
